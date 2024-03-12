@@ -2,15 +2,21 @@
 #include "GLFW/glfw3.h"
 #include <iostream>
 
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+#define GLM_FORCE_XYZW_ONLY 1
+#include "glm.hpp"
+#include "gtc/matrix_transform.hpp"
+#include "gtc/type_ptr.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Shader.h"
 
 #include "Camera.h"
+
+
+// Lophics
+
+#include "Light.h"
 
 // Input
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -65,7 +71,7 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 
-	// Create shader
+	// Create shaders
 	Shader lightingShader("shader.vert", "shader.frag");
 	Shader lightCubeShader("lightCube.vert", "lightCube.frag");
 
@@ -128,13 +134,18 @@ int main()
 		glm::vec3(1.5f,  0.2f, -1.5f),
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
-	// positions of the point lights
-	glm::vec3 pointLightPositions[] = {
-		glm::vec3(0.7f,  0.2f,  2.0f),
-		glm::vec3(2.3f, -3.3f, -4.0f),
-		glm::vec3(-4.0f,  2.0f, -12.0f),
-		glm::vec3(0.0f,  0.0f, -3.0f)
+
+	PointLight pointLights[] = {
+		PointLight({ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f}, { 0.7f, 0.2f, 2.0f }, 1.0f, 0.09f, 0.032f),
+		PointLight({ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f}, { 2.3f, -3.3f, -4.0f }, 1.0f, 0.09f, 0.032f),
+		PointLight({ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f}, { -4.0f, 2.0f, -12.0f }, 1.0f, 0.09f, 0.032f),
+		PointLight({ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f, -3.0f }, 1.0f, 0.09f, 0.032f)
 	};
+	DirectionalLight directionalLight =
+		DirectionalLight({ 0.05f, 0.05f, 0.05f }, { 1.0f, 0.4f, 0.4f }, { 0.5f, 0.5f, 0.5f }, { -0.2f, -1.0f, -0.3f });
+
+	SpotLight spotLight =
+		SpotLight({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, 1.0f, 0.09f, 0.032f, { 0.0f, 0.0f, 0.0f }, glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(15.0f)));
 
 	unsigned int VBO, cubeVAO;
 	glGenVertexArrays(1, &cubeVAO);
@@ -210,6 +221,34 @@ int main()
 	lightingShader.setInt("material.specular", 1);
 	lightingShader.setInt("material.emission", 2);
 
+	// be sure to activate shader when setting uniforms/drawing objects
+	lightingShader.use();
+	lightingShader.setVec3("viewPos", camera.position);
+	lightingShader.setFloat("material.shininess", 64.0f);
+
+	// directional light
+	lightingShader.setVec3("dirLight.direction", directionalLight.direction);
+	lightingShader.setVec3("dirLight.ambient", directionalLight.ambient);
+	lightingShader.setVec3("dirLight.diffuse", directionalLight.diffuse);
+	lightingShader.setVec3("dirLight.specular", directionalLight.specular);
+
+	// Point lights
+	for (int i = 0; i < sizeof(pointLights)/sizeof(pointLights[0]); i++)
+	{
+		std::string index = std::to_string(i);
+		lightingShader.setVec3("pointLights[" + index + "].position", pointLights[i].position);
+		lightingShader.setVec3("pointLights[" + index + "].ambient", pointLights[i].ambient);
+		lightingShader.setVec3("pointLights[" + index + "].diffuse", pointLights[i].diffuse);
+		lightingShader.setVec3("pointLights[" + index + "].specular", pointLights[i].specular);
+		lightingShader.setFloat("pointLights[" + index + "].constant", pointLights[i].constant);
+		lightingShader.setFloat("pointLights[" + index + "].linear", pointLights[i].linear);
+		lightingShader.setFloat("pointLights[" + index + "].quadratic", pointLights[i].quadratic);
+	}
+
+	//TODO:
+	// spotLight
+	lightingShader.setVec3("spotLight.position", camera.position);
+	lightingShader.setVec3("spotLight.direction", camera.front);
 
 
 	while (!glfwWindowShouldClose(window))
@@ -226,58 +265,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-		// be sure to activate shader when setting uniforms/drawing objects
 		lightingShader.use();
-		lightingShader.setVec3("viewPos", camera.position);
-		lightingShader.setFloat("material.shininess", 64.0f);
-		// directional light
-		lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-		lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-		lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-		// point light 1
-		lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
-		lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[0].constant", 1.0f);
-		lightingShader.setFloat("pointLights[0].linear", 0.09f);
-		lightingShader.setFloat("pointLights[0].quadratic", 0.032f);
-		// point light 2
-		lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
-		lightingShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[1].constant", 1.0f);
-		lightingShader.setFloat("pointLights[1].linear", 0.09f);
-		lightingShader.setFloat("pointLights[1].quadratic", 0.032f);
-		// point light 3
-		lightingShader.setVec3("pointLights[2].position", pointLightPositions[2]);
-		lightingShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[2].constant", 1.0f);
-		lightingShader.setFloat("pointLights[2].linear", 0.09f);
-		lightingShader.setFloat("pointLights[2].quadratic", 0.032f);
-		// point light 4
-		lightingShader.setVec3("pointLights[3].position", pointLightPositions[3]);
-		lightingShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[3].constant", 1.0f);
-		lightingShader.setFloat("pointLights[3].linear", 0.09f);
-		lightingShader.setFloat("pointLights[3].quadratic", 0.032f);
-		// spotLight
-		lightingShader.setVec3("spotLight.position", camera.position);
-		lightingShader.setVec3("spotLight.direction", camera.front);
-		lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-		lightingShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-		lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("spotLight.constant", 1.0f);
-		lightingShader.setFloat("spotLight.linear", 0.09f);
-		lightingShader.setFloat("spotLight.quadratic", 0.032f);
-		lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-		lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
 
 		// light properties
 
@@ -318,7 +307,7 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		// also draw the lamp object(s)
+		// also draw the lights themselves
 		lightCubeShader.use();
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
@@ -328,7 +317,7 @@ int main()
 		for (unsigned int i = 0; i < 4; i++)
 		{
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, pointLightPositions[i]);
+			model = glm::translate(model, pointLights[i].position);
 			model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
 			lightCubeShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -388,7 +377,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	camera.ProcessMouseScroll(yoffset);
+	camera.ProcessMouseScroll((float)yoffset);
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
@@ -442,7 +431,7 @@ unsigned int loadTexture(char const* path)
 	}
 	else
 	{
-		std::cout << "Texture failed to load at path: " << path << std::endl;
+		std::cout << "Texture failed to load, path: " << path << std::endl;
 		stbi_image_free(data);
 	}
 

@@ -4,6 +4,8 @@
 
 class Shader
 {
+private:
+
 public:
 	// the program ID
 	unsigned int ID;

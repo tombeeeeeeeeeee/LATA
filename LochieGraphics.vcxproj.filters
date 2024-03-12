@@ -13,12 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Third-Party">
+      <UniqueIdentifier>{b77f2829-195b-4ea4-8273-67b61165c5c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{eb2e6c44-d498-433f-8cf7-82821a8ddb96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -27,30 +30,57 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Third-Party</Filter>
+    </ClCompile>
+    <ClCompile Include="Lophics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="glad.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="khrplatform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="stb_image.h">
+      <Filter>Third-Party</Filter>
+    </ClInclude>
+    <ClInclude Include="khrplatform.h">
+      <Filter>Third-Party</Filter>
+    </ClInclude>
+    <ClInclude Include="glad.h">
+      <Filter>Third-Party</Filter>
+    </ClInclude>
+    <ClInclude Include="Lophics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lightCube.frag" />
-    <None Include="lightCube.vert" />
-    <None Include="oldShader.frag" />
-    <None Include="oldShader.vert" />
-    <None Include="shader.frag" />
-    <None Include="shader.vert" />
+    <None Include="shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="oldShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="oldShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="lightCube.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="lightCube.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

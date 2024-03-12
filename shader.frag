@@ -24,8 +24,21 @@ struct PointLight {
     vec3 diffuse;
     vec3 specular;
 };
-#define NR_POINT_LIGHTS 4
-uniform PointLight pointLights[NR_POINT_LIGHTS];
+
+struct SpotLight {
+    vec3 position;
+    float constant;
+    float linear;
+    float quadratic;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float cutOff;
+    float outerCutOff;
+};
+
+#define MAX_POINT_LIGHTS 4
+uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
 
 uniform DirLight dirLight;
@@ -51,7 +64,7 @@ void main()
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
 
     // Point lights
-    for(int i = 0; i < NR_POINT_LIGHTS; i++){
+    for(int i = 0; i < MAX_POINT_LIGHTS; i++){
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
     }
     

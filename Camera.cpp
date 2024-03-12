@@ -101,11 +101,11 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 void Camera::ProcessMouseScroll(float yoffset)
 {
     fov -= static_cast<float>(yoffset);
-    if (fov < 1.0f) {
-        fov = 1.0f;
+    if (fov < 10.0f) {
+        fov = 10.0f;
     }
-    else if (fov > 179.0f) {
-        fov = 179.0f;
+    else if (fov > 170.0f) {
+        fov = 170.0f;
     }
 }
 
