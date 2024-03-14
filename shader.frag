@@ -60,7 +60,7 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos);
 
     // Directional light
-
+    //TODO: should there be ifs here to check if the lights are actually 'active'
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
 
     // Point lights
