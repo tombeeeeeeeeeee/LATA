@@ -11,7 +11,7 @@ private:
 public:
 
 	Mesh();
-	
+	~Mesh();
 
 	struct Vertex {
 		glm::vec4 position;
@@ -28,5 +28,7 @@ public:
 	void InitialiseFromFile(const char* filename);
 
 	void Draw();
+
+
 };
 

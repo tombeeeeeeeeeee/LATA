@@ -4,7 +4,6 @@
 #include "stb_image.h"
 
 
-#include "mesh.h"
 
 
 unsigned int Lophics::windowWidth = 800;
@@ -162,77 +161,11 @@ Start()
 	lightingShader = Shader("shader.vert", "shader.frag");
 	lightCubeShader = Shader("lightCube.vert", "lightCube.frag");
 
-
-
-	
-	// Generate buffers
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &VBO);
-
-	// Bind vertex buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	// Bind vertex array
-	glBindVertexArray(cubeVAO);
-	// Fill vertex buffer 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-
-	// Position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// Normal
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	// Texture
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-
-
-	// second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
-	glGenVertexArrays(1, &lightCubeVAO);
-	glBindVertexArray(lightCubeVAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	// note that we update the lamp's position attribute's stride to reflect the updated buffer data
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-
-	// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-	// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-	// glBindVertexArray(0);
-
-
 	// uncomment this call to draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-
-	//unsigned int texture;
-	//glGenTextures(1, &texture);
-	//glBindTexture(GL_TEXTURE_2D, texture);
-	//// set the texture wrapping options
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//// set the texture filtering paramters
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//// load and generate the texture, and mipmaps
-	//int width, height, nrChannels;
-	//stbi_set_flip_vertically_on_load(true);
-	//unsigned char* data = stbi_load("images/container.jpg", &width, &height, &nrChannels, 0);
-	//if (data)
-	//{
-	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	//	glGenerateMipmap(GL_TEXTURE_2D);
-	//}
-	//else
-	//{
-	//	std::cout << "Failed to load texture" << std::endl;
-	//}
-	//stbi_image_free(data);
-
-	diffuseMap = loadTexture("images/container2.png");
-	specularMap = loadTexture("images/container2_specular.png");
+	// TODO: some texture manager to unload the textures
+	boxMaterial = Material(loadTexture("images/container2.png"), loadTexture("images/container2_specular.png"));
 
 	// shader configuration
 	lightingShader.Use();
@@ -269,14 +202,12 @@ Start()
 	lightingShader.setVec3("spotLight.position", camera.position);
 	lightingShader.setVec3("spotLight.direction", camera.front);
 
+
+	cubeMesh.InitialiseCube();
 }
 
 void Lophics::Run()
 {
-	Mesh m_quadMesh;
-	//m_quadMesh.InitialiseFromFile("models/lucy.obj");
-	m_quadMesh.InitialiseCube();
-
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = static_cast<float>(glfwGetTime());
@@ -292,8 +223,6 @@ void Lophics::Run()
 
 
 		lightingShader.Use();
-
-		
 
 		// light properties
 
@@ -311,42 +240,21 @@ void Lophics::Run()
 		glm::mat4 model = glm::mat4(1.0f);
 		lightingShader.setMat4("model", model);
 
-		// Bind defuse map
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap);
-
-		// Bind specular map
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularMap);
+		boxMaterial.Use();
 
 
 		// render containers
-		glBindVertexArray(cubeVAO);
 		for (unsigned int i = 0; i < 10; i++)
 		{
-			
-
 			// calculate the model matrix for each object and pass it to shader before drawing
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			lightingShader.setMat4("model", model);
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			cubeMesh.Draw();
 		}
-
-		// Bind defuse map
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap);
-
-		// Bind specular map
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularMap);
-		model = glm::mat4(0.5f);
-		model = glm::rotate(model, glm::radians(45.f), glm::vec3(1.0f, 0.3f, 0.5f));
-		lightingShader.setMat4("model", model);
-		m_quadMesh.Draw();
+		
 
 		// also draw the lights themselves
 		lightCubeShader.Use();
@@ -354,14 +262,13 @@ void Lophics::Run()
 		lightCubeShader.setMat4("view", view);
 
 		// we now draw as many light bulbs as we have point lights.
-		glBindVertexArray(lightCubeVAO);
 		for (unsigned int i = 0; i < 4; i++)
 		{
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, pointLights[i].position);
 			model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
 			lightCubeShader.setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			cubeMesh.Draw();
 		}
 
 		// Check and call events and swap the buffers
@@ -370,9 +277,6 @@ void Lophics::Run()
 	}
 
 	// De-allocate resources
-	glDeleteVertexArrays(1, &cubeVAO);
-	glDeleteVertexArrays(1, &lightCubeVAO);
-	glDeleteBuffers(1, &VBO);
 	lightingShader.DeleteProgram();
 	lightCubeShader.DeleteProgram();
 
