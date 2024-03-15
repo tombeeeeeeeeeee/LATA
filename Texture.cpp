@@ -20,15 +20,21 @@ Texture::Texture() :
 
 void Texture::Initialise(const char* path)
 {
-	LoadTexture(path);
+	ID = LoadTexture(path);
 	initialised = true;
+}
+
+void Texture::Delete()
+{
+	if (initialised) {
+		glDeleteTextures(1, &ID);
+		initialised = false;
+	}
 }
 
 Texture::~Texture()
 {
-	if (initialised) {
-		glDeleteTextures(1, &ID);
-	}
+	Delete();
 }
 
 unsigned int Texture::LoadTexture(const char* path)
@@ -48,9 +54,9 @@ unsigned int Texture::LoadTexture(const char* path)
 		else if (nrComponents == 4)
 			format = GL_RGBA;
 		else {
-			std::cout << "Texture failed to load, could not be read correctly, path: " << path << std::endl;
+			std::cout << "Texture failed to load, could not be read correctly, path: " << path << "\n";
 			stbi_image_free(data);
-			//TODO: Should this return textureID
+			//TODO: Should this return textureID, so it can still call delete textures if that is even neccessary 
 			return textureID;
 		}
 
@@ -68,7 +74,7 @@ unsigned int Texture::LoadTexture(const char* path)
 	}
 	else
 	{
-		std::cout << "Texture failed to load, path: " << path << std::endl;
+		std::cout << "Texture failed to load, path: " << path << "\n";
 		stbi_image_free(data);
 	}
 

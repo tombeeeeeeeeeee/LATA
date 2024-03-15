@@ -77,50 +77,6 @@ void Lophics::scroll_callback(GLFWwindow* window, double xoffset, double yoffset
 
 }
 
-unsigned int Lophics::loadTexture(const char* path)
-{
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
-
-	int width, height, nrComponents;
-	unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
-	if (data)
-	{
-		GLenum format;
-		if (nrComponents == 1)
-			format = GL_RED;
-		else if (nrComponents == 3)
-			format = GL_RGB;
-		else if (nrComponents == 4)
-			format = GL_RGBA;
-		else {
-			std::cout << "Texture failed to load, could not be read correctly, path: " << path << std::endl;
-			stbi_image_free(data);
-			//TODO: Should this return textureID
-			return textureID;
-		}
-
-
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		stbi_image_free(data);
-	}
-	else
-	{
-		std::cout << "Texture failed to load, path: " << path << std::endl;
-		stbi_image_free(data);
-	}
-
-	return textureID;
-}
-
 void Lophics::
 Start()
 {
@@ -133,7 +89,7 @@ Start()
 	window = glfwCreateWindow(windowWidth, windowHeight, "Lochie's Testing", nullptr, nullptr);
 	if (window == nullptr)
 	{
-		std::cout << "Failed to create GLFW window" << std::endl;
+		std::cout << "Failed to create GLFW window\n";
 		glfwTerminate();
 		return;
 		//TODO: fix
@@ -149,7 +105,7 @@ Start()
 	// Load OpenGl function pointers with glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
+		std::cout << "Failed to initialize GLAD\n";
 		return;
 		//TODO: fix
 		//return -1;
@@ -164,17 +120,16 @@ Start()
 	// uncomment this call to draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	// TODO: some texture manager to unload the textures
-	boxMaterial = Material(loadTexture("images/container2.png"), loadTexture("images/container2_specular.png"));
+	// TODO: some texture manager to unload the textures, currently unloading manually at the end
+	specularMap.Initialise("images/container2.png");
+	diffuseMap.Initialise("images/container2_specular.png");
+	boxMaterial = Material(&specularMap, &diffuseMap, &lightingShader);
 
 	// shader configuration
 	lightingShader.Use();
 	lightingShader.setInt("material.diffuse", 0);
 	lightingShader.setInt("material.specular", 1);
 	lightingShader.setInt("material.emission", 2);
-
-	// be sure to activate shader when setting uniforms/drawing objects
-	lightingShader.Use();
 	lightingShader.setVec3("viewPos", camera.position);
 	lightingShader.setFloat("material.shininess", 64.0f);
 
@@ -206,86 +161,84 @@ Start()
 	cubeMesh.InitialiseCube();
 }
 
-void Lophics::Run()
+void Lophics::Update()
 {
-	while (!glfwWindowShouldClose(window))
+	float currentFrame = static_cast<float>(glfwGetTime());
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
+
+	// Input
+	processInput(window);
+
+	// Clear
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+	// light properties
+
+
+	boxMaterial.Use();
+	// material properties
+
+	// view/projection transformations
+	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+	glm::mat4 view = camera.GetViewMatrix();
+	lightingShader.setMat4("projection", projection);
+	lightingShader.setMat4("view", view);
+
+	// world transformation
+	glm::mat4 model = glm::mat4(1.0f);
+	lightingShader.setMat4("model", model);
+
+
+
+	// render containers
+	for (unsigned int i = 0; i < 10; i++)
 	{
-		float currentFrame = static_cast<float>(glfwGetTime());
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-
-		// Input
-		processInput(window);
-
-		// Clear
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-		lightingShader.Use();
-
-		// light properties
-
-
-
-		// material properties
-
-		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		lightingShader.setMat4("projection", projection);
-		lightingShader.setMat4("view", view);
-
-		// world transformation
+		// calculate the model matrix for each object and pass it to shader before drawing
 		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, cubePositions[i]);
+		float angle = 20.0f * i;
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 		lightingShader.setMat4("model", model);
-
-		boxMaterial.Use();
-
-
-		// render containers
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			// calculate the model matrix for each object and pass it to shader before drawing
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			lightingShader.setMat4("model", model);
-			cubeMesh.Draw();
-		}
+		cubeMesh.Draw();
+	}
 		
 
-		// also draw the lights themselves
-		lightCubeShader.Use();
-		lightCubeShader.setMat4("projection", projection);
-		lightCubeShader.setMat4("view", view);
+	// also draw the lights themselves
+	lightCubeShader.Use();
+	lightCubeShader.setMat4("projection", projection);
+	lightCubeShader.setMat4("view", view);
 
-		// we now draw as many light bulbs as we have point lights.
-		for (unsigned int i = 0; i < 4; i++)
-		{
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, pointLights[i].position);
-			model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
-			lightCubeShader.setMat4("model", model);
-			cubeMesh.Draw();
-		}
-
-		// Check and call events and swap the buffers
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+	// we now draw as many light bulbs as we have point lights.
+	for (unsigned int i = 0; i < 4; i++)
+	{
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, pointLights[i].position);
+		model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
+		lightCubeShader.setMat4("model", model);
+		cubeMesh.Draw();
 	}
+
+	// Check and call events and swap the buffers
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
+
+void Lophics::Stop()
+{
 
 	// De-allocate resources
 	lightingShader.DeleteProgram();
 	lightCubeShader.DeleteProgram();
 
+	// Textures
+	specularMap.Delete();
+	diffuseMap.Delete();
+
 	// Terminate and clear GLFW resources
 	glfwTerminate();
 
-}
-
-void Lophics::Stop()
-{
 	std::cout << "test\n";
 }

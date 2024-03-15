@@ -5,23 +5,27 @@
 
 Material::Material() :
 	// Should these be specific values for unfound texture instead
-	diffuseMap(-1),
-	specularMap(-1)
+	diffuse(nullptr),
+	specular(nullptr),
+	shader(nullptr)
 {
 }
 
-Material::Material(unsigned int diffuse, unsigned int specular) :
-	diffuseMap(diffuse),
-	specularMap(specular)
+Material::Material(Texture* _diffuse, Texture* _specular, Shader* _shader) :
+	diffuse(_diffuse),
+	specular(_specular),
+	shader(_shader)
 {
 }
 
 void Material::Use()
 {
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, diffuseMap);
+	glBindTexture(GL_TEXTURE_2D, diffuse->ID);
 
 	// Bind specular map
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, specularMap);
+	glBindTexture(GL_TEXTURE_2D, specular->ID);
+
+	shader->Use();
 }

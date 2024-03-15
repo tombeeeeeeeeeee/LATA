@@ -1,12 +1,17 @@
 #pragma once
+
+#include "Texture.h"
+#include "Shader.h"
+
 class Material
 {
 public:
 	Material();
-	Material(unsigned int diffuse, unsigned int specular);
+	Material(Texture* _diffuse, Texture* _specular, Shader* _shader);
 
-	unsigned int diffuseMap;
-	unsigned int specularMap;
+	Texture* diffuse;
+	Texture* specular;
+	Shader* shader;
 	
 	void Use();
 

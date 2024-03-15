@@ -27,14 +27,15 @@ class Lophics
 	// Window
 	static unsigned int windowWidth;
 	static unsigned int windowHeight;
+public:
 	GLFWwindow* window;
-	
+private:
 	// Camera
 	static Camera camera;
 
 
-	unsigned int diffuseMap;
-	unsigned int specularMap;
+	Texture diffuseMap;
+	Texture specularMap;
 
 
 	Shader lightingShader;
@@ -48,7 +49,6 @@ class Lophics
 	static void processInput(GLFWwindow* window);
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-	unsigned int loadTexture(const char* path);
 
 	static float lastX;
 	static float lastY;
@@ -87,7 +87,7 @@ class Lophics
 public:
 
 	void Start();
-	void Run();
+	void Update();
 	void Stop();
 };
 

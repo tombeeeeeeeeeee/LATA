@@ -6,6 +6,8 @@ int main()
 {
 	Lophics lophics;
 	lophics.Start();
-	lophics.Run();
+	while (!glfwWindowShouldClose(lophics.window)) {
+		lophics.Update();
+	}
 	lophics.Stop();
 }
