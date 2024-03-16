@@ -7,14 +7,16 @@ Material::Material() :
 	// Should these be specific values for unfound texture instead
 	diffuse(nullptr),
 	specular(nullptr),
-	shader(nullptr)
+	emission(nullptr),
+	shininess(64.0f)
 {
 }
 
-Material::Material(Texture* _diffuse, Texture* _specular, Shader* _shader) :
+Material::Material(Texture* _diffuse, Texture* _specular, Texture* _emission, float _shininess = 64.f) :
 	diffuse(_diffuse),
 	specular(_specular),
-	shader(_shader)
+	emission(_emission),
+	shininess(_shininess)
 {
 }
 
@@ -26,6 +28,4 @@ void Material::Use()
 	// Bind specular map
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, specular->ID);
-
-	shader->Use();
 }

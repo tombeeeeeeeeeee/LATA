@@ -7,11 +7,12 @@ class Material
 {
 public:
 	Material();
-	Material(Texture* _diffuse, Texture* _specular, Shader* _shader);
+	Material(Texture* _diffuse, Texture* _specular, Texture* _emission, float _shininess = 64.f);
 
 	Texture* diffuse;
 	Texture* specular;
-	Shader* shader;
+	Texture* emission;
+	float shininess;
 	
 	void Use();
 

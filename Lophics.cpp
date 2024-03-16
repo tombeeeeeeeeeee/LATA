@@ -123,7 +123,8 @@ Start()
 	// TODO: some texture manager to unload the textures, currently unloading manually at the end
 	specularMap.Initialise("images/container2.png");
 	diffuseMap.Initialise("images/container2_specular.png");
-	boxMaterial = Material(&specularMap, &diffuseMap, &lightingShader);
+	boxMaterial = Material(&specularMap, &diffuseMap, nullptr);
+	boxMeshRenderer = MeshRenderer(&boxMaterial, &cubeMesh, &lightingShader);
 
 	// shader configuration
 	lightingShader.Use();

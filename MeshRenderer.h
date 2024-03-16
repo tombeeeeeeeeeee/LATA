@@ -5,10 +5,12 @@
 class MeshRenderer
 {
 public:
-	Material& material;
-	Mesh& mesh;
+	Material* material;
+	Mesh* mesh;
+	Shader* shader;
 
-	MeshRenderer(Material& _material, Mesh& _mesh);
+	MeshRenderer(Material* _material, Mesh* _mesh, Shader* _shader);
+	MeshRenderer();
 
 	void Draw();
 };
