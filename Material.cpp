@@ -12,13 +12,15 @@ Material::Material() :
 {
 }
 
-Material::Material(Texture* _diffuse, Texture* _specular, Texture* _emission, float _shininess = 64.f) :
+Material::Material(Texture* _diffuse, Texture* _specular, Texture* _emission, float _shininess) :
 	diffuse(_diffuse),
 	specular(_specular),
 	emission(_emission),
 	shininess(_shininess)
 {
 }
+
+
 
 void Material::Use()
 {

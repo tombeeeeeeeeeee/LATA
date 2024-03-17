@@ -7,43 +7,53 @@
 
 #include "stb_image.h"
 
-Texture::Texture(const char* path) : 
-	initialised(true)
-{
-	ID = LoadTexture(path);
-}
+std::unordered_map<std::string, Texture, hashThing> TextureManager::loadedTextures;
 
-Texture::Texture() :
-	initialised(false)
+Texture::Texture() : 
+	ID(-1)
 {
 }
 
-void Texture::Initialise(const char* path)
-{
-	ID = LoadTexture(path);
-	initialised = true;
-}
 
-void Texture::Delete()
+
+Texture* TextureManager::GetTexture(std::string path)
 {
-	if (initialised) {
-		glDeleteTextures(1, &ID);
-		initialised = false;
+	auto texture = loadedTextures.find(path);
+
+	if (texture == loadedTextures.end()) {
+
+		Texture newTexture;
+		newTexture.ID = LoadTexture(path.c_str());
+
+		texture = loadedTextures.emplace(path, newTexture).first;
 	}
+
+	return &texture->second;
 }
 
-Texture::~Texture()
+unsigned long long hashThing::operator()(std::string key) const
 {
-	Delete();
+	unsigned long long hash = 14695981039346656037;
+	for (auto i = 0; i < key.size(); i++)
+	{
+		hash ^= key[i];
+		hash *= 1099511628211;
+	}
+	return hash;
 }
 
-unsigned int Texture::LoadTexture(const char* path)
+TextureManager::~TextureManager()
+{
+	Unload();
+}
+
+unsigned int TextureManager::LoadTexture(std::string path)
 {
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
 
 	int width, height, nrComponents;
-	unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
+	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
 	if (data)
 	{
 		GLenum format;
@@ -79,5 +89,14 @@ unsigned int Texture::LoadTexture(const char* path)
 	}
 
 	return textureID;
+}
 
+void TextureManager::Unload()
+{
+	for (auto i = loadedTextures.begin(); i != loadedTextures.end(); i++)
+	{
+		glDeleteTextures(1, &i->second.ID);
+	}
+
+	loadedTextures.clear();
 }

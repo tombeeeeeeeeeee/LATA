@@ -34,16 +34,17 @@ private:
 	static Camera camera;
 
 
-	Texture diffuseMap;
-	Texture specularMap;
+	Texture* diffuseMap;
+	Texture* specularMap;
 
 
 	Shader lightingShader;
 	Shader lightCubeShader;
 
 	Mesh cubeMesh;
+	Mesh testMesh;
 	Material boxMaterial;
-	MeshRenderer meshRenderer;
+	MeshRenderer boxMeshRenderer;
 
 	// Input
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);

@@ -23,6 +23,7 @@ Mesh::~Mesh()
 
 void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, unsigned int* indices)
 {
+	
 	assert(VAO == 0);
 
 	// generate buffers
@@ -40,10 +41,18 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 
 	// enable first element as position
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(0, sizeof(Vertex::position)/sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	// vertex normals
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, sizeof(Vertex::normal) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex),
+		(void*)offsetof(Vertex, normal));
+	// vertex texture coords
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, sizeof(Vertex::texCoord) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex),
+		(void*)offsetof(Vertex, texCoord));
 
 	// bind indices if there are any
-	if (indexCount != 0) {
+	if (indexCount > 0) {
 		glGenBuffers(1, &ibo);
 
 		// bind vertex buffer
@@ -105,7 +114,7 @@ void Mesh::InitialiseQuad()
 	// quad has 2 triangles
 	triCount = 2;
 }
-
+	
 void Mesh::InitialiseCube()
 {
 	// check that the mesh is not initialized already

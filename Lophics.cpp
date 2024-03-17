@@ -121,9 +121,10 @@ Start()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// TODO: some texture manager to unload the textures, currently unloading manually at the end
-	specularMap.Initialise("images/container2.png");
-	diffuseMap.Initialise("images/container2_specular.png");
-	boxMaterial = Material(&specularMap, &diffuseMap, nullptr);
+	testMesh.InitialiseFromFile("models/Lucy.obj");
+	specularMap = TextureManager::GetTexture("images/container2.png");
+	diffuseMap = TextureManager::GetTexture("images/container2_specular.png");
+	boxMaterial = Material(specularMap, diffuseMap, nullptr);
 	boxMeshRenderer = MeshRenderer(&boxMaterial, &cubeMesh, &lightingShader);
 
 	// shader configuration
@@ -178,9 +179,10 @@ void Lophics::Update()
 
 	// light properties
 
+	lightingShader.Use();
 
-	boxMaterial.Use();
 	// material properties
+	boxMaterial.Use();
 
 	// view/projection transformations
 	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
@@ -191,7 +193,7 @@ void Lophics::Update()
 	// world transformation
 	glm::mat4 model = glm::mat4(1.0f);
 	lightingShader.setMat4("model", model);
-
+	testMesh.Draw();
 
 
 	// render containers
@@ -203,9 +205,10 @@ void Lophics::Update()
 		float angle = 20.0f * i;
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 		lightingShader.setMat4("model", model);
+		boxMaterial.Use();
 		cubeMesh.Draw();
 	}
-		
+
 
 	// also draw the lights themselves
 	lightCubeShader.Use();
@@ -219,6 +222,7 @@ void Lophics::Update()
 		model = glm::translate(model, pointLights[i].position);
 		model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
 		lightCubeShader.setMat4("model", model);
+		
 		cubeMesh.Draw();
 	}
 
@@ -235,8 +239,7 @@ void Lophics::Stop()
 	lightCubeShader.DeleteProgram();
 
 	// Textures
-	specularMap.Delete();
-	diffuseMap.Delete();
+	TextureManager::Unload();
 
 	// Terminate and clear GLFW resources
 	glfwTerminate();

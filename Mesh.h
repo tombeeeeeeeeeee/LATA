@@ -1,6 +1,8 @@
 #pragma once
 
 #include "glm.hpp"
+
+//#include "Texture.h"
 //TODO: make mesh renderer class to store textures and stuff
 class Mesh
 {
@@ -19,6 +21,8 @@ public:
 		glm::vec2 texCoord;
 	};
 
+	//std::vector<Texture*> textures;
+
 	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, unsigned int* indices = nullptr);
 
 	void InitialiseQuad();
@@ -31,4 +35,3 @@ public:
 
 
 };
-

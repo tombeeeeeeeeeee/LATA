@@ -7,7 +7,7 @@ class Material
 {
 public:
 	Material();
-	Material(Texture* _diffuse, Texture* _specular, Texture* _emission, float _shininess = 64.f);
+	Material(Texture* _diffuse, Texture* _specular, Texture* _emission, float _shininess = 64.0f);
 
 	Texture* diffuse;
 	Texture* specular;
