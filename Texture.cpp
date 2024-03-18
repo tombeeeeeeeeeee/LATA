@@ -9,6 +9,16 @@
 
 std::unordered_map<std::string, Texture, hashThing> TextureManager::loadedTextures;
 
+const std::unordered_map<Texture::Type, std::string> Texture::TypeNames = 
+{
+	{ Type::diffuse, "diffuse" },
+	{ Type::specular, "specular" },
+	{ Type::normal, "normal" },
+	{ Type::height, "height" },
+	{ Type::emission, "emission" },
+};
+
+
 Texture::Texture() : 
 	ID(-1)
 {
@@ -57,12 +67,15 @@ unsigned int TextureManager::LoadTexture(std::string path)
 	if (data)
 	{
 		GLenum format;
-		if (nrComponents == 1)
+		if (nrComponents == 1) {
 			format = GL_RED;
-		else if (nrComponents == 3)
+		}
+		else if (nrComponents == 3) {
 			format = GL_RGB;
-		else if (nrComponents == 4)
+		}
+		else if (nrComponents == 4) {
 			format = GL_RGBA;
+		}
 		else {
 			std::cout << "Texture failed to load, could not be read correctly, path: " << path << "\n";
 			stbi_image_free(data);

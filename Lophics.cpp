@@ -131,12 +131,13 @@ Start()
 	specularMap = TextureManager::GetTexture("images/container2.png");
 	diffuseMap = TextureManager::GetTexture("images/container2_specular.png");
 	boxMaterial = Material(specularMap, diffuseMap, nullptr);
+	testModel = Model("models/backpack/backpack.obj");
 
 	// shader configuration
 	lightingShader.Use();
-	lightingShader.setInt("material.diffuse", 0);
-	lightingShader.setInt("material.specular", 1);
-	lightingShader.setInt("material.emission", 2);
+	lightingShader.setInt("material.diffuse1", 0);
+	lightingShader.setInt("material.specular1", 1);
+	lightingShader.setInt("material.emission1", 2);
 	lightingShader.setVec3("viewPos", camera.position);
 	lightingShader.setFloat("material.shininess", 64.0f);
 
@@ -198,13 +199,18 @@ void Lophics::Update()
 	glm::mat4 model = glm::mat4(0.1f);
 	model = glm::translate(model, glm::vec3(0, 5, 0));
 	lightingShader.setMat4("model", model);
-	testMesh.Draw(lightingShader);
+	//testMesh.Draw(lightingShader);
 
 	model = glm::mat4(10);
 	//model = glm::translate(model, glm::vec3(0, 5, 0));
 	lightingShader.setMat4("model", model);
-	quadMesh.Draw(lightingShader);
+	//quadMesh.Draw(lightingShader);
 
+	model = glm::mat4(2.0f);
+	model = glm::translate(model, glm::vec3(0, 1, 0));
+
+	lightingShader.setMat4("model", model);
+	testModel.Draw(lightingShader);
 
 	// render containers
 	for (unsigned int i = 0; i < 10; i++)

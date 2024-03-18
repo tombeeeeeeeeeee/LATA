@@ -7,8 +7,17 @@
 class Texture
 {
 public:
+	enum class Type {
+		diffuse,
+		specular,
+		normal,
+		height,
+		emission
+	};
+	static const std::unordered_map<Type, std::string> TypeNames;
+
 	unsigned int ID;
-	std::string type;
+	Type type;
 	Texture();
 
 private:

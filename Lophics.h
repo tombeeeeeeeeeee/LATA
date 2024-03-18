@@ -5,7 +5,7 @@
 #include <iostream>
 
 #define GLM_FORCE_XYZW_ONLY 1
-#include "glm.hpp"
+#include "Maths.h"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
@@ -19,6 +19,8 @@
 #include "mesh.h"
 
 #include "Material.h"
+
+#include "Model.h"
 
 
 class Lophics
@@ -44,6 +46,7 @@ private:
 	Mesh quadMesh;
 	Mesh testMesh;
 	Material boxMaterial;
+	Model testModel;
 
 	// Input
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
