@@ -20,7 +20,6 @@
 
 #include "Material.h"
 
-#include "MeshRenderer.h"
 
 class Lophics
 {
@@ -42,9 +41,9 @@ private:
 	Shader lightCubeShader;
 
 	Mesh cubeMesh;
+	Mesh quadMesh;
 	Mesh testMesh;
 	Material boxMaterial;
-	MeshRenderer boxMeshRenderer;
 
 	// Input
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);

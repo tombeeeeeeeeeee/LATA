@@ -11,9 +11,7 @@ void Entity::Draw()
 	glm::mat4 model = glm::mat4(1.f);
 	model = glm::translate(model, transform.position);
 	model *= transform.scale;
-	meshRenderer->shader->setMat4("model", model);
 	
-	meshRenderer->Draw();
 
 
 }

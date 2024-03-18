@@ -11,7 +11,7 @@ Mesh::Mesh():
 	triCount(0),
 	VAO(0),
 	VBO(0),
-	ibo(0)
+	IBO(0)
 {
 }
 
@@ -23,7 +23,6 @@ Mesh::~Mesh()
 
 void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, unsigned int* indices)
 {
-	
 	assert(VAO == 0);
 
 	// generate buffers
@@ -41,22 +40,20 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 
 	// enable first element as position
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, sizeof(Vertex::position)/sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(0, sizeof(Vertex::position)/sizeof(Vertex::position.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	// vertex normals
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, sizeof(Vertex::normal) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex),
-		(void*)offsetof(Vertex, normal));
+	glVertexAttribPointer(1, sizeof(Vertex::normal) / sizeof(Vertex::normal.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
 	// vertex texture coords
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, sizeof(Vertex::texCoord) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex),
-		(void*)offsetof(Vertex, texCoord));
+	glVertexAttribPointer(2, sizeof(Vertex::texCoord) / sizeof(Vertex::texCoord.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
 
 	// bind indices if there are any
 	if (indexCount > 0) {
-		glGenBuffers(1, &ibo);
+		glGenBuffers(1, &IBO);
 
 		// bind vertex buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
 		// fill vertex buffer
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices, GL_STATIC_DRAW);
@@ -68,48 +65,45 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	}
 
 	// unbind buffers
-	glBindVertexArray(0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	Unbind();
 
 }
 
 void Mesh::InitialiseQuad()
 {
 	//TODO: Rewrite
-	// check that the mesh is not initialized already
+	// Check that the mesh is not initialized already
 	assert(VAO == 0);
 
-	// generate buffers
+	// Generate buffers
 	glGenBuffers(1, &VBO);
 	glGenVertexArrays(1, &VAO);
 
-	// bind vertex array aka a mesh wrapper
+	// Bind vertex array aka a mesh wrapper
 	glBindVertexArray(VAO);
 
-	// bind vertex buffer
+	// Bind vertex buffer
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	// define 6 vertices for 2 triangles
-	Vertex vertices[6];
-	vertices[0].position = { -0.5f, 0, 0.5f, 1 };
-	vertices[1].position = { 0.5f, 0, 0.5f, 1 };
-	vertices[2].position = { -0.5f, 0, -0.5f, 1 };
+	// Define 6 vertices for 2 triangles
+	Vertex vertices[6] = {
+		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
+		{ { -0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 0.0f, 0.0f } }, // Top left
+		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
+		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
+		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
+		{ {  0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 0.0f, 1.0f } } // Bottom right
+	};
 
-	vertices[3].position = { -0.5f, 0, -0.5f, 1 };
-	vertices[4].position = { 0.5f, 0, 0.5f, 1 };
-	vertices[5].position = { 0.5f, 0, -0.5f, 1 };
-
-	// fill vertex buffer
+	// Fill vertex buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	// enable first element as position
+	// Enable first element as position
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(0, sizeof(Vertex::position) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 
 	// unbind buffers
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	Unbind();
 
 	// quad has 2 triangles
 	triCount = 2;
@@ -130,77 +124,74 @@ void Mesh::InitialiseCube()
 	// Bind vertex array
 	glBindVertexArray(VAO);
 
-	//Vertex vertices[8];
-	float vertices[6 * 6 * 9] = {
-		// positions			   // normals           // texture coords
-		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-		 0.5f,  0.5f, -0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-		-0.5f,  0.5f, -0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-							 
-		-0.5f, -0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-		 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f,  0.5f, 1.0f, 0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-							
-		-0.5f,  0.5f,  0.5f, 1.0f,-1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f, 1.0f,-1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f, 1.0f,-1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f, 1.0f,-1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f,  0.5f, 1.0f,-1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f, 1.0f,-1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-							
-		 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-		 0.5f, -0.5f, -0.5f, 1.0f, 1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		 0.5f, -0.5f, -0.5f, 1.0f, 1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		 0.5f, -0.5f,  0.5f, 1.0f, 1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-							 
-		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-		 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-		 0.5f, -0.5f,  0.5f, 1.0f, 0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f, 1.0f, 0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f, 1.0f, 0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-							 
-		-0.5f,  0.5f, -0.5f, 1.0f, 0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-		 0.5f,  0.5f, -0.5f, 1.0f, 0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-		 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f, 1.0f, 0.0f,  1.0f,  0.0f,  0.0f,  1.0f
-	};
-	// Fill vertex buffer
+	Vertex vertices[6 * 6] = {
+		// positions				 // normals           // texture coords
+		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{ 0.0f,  0.0f, -1.0f, 0.0f},  {0.0f,  0.0f} },
+		{ { 0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  0.0f, -1.0f, 0.0f},  {1.0f,  1.0f} },
+		{ { 0.5f, -0.5f, -0.5f, 1.0f},	{ 0.0f,  0.0f, -1.0f, 0.0f},  {1.0f,  0.0f} },
+		{ { 0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  0.0f, -1.0f, 0.0f},  {1.0f,  1.0f} },
+		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{ 0.0f,  0.0f, -1.0f, 0.0f},  {0.0f,  0.0f} },
+		{ {-0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  0.0f, -1.0f, 0.0f},  {0.0f,  1.0f} },
+		   // front face                                                                                    
+		{ {-0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {0.0f,  0.0f} },
+		{ { 0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {1.0f,  0.0f} },
+		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {1.0f,  1.0f} },
+		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {1.0f,  1.0f} },
+		{ {-0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {0.0f,  1.0f} },
+		{ {-0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {0.0f,  0.0f} },
+		   // left face                                                                                                                                                            
+		{ {-0.5f,  0.5f,  0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
+		{ {-0.5f,  0.5f, -0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  1.0f} },
+		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
+		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
+		{ {-0.5f, -0.5f,  0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  0.0f} },
+		{ {-0.5f,  0.5f,  0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
+		   // right face                                                                                     
+		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
+		{ { 0.5f, -0.5f, -0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
+		{ { 0.5f,  0.5f, -0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  1.0f} },
+		{ { 0.5f, -0.5f, -0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
+		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
+		{ { 0.5f, -0.5f,  0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  0.0f} },
+		   // bottom face                                                                                         
+		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
+		{ { 0.5f, -0.5f, -0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {1.0f,  1.0f} },
+		{ { 0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
+		{ { 0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
+		{ {-0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {0.0f,  0.0f} },
+		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
+		   // top face                                                                                    
+		{ {-0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
+		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
+		{ { 0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {1.0f,  1.0f} },
+		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
+		{ {-0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
+		{ {-0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {0.0f,  0.0f} },
+	};                                                                                    
+
+	// Fill vertex buffer 1440, 360
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// Position
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, sizeof(Vertex::position) / sizeof(Vertex::position.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	glEnableVertexAttribArray(0);
 	// Normal
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(4 * sizeof(float)));
+	glVertexAttribPointer(1, sizeof(Vertex::normal) / sizeof(Vertex::normal.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
 	glEnableVertexAttribArray(1);
 	// Texture
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));
+	glVertexAttribPointer(2, sizeof(Vertex::texCoord) / sizeof(Vertex::texCoord.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
 	glEnableVertexAttribArray(2);
 
-	// Unbind
-	//TODO: is this really neccessary? still on the other inits
-	//glBindVertexArray(0);
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	Unbind();
 
 	triCount = 12;
 }
 
 void Mesh::InitialiseFromFile(const char* filename)
 {
-	// read vertices from the model
 	const aiScene* scene = aiImportFile(filename, 0);
 	// just use the first mesh we find for now
+	// TODO: multiple meshes per file
 	aiMesh* mesh = scene->mMeshes[0];
 
 
@@ -209,15 +200,11 @@ void Mesh::InitialiseFromFile(const char* filename)
 	std::vector<unsigned int> indices;
 	for (int i = 0; i < numFaces; i++)
 	{
-		indices.push_back(mesh->mFaces[i].mIndices[0]);
-		indices.push_back(mesh->mFaces[i].mIndices[2]);
-		indices.push_back(mesh->mFaces[i].mIndices[1]);
-		// generate a second triangle for quads
-		if (mesh->mFaces[i].mNumIndices == 4)
+		for (int j = 0; j + 2 < mesh->mFaces[i].mNumIndices; j++)
 		{
-			indices.push_back(mesh->mFaces[i].mIndices[0]);
-			indices.push_back(mesh->mFaces[i].mIndices[3]);
-			indices.push_back(mesh->mFaces[i].mIndices[2]);
+			indices.push_back(mesh->mFaces[i].mIndices[j]);
+			indices.push_back(mesh->mFaces[i].mIndices[j+1]);
+			indices.push_back(mesh->mFaces[i].mIndices[j+2]);
 		}
 	}
 
@@ -226,10 +213,21 @@ void Mesh::InitialiseFromFile(const char* filename)
 	Vertex* vertices = new Vertex[numV];
 	for (int i = 0; i < numV; i++)
 	{
-		vertices[i].position = glm::vec4(mesh->mVertices[i].x,
-			mesh->mVertices[i].y, mesh->mVertices[i].z, 1);
+		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1);
 		// TODO: normals and UVs
-		//vertices[i].normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+		if (mesh->HasNormals()) {
+			vertices[i].normal = glm::vec4(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 0);
+		}
+		else {
+			vertices[i].normal = glm::vec4(1, 0, 0, 0);
+		}
+		// TODO: all tex coords should be the same yeah
+		if (mesh->HasTextureCoords(0)) {
+			vertices[i].texCoord = glm::vec4(mesh->mTextureCoords[i]->x, mesh->mTextureCoords[i]->y, mesh->mTextureCoords[i]->z, 0);
+		}
+		else {
+			vertices[i].texCoord = glm::vec2(0, 0);
+		}
 		
 	}
 	Initialise(numV, vertices, indices.size(), indices.data());
@@ -237,14 +235,49 @@ void Mesh::InitialiseFromFile(const char* filename)
 	aiReleaseImport(scene);
 }
 
-void Mesh::Draw()
+void Mesh::Draw(Shader& shader)
 {
+	unsigned int diffuseNr = 1;
+	unsigned int specularNr = 1;
+
+	//for (unsigned int i = 0; i < textures.size(); i++)
+	//{
+	//	glActiveTexture(GL_TEXTURE0 + i);
+	//	std::string number;
+	//	std::string name = textures[i]->type;
+	//	// TODO: bettr
+	//	if (name == "diffuse") {
+	//		number = std::to_string(diffuseNr++);
+	//	}
+	//	else if (name == "specular") {
+	//		number = std::to_string(specularNr++);
+	//	}
+
+	//	shader.setFloat(("material." + name + number).c_str(), i);
+	//	glBindTexture(GL_TEXTURE_2D, textures[i]->ID);
+	//}
+	//glActiveTexture(GL_TEXTURE0);
+
 	glBindVertexArray(VAO);
 	// using indices or just vertices?
-	if (ibo != 0) {
+	if (IBO != 0) {
 		glDrawElements(GL_TRIANGLES, 3 * triCount, GL_UNSIGNED_INT, 0);
 	}
 	else {
 		glDrawArrays(GL_TRIANGLES, 0, 3 * triCount);
 	}
+}
+
+void Mesh::Unbind()
+{
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+Mesh::Vertex::Vertex(glm::vec4 pos, glm::vec4 nor, glm::vec2 tex) :
+	position(pos),
+	normal(nor),
+	texCoord(tex)
+{
 }

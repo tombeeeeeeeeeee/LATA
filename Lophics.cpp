@@ -113,6 +113,11 @@ Start()
 
 	glEnable(GL_DEPTH_TEST);
 
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+
+
 	// Create shaders
 	lightingShader = Shader("shader.vert", "shader.frag");
 	lightCubeShader = Shader("lightCube.vert", "lightCube.frag");
@@ -120,12 +125,12 @@ Start()
 	// uncomment this call to draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	// TODO: some texture manager to unload the textures, currently unloading manually at the end
+	cubeMesh.InitialiseCube();
+	quadMesh.InitialiseQuad();
 	testMesh.InitialiseFromFile("models/Lucy.obj");
 	specularMap = TextureManager::GetTexture("images/container2.png");
 	diffuseMap = TextureManager::GetTexture("images/container2_specular.png");
 	boxMaterial = Material(specularMap, diffuseMap, nullptr);
-	boxMeshRenderer = MeshRenderer(&boxMaterial, &cubeMesh, &lightingShader);
 
 	// shader configuration
 	lightingShader.Use();
@@ -160,7 +165,6 @@ Start()
 	lightingShader.setVec3("spotLight.direction", camera.front);
 
 
-	cubeMesh.InitialiseCube();
 }
 
 void Lophics::Update()
@@ -185,15 +189,21 @@ void Lophics::Update()
 	boxMaterial.Use();
 
 	// view/projection transformations
-	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.01f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 	lightingShader.setMat4("projection", projection);
 	lightingShader.setMat4("view", view);
 
 	// world transformation
-	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 model = glm::mat4(0.1f);
+	model = glm::translate(model, glm::vec3(0, 5, 0));
 	lightingShader.setMat4("model", model);
-	testMesh.Draw();
+	testMesh.Draw(lightingShader);
+
+	model = glm::mat4(10);
+	//model = glm::translate(model, glm::vec3(0, 5, 0));
+	lightingShader.setMat4("model", model);
+	quadMesh.Draw(lightingShader);
 
 
 	// render containers
@@ -206,7 +216,7 @@ void Lophics::Update()
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 		lightingShader.setMat4("model", model);
 		boxMaterial.Use();
-		cubeMesh.Draw();
+		cubeMesh.Draw(lightingShader);
 	}
 
 
@@ -223,7 +233,7 @@ void Lophics::Update()
 		model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
 		lightCubeShader.setMat4("model", model);
 		
-		cubeMesh.Draw();
+		cubeMesh.Draw(lightCubeShader);
 	}
 
 	// Check and call events and swap the buffers

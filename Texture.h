@@ -8,7 +8,7 @@ class Texture
 {
 public:
 	unsigned int ID;
-
+	std::string type;
 	Texture();
 
 private:

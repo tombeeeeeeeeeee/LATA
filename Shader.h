@@ -1,11 +1,13 @@
 #pragma once
 #include <string>
-#include "glm/mat4x4.hpp"
+#include "glm/mat4x4.hpp"+
+#include "glad.h" // include glad to get the required OpenGL headers
 
 class Shader
 {
 private:
-
+	GLint getLocation(const std::string& name) const;
+	static unsigned int CompileShader(const char* path, int type);
 public:
 	// the program ID
 	unsigned int ID;
