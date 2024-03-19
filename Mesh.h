@@ -5,6 +5,9 @@
 #include "Texture.h"
 
 #include "Shader.h"
+
+#include "assimp/scene.h"
+#include "assimp/cimport.h"
 //TODO: make mesh renderer class to store textures and stuff
 struct Vertex {
 	glm::vec4 position;
@@ -26,7 +29,7 @@ public:
 	//TODO: figure out to remove
 	std::vector<unsigned int> indices;
 
-
+	Mesh(const aiScene* scene, aiMesh* mesh);
 	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture*> textures);
 	Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, unsigned int* indices = nullptr);
 	Mesh();
@@ -37,14 +40,19 @@ public:
 
 	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, unsigned int* indices = nullptr);
 
+	void InitialiseFromAiMesh(const aiScene* scene, aiMesh* mesh);
+
 	void InitialiseQuad();
 
 	void InitialiseCube();
 
 	void InitialiseFromFile(const char* filename);
+	void InitialiseIndexFromFile(const char* filename, int i);
 
 	void Draw(Shader& shader);
 
 private:
 	void Unbind();
+
+	std::vector<Texture*> LoadMaterialTextures(aiMaterial* mat, aiTextureType aiType, Texture::Type type);
 };

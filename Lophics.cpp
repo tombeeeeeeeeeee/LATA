@@ -4,13 +4,11 @@
 #include "stb_image.h"
 
 
+unsigned int Lophics::windowWidth = 1200;
+unsigned int Lophics::windowHeight = 800;
 
-
-unsigned int Lophics::windowWidth = 800;
-unsigned int Lophics::windowHeight = 600;
-
-float Lophics::lastX = 400;
-float Lophics::lastY = 300;
+float Lophics::lastX = 600;
+float Lophics::lastY = 400;
 bool Lophics::firstMouse = true;
 
 Camera Lophics::camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -127,11 +125,13 @@ Start()
 
 	cubeMesh.InitialiseCube();
 	quadMesh.InitialiseQuad();
-	testMesh.InitialiseFromFile("models/Lucy.obj");
+	testMesh.InitialiseFromFile("models/backpack/backpack.obj");
 	specularMap = TextureManager::GetTexture("images/container2.png");
 	diffuseMap = TextureManager::GetTexture("images/container2_specular.png");
 	boxMaterial = Material(specularMap, diffuseMap, nullptr);
-	testModel = Model("models/backpack/backpack.obj");
+	testLocModel = LocModel("models/backpack/backpack.obj");
+
+
 
 	// shader configuration
 	lightingShader.Use();
@@ -196,21 +196,24 @@ void Lophics::Update()
 	lightingShader.setMat4("view", view);
 
 	// world transformation
-	glm::mat4 model = glm::mat4(0.1f);
+	glm::mat4 model = glm::mat4(1.0f);
+	lightingShader.setMat4("model", model);
+	//testLocModel.meshes[0].Draw(lightingShader);
+	
 	model = glm::translate(model, glm::vec3(0, 5, 0));
 	lightingShader.setMat4("model", model);
-	//testMesh.Draw(lightingShader);
+	//testModel.Draw(lightingShader);
 
-	model = glm::mat4(10);
+	model = glm::mat4(2);
 	//model = glm::translate(model, glm::vec3(0, 5, 0));
 	lightingShader.setMat4("model", model);
+	//testMesh.Draw(lightingShader);
 	//quadMesh.Draw(lightingShader);
 
 	model = glm::mat4(2.0f);
 	model = glm::translate(model, glm::vec3(0, 1, 0));
-
 	lightingShader.setMat4("model", model);
-	testModel.Draw(lightingShader);
+	testLocModel.Draw(lightingShader);
 
 	// render containers
 	for (unsigned int i = 0; i < 10; i++)

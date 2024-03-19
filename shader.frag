@@ -5,7 +5,6 @@ struct Material {
     sampler2D diffuse1;
     sampler2D specular1;
     sampler2D emission1;
-    //sampler2D height;
     float shininess;
 }; 
 

@@ -1,11 +1,15 @@
 #include "Mesh.h"
 
-#include "assimp/scene.h"
-#include "assimp/cimport.h"
+
 #include <vector>
 
 #include "glad.h"
 #include "GLFW/glfw3.h"
+
+Mesh::Mesh(const aiScene* scene, aiMesh* mesh) : Mesh()
+{
+	InitialiseFromAiMesh(scene, mesh);
+}
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture*> _textures) : 
 	triCount(0),
@@ -14,12 +18,11 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 	IBO(0),
 	textures(_textures)
 {
-
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
 	Initialise(vertices.size(), &vertices[0], indices.size(), &indices[0]);
 }
 
-Mesh::Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, unsigned int* indices)
+Mesh::Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, unsigned int* indices) : Mesh()
 {
 	Initialise(vertexCount, vertices, indexCount, indices);
 }
@@ -84,6 +87,58 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	// unbind buffers
 	Unbind();
 
+}
+
+void Mesh::InitialiseFromAiMesh(const aiScene* scene, aiMesh* mesh)
+{
+	// extract indicies from the first mesh
+	int numFaces = mesh->mNumFaces;
+	std::vector<unsigned int> indices;
+	for (int i = 0; i < numFaces; i++)
+	{
+		for (int j = 0; j + 2 < mesh->mFaces[i].mNumIndices; j++)
+		{
+			indices.push_back(mesh->mFaces[i].mIndices[j]);
+			indices.push_back(mesh->mFaces[i].mIndices[j + 1]);
+			indices.push_back(mesh->mFaces[i].mIndices[j + 2]);
+		}
+	}
+
+	// extract vertex data
+	int numV = mesh->mNumVertices;
+	Vertex* vertices = new Vertex[numV];
+	for (int i = 0; i < numV; i++)
+	{
+		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1);
+		// TODO: normals and UVs
+		if (mesh->HasNormals()) {
+			vertices[i].normal = glm::vec4(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 0);
+		}
+		else {
+			vertices[i].normal = glm::vec4(1, 0, 0, 0);
+		}
+		// TODO: other tex coords?
+		if (mesh->mTextureCoords[0]) {
+			vertices[i].texCoord = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
+		}
+		else {
+			vertices[i].texCoord = glm::vec2(0.0f, 0.0f);
+		}
+	}
+
+	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+	std::vector<Texture*> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, Texture::Type::diffuse);
+	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+	// 2. specular maps
+	std::vector<Texture*> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, Texture::Type::specular);
+	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+	// 3. normal maps
+	std::vector<Texture*> normalMaps = LoadMaterialTextures(material, aiTextureType_NORMALS, Texture::Type::normal);
+	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+
+	
+	Initialise(numV, vertices, indices.size(), indices.data());
+	delete[] vertices;
 }
 
 void Mesh::InitialiseQuad()
@@ -204,56 +259,28 @@ void Mesh::InitialiseCube()
 	triCount = 12;
 }
 
+//TODO:
 void Mesh::InitialiseFromFile(const char* filename)
+{
+	InitialiseIndexFromFile(filename, 0);
+}
+
+void Mesh::InitialiseIndexFromFile(const char* filename, int i)
 {
 	const aiScene* scene = aiImportFile(filename, 0);
 	// just use the first mesh we find for now
 	// TODO: multiple meshes per file
-	aiMesh* mesh = scene->mMeshes[0];
+	aiMesh* mesh = scene->mMeshes[i];
+
+	InitialiseFromAiMesh(scene, mesh);
 
 
-	// extract indicies from the first mesh
-	int numFaces = mesh->mNumFaces;
-	std::vector<unsigned int> indices;
-	for (int i = 0; i < numFaces; i++)
-	{
-		for (int j = 0; j + 2 < mesh->mFaces[i].mNumIndices; j++)
-		{
-			indices.push_back(mesh->mFaces[i].mIndices[j]);
-			indices.push_back(mesh->mFaces[i].mIndices[j+1]);
-			indices.push_back(mesh->mFaces[i].mIndices[j+2]);
-		}
-	}
-
-	// extract vertex data
-	int numV = mesh->mNumVertices;
-	Vertex* vertices = new Vertex[numV];
-	for (int i = 0; i < numV; i++)
-	{
-		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1);
-		// TODO: normals and UVs
-		if (mesh->HasNormals()) {
-			vertices[i].normal = glm::vec4(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 0);
-		}
-		else {
-			vertices[i].normal = glm::vec4(1, 0, 0, 0);
-		}
-		// TODO: all tex coords should be the same yeah
-		if (mesh->HasTextureCoords(0)) {
-			vertices[i].texCoord = glm::vec4(mesh->mTextureCoords[i]->x, mesh->mTextureCoords[i]->y, mesh->mTextureCoords[i]->z, 0);
-		}
-		else {
-			vertices[i].texCoord = glm::vec2(0, 0);
-		}
-		
-	}
-	Initialise(numV, vertices, indices.size(), indices.data());
-	delete[] vertices;
 	aiReleaseImport(scene);
 }
 
 void Mesh::Draw(Shader& shader)
 {
+	shader.Use();
 	// bind appropriate textures
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
@@ -264,15 +291,15 @@ void Mesh::Draw(Shader& shader)
 		glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
 		// retrieve texture number (the N in diffuse_textureN)
 		std::string number;
-		std::string name = Texture::TypeNames.find* textures[i]->type;
+		std::string name = Texture::TypeNames.find(textures[i]->type)->second;
 		if (name == "diffuse")
 			number = std::to_string(diffuseNr++);
 		else if (name == "specular")
 			number = std::to_string(specularNr++); // transfer unsigned int to string
 		else if (name == "normal")
 			number = std::to_string(normalNr++); // transfer unsigned int to string
-		else if (name == "height")
-			number = std::to_string(heightNr++); // transfer unsigned int to string
+		//else if (name == "height")
+		//	number = std::to_string(heightNr++); // transfer unsigned int to string
 
 		// now set the sampler to the correct texture unit
 		glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
@@ -282,11 +309,18 @@ void Mesh::Draw(Shader& shader)
 
 	// draw mesh
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+	if (IBO != 0) {
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+		glDrawElements(GL_TRIANGLES, 3 * triCount, GL_UNSIGNED_INT, 0);
+	}
+	else {
+		glDrawArrays(GL_TRIANGLES, 0, 3 * triCount);
+	}
 
 	// always good practice to set everything back to defaults once configured.
+	Unbind();
 	glActiveTexture(GL_TEXTURE0);
+
 }
 
 void Mesh::Unbind()
@@ -294,6 +328,21 @@ void Mesh::Unbind()
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+std::vector<Texture*> Mesh::LoadMaterialTextures(aiMaterial* mat, aiTextureType aiType, Texture::Type type)
+{
+	std::vector<Texture*> textures;
+	textures.reserve(mat->GetTextureCount(aiType));
+	for (unsigned int i = 0; i < mat->GetTextureCount(aiType); i++)
+	{
+		aiString str;
+		mat->GetTexture(aiType, i, &str); //TODO: fix path
+		Texture* texture = TextureManager::GetTexture(std::string("models/backpack/") + str.C_Str());
+		texture->type = type;
+		textures.push_back(texture);
+	}
+	return textures;
 }
 
 Vertex::Vertex(glm::vec4 pos, glm::vec4 nor, glm::vec2 tex) :
