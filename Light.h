@@ -3,7 +3,6 @@
 #include "Maths.h"
 struct Light
 {
-public:
     glm::vec3 ambient;
     glm::vec3 diffuse;
     glm::vec3 specular;
@@ -21,7 +20,6 @@ struct PointLight : public Light {
     float linear;
     float quadratic;
     PointLight(glm::vec3 _ambient, glm::vec3 _diffuse, glm::vec3 _specular, glm::vec3 _position, float _constant, float _linear, float _quadratic);
-
 };
 
 struct SpotLight : public PointLight {

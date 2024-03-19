@@ -83,8 +83,8 @@ private:
 	DirectionalLight directionalLight =
 		DirectionalLight({ 0.05f, 0.05f, 0.05f }, { 0.0f, 1.0f, 0.4f }, { 0.5f, 0.5f, 0.5f }, { -0.2f, -1.0f, -0.3f });
 
-	SpotLight spotLight =
-		SpotLight({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, 1.0f, 0.09f, 0.032f, { 0.0f, 0.0f, 0.0f }, glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(15.0f)));
+	SpotLight spotlight =
+		SpotLight({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, 1.0f, 0.09f, 0.032f, { 0.0f, 0.0f, 0.0f }, glm::cos(glm::radians(10.5f)), glm::cos(glm::radians(17.0f)));
 
 
 public:

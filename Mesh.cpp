@@ -6,12 +6,9 @@
 #include "glad.h"
 #include "GLFW/glfw3.h"
 
-Mesh::Mesh(const aiScene* scene, aiMesh* mesh) : Mesh()
-{
-	InitialiseFromAiMesh(scene, mesh);
-}
+#include "TextureManager.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture*> _textures) : 
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture*> _textures) :
 	triCount(0),
 	VAO(0),
 	VBO(0),
@@ -22,7 +19,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 	Initialise(vertices.size(), &vertices[0], indices.size(), &indices[0]);
 }
 
-Mesh::Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, unsigned int* indices) : Mesh()
+Mesh::Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices) : Mesh()
 {
 	Initialise(vertexCount, vertices, indexCount, indices);
 }
@@ -41,7 +38,7 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &VBO);
 }
 
-void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, unsigned int* indices)
+void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices)
 {
 	assert(VAO == 0);
 
@@ -76,7 +73,7 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
 		// fill vertex buffer
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(GLuint), indices, GL_STATIC_DRAW);
 
 		triCount = indexCount / 3;
 	}
@@ -89,12 +86,12 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 
 }
 
-void Mesh::InitialiseFromAiMesh(const aiScene* scene, aiMesh* mesh)
+void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* mesh)
 {
 	// extract indicies from the first mesh
-	int numFaces = mesh->mNumFaces;
-	std::vector<unsigned int> indices;
-	for (int i = 0; i < numFaces; i++)
+	int facesCount = mesh->mNumFaces;
+	std::vector<GLuint> indices;
+	for (int i = 0; i < facesCount; i++)
 	{
 		for (int j = 0; j + 2 < mesh->mFaces[i].mNumIndices; j++)
 		{
@@ -105,9 +102,9 @@ void Mesh::InitialiseFromAiMesh(const aiScene* scene, aiMesh* mesh)
 	}
 
 	// extract vertex data
-	int numV = mesh->mNumVertices;
-	Vertex* vertices = new Vertex[numV];
-	for (int i = 0; i < numV; i++)
+	int vertexCount = mesh->mNumVertices;
+	Vertex* vertices = new Vertex[vertexCount];
+	for (int i = 0; i < vertexCount; i++)
 	{
 		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1);
 		// TODO: normals and UVs
@@ -127,17 +124,17 @@ void Mesh::InitialiseFromAiMesh(const aiScene* scene, aiMesh* mesh)
 	}
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	std::vector<Texture*> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, Texture::Type::diffuse);
+	std::vector<Texture*> diffuseMaps = LoadMaterialTextures(path, material, aiTextureType_DIFFUSE, Texture::Type::diffuse);
 	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 	// 2. specular maps
-	std::vector<Texture*> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, Texture::Type::specular);
+	std::vector<Texture*> specularMaps = LoadMaterialTextures(path, material, aiTextureType_SPECULAR, Texture::Type::specular);
 	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	// 3. normal maps
-	std::vector<Texture*> normalMaps = LoadMaterialTextures(material, aiTextureType_NORMALS, Texture::Type::normal);
+	std::vector<Texture*> normalMaps = LoadMaterialTextures(path, material, aiTextureType_NORMALS, Texture::Type::normal);
 	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 
 	
-	Initialise(numV, vertices, indices.size(), indices.data());
+	Initialise(vertexCount, vertices, indices.size(), indices.data());
 	delete[] vertices;
 }
 
@@ -259,21 +256,17 @@ void Mesh::InitialiseCube()
 	triCount = 12;
 }
 
-//TODO:
 void Mesh::InitialiseFromFile(const char* filename)
 {
 	InitialiseIndexFromFile(filename, 0);
 }
 
-void Mesh::InitialiseIndexFromFile(const char* filename, int i)
+void Mesh::InitialiseIndexFromFile(const char* path, int i)
 {
-	const aiScene* scene = aiImportFile(filename, 0);
-	// just use the first mesh we find for now
-	// TODO: multiple meshes per file
+	const aiScene* scene = aiImportFile(path, 0);
 	aiMesh* mesh = scene->mMeshes[i];
 
-	InitialiseFromAiMesh(scene, mesh);
-
+	InitialiseFromAiMesh(path, scene, mesh);
 
 	aiReleaseImport(scene);
 }
@@ -282,22 +275,28 @@ void Mesh::Draw(Shader& shader)
 {
 	shader.Use();
 	// bind appropriate textures
-	unsigned int diffuseNr = 1;
-	unsigned int specularNr = 1;
-	unsigned int normalNr = 1;
-	unsigned int heightNr = 1;
+	GLuint diffuseNr = 1;
+	GLuint specularNr = 1;
+	GLuint normalNr = 1;
+	GLuint heightNr = 1;
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
 		// retrieve texture number (the N in diffuse_textureN)
 		std::string number;
 		std::string name = Texture::TypeNames.find(textures[i]->type)->second;
-		if (name == "diffuse")
+		switch (textures[i]->type)
+		{
+		case Texture::Type::diffuse:
 			number = std::to_string(diffuseNr++);
-		else if (name == "specular")
+			break;
+		case Texture::Type::specular:
 			number = std::to_string(specularNr++); // transfer unsigned int to string
-		else if (name == "normal")
+			break;
+		case Texture::Type::normal:
 			number = std::to_string(normalNr++); // transfer unsigned int to string
+			break;
+		}
 		//else if (name == "height")
 		//	number = std::to_string(heightNr++); // transfer unsigned int to string
 
@@ -311,7 +310,7 @@ void Mesh::Draw(Shader& shader)
 	glBindVertexArray(VAO);
 	if (IBO != 0) {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-		glDrawElements(GL_TRIANGLES, 3 * triCount, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 3 * triCount, GL_UNSIGNED_INT, 0);	
 	}
 	else {
 		glDrawArrays(GL_TRIANGLES, 0, 3 * triCount);
@@ -330,7 +329,7 @@ void Mesh::Unbind()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-std::vector<Texture*> Mesh::LoadMaterialTextures(aiMaterial* mat, aiTextureType aiType, Texture::Type type)
+std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type)
 {
 	std::vector<Texture*> textures;
 	textures.reserve(mat->GetTextureCount(aiType));
@@ -338,7 +337,8 @@ std::vector<Texture*> Mesh::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 	{
 		aiString str;
 		mat->GetTexture(aiType, i, &str); //TODO: fix path
-		Texture* texture = TextureManager::GetTexture(std::string("models/backpack/") + str.C_Str());
+		std::string folder = path.substr(0, 1 + path.find_last_of("\\/"));
+		Texture* texture = TextureManager::GetTexture(folder + str.C_Str());
 		texture->type = type;
 		textures.push_back(texture);
 	}

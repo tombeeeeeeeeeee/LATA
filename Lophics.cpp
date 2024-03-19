@@ -3,6 +3,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "TextureManager.h"
+
 
 unsigned int Lophics::windowWidth = 1200;
 unsigned int Lophics::windowHeight = 800;
@@ -72,7 +74,6 @@ void Lophics::mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 void Lophics::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll((float)yoffset);
-
 }
 
 void Lophics::
@@ -89,10 +90,9 @@ Start()
 	{
 		std::cout << "Failed to create GLFW window\n";
 		glfwTerminate();
+		throw;
 		return;
-		//TODO: fix
-		//return -1;
-	}	
+	}
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetScrollCallback(window, scroll_callback);
@@ -104,12 +104,14 @@ Start()
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD\n";
+		throw;
 		return;
 		//TODO: fix
 		//return -1;
 	}
 
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
@@ -161,11 +163,16 @@ Start()
 	}
 
 	//TODO:
-	// spotLight
-	lightingShader.setVec3("spotLight.position", camera.position);
-	lightingShader.setVec3("spotLight.direction", camera.front);
-
-
+	// spotlight
+	lightingShader.setVec3("spotlight.position", spotlight.position);
+	lightingShader.setVec3("spotlight.ambient", spotlight.ambient);
+	lightingShader.setVec3("spotlight.diffuse", spotlight.diffuse);
+	lightingShader.setVec3("spotlight.specular", spotlight.specular);
+	lightingShader.setFloat("spotlight.constant", spotlight.constant);
+	lightingShader.setFloat("spotlight.linear", spotlight.linear);
+	lightingShader.setFloat("spotlight.quadratic", spotlight.quadratic);
+	lightingShader.setFloat("spotlight.cutOff", spotlight.cutOff);
+	lightingShader.setFloat("spotlight.outerCutOff", spotlight.outerCutOff);
 }
 
 void Lophics::Update()
@@ -178,13 +185,15 @@ void Lophics::Update()
 	processInput(window);
 
 	// Clear
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);		
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT /*| GL_STENCIL_BUFFER_BIT*/);
 
 
 	// light properties
-
 	lightingShader.Use();
+	lightingShader.setVec3("spotlight.position", camera.position);
+	lightingShader.setVec3("spotlight.direction", camera.front);
+
 
 	// material properties
 	boxMaterial.Use();
@@ -193,7 +202,7 @@ void Lophics::Update()
 	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.01f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 	lightingShader.setMat4("projection", projection);
-	lightingShader.setMat4("view", view);
+	lightingShader.setMat4("view", view);	
 
 	// world transformation
 	glm::mat4 model = glm::mat4(1.0f);
@@ -214,6 +223,7 @@ void Lophics::Update()
 	model = glm::translate(model, glm::vec3(0, 1, 0));
 	lightingShader.setMat4("model", model);
 	testLocModel.Draw(lightingShader);
+
 
 	// render containers
 	for (unsigned int i = 0; i < 10; i++)
@@ -241,7 +251,7 @@ void Lophics::Update()
 		model = glm::translate(model, pointLights[i].position);
 		model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
 		lightCubeShader.setMat4("model", model);
-		
+
 		cubeMesh.Draw(lightCubeShader);
 	}
 
@@ -252,7 +262,6 @@ void Lophics::Update()
 
 void Lophics::Stop()
 {
-
 	// De-allocate resources
 	lightingShader.DeleteProgram();
 	lightCubeShader.DeleteProgram();
