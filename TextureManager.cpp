@@ -6,14 +6,20 @@
 
 std::unordered_map<std::string, Texture, TextureManager::hashThing> TextureManager::loadedTextures;
 
-Texture* TextureManager::GetTexture(std::string path)
+/// <summary>
+/// Gets a texture from a path
+/// </summary>
+/// <param name="path">The path to the texture</param>
+/// <param name="wrappingMode">The texture wrapping mode to use, this value will be ignored if the texture is already loaded</param>
+/// <returns>Pointer to the texture at the given path</returns>
+Texture* TextureManager::GetTexture(std::string path, int wrappingMode)
 {
 	auto texture = loadedTextures.find(path);
 
 	if (texture == loadedTextures.end()) {
 
 		Texture newTexture;
-		newTexture.ID = LoadTexture(path.c_str());
+		newTexture.ID = LoadTexture(path.c_str(), wrappingMode);
 
 		texture = loadedTextures.emplace(path, newTexture).first;
 	}
@@ -37,7 +43,7 @@ TextureManager::~TextureManager()
 	Unload();
 }
 
-unsigned int TextureManager::LoadTexture(std::string path)
+unsigned int TextureManager::LoadTexture(std::string path, int wrappingMode)
 {
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
@@ -67,8 +73,8 @@ unsigned int TextureManager::LoadTexture(std::string path)
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrappingMode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrappingMode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}

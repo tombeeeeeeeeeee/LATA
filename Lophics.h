@@ -36,10 +36,12 @@ private:
 
 	Texture* diffuseMap;
 	Texture* specularMap;
+	Texture* grass;
 
 
 	Shader lightingShader;
 	Shader lightCubeShader;
+	Shader screenShader;
 
 	Mesh cubeMesh;
 	Mesh quadMesh;

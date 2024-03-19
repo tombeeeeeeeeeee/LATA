@@ -130,9 +130,9 @@ Start()
 	testMesh.InitialiseFromFile("models/backpack/backpack.obj");
 	specularMap = TextureManager::GetTexture("images/container2.png");
 	diffuseMap = TextureManager::GetTexture("images/container2_specular.png");
+	grass = TextureManager::GetTexture("images/grass.png", GL_CLAMP_TO_EDGE);
 	boxMaterial = Material(specularMap, diffuseMap, nullptr);
 	testLocModel = LocModel("models/backpack/backpack.obj");
-
 
 
 	// shader configuration
@@ -142,6 +142,8 @@ Start()
 	lightingShader.setInt("material.emission1", 2);
 	lightingShader.setVec3("viewPos", camera.position);
 	lightingShader.setFloat("material.shininess", 64.0f);
+
+
 
 	// directional light
 	lightingShader.setVec3("dirLight.direction", directionalLight.direction);
@@ -234,7 +236,9 @@ void Lophics::Update()
 		float angle = 20.0f * i;
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 		lightingShader.setMat4("model", model);
+		
 		boxMaterial.Use();
+
 		cubeMesh.Draw(lightingShader);
 	}
 

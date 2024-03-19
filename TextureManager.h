@@ -2,10 +2,11 @@
 #include <string>
 #include "Texture.h"
 
+#include "glad.h"
 
 class TextureManager {
 public:
-	static Texture* GetTexture(std::string path);
+	static Texture* GetTexture(std::string path, int wrappingMode = GL_REPEAT);
 
 	static void Unload();
 	~TextureManager();
@@ -15,7 +16,7 @@ private:
 	struct hashThing {
 		unsigned long long operator()(std::string key) const;
 	};
-	static unsigned int LoadTexture(std::string path);
+	static unsigned int LoadTexture(std::string path, int wrappingMode);
 	static std::unordered_map<std::string, Texture, hashThing> loadedTextures;
 	//TODO: Keep a track of amount of loaded textures and unload them as they are unneeded
 };

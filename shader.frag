@@ -43,6 +43,7 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform DirLight dirLight;
 uniform Spotlight spotlight;
 
+const float alphaDiscard = 0.1;
 
 in vec3 FragPos;
 in vec3 Normal;
@@ -79,6 +80,11 @@ void main()
 
 
     result += emission1;
+
+    if(texture(material.diffuse1, TexCoords).a < alphaDiscard) {
+        discard;
+    }
+
     FragColor = vec4(result, 1.0);
 } 
 
