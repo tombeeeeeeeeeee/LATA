@@ -1,8 +1,12 @@
 #pragma once
 
-#include <unordered_map>
-#include <string>
+#include "Graphics.h"
 
+#include "assimp/scene.h"
+#include "assimp/cimport.h"
+
+#include <string>
+#include <unordered_map>
 
 class Texture
 {
@@ -16,7 +20,7 @@ public:
 	};
 	static const std::unordered_map<Type, std::string> TypeNames;
 
-	unsigned int ID;
+	GLuint ID;
 	Type type;
 	Texture();
 };

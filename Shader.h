@@ -1,23 +1,28 @@
 #pragma once
+
+#include "Graphics.h"
+
+#include "glm/mat4x4.hpp"
+
 #include <string>
-#include "glm/mat4x4.hpp"+
-#include "glad.h" // include glad to get the required OpenGL headers
 
 class Shader
 {
 private:
 	GLint getLocation(const std::string& name) const;
-	static unsigned int CompileShader(const char* path, int type);
+	static GLuint CompileShader(const char* path, int type);
 public:
 	// the program ID
-	unsigned int ID;
-	// constructor reads and builds the shader
+	GLuint ID;
 	Shader();
+	// TODO: Contructor from one name that finds all the shaders of different types
 	Shader(const char* vertexPath, const char* fragmentPath);
 	// use/activate the shader
 	void Use();
 	// utility uniform functions
+	//TODO: these can be called without any warning when the shader program is not being used, it should either use the shader or send message
 	void setBool(const std::string& name, bool value) const;
+	void setSampler(const std::string& name, GLuint value) const;
 	void setInt(const std::string& name, int value) const;
 	void setFloat(const std::string& name, float value) const;
 	void setVec2(const std::string& name, const glm::vec2& value) const;

@@ -1,12 +1,10 @@
 #include "Texture.h"
 
-#include "glad.h"
-#include "GLFW/glfw3.h"
-
-#include <iostream>
+#include "Graphics.h"
 
 #include "stb_image.h"
 
+#include <iostream>
 
 const std::unordered_map<Texture::Type, std::string> Texture::TypeNames = 
 {

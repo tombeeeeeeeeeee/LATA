@@ -118,32 +118,51 @@ Start()
 	glEnable(GL_CULL_FACE);
 
 
+
 	// Create shaders
 	lightingShader = Shader("shader.vert", "shader.frag");
 	lightCubeShader = Shader("lightCube.vert", "lightCube.frag");
+	simpleTexturedShader = Shader("simpleTextured.vert", "simpleTextured.frag");
 
 	// uncomment this call to draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	cubeMesh.InitialiseCube();
+	boxMesh.InitialiseCube();
+	lightCubeMesh.InitialiseCube();
 	quadMesh.InitialiseQuad();
-	testMesh.InitialiseFromFile("models/backpack/backpack.obj");
-	specularMap = TextureManager::GetTexture("images/container2.png");
-	diffuseMap = TextureManager::GetTexture("images/container2_specular.png");
-	grass = TextureManager::GetTexture("images/grass.png", GL_CLAMP_TO_EDGE);
-	boxMaterial = Material(specularMap, diffuseMap, nullptr);
-	testLocModel = LocModel("models/backpack/backpack.obj");
+	grassMesh.InitialiseDoubleSidedQuad();
+	
+	diffuseMap = TextureManager::GetTexture("images/container2.png", Texture::Type::diffuse);
+	boxMesh.textures.push_back(diffuseMap);
+	specularMap = TextureManager::GetTexture("images/container2_specular.png", Texture::Type::specular);
+	boxMesh.textures.push_back(specularMap);
+	grass = TextureManager::GetTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE);
+	grassMesh.textures.push_back(grass);
+	testLocModel = Model("models/backpack/backpack.obj");
+	//PointLightModel = LocModel("models/led_light_bulb_9w.glb");
+
+
+	backpack.model = &testLocModel;
+	backpack.scale = 1.0f;
+	backpack.shader = &lightingShader;
+	backpack.position = { 0, 1, 1 };
+
+	pointLightScene.model = &PointLightModel;
+	pointLightScene.scale = 2.0f;
+	pointLightScene.shader = &lightingShader;
+	pointLightScene.position = { 3.f, 1.f, -1.f };
+
+	simpleTexturedShader.Use();
+	simpleTexturedShader.setSampler("material.diffuse1", 0);
 
 
 	// shader configuration
 	lightingShader.Use();
-	lightingShader.setInt("material.diffuse1", 0);
-	lightingShader.setInt("material.specular1", 1);
-	lightingShader.setInt("material.emission1", 2);
+	lightingShader.setSampler("material.diffuse1", 0);
+	lightingShader.setSampler("material.specular1", 1);
+	lightingShader.setSampler("material.emission1", 2);
 	lightingShader.setVec3("viewPos", camera.position);
 	lightingShader.setFloat("material.shininess", 64.0f);
-
-
 
 	// directional light
 	lightingShader.setVec3("dirLight.direction", directionalLight.direction);
@@ -164,8 +183,6 @@ Start()
 		lightingShader.setFloat("pointLights[" + index + "].quadratic", pointLights[i].quadratic);
 	}
 
-	//TODO:
-	// spotlight
 	lightingShader.setVec3("spotlight.position", spotlight.position);
 	lightingShader.setVec3("spotlight.ambient", spotlight.ambient);
 	lightingShader.setVec3("spotlight.diffuse", spotlight.diffuse);
@@ -186,10 +203,8 @@ void Lophics::Update()
 	// Input
 	processInput(window);
 
-	// Clear
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);		
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT /*| GL_STENCIL_BUFFER_BIT*/);
-
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// light properties
 	lightingShader.Use();
@@ -197,56 +212,54 @@ void Lophics::Update()
 	lightingShader.setVec3("spotlight.direction", camera.front);
 
 
-	// material properties
-	boxMaterial.Use();
-
 	// view/projection transformations
 	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.01f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
-	lightingShader.setMat4("projection", projection);
-	lightingShader.setMat4("view", view);	
+	glm::mat4 vp = projection * view;
+	lightingShader.setMat4("vp", vp);
+	simpleTexturedShader.Use();
+	simpleTexturedShader.setMat4("vp", vp);
+	lightCubeShader.Use();
+	lightCubeShader.setMat4("vp", vp);
 
+	lightingShader.Use();
 	// world transformation
 	glm::mat4 model = glm::mat4(1.0f);
-	lightingShader.setMat4("model", model);
-	//testLocModel.meshes[0].Draw(lightingShader);
+
 	
-	model = glm::translate(model, glm::vec3(0, 5, 0));
-	lightingShader.setMat4("model", model);
-	//testModel.Draw(lightingShader);
+	backpack.Draw();
+	pointLightScene.Draw();
 
-	model = glm::mat4(2);
-	//model = glm::translate(model, glm::vec3(0, 5, 0));
-	lightingShader.setMat4("model", model);
-	//testMesh.Draw(lightingShader);
-	//quadMesh.Draw(lightingShader);
-
-	model = glm::mat4(2.0f);
-	model = glm::translate(model, glm::vec3(0, 1, 0));
-	lightingShader.setMat4("model", model);
-	testLocModel.Draw(lightingShader);
-
-
+	lightingShader.Use();
 	// render containers
 	for (unsigned int i = 0; i < 10; i++)
 	{
 		// calculate the model matrix for each object and pass it to shader before drawing
-		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, cubePositions[i]);
 		float angle = 20.0f * i;
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 		lightingShader.setMat4("model", model);
 		
-		boxMaterial.Use();
-
-		cubeMesh.Draw(lightingShader);
+		boxMesh.Draw(lightingShader);
 	}
 
+	// render grass
+	for (unsigned int i = 0; i < 10; i++)
+	{
+		// calculate the model matrix for each object and pass it to shader before drawing
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, grassPositions[i]);
+		float angle = 20.0f * i;
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+		lightingShader.setMat4("model", model);
+
+		grassMesh.Draw(lightingShader);
+	}
 
 	// also draw the lights themselves
 	lightCubeShader.Use();
-	lightCubeShader.setMat4("projection", projection);
-	lightCubeShader.setMat4("view", view);
+	lightCubeShader.setMat4("vp", vp);
 
 	// we now draw as many light bulbs as we have point lights.
 	for (unsigned int i = 0; i < 4; i++)
@@ -256,8 +269,9 @@ void Lophics::Update()
 		model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
 		lightCubeShader.setMat4("model", model);
 
-		cubeMesh.Draw(lightCubeShader);
+		lightCubeMesh.Draw(lightCubeShader);
 	}
+
 
 	// Check and call events and swap the buffers
 	glfwSwapBuffers(window);
@@ -267,14 +281,19 @@ void Lophics::Update()
 void Lophics::Stop()
 {
 	// De-allocate resources
-	lightingShader.DeleteProgram();
-	lightCubeShader.DeleteProgram();
 
 	// Textures
 	TextureManager::Unload();
 
+	for (int i = 0; i < sizeof(shaders)/sizeof(Shader); i++)
+	{
+		shaders[i].DeleteProgram();
+	}
+
+	//TODO: unload meshes properly
+
 	// Terminate and clear GLFW resources
 	glfwTerminate();
 
-	std::cout << "test\n";
+	std::cout << "End\n";
 }

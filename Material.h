@@ -3,17 +3,19 @@
 #include "Texture.h"
 #include "Shader.h"
 
-class Material
+#include <vector>
+
+//TODO: being unused really, decide what to do with
+struct Material
 {
 public:
 	Material();
-	Material(Texture* _diffuse, Texture* _specular, Texture* _emission, float _shininess = 64.0f);
-
-	Texture* diffuse;
-	Texture* specular;
-	Texture* emission;
-	float shininess;
+	Material(unsigned int textureCount, Texture* _textures);
+	Material(std::vector<Texture*> _textures);
 	
+
+	std::vector<Texture*> textures;
+	Shader* shader;
 	void Use();
 
 };

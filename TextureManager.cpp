@@ -1,7 +1,7 @@
 #include "TextureManager.h"
 
-#include "glad.h"
 #include "stb_image.h"
+
 #include <iostream>
 
 std::unordered_map<std::string, Texture, TextureManager::hashThing> TextureManager::loadedTextures;
@@ -12,14 +12,14 @@ std::unordered_map<std::string, Texture, TextureManager::hashThing> TextureManag
 /// <param name="path">The path to the texture</param>
 /// <param name="wrappingMode">The texture wrapping mode to use, this value will be ignored if the texture is already loaded</param>
 /// <returns>Pointer to the texture at the given path</returns>
-Texture* TextureManager::GetTexture(std::string path, int wrappingMode)
+Texture* TextureManager::GetTexture(std::string path, Texture::Type type, int wrappingMode)
 {
 	auto texture = loadedTextures.find(path);
 
 	if (texture == loadedTextures.end()) {
-
 		Texture newTexture;
 		newTexture.ID = LoadTexture(path.c_str(), wrappingMode);
+		newTexture.type = type;
 
 		texture = loadedTextures.emplace(path, newTexture).first;
 	}
@@ -43,9 +43,9 @@ TextureManager::~TextureManager()
 	Unload();
 }
 
-unsigned int TextureManager::LoadTexture(std::string path, int wrappingMode)
+GLuint TextureManager::LoadTexture(std::string path, int wrappingMode)
 {
-	unsigned int textureID;
+	GLuint textureID;
 	glGenTextures(1, &textureID);
 
 	int width, height, nrComponents;
@@ -53,20 +53,23 @@ unsigned int TextureManager::LoadTexture(std::string path, int wrappingMode)
 	if (data)
 	{
 		GLenum format;
-		if (nrComponents == 1) {
+		switch (nrComponents)
+		{
+		case 1:
 			format = GL_RED;
-		}
-		else if (nrComponents == 3) {
+			break;
+		case 3:
 			format = GL_RGB;
-		}
-		else if (nrComponents == 4) {
+			break;
+		case 4: 
 			format = GL_RGBA;
-		}
-		else {
+			break;
+		case 2:
+		default:
 			std::cout << "Texture failed to load, could not be read correctly, path: " << path << "\n";
 			stbi_image_free(data);
-			//TODO: Should this return textureID, so it can still call delete textures if that is even neccessary 
 			return textureID;
+			break;
 		}
 
 		glBindTexture(GL_TEXTURE_2D, textureID);

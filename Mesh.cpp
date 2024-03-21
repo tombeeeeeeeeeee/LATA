@@ -1,12 +1,12 @@
 #include "Mesh.h"
 
+#include "TextureManager.h"
+
+#include "Graphics.h"
 
 #include <vector>
-
-#include "glad.h"
-#include "GLFW/glfw3.h"
-
-#include "TextureManager.h"
+#include <iostream>
+#include <unordered_map>
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture*> _textures) :
 	triCount(0),
@@ -36,34 +36,19 @@ Mesh::~Mesh()
 {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &IBO);
 }
 
 void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices)
 {
 	assert(VAO == 0);
 
-	// generate buffers
-	glGenBuffers(1, &VBO);
-	glGenVertexArrays(1, &VAO);
-
-	// bind vertex array aka a mesh wrapper
-	glBindVertexArray(VAO);
-
-	// bind vertex buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	GenAndBind();
 
 	// fill vertex buffer
 	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(Vertex), vertices, GL_STATIC_DRAW);
 
-	// enable first element as position
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, sizeof(Vertex::position)/sizeof(Vertex::position.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-	// vertex normals
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, sizeof(Vertex::normal) / sizeof(Vertex::normal.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-	// vertex texture coords
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, sizeof(Vertex::texCoord) / sizeof(Vertex::texCoord.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
+	Vertex::EnableAttributes();
 
 	// bind indices if there are any
 	if (indexCount > 0) {
@@ -83,17 +68,15 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 
 	// unbind buffers
 	Unbind();
-
 }
 
 void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* mesh)
 {
-	// extract indicies from the first mesh
 	int facesCount = mesh->mNumFaces;
 	std::vector<GLuint> indices;
-	for (int i = 0; i < facesCount; i++)
+	for (unsigned int i = 0; i < facesCount; i++)
 	{
-		for (int j = 0; j + 2 < mesh->mFaces[i].mNumIndices; j++)
+		for (unsigned int j = 0; j + 2 < mesh->mFaces[i].mNumIndices; j++)
 		{
 			indices.push_back(mesh->mFaces[i].mIndices[j]);
 			indices.push_back(mesh->mFaces[i].mIndices[j + 1]);
@@ -106,13 +89,12 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 	Vertex* vertices = new Vertex[vertexCount];
 	for (int i = 0; i < vertexCount; i++)
 	{
-		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1);
-		// TODO: normals and UVs
+		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1.f);
 		if (mesh->HasNormals()) {
-			vertices[i].normal = glm::vec4(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 0);
+			vertices[i].normal = glm::vec4(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 0.f);
 		}
 		else {
-			vertices[i].normal = glm::vec4(1, 0, 0, 0);
+			vertices[i].normal = glm::vec4(1.f, 0.f, 0.f, 0.f);
 		}
 		// TODO: other tex coords?
 		if (mesh->mTextureCoords[0]) {
@@ -124,15 +106,10 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 	}
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	std::vector<Texture*> diffuseMaps = LoadMaterialTextures(path, material, aiTextureType_DIFFUSE, Texture::Type::diffuse);
-	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-	// 2. specular maps
-	std::vector<Texture*> specularMaps = LoadMaterialTextures(path, material, aiTextureType_SPECULAR, Texture::Type::specular);
-	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-	// 3. normal maps
-	std::vector<Texture*> normalMaps = LoadMaterialTextures(path, material, aiTextureType_NORMALS, Texture::Type::normal);
-	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-
+	//TODO: This shouldn't have to be changed for when another texture type is supported
+	AddMaterialTextures(path, material, aiTextureType_DIFFUSE, Texture::Type::diffuse);
+	AddMaterialTextures(path, material, aiTextureType_SPECULAR, Texture::Type::specular);
+	AddMaterialTextures(path, material, aiTextureType_NORMALS, Texture::Type::normal);
 	
 	Initialise(vertexCount, vertices, indices.size(), indices.data());
 	delete[] vertices;
@@ -140,60 +117,43 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 
 void Mesh::InitialiseQuad()
 {
-	//TODO: Rewrite
-	// Check that the mesh is not initialized already
-	assert(VAO == 0);
-
-	// Generate buffers
-	glGenBuffers(1, &VBO);
-	glGenVertexArrays(1, &VAO);
-
-	// Bind vertex array aka a mesh wrapper
-	glBindVertexArray(VAO);
-
-	// Bind vertex buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	// Define 6 vertices for 2 triangles
-	Vertex vertices[6] = {
-		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
-		{ { -0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 0.0f, 0.0f } }, // Top left
-		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
-		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
-		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
-		{ {  0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 0.0f, 1.0f } } // Bottom right
+	const unsigned int vertexCount = 6;
+	Vertex vertices[vertexCount] = {
+		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
+		{ { -0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } }, // Top left
+		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
+		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
+		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
+		{ {  0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } } // Bottom right
 	};
+	Initialise(vertexCount, vertices);
+}
 
-	// Fill vertex buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+void Mesh::InitialiseDoubleSidedQuad()
+{
+	const unsigned int vertexCount = 12;
+	Vertex vertices[vertexCount] = {
+		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
+		{ { -0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } }, // Top left
+		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
+		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
+		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
+		{ {  0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } }, // Bottom right
 
-	// Enable first element as position
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, sizeof(Vertex::position) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-
-	// unbind buffers
-	Unbind();
-
-	// quad has 2 triangles
-	triCount = 2;
+		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
+		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
+		{ { -0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 0.0f, 0.0f } }, // Top left
+		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
+		{ {  0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } }, // Bottom right
+		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f, 0.0f }, { 0.0f, 1.0f } } // Bottom left
+	};
+	Initialise(vertexCount, vertices);
 }
 	
 void Mesh::InitialiseCube()
 {
-	// check that the mesh is not initialized already
-	assert(VAO == 0);
-
-	// Generate buffers
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	// Bind vertex buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	// Bind vertex array
-	glBindVertexArray(VAO);
-
-	Vertex vertices[6 * 6] = {
+	const unsigned int vertexCount = 36;
+	Vertex vertices[vertexCount] = {
 		// positions				 // normals           // texture coords
 		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{ 0.0f,  0.0f, -1.0f, 0.0f},  {0.0f,  0.0f} },
 		{ { 0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  0.0f, -1.0f, 0.0f},  {1.0f,  1.0f} },
@@ -237,23 +197,7 @@ void Mesh::InitialiseCube()
 		{ {-0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
 		{ {-0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {0.0f,  0.0f} },
 	};                                                                                    
-
-	// Fill vertex buffer 1440, 360
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// Position
-	glVertexAttribPointer(0, sizeof(Vertex::position) / sizeof(Vertex::position.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-	glEnableVertexAttribArray(0);
-	// Normal
-	glVertexAttribPointer(1, sizeof(Vertex::normal) / sizeof(Vertex::normal.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-	glEnableVertexAttribArray(1);
-	// Texture
-	glVertexAttribPointer(2, sizeof(Vertex::texCoord) / sizeof(Vertex::texCoord.x), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
-	glEnableVertexAttribArray(2);
-
-	Unbind();
-
-	triCount = 12;
+	Initialise(vertexCount, vertices);
 }
 
 void Mesh::InitialiseFromFile(const char* filename)
@@ -264,6 +208,10 @@ void Mesh::InitialiseFromFile(const char* filename)
 void Mesh::InitialiseIndexFromFile(const char* path, int i)
 {
 	const aiScene* scene = aiImportFile(path, 0);
+	if (!scene) {
+		std::cout << "Mesh failed to load at: " << path << "\n";
+		return;
+	}
 	aiMesh* mesh = scene->mMeshes[i];
 
 	InitialiseFromAiMesh(path, scene, mesh);
@@ -275,33 +223,28 @@ void Mesh::Draw(Shader& shader)
 {
 	shader.Use();
 	// bind appropriate textures
-	GLuint diffuseNr = 1;
-	GLuint specularNr = 1;
-	GLuint normalNr = 1;
-	GLuint heightNr = 1;
+	
+
+	std::unordered_map<Texture::Type, unsigned int> typeCounts;
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
-		glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-		// retrieve texture number (the N in diffuse_textureN)
-		std::string number;
+		glActiveTexture(GL_TEXTURE0 + i);
+		unsigned int number;
 		std::string name = Texture::TypeNames.find(textures[i]->type)->second;
-		switch (textures[i]->type)
-		{
-		case Texture::Type::diffuse:
-			number = std::to_string(diffuseNr++);
-			break;
-		case Texture::Type::specular:
-			number = std::to_string(specularNr++); // transfer unsigned int to string
-			break;
-		case Texture::Type::normal:
-			number = std::to_string(normalNr++); // transfer unsigned int to string
-			break;
+		// Get the amount of this type of texture has been assigned
+		auto typeCount = typeCounts.find(textures[i]->type);
+		if (typeCount == typeCounts.end()) {
+			//TODO: Should this be emplace or insert
+			typeCount = typeCounts.emplace(std::pair<Texture::Type, unsigned int>(textures[i]->type, 1)).first;
 		}
-		//else if (name == "height")
-		//	number = std::to_string(heightNr++); // transfer unsigned int to string
+		else {
+			typeCount->second++;
+		}
+		number = typeCount->second;
 
 		// now set the sampler to the correct texture unit
-		glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
+		shader.setSampler(("material." + name + std::to_string(number)), i);
+
 		// and finally bind the texture
 		glBindTexture(GL_TEXTURE_2D, textures[i]->ID);
 	}
@@ -310,16 +253,34 @@ void Mesh::Draw(Shader& shader)
 	glBindVertexArray(VAO);
 	if (IBO != 0) {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-		glDrawElements(GL_TRIANGLES, 3 * triCount, GL_UNSIGNED_INT, 0);	
+		glDrawElements(GL_TRIANGLES, 3 * triCount, GL_UNSIGNED_INT, 0);
 	}
 	else {
 		glDrawArrays(GL_TRIANGLES, 0, 3 * triCount);
 	}
 
-	// always good practice to set everything back to defaults once configured.
 	Unbind();
+	
+	// TODO: how many times should this loops, currently five as there shouldn't be more than 5 active textures so this should be okay but it shouldn't be constant as this could later change in the future
+	// Unbinds any assigned textures, this is so if a mesh only has one diffuse, the previously set specular from another mesh isn't used.
+	for (unsigned int i = 0; i < 5; i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 	glActiveTexture(GL_TEXTURE0);
+}
 
+void Mesh::GenAndBind()
+{
+	// Generate buffers
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	// Bind vertex buffer
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// Bind vertex array
+	glBindVertexArray(VAO);
 }
 
 void Mesh::Unbind()
@@ -336,18 +297,22 @@ std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* m
 	for (unsigned int i = 0; i < mat->GetTextureCount(aiType); i++)
 	{
 		aiString str;
-		mat->GetTexture(aiType, i, &str); //TODO: fix path
+		mat->GetTexture(aiType, i, &str);
 		std::string folder = path.substr(0, 1 + path.find_last_of("\\/"));
-		Texture* texture = TextureManager::GetTexture(folder + str.C_Str());
-		texture->type = type;
-		textures.push_back(texture);
+		Texture* texture = TextureManager::GetTexture(folder + str.C_Str(), type);
+		if (texture) {
+			texture->type = type;
+			textures.push_back(texture);
+		}
+		else {
+			std::cout << "Failed attempt to find a texture of type: " << str.C_Str() << "\n";
+		}
 	}
 	return textures;
 }
 
-Vertex::Vertex(glm::vec4 pos, glm::vec4 nor, glm::vec2 tex) :
-	position(pos),
-	normal(nor),
-	texCoord(tex)
+void Mesh::AddMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type)
 {
+	std::vector<Texture*> maps = LoadMaterialTextures(path, mat, aiType, type);
+	textures.insert(textures.end(), maps.begin(), maps.end());
 }

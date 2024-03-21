@@ -1,48 +1,36 @@
 #include "Camera.h"
 
-
 #include "glm/gtc/matrix_transform.hpp"
 
 
-Camera::Camera()
+Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch, float _movementSpeed, float _sensitivity, float _fov) :
+    position(_position),
+    worldUp(_up),
+    yaw(_yaw),
+    pitch(_pitch),
+    movementSpeed(_movementSpeed),
+    sensitivity(_sensitivity),
+    fov(_fov)
 {
-    SetDefaults();
-    position = glm::vec3(0.f, 0.f, 0.f);
-    worldUp = glm::vec3(0.f, 1.f, 0.f);
-    yaw = 0.f;
-    pitch = 0.f;
-    updateVectors();
+    UpdateVectors();
 }
 
-Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch)
+
+Camera::Camera(glm::vec3 _position) : Camera()
 {
-    SetDefaults();
     position = _position;
-    worldUp = _up;
-    yaw = _yaw;
-    pitch = _pitch;
-    updateVectors();
+    UpdateVectors();
 }
 
-Camera::Camera(glm::vec3 _position)
+
+Camera::Camera() : Camera({ 0.f, 0.f, 0.f }, { 0.f, 1.f, 0.f }, -90.f, 0.0f, 2.5f, 0.1f, 60.f)
 {
-    SetDefaults();
-    position = _position;
-    updateVectors();
+    UpdateVectors();
 }
 
 
-void Camera::SetDefaults()
-{
-    yaw = defaultYaw;
-    pitch = defaultPitch;
-    worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-    movementSpeed = defaultMoveSpeed;
-    sensitivity = defaultSensitivity;
-    fov = defaultFov;
-}
 
-glm::mat4 Camera::GetViewMatrix()
+glm::mat4 Camera::GetViewMatrix() const
 {
     return glm::lookAt(position, position + front, up);
 }
@@ -95,7 +83,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
     }
 
     // update Front, Right and Up Vectors using the updated Euler angles
-    updateVectors();
+    UpdateVectors();
 
 }
 
@@ -111,7 +99,7 @@ void Camera::ProcessMouseScroll(float yoffset)
     }
 }
 
-void Camera::updateVectors()
+void Camera::UpdateVectors()
 {
     // calculate the new Front vector
     front = glm::normalize(

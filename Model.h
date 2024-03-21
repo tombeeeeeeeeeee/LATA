@@ -2,16 +2,18 @@
 #include "Mesh.h"
 #include "Shader.h"
 
-class LocModel
+class Model
 {
 public:
-	LocModel();
-	LocModel(std::string path);
+	Model();
+	Model(std::string path);
 
 	void LoadModel(std::string path);
 	void Draw(Shader& shader);
 
 private:
 	std::vector<Mesh> meshes;
+	
+	std::vector<Texture*> textures;
 };
 
