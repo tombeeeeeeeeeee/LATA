@@ -228,7 +228,7 @@ void Mesh::Draw(Shader& shader)
 	std::unordered_map<Texture::Type, unsigned int> typeCounts;
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
-		glActiveTexture(GL_TEXTURE0 + i);
+		glActiveTexture(GL_TEXTURE0 + i+1);
 		unsigned int number;
 		std::string name = Texture::TypeNames.find(textures[i]->type)->second;
 		// Get the amount of this type of texture has been assigned
@@ -243,7 +243,7 @@ void Mesh::Draw(Shader& shader)
 		number = typeCount->second;
 
 		// now set the sampler to the correct texture unit
-		shader.setSampler(("material." + name + std::to_string(number)), i);
+		shader.setSampler(("material." + name + std::to_string(number)), i+1);
 
 		// and finally bind the texture
 		glBindTexture(GL_TEXTURE_2D, textures[i]->ID);

@@ -1,137 +1,21 @@
-#include "Lophics.h"
+#include "TestScene.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
-#include "TextureManager.h"
+//TODO: this should be later removed as translations shouldnt be happening here
+#include "gtc/matrix_transform.hpp"
 
 
-unsigned int Lophics::windowWidth = 1200;
-unsigned int Lophics::windowHeight = 800;
-
-float Lophics::lastX = 600;
-float Lophics::lastY = 400;
-bool Lophics::firstMouse = true;
-
-Camera Lophics::camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
-
-float Lophics::deltaTime = 0.0f;
-
-void Lophics::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void TestScene::Start()
 {
-	glViewport(0, 0, width, height);
-	windowWidth = width;
-	windowHeight = height;
-}
-
-void Lophics::processInput(GLFWwindow* window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, true);
-	}
-	float cameraSpeed = 2.0f * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::FORWARD, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::BACKWARD, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::LEFT, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::RIGHT, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::UP, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::DOWN, deltaTime);
-	}
-}
-
-void Lophics::mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
-{
-	float xpos = static_cast<float>(xposIn);
-	float ypos = static_cast<float>(yposIn);
-
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-	lastX = xpos;
-	lastY = ypos;
-
-	camera.ProcessMouseMovement(xoffset, yoffset, true);
-}
-
-void Lophics::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	camera.ProcessMouseScroll((float)yoffset);
-}
-
-void Lophics::
-Start()
-{
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	// Create window
-	window = glfwCreateWindow(windowWidth, windowHeight, "Lochie's Testing", nullptr, nullptr);
-	if (window == nullptr)
-	{
-		std::cout << "Failed to create GLFW window\n";
-		glfwTerminate();
-		throw;
-		return;
-	}
-	glfwMakeContextCurrent(window);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetScrollCallback(window, scroll_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
-
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	// Load OpenGl function pointers with glad
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD\n";
-		throw;
-		return;
-		//TODO: fix
-		//return -1;
-	}
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
-	glFrontFace(GL_CCW);
-	glCullFace(GL_BACK);
-	glEnable(GL_CULL_FACE);
-
-
-
 	// Create shaders
 	lightingShader = Shader("shader.vert", "shader.frag");
 	lightCubeShader = Shader("lightCube.vert", "lightCube.frag");
 	simpleTexturedShader = Shader("simpleTextured.vert", "simpleTextured.frag");
 
-	// uncomment this call to draw in wireframe polygons.
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 	boxMesh.InitialiseCube();
 	lightCubeMesh.InitialiseCube();
 	quadMesh.InitialiseQuad();
 	grassMesh.InitialiseDoubleSidedQuad();
-	
+
 	diffuseMap = TextureManager::GetTexture("images/container2.png", Texture::Type::diffuse);
 	boxMesh.textures.push_back(diffuseMap);
 	specularMap = TextureManager::GetTexture("images/container2_specular.png", Texture::Type::specular);
@@ -190,40 +74,29 @@ Start()
 	lightingShader.setFloat("spotlight.outerCutOff", spotlight.outerCutOff);
 }
 
-void Lophics::Update()
+void TestScene::Update(float delta)
 {
-	float currentFrame = static_cast<float>(glfwGetTime());
-	deltaTime = currentFrame - lastFrame;
-	lastFrame = currentFrame;
-
-	// Input
-	processInput(window);
-
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// light properties
 	lightingShader.Use();
-	lightingShader.setVec3("spotlight.position", camera.position);
-	lightingShader.setVec3("spotlight.direction", camera.front);
-	lightingShader.setVec3("viewPos", camera.position);
+	lightingShader.setVec3("spotlight.position", camera->position);
+	lightingShader.setVec3("spotlight.direction", camera->front);
+	lightingShader.setVec3("viewPos", camera->position);
 
 
-	// view/projection transformations
-	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.01f, 100.0f);
-	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 vp = projection * view;
-	lightingShader.setMat4("vp", vp);
+	lightingShader.setMat4("vp", viewProjection);
 	simpleTexturedShader.Use();
-	simpleTexturedShader.setMat4("vp", vp);
+	simpleTexturedShader.setMat4("vp", viewProjection);
 	lightCubeShader.Use();
-	lightCubeShader.setMat4("vp", vp);
+	lightCubeShader.setMat4("vp", viewProjection);
 
 	lightingShader.Use();
 	// world transformation
 	glm::mat4 model = glm::mat4(1.0f);
 
-	
+
 	backpack.Draw();
 	pointLightScene.Draw();
 
@@ -237,7 +110,7 @@ void Lophics::Update()
 		float angle = 20.0f * i;
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 		lightingShader.setMat4("model", model);
-		
+
 		boxMesh.Draw(lightingShader);
 	}
 
@@ -256,7 +129,7 @@ void Lophics::Update()
 
 	// also draw the lights themselves
 	lightCubeShader.Use();
-	lightCubeShader.setMat4("vp", vp);
+	lightCubeShader.setMat4("vp", viewProjection);
 
 	// we now draw as many light bulbs as we have point lights.
 	for (unsigned int i = 0; i < 4; i++)
@@ -268,26 +141,12 @@ void Lophics::Update()
 
 		lightCubeMesh.Draw(lightCubeShader);
 	}
-
-	// Check and call events and swap the buffers
-	glfwSwapBuffers(window);
-	glfwPollEvents();
 }
 
-void Lophics::Stop()
+TestScene::~TestScene()
 {
-	// De-allocate resources
-
-	// Textures
-	TextureManager::Unload();
-
 	for (int i = 0; i < sizeof(shaders) / sizeof(Shader); i++)
 	{
 		shaders[i].DeleteProgram();
 	}
-
-	// Terminate and clear GLFW resources
-	glfwTerminate();
-
-	std::cout << "End\n";
 }

@@ -25,7 +25,7 @@ void Material::Use()
 	// Unbinds any assigned textures, this is so if a mesh only has one diffuse, the previously set specular from another mesh isn't used.
 	for (unsigned int i = 0; i < 5; i++)
 	{
-		glActiveTexture(GL_TEXTURE0 + i);
+		glActiveTexture(GL_TEXTURE0 + i+1);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -49,7 +49,7 @@ void Material::Use()
 			number = typeCount->second;
 
 			// now set the sampler to the correct texture unit
-			shader->setSampler(("material." + name + std::to_string(number)), i);
+			shader->setSampler(("material." + name + std::to_string(number)), i+1);
 
 			// and finally bind the texture
 			glBindTexture(GL_TEXTURE_2D, textures[i]->ID);

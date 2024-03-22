@@ -1,8 +1,9 @@
 #pragma once
-#include <string>
 #include "Texture.h"
 
 #include "Graphics.h"
+
+#include <string>
 
 class TextureManager {
 public:

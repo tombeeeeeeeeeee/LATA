@@ -1,13 +1,19 @@
+//#include "Lophics.h"
+#include "SceneManager.h"
 
-
-#include "Lophics.h"
+#include "TestScene.h"
 
 int main()
 {
-	Lophics lophics;
-	lophics.Start();
-	while (!glfwWindowShouldClose(lophics.window)) {
-		lophics.Update();
+	SceneManager sceneManager(new TestScene());
+	while (!sceneManager.ShouldClose())
+	{
+		sceneManager.Update();
 	}
-	lophics.Stop();
+
+	//lophics.Start();
+	//while (!glfwWindowShouldClose(lophics.window)) {
+	//	lophics.Update();
+	//}
+	//lophics.Stop();
 }
