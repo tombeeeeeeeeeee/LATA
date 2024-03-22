@@ -36,7 +36,7 @@ void Model::LoadModel(std::string path)
 	aiReleaseImport(scene);
 }
 
-void Model::Draw(Shader& shader)
+void Model::Draw(Shader* shader)
 {
 	for (auto mesh = meshes.begin(); mesh != meshes.end(); mesh++)
 	{

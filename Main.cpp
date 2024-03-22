@@ -13,10 +13,4 @@ int main()
 	{
 		sceneManager.Update();
 	}
-
-	//lophics.Start();
-	//while (!glfwWindowShouldClose(lophics.window)) {
-	//	lophics.Update();
-	//}
-	//lophics.Stop();
 }

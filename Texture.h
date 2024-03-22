@@ -23,5 +23,7 @@ public:
 	GLuint ID;
 	Type type;
 	Texture();
+
+	static GLuint Load(std::string path, int wrappingMode);
 };
 

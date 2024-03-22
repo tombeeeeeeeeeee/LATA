@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-#include "TextureManager.h"
+#include "ResourceManager.h"
 
 #include "Graphics.h"
 
@@ -72,7 +72,7 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 
 void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* mesh)
 {
-	int facesCount = mesh->mNumFaces;
+	unsigned int facesCount = mesh->mNumFaces;
 	std::vector<GLuint> indices;
 	for (unsigned int i = 0; i < facesCount; i++)
 	{
@@ -200,14 +200,14 @@ void Mesh::InitialiseCube()
 	Initialise(vertexCount, vertices);
 }
 
-void Mesh::InitialiseFromFile(const char* filename)
+void Mesh::InitialiseFromFile(std::string filename)
 {
-	InitialiseIndexFromFile(filename, 0);
+	InitialiseIndexFromFile(filename.c_str(), 0);
 }
 
-void Mesh::InitialiseIndexFromFile(const char* path, int i)
+void Mesh::InitialiseIndexFromFile(std::string path, int i)
 {
-	const aiScene* scene = aiImportFile(path, 0);
+	const aiScene* scene = aiImportFile(path.c_str(), 0);
 	if (!scene) {
 		std::cout << "Mesh failed to load at: " << path << "\n";
 		return;
@@ -219,12 +219,11 @@ void Mesh::InitialiseIndexFromFile(const char* path, int i)
 	aiReleaseImport(scene);
 }
 
-void Mesh::Draw(Shader& shader)
+void Mesh::Draw(Shader* shader)
 {
-	shader.Use();
-	// bind appropriate textures
-	
+	shader->Use();
 
+	// bind appropriate textures
 	std::unordered_map<Texture::Type, unsigned int> typeCounts;
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
@@ -243,7 +242,7 @@ void Mesh::Draw(Shader& shader)
 		number = typeCount->second;
 
 		// now set the sampler to the correct texture unit
-		shader.setSampler(("material." + name + std::to_string(number)), i+1);
+		shader->setSampler(("material." + name + std::to_string(number)), i+1);
 
 		// and finally bind the texture
 		glBindTexture(GL_TEXTURE_2D, textures[i]->ID);
@@ -290,6 +289,7 @@ void Mesh::Unbind()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+// TODO: These should specifically be called for files found in the mtl file if there
 std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type)
 {
 	std::vector<Texture*> textures;
@@ -299,7 +299,7 @@ std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* m
 		aiString str;
 		mat->GetTexture(aiType, i, &str);
 		std::string folder = path.substr(0, 1 + path.find_last_of("\\/"));
-		Texture* texture = TextureManager::GetTexture(folder + str.C_Str(), type);
+		Texture* texture = ResourceManager::GetTexture(folder + str.C_Str(), type);
 		if (texture) {
 			texture->type = type;
 			textures.push_back(texture);

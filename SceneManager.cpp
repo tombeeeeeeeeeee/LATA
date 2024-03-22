@@ -1,6 +1,6 @@
 #include "SceneManager.h"
 
-#include "TextureManager.h"
+#include "ResourceManager.h"
 
 #include "gtc/matrix_transform.hpp"
 
@@ -96,7 +96,7 @@ SceneManager::SceneManager(Scene* _scene) :
 
 	glfwMakeContextCurrent(window);
 
-	//TODO: set callbacks here
+
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
@@ -140,7 +140,7 @@ SceneManager::~SceneManager()
 	delete scene;
 
 	// Textures
-	TextureManager::Unload();
+	ResourceManager::Unload();
 
 	//TODO: unload meshes properly
 
@@ -160,6 +160,9 @@ void SceneManager::Update()
 	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.01f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 	scene->viewProjection = projection * view;
+
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	scene->Update(deltaTime);
 

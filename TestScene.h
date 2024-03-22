@@ -1,45 +1,27 @@
 #pragma once
 #include "Scene.h"
 
-#include "TextureManager.h"
+#include "ResourceManager.h"
 #include "Texture.h"
 #include "Shader.h"
 #include "Model.h"
 #include "SceneObject.h"
 #include "Light.h"
 
-
 class TestScene : public Scene
 {
 private:
 
-	Texture* diffuseMap;
-	Texture* specularMap;
-	Texture* grass;
-
-
-	Shader lightingShader;
-	Shader simpleTexturedShader;
-	Shader lightCubeShader;
-	Shader screenShader;
-
-	Shader shaders[4] = {
-		lightingShader,
-		simpleTexturedShader,
-		lightCubeShader,
-		screenShader
-	};
+	Shader* lightingShader;
+	Shader* lightCubeShader;
 
 	Mesh boxMesh;
 	Mesh lightCubeMesh;
 	Mesh quadMesh;
 	Mesh testMesh;
 	Mesh grassMesh;
-	//Material boxMaterial;
 	Model testLocModel;
-	Model PointLightModel;
 	SceneObject backpack;
-	SceneObject pointLightScene;
 
 	glm::vec3 cubePositions[10] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
