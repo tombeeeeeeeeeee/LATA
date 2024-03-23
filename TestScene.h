@@ -17,8 +17,6 @@ private:
 
 	Mesh boxMesh;
 	Mesh lightCubeMesh;
-	Mesh quadMesh;
-	Mesh testMesh;
 	Mesh grassMesh;
 	Model testLocModel;
 	SceneObject backpack;

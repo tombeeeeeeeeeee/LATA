@@ -8,7 +8,7 @@ struct Material {
     float shininess;
 }; 
 
-struct DirLight {
+struct DirectionalLight {
     vec3 direction;
     vec3 ambient;
     vec3 diffuse;
@@ -40,7 +40,7 @@ struct Spotlight {
 
 #define MAX_POINT_LIGHTS 4
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
-uniform DirLight dirLight;
+uniform DirectionalLight directionalLight;
 uniform Spotlight spotlight;
 
 const float alphaDiscard = 0.1;
@@ -52,7 +52,7 @@ in vec2 TexCoords;
 uniform vec3 viewPos;
 uniform Material material;
 
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
+vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcSpotlight(Spotlight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
@@ -65,7 +65,7 @@ void main()
 
     // Directional light
     //TODO: should there be ifs here to check if the lights are actually 'active', I don't think it'll actually help performance wise?
-    vec3 result = CalcDirLight(dirLight, norm, viewDir);
+    vec3 result = CalcDirectionalLight(directionalLight, norm, viewDir);
 
     // Point lights
     for(int i = 0; i < MAX_POINT_LIGHTS; i++) {
@@ -85,7 +85,7 @@ void main()
     FragColor = vec4(result, 1.0);
 } 
 
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
+vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 {
     vec3 lightDir = normalize(-light.direction);
 

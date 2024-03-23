@@ -8,12 +8,12 @@
 #include <iostream>
 #include <unordered_map>
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture*> _textures) :
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) :
 	triCount(0),
 	VAO(0),
 	VBO(0),
 	IBO(0),
-	textures(_textures)
+	material(nullptr)
 {
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
 	Initialise(vertices.size(), &vertices[0], indices.size(), &indices[0]);
@@ -24,11 +24,12 @@ Mesh::Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexC
 	Initialise(vertexCount, vertices, indexCount, indices);
 }
 
-Mesh::Mesh():
+Mesh::Mesh() :
 	triCount(0),
 	VAO(0),
 	VBO(0),
-	IBO(0)
+	IBO(0),
+	material(nullptr)
 {
 }
 
@@ -105,12 +106,18 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 		}
 	}
 
-	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+	//Texture stuff
+	aiMaterial* ai_material = scene->mMaterials[mesh->mMaterialIndex];
+
+	//Texture textures[] = {
+	std::vector<Texture*> textures;
 	//TODO: This shouldn't have to be changed for when another texture type is supported
-	AddMaterialTextures(path, material, aiTextureType_DIFFUSE, Texture::Type::diffuse);
-	AddMaterialTextures(path, material, aiTextureType_SPECULAR, Texture::Type::specular);
-	AddMaterialTextures(path, material, aiTextureType_NORMALS, Texture::Type::normal);
-	
+	AddMaterialTextures(&textures, path, ai_material, aiTextureType_DIFFUSE, Texture::Type::diffuse);
+	AddMaterialTextures(&textures, path, ai_material, aiTextureType_SPECULAR, Texture::Type::specular);
+	AddMaterialTextures(&textures, path, ai_material, aiTextureType_NORMALS, Texture::Type::normal);
+
+	material = ResourceManager::GetMaterial(textures);
+
 	Initialise(vertexCount, vertices, indices.size(), indices.data());
 	delete[] vertices;
 }
@@ -149,7 +156,7 @@ void Mesh::InitialiseDoubleSidedQuad()
 	};
 	Initialise(vertexCount, vertices);
 }
-	
+
 void Mesh::InitialiseCube()
 {
 	const unsigned int vertexCount = 36;
@@ -161,42 +168,42 @@ void Mesh::InitialiseCube()
 		{ { 0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  0.0f, -1.0f, 0.0f},  {1.0f,  1.0f} },
 		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{ 0.0f,  0.0f, -1.0f, 0.0f},  {0.0f,  0.0f} },
 		{ {-0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  0.0f, -1.0f, 0.0f},  {0.0f,  1.0f} },
-		   // front face                                                                                    
+		// front face                                                                                    
 		{ {-0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {0.0f,  0.0f} },
 		{ { 0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {1.0f,  0.0f} },
 		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {1.0f,  1.0f} },
 		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {1.0f,  1.0f} },
 		{ {-0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {0.0f,  1.0f} },
 		{ {-0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f,  0.0f,  1.0f, 0.0f},  {0.0f,  0.0f} },
-		   // left face                                                                                                                                                            
+		// left face                         
 		{ {-0.5f,  0.5f,  0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
 		{ {-0.5f,  0.5f, -0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  1.0f} },
 		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
 		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
 		{ {-0.5f, -0.5f,  0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  0.0f} },
 		{ {-0.5f,  0.5f,  0.5f, 1.0f},	{-1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
-		   // right face                                                                                     
+		// right face                                                                                     
 		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
 		{ { 0.5f, -0.5f, -0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
 		{ { 0.5f,  0.5f, -0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  1.0f} },
 		{ { 0.5f, -0.5f, -0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
 		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
 		{ { 0.5f, -0.5f,  0.5f, 1.0f},	{ 1.0f,  0.0f,  0.0f, 0.0f},  {0.0f,  0.0f} },
-		   // bottom face                                                                                         
+		// bottom face                                                                                         
 		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
 		{ { 0.5f, -0.5f, -0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {1.0f,  1.0f} },
 		{ { 0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
 		{ { 0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
 		{ {-0.5f, -0.5f,  0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {0.0f,  0.0f} },
 		{ {-0.5f, -0.5f, -0.5f, 1.0f},	{ 0.0f, -1.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
-		   // top face                                                                                    
+		// top face                                                                                    
 		{ {-0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
 		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
 		{ { 0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {1.0f,  1.0f} },
 		{ { 0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {1.0f,  0.0f} },
 		{ {-0.5f,  0.5f, -0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {0.0f,  1.0f} },
 		{ {-0.5f,  0.5f,  0.5f, 1.0f},	{ 0.0f,  1.0f,  0.0f, 0.0f},  {0.0f,  0.0f} },
-	};                                                                                    
+	};
 	Initialise(vertexCount, vertices);
 }
 
@@ -223,29 +230,9 @@ void Mesh::Draw(Shader* shader)
 {
 	shader->Use();
 
-	// bind appropriate textures
-	std::unordered_map<Texture::Type, unsigned int> typeCounts;
-	for (unsigned int i = 0; i < textures.size(); i++)
-	{
-		glActiveTexture(GL_TEXTURE0 + i+1);
-		unsigned int number;
-		std::string name = Texture::TypeNames.find(textures[i]->type)->second;
-		// Get the amount of this type of texture has been assigned
-		auto typeCount = typeCounts.find(textures[i]->type);
-		if (typeCount == typeCounts.end()) {
-			//TODO: Should this be emplace or insert
-			typeCount = typeCounts.emplace(std::pair<Texture::Type, unsigned int>(textures[i]->type, 1)).first;
-		}
-		else {
-			typeCount->second++;
-		}
-		number = typeCount->second;
-
-		// now set the sampler to the correct texture unit
-		shader->setSampler(("material." + name + std::to_string(number)), i+1);
-
-		// and finally bind the texture
-		glBindTexture(GL_TEXTURE_2D, textures[i]->ID);
+	// Use material
+	if (material) {
+		material->Use(shader);
 	}
 
 	// draw mesh
@@ -259,15 +246,6 @@ void Mesh::Draw(Shader* shader)
 	}
 
 	Unbind();
-	
-	// TODO: how many times should this loops, currently five as there shouldn't be more than 5 active textures so this should be okay but it shouldn't be constant as this could later change in the future
-	// Unbinds any assigned textures, this is so if a mesh only has one diffuse, the previously set specular from another mesh isn't used.
-	for (unsigned int i = 0; i < 5; i++)
-	{
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-	glActiveTexture(GL_TEXTURE0);
 }
 
 void Mesh::GenAndBind()
@@ -311,8 +289,8 @@ std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* m
 	return textures;
 }
 
-void Mesh::AddMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type)
+void Mesh::AddMaterialTextures(std::vector<Texture*>* textures, std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type)
 {
 	std::vector<Texture*> maps = LoadMaterialTextures(path, mat, aiType, type);
-	textures.insert(textures.end(), maps.begin(), maps.end());
+	textures->insert(textures->end(), std::make_move_iterator(maps.begin()), std::make_move_iterator(maps.end()));
 }

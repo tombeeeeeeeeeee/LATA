@@ -12,15 +12,14 @@ void TestScene::Start()
 
 	boxMesh.InitialiseCube();
 	lightCubeMesh.InitialiseCube();
-	quadMesh.InitialiseQuad();
 	grassMesh.InitialiseDoubleSidedQuad();
 
 	Texture* diffuseMap = ResourceManager::GetTexture("images/container2.png", Texture::Type::diffuse);
-	boxMesh.textures.push_back(diffuseMap);
 	Texture* specularMap = ResourceManager::GetTexture("images/container2_specular.png", Texture::Type::specular);
-	boxMesh.textures.push_back(specularMap);
+	boxMesh.material = ResourceManager::GetMaterial(std::vector<Texture*>{ diffuseMap, specularMap });
+	
 	Texture* grass = ResourceManager::GetTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE);
-	grassMesh.textures.push_back(grass);
+	grassMesh.material = ResourceManager::GetMaterial(std::vector<Texture*>{ grass });
 	testLocModel = Model("models/backpack/backpack.obj");
 
 	backpack = SceneObject(&testLocModel, lightingShader, { 0.f, 1.f, 1.f });
@@ -29,13 +28,10 @@ void TestScene::Start()
 	lightingShader->Use();
 	lightingShader->setFloat("material.shininess", 64.0f);
 
-	// TODO: Clean up this light setup, could be functions somewhere else?
 	// directional light
-	lightingShader->setVec3("dirLight.direction", directionalLight.direction);
-	lightingShader->setVec3("dirLight.ambient", directionalLight.ambient);
-	lightingShader->setVec3("dirLight.diffuse", directionalLight.diffuse);
-	lightingShader->setVec3("dirLight.specular", directionalLight.specular);
+	directionalLight.ApplyToShader(lightingShader);
 
+	// TODO: Clean up this light setup, could be functions somewhere else?
 	// Point lights
 	for (int i = 0; i < sizeof(pointLights) / sizeof(pointLights[0]); i++)
 	{
@@ -49,15 +45,7 @@ void TestScene::Start()
 		lightingShader->setFloat("pointLights[" + index + "].quadratic", pointLights[i].quadratic);
 	}
 
-	lightingShader->setVec3("spotlight.position", spotlight.position);
-	lightingShader->setVec3("spotlight.ambient", spotlight.ambient);
-	lightingShader->setVec3("spotlight.diffuse", spotlight.diffuse);
-	lightingShader->setVec3("spotlight.specular", spotlight.specular);
-	lightingShader->setFloat("spotlight.constant", spotlight.constant);
-	lightingShader->setFloat("spotlight.linear", spotlight.linear);
-	lightingShader->setFloat("spotlight.quadratic", spotlight.quadratic);
-	lightingShader->setFloat("spotlight.cutOff", spotlight.cutOff);
-	lightingShader->setFloat("spotlight.outerCutOff", spotlight.outerCutOff);
+	spotlight.ApplyToShader(lightingShader);
 }
 
 void TestScene::Update(float delta)

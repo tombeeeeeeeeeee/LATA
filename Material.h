@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Texture.h"
-#include "Shader.h"
 
 #include <vector>
 
-//TODO: being unused really, decide what to do with
+class Shader;
+
 struct Material
 {
 public:
@@ -15,8 +15,6 @@ public:
 	
 
 	std::vector<Texture*> textures;
-	Shader* shader;
-	void Use();
-
+	void Use(Shader* shader);
 };
 
