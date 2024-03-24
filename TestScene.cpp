@@ -77,16 +77,7 @@ void TestScene::Update(float delta)
 	{
 		lightCube.position = pointLights[i].position;
 		lightCube.Draw();
-	}
-
-	if (!ImGui::Begin("Controls Menu", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::End();
-	}
-
-	ImGui::Text("Look around with the mouse");
-	ImGui::Text("Use keyboard (WASD) to move the camera around");
-
-	ImGui::End();
+	}	
 }
 
 TestScene::~TestScene()

@@ -9,8 +9,8 @@ std::unordered_map<std::string, Shader, ResourceManager::hashFNV1A> ResourceMana
 std::unordered_map<std::vector<Texture*>, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
 
 
-//unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
-//unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
+const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
+const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
 
 Texture* ResourceManager::GetTexture(std::string path, Texture::Type type, int wrappingMode)
@@ -60,22 +60,22 @@ Material* ResourceManager::GetMaterial(std::vector<Texture*> textures)
 
 unsigned long long ResourceManager::hashFNV1A::operator()(std::string key) const
 {
-	unsigned long long hash = 14695981039346656037;
+	unsigned long long hash = offset;
 	for (auto i = 0; i < key.size(); i++)
 	{
 		hash ^= key[i];
-		hash *= 1099511628211;
+		hash *= prime;
 	}
 	return hash;
 }
 
 unsigned long long ResourceManager::hashFNV1A::operator()(std::vector<Texture*> key) const
 {
-	unsigned long long hash = 14695981039346656037;
+	unsigned long long hash = offset;
 	for (auto t = key.begin(); t != key.end(); t++)
 	{
 		hash ^= (*t)->ID;
-		hash *= 1099511628211;
+		hash *= prime;
 	}
 	return hash;
 }

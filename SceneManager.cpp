@@ -2,8 +2,6 @@
 
 #include "ResourceManager.h"
 
-#include "gtc/matrix_transform.hpp"
-
 #include "imguiStuff.h"
 
 #include <iostream>
@@ -54,7 +52,7 @@ void SceneManager::scroll_callback(GLFWwindow* window, double xoffset, double yo
 
 void SceneManager::processInput(GLFWwindow* window)
 {
-	//if (!ImGui::GetIO().WantCaptureKeyboard) { return; }
+	if (ImGui::GetIO().WantCaptureKeyboard) { return; }
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
@@ -77,6 +75,14 @@ void SceneManager::processInput(GLFWwindow* window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
 		camera.ProcessKeyboard(Camera::DOWN, deltaTime);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		firstMouse = true;
+	}
+	else {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 }
 
@@ -107,35 +113,34 @@ SceneManager::SceneManager(Scene* _scene) :
 
 	//TODO: Make function to change the input mode or something
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	if (!gladLoadGL())
-	{
-		//TODO:
-		throw;
-	}
-
-	//// Load OpenGl function pointers with glad
-	//if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	
+	// TODO: Find out the difference between loading glad like this
+	//if (!gladLoadGL())
 	//{
-	//	std::cout << "Failed to initialize GLAD\n";
+	//	//TODO:
 	//	throw;
-	//	return;
-	//	//TODO: fix
-	//	//return -1;
 	//}
 
-
+	//// Load OpenGl function pointers with glad
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD\n";
+		throw;
+		return;
+		//TODO: fix
+		//return -1;
+	}
 
 	ImGui::CreateContext();
 
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
 
+	//ImGui::StyleColorsClassic();
+	//ImGui::StyleColorsLight();
 	ImGui::StyleColorsDark();
 
 	//ImGui_ImplGlfw_InitForOpenGL(window, true);
-
-
 
 	// Depth testing
 	glEnable(GL_DEPTH_TEST);
@@ -150,11 +155,6 @@ SceneManager::SceneManager(Scene* _scene) :
 
 	// Draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	
-	//
-	
-
 
 	scene->camera = &camera;
 
@@ -197,16 +197,12 @@ void SceneManager::Update()
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-
-
-
 	scene->Update(deltaTime);
+	scene->gui.Update();
 
 	ImGui::Render();
 
