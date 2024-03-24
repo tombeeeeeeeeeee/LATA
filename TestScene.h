@@ -18,8 +18,10 @@ private:
 	Mesh boxMesh;
 	Mesh lightCubeMesh;
 	Mesh grassMesh;
-	Model testLocModel;
+	Model backpackModel;
+	Model boxModel;
 	SceneObject backpack;
+	SceneObject testObject;
 
 	glm::vec3 cubePositions[10] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),

@@ -1,8 +1,5 @@
 #include "TestScene.h"
 
-//TODO: this should be later removed as translations shouldnt be happening here
-#include "gtc/matrix_transform.hpp"
-
 
 void TestScene::Start()
 {
@@ -20,9 +17,17 @@ void TestScene::Start()
 	
 	Texture* grass = ResourceManager::GetTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE);
 	grassMesh.material = ResourceManager::GetMaterial(std::vector<Texture*>{ grass });
-	testLocModel = Model("models/backpack/backpack.obj");
+	backpackModel = Model("models/backpack/backpack.obj");
 
-	backpack = SceneObject(&testLocModel, lightingShader, { 0.f, 1.f, 1.f });
+	backpack = SceneObject(&backpackModel, lightingShader, { 0.f, 1.f, 1.f });
+	Mesh newMesh;
+	newMesh.material = ResourceManager::GetMaterial(std::vector<Texture*>{ diffuseMap, specularMap });
+	newMesh.InitialiseCube();
+	boxModel.AddMesh(&newMesh);
+	//boxModel.meshes.push_back(newMesh);
+	//boxModel.meshes.push_back(std::move(newMesh));
+	//boxModel.meshes[0].material = ResourceManager::GetMaterial(std::vector<Texture*>{ diffuseMap, specularMap });
+	//boxModel.AddMesh();
 
 	// shader configuration
 	lightingShader->Use();
@@ -64,8 +69,9 @@ void TestScene::Update(float delta)
 
 	lightingShader->Use();
 
-	glm::mat4 model = glm::mat4(1.0f);
-
+	glm::mat4 model = glm::mat4(5.0f);
+	lightingShader->setMat4("model", model);
+	boxModel.Draw(lightingShader);
 
 	backpack.Draw();
 

@@ -9,11 +9,10 @@ public:
 	Model(std::string path);
 
 	void LoadModel(std::string path);
+	void AddMesh(Mesh* mesh);
 	void Draw(Shader* shader);
 
-private:
 	std::vector<Mesh> meshes;
-	
-	std::vector<Texture*> textures;
+private:
 };
 

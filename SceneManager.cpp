@@ -131,6 +131,8 @@ SceneManager::SceneManager(Scene* _scene) :
 	scene->camera = &camera;
 
 	scene->Start();
+
+	std::cout << "Start finished\n";
 }
 
 SceneManager::~SceneManager()

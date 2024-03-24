@@ -3,7 +3,7 @@
 #include "Shader.h"
 #include "Model.h"
 
-#include "gtc/matrix_transform.hpp"
+
 
 SceneObject::SceneObject() :
 	model(nullptr),

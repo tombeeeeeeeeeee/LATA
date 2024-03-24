@@ -27,13 +27,22 @@ void Model::LoadModel(std::string path)
 	}
 
 	meshes.resize(scene->mNumMeshes);
+	//meshes.reserve(scene->mNumMeshes);
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[i];
 		meshes[i].InitialiseFromAiMesh(path, scene, mesh);
+		//Mesh newMesh;
+		//newMesh.InitialiseFromAiMesh(path, scene, mesh);
+		//meshes.push_back(std::move(newMesh));
 	}
 
 	aiReleaseImport(scene);
+}
+
+void Model::AddMesh(Mesh* mesh)
+{
+	meshes.push_back(std::move(*mesh));
 }
 
 void Model::Draw(Shader* shader)
