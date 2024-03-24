@@ -12,7 +12,8 @@ public:
 	void AddMesh(Mesh* mesh);
 	void Draw(Shader* shader);
 
-	std::vector<Mesh> meshes;
 private:
+	//TODO: Model currently comepletly owns the meshes, this should not be the case
+	std::vector<Mesh> meshes;
 };
 

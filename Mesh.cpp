@@ -35,7 +35,7 @@ Mesh::Mesh() :
 
 Mesh::~Mesh()
 {
-	std::cout << "A mesh was destroyed\n";
+	//std::cout << "A mesh was destroyed\n";
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &IBO);
@@ -43,7 +43,7 @@ Mesh::~Mesh()
 
 Mesh::Mesh(Mesh&& other) noexcept
 {
-	std::cout << "A mesh was moved via constructor!\n";
+	//std::cout << "A mesh was moved via constructor!\n";
 	triCount = other.triCount;
 	VAO = other.VAO;
 	VBO = other.VBO;
@@ -56,24 +56,6 @@ Mesh::Mesh(Mesh&& other) noexcept
 	other.IBO = 0;
 	other.material = nullptr;
 }
-
-//Mesh& Mesh::operator=(Mesh&& other) noexcept
-//{
-//	std::cout << "A mesh was moved via operator!\n";
-//	triCount = other.triCount;
-//	VAO = other.VAO;
-//	VBO = other.VBO;
-//	IBO = other.IBO;
-//	material = other.material;
-//
-//	other.triCount = 0;
-//	other.VAO = 0;
-//	other.VBO = 0;
-//	other.IBO = 0;
-//	other.material = nullptr;
-//	// TODO: insert return statement here
-//	return *this;
-//}
 
 void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices)
 {

@@ -65,15 +65,15 @@ void main()
 
     // Directional light
     //TODO: should there be ifs here to check if the lights are actually 'active', I don't think it'll actually help performance wise?
-    vec3 result = CalcDirectionalLight(directionalLight, norm, viewDir);
+    vec3 result = max(CalcDirectionalLight(directionalLight, norm, viewDir), 0);
 
     // Point lights
     for(int i = 0; i < MAX_POINT_LIGHTS; i++) {
-        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
+        result += max(CalcPointLight(pointLights[i], norm, FragPos, viewDir), 0);
     }
     
     // Spot light
-    result += CalcSpotlight(spotlight, norm, FragPos, viewDir);
+    result += max(CalcSpotlight(spotlight, norm, FragPos, viewDir), 0);
 
     // Emission
     result += vec3(texture(material.emission1, TexCoords));

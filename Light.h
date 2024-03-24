@@ -24,14 +24,16 @@ struct PointLight : public Light {
     float constant;
     float linear;
     float quadratic;
-    PointLight(glm::vec3 _ambient, glm::vec3 _diffuse, glm::vec3 _specular, glm::vec3 _position, float _constant, float _linear, float _quadratic);
+    // TODO: The index of the light shouldn't be stored here
+    int index;
+    PointLight(glm::vec3 _ambient, glm::vec3 _diffuse, glm::vec3 _specular, glm::vec3 _position, float _constant, float _linear, float _quadratic, int _index);
     void ApplyToShader(Shader* shader) override;
 };
 
-struct SpotLight : public PointLight {
+struct Spotlight : public PointLight {
     glm::vec3 direction;
     float cutOff;
     float outerCutOff;
-    SpotLight(glm::vec3 _ambient, glm::vec3 _diffuse, glm::vec3 _specular, glm::vec3 _position, float _constant, float _linear, float _quadratic, glm::vec3 _direction, float _cutOff, float _outerCutOff);
+    Spotlight(glm::vec3 _ambient, glm::vec3 _diffuse, glm::vec3 _specular, glm::vec3 _position, float _constant, float _linear, float _quadratic, glm::vec3 _direction, float _cutOff, float _outerCutOff);
     void ApplyToShader(Shader* shader) override;
 };
