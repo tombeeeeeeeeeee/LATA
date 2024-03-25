@@ -30,11 +30,12 @@ void SceneManager::mouse_callback(GLFWwindow* window, double xposIn, double ypos
 	float xpos = static_cast<float>(xposIn);
 	float ypos = static_cast<float>(yposIn);
 
-	if (firstMouse)
+	if (firstMouse || ImGui::GetIO().WantCaptureMouse)
 	{
 		xpos = 0.5;
 		ypos = 0.5;
 		firstMouse = false;
+		return;
 	}
 
 	if (lockedCamera) { return; }
