@@ -4,6 +4,8 @@
 
 class Scene;
 class Camera;
+class SceneObject;
+class Transform;
 
 class GUI
 {
@@ -17,7 +19,11 @@ private:
 	void ResourceMenu();
 	void TestMenu();
 	void CameraMenu();
+	int sceneObjectSelectedIndex;
+	void SceneObjectMenu();
 
 	void CameraGUI(Camera* camera);
+	void TransformGUI(Transform* transform);
+	void SceneObjectGUI(SceneObject* sceneObject);
 };
 

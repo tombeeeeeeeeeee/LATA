@@ -1,4 +1,7 @@
 #pragma once
+
+#include "Transform.h"
+
 #include "Maths.h"
 
 class Model;
@@ -8,9 +11,7 @@ class Shader;
 class SceneObject
 {
 public:
-	glm::vec3 position;
-	glm::vec3 rotation;
-	float scale;
+	Transform transform;
 
 	Model* model;
 	Shader* shader;

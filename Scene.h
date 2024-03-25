@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SceneObject.h"
 #include "Camera.h"
 
 #include "GUI.h"
@@ -17,6 +18,7 @@ public:
 	Camera* camera;
 	friend GUI;
 	GUI gui;
+	std::vector<SceneObject*> sceneObjects;
 
 	virtual void Start() {};
 	virtual void Update(float delta) = 0;

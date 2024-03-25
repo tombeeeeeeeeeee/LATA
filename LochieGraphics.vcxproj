@@ -164,6 +164,7 @@
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
@@ -197,6 +198,7 @@
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
@@ -211,6 +213,7 @@
     <None Include="shader.vert" />
     <None Include="simpleTextured.frag" />
     <None Include="simpleTextured.vert" />
+    <None Include="solidColour.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

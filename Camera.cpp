@@ -29,7 +29,7 @@ Camera::Camera() : Camera({ 0.f, 0.f, 0.f }, { 0.f, 1.f, 0.f }, -90.f, 0.0f, 2.5
 }
 
 
-
+// TODO: this could be written without the lookAt function
 glm::mat4 Camera::GetViewMatrix() const
 {
     return glm::lookAt(position, position + front, up);

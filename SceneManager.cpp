@@ -15,6 +15,7 @@ Camera SceneManager::camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float SceneManager::lastX = 600;
 float SceneManager::lastY = 400;
 bool SceneManager::firstMouse = true;
+bool SceneManager::lockedCamera = false;
 
 
 void SceneManager::framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -36,6 +37,8 @@ void SceneManager::mouse_callback(GLFWwindow* window, double xposIn, double ypos
 		firstMouse = false;
 	}
 
+	if (lockedCamera) { return; }
+
 	float xoffset = xpos - lastX;
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
@@ -54,6 +57,18 @@ void SceneManager::processInput(GLFWwindow* window)
 {
 	if (ImGui::GetIO().WantCaptureKeyboard) { return; }
 
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		lockedCamera = true;
+		firstMouse = true;
+	}
+	else {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		lockedCamera = false;
+	}
+
+	// Camera movement
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
@@ -77,13 +92,7 @@ void SceneManager::processInput(GLFWwindow* window)
 		camera.ProcessKeyboard(Camera::DOWN, deltaTime);
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		firstMouse = true;
-	}
-	else {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	}
+	
 }
 
 SceneManager::SceneManager(Scene* _scene) :
@@ -151,6 +160,10 @@ SceneManager::SceneManager(Scene* _scene) :
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
 
+	//// Stencil Testing
+	/*glEnable(GL_STENCIL_TEST);
+	glStencilMask(0xFF);*/
+
 	//TODO: Shaders, Meshes, Models, Textures should all be set up in the scene
 
 	// Draw in wireframe polygons.
@@ -194,8 +207,12 @@ void SceneManager::Update()
 	glm::mat4 view = camera.GetViewMatrix();
 	scene->viewProjection = projection * view;
 
+	// Stencil stuffs
+	
+
+
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();

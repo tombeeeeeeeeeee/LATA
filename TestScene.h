@@ -13,11 +13,13 @@ class TestScene : public Scene
 private:
 	Shader* lightingShader;
 	Shader* lightCubeShader;
+	Shader* solidColourShader;
 
 	Model backpackModel;
 	Model boxModel;
 	Model grassModel;
 	Model lightCubeModel;
+
 	SceneObject backpack;
 	SceneObject grass;
 	SceneObject box;
@@ -64,6 +66,7 @@ private:
 
 public:
 
+	TestScene();
 	void Start() override;
 	void Update(float delta) override;
 	~TestScene() override;

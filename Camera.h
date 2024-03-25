@@ -5,7 +5,7 @@
 
 #include <vector>
 
-
+// TODO: Make this fit better with the sceneObject system
 class Camera
 {
 public:

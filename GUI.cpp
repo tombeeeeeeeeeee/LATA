@@ -1,5 +1,6 @@
 #include "GUI.h"
 
+#include "SceneObject.h"
 #include "Scene.h"
 
 #include "ResourceManager.h"
@@ -9,6 +10,7 @@ void GUI::Update()
 	TestMenu();
 	ResourceMenu();
 	CameraMenu();
+	SceneObjectMenu();
 }
 
 void GUI::ResourceMenu()
@@ -93,6 +95,22 @@ void GUI::CameraMenu()
 	ImGui::End();
 }
 
+void GUI::SceneObjectMenu()
+{
+	if (!ImGui::Begin("Scene Object Menu", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::End();
+		return;
+	}
+
+
+	if (ImGui::SliderInt("Scene Object Index", &sceneObjectSelectedIndex, 0, scene->sceneObjects.size()-1)) {
+		sceneObjectSelectedIndex = glm::clamp(sceneObjectSelectedIndex, 0, (int)scene->sceneObjects.size()-1);
+	}
+	SceneObjectGUI(scene->sceneObjects[sceneObjectSelectedIndex]);
+
+	ImGui::End();
+}
+
 void GUI::CameraGUI(Camera* camera)
 {
 	ImGui::DragFloat3("Position##Camera", &camera->position[0]);
@@ -119,5 +137,18 @@ void GUI::CameraGUI(Camera* camera)
 	ImGui::DragFloat("Movement Speed##Camera", &camera->movementSpeed);
 	ImGui::DragFloat("Sensitivity##Camera", &camera->sensitivity);
 	ImGui::DragFloat("FOV##Camera", &camera->fov);
+}
+
+void GUI::TransformGUI(Transform* transform)
+{
+	ImGui::DragFloat3("Position##transform", &transform->position[0]);
+	ImGui::DragFloat3("Rotation##transform", &transform->rotation[0]);
+
+	ImGui::DragFloat("Scale##transform", &transform->scale);
+}
+
+void GUI::SceneObjectGUI(SceneObject* sceneObject)
+{
+	TransformGUI(&sceneObject->transform);
 }
 
