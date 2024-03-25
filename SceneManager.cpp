@@ -28,6 +28,7 @@ void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int he
 	windowHeight = height;
 }
 
+// TODO: Make it so holding right click can move the camera if the camera is locked
 void SceneManager::MouseMoveCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
 	if (lockedCamera) { return; }
@@ -37,7 +38,6 @@ void SceneManager::MouseMoveCallback(GLFWwindow* window, double xposIn, double y
 		firstMouse = false;
 		return;
 	}
-
 
 	float xpos = static_cast<float>(xposIn);
 	float ypos = static_cast<float>(yposIn);
@@ -154,7 +154,6 @@ SceneManager::SceneManager(Scene* _scene) :
 	if (!window) {
 		std::cout << "Failed to create GLFW window\n";
 		glfwTerminate();
-		//TODO: something better than throw, same with loading GLAD and glfw
 		throw;
 	}
 
@@ -165,7 +164,6 @@ SceneManager::SceneManager(Scene* _scene) :
 
 	glfwMakeContextCurrent(window);
 
-	//TODO: Make function to change the input mode or something
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	
 	if (!gladLoadGL())
@@ -184,8 +182,6 @@ SceneManager::SceneManager(Scene* _scene) :
 	//ImGui::StyleColorsLight();
 	ImGui::StyleColorsDark();
 
-	//ImGui_ImplGlfw_InitForOpenGL(window, true);
-
 	// Depth testing
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -194,12 +190,6 @@ SceneManager::SceneManager(Scene* _scene) :
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
-
-	//// Stencil Testing
-	/*glEnable(GL_STENCIL_TEST);
-	glStencilMask(0xFF);*/
-
-	//TODO: Shaders, Meshes, Models, Textures should all be set up in the scene
 
 	// Draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

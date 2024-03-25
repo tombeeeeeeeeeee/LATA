@@ -1,11 +1,12 @@
 #pragma once
+#include "Part.h"
 
 #include "Maths.h"
 
 class Model;
 class Shader;
 
-class ModelRenderer
+class ModelRenderer : public Part
 {
 public:
 	Model* model;
@@ -13,6 +14,7 @@ public:
 
 	ModelRenderer(Model* _model, Shader* _shader);
 
-	virtual void Draw(glm::mat4 matrix);
+	virtual void Draw() override;
+	virtual void GUI(Part* part) override;
 };
 

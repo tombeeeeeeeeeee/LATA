@@ -10,9 +10,11 @@ class MultiModelRenderer : public ModelRenderer
 public:
 	std::vector<Transform> transforms;
 
-	void Draw(glm::mat4 matrix) override;
+	void Draw() override;
 	
 	MultiModelRenderer(Model* _model, Shader* _shader);
 	MultiModelRenderer(Model* _model, Shader* _shader, std::vector<Transform> _tranforms);
+
+	void GUI(Part* part) override;
 };
 

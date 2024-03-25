@@ -1,5 +1,9 @@
 #include "Transform.h"
 
+#include "imguiStuff.h"
+
+#include <string>
+
 Transform::Transform() :
 	position({ 0.f, 0.f, 0.f }),
 	rotation({ 0.f, 0.f, 0.f }),
@@ -23,4 +27,15 @@ glm::mat4 Transform::getMatrix() const
 	matrix = glm::rotate(matrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 	matrix = glm::rotate(matrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 	return matrix;
+}
+
+void Transform::GUI(Part* part)
+{
+	std::string tag = std::to_string(reinterpret_cast<std::uintptr_t>(part));
+	Transform* transform = (Transform*)part;
+
+	ImGui::DragFloat3(("Position##transform" + tag).c_str(), &transform->position[0]);
+	ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &transform->rotation[0]);
+
+	ImGui::DragFloat(("Scale##transform" + tag).c_str(), &transform->scale);
 }

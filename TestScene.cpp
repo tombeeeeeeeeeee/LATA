@@ -17,10 +17,6 @@ void TestScene::Start()
 	// Shaders
 	lightingShader = ResourceManager::GetShader("shader.vert", "shader.frag");
 	lightCubeShader = ResourceManager::GetShader("lightCube.vert", "lightCube.frag");
-	solidColourShader = ResourceManager::GetShader("lightCube.vert", "solidColour.frag");
-
-	solidColourShader->Use();
-	solidColourShader->setVec3("colour", { 0.2f, 1.0f, 0.2f });
 
 	lightingShader->Use();
 	lightingShader->setFloat("material.shininess", 64.0f);
@@ -39,7 +35,7 @@ void TestScene::Start()
 			ResourceManager::GetTexture("images/container2_specular.png", Texture::Type::specular)
 	});
 	boxModel.AddMesh(&boxMesh);
-	boxes.modelRenderer = new MultiModelRenderer(&boxModel, lightingShader, std::vector<Transform>
+	boxes.AddPart(new MultiModelRenderer(&boxModel, lightingShader, std::vector<Transform>
 	{
 		Transform({  0.0f,  0.0f,  0.00f }, { 20.f,   6.f,  10.f }, 1.0f),
 		Transform({  2.0f,  5.0f, -15.0f }, { 40.f,  12.f,  20.f }, 1.0f),
@@ -51,12 +47,12 @@ void TestScene::Start()
 		Transform({  1.5f,  2.0f, -2.50f }, { 160.f, 48.f,  80.f }, 1.0f),
 		Transform({  1.5f,  0.2f, -1.50f }, { 180.f, 54.f,  90.f }, 1.0f),
 		Transform({ -1.3f,  1.0f, -1.50f }, { 200.f, 60.f, 100.f }, 1.0f)
-	});
+	}));
 
 	Mesh lightCubeMesh;
 	lightCubeMesh.InitialiseCube();
 	lightCubeModel.AddMesh(&lightCubeMesh);
-	lightCube.modelRenderer = new ModelRenderer(&lightCubeModel, lightCubeShader);
+	lightCube.AddPart(new ModelRenderer(&lightCubeModel, lightCubeShader));
 	lightCube.transform.scale = 0.2f;
 
 	Mesh grassMesh;
@@ -65,7 +61,7 @@ void TestScene::Start()
 		ResourceManager::GetTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE)
 	});
 	grassModel.AddMesh(&grassMesh);
-	grass.modelRenderer = new MultiModelRenderer(&grassModel, lightingShader, std::vector<Transform>{
+	grass.AddPart(new MultiModelRenderer(&grassModel, lightingShader, std::vector<Transform>{
 		Transform({ 0.0f, 0.0f,   0.0f }, { 0.f,  20.f, 0.f }, 1.0f),
 		Transform({ 2.0f, 0.0f, -15.0f }, { 0.f,  40.f, 0.f }, 1.0f),
 		Transform({ -1.5f, 0.0f, -03.5f }, { 0.f,  60.f, 0.f }, 1.0f),
@@ -76,20 +72,17 @@ void TestScene::Start()
 		Transform({ 1.5f, 0.0f, -03.5f }, { 0.f, 160.f, 0.f }, 1.0f),
 		Transform({ 1.5f, 0.0f, -04.5f }, { 0.f, 180.f, 0.f }, 1.0f),
 		Transform({ -1.3f, 0.0f, -01.5f }, { 0.f, 200.f, 0.f }, 1.0f),
-	});
-
-	//backpackModel = Model("models/backpack/backpack.obj");
-	backpackModel = Model("models/soulspear/soulspear.obj");
-	backpackModel.SetMaterial(ResourceManager::GetMaterial(std::vector<Texture*>{
-		ResourceManager::GetTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse),
-		ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular),
-		ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal)
 	}));
-	backpack.modelRenderer = new ModelRenderer(&backpackModel, lightingShader);
+
+	backpackModel = Model("models/backpack/backpack.obj");
+	//backpackModel = Model("models/soulspear/soulspear.obj");
+	//backpackModel.SetMaterial(ResourceManager::GetMaterial(std::vector<Texture*>{
+	//	ResourceManager::GetTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse),
+	//	ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular),
+	//	ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal)
+	//}));
+	backpack.AddPart(new ModelRenderer(&backpackModel, lightingShader));
 	backpack.transform.position = { 0.f, 1.f, 1.f };
-
-	glEnable(GL_STENCIL_TEST);
-
 }
 
 void TestScene::Update(float delta)
@@ -103,46 +96,13 @@ void TestScene::Update(float delta)
 
 	lightCubeShader->Use();
 	lightCubeShader->setMat4("vp", viewProjection);
-	solidColourShader->Use();
-	solidColourShader->setMat4("vp", viewProjection);
-
-	// Stencil stuff
-	glEnable(GL_DEPTH_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-	// Disable Drawing to the stencil mask
-	glStencilMask(0x00);
-
 
 	// Drawing
-	backpack.Draw();
-
-	// Enable Drawing to the stencil mask
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
-	glStencilMask(0xFF);
-
-	boxes.modelRenderer->shader = lightingShader;
-	boxes.transform.scale = 1.0f;
-	boxes.Draw();
-
-	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-	glStencilMask(0x00);
-	glDisable(GL_DEPTH_TEST);
-
-	boxes.modelRenderer->shader = solidColourShader;
-	boxes.transform.scale = 1.1f;
-	boxes.Draw();
-
-	glStencilMask(0xFF);
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
-	glEnable(GL_DEPTH_TEST);
-
-	grass.Draw();
-
-	for (unsigned int i = 0; i < 4; i++)
+	// TODO: Actual draw/update loop
+	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
-		lightCube.transform.position = pointLights[i].position;
-		lightCube.Draw();
+		(*i)->Update(delta);
+		(*i)->Draw();
 	}
 }
 

@@ -13,7 +13,6 @@ class TestScene : public Scene
 private:
 	Shader* lightingShader;
 	Shader* lightCubeShader;
-	Shader* solidColourShader;
 
 	Model backpackModel;
 	Model boxModel;

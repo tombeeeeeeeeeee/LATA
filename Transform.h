@@ -1,8 +1,9 @@
 #pragma once
+#include "Part.h"
 
 #include "Maths.h"
 
-class Transform
+class Transform : public Part
 {
 public:
 	glm::vec3 position;
@@ -13,5 +14,7 @@ public:
 	Transform(glm::vec3 _position, glm::vec3 _rotation, float _scale);
 
 	glm::mat4 getMatrix() const;
+
+	void GUI(Part* part) override;
 };
 

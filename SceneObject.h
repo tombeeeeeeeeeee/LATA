@@ -5,6 +5,8 @@
 
 #include "Maths.h"
 
+#include <vector>
+
 class Model;
 class Shader;
 
@@ -13,18 +15,19 @@ class SceneObject
 {
 public:
 	Transform transform;
-	ModelRenderer* modelRenderer;
-	
+	std::vector<Part*> parts;
 
 	SceneObject();
-	SceneObject(Model* _model, Shader* _shader, glm::vec3 _position = { 0.f, 0.f, 0.f }, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.0f);
+	SceneObject(glm::vec3 _position, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.0f);
 
 	~SceneObject();
 
 	SceneObject(const SceneObject& other) = delete;
 	SceneObject& operator=(const SceneObject& other) = delete;
 
-
+	void Update(float delta);
 	void Draw() const;
+
+	void AddPart(Part* part);
 };
 

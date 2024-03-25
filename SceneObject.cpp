@@ -6,24 +6,38 @@
 #include "ModelRenderer.h"
 
 SceneObject::SceneObject() :
-	transform(Transform({ 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f }, 1.0f)),
-	modelRenderer(nullptr)
+	transform(Transform({ 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f }, 1.0f))
 {
 }
 
-SceneObject::SceneObject(Model* _model, Shader* _shader, glm::vec3 _position, glm::vec3 _rotation, float _scale) :
-	transform(Transform(_position, _rotation, _scale)),
-	modelRenderer(new ModelRenderer(_model, _shader))
+SceneObject::SceneObject(glm::vec3 _position, glm::vec3 _rotation, float _scale) :
+	transform(Transform(_position, _rotation, _scale))
 {
 }
 
 SceneObject::~SceneObject()
 {
-	delete modelRenderer;
+	// TODO: Cleanup parts
+}
+
+void SceneObject::Update(float delta)
+{
+	for (auto part = parts.begin(); part != parts.end(); part++)
+	{
+		(*part)->Update();
+	}
 }
 
 void SceneObject::Draw() const
 {
-	if (!modelRenderer) { return; }
-	modelRenderer->Draw(transform.getMatrix());
+	for (auto part = parts.begin(); part != parts.end(); part++)
+	{
+		(*part)->Draw();
+	}
+}
+
+void SceneObject::AddPart(Part* part)
+{
+	parts.push_back(part);
+	part->sceneObject = this;
 }

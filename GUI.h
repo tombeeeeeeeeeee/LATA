@@ -27,7 +27,5 @@ private:
 
 	void CameraGUI(Camera* camera);
 	void SceneObjectGUI(SceneObject* sceneObject);
-	void TransformGUI(Transform* transform, std::string tag);
-	void ModelRendererGUI(ModelRenderer* modelRenderer);
 };
 
