@@ -11,7 +11,7 @@ public:
 	void LoadModel(std::string path);
 	void AddMesh(Mesh* mesh);
 	void Draw(Shader* shader);
-
+	void SetMaterial(Material* material);
 private:
 	//TODO: Model currently comepletly owns the meshes, this should not be the case
 	std::vector<Mesh> meshes;

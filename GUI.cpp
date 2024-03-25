@@ -2,6 +2,8 @@
 
 #include "SceneObject.h"
 #include "Scene.h"
+#include "ModelRenderer.h"
+#include "MultiModelRenderer.h"
 
 #include "ResourceManager.h"
 
@@ -139,16 +141,30 @@ void GUI::CameraGUI(Camera* camera)
 	ImGui::DragFloat("FOV##Camera", &camera->fov);
 }
 
-void GUI::TransformGUI(Transform* transform)
-{
-	ImGui::DragFloat3("Position##transform", &transform->position[0]);
-	ImGui::DragFloat3("Rotation##transform", &transform->rotation[0]);
-
-	ImGui::DragFloat("Scale##transform", &transform->scale);
-}
-
 void GUI::SceneObjectGUI(SceneObject* sceneObject)
 {
-	TransformGUI(&sceneObject->transform);
+	TransformGUI(&sceneObject->transform, "SceneObject");
+	ModelRendererGUI(sceneObject->modelRenderer);
+}
+
+void GUI::TransformGUI(Transform* transform, std::string tag)
+{
+	ImGui::DragFloat3(("Position##transform" + tag).c_str(), &transform->position[0]);
+	ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &transform->rotation[0]);
+
+	ImGui::DragFloat(("Scale##transform" + tag).c_str(), &transform->scale);
+}
+
+void GUI::ModelRendererGUI(ModelRenderer* modelRenderer)
+{	
+	ImGui::Text(("Shader: " + std::to_string(modelRenderer->shader->ID)).c_str());
+
+	if (dynamic_cast<MultiModelRenderer*>(modelRenderer)) {
+		MultiModelRenderer* multiModelRenderer = (MultiModelRenderer*)modelRenderer;
+		for (unsigned int i = 0; i < multiModelRenderer->transforms.size(); i++)
+		{
+			TransformGUI(&multiModelRenderer->transforms[i], std::to_string(i));
+		}
+	}
 }
 

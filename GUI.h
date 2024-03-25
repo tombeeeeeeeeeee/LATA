@@ -2,10 +2,13 @@
 
 #include "imguiStuff.h"
 
+#include <string>
+
 class Scene;
 class Camera;
 class SceneObject;
 class Transform;
+class ModelRenderer;
 
 class GUI
 {
@@ -23,7 +26,8 @@ private:
 	void SceneObjectMenu();
 
 	void CameraGUI(Camera* camera);
-	void TransformGUI(Transform* transform);
 	void SceneObjectGUI(SceneObject* sceneObject);
+	void TransformGUI(Transform* transform, std::string tag);
+	void ModelRendererGUI(ModelRenderer* modelRenderer);
 };
 

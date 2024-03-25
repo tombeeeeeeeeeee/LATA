@@ -96,7 +96,7 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 	{
 		for (unsigned int j = 0; j + 2 < mesh->mFaces[i].mNumIndices; j++)
 		{
-			indices.push_back(mesh->mFaces[i].mIndices[j]);
+			indices.push_back(mesh->mFaces[i].mIndices[0]);
 			indices.push_back(mesh->mFaces[i].mIndices[j + 1]);
 			indices.push_back(mesh->mFaces[i].mIndices[j + 2]);
 		}
@@ -285,7 +285,7 @@ void Mesh::Unbind()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-// TODO: These should specifically be called for files found in the mtl file if there
+// Only works for files that specify the location of the textures
 std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type)
 {
 	std::vector<Texture*> textures;
@@ -301,7 +301,7 @@ std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* m
 			textures.push_back(texture);
 		}
 		else {
-			std::cout << "Failed attempt to find a texture of type: " << str.C_Str() << "\n";
+			std::cout << "Failed attempt to find a texture of path: " << str.C_Str() << "\nThe file might have been moved or renamed\n";
 		}
 	}
 	return textures;

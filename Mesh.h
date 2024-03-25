@@ -17,10 +17,6 @@ private:
 	GLuint VAO, VBO, IBO;
 
 public:
-	// 
-	// Instead of storing textures, store local numbers of what material to use
-	// The model would than provide what textures go into each number
-	// For example say theres a model with two meshs, mesh1 has a material1, the mesh2 has a different texture so its would store a different material
 	// TODO: Change how the materials are stored and perhaps store them on the model instead of mesh, so that the same mesh can be used with different models
 
 

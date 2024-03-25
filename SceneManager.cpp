@@ -32,18 +32,18 @@ void SceneManager::mouse_callback(GLFWwindow* window, double xposIn, double ypos
 
 	if (firstMouse)
 	{
-		lastX = xpos;
-		lastY = ypos;
+		xpos = 0.5;
+		ypos = 0.5;
 		firstMouse = false;
 	}
 
 	if (lockedCamera) { return; }
+	else {
+		glfwSetCursorPos(window, 0.5, 0.5);
+	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-	lastX = xpos;
-	lastY = ypos;
+	float xoffset = xpos - 0.5;
+	float yoffset = 0.5 - ypos;
 
 	camera.ProcessMouseMovement(xoffset, yoffset, true);
 }
@@ -51,6 +51,11 @@ void SceneManager::mouse_callback(GLFWwindow* window, double xposIn, double ypos
 void SceneManager::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll((float)yoffset);
+}
+
+void GLAPIENTRY SceneManager::ErrorMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+	// TODO: Write this function
 }
 
 void SceneManager::processInput(GLFWwindow* window)
@@ -104,7 +109,18 @@ SceneManager::SceneManager(Scene* _scene) :
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef DEBUG 
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(ErrorMessageCallback , nullptr);
+
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+#endif
 
 	window = glfwCreateWindow(windowWidth, windowHeight, scene->windowName.c_str(), nullptr, nullptr);
 	if (!window) {
@@ -124,21 +140,12 @@ SceneManager::SceneManager(Scene* _scene) :
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	
 	// TODO: Find out the difference between loading glad like this
-	//if (!gladLoadGL())
-	//{
-	//	//TODO:
-	//	throw;
-	//}
-
-	//// Load OpenGl function pointers with glad
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	if (!gladLoadGL())
 	{
 		std::cout << "Failed to initialize GLAD\n";
 		throw;
-		return;
-		//TODO: fix
-		//return -1;
 	}
+
 
 	ImGui::CreateContext();
 
@@ -206,10 +213,6 @@ void SceneManager::Update()
 	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.01f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 	scene->viewProjection = projection * view;
-
-	// Stencil stuffs
-	
-
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

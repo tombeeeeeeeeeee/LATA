@@ -52,3 +52,11 @@ void Model::Draw(Shader* shader)
 		mesh->Draw(shader);
 	}
 }
+
+void Model::SetMaterial(Material* material)
+{
+	for (auto mesh = meshes.begin(); mesh != meshes.end(); mesh++)
+	{
+		mesh->material = material;
+	}
+}

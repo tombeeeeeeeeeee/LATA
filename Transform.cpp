@@ -7,7 +7,7 @@ Transform::Transform() :
 {
 }
 
-Transform::Transform(glm::vec3 _position, glm::vec3 _rotation, float _scale) :
+Transform::Transform(glm::vec3 _position, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.0f) :
 	position(_position),
 	rotation(_rotation),
 	scale(_scale)

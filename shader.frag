@@ -43,7 +43,7 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform DirectionalLight directionalLight;
 uniform Spotlight spotlight;
 
-const float alphaDiscard = 0.1;
+const float alphaDiscard = 0.5;
 
 in vec3 FragPos;
 in vec3 Normal;
