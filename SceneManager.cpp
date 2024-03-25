@@ -6,8 +6,11 @@
 
 #include <iostream>
 
-unsigned int SceneManager::windowWidth = 1200;
-unsigned int SceneManager::windowHeight = 800;
+unsigned int SceneManager::windowWidth = 1920 / 2;
+unsigned int SceneManager::windowHeight = 1080 / 2;
+WindowModes SceneManager::windowMode = WindowModes::windowed;
+GLFWwindow* SceneManager::window = nullptr;
+
 
 float SceneManager::deltaTime = 0.0f;
 
@@ -18,38 +21,33 @@ bool SceneManager::firstMouse = true;
 bool SceneManager::lockedCamera = false;
 
 
-void SceneManager::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 	windowWidth = width;
 	windowHeight = height;
 }
 
-void SceneManager::mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+void SceneManager::MouseMoveCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	float xpos = static_cast<float>(xposIn);
-	float ypos = static_cast<float>(yposIn);
-
-	if (firstMouse || ImGui::GetIO().WantCaptureMouse)
+	if (lockedCamera) { return; }
+	glfwSetCursorPos(window, 0, 0);
+	if (firstMouse)
 	{
-		xpos = 0.5;
-		ypos = 0.5;
 		firstMouse = false;
 		return;
 	}
 
-	if (lockedCamera) { return; }
-	else {
-		glfwSetCursorPos(window, 0.5, 0.5);
-	}
 
-	float xoffset = xpos - 0.5;
-	float yoffset = 0.5 - ypos;
+	float xpos = static_cast<float>(xposIn);
+	float ypos = static_cast<float>(yposIn);
 
+	float xoffset = xpos;
+	float yoffset = - ypos;
 	camera.ProcessMouseMovement(xoffset, yoffset, true);
 }
 
-void SceneManager::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void SceneManager::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll((float)yoffset);
 }
@@ -59,20 +57,30 @@ void GLAPIENTRY SceneManager::ErrorMessageCallback(GLenum source, GLenum type, G
 	// TODO: Write this function
 }
 
-void SceneManager::processInput(GLFWwindow* window)
+void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if ((key == GLFW_KEY_F11 && action == GLFW_PRESS) || (key == GLFW_KEY_ENTER && action == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)) {
+		ToggleFullscreen();
+	}
+
+	// TODO: continue to lock camera when a mouse button is being held down too
+	if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS) {
+		if (!lockedCamera) {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetCursorPos(window, windowWidth / 2, windowHeight / 2);
+			lockedCamera = true;
+			firstMouse = true;
+		}
+		else {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			lockedCamera = false;
+		}
+	}
+}
+
+void SceneManager::ProcessInput(GLFWwindow* window)
 {
 	if (ImGui::GetIO().WantCaptureKeyboard) { return; }
-
-
-	if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		lockedCamera = true;
-		firstMouse = true;
-	}
-	else {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		lockedCamera = false;
-	}
 
 	// Camera movement
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -96,9 +104,26 @@ void SceneManager::processInput(GLFWwindow* window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
 		camera.ProcessKeyboard(Camera::DOWN, deltaTime);
-	}
+	}	
+}
 
-	
+void SceneManager::ToggleFullscreen()
+{
+	auto temp = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	firstMouse = true;
+	switch (windowMode)
+	{
+	case WindowModes::windowed:
+		windowMode = WindowModes::fullscreenWindowed;
+		glfwSetWindowMonitor(SceneManager::window, glfwGetPrimaryMonitor(), 0, 0, temp->width, temp->height, temp->refreshRate);
+		break;
+	case WindowModes::fullscreenWindowed:
+		windowMode = WindowModes::windowed;
+		glfwSetWindowMonitor(window, nullptr, windowWidth / 4 , windowHeight / 4, windowWidth / 2, windowHeight / 2, temp->refreshRate);
+		break;
+	default:
+		break;
+	}
 }
 
 SceneManager::SceneManager(Scene* _scene) :
@@ -123,6 +148,8 @@ SceneManager::SceneManager(Scene* _scene) :
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 #endif
 
+	//glfwGetPrimaryMonitor();
+	//window = glfwCreateWindow(windowWidth, windowHeight, scene->windowName.c_str(), glfwGetPrimaryMonitor(), nullptr);
 	window = glfwCreateWindow(windowWidth, windowHeight, scene->windowName.c_str(), nullptr, nullptr);
 	if (!window) {
 		std::cout << "Failed to create GLFW window\n";
@@ -131,16 +158,16 @@ SceneManager::SceneManager(Scene* _scene) :
 		throw;
 	}
 
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetScrollCallback(window, scroll_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
+	glfwSetCursorPosCallback(window, MouseMoveCallback);
+	glfwSetScrollCallback(window, ScrollCallback);
+	glfwSetKeyCallback(window, KeyCallback);
 
 	glfwMakeContextCurrent(window);
 
 	//TODO: Make function to change the input mode or something
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	
-	// TODO: Find out the difference between loading glad like this
 	if (!gladLoadGL())
 	{
 		std::cout << "Failed to initialize GLAD\n";
@@ -210,7 +237,7 @@ void SceneManager::Update()
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 
-	processInput(window);
+	ProcessInput(window);
 	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.01f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 	scene->viewProjection = projection * view;

@@ -6,23 +6,31 @@
 
 #include "Graphics.h"
 
+enum class WindowModes {
+	windowed,
+	fullscreenWindowed
+};
+
 class SceneManager
 {
 	Scene* scene;
 
 	// Window
+	static WindowModes windowMode;
 	static unsigned int windowWidth;
 	static unsigned int windowHeight;
-	GLFWwindow* window;
+	static GLFWwindow* window;
 
-	// Callbacks
-	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-	static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
-	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+	// Callbacks //TODO: change how these functions are called, look at other examples on how callbacks can be handled
+	static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
+	static void MouseMoveCallback(GLFWwindow* window, double xposIn, double yposIn);
+	static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	static void GLAPIENTRY ErrorMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
-	static void processInput(GLFWwindow* window);
+	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+	static void ProcessInput(GLFWwindow* window);
+	static void ToggleFullscreen();
 
 	// Time
 	static float deltaTime;

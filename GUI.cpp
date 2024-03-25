@@ -75,12 +75,13 @@ void GUI::ResourceMenu()
 void GUI::TestMenu()
 {
 	if (!ImGui::Begin("Controls Menu", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::End();
+		ImGui::End();	
 		return;
 	}
 
 	ImGui::Text("Look around with the mouse");
 	ImGui::Text("Use keyboard (WASD) to move the camera around");
+	ImGui::Text("Press the ALT key (left) to toggle between moving the mouse / camera");
 
 	ImGui::End();
 }
