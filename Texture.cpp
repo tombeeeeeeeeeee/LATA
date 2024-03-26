@@ -33,7 +33,7 @@ GLuint Texture::Load(std::string path, int wrappingMode)
 		switch (nrComponents)
 		{
 		case STBI_grey:
-			format = GL_LUMINANCE; //TODO: 
+			format = GL_RED;
 			break;
 		case STBI_grey_alpha:
 			format = GL_RG;
