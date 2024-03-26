@@ -28,12 +28,11 @@ MultiModelRenderer::MultiModelRenderer(Model* _model, Shader* _shader, std::vect
 
 }
 
-void MultiModelRenderer::GUI(Part* part)
+void MultiModelRenderer::GUI()
 {
-	MultiModelRenderer* multiModelRenderer = (MultiModelRenderer*)part;
-	ImGui::Text(("Shader: " + std::to_string(multiModelRenderer->shader->ID)).c_str());
-	for (unsigned int i = 0; i < multiModelRenderer->transforms.size(); i++)
+	ImGui::Text(("Shader: " + std::to_string(shader->ID)).c_str());
+	for (unsigned int i = 0; i < transforms.size(); i++)
 	{
-		multiModelRenderer->transforms[i].GUI(&multiModelRenderer->transforms[i]);
+		transforms[i].GUI();
 	}
 }

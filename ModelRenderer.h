@@ -15,6 +15,6 @@ public:
 	ModelRenderer(Model* _model, Shader* _shader);
 
 	virtual void Draw() override;
-	virtual void GUI(Part* part) override;
+	virtual void GUI() override;
 };
 

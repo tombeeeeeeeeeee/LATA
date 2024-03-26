@@ -17,7 +17,11 @@ SceneObject::SceneObject(glm::vec3 _position, glm::vec3 _rotation, float _scale)
 
 SceneObject::~SceneObject()
 {
-	// TODO: Cleanup parts
+	// TODO: Cleanup parts, make sure working
+	while (!parts.empty()) {
+		delete parts.back();
+		parts.pop_back();
+	}
 }
 
 void SceneObject::Update(float delta)

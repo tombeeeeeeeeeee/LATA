@@ -1,5 +1,7 @@
 #include "Transform.h"
 
+#include "Utilities.h"
+
 #include "imguiStuff.h"
 
 #include <string>
@@ -29,13 +31,12 @@ glm::mat4 Transform::getMatrix() const
 	return matrix;
 }
 
-void Transform::GUI(Part* part)
+void Transform::GUI()
 {
-	std::string tag = std::to_string(reinterpret_cast<std::uintptr_t>(part));
-	Transform* transform = (Transform*)part;
+	std::string tag = PointerToString(this);
 
-	ImGui::DragFloat3(("Position##transform" + tag).c_str(), &transform->position[0]);
-	ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &transform->rotation[0]);
+	ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0]);
+	ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &rotation[0]);
 
-	ImGui::DragFloat(("Scale##transform" + tag).c_str(), &transform->scale);
+	ImGui::DragFloat(("Scale##transform" + tag).c_str(), &scale);
 }

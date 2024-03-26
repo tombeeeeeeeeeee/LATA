@@ -14,6 +14,7 @@ void GUI::Update()
 	ResourceMenu();
 	CameraMenu();
 	SceneObjectMenu();
+	LightMenu();
 }
 
 void GUI::ResourceMenu()
@@ -94,7 +95,7 @@ void GUI::CameraMenu()
 		return;
 	}
 
-	CameraGUI(scene->camera);
+	scene->camera->GUI();
 
 	ImGui::End();
 }
@@ -106,7 +107,6 @@ void GUI::SceneObjectMenu()
 		return;
 	}
 
-
 	if (ImGui::SliderInt("Scene Object Index", &sceneObjectSelectedIndex, 0, scene->sceneObjects.size()-1)) {
 		sceneObjectSelectedIndex = glm::clamp(sceneObjectSelectedIndex, 0, (int)scene->sceneObjects.size()-1);
 	}
@@ -115,39 +115,26 @@ void GUI::SceneObjectMenu()
 	ImGui::End();
 }
 
-void GUI::CameraGUI(Camera* camera)
+void GUI::LightMenu()
 {
-	ImGui::DragFloat3("Position##Camera", &camera->position[0]);
-	
-	ImGui::BeginDisabled();
-	ImGui::DragFloat3("Front##Camera", &camera->front[0]);
-	ImGui::DragFloat3("Up##Camera", &camera->up[0]);
-	ImGui::DragFloat3("Right##Camera", &camera->right[0]);
-	ImGui::EndDisabled();
-
-	
-	if (ImGui::DragFloat3("World up##Camera", &camera->worldUp[0])) {
-		camera->UpdateVectors();
+	if (!ImGui::Begin("Light Menu", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::End();
+		return;
 	}
 
-	if (ImGui::DragFloat("Yaw##Camera", &camera->yaw)) {
-		camera->UpdateVectors();
+	if (ImGui::SliderInt("Light selected", &lightSelectedIndex, 0, scene->lights.size() - 1)) {
+		lightSelectedIndex = glm::clamp(lightSelectedIndex, 0, (int)scene->lights.size() - 1);
 	}
+	(scene->lights[lightSelectedIndex])->GUI();
 
-	if (ImGui::DragFloat("Pitch##Camera", &camera->pitch)) {
-		camera->UpdateVectors();
-	}
-
-	ImGui::DragFloat("Movement Speed##Camera", &camera->movementSpeed);
-	ImGui::DragFloat("Sensitivity##Camera", &camera->sensitivity);
-	ImGui::DragFloat("FOV##Camera", &camera->fov);
+	ImGui::End();
 }
 
 void GUI::SceneObjectGUI(SceneObject* sceneObject)
 {
-	sceneObject->transform.GUI(&sceneObject->transform);
+	sceneObject->transform.GUI();
 	for (auto i = sceneObject->parts.begin(); i != sceneObject->parts.end(); i++)
 	{
-		(*i)->GUI(*i);
+		(*i)->GUI();
 	}
 }

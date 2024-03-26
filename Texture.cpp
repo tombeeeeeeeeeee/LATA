@@ -22,34 +22,36 @@ Texture::Texture() :
 
 GLuint Texture::Load(std::string path, int wrappingMode)
 {
-	GLuint textureID;
-	glGenTextures(1, &textureID);
+	GLuint ID;
+	glGenTextures(1, &ID);
 
 	int width, height, nrComponents;
-	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
+	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrComponents, STBI_default);
 	if (data)
 	{
 		GLenum format;
 		switch (nrComponents)
 		{
-		case 1:
-			format = GL_RED;
+		case STBI_grey:
+			format = GL_LUMINANCE; //TODO: 
 			break;
-		case 3:
+		case STBI_grey_alpha:
+			format = GL_RG;
+			break;
+		case STBI_rgb:
 			format = GL_RGB;
 			break;
-		case 4:
+		case STBI_rgb_alpha:
 			format = GL_RGBA;
 			break;
-		case 2:
 		default:
 			std::cout << "Texture failed to load, could not be read correctly, path: " << path << "\n";
 			stbi_image_free(data);
-			return textureID;
+			return ID;
 			break;
 		}
 
-		glBindTexture(GL_TEXTURE_2D, textureID);
+		glBindTexture(GL_TEXTURE_2D, ID);
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -66,5 +68,5 @@ GLuint Texture::Load(std::string path, int wrappingMode)
 	}
 	stbi_image_free(data);
 
-	return textureID;
+	return ID;
 }

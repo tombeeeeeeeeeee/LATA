@@ -2,18 +2,30 @@
 
 #include "MultiModelRenderer.h"
 
+#include "stb_image.h"
+
 TestScene::TestScene()
 {
 	sceneObjects = std::vector<SceneObject*>{
-		&boxes,
-		&grass,
-		&lightCube,
-		&backpack
+		boxes,
+		grass,
+		lightCube,
+		backpack
 	};
+	lights = std::vector<Light*>{
+		&pointLights[0],
+		&pointLights[1],
+		&pointLights[2],
+		&pointLights[3],
+		&spotlight,
+		&directionalLight
+	};
+	
 }
 
 void TestScene::Start()
 {
+	
 	// Shaders
 	lightingShader = ResourceManager::GetShader("shader.vert", "shader.frag");
 	lightCubeShader = ResourceManager::GetShader("lightCube.vert", "lightCube.frag");
@@ -35,7 +47,7 @@ void TestScene::Start()
 			ResourceManager::GetTexture("images/container2_specular.png", Texture::Type::specular)
 	});
 	boxModel.AddMesh(&boxMesh);
-	boxes.AddPart(new MultiModelRenderer(&boxModel, lightingShader, std::vector<Transform>
+	boxes->AddPart(new MultiModelRenderer(&boxModel, lightingShader, std::vector<Transform>
 	{
 		Transform({  0.0f,  0.0f,  0.00f }, { 20.f,   6.f,  10.f }, 1.0f),
 		Transform({  2.0f,  5.0f, -15.0f }, { 40.f,  12.f,  20.f }, 1.0f),
@@ -52,8 +64,8 @@ void TestScene::Start()
 	Mesh lightCubeMesh;
 	lightCubeMesh.InitialiseCube();
 	lightCubeModel.AddMesh(&lightCubeMesh);
-	lightCube.AddPart(new ModelRenderer(&lightCubeModel, lightCubeShader));
-	lightCube.transform.scale = 0.2f;
+	lightCube->AddPart(new ModelRenderer(&lightCubeModel, lightCubeShader));
+	lightCube->transform.scale = 0.2f;
 
 	Mesh grassMesh;
 	grassMesh.InitialiseDoubleSidedQuad();
@@ -61,7 +73,7 @@ void TestScene::Start()
 		ResourceManager::GetTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE)
 	});
 	grassModel.AddMesh(&grassMesh);
-	grass.AddPart(new MultiModelRenderer(&grassModel, lightingShader, std::vector<Transform>{
+	grass->AddPart(new MultiModelRenderer(&grassModel, lightingShader, std::vector<Transform>{
 		Transform({ 0.0f, 0.0f,   0.0f }, { 0.f,  20.f, 0.f }, 1.0f),
 		Transform({ 2.0f, 0.0f, -15.0f }, { 0.f,  40.f, 0.f }, 1.0f),
 		Transform({ -1.5f, 0.0f, -03.5f }, { 0.f,  60.f, 0.f }, 1.0f),
@@ -74,23 +86,27 @@ void TestScene::Start()
 		Transform({ -1.3f, 0.0f, -01.5f }, { 0.f, 200.f, 0.f }, 1.0f),
 	}));
 
-	backpackModel = Model("models/backpack/backpack.obj");
-	//backpackModel = Model("models/soulspear/soulspear.obj");
-	//backpackModel.SetMaterial(ResourceManager::GetMaterial(std::vector<Texture*>{
-	//	ResourceManager::GetTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse),
-	//	ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular),
-	//	ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal)
-	//}));
-	backpack.AddPart(new ModelRenderer(&backpackModel, lightingShader));
-	backpack.transform.position = { 0.f, 1.f, 1.f };
+	backpackModel = Model("models/backpack/backpack.obj", false);
+	//backpackModel = Model(std::string("models/soulspear/soulspear.obj"), false);
+	/*backpackModel.SetMaterial(ResourceManager::GetMaterial(std::vector<Texture*>{
+		ResourceManager::GetTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse),
+		ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular),
+		ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal)
+	}));*/
+	backpack->AddPart(new ModelRenderer(&backpackModel, lightingShader));
+	backpack->transform.position = { 0.f, 1.f, 1.f };
 }
 
 void TestScene::Update(float delta)
 {
+	spotlight.direction = camera->front;
+	spotlight.position = camera->position;
+	for (auto i = lights.begin(); i != lights.end(); i++)
+	{
+		(*i)->ApplyToShader(lightingShader);
+	}
 	// Shader
 	lightingShader->Use();
-	lightingShader->setVec3("spotlight.position", camera->position);
-	lightingShader->setVec3("spotlight.direction", camera->front);
 	lightingShader->setVec3("viewPos", camera->position);
 	lightingShader->setMat4("vp", viewProjection);
 
@@ -108,5 +124,4 @@ void TestScene::Update(float delta)
 
 TestScene::~TestScene()
 {
-
 }

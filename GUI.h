@@ -22,10 +22,12 @@ private:
 	void ResourceMenu();
 	void TestMenu();
 	void CameraMenu();
-	int sceneObjectSelectedIndex;
+	//TODO: functions will probably break if the vectors are empty
+	int sceneObjectSelectedIndex = 0;
 	void SceneObjectMenu();
+	int lightSelectedIndex = 0;
+	void LightMenu();
 
-	void CameraGUI(Camera* camera);
 	void SceneObjectGUI(SceneObject* sceneObject);
 };
 

@@ -19,7 +19,7 @@ public:
 	/// <param name="type">The texture type, this value will be ignored if the texture is already loaded</param>
 	/// <param name="wrappingMode">The texture wrapping mode to use, this value will be ignored if the texture is already loaded</param>
 	/// <returns>Pointer to the texture at the given path</returns>	
-	static Texture* GetTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT);
+	static Texture* GetTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	static Shader* GetShader(std::string vertexPath, std::string fragmentPath);
 	static Material* GetMaterial(std::vector<Texture*> textures);
 

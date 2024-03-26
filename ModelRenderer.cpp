@@ -19,9 +19,8 @@ void ModelRenderer::Draw()
 	model->Draw(shader);
 }
 
-void ModelRenderer::GUI(Part* part)
+void ModelRenderer::GUI()
 {
-	ModelRenderer* modelRenderer = (ModelRenderer*)part;
-	ImGui::Text(("Shader: " + std::to_string(modelRenderer->shader->ID)).c_str());
+	ImGui::Text(("Shader: " + std::to_string(shader->ID)).c_str());
 }
 

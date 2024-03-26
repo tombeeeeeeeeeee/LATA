@@ -88,7 +88,7 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	Unbind();
 }
 
-void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* mesh)
+void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* mesh, bool flipTexturesOnLoad)
 {
 	unsigned int facesCount = mesh->mNumFaces;
 	std::vector<GLuint> indices;
@@ -128,10 +128,10 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 
 	//Texture textures[] = {
 	std::vector<Texture*> textures;
-	//TODO: This shouldn't have to be changed for when another texture type is supported
-	AddMaterialTextures(&textures, path, ai_material, aiTextureType_DIFFUSE, Texture::Type::diffuse);
-	AddMaterialTextures(&textures, path, ai_material, aiTextureType_SPECULAR, Texture::Type::specular);
-	AddMaterialTextures(&textures, path, ai_material, aiTextureType_NORMALS, Texture::Type::normal);
+	//TODO: This shouldn't have to be changed for when another texture type is supported, make some sorta loop or dynamically check what materials there are
+	AddMaterialTextures(&textures, path, ai_material, aiTextureType_DIFFUSE, Texture::Type::diffuse, flipTexturesOnLoad);
+	AddMaterialTextures(&textures, path, ai_material, aiTextureType_SPECULAR, Texture::Type::specular, flipTexturesOnLoad);
+	AddMaterialTextures(&textures, path, ai_material, aiTextureType_NORMALS, Texture::Type::normal, flipTexturesOnLoad);
 
 	material = ResourceManager::GetMaterial(textures);
 
@@ -286,7 +286,7 @@ void Mesh::Unbind()
 }
 
 // Only works for files that specify the location of the textures
-std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type)
+std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type, bool flipOnLoad)
 {
 	std::vector<Texture*> textures;
 	textures.reserve(mat->GetTextureCount(aiType));
@@ -295,7 +295,8 @@ std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* m
 		aiString str;
 		mat->GetTexture(aiType, i, &str);
 		std::string folder = path.substr(0, 1 + path.find_last_of("\\/"));
-		Texture* texture = ResourceManager::GetTexture(folder + str.C_Str(), type);
+		// TODO: Don't default to GL_REPEAT here, change the parameters
+		Texture* texture = ResourceManager::GetTexture(folder + str.C_Str(), type, GL_REPEAT, flipOnLoad);
 		if (texture) {
 			texture->type = type;
 			textures.push_back(texture);
@@ -307,8 +308,8 @@ std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* m
 	return textures;
 }
 
-void Mesh::AddMaterialTextures(std::vector<Texture*>* textures, std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type)
+void Mesh::AddMaterialTextures(std::vector<Texture*>* textures, std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type, bool flipOnLoad)
 {
-	std::vector<Texture*> maps = LoadMaterialTextures(path, mat, aiType, type);
+	std::vector<Texture*> maps = LoadMaterialTextures(path, mat, aiType, type, flipOnLoad);
 	textures->insert(textures->end(), std::make_move_iterator(maps.begin()), std::make_move_iterator(maps.end()));
 }

@@ -7,7 +7,7 @@ class Part
 public:
 	SceneObject* sceneObject;
 
-	virtual void GUI(Part* part) {};
+	virtual void GUI() {};
 
 	virtual void Update() {};
 	virtual void Draw() {};

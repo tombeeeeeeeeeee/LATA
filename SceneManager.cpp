@@ -23,6 +23,9 @@ bool SceneManager::lockedCamera = false;
 
 void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
+	if (width == 0 && height == 0) {
+		width = height = 1;
+	}
 	glViewport(0, 0, width, height);
 	windowWidth = width;
 	windowHeight = height;
@@ -132,7 +135,6 @@ SceneManager::SceneManager(Scene* _scene) :
 	if (!glfwInit() || !_scene) {
 		return;
 	}
-
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);

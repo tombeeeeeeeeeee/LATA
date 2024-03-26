@@ -15,6 +15,6 @@ public:
 
 	glm::mat4 getMatrix() const;
 
-	void GUI(Part* part) override;
+	void GUI() override;
 };
 

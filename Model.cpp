@@ -9,12 +9,12 @@ Model::Model()
 {
 }
 
-Model::Model(std::string path)
+Model::Model(std::string path, bool flipTexturesOnLoad)
 {
-	LoadModel(path);
+	LoadModel(path, flipTexturesOnLoad);
 }
 
-void Model::LoadModel(std::string path)
+void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 {
 	const aiScene* scene = aiImportFile(path.c_str(), 0);
 
@@ -31,7 +31,7 @@ void Model::LoadModel(std::string path)
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[i];
-		meshes[i].InitialiseFromAiMesh(path, scene, mesh);
+		meshes[i].InitialiseFromAiMesh(path, scene, mesh, flipTexturesOnLoad);
 		//Mesh newMesh;
 		//newMesh.InitialiseFromAiMesh(path, scene, mesh);
 		//meshes.push_back(std::move(newMesh));

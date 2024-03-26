@@ -2,6 +2,7 @@
 
 #include "SceneObject.h"
 #include "Camera.h"
+#include "Light.h"
 
 #include "GUI.h"
 
@@ -19,12 +20,13 @@ public:
 	friend GUI;
 	GUI gui;
 	std::vector<SceneObject*> sceneObjects;
+	std::vector<Light*> lights;
 
 	virtual void Start() {};
 	virtual void Update(float delta) = 0;
 
 	Scene();
-	virtual ~Scene() = default;
+	virtual ~Scene();
 
 	Scene(const Scene& other) = delete;
 	Scene& operator=(const Scene& other) = delete;

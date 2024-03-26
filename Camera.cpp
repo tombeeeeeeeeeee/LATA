@@ -2,6 +2,7 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "imguiStuff.h"
 
 Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch, float _movementSpeed, float _sensitivity, float _fov) :
     position(_position),
@@ -109,5 +110,32 @@ void Camera::UpdateVectors()
     // also re-calculate the Right and Up vector
     right = glm::normalize(glm::cross(front, worldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     up = glm::normalize(glm::cross(right, front));
+}
 
+void Camera::GUI()
+{
+    ImGui::DragFloat3("Position##Camera", &position[0]);
+
+    ImGui::BeginDisabled();
+    ImGui::DragFloat3("Front##Camera", &front[0]);
+    ImGui::DragFloat3("Up##Camera", &up[0]);
+    ImGui::DragFloat3("Right##Camera", &right[0]);
+    ImGui::EndDisabled();
+
+
+    if (ImGui::DragFloat3("World up##Camera", &worldUp[0])) {
+        UpdateVectors();
+    }
+
+    if (ImGui::DragFloat("Yaw##Camera", &yaw)) {
+        UpdateVectors();
+    }
+
+    if (ImGui::DragFloat("Pitch##Camera", &pitch)) {
+        UpdateVectors();
+    }
+
+    ImGui::DragFloat("Movement Speed##Camera", &movementSpeed);
+    ImGui::DragFloat("Sensitivity##Camera", &sensitivity);
+    ImGui::DragFloat("FOV##Camera", &fov);
 }

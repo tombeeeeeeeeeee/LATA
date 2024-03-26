@@ -19,10 +19,10 @@ private:
 	Model grassModel;
 	Model lightCubeModel;
 
-	SceneObject backpack;
-	SceneObject grass;
-	SceneObject boxes;
-	SceneObject lightCube;
+	SceneObject* backpack = new SceneObject();
+	SceneObject* grass = new SceneObject();
+	SceneObject* boxes = new SceneObject();
+	SceneObject* lightCube = new SceneObject();
 
 	PointLight pointLights[4] = {
 		PointLight({ 0.05f, 0.05f, 0.05f }, { 1.0f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f}, { 0.7f, 0.2f, 2.0f }, 1.0f, 0.09f, 0.032f, 0),
@@ -34,7 +34,6 @@ private:
 		DirectionalLight({ 0.05f, 0.05f, 0.05f }, { 0.0f, 1.0f, 0.4f }, { 0.5f, 0.5f, 0.5f }, { -0.2f, -1.0f, -0.3f });
 
 	Spotlight spotlight = Spotlight({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, 0.5f, 0.09f, 0.032f, { 0.0f, 0.0f, 0.0f }, glm::cos(glm::radians(10.f)), glm::cos(glm::radians(15.f)));
-	//Spotlight spotlight = Spotlight({ 0.0f, 00.f, 00.f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, 0.0f, 0.00f, 0.000f, { 0.0f, 0.0f, 0.0f }, 0.f, 0.f);
 
 public:
 

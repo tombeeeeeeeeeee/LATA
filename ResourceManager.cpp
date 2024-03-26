@@ -13,8 +13,9 @@ const unsigned long long ResourceManager::hashFNV1A::offset = 146959810393466560
 const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
 
-Texture* ResourceManager::GetTexture(std::string path, Texture::Type type, int wrappingMode)
+Texture* ResourceManager::GetTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
 {
+	stbi_set_flip_vertically_on_load(flipOnLoad);
 	auto texture = textures.find(path);
 
 	if (texture == textures.end()) {

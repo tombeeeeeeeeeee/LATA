@@ -6,9 +6,9 @@ class Model
 {
 public:
 	Model();
-	Model(std::string path);
+	Model(std::string path, bool flipTexturesOnLoad = true);
 
-	void LoadModel(std::string path);
+	void LoadModel(std::string path, bool flipTexturesOnLoad = true);
 	void AddMesh(Mesh* mesh);
 	void Draw(Shader* shader);
 	void SetMaterial(Material* material);
