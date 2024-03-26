@@ -16,7 +16,7 @@ Model::Model(std::string path, bool flipTexturesOnLoad)
 
 void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 {
-	const aiScene* scene = aiImportFile(path.c_str(), 0);
+	const aiScene* scene = aiImportFile(path.c_str(), Mesh::aiLoadFlag);
 
 	if (scene == nullptr) {
 		std::cout << "Error loading model at: " << path << "\n";

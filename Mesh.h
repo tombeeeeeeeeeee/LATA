@@ -8,6 +8,8 @@
 
 #include "assimp/scene.h"
 #include "assimp/cimport.h"
+#include "assimp/postprocess.h"
+
 
 // TODO: Meshes cannot be shared across models atm, as they are owned by the models
 class Mesh
@@ -17,6 +19,7 @@ private:
 	GLuint VAO, VBO, IBO;
 
 public:
+	static int aiLoadFlag;
 	// TODO: Change how the materials are stored and perhaps store them on the model instead of mesh, so that the same mesh can be used with different models
 
 

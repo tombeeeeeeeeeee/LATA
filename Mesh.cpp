@@ -8,6 +8,8 @@
 #include <iostream>
 #include <unordered_map>
 
+int Mesh::aiLoadFlag = aiProcess_CalcTangentSpace;
+
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) :
 	triCount(0),
 	VAO(0),
@@ -240,7 +242,7 @@ void Mesh::InitialiseFromFile(std::string filename)
 
 void Mesh::InitialiseIndexFromFile(std::string path, int i)
 {
-	const aiScene* scene = aiImportFile(path.c_str(), aiComponent_TANGENTS_AND_BITANGENTS);
+	const aiScene* scene = aiImportFile(path.c_str(), Mesh::aiLoadFlag);
 	if (!scene) {
 		std::cout << "Mesh failed to load at: " << path << "\n";
 		return;
