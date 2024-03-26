@@ -107,19 +107,27 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 	Vertex* vertices = new Vertex[vertexCount];
 	for (int i = 0; i < vertexCount; i++)
 	{
-		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1.f);
+		vertices[i].position = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1.f };
 		if (mesh->HasNormals()) {
-			vertices[i].normal = glm::vec4(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 0.f);
+			vertices[i].normal = { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 0.f };
 		}
 		else {
-			vertices[i].normal = glm::vec4(1.f, 0.f, 0.f, 0.f);
+			vertices[i].normal = { 1.f, 0.f, 0.f, 0.f };
 		}
 		// TODO: other tex coords?
 		if (mesh->mTextureCoords[0]) {
-			vertices[i].texCoord = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
+			vertices[i].texCoord = { mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y };
 		}
 		else {
-			vertices[i].texCoord = glm::vec2(0.0f, 0.0f);
+			vertices[i].texCoord = { 0.0f, 0.0f };
+		}
+		if (mesh->HasTangentsAndBitangents()) {
+			vertices[i].tangent = { mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z };
+			vertices[i].biTangent = { mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z };
+		}
+		else {
+			vertices[i].tangent = { 0, 0, 0 };
+			vertices[i].biTangent = { 0, 0, 0 };
 		}
 	}
 
@@ -232,7 +240,7 @@ void Mesh::InitialiseFromFile(std::string filename)
 
 void Mesh::InitialiseIndexFromFile(std::string path, int i)
 {
-	const aiScene* scene = aiImportFile(path.c_str(), 0);
+	const aiScene* scene = aiImportFile(path.c_str(), aiComponent_TANGENTS_AND_BITANGENTS);
 	if (!scene) {
 		std::cout << "Mesh failed to load at: " << path << "\n";
 		return;

@@ -49,6 +49,8 @@ const float alphaDiscard = 0.5;
 in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoords;
+in vec3 Tangent;
+in vec3 BiTangent;
   
 uniform vec3 viewPos;
 uniform Material material;
@@ -59,9 +61,19 @@ vec3 CalcSpotlight(Spotlight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight);
 
+vec3 normal;
+
 void main()
 {
-    vec3 norm = normalize(Normal);
+    
+
+    FragColor = vec4(Tangent, 1.0);
+
+    return;
+
+    //vec3 norm = texture(material.normal1, TexCoords);
+    vec3 norm = normal;
+    //vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
     // Directional light
