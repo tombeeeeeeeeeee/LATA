@@ -13,12 +13,12 @@ TestScene::TestScene()
 		backpack
 	};
 	lights = std::vector<Light*>{
-		//&pointLights[0],
-		//&pointLights[1],
-		//&pointLights[2],
-		//&pointLights[3],
+		&pointLights[0],
+		&pointLights[1],
+		&pointLights[2],
+		&pointLights[3],
 		&spotlight,
-		//&directionalLight
+		&directionalLight
 	};
 	
 }
@@ -99,12 +99,13 @@ void TestScene::Start()
 
 void TestScene::Update(float delta)
 {
-	spotlight.direction = camera->front;
 	spotlight.position = camera->position;
+	spotlight.direction = camera->front;
 	for (auto i = lights.begin(); i != lights.end(); i++)
 	{
 		(*i)->ApplyToShader(lightingShader);
 	}
+	
 	// Shader
 	lightingShader->Use();
 	lightingShader->setVec3("viewPos", camera->position);

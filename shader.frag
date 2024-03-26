@@ -135,7 +135,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 vec3 CalcSpotlight(Spotlight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     
-    vec3 lightDir = normalize(light.position - FragPos);
+    vec3 lightDir = normalize(light.position - fragPos);
 
     // Spotlight stuff
     float theta = dot(lightDir, normalize(-light.direction));
@@ -144,25 +144,28 @@ vec3 CalcSpotlight(Spotlight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
 
     // Ambient
     vec3 ambient = light.ambient * texture(material.diffuse1, TexCoords).rgb;
+	ambient *= intensity;
     
     // Diffuse
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 diffuse = light.diffuse * diff * texture(material.diffuse1, TexCoords).rgb;
-    diffuse  *= intensity;
-    
+    diffuse *= intensity;
+
     // Specular
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     vec3 specular = light.specular * spec * texture(material.specular1, TexCoords).rgb;
-    specular *= intensity;
+	specular *= intensity;
     
     // Attenuation
-    float distanceToLight = length(light.position - FragPos);
-    float attenuation = CalcAttenuation(light.constant, light.linear, light.quadratic, distanceToLight);
+    float distanceToLight  = length(light.position - fragPos);
+    float attenuation = CalcAttenuation(light.constant, light.linear, light.quadratic, distanceToLight);    
+    
+    
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
-    
+
     // Combine results
     return ambient + diffuse + specular;
 }
