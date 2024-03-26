@@ -13,12 +13,12 @@ TestScene::TestScene()
 		backpack
 	};
 	lights = std::vector<Light*>{
-		&pointLights[0],
-		&pointLights[1],
-		&pointLights[2],
-		&pointLights[3],
+		//&pointLights[0],
+		//&pointLights[1],
+		//&pointLights[2],
+		//&pointLights[3],
 		&spotlight,
-		&directionalLight
+		//&directionalLight
 	};
 	
 }

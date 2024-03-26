@@ -14,9 +14,9 @@ Light::Light(glm::vec3 _ambient, glm::vec3 _diffuse, glm::vec3 _specular) :
 void Light::GUI()
 {
 	std::string tag = PointerToString(this);
-	ImGui::DragFloat3(("Ambient##" + tag).c_str(), &ambient[0]);
-	ImGui::DragFloat3(("Diffuse##" + tag).c_str(), &diffuse[0]);
-	ImGui::DragFloat3(("Specular##" + tag).c_str(), &specular[0]);
+	ImGui::DragFloat3(("Ambient##" + tag).c_str(), &ambient[0], 0.1f);
+	ImGui::DragFloat3(("Diffuse##" + tag).c_str(), &diffuse[0], 0.1f);
+	ImGui::DragFloat3(("Specular##" + tag).c_str(), &specular[0], 0.1f);
 }
 
 DirectionalLight::DirectionalLight(glm::vec3 _ambient, glm::vec3 _diffuse, glm::vec3 _specular, glm::vec3 _direction) : 
@@ -67,11 +67,11 @@ void PointLight::GUI()
 {
 	Light::GUI();
 	std::string tag = PointerToString(this);
-	ImGui::DragFloat3(("Position##" + tag).c_str(), &position[0]);
-	ImGui::DragFloat(("Constant##" + tag).c_str(), &constant);
-	ImGui::DragFloat(("Linear##" + tag).c_str(), &linear);
-	ImGui::DragFloat(("Quadratic##" + tag).c_str(), &quadratic);
-	ImGui::DragInt(("Index##" + tag).c_str(), &index);
+	ImGui::DragFloat3(("Position##" + tag).c_str(), &position[0], 0.1f);
+	ImGui::DragFloat(("Constant##" + tag).c_str(), &constant, 0.1f);
+	ImGui::DragFloat(("Linear##" + tag).c_str(), &linear, 0.1f);
+	ImGui::DragFloat(("Quadratic##" + tag).c_str(), &quadratic, 0.1f);
+	ImGui::DragInt(("Index##" + tag).c_str(), &index, 0.1f);
 }
 
 Spotlight::Spotlight(glm::vec3 _ambient, glm::vec3 _diffuse, glm::vec3 _specular, glm::vec3 _position, float _constant, float _linear, float _quadratic, glm::vec3 _direction, float _cutOff, float _outerCutOff) : PointLight(_ambient, _diffuse, _specular, _position, _constant, _linear, _quadratic, -1),
@@ -97,13 +97,13 @@ void Spotlight::GUI()
 {
 	Light::GUI();
 	std::string tag = PointerToString(this);
-	ImGui::DragFloat3(("Position##" + tag).c_str(), &position[0]);
-	ImGui::DragFloat3(("Direction##" + tag).c_str(), &direction[0]);
-	ImGui::DragFloat(("Constant##" + tag).c_str(), &constant);
-	ImGui::DragFloat(("Linear##" + tag).c_str(), &linear);
-	ImGui::DragFloat(("Quadratic##" + tag).c_str(), &quadratic);
-	ImGui::DragFloat(("Cut off##" + tag).c_str(), &cutOff);
-	ImGui::DragFloat(("Outer cut off##" + tag).c_str(), &outerCutOff);
+	ImGui::DragFloat3(("Position##" + tag).c_str(), &position[0], 0.1f);
+	ImGui::DragFloat3(("Direction##" + tag).c_str(), &direction[0], 0.1f);
+	ImGui::DragFloat(("Constant##" + tag).c_str(), &constant, 0.1f);
+	ImGui::DragFloat(("Linear##" + tag).c_str(), &linear, 0.1f);
+	ImGui::DragFloat(("Quadratic##" + tag).c_str(), &quadratic, 0.1f);
+	ImGui::DragFloat(("Cut off##" + tag).c_str(), &cutOff, 0.1f);
+	ImGui::DragFloat(("Outer cut off##" + tag).c_str(), &outerCutOff, 0.1f);
 
 }
 	
