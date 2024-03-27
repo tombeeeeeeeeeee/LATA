@@ -87,11 +87,11 @@ void TestScene::Start()
 	}));
 
 	//backpackModel = Model("models/backpack/backpack.obj", false);
-	backpackModel = Model(std::string("models/soulspear/soulspear.obj"), false);
+	backpackModel = Model(std::string("models/soulspear/soulspear.obj"), true);
 	backpackModel.SetMaterial(ResourceManager::GetMaterial(std::vector<Texture*>{
-		ResourceManager::GetTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse),
-		ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular),
-		ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal)
+		ResourceManager::GetTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse, GL_REPEAT, true),
+		ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
+		ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true)
 	}));
 	backpack->AddPart(new ModelRenderer(&backpackModel, lightingShader));
 	backpack->transform.position = { 0.f, 1.f, 1.f };
