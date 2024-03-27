@@ -48,15 +48,18 @@ const float alphaDiscard = 0.5;
 
 in vec3 FragPos;
 in vec2 TexCoords;
-in vec3 Normal;
-in vec3 Tangent;
-in vec3 BiTangent;
+//in vec3 Normal;
+
+in vec3 TangentViewPos;
+in vec3 TangentFragPos;
+in vec3 TangentSpotlightPos;
+in vec3 TangentPointLightsPos[MAX_POINT_LIGHTS];
   
 uniform vec3 viewPos;
 uniform Material material;
 
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3 CalcPointLight(PointLight light, int index, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcSpotlight(Spotlight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight);
@@ -65,29 +68,29 @@ void main()
 {
     vec3 normal = texture(material.normal1, TexCoords).rgb;
 //    // transform normal vector to range [-1,1]
-//    normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent space    
+    normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent space    
 //
 //    vec3 norm = texture(material.normal1, TexCoords);
-    vec3 norm = normal;
+    //vec3 norm = Normal;
 //
 //    FragColor = vec4(norm, 1.0);
 //    return;
 
 //    vec3 norm = vec3(0, 1, 0);
 //    vec3 norm = normalize(Normal);
-    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 viewDir = normalize(TangentViewPos - TangentFragPos);
 
     // Directional light
     //TODO: should there be ifs here to check if the lights are actually 'active', I don't think it'll actually help performance wise?
-    vec3 result = max(CalcDirectionalLight(directionalLight, norm, viewDir), 0);
+    vec3 result = max(CalcDirectionalLight(directionalLight, normal, viewDir), 0);
 
     // Point lights
     for(int i = 0; i < MAX_POINT_LIGHTS; i++) {
-        result += max(CalcPointLight(pointLights[i], norm, FragPos, viewDir), 0);
+        result += max(CalcPointLight(pointLights[i], i, normal, FragPos, viewDir), 0);
     }
     
     // Spot light
-    result += max(CalcSpotlight(spotlight, norm, FragPos, viewDir), 0);
+    result += max(CalcSpotlight(spotlight, normal, FragPos, viewDir), 0);
 
     // Emission
     result += vec3(texture(material.emission1, TexCoords));
@@ -119,9 +122,9 @@ vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
     return ambient + diffuse + specular;
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 CalcPointLight(PointLight light, int i, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 lightDir = normalize(TangentSpotlightPos[i] - TangentFragPos);
 
     // Ambient
     vec3 ambient = light.ambient * vec3(texture(material.diffuse1, TexCoords));
@@ -148,7 +151,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 vec3 CalcSpotlight(Spotlight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 lightDir = normalize(TangentSpotlightPos - TangentFragPos);
 
     // Spotlight stuff
     float theta = dot(lightDir, normalize(-light.direction));
