@@ -70,3 +70,8 @@ GLuint Texture::Load(std::string path, int wrappingMode)
 
 	return ID;
 }
+
+void Texture::DeleteTexture()
+{
+	glDeleteTextures(1, &ID);
+}

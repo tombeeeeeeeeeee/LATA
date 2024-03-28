@@ -25,5 +25,6 @@ public:
 	Texture();
 
 	static GLuint Load(std::string path, int wrappingMode);
+	void DeleteTexture();
 };
 

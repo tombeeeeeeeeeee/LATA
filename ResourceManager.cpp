@@ -83,15 +83,15 @@ unsigned long long ResourceManager::hashFNV1A::operator()(std::vector<Texture*> 
 
 ResourceManager::~ResourceManager()
 {
-	Unload();
+	UnloadAll();
 }
 
 
-void ResourceManager::Unload()
+void ResourceManager::UnloadAll()
 {
 	for (auto i = textures.begin(); i != textures.end(); i++)
 	{
-		glDeleteTextures(1, &i->second.ID);
+		i->second.DeleteTexture();
 	}
 	textures.clear();
 
@@ -99,4 +99,5 @@ void ResourceManager::Unload()
 	{
 		i->second.DeleteProgram();
 	}
+	shaders.clear();
 }

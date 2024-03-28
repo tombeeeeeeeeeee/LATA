@@ -8,22 +8,22 @@ layout (location = 4) in vec3 aBiTangent;
 
 
 
-//struct DirectionalLight {
-//    vec3 direction;
-//    vec3 ambient;
-//    vec3 diffuse;
-//    vec3 specular;
-//};
-//
-//struct PointLight {
-//    vec3 position;
-//    float constant;
-//    float linear;
-//    float quadratic;
-//    vec3 ambient;
-//    vec3 diffuse;
-//    vec3 specular;
-//};
+struct DirectionalLight {
+    vec3 direction;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+struct PointLight {
+    vec3 position;
+    float constant;
+    float linear;
+    float quadratic;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
 
 struct Spotlight {
     vec3 position;
@@ -38,21 +38,20 @@ struct Spotlight {
     float outerCutOff;
 };
 
-//#define MAX_POINT_LIGHTS 4
-//uniform PointLight pointLights[MAX_POINT_LIGHTS];
+#define MAX_POINT_LIGHTS 4
+uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform Spotlight spotlight;
 
 
 
 
 out vec3 FragPos;
-//out vec3 Normal;
 out vec2 TexCoords;
 out vec3 TangentViewPos;
 out vec3 TangentFragPos;
 
 out vec3 TangentSpotlightPos;
-//out vec3 TangentPointLightsPos[MAX_POINT_LIGHTS];
+out vec3 TangentPointLightsPos[MAX_POINT_LIGHTS];
 
 
 uniform mat4 model;
@@ -74,16 +73,11 @@ void main()
     // The transpose of an orthogonal matrix (each axis is a perpendicular unit vector) equals its inverse
     mat3 TBN = transpose(mat3(T, B, N));
 
-
-//    vs_out.TangentLightPos = TBN * lightPos;
-
     TangentSpotlightPos = TBN * spotlight.position;
 
-//    for(int i = 0; i < MAX_POINT_LIGHTS; i++) {
-//        TangentPointLightsPos[i] = TBN * pointLights[i].position;
-//    }
-//    
-    
+    for(int i = 0; i < MAX_POINT_LIGHTS; i++) {
+        TangentPointLightsPos[i] = TBN * pointLights[i].position;
+    }    
     
     TangentViewPos  = TBN * viewPos;
 

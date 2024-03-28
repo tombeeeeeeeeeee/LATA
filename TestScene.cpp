@@ -33,18 +33,17 @@ void TestScene::Start()
 	lightingShader->Use();
 	lightingShader->setFloat("material.shininess", 64.0f);
 
-	directionalLight.ApplyToShader(lightingShader);
-	spotlight.ApplyToShader(lightingShader);
-	for (int i = 0; i < sizeof(pointLights) / sizeof(pointLights[0]); i++)
+	for (auto i = lights.begin(); i != lights.end(); i++)
 	{
-		pointLights[i].ApplyToShader(lightingShader);
+		(*i)->ApplyToShader(lightingShader);
 	}
 
 	Mesh boxMesh;
 	boxMesh.InitialiseCube();
 	boxMesh.material = ResourceManager::GetMaterial(std::vector<Texture*> {
 		ResourceManager::GetTexture("images/container2.png", Texture::Type::diffuse),
-			ResourceManager::GetTexture("images/container2_specular.png", Texture::Type::specular)
+			ResourceManager::GetTexture("images/container2_specular.png", Texture::Type::specular),
+			ResourceManager::GetTexture("images/DefaultNormal.png", Texture::Type::normal),
 	});
 	boxModel.AddMesh(&boxMesh);
 	boxes->AddPart(new MultiModelRenderer(&boxModel, lightingShader, std::vector<Transform>
@@ -70,7 +69,8 @@ void TestScene::Start()
 	Mesh grassMesh;
 	grassMesh.InitialiseDoubleSidedQuad();
 	grassMesh.material = ResourceManager::GetMaterial(std::vector<Texture*>{
-		ResourceManager::GetTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE)
+		ResourceManager::GetTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE, false),
+			ResourceManager::GetTexture("images/DefaultNormal.png", Texture::Type::normal)
 	});
 	grassModel.AddMesh(&grassMesh);
 	grass->AddPart(new MultiModelRenderer(&grassModel, lightingShader, std::vector<Transform>{
@@ -87,18 +87,29 @@ void TestScene::Start()
 	}));
 
 	//backpackModel = Model("models/backpack/backpack.obj", false);
-	backpackModel = Model(std::string("models/soulspear/soulspear.obj"), true);
-	backpackModel.SetMaterial(ResourceManager::GetMaterial(std::vector<Texture*>{
-		ResourceManager::GetTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse, GL_REPEAT, true),
-		ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
-		ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true)
+	backpackModel = Model("models/DefaultCube.obj");
+	backpackModel.SetMaterial(ResourceManager::GetMaterial(std::vector<Texture*> {
+		ResourceManager::GetTexture("images/container2.png", Texture::Type::diffuse),
+			ResourceManager::GetTexture("images/container2_specular.png", Texture::Type::specular),
+			ResourceManager::GetTexture("images/DefaultNormal.png", Texture::Type::normal),
 	}));
+	//backpackModel.SetMaterial(ResourceManager::GetMaterial(std::vector<Texture*>{
+	//	ResourceManager::GetTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::diffuse, GL_REPEAT, true),
+	//	ResourceManager::GetTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true)
+	//}));
+	//backpackModel = Model(std::string("models/soulspear/soulspear.obj"), true);
+	//backpackModel.SetMaterial(ResourceManager::GetMaterial(std::vector<Texture*>{
+	//	ResourceManager::GetTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse, GL_REPEAT, true),
+	//	ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
+	//	ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true)
+	//}));
 	backpack->AddPart(new ModelRenderer(&backpackModel, lightingShader));
 	backpack->transform.position = { 0.f, 1.f, 1.f };
 }
 
 void TestScene::Update(float delta)
 {
+	pointLights[0].position.x = 1.5f * sin(glfwGetTime() * 2.f);
 	spotlight.position = camera->position;
 	spotlight.direction = camera->front;
 	for (auto i = lights.begin(); i != lights.end(); i++)

@@ -23,7 +23,7 @@ public:
 	static Shader* GetShader(std::string vertexPath, std::string fragmentPath);
 	static Material* GetMaterial(std::vector<Texture*> textures);
 
-	static void Unload();
+	static void UnloadAll();
 	~ResourceManager();
 	ResourceManager(const ResourceManager& other) = delete;
 	ResourceManager& operator=(const ResourceManager& other) = delete;

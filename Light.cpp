@@ -67,10 +67,10 @@ void PointLight::GUI()
 {
 	Light::GUI();
 	std::string tag = PointerToString(this);
-	ImGui::DragFloat3(("Position##" + tag).c_str(), &position[0], 0.01f);
-	ImGui::SliderFloat(("Constant##" + tag).c_str(), &constant, 0.f, 1.f);
-	ImGui::SliderFloat(("Linear##" + tag).c_str(), &linear, 0.f, 1.f);
-	ImGui::SliderFloat(("Quadratic##" + tag).c_str(), &quadratic, 0.f, 1.f);
+	ImGui::DragFloat3(("Position##" + tag).c_str(),   &position[0], 0.01f);
+	ImGui::SliderFloat(("Constant##" + tag).c_str(),  &constant,    0.f, 1.f);
+	ImGui::SliderFloat(("Linear##" + tag).c_str(),    &linear,      0.f, 1.f);
+	ImGui::SliderFloat(("Quadratic##" + tag).c_str(), &quadratic,   0.f, 1.f);
 	ImGui::BeginDisabled();
 	ImGui::DragInt(("Index##" + tag).c_str(), &index, 0.01f, 0.f, 1.f);
 	ImGui::EndDisabled();
@@ -100,13 +100,13 @@ void Spotlight::GUI()
 {
 	Light::GUI();
 	std::string tag = PointerToString(this);
-	ImGui::DragFloat3(("Position##" + tag).c_str(), &position[0], 0.01f);
-	ImGui::DragFloat3(("Direction##" + tag).c_str(), &direction[0], -1.f, 1.f);
-	ImGui::DragFloat(("Constant##" + tag).c_str(), &constant, 0.f, 1.f);
-	ImGui::SliderFloat(("Linear##" + tag).c_str(), &linear, 0.f, 1.f);
-	ImGui::SliderFloat(("Quadratic##" + tag).c_str(), &quadratic, 0.f, 1.f);
-	ImGui::SliderFloat(("Cut off##" + tag).c_str(), &cutOff, 0.f, 1.f);
-	ImGui::SliderFloat(("Outer cut off##" + tag).c_str(), &outerCutOff, 0.f, 1.f);
+	ImGui::DragFloat3(("Position##" + tag).c_str(),       &position[0],   0.01f);
+	ImGui::DragFloat3(("Direction##" + tag).c_str(),      &direction[0], -1.f, 1.f);
+	ImGui::SliderFloat(("Constant##" + tag).c_str(),        &constant,    0.f, 1.f);
+	ImGui::SliderFloat(("Linear##" + tag).c_str(),        &linear,        0.f, 1.f);
+	ImGui::SliderFloat(("Quadratic##" + tag).c_str(),     &quadratic,     0.f, 1.f);
+	ImGui::SliderFloat(("Cut off##" + tag).c_str(),       &cutOff,        0.f, 1.f);
+	ImGui::SliderFloat(("Outer cut off##" + tag).c_str(), &outerCutOff,   0.f, 1.f);
 
 }
 	
