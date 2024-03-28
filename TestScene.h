@@ -13,6 +13,11 @@ class TestScene : public Scene
 private:
 	Shader* lightingShader;
 	Shader* lightCubeShader;
+	Shader* skyBoxShader;
+
+	Mesh testMesh;
+	Mesh skybox;
+	GLuint skyboxTexture;
 
 	Model backpackModel;
 	Model boxModel;

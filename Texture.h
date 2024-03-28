@@ -25,6 +25,9 @@ public:
 	Texture();
 
 	static GLuint Load(std::string path, int wrappingMode);
+
+	static GLuint LoadCubeMap(std::vector<std::string> faces);
+
 	void DeleteTexture();
 };
 

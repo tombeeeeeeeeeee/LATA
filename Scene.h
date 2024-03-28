@@ -22,6 +22,9 @@ public:
 	std::vector<SceneObject*> sceneObjects;
 	std::vector<Light*> lights;
 
+	unsigned int* windowWidth;
+	unsigned int* windowHeight;
+
 	virtual void Start() {};
 	virtual void Update(float delta) = 0;
 
