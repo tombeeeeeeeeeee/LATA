@@ -235,6 +235,56 @@ void Mesh::InitialiseCube()
 	Initialise(vertexCount, vertices);
 }
 
+void Mesh::InitialiseCubeMap()
+{
+	const unsigned int vertexCount = 36;
+	Vertex vertices[vertexCount] = {
+		// positions					// normals					  // texture coords
+		{ {-1.0f, -1.0f, -1.0f, 1.0f} },
+		{ { 1.0f, -1.0f, -1.0f, 1.0f} }, 
+		{ { 1.0f,  1.0f, -1.0f, 1.0f} },
+		{ { 1.0f,  1.0f, -1.0f, 1.0f} },
+		{ {-1.0f,  1.0f, -1.0f, 1.0f} },
+		{ {-1.0f, -1.0f, -1.0f, 1.0f} },
+		// left face                                         		   
+		{ {-1.0f,  1.0f,  1.0f, 1.0f} },
+		{ {-1.0f, -1.0f, -1.0f, 1.0f} }, 
+		{ {-1.0f,  1.0f, -1.0f, 1.0f} },
+		{ {-1.0f, -1.0f, -1.0f, 1.0f} },
+		{ {-1.0f,  1.0f,  1.0f, 1.0f} },
+		{ {-1.0f, -1.0f,  1.0f, 1.0f} },
+		// right face                     
+		{ { 1.0f,  1.0f,  1.0f, 1.0f} },
+		{ { 1.0f,  1.0f, -1.0f, 1.0f} }, 
+		{ { 1.0f, -1.0f, -1.0f, 1.0f} },
+		{ { 1.0f, -1.0f, -1.0f, 1.0f} },
+		{ { 1.0f, -1.0f,  1.0f, 1.0f} },
+		{ { 1.0f,  1.0f,  1.0f, 1.0f} },
+		// front face                 		
+		{ { -1.0f,-1.0f,  1.0f, 1.0f} },
+		{ { 1.0f,  1.0f,  1.0f, 1.0f} },
+		{ { 1.0f, -1.0f,  1.0f, 1.0f} },
+		{ { 1.0f,  1.0f,  1.0f, 1.0f} }, 
+		{ {-1.0f, -1.0f,  1.0f, 1.0f} },
+		{ {-1.0f,  1.0f,  1.0f, 1.0f} },
+		// top face                       
+		{ {-1.0f,  1.0f, -1.0f, 1.0f} },
+		{ { 1.0f,  1.0f, -1.0f, 1.0f} }, 
+		{ { 1.0f,  1.0f,  1.0f, 1.0f} },
+		{ { 1.0f,  1.0f,  1.0f, 1.0f} },
+		{ {-1.0f,  1.0f,  1.0f, 1.0f} },
+		{ {-1.0f,  1.0f, -1.0f, 1.0f} },
+		// bottom face                        
+		{ {-1.0f, -1.0f, -1.0f, 1.0f} },
+		{ { 1.0f, -1.0f,  1.0f, 1.0f} }, 
+		{ { 1.0f, -1.0f, -1.0f, 1.0f} },
+		{ { 1.0f, -1.0f,  1.0f, 1.0f} },
+		{ {-1.0f, -1.0f, -1.0f, 1.0f} },
+		{ {-1.0f, -1.0f,  1.0f, 1.0f} },
+	};
+	Initialise(vertexCount, vertices);
+}
+
 void Mesh::InitialiseFromFile(std::string filename)
 {
 	InitialiseIndexFromFile(filename.c_str(), 0);

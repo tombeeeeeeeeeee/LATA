@@ -9,7 +9,7 @@ struct Vertex {
 	glm::vec3 biTangent;
 
 	// TODO: Don't default these to 0
-	Vertex(glm::vec4 pos, glm::vec4 nor, glm::vec2 tex, glm::vec3 tan = { 0, 0, 0 }, glm::vec3 bit = { 0, 0, 0 });
+	Vertex(glm::vec4 pos, glm::vec4 nor = { 0.f, 0.f, 0.f, 0.f }, glm::vec2 tex = { 0.f, 0.f }, glm::vec3 tan = { 0.f, 0.f, 0.f }, glm::vec3 bit = { 0.f, 0.f, 0.f });
 	static void EnableAttributes();
 	Vertex() {};
 };

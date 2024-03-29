@@ -50,6 +50,7 @@ public:
 	void InitialiseQuad();
 	void InitialiseDoubleSidedQuad();
 	void InitialiseCube();
+	void InitialiseCubeMap();
 
 	void InitialiseFromFile(std::string filename);
 	void InitialiseIndexFromFile(std::string filename, int i);

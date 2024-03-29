@@ -31,7 +31,7 @@ void TestScene::Start()
 	lightCubeShader = ResourceManager::GetShader("lightCube.vert", "lightCube.frag");
 	skyBoxShader = ResourceManager::GetShader("cubemap.vert", "cubemap.frag");
 
-	skybox.InitialiseCube();
+	skybox.InitialiseCubeMap();
 
 	std::vector<std::string> faces = std::vector<std::string>{
 			"images/skybox/right.jpg",
@@ -52,8 +52,6 @@ void TestScene::Start()
 	{
 		(*i)->ApplyToShader(lightingShader);
 	}
-
-	testMesh.InitialiseCube();
 
 	Mesh boxMesh;
 	boxMesh.InitialiseCube();
@@ -143,10 +141,10 @@ void TestScene::Update(float delta)
 	lightCubeShader->setMat4("vp", viewProjection);
 
 	skyBoxShader->Use();
+	//glm::mat4 view = camera->GetViewMatrix();
 	glm::mat4 view = glm::mat4(glm::mat3(camera->GetViewMatrix()));
 	glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, 0.01f, 100.0f);
-
-	glm::mat4 vp = view * projection;
+	glm::mat4 vp = projection * view;
 	skyBoxShader->setMat4("vp", vp);
 
 
@@ -160,7 +158,6 @@ void TestScene::Update(float delta)
 	}
 
 
-	//testMesh.Draw(skyBoxShader);
 // Drawing
 
 // Disable depth for skybox
