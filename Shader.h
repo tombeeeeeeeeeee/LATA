@@ -6,6 +6,9 @@
 
 #include <string>
 
+
+// TODO: Some shaders can be quite similar, see if there is or make a solution to not having to have to have a lot of shaders.
+
 class Shader
 {
 private:

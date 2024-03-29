@@ -11,7 +11,8 @@
 class TestScene : public Scene
 {
 private:
-	Shader* lightingShader;
+	Shader* litNormalShader;
+	Shader* litShader;
 	Shader* lightCubeShader;
 	Shader* skyBoxShader;
 
@@ -23,11 +24,15 @@ private:
 	Model boxModel;
 	Model grassModel;
 	Model lightCubeModel;
+	Model soulSpearModel;
+	Model testRedBoxModel;
 
-	SceneObject* backpack  = new SceneObject();
-	SceneObject* grass     = new SceneObject();
-	SceneObject* boxes     = new SceneObject();
-	SceneObject* lightCube = new SceneObject();
+	SceneObject* backpack   = new SceneObject();
+	SceneObject* soulSpear  = new SceneObject();
+	SceneObject* testRedBox = new SceneObject();
+	SceneObject* grass      = new SceneObject();
+	SceneObject* boxes      = new SceneObject();
+	SceneObject* lightCube  = new SceneObject();
 
 	PointLight pointLights[4] = {
 		PointLight({ 0.05f, 0.05f, 0.05f }, { 1.0f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  3.2f,  2.0f }, 0.5f, 0.09f, 0.032f, 0),

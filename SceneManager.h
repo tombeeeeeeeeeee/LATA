@@ -42,8 +42,6 @@ class SceneManager
 	static float lastY;
 	static bool firstMouse;
 	static bool lockedCamera;
-
-	//static void processInput(GLFWwindow* window);
 	
 public:
 
