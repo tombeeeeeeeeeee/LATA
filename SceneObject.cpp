@@ -49,3 +49,13 @@ void SceneObject::Draw() const
 		(*part)->Draw();
 	}
 }
+
+void SceneObject::GUI()
+{
+	transform.GUI();
+	renderer->GUI();
+	for (auto i = parts.begin(); i != parts.end(); i++)
+	{
+		(*i)->GUI();
+	}
+}

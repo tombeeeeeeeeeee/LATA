@@ -1,6 +1,7 @@
 #include "ResourceManager.h"
 
 #include "stb_image.h"
+#include "imguiStuff.h"
 
 #include <iostream>
 
@@ -84,6 +85,56 @@ unsigned long long ResourceManager::hashFNV1A::operator()(std::vector<Texture*> 
 ResourceManager::~ResourceManager()
 {
 	UnloadAll();
+}
+
+void ResourceManager::GUI()
+{
+	if (ImGui::BeginTable("Resource Textures", 3)) {
+		ImGui::TableNextRow();
+
+		ImGui::TableSetColumnIndex(0);
+		ImGui::Text("ID");
+
+		ImGui::TableSetColumnIndex(1);
+		ImGui::Text("Path");
+
+		ImGui::TableSetColumnIndex(2);
+		ImGui::Text("Type");
+
+		for (auto i = ResourceManager::textures.begin(); i != ResourceManager::textures.end(); i++)
+		{
+			ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text(std::to_string(i->second.ID).c_str());
+
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text(i->first.c_str());
+
+			ImGui::TableSetColumnIndex(2);
+			ImGui::Text(Texture::TypeNames.find(i->second.type)->second.c_str());
+		}
+		ImGui::EndTable();
+	}
+	ImGui::NewLine();
+
+	for (auto i = ResourceManager::materials.begin(); i != ResourceManager::materials.end(); i++)
+	{
+		for (auto j = i->second.textures.begin(); j != i->second.textures.end(); j++)
+		{
+			ImGui::Text(std::to_string((*j)->ID).c_str());
+			ImGui::SameLine();
+		}
+		ImGui::NewLine();
+	}
+	ImGui::NewLine();
+
+	for (auto i = ResourceManager::shaders.begin(); i != ResourceManager::shaders.end(); i++)
+	{
+		ImGui::Text(i->first.c_str());
+		ImGui::SameLine();
+		ImGui::Text(std::to_string(i->second.ID).c_str());
+	}
 }
 
 

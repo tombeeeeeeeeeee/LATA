@@ -1,5 +1,7 @@
 #include "Texture.h"
 
+#include "Shader.h"
+
 #include "Graphics.h"
 
 #include "stb_image.h"
@@ -12,7 +14,7 @@ const std::unordered_map<Texture::Type, std::string> Texture::TypeNames =
 	{ Type::specular, "specular" },
 	{ Type::normal, "normal" },
 	{ Type::height, "height" },
-	{ Type::emission, "emission" },
+	{ Type::emission, "emission" }, // TODO: Should cubemap be a type?
 };
 
 Texture::Texture() : 
@@ -57,9 +59,7 @@ GLuint Texture::Load(std::string path, int wrappingMode)
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrappingMode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrappingMode);
-		//TODO:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	else
@@ -97,6 +97,14 @@ GLuint Texture::LoadCubeMap(std::vector<std::string> faces)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	return ID;
+}
+
+void Texture::UseCubeMap(GLuint ID, Shader* shader)
+{
+	shader->Use();
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
+	shader->setSampler("cubeMap", 1);
 }
 
 void Texture::DeleteTexture()

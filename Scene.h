@@ -17,7 +17,6 @@ public:
 	std::string windowName = "Lochie's Scene";
 
 	Camera* camera;
-	friend GUI;
 	GUI gui;
 	std::vector<SceneObject*> sceneObjects;
 	std::vector<Light*> lights;

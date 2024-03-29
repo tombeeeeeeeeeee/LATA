@@ -33,15 +33,21 @@ void TestScene::Start()
 	lightCubeShader = ResourceManager::GetShader("lightCube.vert", "lightCube.frag");
 	skyBoxShader = ResourceManager::GetShader("cubemap.vert", "cubemap.frag");
 
-	skybox.InitialiseCubeMap();
+	skybox.InitialiseCubeInsideOut();
 
 	std::vector<std::string> faces = std::vector<std::string>{
-			"images/skybox/right.jpg",
-			"images/skybox/left.jpg",
-			"images/skybox/top.jpg",
-			"images/skybox/bottom.jpg",
-			"images/skybox/front.jpg",
-			"images/skybox/back.jpg"
+		//"images/otherskybox/right.png",
+		//"images/otherskybox/left.png",
+		//"images/otherskybox/top.png",
+		//"images/otherskybox/bottom.png",
+		//"images/otherskybox/front.png",
+		//"images/otherskybox/back.png"
+		"images/skybox/right.jpg",
+		"images/skybox/left.jpg",
+		"images/skybox/top.jpg",
+		"images/skybox/bottom.jpg",
+		"images/skybox/front.jpg",
+		"images/skybox/back.jpg"
 	};
 	skyboxTexture = Texture::LoadCubeMap(faces);
 
@@ -60,16 +66,16 @@ void TestScene::Start()
 	boxModel.AddMesh(&boxMesh);
 	boxes->setRenderer(new MultiModelRenderer(&boxModel, litShader, std::vector<Transform>
 	{
-		Transform({  0.0f,  0.0f,  0.00f }, { 00.f,   0.f, 00.f }, 1.0f),
-		Transform({  2.0f,  5.0f, -15.0f }, { 20.f,   6.f, 10.f }, 1.0f),
-		Transform({ -1.5f, -2.2f, -2.50f }, { 40.f,  12.f, 20.f }, 1.0f),
-		Transform({ -3.8f, -2.0f, -12.3f }, { 60.f,  18.f, 30.f }, 1.0f),
-		Transform({  2.4f, -0.4f, -3.50f }, { 80.f,  24.f, 40.f }, 1.0f),
-		Transform({ -1.7f,  3.0f, -7.50f }, { 100.f, 30.f, 50.f }, 1.0f),
-		Transform({  1.3f, -2.0f, -2.50f }, { 120.f, 36.f, 60.f }, 1.0f),
-		Transform({  1.5f,  2.0f, -2.50f }, { 140.f, 42.f, 70.f }, 1.0f),
-		Transform({  1.5f,  0.2f, -1.50f }, { 160.f, 48.f, 80.f }, 1.0f),
-		Transform({ -1.3f,  1.0f, -1.50f }, { 180.f, 54.f, 90.f }, 1.0f)
+		Transform({  0.0f,  0.0f,  0.00f }, { 00.f,   0.f, 00.f }),
+		Transform({  2.0f,  5.0f, -15.0f }, { 20.f,   6.f, 10.f }),
+		Transform({ -1.5f, -2.2f, -2.50f }, { 40.f,  12.f, 20.f }),
+		Transform({ -3.8f, -2.0f, -12.3f }, { 60.f,  18.f, 30.f }),
+		Transform({  2.4f, -0.4f, -3.50f }, { 80.f,  24.f, 40.f }),
+		Transform({ -1.7f,  3.0f, -7.50f }, { 100.f, 30.f, 50.f }),
+		Transform({  1.3f, -2.0f, -2.50f }, { 120.f, 36.f, 60.f }),
+		Transform({  1.5f,  2.0f, -2.50f }, { 140.f, 42.f, 70.f }),
+		Transform({  1.5f,  0.2f, -1.50f }, { 160.f, 48.f, 80.f }),
+		Transform({ -1.3f,  1.0f, -1.50f }, { 180.f, 54.f, 90.f })
 	}));
 
 	Mesh lightCubeMesh;
@@ -89,16 +95,16 @@ void TestScene::Start()
 	});
 	grassModel.AddMesh(&grassMesh);
 	grass->setRenderer(new MultiModelRenderer(&grassModel, litShader, std::vector<Transform>{
-		Transform({ 0.0f, 0.0f,   0.0f }, { 0.f,  20.f, 0.f }, 1.0f),
-		Transform({ 2.0f, 0.0f, -15.0f }, { 0.f,  40.f, 0.f }, 1.0f),
-		Transform({ -1.5f, 0.0f, -03.5f }, { 0.f,  60.f, 0.f }, 1.0f),
-		Transform({ -3.8f, 0.0f, -10.3f }, { 0.f,  80.f, 0.f }, 1.0f),
-		Transform({ 2.4f, 0.0f, -05.5f }, { 0.f, 100.f, 0.f }, 1.0f),
-		Transform({ -1.7f, 0.0f, -09.5f }, { 0.f, 120.f, 0.f }, 1.0f),
-		Transform({ 1.3f, 0.0f, -03.5f }, { 0.f, 140.f, 0.f }, 1.0f),
-		Transform({ 1.5f, 0.0f, -03.5f }, { 0.f, 160.f, 0.f }, 1.0f),
-		Transform({ 1.5f, 0.0f, -04.5f }, { 0.f, 180.f, 0.f }, 1.0f),
-		Transform({ -1.3f, 0.0f, -01.5f }, { 0.f, 200.f, 0.f }, 1.0f),
+		Transform({ 0.0f,  0.0f,   0.0f }, { 0.f,  20.f, 0.f }),
+		Transform({ 2.0f,  0.0f, -15.0f }, { 0.f,  40.f, 0.f }),
+		Transform({ -1.5f, 0.0f, -03.5f }, { 0.f,  60.f, 0.f }),
+		Transform({ -3.8f, 0.0f, -10.3f }, { 0.f,  80.f, 0.f }),
+		Transform({ 2.4f,  0.0f, -05.5f }, { 0.f, 100.f, 0.f }),
+		Transform({ -1.7f, 0.0f, -09.5f }, { 0.f, 120.f, 0.f }),
+		Transform({ 1.3f,  0.0f, -03.5f }, { 0.f, 140.f, 0.f }),
+		Transform({ 1.5f,  0.0f, -03.5f }, { 0.f, 160.f, 0.f }),
+		Transform({ 1.5f,  0.0f, -04.5f }, { 0.f, 180.f, 0.f }),
+		Transform({ -1.3f, 0.0f, -01.5f }, { 0.f, 200.f, 0.f }),
 	}));
 
 	backpackModel = Model("models/backpack/backpack.obj", false);
@@ -173,10 +179,7 @@ void TestScene::Update(float delta)
 	// TODO: Make a skybox sceneobject or something, the skybox stuff needs its own space/class
 
 	glDepthFunc(GL_LEQUAL); // Change depth function
-	skyBoxShader->Use();
-	glActiveTexture(GL_TEXTURE0 + 1);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
-	skyBoxShader->setSampler("cubeMap", 1); // Doesn't need to be set every frame
+	Texture::UseCubeMap(skyboxTexture, skyBoxShader);
 	skybox.Draw(skyBoxShader); // Actually draw the skyBox
 	glDepthFunc(GL_LESS); // Change depth function back
 }

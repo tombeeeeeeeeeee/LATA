@@ -235,11 +235,11 @@ void Mesh::InitialiseCube()
 	Initialise(vertexCount, vertices);
 }
 
-void Mesh::InitialiseCubeMap()
+void Mesh::InitialiseCubeInsideOut()
 {
 	const unsigned int vertexCount = 36;
 	Vertex vertices[vertexCount] = {
-		// positions					// normals					  // texture coords
+		// positions					
 		{ {-1.0f, -1.0f, -1.0f, 1.0f} },
 		{ { 1.0f, -1.0f, -1.0f, 1.0f} }, 
 		{ { 1.0f,  1.0f, -1.0f, 1.0f} },

@@ -40,8 +40,6 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform Spotlight spotlight;
 
 
-
-
 out vec3 FragPos;
 out vec2 TexCoords;
 out vec3 TangentViewPos;

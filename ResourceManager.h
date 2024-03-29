@@ -10,7 +10,6 @@
 //TODO: Maybe get shader without needing both the fragment and vertex shader, it could just find them both if they have the same name and just differing extension or custom file format that stores the name of the others
 class ResourceManager {
 public:
-	friend class GUI;
 	//TODO: Make the same texture be able to be loaded multiple times as different types?
 	/// <summary>
 	/// Gets a texture from a path
@@ -27,6 +26,8 @@ public:
 	~ResourceManager();
 	ResourceManager(const ResourceManager& other) = delete;
 	ResourceManager& operator=(const ResourceManager& other) = delete;
+
+	static void GUI();
 private:
 	struct hashFNV1A {
 		static const unsigned long long offset;

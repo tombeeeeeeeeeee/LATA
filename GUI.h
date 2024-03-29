@@ -27,7 +27,5 @@ private:
 	void SceneObjectMenu();
 	int lightSelectedIndex = 0;
 	void LightMenu();
-
-	void SceneObjectGUI(SceneObject* sceneObject);
 };
 

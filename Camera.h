@@ -9,6 +9,7 @@
 class Camera
 {
 public:
+    // TODO: Change to matrix transform? use transform class
     // camera Attributes
     glm::vec3 position;
     glm::vec3 front;
@@ -16,6 +17,7 @@ public:
     glm::vec3 right;
     glm::vec3 worldUp;
     // euler Angles
+    //TODO: Roll
     float yaw;
     float pitch;
     // camera options

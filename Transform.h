@@ -11,7 +11,7 @@ public:
 	float scale;
 
 	Transform();
-	Transform(glm::vec3 _position, glm::vec3 _rotation, float _scale);
+	Transform(glm::vec3 _position, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.f);
 
 	glm::mat4 getMatrix() const;
 

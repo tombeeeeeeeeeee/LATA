@@ -34,5 +34,9 @@ public:
 	SceneObject& operator=(const SceneObject& other) = delete;
 
 	void Update(float delta);
-	void Draw() const;};
+	void Draw() const;
+	void GUI();
+};
+
+
 

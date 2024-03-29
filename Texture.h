@@ -8,6 +8,8 @@
 #include <string>
 #include <unordered_map>
 
+class Shader;
+
 class Texture
 {
 public:
@@ -27,6 +29,7 @@ public:
 	static GLuint Load(std::string path, int wrappingMode);
 
 	static GLuint LoadCubeMap(std::vector<std::string> faces);
+	static void UseCubeMap(GLuint ID, Shader* shader);
 
 	void DeleteTexture();
 };
