@@ -32,7 +32,7 @@ SceneManager::SceneManager(Scene* _scene) :
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	glfwWindowHint(GLFW_SAMPLES, 16);
+	glfwWindowHint(GLFW_SAMPLES, 16); // for MSAA
 
 
 #if _DEBUG  
@@ -182,7 +182,6 @@ void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int he
 	windowHeight = height;
 }
 
-// TODO: Make it so holding right click can move the camera if the camera is locked
 void SceneManager::MouseMoveCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
 	if ((lockedCamera && !oppositeCameraMode) || (!lockedCamera && oppositeCameraMode)) { return; }
@@ -265,7 +264,6 @@ void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int ac
 		ToggleFullscreen();
 	}
 
-	// TODO: continue to lock camera when a mouse button is being held down too
 	if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS) {
 		lockedCamera = !lockedCamera;
 		RefreshInputMode();

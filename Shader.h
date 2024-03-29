@@ -8,6 +8,17 @@
 
 
 // TODO: Some shaders can be quite similar, see if there is or make a solution to not having to have to have a lot of shaders.
+// Shader system
+// Need some sort of #include system, theres a lot of functions that would be better off to be in a single file and copied over
+// Structs
+// 'Static' functions
+// 
+// 
+// There seems to be an extension for opengl already https://registry.khronos.org/OpenGL/extensions/ARB/ARB_shading_language_include.txt
+// Is it worth using that or doing it myself, 
+// note: recursion
+//
+
 
 class Shader
 {

@@ -15,13 +15,20 @@ SceneObject::SceneObject(glm::vec3 _position, glm::vec3 _rotation, float _scale)
 {
 }
 
+void SceneObject::setRenderer(ModelRenderer* modelRenderer)
+{
+	renderer = modelRenderer;
+	renderer->sceneObject = this;
+}
+
+ModelRenderer* SceneObject::getRenderer() const
+{
+	return renderer;
+}
+
 SceneObject::~SceneObject()
 {
-	// TODO: Cleanup parts, make sure working
-	while (!parts.empty()) {
-		delete parts.back();
-		parts.pop_back();
-	}
+	delete renderer;
 }
 
 void SceneObject::Update(float delta)
@@ -34,14 +41,11 @@ void SceneObject::Update(float delta)
 
 void SceneObject::Draw() const
 {
+	if (renderer) {
+		renderer->Draw();
+	}
 	for (auto part = parts.begin(); part != parts.end(); part++)
 	{
 		(*part)->Draw();
 	}
-}
-
-void SceneObject::AddPart(Part* part)
-{
-	parts.push_back(part);
-	part->sceneObject = this;
 }

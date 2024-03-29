@@ -35,6 +35,9 @@ private:
 		unsigned long long operator()(std::vector<Texture*> key) const;
 
 	};
+
+	// TODO: Maybe make a template function, all the 'Get' functions are very similar and could prob be written better
+
 	static std::unordered_map<std::string, Texture, hashFNV1A> textures;
 	static std::unordered_map<std::string, Shader, hashFNV1A> shaders;
 	static std::unordered_map<std::vector<Texture*>, Material, hashFNV1A> materials;

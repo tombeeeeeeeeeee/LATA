@@ -9,8 +9,7 @@ TestScene::TestScene()
 	sceneObjects = std::vector<SceneObject*>{
 		boxes,
 		grass,
-		// TODO: Make lights show up again
-		//lightCube,
+		lightCube,
 		backpack,
 		soulSpear,
 		testRedBox,
@@ -59,25 +58,29 @@ void TestScene::Start()
 		ResourceManager::GetTexture("images/container2_specular.png", Texture::Type::specular),
 	});
 	boxModel.AddMesh(&boxMesh);
-	boxes->AddPart(new MultiModelRenderer(&boxModel, litShader, std::vector<Transform>
+	boxes->setRenderer(new MultiModelRenderer(&boxModel, litShader, std::vector<Transform>
 	{
-		Transform({  0.0f,  0.0f,  0.00f }, { 20.f,   6.f,  10.f }, 1.0f),
-		Transform({  2.0f,  5.0f, -15.0f }, { 40.f,  12.f,  20.f }, 1.0f),
-		Transform({ -1.5f, -2.2f, -2.50f }, { 60.f,  18.f,  30.f }, 1.0f),
-		Transform({ -3.8f, -2.0f, -12.3f }, { 80.f,  24.f,  40.f }, 1.0f),
-		Transform({  2.4f, -0.4f, -3.50f }, { 100.f, 30.f,  50.f }, 1.0f),
-		Transform({ -1.7f,  3.0f, -7.50f }, { 120.f, 36.f,  60.f }, 1.0f),
-		Transform({  1.3f, -2.0f, -2.50f }, { 140.f, 42.f,  70.f }, 1.0f),
-		Transform({  1.5f,  2.0f, -2.50f }, { 160.f, 48.f,  80.f }, 1.0f),
-		Transform({  1.5f,  0.2f, -1.50f }, { 180.f, 54.f,  90.f }, 1.0f),
-		Transform({ -1.3f,  1.0f, -1.50f }, { 200.f, 60.f, 100.f }, 1.0f)
+		Transform({  0.0f,  0.0f,  0.00f }, { 00.f,   0.f, 00.f }, 1.0f),
+		Transform({  2.0f,  5.0f, -15.0f }, { 20.f,   6.f, 10.f }, 1.0f),
+		Transform({ -1.5f, -2.2f, -2.50f }, { 40.f,  12.f, 20.f }, 1.0f),
+		Transform({ -3.8f, -2.0f, -12.3f }, { 60.f,  18.f, 30.f }, 1.0f),
+		Transform({  2.4f, -0.4f, -3.50f }, { 80.f,  24.f, 40.f }, 1.0f),
+		Transform({ -1.7f,  3.0f, -7.50f }, { 100.f, 30.f, 50.f }, 1.0f),
+		Transform({  1.3f, -2.0f, -2.50f }, { 120.f, 36.f, 60.f }, 1.0f),
+		Transform({  1.5f,  2.0f, -2.50f }, { 140.f, 42.f, 70.f }, 1.0f),
+		Transform({  1.5f,  0.2f, -1.50f }, { 160.f, 48.f, 80.f }, 1.0f),
+		Transform({ -1.3f,  1.0f, -1.50f }, { 180.f, 54.f, 90.f }, 1.0f)
 	}));
 
 	Mesh lightCubeMesh;
 	lightCubeMesh.InitialiseCube();
 	lightCubeModel.AddMesh(&lightCubeMesh);
-	lightCube->AddPart(new ModelRenderer(&lightCubeModel, lightCubeShader));
-	lightCube->transform.scale = 0.2f;
+	MultiModelRenderer* lightCubeRenderer = new MultiModelRenderer(&lightCubeModel, lightCubeShader, std::vector<Transform>(sizeof(pointLights) / sizeof(pointLights[0])));
+	lightCube->setRenderer(lightCubeRenderer);
+	for (int i = 0; i < sizeof(pointLights) / sizeof(pointLights[0]); i++)
+	{
+		lightCubeRenderer->transforms[i].scale = 0.2f;
+	}
 
 	Mesh grassMesh;
 	grassMesh.InitialiseDoubleSidedQuad();
@@ -85,7 +88,7 @@ void TestScene::Start()
 		ResourceManager::GetTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE, false),
 	});
 	grassModel.AddMesh(&grassMesh);
-	grass->AddPart(new MultiModelRenderer(&grassModel, litShader, std::vector<Transform>{
+	grass->setRenderer(new MultiModelRenderer(&grassModel, litShader, std::vector<Transform>{
 		Transform({ 0.0f, 0.0f,   0.0f }, { 0.f,  20.f, 0.f }, 1.0f),
 		Transform({ 2.0f, 0.0f, -15.0f }, { 0.f,  40.f, 0.f }, 1.0f),
 		Transform({ -1.5f, 0.0f, -03.5f }, { 0.f,  60.f, 0.f }, 1.0f),
@@ -100,7 +103,7 @@ void TestScene::Start()
 
 	backpackModel = Model("models/backpack/backpack.obj", false);
 
-	backpack->AddPart(new ModelRenderer(&backpackModel, litShader));
+	backpack->setRenderer(new ModelRenderer(&backpackModel, litShader));
 	backpack->transform.position = { -5.f, -1.f, 0.f };
 
 	testRedBoxModel = Model("models/normalBoxTest/Box_normal_example.obj");
@@ -108,7 +111,7 @@ void TestScene::Start()
 		ResourceManager::GetTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::diffuse, GL_REPEAT, true),
 		ResourceManager::GetTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true),
 	}));
-	testRedBox->AddPart(new ModelRenderer(&testRedBoxModel, litNormalShader));
+	testRedBox->setRenderer(new ModelRenderer(&testRedBoxModel, litNormalShader));
 	testRedBox->transform.position = { 5.f, -3.f, 2.f };
 
 	soulSpearModel = Model(std::string("models/soulspear/soulspear.obj"), true);
@@ -117,7 +120,7 @@ void TestScene::Start()
 		ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
 		ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true)
 	}));
-	soulSpear->AddPart(new ModelRenderer(&soulSpearModel, litNormalShader));
+	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, litNormalShader));
 	soulSpear->transform.position = { 0.f, 1.f, 1.f };
 }
 
@@ -130,6 +133,12 @@ void TestScene::Update(float delta)
 	{
 		(*i)->ApplyToShader(litNormalShader);
 		(*i)->ApplyToShader(litShader);
+	}
+
+	MultiModelRenderer* lightCubeRenderer = (MultiModelRenderer*)lightCube->getRenderer();
+	for (int i = 0; i < sizeof(pointLights) / sizeof(pointLights[0]); i++)
+	{
+		lightCubeRenderer->transforms[i].position = pointLights[i].position;
 	}
 	
 	// Shader
