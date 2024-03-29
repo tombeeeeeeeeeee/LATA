@@ -28,6 +28,9 @@ class SceneManager
 	static void GLAPIENTRY ErrorMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
 	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+
+	static void RefreshInputMode();
 
 	static void ProcessInput(GLFWwindow* window);
 	static void ToggleFullscreen();
@@ -42,6 +45,7 @@ class SceneManager
 	static float lastY;
 	static bool firstMouse;
 	static bool lockedCamera;
+	static bool oppositeCameraMode;
 	
 public:
 
