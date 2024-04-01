@@ -11,10 +11,10 @@
 class TestScene : public Scene
 {
 private:
-	Shader* litNormalShader;
-	Shader* litShader;
-	Shader* lightCubeShader;
-	Shader* skyBoxShader;
+	Shader* litNormalShader = nullptr;
+	Shader* litShader		= nullptr;
+	Shader* lightCubeShader = nullptr;
+	Shader* skyBoxShader	= nullptr;
 
 	Mesh testMesh;
 	Mesh skybox;
