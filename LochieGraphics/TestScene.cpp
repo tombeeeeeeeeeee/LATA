@@ -52,10 +52,10 @@ void TestScene::Start()
 	skyboxTexture = Texture::LoadCubeMap(faces);
 
 	litShader->Use();
-	litShader->setFloat("material.shininess", 64.0f);
+	litShader->setFloat("material.shininess", 32.f);
 
 	litNormalShader->Use();
-	litNormalShader->setFloat("material.shininess", 64.0f);
+	litNormalShader->setFloat("material.shininess", 32.f);
 
 	Mesh boxMesh;
 	boxMesh.InitialiseCube();
@@ -125,6 +125,7 @@ void TestScene::Start()
 		ResourceManager::GetTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse, GL_REPEAT, true),
 		ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
 		ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true)
+		//ResourceManager::GetTexture("images/DefaultNormal.png", Texture::Type::normal, GL_REPEAT, true)
 	}));
 	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, litNormalShader));
 	soulSpear->transform.position = { 0.f, 1.f, 1.f };
@@ -132,6 +133,9 @@ void TestScene::Start()
 
 void TestScene::Update(float delta)
 {
+	messengerGUI.GUI(); //TODO: Shouldn't be here, should also be inside a gui menu thing
+	messengerGUI.Update();
+
 	pointLights[0].position.x = 1.5f * sin(glfwGetTime() * 2.f);
 	spotlight.position = camera->position;
 	spotlight.direction = camera->front;

@@ -88,7 +88,6 @@ GLuint Texture::LoadCubeMap(std::vector<std::string> faces)
 		else
 		{
 			std::cout << "Cubemap failed to load at path: " << faces[i] << "\n";
-			stbi_image_free(data);
 		}
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
