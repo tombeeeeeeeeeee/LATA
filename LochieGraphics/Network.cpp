@@ -1,10 +1,9 @@
 #include "Network.h"
 
-ULONG Network::uNonBlockingMode = 1;
 
-bool Network::CommonSetup(std::string ip, std::string port, addrinfo** info, SOCKET* soc)
+bool Network::CommonSetup(addrinfo** info, SOCKET* soc)
 {
-	if (!Network::InitWinsock()) { return false; }
+	if (!InitWinsock()) { return false; }
 
 	addrinfo hints;
 
@@ -12,11 +11,11 @@ bool Network::CommonSetup(std::string ip, std::string port, addrinfo** info, SOC
 	hints.ai_family = AF_INET; // IPv4 (AF_INET)		// IPv6 (AF_INET6)
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
-	hints.ai_flags = AI_PASSIVE; // Only needed for the server, but ingored for client (only gets used for a bind call)
+	hints.ai_flags = AI_PASSIVE; // Only needed for the server, but ignored for client (only gets used for a bind call)
 
-	if (!Network::GetAddressInfo(ip, port, &hints, info)) { return false; }
+	if (!GetAddressInfo(address, port, &hints, info)) { return false; }
 
-	if (!Network::CreateSocket(soc, info)) { return false; }
+	if (!CreateSocket(soc, info)) { return false; }
 
 	return true;
 }

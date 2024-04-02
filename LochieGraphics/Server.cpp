@@ -6,9 +6,9 @@ void Server::Start()
 
 	addrinfo* info = nullptr;
 	
-	if (!Network::CommonSetup(address, port, &info, &ListenSocket))
+	if (!CommonSetup(&info, &ListenSocket))
 
-	if (!Network::SetSocketNonBlocking(&ListenSocket, &info)) { return; }
+	if (!SetSocketNonBlocking(&ListenSocket, &info)) { return; }
 
 	int iResult;
 	// Setup the TCP listening socket; bind

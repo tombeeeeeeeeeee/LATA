@@ -6,7 +6,7 @@ void Client::Start()
 
 	addrinfo* info = nullptr;
 
-	if (!Network::CommonSetup(address, port, &info, &ConnectSocket)) { return; }
+	if (!CommonSetup(&info, &ConnectSocket)) { return; }
 
 	int iResult;
 	// Connect to server.
@@ -19,7 +19,7 @@ void Client::Start()
 		return;
 	}
 
-	if (!Network::SetSocketNonBlocking(&ConnectSocket, &info)) { return; }
+	if (!SetSocketNonBlocking(&ConnectSocket, &info)) { return; }
 
 	freeaddrinfo(info);
 }

@@ -2,28 +2,18 @@
 
 #include "Network.h"
 
-#define DEFAULT_BUFLEN 512
-
-typedef void(*RecieveCallback)(const char* buffer);
 
 //TODO: Error when cannot join
-class Client
+class Client : public Network
 {
 private:
 	SOCKET ConnectSocket = INVALID_SOCKET;
-	ULONG uNonBlockingMode = 1;
-
 
 public:
-	RecieveCallback recieveCallback = nullptr;
-	void Start();
-	void Run();
+	void Start() override;
+	void Run() override;
 	void Send(const char* sendBuf);
 	void Disconnect();
-	void Close();
-
-public:
-	std::string address;
-	std::string port;
+	void Close() override;
 };
 
