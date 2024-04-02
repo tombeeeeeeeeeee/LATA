@@ -1,10 +1,6 @@
 #pragma once
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <stdio.h>
-#include <iostream>
 
-#pragma comment(lib, "Ws2_32.lib")
+#include "Network.h"
 
 #define DEFAULT_BUFLEN 512
 
@@ -20,11 +16,11 @@ private:
 
 public:
 	RecieveCallback recieveCallback = nullptr;
-	int Start();
-	int Run();
-	int Send(const char* sendBuf);
-	int Disconnect();
-	int Close();
+	void Start();
+	void Run();
+	void Send(const char* sendBuf);
+	void Disconnect();
+	void Close();
 
 public:
 	std::string address;
