@@ -1,5 +1,8 @@
 #include "Server.h"
 
+#include<string>
+
+
 void Server::Start()
 {
 	std::cout << "Starting Server...\n";
@@ -11,7 +14,7 @@ void Server::Start()
 	if (!SetSocketNonBlocking(&listenSocket, &info)) { return; }
 	
 	// Bind listening socket to address
-	if (!BindSocket(&listenSocket, &info)) { return; };
+	if (!BindSocket(&listenSocket, &info, port)) { return; };
 
 	freeaddrinfo(info);
 
@@ -77,9 +80,9 @@ void Server::CheckConnectClient()
 
 void Server::CloseClient(int i)
 {
-	int iResult = shutdown(clientSockets[i], SD_SEND);
+	int error = shutdown(clientSockets[i], SD_SEND);
 	closesocket(clientSockets[i]);
-	if (iResult == SOCKET_ERROR) {
+	if (error == SOCKET_ERROR) {
 		std::cout << "shutdown failed: " << WSAGetLastError() << "\n";
 		return;
 	}
@@ -88,9 +91,21 @@ void Server::CloseClient(int i)
 	clientSockets[i] = INVALID_SOCKET;
 }
 
-bool Server::BindSocket(SOCKET* soc, addrinfo** info)
+bool Server::BindSocket(SOCKET* soc, addrinfo** info, std::string port)
 {
-	int error = bind(*soc, (*info)->ai_addr, (int)(*info)->ai_addrlen);
+	//INADDR_ANY
+
+	//server_address.sin_addr.S_un.S_addr = INADDR_ANY;
+	
+	//(*info)->ai_addr.
+	sockaddr_in server_address;
+	server_address.sin_family = AF_INET;
+	server_address.sin_port = htons(std::stoi(port));
+	server_address.sin_addr.S_un.S_addr = INADDR_ANY;
+
+	int error = bind(*soc, (sockaddr*)&server_address, sizeof(server_address));
+	// Old
+	//int error = bind(*soc, (*info)->ai_addr, (int)(*info)->ai_addrlen);
 	if (error == SOCKET_ERROR) {
 		std::cout << "bind failed with error: " << WSAGetLastError() << "\n";
 		closesocket(*soc);

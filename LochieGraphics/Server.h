@@ -31,7 +31,7 @@ private:
 	// TODO: Connecting should no longer be blocking and should be able to happen all on a single thread
 	void CloseClient(int i);
 
-	static bool BindSocket(SOCKET* soc, addrinfo** info);
+	static bool BindSocket(SOCKET* soc, addrinfo** info, std::string port);
 	static bool ListenOnSocket(SOCKET* soc);
 };
 

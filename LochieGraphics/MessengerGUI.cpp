@@ -9,7 +9,7 @@
 void MessengerGUI::Start()
 {
 	// Get address as string
-	std::string add = std::to_string(address[0]) + "." + std::to_string(address[1]) + "." + std::to_string(address[2]) + "." + std::to_string(address[0]);
+	std::string add = std::to_string(address[0]) + "." + std::to_string(address[1]) + "." + std::to_string(address[2]) + "." + std::to_string(address[3]);
 
 	started = true;
 	if (serverTicked) {
@@ -30,6 +30,9 @@ void MessengerGUI::GUI()
 		ImGui::BeginDisabled();
 	}
 	ImGui::InputInt4("IPv4 address", address);
+	std::string add = std::to_string(address[0]) + "." + std::to_string(address[1]) + "." + std::to_string(address[2]) + "." + std::to_string(address[3]);
+	ImGui::Text(add.c_str());
+
 	ImGui::InputInt("Port number", &port);
 
 	// TODO: see if combining these ifs are okay, should leave early???
