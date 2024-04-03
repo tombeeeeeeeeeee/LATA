@@ -7,7 +7,7 @@
 class Client : public Network
 {
 private:
-	SOCKET ConnectSocket = INVALID_SOCKET;
+	SOCKET connectSocket = INVALID_SOCKET;
 
 public:
 	void Start() override;

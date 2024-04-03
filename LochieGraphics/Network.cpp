@@ -1,5 +1,6 @@
 #include "Network.h"
 
+ULONG Network::uNonBlockingMode = 1;
 
 bool Network::CommonSetup(addrinfo** info, SOCKET* soc)
 {
@@ -30,7 +31,7 @@ bool Network::InitWinsock()
 	}
     return true;
 }
-
+// TODO: Should this not be checking for writability?
 bool Network::Send(SOCKET soc, const char* sendBuffer)
 {
 	// (Plus one for terminating char \0)
@@ -66,6 +67,26 @@ bool Network::CreateSocket(SOCKET* soc, addrinfo** info)
 		return false;
 	}
 	return true;
+}
+
+bool Network::SocketReadable(SOCKET* soc)
+{
+	WSAPOLLFD fdArray = { 0 };
+	fdArray.events = POLLRDNORM;
+	fdArray.fd = *soc;
+	int check = WSAPoll(&fdArray, 1, 0);
+	if (check == SOCKET_ERROR) {
+		std::cout << "Error while checking readability of socket: " << WSAGetLastError() << "\n";
+		return false;
+	}
+	return check; // Check will be 1 or greater when readable
+}
+
+bool Network::SocketWritable(SOCKET* soc)
+{
+	// TODO: Write function
+	std::cout << "ERROR CHECKING WRITABLITIY, I haven't made the function yet\n";
+	return false;
 }
 
 bool Network::SetSocketNonBlocking(SOCKET* soc, addrinfo** info)

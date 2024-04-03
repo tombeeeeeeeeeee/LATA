@@ -8,13 +8,11 @@
 
 #pragma comment(lib, "Ws2_32.lib") // TODO: link properly
 
-#define DEFAULT_PORT "27015"
 #define DEFAULT_BUFLEN 512
 
 #define DEFAULT_CLIENT_LIMIT 4
 
 typedef void(*RecieveCallback)(const char* buffer);
-
 
 //TODO: Maybe this should be a super class of client and server
 class Network
@@ -30,16 +28,18 @@ public:
 
 	RecieveCallback recieveCallback = nullptr;
 
-
 protected:
 	bool CommonSetup(addrinfo** info, SOCKET* soc);
-	bool SetSocketNonBlocking(SOCKET* soc, addrinfo** info);
-	bool Send(SOCKET soc, const char* sendBuffer);
+	static bool SetSocketNonBlocking(SOCKET* soc, addrinfo** info);
+	static bool Send(SOCKET soc, const char* sendBuffer);
 
+	// Readable and writable are mean that the socket will be non blocking
+	static bool SocketReadable(SOCKET* soc);
+	static bool SocketWritable(SOCKET* soc);
 private:
-	ULONG uNonBlockingMode;
+	static ULONG uNonBlockingMode;
 
-	bool InitWinsock();
-	bool GetAddressInfo(std::string ip, std::string port, addrinfo* hints, addrinfo** info);
-	bool CreateSocket(SOCKET* soc, addrinfo** info);
+	static bool InitWinsock();
+	static bool GetAddressInfo(std::string ip, std::string port, addrinfo* hints, addrinfo** info);
+	static bool CreateSocket(SOCKET* soc, addrinfo** info);
 };

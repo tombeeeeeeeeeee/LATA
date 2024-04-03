@@ -6,29 +6,18 @@ void Server::Start()
 
 	addrinfo* info = nullptr;
 	
-	if (!CommonSetup(&info, &ListenSocket))
+	if (!CommonSetup(&info, &listenSocket))
 
-	if (!SetSocketNonBlocking(&ListenSocket, &info)) { return; }
+	if (!SetSocketNonBlocking(&listenSocket, &info)) { return; }
+	
+	// Bind listening socket to address
+	if (!BindSocket(&listenSocket, &info)) { return; };
 
-	int iResult;
-	// Setup the TCP listening socket; bind
-	iResult = bind(ListenSocket, info->ai_addr, (int)info->ai_addrlen);
 	freeaddrinfo(info);
-	if (iResult == SOCKET_ERROR) {
-		std::cout << "bind failed with error: " << WSAGetLastError() << "\n";
-		closesocket(ListenSocket);
-		WSACleanup();
-		return;
-	}
 
 	// Listen
-	if (listen(ListenSocket, SOMAXCONN) == SOCKET_ERROR) {
-		std::cout << "Listen failed with error: " << WSAGetLastError() << "\n";
-		closesocket(ListenSocket);
-		WSACleanup();
-		return;
-	}
-
+	if (!ListenOnSocket(&listenSocket)) { return; }
+	
 	started = true;
 }
 
@@ -38,15 +27,11 @@ void Server::Run()
 
 	for (int i = 0; i < DEFAULT_CLIENT_LIMIT; i++)
 	{
-		if (ClientSocket[i] == INVALID_SOCKET) { continue; }
+		if (clientSockets[i] == INVALID_SOCKET) { continue; }
 
-		WSAPOLLFD fdArray = { 0 };
-		fdArray.events = POLLRDNORM;
-		fdArray.fd = ClientSocket[i];
-		// WSAPoll (array, array elements, how long to wait (0 for no wait return immediately))
-		if (WSAPoll(&fdArray, 1, 0) == 0) { continue; }
+		if (!SocketReadable(&clientSockets[i])) { continue; }
 
-		iResult = recv(ClientSocket[i], recvbuf[i], recvbuflen, 0);
+		iResult = recv(clientSockets[i], recvbuf[i], recvbuflen, 0);
 		if (iResult > 0) {
 			std::cout << "Bytes received: " << iResult << "\n";
 			std::cout << recvbuf[i] << "\n";
@@ -71,22 +56,16 @@ void Server::CheckConnectClient()
 	// Find avaliable client spot
 	for (int i = 0; i < DEFAULT_CLIENT_LIMIT; i++)
 	{
-		if (ClientSocket[i] != INVALID_SOCKET) { continue; }
-		// Accept a client socket
+		if (clientSockets[i] != INVALID_SOCKET) { continue; }
 
-		WSAPOLLFD fdArray = { 0 };
-		fdArray.events = POLLRDNORM;
-		fdArray.fd = ListenSocket;
-
-		int check = WSAPoll(&fdArray, 1, 0);
-
-		if (check == 0) {
-			return; //TODO:
+		if (!SocketReadable(&listenSocket)) {
+			return; // TODO: move before for loop
 		}
 		std::cout << "New client connecting...: " << "\n";
 
-		ClientSocket[i] = accept(ListenSocket, NULL, NULL);
-		if (ClientSocket[i] == INVALID_SOCKET) {
+		// Accept a client socket
+		clientSockets[i] = accept(listenSocket, NULL, NULL);
+		if (clientSockets[i] == INVALID_SOCKET) {
 			std::cout << "accept failed: " << WSAGetLastError() << "\n";
 			return;
 		}
@@ -98,15 +77,38 @@ void Server::CheckConnectClient()
 
 void Server::CloseClient(int i)
 {
-	int iResult = shutdown(ClientSocket[i], SD_SEND);
-	closesocket(ClientSocket[i]);
+	int iResult = shutdown(clientSockets[i], SD_SEND);
+	closesocket(clientSockets[i]);
 	if (iResult == SOCKET_ERROR) {
 		std::cout << "shutdown failed: " << WSAGetLastError() << "\n";
 		return;
 	}
 
 	// cleanup
-	ClientSocket[i] = INVALID_SOCKET;
+	clientSockets[i] = INVALID_SOCKET;
+}
+
+bool Server::BindSocket(SOCKET* soc, addrinfo** info)
+{
+	int error = bind(*soc, (*info)->ai_addr, (int)(*info)->ai_addrlen);
+	if (error == SOCKET_ERROR) {
+		std::cout << "bind failed with error: " << WSAGetLastError() << "\n";
+		closesocket(*soc);
+		WSACleanup();
+		return false;
+	}
+	return true;
+}
+
+bool Server::ListenOnSocket(SOCKET* soc)
+{
+	if (listen(*soc, SOMAXCONN) == SOCKET_ERROR) {
+		std::cout << "Listen failed with error: " << WSAGetLastError() << "\n";
+		closesocket(*soc);
+		WSACleanup();
+		return false;
+	}
+	return true;
 }
 
 void Server::Close()
@@ -116,14 +118,14 @@ void Server::Close()
 
 void Server::Send(int clientIndex, const char* sendBuf)
 {
-	Network::Send(ClientSocket[clientIndex], sendBuf);
+	Network::Send(clientSockets[clientIndex], sendBuf);
 }
 
 void Server::Broadcast(const char* sendBuf)
 {
 	for (int i = 0; i < DEFAULT_CLIENT_LIMIT; i++)
 	{
-		if (ClientSocket[i] == INVALID_SOCKET) { continue; }
+		if (clientSockets[i] == INVALID_SOCKET) { continue; }
 		Send(i, sendBuf);
 	}
 }

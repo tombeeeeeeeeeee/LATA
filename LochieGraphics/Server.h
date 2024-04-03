@@ -2,8 +2,6 @@
 
 #include "Network.h"
 
-
-
 typedef void(*RecieveCallback)(const char* buffer);
 
 
@@ -21,8 +19,8 @@ public:
 
 
 	// TODO: rename with lowercases
-	SOCKET ListenSocket = INVALID_SOCKET; // TODO: Not listen after client limit reached?
-	SOCKET ClientSocket[DEFAULT_CLIENT_LIMIT] = { INVALID_SOCKET, INVALID_SOCKET, INVALID_SOCKET, INVALID_SOCKET };
+	SOCKET listenSocket = INVALID_SOCKET; // TODO: Not listen after client limit reached?
+	SOCKET clientSockets[DEFAULT_CLIENT_LIMIT] = { INVALID_SOCKET, INVALID_SOCKET, INVALID_SOCKET, INVALID_SOCKET };
 	
 	bool started = false; // TODO: maybe actually use
 
@@ -32,5 +30,8 @@ private:
 
 	// TODO: Connecting should no longer be blocking and should be able to happen all on a single thread
 	void CloseClient(int i);
+
+	static bool BindSocket(SOCKET* soc, addrinfo** info);
+	static bool ListenOnSocket(SOCKET* soc);
 };
 

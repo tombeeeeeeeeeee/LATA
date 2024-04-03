@@ -31,6 +31,12 @@
     <Filter Include="Header Files\Networking">
       <UniqueIdentifier>{a7f01ee9-5b81-4504-b964-2a6b42d8c1e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Messenger">
+      <UniqueIdentifier>{38735373-a6cd-4dd3-90e1-47294e94f0c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Messenger">
+      <UniqueIdentifier>{7aa7a8ad-c989-4174-96b9-90360e672617}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -126,20 +132,20 @@
     <ClCompile Include="Server.cpp">
       <Filter>Source Files\Networking</Filter>
     </ClCompile>
-    <ClCompile Include="MessengerServer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Messenger.cpp">
+      <Filter>Source Files\Messenger</Filter>
     </ClCompile>
     <ClCompile Include="MessengerClient.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Messenger.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Messenger</Filter>
     </ClCompile>
     <ClCompile Include="MessengerGUI.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Messenger</Filter>
+    </ClCompile>
+    <ClCompile Include="MessengerServer.cpp">
+      <Filter>Source Files\Messenger</Filter>
     </ClCompile>
     <ClCompile Include="Network.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Networking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -254,20 +260,20 @@
     <ClInclude Include="Server.h">
       <Filter>Header Files\Networking</Filter>
     </ClInclude>
-    <ClInclude Include="MessengerServer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MessengerClient.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Network.h">
+      <Filter>Header Files\Networking</Filter>
     </ClInclude>
     <ClInclude Include="Messenger.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Messenger</Filter>
+    </ClInclude>
+    <ClInclude Include="MessengerClient.h">
+      <Filter>Header Files\Messenger</Filter>
     </ClInclude>
     <ClInclude Include="MessengerGUI.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Messenger</Filter>
     </ClInclude>
-    <ClInclude Include="Network.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="MessengerServer.h">
+      <Filter>Header Files\Messenger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

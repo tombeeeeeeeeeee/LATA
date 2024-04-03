@@ -6,20 +6,20 @@ void Client::Start()
 
 	addrinfo* info = nullptr;
 
-	if (!CommonSetup(&info, &ConnectSocket)) { return; }
+	if (!CommonSetup(&info, &connectSocket)) { return; }
 
 	int iResult;
 	// Connect to server.
-	iResult = connect(ConnectSocket, info->ai_addr, (int)info->ai_addrlen);
+	iResult = connect(connectSocket, info->ai_addr, (int)info->ai_addrlen);
 	if (iResult == SOCKET_ERROR) {
-		closesocket(ConnectSocket);
-		ConnectSocket = INVALID_SOCKET;
+		closesocket(connectSocket);
+		connectSocket = INVALID_SOCKET;
 		std::cout << "Unable to connect to server: " << WSAGetLastError() << "\n";
 		WSACleanup();
 		return;
 	}
 
-	if (!SetSocketNonBlocking(&ConnectSocket, &info)) { return; }
+	if (!SetSocketNonBlocking(&connectSocket, &info)) { return; }
 
 	freeaddrinfo(info);
 }
@@ -31,18 +31,9 @@ void Client::Run() // check if gonna block
 	char recvbuf[DEFAULT_BUFLEN];
 	int recvbuflen = DEFAULT_BUFLEN;
 
-	WSAPOLLFD fdArray = { 0 };
-	fdArray.events = POLLRDNORM;
-	fdArray.fd = ConnectSocket;
+	if (!SocketReadable(&connectSocket)) { return; }
 
-	int check = WSAPoll(&fdArray, 1, 0);
-
-	if (check == 0) {
-		return;
-	}
-
-
-	iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+	iResult = recv(connectSocket, recvbuf, recvbuflen, 0);
 	if (iResult > 0) {
 		std::cout << "Bytes received: " << iResult << "\n";
 
@@ -57,19 +48,18 @@ void Client::Run() // check if gonna block
 	else {
 		std::cout << "recv failed: " << WSAGetLastError() << "\n";
 	}
-
 }
 
 void Client::Send(const char* sendBuf)
 {
-	Network::Send(ConnectSocket, sendBuf);
+	Network::Send(connectSocket, sendBuf);
 }
 
 void Client::Disconnect()
 {
-	// the client can still use the ConnectSocket for receiving data
-	int iResult = shutdown(ConnectSocket, SD_SEND);
-	closesocket(ConnectSocket);
+	// the client can still use the connectSocket for receiving data
+	int iResult = shutdown(connectSocket, SD_SEND);
+	closesocket(connectSocket);
 	if (iResult == SOCKET_ERROR) {
 		std::cout << "shutdown failed: " << WSAGetLastError() << "\n";
 		WSACleanup();
@@ -80,6 +70,6 @@ void Client::Disconnect()
 void Client::Close()
 {
 	// cleanup
-	closesocket(ConnectSocket);
+	closesocket(connectSocket);
 	WSACleanup();
 }
