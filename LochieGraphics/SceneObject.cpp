@@ -2,8 +2,10 @@
 
 #include "Shader.h"
 #include "Model.h"
-
 #include "ModelRenderer.h"
+
+#include "imgui.h"
+#include "imgui_stdlib.h"
 
 SceneObject::SceneObject() :
 	transform(Transform({ 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f }, 1.0f))
@@ -52,6 +54,7 @@ void SceneObject::Draw() const
 
 void SceneObject::GUI()
 {
+	ImGui::InputText("Name", &name);
 	transform.GUI();
 	renderer->GUI();
 	for (auto i = parts.begin(); i != parts.end(); i++)

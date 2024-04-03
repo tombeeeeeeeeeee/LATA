@@ -1,8 +1,13 @@
 #include "SceneManager.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include "ResourceManager.h"
 
-#include "imguiStuff.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #include <iostream>
 
@@ -85,6 +90,7 @@ SceneManager::SceneManager(Scene* _scene) :
 
 	//ImGui::StyleColorsClassic();
 	//ImGui::StyleColorsLight();
+
 	ImGui::StyleColorsDark();
 
 	// Depth testing
@@ -155,7 +161,7 @@ void SceneManager::Update()
 
 	ImGui::Render();
 
-	if (ImGui::GetDrawData())	//Render tends to get called once or twice before Update gets called, so we need to make sure this info exists.
+	if (ImGui::GetDrawData())
 	{
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
@@ -224,11 +230,11 @@ void GLAPIENTRY SceneManager::ErrorMessageCallback(GLenum source, GLenum type, G
 	switch (source)
 	{
 	case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "Shader Compiler"; break;
-	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "Window System"; break;
-	case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "Third Party"; break;
-	case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Application"; break;
-	case GL_DEBUG_SOURCE_OTHER:           std::cout << "Other"; break;
-	case GL_DEBUG_SOURCE_API:             std::cout << "API"; break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "Window System";   break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "Third Party";	  break;
+	case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Application";	  break;
+	case GL_DEBUG_SOURCE_OTHER:           std::cout << "Other";			  break;
+	case GL_DEBUG_SOURCE_API:             std::cout << "API";			  break;
 	}
 	std::cout << "\n";
 
@@ -236,23 +242,23 @@ void GLAPIENTRY SceneManager::ErrorMessageCallback(GLenum source, GLenum type, G
 	switch (type)
 	{
 	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "Deprecated Behaviour"; break;
-	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Undefined Behaviour"; break;
-	case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Portability"; break;
-	case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Performance"; break;
-	case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "Push Group"; break;
-	case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "Pop Group"; break;
-	case GL_DEBUG_TYPE_MARKER:              std::cout << "Marker"; break;
-	case GL_DEBUG_TYPE_ERROR:               std::cout << "Error"; break;
-	case GL_DEBUG_TYPE_OTHER:               std::cout << "Other"; break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Undefined Behaviour";  break;
+	case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Portability";			 break;
+	case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Performance";			 break;
+	case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "Push Group";			 break;
+	case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "Pop Group";			 break;
+	case GL_DEBUG_TYPE_MARKER:              std::cout << "Marker";				 break;
+	case GL_DEBUG_TYPE_ERROR:               std::cout << "Error";				 break;
+	case GL_DEBUG_TYPE_OTHER:               std::cout << "Other";				 break;
 	}
 	std::cout << "\n";
 
 	std::cout << "Severity: ";
 	switch (severity)
 	{
-	case GL_DEBUG_SEVERITY_HIGH:         std::cout << "high"; break;
-	case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "medium"; break;
-	case GL_DEBUG_SEVERITY_LOW:          std::cout << "low"; break;
+	case GL_DEBUG_SEVERITY_HIGH:         std::cout << "high";		  break;
+	case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "medium";		  break;
+	case GL_DEBUG_SEVERITY_LOW:          std::cout << "low";		  break;
 	case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "notification"; break;
 	}
 	std::cout << "\n";
@@ -285,12 +291,6 @@ void SceneManager::MouseButtonCallback(GLFWwindow* window, int button, int actio
 
 void SceneManager::ProcessInput(GLFWwindow* window)
 {
-	//if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT)) {
-	//	oppositeCameraMode = true;
-	//}
-	//else {
-	//	oppositeCameraMode = false;
-	//}
 	if (ImGui::GetIO().WantCaptureKeyboard) { return; }
 
 	// Camera movement

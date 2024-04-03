@@ -4,7 +4,7 @@
 #include "Shader.h"
 #include "SceneObject.h"
 
-#include "imguiStuff.h"
+#include "imgui.h"
 
 ModelRenderer::ModelRenderer(Model* _model, Shader* _shader) :
 	model(_model),

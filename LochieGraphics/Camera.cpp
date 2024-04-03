@@ -2,7 +2,7 @@
 
 #include "Maths.h"
 
-#include "imguiStuff.h"
+#include "imgui.h"
 
 Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch, float _movementSpeed, float _sensitivity, float _fov) :
     position(_position),

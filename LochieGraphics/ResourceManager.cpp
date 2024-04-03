@@ -1,7 +1,7 @@
 #include "ResourceManager.h"
 
 #include "stb_image.h"
-#include "imguiStuff.h"
+#include "imgui.h"
 
 #include <iostream>
 

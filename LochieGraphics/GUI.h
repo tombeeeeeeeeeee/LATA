@@ -1,14 +1,10 @@
 #pragma once
 
-#include "imguiStuff.h"
+#include "imgui.h"
 
 #include <string>
 
 class Scene;
-class Camera;
-class SceneObject;
-class Transform;
-class ModelRenderer;
 
 class GUI
 {

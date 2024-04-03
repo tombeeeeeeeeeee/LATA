@@ -6,6 +6,7 @@
 #include "Maths.h"
 
 #include <vector>
+#include <string>
 
 class Model;
 class Shader;
@@ -16,6 +17,8 @@ class SceneObject
 private:
 	ModelRenderer* renderer = nullptr;
 public:
+
+	std::string name = "Unnamed Scene Object";
 
 	Transform transform;
 
