@@ -208,6 +208,7 @@ void SceneManager::MouseMoveCallback(GLFWwindow* window, double xposIn, double y
 
 void SceneManager::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
+	if (ImGui::GetIO().WantCaptureMouse) { return; }
 	camera.ProcessMouseScroll((float)yoffset);
 }
 
