@@ -93,15 +93,10 @@ void Server::CloseClient(int i)
 
 bool Server::BindSocket(SOCKET* soc, addrinfo** info, std::string port)
 {
-	//INADDR_ANY
-
-	//server_address.sin_addr.S_un.S_addr = INADDR_ANY;
-	
-	//(*info)->ai_addr.
 	sockaddr_in server_address;
 	server_address.sin_family = AF_INET;
 	server_address.sin_port = htons(std::stoi(port));
-	server_address.sin_addr.S_un.S_addr = INADDR_ANY;
+	server_address.sin_addr.S_un.S_addr = INADDR_ANY; // Bind to no particular address (any)
 
 	int error = bind(*soc, (sockaddr*)&server_address, sizeof(server_address));
 	// Old

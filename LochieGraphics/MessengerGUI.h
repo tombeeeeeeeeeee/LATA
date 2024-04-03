@@ -15,7 +15,8 @@ class MessengerGUI
 	char messageBuffer[256];
 	
 	// TODO: better types
-	int address[4] = { 127, 0, 0, 1};
+	const int maxAddressLength = 15;
+	char address[15] = "127.0.0.1";
 	int port = 7777;
 
 
