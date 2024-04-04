@@ -1,9 +1,7 @@
 #pragma once
 class ImGuiStyles
 {
-private:
-	void TemplateStyle();
 public:
-	void SetLocStyle();
+	static void SetLocStyle();
 };
 

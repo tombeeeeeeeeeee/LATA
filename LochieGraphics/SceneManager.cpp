@@ -8,7 +8,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-
+#include "ImGuiStyles.h"
 #include <iostream>
 
 unsigned int SceneManager::windowWidth = 1920 / 2;
@@ -90,8 +90,8 @@ SceneManager::SceneManager(Scene* _scene) :
 
 	//ImGui::StyleColorsClassic();
 	//ImGui::StyleColorsLight();
-
-	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsDark();
+	ImGuiStyles::SetLocStyle();
 
 	// Depth testing
 	glEnable(GL_DEPTH_TEST);
@@ -342,7 +342,7 @@ void SceneManager::RefreshInputMode()
 {
 	if ((lockedCamera && !oppositeCameraMode) || (!lockedCamera && oppositeCameraMode)) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		glfwSetCursorPos(window, windowWidth / 2, windowHeight / 2);
+		glfwSetCursorPos(window, windowWidth / 2.f, windowHeight / 2.f);
 		firstMouse = true;
 	}
 	else {
