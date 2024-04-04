@@ -8,6 +8,7 @@
 
 #include "Graphics.h"
 
+// TODO: fullscreen window with border, exclusive fullscreen
 enum class WindowModes {
 	windowed,
 	fullscreenWindowed
@@ -36,7 +37,7 @@ private:
 	static void RefreshInputMode();
 
 	static void ProcessInput(GLFWwindow* window);
-	static void ToggleFullscreen();
+	static void ToggleFullscreen(); // TODO: fullscreen for correct monitor and remember size and pos
 
 	// Time
 	static float deltaTime;

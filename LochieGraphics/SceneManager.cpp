@@ -82,16 +82,21 @@ SceneManager::SceneManager(Scene* _scene) :
 	}
 #endif
 
-
+	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	ImGui_ImplOpenGL3_Init();
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
 	//ImGui::StyleColorsClassic();
 	//ImGui::StyleColorsLight();
 	//ImGui::StyleColorsDark();
 	ImGuiStyles::SetLocStyle();
+
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init(); // TODO: Theres an overload for this that takes a version, see if should be using
+
 
 	// Depth testing
 	glEnable(GL_DEPTH_TEST);
@@ -156,15 +161,24 @@ void SceneManager::Update()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
 	scene->Update(deltaTime);
 	scene->gui.Update();
 
 	ImGui::Render();
 
-	if (ImGui::GetDrawData())
-	{
+	// TODO: remove if if not needed
+	//if (ImGui::GetDrawData())
+	//{
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	//}
+
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		glfwMakeContextCurrent(window);
 	}
 
 	// Check and call events and swap the buffers
@@ -176,8 +190,6 @@ bool SceneManager::ShouldClose() const
 {
 	return glfwWindowShouldClose(window);
 }
-
-
 
 void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {

@@ -20,7 +20,7 @@ void GUI::Update()
 
 void GUI::ResourceMenu()
 {
-	if (!ImGui::Begin("Resource Menu", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Resource Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
 		return;
 	}
@@ -36,7 +36,7 @@ void GUI::ResourceMenu()
 
 void GUI::TestMenu()
 {
-	if (!ImGui::Begin("Controls Menu", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Controls Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();	
 		return;
 	}
@@ -50,7 +50,7 @@ void GUI::TestMenu()
 
 void GUI::CameraMenu()
 {
-	if (!ImGui::Begin("Camera Menu", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Camera Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
 		return;
 	}
@@ -62,7 +62,7 @@ void GUI::CameraMenu()
 
 void GUI::SceneObjectMenu()
 {
-	if (!ImGui::Begin("Scene Object Menu", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Scene Object Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
 		return;
 	}
@@ -77,7 +77,7 @@ void GUI::SceneObjectMenu()
 
 void GUI::LightMenu()
 {
-	if (!ImGui::Begin("Light Menu", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Light Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
 		return;
 	}
