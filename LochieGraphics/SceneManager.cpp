@@ -16,8 +16,8 @@ unsigned int SceneManager::windowHeight = 1080 / 2;
 WindowModes SceneManager::windowMode = WindowModes::windowed;
 GLFWwindow* SceneManager::window = nullptr;
 
-
 float SceneManager::deltaTime = 0.0f;
+FixedSizeQueue<float, 300> SceneManager::frameTimes;
 
 Camera SceneManager::camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float SceneManager::lastX = 600;
@@ -143,6 +143,7 @@ void SceneManager::Update()
 	float currentFrame = static_cast<float>(glfwGetTime());
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
+	frameTimes.Push(deltaTime);
 
 	ProcessInput(window);
 	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.01f, 100.0f);

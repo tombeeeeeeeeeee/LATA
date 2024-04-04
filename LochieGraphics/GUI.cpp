@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "ModelRenderer.h"
 #include "MultiModelRenderer.h"
+#include "SceneManager.h"
 
 #include "ResourceManager.h"
 
@@ -25,6 +26,10 @@ void GUI::ResourceMenu()
 	}
 
 	ResourceManager::GUI();
+
+	// Graph range top is 20fps
+	ImGui::PlotLines("Time per frame", SceneManager::frameTimes.elements, IM_ARRAYSIZE(SceneManager::frameTimes.elements), SceneManager::frameTimes.position, nullptr, 0.00f, 0.05f, ImVec2(0.f, 80.0f));
+
 
 	ImGui::End();
 }

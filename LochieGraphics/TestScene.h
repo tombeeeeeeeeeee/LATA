@@ -12,7 +12,6 @@
 class TestScene : public Scene
 {
 private:
-
 	//TODO: fix, bad name
 	MessengerGUI messengerGUI;
 

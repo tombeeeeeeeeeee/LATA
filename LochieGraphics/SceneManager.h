@@ -4,6 +4,8 @@
 
 #include "Camera.h"
 
+#include "FixedSizeQueue.h"
+
 #include "Graphics.h"
 
 enum class WindowModes {
@@ -13,6 +15,7 @@ enum class WindowModes {
 
 class SceneManager
 {
+private:
 	Scene* scene;
 
 	// Window
@@ -38,6 +41,9 @@ class SceneManager
 	// Time
 	static float deltaTime;
 	float lastFrame = 0.0f;
+public:
+	static FixedSizeQueue<float, 300> frameTimes;
+private:
 
 	// Camera
 	static Camera camera;
@@ -57,6 +63,5 @@ public:
 
 	void Update();
 	bool ShouldClose() const;
-
 };
 

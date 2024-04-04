@@ -4,6 +4,8 @@
 
 #include "stb_image.h"
 
+#include <iostream>
+
 TestScene::TestScene()
 {
 	sceneObjects = std::vector<SceneObject*>{
@@ -133,9 +135,8 @@ void TestScene::Start()
 
 void TestScene::Update(float delta)
 {
-	//messengerGUI.GUI(); //TODO: Shouldn't be here, should also be inside a gui menu thing
-	//messengerGUI.Update();
-	ImGui::ShowStyleEditor(nullptr);
+	messengerGUI.GUI(); //TODO: Shouldn't be here, should also be inside a gui menu thing
+	messengerGUI.Update();
 
 	pointLights[0].position.x = 1.5f * sin(glfwGetTime() * 2.f);
 	spotlight.position = camera->position;
