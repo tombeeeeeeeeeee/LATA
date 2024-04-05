@@ -1,4 +1,4 @@
-#include "MessengerGUI.h"
+#include "MessengerInterface.h"
 
 #include "MessengerServer.h"
 #include "MessengerClient.h"
@@ -6,7 +6,7 @@
 #include "imgui.h"
 
 
-void MessengerGUI::Start()
+void MessengerInterface::Start()
 {
 	started = true;
 	if (serverTicked) {
@@ -19,7 +19,7 @@ void MessengerGUI::Start()
 }
 
 // TODO: Really shouldn't be a gui function
-void MessengerGUI::GUI()
+void MessengerInterface::GUI()
 {
 	ImGui::Checkbox("Server?", &serverTicked);
 	
@@ -34,10 +34,10 @@ void MessengerGUI::GUI()
 		Start();
 	}
 
-	ImGui::InputText("Message", messageBuffer, bufSize);
+	ImGui::InputText("Message", typedMessage, maxMessageLength);
 
 	if (ImGui::Button("Send!!!")) {
-		messenger->Send(messageBuffer);
+		messenger->Send(typedMessage);
 	}
 
 	for (auto i = messenger->messages.rbegin(); i != messenger->messages.rend() ; i++)
@@ -46,7 +46,7 @@ void MessengerGUI::GUI()
 	}
 }
 
-void MessengerGUI::Update()
+void MessengerInterface::Update()
 {
 	if (!started) { return; }
 	

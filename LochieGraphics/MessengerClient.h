@@ -1,11 +1,9 @@
 #pragma once
-#include "Messenger.h"
+#include "MessengerNetwork.h"
 
 #include "Client.h"
 
-#include <vector>
-
-class MessengerClient : public Messenger
+class MessengerClient : public MessengerNetwork
 {
 	Client client;
 

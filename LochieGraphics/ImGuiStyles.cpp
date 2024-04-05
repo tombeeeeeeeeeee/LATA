@@ -7,10 +7,6 @@ void ImGuiStyles::SetLocStyle()
 {
 	ImGuiStyle* style = &ImGui::GetStyle();
 
-	// 
-	//style->FrameRounding = 
-
-
 	// Sizes
 	//// Main
 	style->WindowPadding = ImVec2(12, 8);
@@ -61,7 +57,6 @@ void ImGuiStyles::SetLocStyle()
 	//// Misc
 	style->DisplaySafeAreaPadding = ImVec2(0, 0);
 
-	// Colours
 
 	// Fonts
 	//TODO: load diff font?
@@ -75,6 +70,7 @@ void ImGuiStyles::SetLocStyle()
 	style->Alpha = 1.0f;
 	style->DisabledAlpha = 0.5f;
 
+	// Colours
 	ImVec4* colors = ImGui::GetStyle().Colors;
 	colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 	colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
@@ -141,5 +137,4 @@ void ImGuiStyles::SetLocStyle()
 	// plotting stuff
 	// table stuff
 	// modal window dim bg
-
 }

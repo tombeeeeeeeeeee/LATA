@@ -27,6 +27,7 @@ void GUI::ResourceMenu()
 
 	ResourceManager::GUI();
 
+	// TODO: Make this graph better, have lines and stuff for specific frame rates
 	// Graph range top is 20fps
 	ImGui::PlotLines("Time per frame", SceneManager::frameTimes.elements, IM_ARRAYSIZE(SceneManager::frameTimes.elements), SceneManager::frameTimes.position, nullptr, 0.00f, 0.05f, ImVec2(0.f, 80.0f));
 
@@ -44,6 +45,7 @@ void GUI::TestMenu()
 	ImGui::Text("Look around with the mouse");
 	ImGui::Text("Use keyboard (WASD) to move the camera around");
 	ImGui::Text("Press the ALT key (left) to toggle between moving the mouse / camera");
+	ImGui::Text("Hold right click to also switch moving the mouse/camera");
 
 	ImGui::End();
 }

@@ -7,13 +7,13 @@
 #include "Model.h"
 #include "SceneObject.h"
 #include "Light.h"
-#include "MessengerGUI.h"
+#include "MessengerInterface.h"
 
 class TestScene : public Scene
 {
 private:
 	//TODO: fix, bad name
-	MessengerGUI messengerGUI;
+	MessengerInterface messengerGUI;
 
 	Shader* litNormalShader = nullptr;
 	Shader* litShader		= nullptr;

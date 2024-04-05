@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-class Messenger
+class MessengerNetwork
 {
 public:
 	static std::vector<std::string> messages;

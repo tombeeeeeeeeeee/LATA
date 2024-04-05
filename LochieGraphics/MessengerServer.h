@@ -1,11 +1,9 @@
 #pragma once
-#include "Messenger.h"
+#include "MessengerNetwork.h"
 
 #include "Server.h"
 
-#include <vector>
-
-class MessengerServer : public Messenger
+class MessengerServer : public MessengerNetwork
 {
 	static Server server;
 
