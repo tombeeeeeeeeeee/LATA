@@ -45,18 +45,11 @@ void Model::AddMesh(Mesh* mesh)
 	meshes.push_back(std::move(*mesh));
 }
 
-void Model::Draw(Shader* shader)
+void Model::Draw()
 {
+	material->Use();
 	for (auto mesh = meshes.begin(); mesh != meshes.end(); mesh++)
 	{
-		mesh->Draw(shader);
-	}
-}
-
-void Model::SetMaterial(Material* material)
-{
-	for (auto mesh = meshes.begin(); mesh != meshes.end(); mesh++)
-	{
-		mesh->material = material;
+		mesh->Draw();
 	}
 }

@@ -7,7 +7,7 @@
 
 std::unordered_map<std::string, Texture, ResourceManager::hashFNV1A> ResourceManager::textures;
 std::unordered_map<std::string, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
-std::unordered_map<std::vector<Texture*>, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
+std::unordered_map<std::string, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
 
 
 const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
@@ -45,16 +45,14 @@ Shader* ResourceManager::GetShader(std::string vertexPath, std::string fragmentP
 	return &shader->second;
 }
 
-//TODO: Sort textures in a specific order so that it doesn't make a new texture for the same material if the textures are given in a different order
-Material* ResourceManager::GetMaterial(std::vector<Texture*> textures)
+Material* ResourceManager::GetMaterial(std::string name, Shader* shader)
 {
-	auto material = materials.find(textures);
+	auto material = materials.find(name);
 
 	if (material == materials.end()) {
-		Material newMaterial;
-		newMaterial.textures = textures;
+		Material newMaterial(name, shader);
 
-		material = materials.emplace(textures, newMaterial).first;
+		material = materials.emplace(name, newMaterial).first;
 	}
 
 	return &material->second;
@@ -120,10 +118,13 @@ void ResourceManager::GUI()
 
 	for (auto i = ResourceManager::materials.begin(); i != ResourceManager::materials.end(); i++)
 	{
+		ImGui::Text(i->first.c_str());
 		for (auto j = i->second.textures.begin(); j != i->second.textures.end(); j++)
 		{
-			ImGui::Text(std::to_string((*j)->ID).c_str());
-			ImGui::SameLine();
+			if (j->second != nullptr) {
+				ImGui::Text(std::to_string((j->second)->ID).c_str());
+				ImGui::SameLine();
+			}
 		}
 		ImGui::NewLine();
 	}

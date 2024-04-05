@@ -21,7 +21,7 @@ class MessengerInterface
 
 	void Start();
 public:
-	void GUI() override;
+	void GUI();
 
-	void Update() override;
+	void Update();
 };

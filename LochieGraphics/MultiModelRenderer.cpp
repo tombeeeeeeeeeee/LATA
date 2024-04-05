@@ -8,21 +8,21 @@
 
 void MultiModelRenderer::Draw()
 {
-	shader->Use();
+	model->material->getShader()->Use();
 	for (auto i = transforms.begin(); i != transforms.end(); i++)
 	{
 		//TODO: This moves in a unique way, kinda intersting maybe keep somehow
-		shader->setMat4("model", i->getMatrix() * sceneObject->transform.getMatrix());
-		model->Draw(shader);
+		model->material->getShader()->setMat4("model", i->getMatrix() * sceneObject->transform.getMatrix());
+		model->Draw();
 	}
 }
 
-MultiModelRenderer::MultiModelRenderer(Model* _model, Shader* _shader) : ModelRenderer(_model, _shader)
+MultiModelRenderer::MultiModelRenderer(Model* _model) : ModelRenderer(_model)
 {
 
 }
 
-MultiModelRenderer::MultiModelRenderer(Model* _model, Shader* _shader, std::vector<Transform> _tranforms) : ModelRenderer(_model, _shader),
+MultiModelRenderer::MultiModelRenderer(Model* _model, std::vector<Transform> _tranforms) : ModelRenderer(_model),
 	transforms(_tranforms)
 {
 
@@ -30,7 +30,8 @@ MultiModelRenderer::MultiModelRenderer(Model* _model, Shader* _shader, std::vect
 
 void MultiModelRenderer::GUI()
 {
-	ImGui::Text(("Shader: " + std::to_string(shader->ID)).c_str());
+	// TODO:
+	ImGui::Text(("Shader: " + std::to_string(model->material->getShader()->ID)).c_str());
 	for (unsigned int i = 0; i < transforms.size(); i++)
 	{
 		transforms[i].GUI();

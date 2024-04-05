@@ -16,7 +16,7 @@ void GUI::Update()
 	CameraMenu();
 	SceneObjectMenu();
 	LightMenu();
-
+	SceneSpecificMenu();
 }
 
 void GUI::ResourceMenu()
@@ -89,6 +89,17 @@ void GUI::LightMenu()
 		lightSelectedIndex = glm::clamp(lightSelectedIndex, 0, (int)scene->lights.size() - 1);
 	}
 	scene->lights[lightSelectedIndex]->GUI();
+
+	ImGui::End();
+}
+
+void GUI::SceneSpecificMenu()
+{
+	if (!ImGui::Begin("Scene Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::End();
+		return;
+	}
+	scene->GUI();
 
 	ImGui::End();
 }

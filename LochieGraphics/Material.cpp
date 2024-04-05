@@ -4,25 +4,88 @@
 
 #include "Graphics.h"
 
-Material::Material()
-{
-}
+#include <iostream>
 
-Material::Material(unsigned int textureCount, Texture* _textures)
+void Material::GetShaderUniforms()
 {
-	textures.reserve(textureCount);
-	for (unsigned int i = 0; i < textureCount; i++)
+	if (!shader) {
+		std::cout << "Tried to get uniforms of no shader! On material:" << name << "\n";
+		return;
+	}
+	GLint uniformCount;
+
+	glGetProgramiv(shader->ID, GL_ACTIVE_UNIFORMS, &uniformCount);
+	for (GLint i = 0; i < uniformCount; i++)
 	{
-		textures.push_back(&_textures[i]);
+		GLint size; // size of the variable
+		GLenum type; // type of the variable (float, vec3 or mat4, etc)
+		const GLsizei bufSize = 32; // maximum name length
+		GLchar name[bufSize]; // variable name in GLSL
+		GLsizei length; // name length
+
+		glGetActiveUniform(shader->ID, i, bufSize, &length, &size, &type, name);
+		// If the uniform doesn't start with 'material.', ignore it
+		if (strncmp(name, "material.", 9) != 0) { continue; }
+
+		// TODO: does the whole name need to be inserted, is it worth cutting out the 'material.'
+		switch (type)
+		{
+		case GL_SAMPLER_2D:
+			// TODO: This is prob where a default texture can be set
+			textures.emplace(name, (Texture*)nullptr);
+			break;
+		case GL_FLOAT:
+			floats.emplace(name, 0.f);
+			break;
+		default:
+			std::cout << "Error: Shader uniform type not yet supported for material!";
+			break;
+		}
 	}
 }
 
-Material::Material(std::vector<Texture*> _textures)
+Material::Material(std::string _name) :
+	name(_name)
 {
-	textures = _textures;
 }
 
-void Material::Use(Shader* shader)
+Shader* Material::getShader()
+{
+	return shader;
+}
+
+void Material::setShader(Shader* _shader)
+{
+	shader = _shader;
+	// TODO: should this clear them first
+	GetShaderUniforms();
+}
+
+Material::Material(std::string _name, Shader* _shader) :
+	shader(_shader),
+	name(_name)
+{
+	GetShaderUniforms();
+}
+
+void Material::AddTextures(std::vector<Texture*> _textures)
+{
+	for (auto i = _textures.begin(); i != _textures.end(); i++)
+	{
+		// TODO: Only one of each texture is supported atm, fix?
+		// TODO: what happens when not found
+		auto texture = textures.find("material." + Texture::TypeNames.find((*i)->type)->second + "1");
+		if (texture != textures.end()) {
+			texture->second = (*i);
+		}
+		else {
+			std::cout << "Error, unable to find texture spot for material:" << "material." + Texture::TypeNames.find((*i)->type)->second + "1\n";
+		}
+	}
+}
+
+//TODO: fix
+void Material::Use()
 {
 	// Bind textures
 
@@ -35,27 +98,20 @@ void Material::Use(Shader* shader)
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-
-	std::unordered_map<Texture::Type, unsigned int> typeCounts;
-	for (unsigned int i = 0; i < textures.size(); i++)
+	int count = 0;
+	for (auto i = textures.begin(); i != textures.end(); i++)
 	{
-		glActiveTexture(GL_TEXTURE0 + i + 1);
-		unsigned int number;
-		std::string name = Texture::TypeNames.find(textures[i]->type)->second;
-		// Get the amount of this type of texture has been assigned
-		auto typeCount = typeCounts.find(textures[i]->type);
-		if (typeCount == typeCounts.end()) {
-			//TODO: Should this be emplace or insert
-			typeCount = typeCounts.emplace(std::pair<Texture::Type, unsigned int>(textures[i]->type, 1)).first;
+		if (i->second == nullptr) { 
+			continue; 
 		}
-		else {
-			typeCount->second++;
-		}
-		number = typeCount->second;
-
-		// Set the sampler to the correct texture unit
-		shader->setSampler(("material." + name + std::to_string(number)), i + 1);
-
-		glBindTexture(GL_TEXTURE_2D, textures[i]->ID);
+		count++;
+		glActiveTexture(GL_TEXTURE0 + count + 1);
+		shader->setSampler(i->first, count + 1);
+		glBindTexture(GL_TEXTURE_2D, i->second->ID);
 	}
+	// TODO: uncomment
+	//for (auto i = floats.begin(); i != floats.end(); i++)
+	//{
+	//	shader->setFloat(i->first, i->second);
+	//}
 }

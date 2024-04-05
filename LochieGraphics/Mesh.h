@@ -22,12 +22,7 @@ public:
 	static int aiLoadFlag;
 	// TODO: Change how the materials are stored and perhaps store them on the model instead of mesh, so that the same mesh can be used with different models
 
-
-	//std::vector<Texture*> textures;
-	Material* material;
-
-
-	void Draw(Shader* shader);
+	void Draw();
 
 	// TODO: Constructors for preset shapes 
 	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices);

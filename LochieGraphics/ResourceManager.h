@@ -20,7 +20,7 @@ public:
 	/// <returns>Pointer to the texture at the given path</returns>	
 	static Texture* GetTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	static Shader* GetShader(std::string vertexPath, std::string fragmentPath);
-	static Material* GetMaterial(std::vector<Texture*> textures);
+	static Material* GetMaterial(std::string name, Shader* shader = nullptr);
 
 	static void UnloadAll();
 	~ResourceManager();
@@ -41,5 +41,5 @@ private:
 
 	static std::unordered_map<std::string, Texture, hashFNV1A> textures;
 	static std::unordered_map<std::string, Shader, hashFNV1A> shaders;
-	static std::unordered_map<std::vector<Texture*>, Material, hashFNV1A> materials;
+	static std::unordered_map<std::string, Material, hashFNV1A> materials;
 };

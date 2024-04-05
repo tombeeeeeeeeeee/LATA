@@ -14,8 +14,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) :
 	triCount(0),
 	VAO(0),
 	VBO(0),
-	IBO(0),
-	material(nullptr)
+	IBO(0)
 {
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
 	Initialise(vertices.size(), &vertices[0], indices.size(), &indices[0]);
@@ -30,8 +29,7 @@ Mesh::Mesh() :
 	triCount(0),
 	VAO(0),
 	VBO(0),
-	IBO(0),
-	material(nullptr)
+	IBO(0)
 {
 }
 
@@ -50,13 +48,11 @@ Mesh::Mesh(Mesh&& other) noexcept
 	VAO = other.VAO;
 	VBO = other.VBO;
 	IBO = other.IBO;
-	material = other.material;	
 	
 	other.triCount = 0;
 	other.VAO = 0;
 	other.VBO = 0;
 	other.IBO = 0;
-	other.material = nullptr;
 }
 
 void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices)
@@ -133,17 +129,19 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 		}
 	}
 
+	// TODO: Move somewhere else
 	//Texture stuff
-	aiMaterial* ai_material = scene->mMaterials[mesh->mMaterialIndex];
+	//aiMaterial* ai_material = scene->mMaterials[mesh->mMaterialIndex];
 
 	//Texture textures[] = {
-	std::vector<Texture*> textures;
+	//std::vector<Texture*> textures;
 	//TODO: This shouldn't have to be changed for when another texture type is supported, make some sorta loop or dynamically check what materials there are
-	AddMaterialTextures(&textures, path, ai_material, aiTextureType_DIFFUSE, Texture::Type::diffuse, flipTexturesOnLoad);
-	AddMaterialTextures(&textures, path, ai_material, aiTextureType_SPECULAR, Texture::Type::specular, flipTexturesOnLoad);
-	AddMaterialTextures(&textures, path, ai_material, aiTextureType_NORMALS, Texture::Type::normal, flipTexturesOnLoad); // TODO: are the normals actually stored in aiTextureType_HEIGHT for obj files?
+	//AddMaterialTextures(&textures, path, ai_material, aiTextureType_DIFFUSE, Texture::Type::diffuse, flipTexturesOnLoad);
+	//AddMaterialTextures(&textures, path, ai_material, aiTextureType_SPECULAR, Texture::Type::specular, flipTexturesOnLoad);
+	//AddMaterialTextures(&textures, path, ai_material, aiTextureType_NORMALS, Texture::Type::normal, flipTexturesOnLoad); // TODO: are the normals actually stored in aiTextureType_HEIGHT for obj files?
 
-	material = ResourceManager::GetMaterial(textures);
+	// TODO: Remove
+	//material = ResourceManager::GetMaterial(textures);
 
 	Initialise(vertexCount, vertices, indices.size(), indices.data());
 	delete[] vertices;
@@ -304,15 +302,8 @@ void Mesh::InitialiseIndexFromFile(std::string path, int i)
 	aiReleaseImport(scene);
 }
 
-void Mesh::Draw(Shader* shader)
+void Mesh::Draw()
 {
-	shader->Use();
-
-	// Use material
-	if (material) {
-		material->Use(shader);
-	}
-
 	// draw mesh
 	glBindVertexArray(VAO);
 	if (IBO != 0) {

@@ -6,21 +6,21 @@
 
 #include "imgui.h"
 
-ModelRenderer::ModelRenderer(Model* _model, Shader* _shader) :
-	model(_model),
-	shader(_shader)
+ModelRenderer::ModelRenderer(Model* _model) :
+	model(_model)
 {
 }
 
 void ModelRenderer::Draw()
 {
-	shader->Use();
-	shader->setMat4("model", sceneObject->transform.getMatrix());
-	model->Draw(shader);
+	model->material->getShader()->Use();
+	model->material->getShader()->setMat4("model", sceneObject->transform.getMatrix());
+	model->Draw();
 }
 
 void ModelRenderer::GUI()
 {
-	ImGui::Text(("Shader: " + std::to_string(shader->ID)).c_str());
+	// TODO:
+	ImGui::Text(("Shader: " + std::to_string(model->material->getShader()->ID)).c_str());
 }
 

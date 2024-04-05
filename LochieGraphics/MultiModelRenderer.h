@@ -12,8 +12,8 @@ public:
 
 	void Draw() override;
 	
-	MultiModelRenderer(Model* _model, Shader* _shader);
-	MultiModelRenderer(Model* _model, Shader* _shader, std::vector<Transform> _tranforms);
+	MultiModelRenderer(Model* _model);
+	MultiModelRenderer(Model* _model, std::vector<Transform> _tranforms);
 
 	void GUI() override;
 };

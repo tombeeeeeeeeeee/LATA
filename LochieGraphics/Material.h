@@ -3,18 +3,28 @@
 #include "Texture.h"
 
 #include <vector>
+#include <unordered_map>
 
 class Shader;
 
 struct Material
 {
+private:
+	// TODO: store a bool to see if this has been run yet
+	void GetShaderUniforms();
+	Shader* shader;
 public:
-	Material();
-	Material(unsigned int textureCount, Texture* _textures);
-	Material(std::vector<Texture*> _textures);
-	
+	Material(std::string _name, Shader* _shader);
+	Material(std::string _name);
+	void setShader(Shader* _shader);
+	Shader* getShader();
+	std::string name; // TODO: Create some other sort of identifier, like an ID or something
 
-	std::vector<Texture*> textures;
-	void Use(Shader* shader);
+	
+	// TODO: Think about better ways to have this rather than having a map for each
+	std::unordered_map<std::string, Texture*> textures;
+	void AddTextures(std::vector<Texture*> _textures);
+	std::unordered_map<std::string, float> floats;
+	void Use();
 };
 

@@ -10,9 +10,8 @@ class ModelRenderer : public Part
 {
 public:
 	Model* model;
-	Shader* shader;
 
-	ModelRenderer(Model* _model, Shader* _shader);
+	ModelRenderer(Model* _model);
 
 	virtual void Draw() override;
 	virtual void GUI() override;
