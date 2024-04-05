@@ -16,6 +16,7 @@ void GUI::Update()
 	CameraMenu();
 	SceneObjectMenu();
 	LightMenu();
+
 }
 
 void GUI::ResourceMenu()

@@ -1,9 +1,8 @@
 #pragma once
-#include "Part.h"
 
 #include "MessengerNetwork.h"
 
-class MessengerInterface : public Part
+class MessengerInterface
 {
 	bool serverTicked = false;
 
@@ -25,6 +24,4 @@ public:
 	void GUI() override;
 
 	void Update() override;
-	
 };
-

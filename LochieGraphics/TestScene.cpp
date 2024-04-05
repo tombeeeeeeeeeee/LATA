@@ -135,8 +135,7 @@ void TestScene::Start()
 
 void TestScene::Update(float delta)
 {
-	messengerGUI.GUI(); //TODO: Shouldn't be here, should also be inside a gui menu thing
-	messengerGUI.Update();
+	messengerInterface.Update();
 
 	pointLights[0].position.x = 1.5f * sin(glfwGetTime() * 2.f);
 	spotlight.position = camera->position;
@@ -188,6 +187,11 @@ void TestScene::Update(float delta)
 	Texture::UseCubeMap(skyboxTexture, skyBoxShader);
 	skybox.Draw(skyBoxShader); // Actually draw the skyBox
 	glDepthFunc(GL_LESS); // Change depth function back
+}
+
+void TestScene::GUI()
+{
+	messengerInterface.GUI();
 }
 
 TestScene::~TestScene()

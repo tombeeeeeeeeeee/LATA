@@ -12,8 +12,7 @@
 class TestScene : public Scene
 {
 private:
-	//TODO: fix, bad name
-	MessengerInterface messengerGUI;
+	MessengerInterface messengerInterface;
 
 	Shader* litNormalShader = nullptr;
 	Shader* litShader		= nullptr;
@@ -55,5 +54,6 @@ public:
 	TestScene();
 	void Start() override;
 	void Update(float delta) override;
+	void GUI() override;
 	~TestScene() override;
 };

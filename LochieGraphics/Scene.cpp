@@ -1,5 +1,10 @@
 #include "Scene.h"
 
+void Scene::DefaultGUI()
+{
+
+}
+
 Scene::Scene()
 {
 	gui.scene = this;

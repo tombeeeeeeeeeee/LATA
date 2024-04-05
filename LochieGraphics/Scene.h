@@ -26,6 +26,8 @@ public:
 
 	virtual void Start() {};
 	virtual void Update(float delta) = 0;
+	// TODO: Maybe move some of the GUI code that is in the GUI class here
+	virtual void GUI() {};
 
 	Scene();
 	virtual ~Scene();
