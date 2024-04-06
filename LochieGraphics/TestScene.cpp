@@ -187,11 +187,11 @@ void TestScene::Update(float delta)
 	}
 	// Skybox, 
 	// TODO: Make a skybox sceneobject or something, the skybox stuff needs its own space/class
-
 	glDepthFunc(GL_LEQUAL); // Change depth function
 	Texture::UseCubeMap(skyboxTexture, skyBoxShader);
 	skybox.Draw(); // Actually draw the skyBox
 	glDepthFunc(GL_LESS); // Change depth function back
+
 }
 
 void TestScene::GUI()
