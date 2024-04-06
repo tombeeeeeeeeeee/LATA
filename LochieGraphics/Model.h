@@ -11,7 +11,6 @@ public:
 	void LoadModel(std::string path, bool flipTexturesOnLoad = true);
 	void AddMesh(Mesh* mesh);
 	void Draw();
-	Material* material;
 private:
 	//TODO: Model currently comepletly owns the meshes, this should not be the case
 	std::vector<Mesh> meshes;

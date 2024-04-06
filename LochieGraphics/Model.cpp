@@ -47,7 +47,6 @@ void Model::AddMesh(Mesh* mesh)
 
 void Model::Draw()
 {
-	material->Use();
 	for (auto mesh = meshes.begin(); mesh != meshes.end(); mesh++)
 	{
 		mesh->Draw();

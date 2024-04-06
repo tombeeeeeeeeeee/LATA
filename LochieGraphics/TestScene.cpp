@@ -23,18 +23,16 @@ TestScene::TestScene()
 		&pointLights[3],
 		&spotlight,
 		&directionalLight
-	};
-	
+	};	
 }
 
 void TestScene::Start()
 {
 	// Shaders
-	litNormalShader = ResourceManager::GetShader("shaders/litNormal.vert", "shaders/litNormal.frag");
-	litShader = ResourceManager::GetShader("shaders/lit.vert", "shaders/lit.frag");
-	lightCubeShader = ResourceManager::GetShader("shaders/lightCube.vert", "shaders/lightCube.frag");
-	skyBoxShader = ResourceManager::GetShader("shaders/cubemap.vert", "shaders/cubemap.frag");
-
+	litNormalShader  = ResourceManager::GetShader("shaders/litNormal.vert", "shaders/litNormal.frag");
+	litShader		 = ResourceManager::GetShader("shaders/lit.vert",		"shaders/lit.frag");
+	lightCubeShader  = ResourceManager::GetShader("shaders/lightCube.vert", "shaders/lightCube.frag");
+	skyBoxShader	 = ResourceManager::GetShader("shaders/cubemap.vert",	"shaders/cubemap.frag");
 	skybox.InitialiseCubeInsideOut();
 
 	std::vector<std::string> faces = std::vector<std::string>{
@@ -66,9 +64,8 @@ void TestScene::Start()
 		ResourceManager::GetTexture("images/container2.png", Texture::Type::diffuse),
 		ResourceManager::GetTexture("images/container2_specular.png", Texture::Type::specular),
 	});
-	boxModel.material = boxMaterial;
 	boxModel.AddMesh(&boxMesh);
-	boxes->setRenderer(new MultiModelRenderer(&boxModel, std::vector<Transform>
+	boxes->setRenderer(new MultiModelRenderer(&boxModel, boxMaterial, std::vector<Transform>
 	{
 		Transform({  0.0f,  0.0f,  0.00f }, { 00.f,   0.f, 00.f }),
 		Transform({  2.0f,  5.0f, -15.0f }, { 20.f,   6.f, 10.f }),
@@ -85,9 +82,8 @@ void TestScene::Start()
 	Mesh lightCubeMesh;
 	lightCubeMesh.InitialiseCube();
 	Material* lightCubeMaterial = ResourceManager::GetMaterial("lightCube", lightCubeShader);
-	lightCubeModel.material = lightCubeMaterial;
 	lightCubeModel.AddMesh(&lightCubeMesh);
-	MultiModelRenderer* lightCubeRenderer = new MultiModelRenderer(&lightCubeModel, std::vector<Transform>(sizeof(pointLights) / sizeof(pointLights[0])));
+	MultiModelRenderer* lightCubeRenderer = new MultiModelRenderer(&lightCubeModel, lightCubeMaterial, std::vector<Transform>(sizeof(pointLights) / sizeof(pointLights[0])));
 	lightCube->setRenderer(lightCubeRenderer);
 	for (int i = 0; i < sizeof(pointLights) / sizeof(pointLights[0]); i++)
 	{
@@ -100,9 +96,8 @@ void TestScene::Start()
 	grassMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::GetTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE, false),
 	});
-	grassModel.material = grassMaterial;
 	grassModel.AddMesh(&grassMesh);
-	grass->setRenderer(new MultiModelRenderer(&grassModel, std::vector<Transform>{
+	grass->setRenderer(new MultiModelRenderer(&grassModel, grassMaterial, std::vector<Transform>{
 		Transform({ 0.0f,  0.0f,   0.0f }, { 0.f,  20.f, 0.f }),
 		Transform({ 2.0f,  0.0f, -15.0f }, { 0.f,  40.f, 0.f }),
 		Transform({ -1.5f, 0.0f, -03.5f }, { 0.f,  60.f, 0.f }),
@@ -122,8 +117,7 @@ void TestScene::Start()
 		ResourceManager::GetTexture("models/backpack/normal.png", Texture::Type::normal, GL_REPEAT, false),
 		ResourceManager::GetTexture("models/backpack/specular.jpg", Texture::Type::specular, GL_REPEAT, false)
 	});
-	backpackModel.material = backpackMaterial;
-	backpack->setRenderer(new ModelRenderer(&backpackModel));
+	backpack->setRenderer(new ModelRenderer(&backpackModel, backpackMaterial));
 	backpack->transform.position = { -5.f, -1.f, 0.f };
 
 	testRedBoxModel = Model("models/normalBoxTest/Box_normal_example.obj");
@@ -132,8 +126,7 @@ void TestScene::Start()
 		ResourceManager::GetTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::diffuse, GL_REPEAT, true),
 		ResourceManager::GetTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true),
 	});
-	testRedBoxModel.material = testRedBoxMaterial;
-	testRedBox->setRenderer(new ModelRenderer(&testRedBoxModel));
+	testRedBox->setRenderer(new ModelRenderer(&testRedBoxModel, testRedBoxMaterial));
 	testRedBox->transform.position = { 5.f, -3.f, 2.f };
 
 	soulSpearModel = Model(std::string("models/soulspear/soulspear.obj"), true);
@@ -144,8 +137,7 @@ void TestScene::Start()
 		ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true)
 		//ResourceManager::GetTexture("images/DefaultNormal.png", Texture::Type::normal, GL_REPEAT, true)
 	});
-	soulSpearModel.material = soulSpearMaterial;
-	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel));
+	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, soulSpearMaterial));
 	soulSpear->transform.position = { 0.f, 1.f, 1.f };
 }
 
