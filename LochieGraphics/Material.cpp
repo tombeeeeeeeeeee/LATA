@@ -84,7 +84,6 @@ void Material::AddTextures(std::vector<Texture*> _textures)
 	}
 }
 
-//TODO: fix
 void Material::Use()
 {
 	// Bind textures

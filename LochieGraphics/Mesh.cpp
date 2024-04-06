@@ -140,7 +140,6 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 	//AddMaterialTextures(&textures, path, ai_material, aiTextureType_SPECULAR, Texture::Type::specular, flipTexturesOnLoad);
 	//AddMaterialTextures(&textures, path, ai_material, aiTextureType_NORMALS, Texture::Type::normal, flipTexturesOnLoad); // TODO: are the normals actually stored in aiTextureType_HEIGHT for obj files?
 
-	// TODO: Remove
 	//material = ResourceManager::GetMaterial(textures);
 
 	Initialise(vertexCount, vertices, indices.size(), indices.data());

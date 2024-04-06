@@ -19,10 +19,6 @@
 // note: recursion
 //
 
-
-// TODO: Don't bind already binded shader program
-
-
 class Shader
 {
 private:

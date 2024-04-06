@@ -20,7 +20,6 @@ private:
 
 public:
 	static int aiLoadFlag;
-	// TODO: Change how the materials are stored and perhaps store them on the model instead of mesh, so that the same mesh can be used with different models
 
 	void Draw();
 

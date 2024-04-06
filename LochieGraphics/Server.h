@@ -18,7 +18,6 @@ public:
 	void Broadcast(const char* sendBuf);
 
 
-	// TODO: rename with lowercases
 	SOCKET listenSocket = INVALID_SOCKET; // TODO: Not listen after client limit reached?
 	SOCKET clientSockets[DEFAULT_CLIENT_LIMIT] = { INVALID_SOCKET, INVALID_SOCKET, INVALID_SOCKET, INVALID_SOCKET };
 	

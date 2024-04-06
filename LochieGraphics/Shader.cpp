@@ -81,6 +81,7 @@ Shader::Shader() : ID(-1)
 
 void Shader::Use()
 {
+	// TODO: Don't call if already using
 	glUseProgram(ID);
 }
 

@@ -14,7 +14,6 @@
 
 typedef void(*RecieveCallback)(const char* buffer);
 
-//TODO: Maybe this should be a super class of client and server
 class Network
 {
 public:
