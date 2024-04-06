@@ -19,14 +19,12 @@ private:
 	Shader* lightCubeShader = nullptr;
 	Shader* skyBoxShader	= nullptr;
 
-	Mesh testMesh;
 	Mesh skybox;
 	GLuint skyboxTexture;
 
 	Model backpackModel;
-	Model boxModel;
+	Model cubeModel;
 	Model grassModel;
-	Model lightCubeModel;
 	Model soulSpearModel;
 	Model testRedBoxModel;
 

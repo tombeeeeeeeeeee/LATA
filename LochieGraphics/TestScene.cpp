@@ -57,15 +57,15 @@ void TestScene::Start()
 	litNormalShader->Use();
 	litNormalShader->setFloat("material.shininess", 32.f);
 
-	Mesh boxMesh;
-	boxMesh.InitialiseCube();
+	Mesh cubeMesh;
+	cubeMesh.InitialiseCube();
 	Material* boxMaterial = ResourceManager::GetMaterial("box", litShader);
 	boxMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::GetTexture("images/container2.png", Texture::Type::diffuse),
 		ResourceManager::GetTexture("images/container2_specular.png", Texture::Type::specular),
 	});
-	boxModel.AddMesh(&boxMesh);
-	boxes->setRenderer(new MultiModelRenderer(&boxModel, boxMaterial, std::vector<Transform>
+	cubeModel.AddMesh(&cubeMesh);
+	boxes->setRenderer(new MultiModelRenderer(&cubeModel, boxMaterial, std::vector<Transform>
 	{
 		Transform({  0.0f,  0.0f,  0.00f }, { 00.f,   0.f, 00.f }),
 		Transform({  2.0f,  5.0f, -15.0f }, { 20.f,   6.f, 10.f }),
@@ -79,11 +79,8 @@ void TestScene::Start()
 		Transform({ -1.3f,  1.0f, -1.50f }, { 180.f, 54.f, 90.f })
 	}));
 
-	Mesh lightCubeMesh;
-	lightCubeMesh.InitialiseCube();
 	Material* lightCubeMaterial = ResourceManager::GetMaterial("lightCube", lightCubeShader);
-	lightCubeModel.AddMesh(&lightCubeMesh);
-	MultiModelRenderer* lightCubeRenderer = new MultiModelRenderer(&lightCubeModel, lightCubeMaterial, std::vector<Transform>(sizeof(pointLights) / sizeof(pointLights[0])));
+	MultiModelRenderer* lightCubeRenderer = new MultiModelRenderer(&cubeModel, lightCubeMaterial, std::vector<Transform>(sizeof(pointLights) / sizeof(pointLights[0])));
 	lightCube->setRenderer(lightCubeRenderer);
 	for (int i = 0; i < sizeof(pointLights) / sizeof(pointLights[0]); i++)
 	{
