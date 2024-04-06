@@ -1,5 +1,7 @@
 #include "ResourceManager.h"
 
+#include "Utilities.h"
+
 #include "stb_image.h"
 #include "imgui.h"
 
@@ -87,54 +89,65 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::GUI()
 {
-	if (ImGui::BeginTable("Resource Textures", 3)) {
-		ImGui::TableNextRow();
+	if (ImGui::CollapsingHeader("Textures")) {
 
-		ImGui::TableSetColumnIndex(0);
-		ImGui::Text("ID");
-
-		ImGui::TableSetColumnIndex(1);
-		ImGui::Text("Path");
-
-		ImGui::TableSetColumnIndex(2);
-		ImGui::Text("Type");
-
-		for (auto i = ResourceManager::textures.begin(); i != ResourceManager::textures.end(); i++)
-		{
+		if (ImGui::BeginTable("Resource Textures", 3)) {
 			ImGui::TableNextRow();
 
 			ImGui::TableSetColumnIndex(0);
-			ImGui::Text(std::to_string(i->second.ID).c_str());
-
+			ImGui::Text("Path");
+			
 			ImGui::TableSetColumnIndex(1);
-			ImGui::Text(i->first.c_str());
+			ImGui::Text("Type");
 
 			ImGui::TableSetColumnIndex(2);
-			ImGui::Text(Texture::TypeNames.find(i->second.type)->second.c_str());
-		}
-		ImGui::EndTable();
-	}
-	ImGui::NewLine();
+			ImGui::Text("ID");
 
-	for (auto i = ResourceManager::materials.begin(); i != ResourceManager::materials.end(); i++)
-	{
-		ImGui::Text(i->first.c_str());
-		for (auto j = i->second.textures.begin(); j != i->second.textures.end(); j++)
-		{
-			if (j->second != nullptr) {
-				ImGui::Text(std::to_string((j->second)->ID).c_str());
-				ImGui::SameLine();
+			for (auto i = ResourceManager::textures.begin(); i != ResourceManager::textures.end(); i++)
+			{
+				ImGui::TableNextRow();
+
+				ImGui::TableSetColumnIndex(0);
+				ImGui::Text(i->first.c_str());
+
+				ImGui::TableSetColumnIndex(1);
+				ImGui::Text(Texture::TypeNames.find(i->second.type)->second.c_str());
+
+				ImGui::TableSetColumnIndex(2);
+				ImGui::Text(std::to_string(i->second.ID).c_str());
 			}
+			ImGui::EndTable();
 		}
-		ImGui::NewLine();
 	}
-	ImGui::NewLine();
 
-	for (auto i = ResourceManager::shaders.begin(); i != ResourceManager::shaders.end(); i++)
-	{
-		ImGui::Text(i->first.c_str());
-		ImGui::SameLine();
-		ImGui::Text(std::to_string(i->second.ID).c_str());
+	if (ImGui::CollapsingHeader("Materials")) {
+
+		for (auto i = ResourceManager::materials.begin(); i != ResourceManager::materials.end(); i++)
+		{
+			i->second.GUI();
+			ImGui::NewLine();
+
+
+
+
+			//ImGui::Text(i->first.c_str());
+			//for (auto j = i->second.textures.begin(); j != i->second.textures.end(); j++)
+			//{
+			//	if (j->second == nullptr) { continue; }
+			//	ImGui::Text(std::to_string((j->second)->ID).c_str());
+			//	ImGui::SameLine();
+			//}
+			//ImGui::NewLine();
+		}
+	}
+	
+	if (ImGui::CollapsingHeader("Shaders")) {
+		for (auto i = ResourceManager::shaders.begin(); i != ResourceManager::shaders.end(); i++)
+		{
+			ImGui::Text(i->first.c_str());
+			ImGui::SameLine();
+			ImGui::Text(std::to_string(i->second.ID).c_str());
+		}
 	}
 }
 

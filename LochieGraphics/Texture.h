@@ -13,6 +13,7 @@ class Shader;
 class Texture
 {
 public:
+	// TODO: Reconsider if textures need keep its type
 	enum class Type {
 		diffuse,
 		specular,

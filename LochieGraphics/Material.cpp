@@ -2,7 +2,10 @@
 
 #include "Shader.h"
 
+#include "Utilities.h"
+
 #include "Graphics.h"
+#include "imgui.h"
 
 #include <iostream>
 
@@ -35,10 +38,8 @@ void Material::GetShaderUniforms()
 			textures.emplace(name, (Texture*)nullptr);
 			break;
 		case GL_FLOAT:
-			floats.emplace(name, 0.f);
-			break;
 		default:
-			std::cout << "Error: Shader uniform type not yet supported for material!";
+			std::cout << "Error: Shader uniform type not yet supported for material! Type: " << type << "\n";
 			break;
 		}
 	}
@@ -113,4 +114,23 @@ void Material::Use()
 	//{
 	//	shader->setFloat(i->first, i->second);
 	//}
+}
+
+void Material::GUI()
+{
+	std::string tag = PointerToString(this);
+	ImGui::Text(name.c_str());
+	ImGui::Text(("Shader ID:" + std::to_string(shader->ID)).c_str());
+	ImGui::Text("Textures");
+	for (auto i = textures.begin(); i != textures.end(); i++)
+	{
+		ImGui::Text(i->first.c_str());
+		
+		//ImGui::InputInt((i->first + "##" + tag).c_str(), &i->s)
+
+		if (i->second) {
+			ImGui::SameLine();
+			ImGui::Text(std::to_string(i->second->ID).c_str());
+		}
+	}
 }

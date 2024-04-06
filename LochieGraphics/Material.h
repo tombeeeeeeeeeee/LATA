@@ -21,10 +21,11 @@ public:
 	std::string name; // TODO: Create some other sort of identifier, like an ID or something
 
 	
-	// TODO: Think about better ways to have this rather than having a map for each
+	// TODO: Think about better ways to have this rather than having a map for each type
 	std::unordered_map<std::string, Texture*> textures;
 	void AddTextures(std::vector<Texture*> _textures);
-	std::unordered_map<std::string, float> floats;
 	void Use();
+
+	void GUI();
 };
 
