@@ -73,7 +73,7 @@ void Scene::Load()
 
 
 
-		newSceneObject.
+		//newSceneObject.
 	}
 
 	file.close();
