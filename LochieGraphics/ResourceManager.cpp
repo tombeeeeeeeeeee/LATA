@@ -38,8 +38,7 @@ Shader* ResourceManager::GetShader(std::string vertexPath, std::string fragmentP
 	auto shader = shaders.find(path);
 
 	if (shader == shaders.end()) {
-		Shader newShader;
-		newShader.ID = Shader::Load(vertexPath, fragmentPath);
+		Shader newShader(vertexPath, fragmentPath);
 
 		shader = shaders.emplace(path, newShader).first;
 	}
