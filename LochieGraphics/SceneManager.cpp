@@ -15,6 +15,7 @@ unsigned int SceneManager::windowWidth = 1920 / 2;
 unsigned int SceneManager::windowHeight = 1080 / 2;
 WindowModes SceneManager::windowMode = WindowModes::windowed;
 GLFWwindow* SceneManager::window = nullptr;
+Scene* SceneManager::scene = nullptr;
 
 float SceneManager::deltaTime = 0.0f;
 FixedSizeQueue<float, 300> SceneManager::frameTimes;
@@ -26,9 +27,9 @@ bool SceneManager::firstMouse = true;
 bool SceneManager::lockedCamera = false; // TODO: better names for these variables that change input mode
 bool SceneManager::oppositeCameraMode = false;
 
-SceneManager::SceneManager(Scene* _scene) :
-	scene(_scene)
+SceneManager::SceneManager(Scene* _scene)
 {
+	scene = _scene;
 	if (!glfwInit() || !_scene) {
 		return;
 	}
@@ -287,6 +288,14 @@ void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int ac
 	if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS) {
 		lockedCamera = !lockedCamera;
 		RefreshInputMode();
+	}
+
+
+	if (key == GLFW_KEY_GRAVE_ACCENT && action == GLFW_PRESS) {
+		scene->Save();
+	}
+	if (key == GLFW_KEY_SLASH && action == GLFW_PRESS) {
+		scene->Load();
 	}
 }
 

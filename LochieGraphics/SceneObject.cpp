@@ -56,7 +56,9 @@ void SceneObject::GUI()
 {
 	ImGui::InputText("Name", &name);
 	transform.GUI();
-	renderer->GUI();
+	if (renderer) {
+		renderer->GUI();
+	}
 	for (auto i = parts.begin(); i != parts.end(); i++)
 	{
 		(*i)->GUI();

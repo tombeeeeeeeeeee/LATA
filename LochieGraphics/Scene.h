@@ -20,6 +20,7 @@ public:
 	GUI gui;
 	std::vector<SceneObject*> sceneObjects;
 	std::vector<Light*> lights;
+	std::vector<Shader*> shaders;
 
 	unsigned int* windowWidth;
 	unsigned int* windowHeight;
@@ -36,4 +37,8 @@ public:
 	Scene& operator=(const Scene& other) = delete;
 
 	glm::mat4 viewProjection;
+
+
+	void Save();
+	void Load();
 };

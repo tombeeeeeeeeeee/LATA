@@ -3,7 +3,7 @@
 
 #include "Maths.h"
 
-class Transform : public Part
+class Transform
 {
 public:
 	glm::vec3 position;
@@ -15,6 +15,6 @@ public:
 
 	glm::mat4 getMatrix() const;
 
-	void GUI() override;
+	void GUI();
 };
 

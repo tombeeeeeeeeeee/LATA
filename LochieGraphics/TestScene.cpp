@@ -154,7 +154,7 @@ void TestScene::Update(float delta)
 	MultiModelRenderer* lightCubeRenderer = (MultiModelRenderer*)lightCube->getRenderer();
 	for (int i = 0; i < sizeof(pointLights) / sizeof(pointLights[0]); i++)
 	{
-		lightCubeRenderer->transforms[i].position = pointLights[i].position;
+		//lightCubeRenderer->transforms[i].position = pointLights[i].position;
 	}
 	
 	// Shader
@@ -191,7 +191,6 @@ void TestScene::Update(float delta)
 	Texture::UseCubeMap(skyboxTexture, skyBoxShader);
 	skybox.Draw(); // Actually draw the skyBox
 	glDepthFunc(GL_LESS); // Change depth function back
-
 }
 
 void TestScene::GUI()
