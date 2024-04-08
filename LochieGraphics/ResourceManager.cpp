@@ -4,6 +4,7 @@
 
 #include "stb_image.h"
 #include "imgui.h"
+#include "imgui_stdlib.h"
 
 #include <iostream>
 
@@ -141,12 +142,42 @@ void ResourceManager::GUI()
 	}
 	
 	if (ImGui::CollapsingHeader("Shaders")) {
+		if (ImGui::BeginTable("Shader list", 4)) {
+			ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Vertex");
+
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text("Fragment");
+
+			ImGui::TableSetColumnIndex(2);
+			ImGui::Text("ID");
+
+			ImGui::TableSetColumnIndex(3);
+			ImGui::Text("Reload");
+		}
 		for (auto i = ResourceManager::shaders.begin(); i != ResourceManager::shaders.end(); i++)
 		{
-			ImGui::Text(i->first.c_str());
-			ImGui::SameLine();
+			ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::PushItemWidth(180);
+			ImGui::InputText(("  ##Vertex" + PointerToString(&i->second.vertexPath)).c_str(), &i->second.vertexPath);
+
+			ImGui::TableSetColumnIndex(1);
+			ImGui::PushItemWidth(180);
+			ImGui::InputText(("##Fragment" + PointerToString(&i->second.fragmentPath)).c_str(), &i->second.fragmentPath);
+
+			ImGui::TableSetColumnIndex(2);
 			ImGui::Text(std::to_string(i->second.ID).c_str());
+
+			ImGui::TableSetColumnIndex(3);
+			if (ImGui::Button(("Recompile##" + std::to_string(i->second.ID)).c_str())) {
+				i->second.Load();
+			}
 		}
+		ImGui::EndTable();
 	}
 }
 

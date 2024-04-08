@@ -24,13 +24,14 @@ class Shader
 private:
 	GLint getUniformLocation(const std::string& name) const;
 	static GLuint CompileShader(std::string path, int type);
+	bool loaded = false;
 public:
 	static GLuint currentID;
 	// the program ID
 	GLuint ID;
 	// TODO: Contructor from one name that finds all the shaders of different types
 	Shader(std::string vertexPath, std::string fragmentPath);
-	static GLuint Load(std::string vertexPath, std::string fragmentPath); // TODO: recompile shader
+	void Load();
 	std::string vertexPath;
 	std::string fragmentPath;
 	// use/activate the shader

@@ -23,6 +23,7 @@ public:
 	
 	// TODO: Think about better ways to have this rather than having a map for each type
 	std::unordered_map<std::string, Texture*> textures;
+	std::unordered_map<std::string, float> floats;
 	void AddTextures(std::vector<Texture*> _textures);
 	void Use();
 

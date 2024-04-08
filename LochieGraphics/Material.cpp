@@ -38,6 +38,8 @@ void Material::GetShaderUniforms()
 			textures.emplace(name, (Texture*)nullptr);
 			break;
 		case GL_FLOAT:
+			floats.emplace(name, 32.f);
+			break;
 		default:
 			std::cout << "Error: Shader uniform type not yet supported for material! Type: " << type << "\n";
 			break;
@@ -92,28 +94,27 @@ void Material::Use()
 	shader->Use();
 	// Unbinds any extra assigned textures, this is so if a mesh only has one diffuse, the previously set specular from another mesh isn't used.
 	//for (unsigned int i = textures.size(); i < textures.size() + 5; i++)
-	for (unsigned int i = 0; i < 5; i++)
+	for (unsigned int i = 0; i < 10; i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i );
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	int count = 0;
+	int count = 1;
 	for (auto i = textures.begin(); i != textures.end(); i++)
 	{
 		if (i->second == nullptr) { 
 			continue; 
 		}
-		count++;
-		glActiveTexture(GL_TEXTURE0 + count + 1);
-		shader->setSampler(i->first, count + 1);
+		glActiveTexture(GL_TEXTURE0 + count);
+		shader->setSampler(i->first, count);
 		glBindTexture(GL_TEXTURE_2D, i->second->ID);
+		count++;
 	}
-	// TODO: uncomment
-	//for (auto i = floats.begin(); i != floats.end(); i++)
-	//{
-	//	shader->setFloat(i->first, i->second);
-	//}
+	for (auto i = floats.begin(); i != floats.end(); i++)
+	{
+		shader->setFloat(i->first, i->second);
+	}
 }
 
 void Material::GUI()
@@ -130,7 +131,12 @@ void Material::GUI()
 
 		if (i->second) {
 			ImGui::SameLine();
-			ImGui::Text(std::to_string(i->second->ID).c_str());
+			ImGui::Text(std::to_string(i->second->ID).c_str()); // TODO: make this customisable
 		}
+	}
+	for (auto i = floats.begin(); i != floats.end(); i++)
+	{
+		ImGui::Text(i->first.c_str());
+		ImGui::DragFloat((i->first + "##" + tag).c_str(), &i->second);
 	}
 }

@@ -90,9 +90,7 @@ SceneManager::SceneManager(Scene* _scene)
 	//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
-	//ImGui::StyleColorsClassic();
-	//ImGui::StyleColorsLight();
-	//ImGui::StyleColorsDark();
+	// ImGui style
 	ImGuiStyles::SetLocStyle();
 
 	ImGui_ImplGlfw_InitForOpenGL(window, true);

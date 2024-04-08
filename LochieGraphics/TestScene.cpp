@@ -112,7 +112,7 @@ void TestScene::Start()
 	backpackMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::GetTexture("models/backpack/diffuse.jpg", Texture::Type::diffuse, GL_REPEAT, false),
 		ResourceManager::GetTexture("models/backpack/normal.png", Texture::Type::normal, GL_REPEAT, false),
-		ResourceManager::GetTexture("models/backpack/specular.jpg", Texture::Type::specular, GL_REPEAT, false)
+		ResourceManager::GetTexture("models/backpack/specular.jpg", Texture::Type::specular, GL_REPEAT, false),
 	});
 	backpack->setRenderer(new ModelRenderer(&backpackModel, backpackMaterial));
 	backpack->transform.position = { -5.f, -1.f, 0.f };
@@ -131,8 +131,7 @@ void TestScene::Start()
 	soulSpearMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::GetTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse, GL_REPEAT, true),
 		ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
-		ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true)
-		//ResourceManager::GetTexture("images/DefaultNormal.png", Texture::Type::normal, GL_REPEAT, true)
+		ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
 	});
 	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, soulSpearMaterial));
 	soulSpear->transform.position = { 0.f, 1.f, 1.f };

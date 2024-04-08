@@ -13,7 +13,7 @@ Shader::Shader(std::string _vertexPath, std::string _fragmentPath) :
 	fragmentPath(_fragmentPath)
 {
 	// Shader Program
-	ID = Load(vertexPath, fragmentPath);
+	Load();
 }
 
 GLuint Shader::CompileShader(std::string path, int type)
@@ -39,12 +39,13 @@ GLuint Shader::CompileShader(std::string path, int type)
 	return shader;
 }
 
-GLuint Shader::Load(std::string vertexPath, std::string fragmentPath)
+void Shader::Load()
 {
+	if (loaded) { DeleteProgram(); }
 	GLuint vertex = CompileShader(vertexPath, GL_VERTEX_SHADER);
 	GLuint fragment = CompileShader(fragmentPath, GL_FRAGMENT_SHADER);
 
-	GLuint ID = glCreateProgram();
+	ID = glCreateProgram();
 	glAttachShader(ID, vertex);
 	glAttachShader(ID, fragment);
 	glLinkProgram(ID);
@@ -65,7 +66,7 @@ GLuint Shader::Load(std::string vertexPath, std::string fragmentPath)
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 
-	return ID;
+	loaded = true;
 }
 
 GLint Shader::getUniformLocation(const std::string& name) const
