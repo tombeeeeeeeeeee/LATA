@@ -19,15 +19,20 @@ public:
 		specular,
 		normal,
 		height,
-		emission
+		emission,
+		count
 	};
 	static const std::unordered_map<Type, std::string> TypeNames;
 
 	GLuint ID;
 	Type type;
-	Texture();
+	std::string path;
+	int wrappingMode;
+	bool flipped; //TODO: rename to flip?
+	bool loaded = false;
+	Texture(std::string path, int wrappingMode, bool flip = false);
 
-	static GLuint Load(std::string path, int wrappingMode);
+	void Load();
 
 	static GLuint LoadCubeMap(std::vector<std::string> faces);
 	static void UseCubeMap(GLuint ID, Shader* shader);

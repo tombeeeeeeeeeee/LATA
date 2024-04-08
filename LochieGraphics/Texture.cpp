@@ -17,14 +17,20 @@ const std::unordered_map<Texture::Type, std::string> Texture::TypeNames =
 	{ Type::emission, "emission" }, // TODO: Should cubemap be a type?
 };
 
-Texture::Texture() : 
-	ID(-1)
+Texture::Texture(std::string _path, int _wrappingMode, bool flip) :
+	path(_path),
+	wrappingMode(_wrappingMode),
+	flipped(flip)
 {
+	Load();
 }
 
-GLuint Texture::Load(std::string path, int wrappingMode)
+void Texture::Load()
 {
-	GLuint ID;
+	if (loaded) { DeleteTexture(); }
+	stbi_set_flip_vertically_on_load(flipped);
+
+	ID;
 	glGenTextures(1, &ID);
 
 	int width, height, components;
@@ -49,7 +55,7 @@ GLuint Texture::Load(std::string path, int wrappingMode)
 		default:
 			std::cout << "Texture failed to load, could not be read correctly, path: " << path << "\n";
 			stbi_image_free(data);
-			return ID;
+			return;
 			break;
 		}
 
@@ -67,8 +73,7 @@ GLuint Texture::Load(std::string path, int wrappingMode)
 		std::cout << "Texture failed to load, path: " << path << "\n";
 	}
 	stbi_image_free(data);
-
-	return ID;
+	loaded = true;
 }
 
 GLuint Texture::LoadCubeMap(std::vector<std::string> faces)

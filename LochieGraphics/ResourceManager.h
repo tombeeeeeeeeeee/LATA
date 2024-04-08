@@ -10,14 +10,7 @@
 //TODO: Maybe get shader without needing both the fragment and vertex shader, it could just find them both if they have the same name and just differing extension or custom file format that stores the name of the others
 class ResourceManager {
 public:
-	//TODO: Make the same texture be able to be loaded multiple times as different types?
-	/// <summary>
-	/// Gets a texture from a path
-	/// </summary>
-	/// <param name="path">The path to the texture</param>
-	/// <param name="type">The texture type, this value will be ignored if the texture is already loaded</param>
-	/// <param name="wrappingMode">The texture wrapping mode to use, this value will be ignored if the texture is already loaded</param>
-	/// <returns>Pointer to the texture at the given path</returns>	
+	// TODO: Make resources be gathered from a GUID
 	static Texture* GetTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	static Shader* GetShader(std::string vertexPath, std::string fragmentPath);
 	static Material* GetMaterial(std::string name, Shader* shader = nullptr);

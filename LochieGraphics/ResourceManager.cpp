@@ -19,12 +19,10 @@ const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
 Texture* ResourceManager::GetTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
 {
-	stbi_set_flip_vertically_on_load(flipOnLoad);
 	auto texture = textures.find(path);
 
 	if (texture == textures.end()) {
-		Texture newTexture;
-		newTexture.ID = Texture::Load(path.c_str(), wrappingMode);
+		Texture newTexture(path, wrappingMode, flipOnLoad);
 		newTexture.type = type;
 
 		texture = textures.emplace(path, newTexture).first;
@@ -91,7 +89,7 @@ void ResourceManager::GUI()
 {
 	if (ImGui::CollapsingHeader("Textures")) {
 
-		if (ImGui::BeginTable("Resource Textures", 3)) {
+		if (ImGui::BeginTable("Resource Textures", 5)) {
 			ImGui::TableNextRow();
 
 			ImGui::TableSetColumnIndex(0);
@@ -101,25 +99,58 @@ void ResourceManager::GUI()
 			ImGui::Text("Type");
 
 			ImGui::TableSetColumnIndex(2);
+			ImGui::Text("Flipped");
+
+			ImGui::TableSetColumnIndex(3);
 			ImGui::Text("ID");
+
+			ImGui::TableSetColumnIndex(4);
+			ImGui::Text("Reload");
 
 			for (auto i = ResourceManager::textures.begin(); i != ResourceManager::textures.end(); i++)
 			{
 				ImGui::TableNextRow();
 
 				ImGui::TableSetColumnIndex(0);
-				ImGui::Text(i->first.c_str());
+				ImGui::PushItemWidth(270);
+				ImGui::InputText(("##" + PointerToString(&i->second.path)).c_str(), &i->second.path); // TODO:
 
 				ImGui::TableSetColumnIndex(1);
-				ImGui::Text(Texture::TypeNames.find(i->second.type)->second.c_str());
+
+				ImGui::PushItemWidth(90);
+				if (ImGui::BeginCombo(("##" + PointerToString(&i->second)).c_str(), Texture::TypeNames.find(i->second.type)->second.c_str()))
+				{
+					for (int n = 0; n < (int)Texture::Type::count; n++)
+					{
+						const bool is_selected = ((int)i->second.type == n);
+						if (ImGui::Selectable(Texture::TypeNames.find((Texture::Type)n)->second.c_str(), is_selected)) {
+							i->second.type = (Texture::Type)n;
+						}
+
+						// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+						if (is_selected) {
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
 
 				ImGui::TableSetColumnIndex(2);
+				ImGui::Checkbox(("##" + PointerToString(&i->second.flipped)).c_str(), &i->second.flipped);
+
+				ImGui::TableSetColumnIndex(3);
 				ImGui::Text(std::to_string(i->second.ID).c_str());
+
+				ImGui::TableSetColumnIndex(4);
+				if (ImGui::Button(("Reload##" + std::to_string(i->second.ID)).c_str())) {
+					i->second.Load();
+				}
 			}
 			ImGui::EndTable();
 		}
 	}
 
+	// TODO: Should be able to change the stuff of materials
 	if (ImGui::CollapsingHeader("Materials")) {
 
 		for (auto i = ResourceManager::materials.begin(); i != ResourceManager::materials.end(); i++)
@@ -163,7 +194,7 @@ void ResourceManager::GUI()
 
 			ImGui::TableSetColumnIndex(0);
 			ImGui::PushItemWidth(180);
-			ImGui::InputText(("  ##Vertex" + PointerToString(&i->second.vertexPath)).c_str(), &i->second.vertexPath);
+			ImGui::InputText(("##Vertex" + PointerToString(&i->second.vertexPath)).c_str(), &i->second.vertexPath);
 
 			ImGui::TableSetColumnIndex(1);
 			ImGui::PushItemWidth(180);

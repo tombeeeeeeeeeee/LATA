@@ -124,8 +124,6 @@ SceneManager::SceneManager(Scene* _scene)
 
 SceneManager::~SceneManager()
 {
-	// De-allocate resources
-
 	delete scene;
 
 	// Textures
@@ -133,6 +131,7 @@ SceneManager::~SceneManager()
 
 	//TODO: unload meshes properly
 
+	// Close ImGui
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
