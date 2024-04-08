@@ -28,7 +28,7 @@ private:
 public:
 	static GLuint currentID;
 	// the program ID
-	GLuint ID;
+	GLuint GLID;
 	// TODO: Contructor from one name that finds all the shaders of different types
 	Shader(std::string vertexPath, std::string fragmentPath);
 	void Load();

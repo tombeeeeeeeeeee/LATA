@@ -17,7 +17,7 @@ void Material::GetShaderUniforms()
 	}
 	GLint uniformCount;
 
-	glGetProgramiv(shader->ID, GL_ACTIVE_UNIFORMS, &uniformCount);
+	glGetProgramiv(shader->GLID, GL_ACTIVE_UNIFORMS, &uniformCount);
 	for (GLint i = 0; i < uniformCount; i++)
 	{
 		GLint size; // size of the variable
@@ -26,7 +26,7 @@ void Material::GetShaderUniforms()
 		GLchar name[bufSize]; // variable name in GLSL
 		GLsizei length; // name length
 
-		glGetActiveUniform(shader->ID, i, bufSize, &length, &size, &type, name);
+		glGetActiveUniform(shader->GLID, i, bufSize, &length, &size, &type, name);
 		// If the uniform doesn't start with 'material.', ignore it
 		if (strncmp(name, "material.", 9) != 0) { continue; }
 
@@ -77,6 +77,7 @@ void Material::AddTextures(std::vector<Texture*> _textures)
 	{
 		// TODO: Only one of each texture is supported atm, fix?
 		// TODO: what happens when not found
+		//auto texture = textures.find("material." + Texture::TypeNames.find((*i)->type)->second + "1");
 		auto texture = textures.find("material." + Texture::TypeNames.find((*i)->type)->second + "1");
 		if (texture != textures.end()) {
 			texture->second = (*i);
@@ -108,7 +109,7 @@ void Material::Use()
 		}
 		glActiveTexture(GL_TEXTURE0 + count);
 		shader->setSampler(i->first, count);
-		glBindTexture(GL_TEXTURE_2D, i->second->ID);
+		glBindTexture(GL_TEXTURE_2D, i->second->GLID);
 		count++;
 	}
 	for (auto i = floats.begin(); i != floats.end(); i++)
@@ -121,7 +122,7 @@ void Material::GUI()
 {
 	std::string tag = PointerToString(this);
 	ImGui::Text(name.c_str());
-	ImGui::Text(("Shader ID:" + std::to_string(shader->ID)).c_str());
+	ImGui::Text(("Shader ID:" + std::to_string(shader->GLID)).c_str());
 	ImGui::Text("Textures");
 	for (auto i = textures.begin(); i != textures.end(); i++)
 	{
@@ -131,7 +132,7 @@ void Material::GUI()
 
 		if (i->second) {
 			ImGui::SameLine();
-			ImGui::Text(std::to_string(i->second->ID).c_str()); // TODO: make this customisable
+			ImGui::Text(std::to_string(i->second->GLID).c_str()); // TODO: make this customisable
 		}
 	}
 	for (auto i = floats.begin(); i != floats.end(); i++)

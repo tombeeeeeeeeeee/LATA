@@ -57,6 +57,8 @@ void TestScene::Start()
 	litNormalShader->Use();
 	litNormalShader->setFloat("material.shininess", 32.f);
 
+	Texture* test = ResourceManager::GetTexture("images/container2.png", Texture::Type::diffuse);
+
 	Mesh cubeMesh;
 	cubeMesh.InitialiseCube();
 	Material* boxMaterial = ResourceManager::GetMaterial("box", litShader);

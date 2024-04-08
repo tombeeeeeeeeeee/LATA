@@ -23,6 +23,6 @@ void ModelRenderer::Draw()
 void ModelRenderer::GUI()
 {
 	// TODO:
-	ImGui::Text(("Shader: " + std::to_string(material->getShader()->ID)).c_str());
+	ImGui::Text(("Shader: " + std::to_string(material->getShader()->GLID)).c_str());
 }
 

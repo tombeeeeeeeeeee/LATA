@@ -8,7 +8,9 @@
 
 #include <iostream>
 
-std::unordered_map<std::string, Texture, ResourceManager::hashFNV1A> ResourceManager::textures;
+std::unordered_map<unsigned long long, Texture, ResourceManager::hashFNV1A> ResourceManager::idTextureMap;
+std::unordered_map<std::string, Texture*, ResourceManager::hashFNV1A> ResourceManager::pathTextureMap;
+unsigned long long ResourceManager::guidCounter = 100;
 std::unordered_map<std::string, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
 std::unordered_map<std::string, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
 
@@ -19,16 +21,37 @@ const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
 Texture* ResourceManager::GetTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
 {
-	auto texture = textures.find(path);
+	auto texture = pathTextureMap.find(path);
 
-	if (texture == textures.end()) {
-		Texture newTexture(path, wrappingMode, flipOnLoad);
-		newTexture.type = type;
-
-		texture = textures.emplace(path, newTexture).first;
+	if (texture == pathTextureMap.end()) {
+		Texture newTexture(path, type, wrappingMode, flipOnLoad);
+		newTexture.GUID = GetNewGuid();
+		// TODO: Call load texture function here instead
+		texture = pathTextureMap.emplace(path, &newTexture).first;
+		idTextureMap.emplace(newTexture.GUID, newTexture);
 	}
 
-	return &texture->second;
+	return texture->second;
+}
+
+Texture* ResourceManager::GetTexture(unsigned long long GUID)
+{
+		auto texture = idTextureMap.find(GUID);
+	
+		if (texture == idTextureMap.end()) {
+			std::cout << "Error: Unable to find texture of GUID: " << GUID << "\n";
+			return nullptr; // return 'default' or 'missing' texture instead
+		}
+	
+		return &texture->second;
+}
+
+unsigned long long ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
+{
+	Texture newTexture = Texture(path, type, wrappingMode, flipOnLoad);
+	newTexture.GUID = GetNewGuid();
+	idTextureMap.emplace(newTexture.GUID, newTexture);
+	return newTexture.GUID;
 }
 
 Shader* ResourceManager::GetShader(std::string vertexPath, std::string fragmentPath)
@@ -58,6 +81,17 @@ Material* ResourceManager::GetMaterial(std::string name, Shader* shader)
 	return &material->second;
 }
 
+// TODO: check if the prime and offset is supposed to be different for this one?
+unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
+{
+	unsigned long long hash = offset;
+
+	hash ^= key;
+	hash *= prime;
+
+	return hash;
+}
+
 unsigned long long ResourceManager::hashFNV1A::operator()(std::string key) const
 {
 	unsigned long long hash = offset;
@@ -74,7 +108,7 @@ unsigned long long ResourceManager::hashFNV1A::operator()(std::vector<Texture*> 
 	unsigned long long hash = offset;
 	for (auto t = key.begin(); t != key.end(); t++)
 	{
-		hash ^= (*t)->ID;
+		hash ^= (*t)->GLID;
 		hash *= prime;
 	}
 	return hash;
@@ -107,7 +141,7 @@ void ResourceManager::GUI()
 			ImGui::TableSetColumnIndex(4);
 			ImGui::Text("Reload");
 
-			for (auto i = ResourceManager::textures.begin(); i != ResourceManager::textures.end(); i++)
+			for (auto i = ResourceManager::idTextureMap.begin(); i != ResourceManager::idTextureMap.end(); i++)
 			{
 				ImGui::TableNextRow();
 
@@ -139,10 +173,10 @@ void ResourceManager::GUI()
 				ImGui::Checkbox(("##" + PointerToString(&i->second.flipped)).c_str(), &i->second.flipped);
 
 				ImGui::TableSetColumnIndex(3);
-				ImGui::Text(std::to_string(i->second.ID).c_str());
+				ImGui::Text(std::to_string(i->second.GLID).c_str());
 
 				ImGui::TableSetColumnIndex(4);
-				if (ImGui::Button(("Reload##" + std::to_string(i->second.ID)).c_str())) {
+				if (ImGui::Button(("Reload##" + std::to_string(i->second.GLID)).c_str())) {
 					i->second.Load();
 				}
 			}
@@ -201,10 +235,10 @@ void ResourceManager::GUI()
 			ImGui::InputText(("##Fragment" + PointerToString(&i->second.fragmentPath)).c_str(), &i->second.fragmentPath);
 
 			ImGui::TableSetColumnIndex(2);
-			ImGui::Text(std::to_string(i->second.ID).c_str());
+			ImGui::Text(std::to_string(i->second.GLID).c_str());
 
 			ImGui::TableSetColumnIndex(3);
-			if (ImGui::Button(("Recompile##" + std::to_string(i->second.ID)).c_str())) {
+			if (ImGui::Button(("Recompile##" + std::to_string(i->second.GLID)).c_str())) {
 				i->second.Load();
 			}
 		}
@@ -213,13 +247,18 @@ void ResourceManager::GUI()
 }
 
 
+unsigned long long ResourceManager::GetNewGuid()
+{
+	return ++guidCounter;
+}
+
 void ResourceManager::UnloadAll()
 {
-	for (auto i = textures.begin(); i != textures.end(); i++)
+	for (auto i = idTextureMap.begin(); i != idTextureMap.end(); i++)
 	{
 		i->second.DeleteTexture();
 	}
-	textures.clear();
+	idTextureMap.clear();
 
 	for (auto i = shaders.begin(); i != shaders.end(); i++)
 	{

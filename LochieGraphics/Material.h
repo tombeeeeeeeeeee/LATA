@@ -7,12 +7,13 @@
 
 class Shader;
 
-struct Material
+class Material
 {
 private:
 	// TODO: store a bool to see if this has been run yet
 	void GetShaderUniforms();
 	Shader* shader;
+	std::unordered_map<std::string, Texture*> textures;
 public:
 	Material(std::string _name, Shader* _shader);
 	Material(std::string _name);
@@ -22,7 +23,6 @@ public:
 
 	
 	// TODO: Think about better ways to have this rather than having a map for each type
-	std::unordered_map<std::string, Texture*> textures;
 	std::unordered_map<std::string, float> floats;
 	void AddTextures(std::vector<Texture*> _textures);
 	void Use();

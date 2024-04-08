@@ -24,18 +24,19 @@ public:
 	};
 	static const std::unordered_map<Type, std::string> TypeNames;
 
-	GLuint ID;
+	unsigned long long GUID;
+	GLuint GLID;
 	Type type;
 	std::string path;
 	int wrappingMode;
 	bool flipped; //TODO: rename to flip?
 	bool loaded = false;
-	Texture(std::string path, int wrappingMode, bool flip = false);
+	Texture(std::string _path, Type _type, int _wrappingMode, bool flip = false);
 
 	void Load();
 
 	static GLuint LoadCubeMap(std::vector<std::string> faces);
-	static void UseCubeMap(GLuint ID, Shader* shader);
+	static void UseCubeMap(GLuint GLID, Shader* shader);
 
 	void DeleteTexture();
 };
