@@ -13,6 +13,7 @@ private:
 	// TODO: store a bool to see if this has been run yet
 	void GetShaderUniforms();
 	Shader* shader;
+	unsigned long long shaderGUID;
 	std::unordered_map<std::string, Texture*> texturePointers;
 	std::unordered_map<std::string, unsigned long long> textureGUIDs;
 public:

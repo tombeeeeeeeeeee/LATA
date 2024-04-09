@@ -18,6 +18,10 @@ void Material::GetShaderUniforms()
 		return;
 	}
 	// TODO: Clear current stuff
+	texturePointers.clear();
+	textureGUIDs.clear();
+	floats.clear();
+
 	GLint uniformCount;
 
 	glGetProgramiv(shader->GLID, GL_ACTIVE_UNIFORMS, &uniformCount);
@@ -67,6 +71,7 @@ Material::Material(std::string _name, Shader* _shader) :
 	shader(_shader),
 	name(_name)
 {
+	shaderGUID = _shader->GUID;
 	GetShaderUniforms();
 }
 
@@ -133,16 +138,25 @@ void Material::GUI()
 {
 	std::string tag = PointerToString(this);
 	ImGui::Text(name.c_str());
-	ImGui::Text(("Shader glID:" + std::to_string(shader->GLID)).c_str());
+	unsigned long long oldShaderGUID = shaderGUID;
+	if (ImGui::InputScalar(("Shader##" + PointerToString(&shaderGUID)).c_str(), ImGuiDataType_U64, &shaderGUID)) {
+		Shader* newShader = ResourceManager::GetShader(shaderGUID);
+		if (newShader) {
+			setShader(newShader);
+		}
+		else {
+			shaderGUID = oldShaderGUID;
+		}
+	}
+
 	for (auto i = textureGUIDs.begin(); i != textureGUIDs.end(); i++)
 	{
-		
-		//ImGui::Text(i->first.c_str());
-		std::string number = std::to_string(i->second);
-		// TODO: Make it so only numbers can be typed in this
-		if (ImGui::InputText((i->first + "##" + PointerToString(&i->second)).c_str(), &number)) {
-			i->second = std::stoull(number);
-			Refresh();
+		unsigned long long newTextureGUID = i->second;
+		if (ImGui::InputScalar((i->first + "##" + PointerToString(&i->second)).c_str(), ImGuiDataType_U64, &newTextureGUID)) {
+			if (ResourceManager::GetTexture(newTextureGUID)) {
+				i->second = newTextureGUID;
+				Refresh();
+			}
 		}
 	}
 	for (auto i = floats.begin(); i != floats.end(); i++)

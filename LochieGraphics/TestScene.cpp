@@ -29,10 +29,10 @@ TestScene::TestScene()
 void TestScene::Start()
 {
 	// Shaders
-	litNormalShader  = ResourceManager::GetShader("shaders/litNormal.vert", "shaders/litNormal.frag");
-	litShader		 = ResourceManager::GetShader("shaders/lit.vert",		"shaders/lit.frag");
-	lightCubeShader  = ResourceManager::GetShader("shaders/lightCube.vert", "shaders/lightCube.frag");
-	skyBoxShader	 = ResourceManager::GetShader("shaders/cubemap.vert",	"shaders/cubemap.frag");
+	litNormalShader  = ResourceManager::LoadShader("shaders/litNormal.vert", "shaders/litNormal.frag");
+	litShader		 = ResourceManager::LoadShader("shaders/lit.vert",		"shaders/lit.frag");
+	lightCubeShader  = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag");
+	skyBoxShader	 = ResourceManager::LoadShader("shaders/cubemap.vert",	"shaders/cubemap.frag");
 	skybox.InitialiseCubeInsideOut();
 
 	std::vector<std::string> faces = std::vector<std::string>{

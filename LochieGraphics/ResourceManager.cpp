@@ -10,7 +10,7 @@
 
 std::unordered_map<unsigned long long, Texture, ResourceManager::hashFNV1A> ResourceManager::textures;
 unsigned long long ResourceManager::guidCounter = 100;
-std::unordered_map<std::string, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
+std::unordered_map<unsigned long long, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
 std::unordered_map<std::string, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
 
 
@@ -19,33 +19,37 @@ const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
 Texture* ResourceManager::GetTexture(unsigned long long GUID)
 {
-		auto texture = textures.find(GUID);
+	auto texture = textures.find(GUID);
 	
-		if (texture == textures.end()) {
-			std::cout << "Error: Unable to find texture of GUID: " << GUID << "\n";
-			return nullptr; // return 'default' or 'missing' texture instead
-		}
+	if (texture == textures.end()) {
+		std::cout << "Error: Unable to find texture of GUID: " << GUID << "\n";
+		return nullptr; // return 'default' or 'missing' texture instead
+	}
 	
-		return &texture->second;
+	return &texture->second;
 }
 
 Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
 {
 	Texture newTexture(path, type, wrappingMode, flipOnLoad);
 	newTexture.GUID = GetNewGuid();
-	// TODO: Call load texture function here instead
 	return &textures.emplace(newTexture.GUID, newTexture).first->second;
 }
 
-Shader* ResourceManager::GetShader(std::string vertexPath, std::string fragmentPath)
+Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragmentPath)
 {
-	std::string path = vertexPath + fragmentPath;
-	auto shader = shaders.find(path);
+	Shader newShader(vertexPath, fragmentPath);
+	newShader.GUID = GetNewGuid();
+	return &shaders.emplace(newShader.GUID, newShader).first->second;
+}
+
+Shader* ResourceManager::GetShader(unsigned long long GUID)
+{
+	auto shader = shaders.find(GUID);
 
 	if (shader == shaders.end()) {
-		Shader newShader(vertexPath, fragmentPath);
-
-		shader = shaders.emplace(path, newShader).first;
+		std::cout << "Error: Unable to find shader of GUID: " << GUID << "\n";
+		return nullptr; // return 'default' or 'missing' shader instead
 	}
 
 	return &shader->second;
@@ -64,7 +68,6 @@ Material* ResourceManager::GetMaterial(std::string name, Shader* shader)
 	return &material->second;
 }
 
-// TODO: check if the prime and offset is supposed to be different for this one?
 unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
 {
 	unsigned long long hash = offset;
@@ -81,17 +84,6 @@ unsigned long long ResourceManager::hashFNV1A::operator()(std::string key) const
 	for (auto i = 0; i < key.size(); i++)
 	{
 		hash ^= key[i];
-		hash *= prime;
-	}
-	return hash;
-}
-
-unsigned long long ResourceManager::hashFNV1A::operator()(std::vector<Texture*> key) const
-{
-	unsigned long long hash = offset;
-	for (auto t = key.begin(); t != key.end(); t++)
-	{
-		hash ^= (*t)->GLID;
 		hash *= prime;
 	}
 	return hash;
