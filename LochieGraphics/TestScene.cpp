@@ -61,8 +61,8 @@ void TestScene::Start()
 	cubeMesh.InitialiseCube();
 	Material* boxMaterial = ResourceManager::GetMaterial("box", litShader);
 	boxMaterial->AddTextures(std::vector<Texture*> {
-		ResourceManager::GetTexture("images/container2.png", Texture::Type::diffuse),
-		ResourceManager::GetTexture("images/container2_specular.png", Texture::Type::specular),
+		ResourceManager::LoadTexture("images/container2.png", Texture::Type::diffuse),
+		ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::specular),
 	});
 	cubeModel.AddMesh(&cubeMesh);
 	boxes->setRenderer(new MultiModelRenderer(&cubeModel, boxMaterial, std::vector<Transform>
@@ -91,7 +91,7 @@ void TestScene::Start()
 	grassMesh.InitialiseDoubleSidedQuad();
 	Material* grassMaterial = ResourceManager::GetMaterial("grass", litShader);
 	grassMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::GetTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE, false),
+		ResourceManager::LoadTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE, false),
 	});
 	grassModel.AddMesh(&grassMesh);
 	grass->setRenderer(new MultiModelRenderer(&grassModel, grassMaterial, std::vector<Transform>{
@@ -110,9 +110,9 @@ void TestScene::Start()
 	backpackModel = Model("models/backpack/backpack.obj", false);
 	Material* backpackMaterial = ResourceManager::GetMaterial("backpack", litNormalShader);
 	backpackMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::GetTexture("models/backpack/diffuse.jpg", Texture::Type::diffuse, GL_REPEAT, false),
-		ResourceManager::GetTexture("models/backpack/normal.png", Texture::Type::normal, GL_REPEAT, false),
-		ResourceManager::GetTexture("models/backpack/specular.jpg", Texture::Type::specular, GL_REPEAT, false),
+		ResourceManager::LoadTexture("models/backpack/diffuse.jpg", Texture::Type::diffuse, GL_REPEAT, false),
+		ResourceManager::LoadTexture("models/backpack/normal.png", Texture::Type::normal, GL_REPEAT, false),
+		ResourceManager::LoadTexture("models/backpack/specular.jpg", Texture::Type::specular, GL_REPEAT, false),
 	});
 	backpack->setRenderer(new ModelRenderer(&backpackModel, backpackMaterial));
 	backpack->transform.position = { -5.f, -1.f, 0.f };
@@ -120,8 +120,8 @@ void TestScene::Start()
 	testRedBoxModel = Model("models/normalBoxTest/Box_normal_example.obj");
 	Material* testRedBoxMaterial = ResourceManager::GetMaterial("testRedBox", litNormalShader);
 	testRedBoxMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::GetTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::diffuse, GL_REPEAT, true),
-		ResourceManager::GetTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true),
+		ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::diffuse, GL_REPEAT, true),
+		ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true),
 	});
 	testRedBox->setRenderer(new ModelRenderer(&testRedBoxModel, testRedBoxMaterial));
 	testRedBox->transform.position = { 5.f, -3.f, 2.f };
@@ -129,9 +129,9 @@ void TestScene::Start()
 	soulSpearModel = Model(std::string("models/soulspear/soulspear.obj"), true);
 	Material* soulSpearMaterial = ResourceManager::GetMaterial("soulSpear", litNormalShader);
 	soulSpearMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::GetTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse, GL_REPEAT, true),
-		ResourceManager::GetTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
-		ResourceManager::GetTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
+		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse, GL_REPEAT, true),
+		ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
+		ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
 	});
 	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, soulSpearMaterial));
 	soulSpear->transform.position = { 0.f, 1.f, 1.f };

@@ -133,7 +133,7 @@ void Material::GUI()
 {
 	std::string tag = PointerToString(this);
 	ImGui::Text(name.c_str());
-	ImGui::Text(("Shader gl ID:" + std::to_string(shader->GLID)).c_str());
+	ImGui::Text(("Shader glID:" + std::to_string(shader->GLID)).c_str());
 	for (auto i = textureGUIDs.begin(); i != textureGUIDs.end(); i++)
 	{
 		
@@ -144,19 +144,9 @@ void Material::GUI()
 			i->second = std::stoull(number);
 			Refresh();
 		}
-
-
-
-
-		//if (i->second) {
-		//	ImGui::SameLine();
-
-		//	ImGui::Text(std::to_string(i->second->GLID).c_str()); // TODO: make this customisable
-		//}
 	}
 	for (auto i = floats.begin(); i != floats.end(); i++)
 	{
-		ImGui::Text(i->first.c_str());
 		ImGui::DragFloat((i->first + "##" + tag).c_str(), &i->second);
 	}
 	

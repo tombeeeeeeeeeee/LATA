@@ -6,13 +6,12 @@
 #include <sstream>
 #include <fstream>
 
-GLuint Shader::currentID = 0;
+GLuint Shader::usingID = 0;
 
 Shader::Shader(std::string _vertexPath, std::string _fragmentPath) :
 	vertexPath(_vertexPath),
 	fragmentPath(_fragmentPath)
 {
-	// Shader Program
 	Load();
 }
 
@@ -71,6 +70,9 @@ void Shader::Load()
 
 GLint Shader::getUniformLocation(const std::string& name) const
 {
+	if (usingID != GLID) {
+		std::cout << "Error: Using wrong shader when setting uniform\n";
+	}
 	GLint location = glGetUniformLocation(GLID, name.c_str());
 	if (location == -1) {
 		// TODO: Make a better error handling system instead of lagging and spamming the console
@@ -82,8 +84,8 @@ GLint Shader::getUniformLocation(const std::string& name) const
 
 void Shader::Use()
 {
-	if (currentID != GLID) {
-		currentID = GLID;
+	if (usingID != GLID) {
+		usingID = GLID;
 		glUseProgram(GLID);
 	}
 }

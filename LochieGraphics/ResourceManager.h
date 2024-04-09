@@ -11,10 +11,10 @@
 class ResourceManager {
 public:
 	// TODO: Make resources be gathered from a GUID
-	static Texture* GetTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	static Texture* GetTexture(unsigned long long GUID);
 	static Texture* LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	static Shader* GetShader(std::string vertexPath, std::string fragmentPath);
+	static Shader* GetShader(unsigned long long, std::string fragmentPath);
 	static Material* GetMaterial(std::string name, Shader* shader = nullptr);
 
 	static unsigned long long guidCounter;
@@ -38,9 +38,8 @@ private:
 
 	// TODO: Maybe make a template function, all the 'Get' functions are very similar and could prob be written better
 
-	//static std::unordered_map<std::string, Texture, hashFNV1A> textures;
-	static std::unordered_map<unsigned long long, Texture, hashFNV1A> idTextureMap; // This actually stores/owns the textures
-	static std::unordered_map<std::string, Texture*, hashFNV1A> pathTextureMap; // This only stores pointers to help find textures
+	static std::unordered_map<unsigned long long, Texture, hashFNV1A> textures; // This stores/owns the textures
 	static std::unordered_map<std::string, Shader, hashFNV1A> shaders;
+	//static std::unordered_map<unsigned long long, Shader, hashFNV1A> shaders;
 	static std::unordered_map<std::string, Material, hashFNV1A> materials;
 };
