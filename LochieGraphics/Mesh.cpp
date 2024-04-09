@@ -17,7 +17,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) :
 	IBO(0)
 {
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
-	Initialise(vertices.size(), &vertices[0], indices.size(), &indices[0]);
+	Initialise((int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
 }
 
 Mesh::Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices) : Mesh()
@@ -142,7 +142,7 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 
 	//material = ResourceManager::GetMaterial(textures);
 
-	Initialise(vertexCount, vertices, indices.size(), indices.data());
+	Initialise(vertexCount, vertices, (int)indices.size(), indices.data());
 	delete[] vertices;
 }
 

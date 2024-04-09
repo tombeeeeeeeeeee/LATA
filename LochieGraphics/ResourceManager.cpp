@@ -24,11 +24,7 @@ Texture* ResourceManager::GetTexture(std::string path, Texture::Type type, int w
 	auto texture = pathTextureMap.find(path);
 
 	if (texture == pathTextureMap.end()) {
-		Texture newTexture(path, type, wrappingMode, flipOnLoad);
-		newTexture.GUID = GetNewGuid();
-		// TODO: Call load texture function here instead
-		texture = pathTextureMap.emplace(path, &newTexture).first;
-		idTextureMap.emplace(newTexture.GUID, newTexture);
+		return LoadTexture(path, type, wrappingMode, flipOnLoad);
 	}
 
 	return texture->second;
@@ -46,12 +42,14 @@ Texture* ResourceManager::GetTexture(unsigned long long GUID)
 		return &texture->second;
 }
 
-unsigned long long ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
+Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
 {
-	Texture newTexture = Texture(path, type, wrappingMode, flipOnLoad);
+	Texture newTexture(path, type, wrappingMode, flipOnLoad);
 	newTexture.GUID = GetNewGuid();
-	idTextureMap.emplace(newTexture.GUID, newTexture);
-	return newTexture.GUID;
+	// TODO: Call load texture function here instead
+	auto temp = idTextureMap.emplace(newTexture.GUID, newTexture);
+	pathTextureMap.emplace(path, &temp.first->second);
+	return &temp.first->second;
 }
 
 Shader* ResourceManager::GetShader(std::string vertexPath, std::string fragmentPath)

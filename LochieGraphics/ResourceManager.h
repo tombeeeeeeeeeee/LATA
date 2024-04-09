@@ -13,7 +13,7 @@ public:
 	// TODO: Make resources be gathered from a GUID
 	static Texture* GetTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	static Texture* GetTexture(unsigned long long GUID);
-	static unsigned long long LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
+	static Texture* LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	static Shader* GetShader(std::string vertexPath, std::string fragmentPath);
 	static Material* GetMaterial(std::string name, Shader* shader = nullptr);
 

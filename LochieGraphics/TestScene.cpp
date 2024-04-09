@@ -57,8 +57,6 @@ void TestScene::Start()
 	litNormalShader->Use();
 	litNormalShader->setFloat("material.shininess", 32.f);
 
-	Texture* test = ResourceManager::GetTexture("images/container2.png", Texture::Type::diffuse);
-
 	Mesh cubeMesh;
 	cubeMesh.InitialiseCube();
 	Material* boxMaterial = ResourceManager::GetMaterial("box", litShader);
@@ -143,7 +141,7 @@ void TestScene::Update(float delta)
 {
 	messengerInterface.Update();
 
-	pointLights[0].position.x = 1.5f * sin(glfwGetTime() * 2.f);
+	pointLights[0].position.x = 1.5f * (float)sin((float)glfwGetTime() * 2.f);
 	spotlight.position = camera->position;
 	spotlight.direction = camera->front;
 	for (auto i = lights.begin(); i != lights.end(); i++)

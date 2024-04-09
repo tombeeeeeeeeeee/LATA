@@ -1,20 +1,23 @@
 #include "Material.h"
 
 #include "Shader.h"
+#include "ResourceManager.h"
 
 #include "Utilities.h"
 
 #include "Graphics.h"
 #include "imgui.h"
+#include "imgui_stdlib.h"
 
 #include <iostream>
 
 void Material::GetShaderUniforms()
 {
 	if (!shader) {
-		std::cout << "Tried to get uniforms of no shader! On material:" << name << "\n";
+		std::cout << "Tried to get uniforms of no particular shader! On material:" << name << "\n";
 		return;
 	}
+	// TODO: Clear current stuff
 	GLint uniformCount;
 
 	glGetProgramiv(shader->GLID, GL_ACTIVE_UNIFORMS, &uniformCount);
@@ -35,7 +38,8 @@ void Material::GetShaderUniforms()
 		{
 		case GL_SAMPLER_2D:
 			// TODO: This is prob where a default texture can be set
-			textures.emplace(name, (Texture*)nullptr);
+			texturePointers.emplace(name, (Texture*)nullptr);
+			textureGUIDs.emplace(name, 0);
 			break;
 		case GL_FLOAT:
 			floats.emplace(name, 32.f);
@@ -45,11 +49,6 @@ void Material::GetShaderUniforms()
 			break;
 		}
 	}
-}
-
-Material::Material(std::string _name) :
-	name(_name)
-{
 }
 
 Shader* Material::getShader()
@@ -78,12 +77,14 @@ void Material::AddTextures(std::vector<Texture*> _textures)
 		// TODO: Only one of each texture is supported atm, fix?
 		// TODO: what happens when not found
 		//auto texture = textures.find("material." + Texture::TypeNames.find((*i)->type)->second + "1");
-		auto texture = textures.find("material." + Texture::TypeNames.find((*i)->type)->second + "1");
-		if (texture != textures.end()) {
+		std::string textureName = "material." + Texture::TypeNames.find((*i)->type)->second + "1";
+		auto texture = texturePointers.find(textureName);
+		if (texture != texturePointers.end()) {
 			texture->second = (*i);
+			textureGUIDs.find(textureName)->second = texture->second->GUID;
 		}
 		else {
-			std::cout << "Error, unable to find texture spot for material:" << "material." + Texture::TypeNames.find((*i)->type)->second + "1\n";
+			std::cout << "Error, unable to find texture spot for material: " << textureName + "\n";
 		}
 	}
 }
@@ -102,7 +103,7 @@ void Material::Use()
 	}
 
 	int count = 1;
-	for (auto i = textures.begin(); i != textures.end(); i++)
+	for (auto i = texturePointers.begin(); i != texturePointers.end(); i++)
 	{
 		if (i->second == nullptr) { 
 			continue; 
@@ -118,26 +119,45 @@ void Material::Use()
 	}
 }
 
+void Material::Refresh()
+{
+	for (auto i = textureGUIDs.begin(); i != textureGUIDs.end(); i++)
+	{
+		if (i->second) {
+			texturePointers.find(i->first)->second = ResourceManager::GetTexture(i->second);
+		}
+	}
+}
+
 void Material::GUI()
 {
 	std::string tag = PointerToString(this);
 	ImGui::Text(name.c_str());
-	ImGui::Text(("Shader ID:" + std::to_string(shader->GLID)).c_str());
-	ImGui::Text("Textures");
-	for (auto i = textures.begin(); i != textures.end(); i++)
+	ImGui::Text(("Shader gl ID:" + std::to_string(shader->GLID)).c_str());
+	for (auto i = textureGUIDs.begin(); i != textureGUIDs.end(); i++)
 	{
-		ImGui::Text(i->first.c_str());
 		
-		//ImGui::InputInt((i->first + "##" + tag).c_str(), &i->s)
-
-		if (i->second) {
-			ImGui::SameLine();
-			ImGui::Text(std::to_string(i->second->GLID).c_str()); // TODO: make this customisable
+		//ImGui::Text(i->first.c_str());
+		std::string number = std::to_string(i->second);
+		// TODO: Make it so only numbers can be typed in this
+		if (ImGui::InputText((i->first + "##" + PointerToString(&i->second)).c_str(), &number)) {
+			i->second = std::stoull(number);
+			Refresh();
 		}
+
+
+
+
+		//if (i->second) {
+		//	ImGui::SameLine();
+
+		//	ImGui::Text(std::to_string(i->second->GLID).c_str()); // TODO: make this customisable
+		//}
 	}
 	for (auto i = floats.begin(); i != floats.end(); i++)
 	{
 		ImGui::Text(i->first.c_str());
 		ImGui::DragFloat((i->first + "##" + tag).c_str(), &i->second);
 	}
+	
 }
