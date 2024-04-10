@@ -101,6 +101,7 @@ void Material::Use()
 	shader->Use();
 	// Unbinds any extra assigned textures, this is so if a mesh only has one diffuse, the previously set specular from another mesh isn't used.
 	//for (unsigned int i = textures.size(); i < textures.size() + 5; i++)
+	// TODO: This might not be needed anymore
 	for (unsigned int i = 0; i < 10; i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i );
@@ -110,12 +111,14 @@ void Material::Use()
 	int count = 1;
 	for (auto i = texturePointers.begin(); i != texturePointers.end(); i++)
 	{
-		if (i->second == nullptr) { 
-			continue; 
-		}
-		glActiveTexture(GL_TEXTURE0 + count);
+		glActiveTexture(GL_TEXTURE0 + count); // TODO: Move some of this to texture
 		shader->setSampler(i->first, count);
-		glBindTexture(GL_TEXTURE_2D, i->second->GLID);
+		if (i->second) {
+			glBindTexture(GL_TEXTURE_2D, i->second->GLID);
+		}
+		else {
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 		count++;
 	}
 	for (auto i = floats.begin(); i != floats.end(); i++)
@@ -131,6 +134,9 @@ void Material::Refresh()
 		if (i->second) {
 			texturePointers.find(i->first)->second = ResourceManager::GetTexture(i->second);
 		}
+		else {
+			texturePointers.find(i->first)->second = nullptr;
+		}
 	}
 }
 
@@ -138,14 +144,12 @@ void Material::GUI()
 {
 	std::string tag = PointerToString(this);
 	ImGui::Text(name.c_str());
-	unsigned long long oldShaderGUID = shaderGUID;
-	if (ImGui::InputScalar(("Shader##" + PointerToString(&shaderGUID)).c_str(), ImGuiDataType_U64, &shaderGUID)) {
-		Shader* newShader = ResourceManager::GetShader(shaderGUID);
+	unsigned long long newShadersGUID = shaderGUID;
+	if (ImGui::InputScalar(("Shader##" + PointerToString(&shaderGUID)).c_str(), ImGuiDataType_U64, &newShadersGUID)) {
+		Shader* newShader = ResourceManager::GetShader(newShadersGUID);
 		if (newShader) {
+			shaderGUID = newShadersGUID;
 			setShader(newShader);
-		}
-		else {
-			shaderGUID = oldShaderGUID;
 		}
 	}
 
@@ -153,9 +157,10 @@ void Material::GUI()
 	{
 		unsigned long long newTextureGUID = i->second;
 		if (ImGui::InputScalar((i->first + "##" + PointerToString(&i->second)).c_str(), ImGuiDataType_U64, &newTextureGUID)) {
-			if (ResourceManager::GetTexture(newTextureGUID)) {
+			// If texture found, or zero; zero is for no texture
+			if (ResourceManager::GetTexture(newTextureGUID) || newTextureGUID == 0) {
 				i->second = newTextureGUID;
-				Refresh();
+				Refresh(); // TODO: Don't need to refresh everything
 			}
 		}
 	}

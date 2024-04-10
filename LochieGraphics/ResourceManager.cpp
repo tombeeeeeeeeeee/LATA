@@ -22,10 +22,10 @@ Texture* ResourceManager::GetTexture(unsigned long long GUID)
 	auto texture = textures.find(GUID);
 	
 	if (texture == textures.end()) {
-		std::cout << "Error: Unable to find texture of GUID: " << GUID << "\n";
+		//std::cout << "Error: Unable to find texture of GUID: " << GUID << "\n";
 		return nullptr; // return 'default' or 'missing' texture instead
 	}
-	
+
 	return &texture->second;
 }
 
@@ -36,6 +36,18 @@ Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int 
 	return &textures.emplace(newTexture.GUID, newTexture).first->second;
 }
 
+Shader* ResourceManager::GetShader(unsigned long long GUID)
+{
+	auto shader = shaders.find(GUID);
+
+	if (shader == shaders.end()) {
+		//std::cout << "Error: Unable to find shader of GUID: " << GUID << "\n";
+		return nullptr; // return 'default' or 'missing' shader instead
+	}
+
+	return &shader->second;
+}
+
 Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragmentPath)
 {
 	Shader newShader(vertexPath, fragmentPath);
@@ -43,17 +55,6 @@ Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragment
 	return &shaders.emplace(newShader.GUID, newShader).first->second;
 }
 
-Shader* ResourceManager::GetShader(unsigned long long GUID)
-{
-	auto shader = shaders.find(GUID);
-
-	if (shader == shaders.end()) {
-		std::cout << "Error: Unable to find shader of GUID: " << GUID << "\n";
-		return nullptr; // return 'default' or 'missing' shader instead
-	}
-
-	return &shader->second;
-}
 
 Material* ResourceManager::GetMaterial(std::string name, Shader* shader)
 {
@@ -188,7 +189,7 @@ void ResourceManager::GUI()
 	}
 	
 	if (ImGui::CollapsingHeader("Shaders")) {
-		if (ImGui::BeginTable("Shader list", 4)) {
+		if (ImGui::BeginTable("Shader list", 5)) {
 			ImGui::TableNextRow();
 
 			ImGui::TableSetColumnIndex(0);
@@ -198,9 +199,12 @@ void ResourceManager::GUI()
 			ImGui::Text("Fragment");
 
 			ImGui::TableSetColumnIndex(2);
-			ImGui::Text("ID");
+			ImGui::Text("GUID");
 
 			ImGui::TableSetColumnIndex(3);
+			ImGui::Text("glID");
+
+			ImGui::TableSetColumnIndex(4);
 			ImGui::Text("Reload");
 		}
 		for (auto i = ResourceManager::shaders.begin(); i != ResourceManager::shaders.end(); i++)
@@ -216,9 +220,12 @@ void ResourceManager::GUI()
 			ImGui::InputText(("##Fragment" + PointerToString(&i->second.fragmentPath)).c_str(), &i->second.fragmentPath);
 
 			ImGui::TableSetColumnIndex(2);
-			ImGui::Text(std::to_string(i->second.GLID).c_str());
+			ImGui::Text(std::to_string(i->second.GUID).c_str());
 
 			ImGui::TableSetColumnIndex(3);
+			ImGui::Text(std::to_string(i->second.GLID).c_str());
+
+			ImGui::TableSetColumnIndex(4);
 			if (ImGui::Button(("Recompile##" + std::to_string(i->second.GLID)).c_str())) {
 				i->second.Load();
 			}

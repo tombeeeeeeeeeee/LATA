@@ -51,12 +51,6 @@ void TestScene::Start()
 	};
 	skyboxTexture = Texture::LoadCubeMap(faces); //TODO: Should be using the resource manager
 
-	litShader->Use();
-	litShader->setFloat("material.shininess", 32.f);
-
-	litNormalShader->Use();
-	litNormalShader->setFloat("material.shininess", 32.f);
-
 	Mesh cubeMesh;
 	cubeMesh.InitialiseCube();
 	Material* boxMaterial = ResourceManager::GetMaterial("box", litShader);
