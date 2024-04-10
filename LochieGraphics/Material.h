@@ -20,6 +20,7 @@ public:
 	Material(std::string _name, Shader* _shader);
 	void setShader(Shader* _shader);
 	Shader* getShader();
+	unsigned long long GUID;
 	std::string name;
 	
 	// TODO: Think about better ways to have this rather than having a map for each type

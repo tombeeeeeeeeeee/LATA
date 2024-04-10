@@ -15,7 +15,8 @@ public:
 	static Texture* LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	static Shader* GetShader(unsigned long long GUID);
 	static Shader* LoadShader(std::string vertexPath, std::string fragmentPath);
-	static Material* GetMaterial(std::string name, Shader* shader = nullptr);
+	static Material* GetMaterial(unsigned long long GUID);
+	static Material* LoadMaterial(std::string name, Shader* shader = nullptr);
 
 	static unsigned long long guidCounter;
 	static unsigned long long GetNewGuid();
@@ -38,5 +39,5 @@ private:
 
 	static std::unordered_map<unsigned long long, Texture, hashFNV1A> textures; // This stores/owns the textures
 	static std::unordered_map<unsigned long long, Shader, hashFNV1A> shaders;
-	static std::unordered_map<std::string, Material, hashFNV1A> materials;
+	static std::unordered_map<unsigned long long, Material, hashFNV1A> materials;
 };

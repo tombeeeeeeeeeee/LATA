@@ -9,10 +9,9 @@
 #include <iostream>
 
 std::unordered_map<unsigned long long, Texture, ResourceManager::hashFNV1A> ResourceManager::textures;
-unsigned long long ResourceManager::guidCounter = 100;
 std::unordered_map<unsigned long long, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
-std::unordered_map<std::string, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
-
+std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
+unsigned long long ResourceManager::guidCounter = 100;
 
 const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
 const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
@@ -23,7 +22,7 @@ Texture* ResourceManager::GetTexture(unsigned long long GUID)
 	
 	if (texture == textures.end()) {
 		//std::cout << "Error: Unable to find texture of GUID: " << GUID << "\n";
-		return nullptr; // return 'default' or 'missing' texture instead
+		return nullptr; // TODO: Should this return 'default' or 'missing' texture instead?
 	}
 
 	return &texture->second;
@@ -55,18 +54,24 @@ Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragment
 	return &shaders.emplace(newShader.GUID, newShader).first->second;
 }
 
-
-Material* ResourceManager::GetMaterial(std::string name, Shader* shader)
+Material* ResourceManager::GetMaterial(unsigned long long GUID)
 {
-	auto material = materials.find(name);
+	auto material = materials.find(GUID);
 
 	if (material == materials.end()) {
-		Material newMaterial(name, shader);
-
-		material = materials.emplace(name, newMaterial).first;
+		//std::cout << "Error: Unable to find material of GUID: " << GUID << "\n";
+		return nullptr; // return 'default' or 'missing' material instead
 	}
 
 	return &material->second;
+}
+
+
+Material* ResourceManager::LoadMaterial(std::string name, Shader* shader)
+{
+	Material newMaterial(name, shader);
+	newMaterial.GUID = GetNewGuid();
+	return &materials.emplace(newMaterial.GUID, newMaterial).first->second;
 }
 
 unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const

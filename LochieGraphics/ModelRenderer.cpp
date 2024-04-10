@@ -4,13 +4,22 @@
 #include "Shader.h"
 #include "Material.h"
 #include "SceneObject.h"
+#include "ResourceManager.h"
 
 #include "imgui.h"
+
+ModelRenderer::ModelRenderer(Model* _model, unsigned long long _materialGUID) :
+	model(_model),
+	materialGUID(_materialGUID)
+{
+	material = ResourceManager::GetMaterial(materialGUID);
+}
 
 ModelRenderer::ModelRenderer(Model* _model, Material* _material) :
 	model(_model),
 	material(_material)
 {
+	materialGUID = material->GUID;
 }
 
 void ModelRenderer::Draw()

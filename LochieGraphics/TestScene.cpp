@@ -49,11 +49,12 @@ void TestScene::Start()
 		"images/skybox/front.jpg",
 		"images/skybox/back.jpg"
 	};
+	// TODO: There are other ways to do a skybox, see: https://webglfundamentals.org/webgl/lessons/webgl-skybox.html for an example
 	skyboxTexture = Texture::LoadCubeMap(faces); //TODO: Should be using the resource manager
 
 	Mesh cubeMesh;
 	cubeMesh.InitialiseCube();
-	Material* boxMaterial = ResourceManager::GetMaterial("box", litShader);
+	Material* boxMaterial = ResourceManager::LoadMaterial("box", litShader);
 	boxMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("images/container2.png", Texture::Type::diffuse),
 		ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::specular),
@@ -73,7 +74,7 @@ void TestScene::Start()
 		Transform({ -1.3f,  1.0f, -1.50f }, { 180.f, 54.f, 90.f })
 	}));
 
-	Material* lightCubeMaterial = ResourceManager::GetMaterial("lightCube", lightCubeShader);
+	Material* lightCubeMaterial = ResourceManager::LoadMaterial("lightCube", lightCubeShader);
 	MultiModelRenderer* lightCubeRenderer = new MultiModelRenderer(&cubeModel, lightCubeMaterial, std::vector<Transform>(sizeof(pointLights) / sizeof(pointLights[0])));
 	lightCube->setRenderer(lightCubeRenderer);
 	for (int i = 0; i < sizeof(pointLights) / sizeof(pointLights[0]); i++)
@@ -83,7 +84,7 @@ void TestScene::Start()
 
 	Mesh grassMesh;
 	grassMesh.InitialiseDoubleSidedQuad();
-	Material* grassMaterial = ResourceManager::GetMaterial("grass", litShader);
+	Material* grassMaterial = ResourceManager::LoadMaterial("grass", litShader);
 	grassMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE, false),
 	});
@@ -102,7 +103,7 @@ void TestScene::Start()
 	}));
 
 	backpackModel = Model("models/backpack/backpack.obj", false);
-	Material* backpackMaterial = ResourceManager::GetMaterial("backpack", litNormalShader);
+	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", litNormalShader);
 	backpackMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/backpack/diffuse.jpg", Texture::Type::diffuse, GL_REPEAT, false),
 		ResourceManager::LoadTexture("models/backpack/normal.png", Texture::Type::normal, GL_REPEAT, false),
@@ -112,7 +113,7 @@ void TestScene::Start()
 	backpack->transform.position = { -5.f, -1.f, 0.f };
 
 	testRedBoxModel = Model("models/normalBoxTest/Box_normal_example.obj");
-	Material* testRedBoxMaterial = ResourceManager::GetMaterial("testRedBox", litNormalShader);
+	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", litNormalShader);
 	testRedBoxMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::diffuse, GL_REPEAT, true),
 		ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true),
@@ -121,7 +122,7 @@ void TestScene::Start()
 	testRedBox->transform.position = { 5.f, -3.f, 2.f };
 
 	soulSpearModel = Model(std::string("models/soulspear/soulspear.obj"), true);
-	Material* soulSpearMaterial = ResourceManager::GetMaterial("soulSpear", litNormalShader);
+	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", litNormalShader);
 	soulSpearMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse, GL_REPEAT, true),
 		ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
