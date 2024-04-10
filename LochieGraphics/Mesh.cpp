@@ -17,7 +17,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) :
 	IBO(0)
 {
 	// now that we have all the required data, set the vertex buffers and its attribute pointers.
-	Initialise(vertices.size(), &vertices[0], indices.size(), &indices[0]);
+	Initialise((int)vertices.size(), &vertices[0], (int)indices.size(), &indices[0]);
 }
 
 Mesh::Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices) : Mesh()
@@ -142,7 +142,7 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 
 	//material = ResourceManager::GetMaterial(textures);
 
-	Initialise(vertexCount, vertices, indices.size(), indices.data());
+	Initialise(vertexCount, vertices, (int)indices.size(), indices.data());
 	delete[] vertices;
 }
 
@@ -336,30 +336,30 @@ void Mesh::Unbind()
 }
 
 // Only works for files that specify the location of the textures
-std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type, bool flipOnLoad)
-{
-	std::vector<Texture*> textures;
-	textures.reserve(mat->GetTextureCount(aiType));
-	for (unsigned int i = 0; i < mat->GetTextureCount(aiType); i++)
-	{
-		aiString str;
-		mat->GetTexture(aiType, i, &str);
-		std::string folder = path.substr(0, 1 + path.find_last_of("\\/"));
-		// TODO: Don't default to GL_REPEAT here, change the parameters
-		Texture* texture = ResourceManager::GetTexture(folder + str.C_Str(), type, GL_REPEAT, flipOnLoad);
-		if (texture) {
-			texture->type = type;
-			textures.push_back(texture);
-		}
-		else {
-			std::cout << "Failed attempt to find a texture of path: " << str.C_Str() << "\nThe file might have been moved or renamed\n";
-		}
-	}
-	return textures;
-}
+//std::vector<Texture*> Mesh::LoadMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type, bool flipOnLoad)
+//{
+//	std::vector<Texture*> textures;
+//	textures.reserve(mat->GetTextureCount(aiType));
+//	for (unsigned int i = 0; i < mat->GetTextureCount(aiType); i++)
+//	{
+//		aiString str;
+//		mat->GetTexture(aiType, i, &str);
+//		std::string folder = path.substr(0, 1 + path.find_last_of("\\/"));
+//		// TODO: Don't default to GL_REPEAT here, change the parameters
+//		Texture* texture = ResourceManager::GetTexture(folder + str.C_Str(), type, GL_REPEAT, flipOnLoad);
+//		if (texture) {
+//			texture->type = type;
+//			textures.push_back(texture);
+//		}
+//		else {
+//			std::cout << "Failed attempt to find a texture of path: " << str.C_Str() << "\nThe file might have been moved or renamed\n";
+//		}
+//	}
+//	return textures;
+//}
 
-void Mesh::AddMaterialTextures(std::vector<Texture*>* textures, std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type, bool flipOnLoad)
-{
-	std::vector<Texture*> maps = LoadMaterialTextures(path, mat, aiType, type, flipOnLoad);
-	textures->insert(textures->end(), std::make_move_iterator(maps.begin()), std::make_move_iterator(maps.end()));
-}
+//void Mesh::AddMaterialTextures(std::vector<Texture*>* textures, std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type, bool flipOnLoad)
+//{
+//	std::vector<Texture*> maps = LoadMaterialTextures(path, mat, aiType, type, flipOnLoad);
+//	textures->insert(textures->end(), std::make_move_iterator(maps.begin()), std::make_move_iterator(maps.end()));
+//}

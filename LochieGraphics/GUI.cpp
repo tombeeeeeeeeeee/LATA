@@ -30,7 +30,7 @@ void GUI::ResourceMenu()
 
 	// TODO: Make this graph better, have lines and stuff for specific frame rates
 	// Graph range top is 20fps
-	ImGui::PlotLines("Time per frame", SceneManager::frameTimes.elements, IM_ARRAYSIZE(SceneManager::frameTimes.elements), SceneManager::frameTimes.position, nullptr, 0.00f, 0.05f, ImVec2(0.f, 80.0f));
+	ImGui::PlotLines("Time per frame", SceneManager::frameTimes.elements, IM_ARRAYSIZE(SceneManager::frameTimes.elements), (int)SceneManager::frameTimes.position, nullptr, 0.00f, 0.05f, ImVec2(0.f, 80.0f));
 
 
 	ImGui::End();
@@ -70,7 +70,7 @@ void GUI::SceneObjectMenu()
 		return;
 	}
 
-	if (ImGui::SliderInt("Scene Object Index", &sceneObjectSelectedIndex, 0, scene->sceneObjects.size()-1)) {
+	if (ImGui::SliderInt("Scene Object Index", &sceneObjectSelectedIndex, 0, (int)(scene->sceneObjects.size()-1))) {
 		sceneObjectSelectedIndex = glm::clamp(sceneObjectSelectedIndex, 0, (int)scene->sceneObjects.size()-1);
 	}
 	scene->sceneObjects[sceneObjectSelectedIndex]->GUI();
@@ -85,7 +85,7 @@ void GUI::LightMenu()
 		return;
 	}
 
-	if (ImGui::SliderInt("Light selected", &lightSelectedIndex, 0, scene->lights.size() - 1)) {
+	if (ImGui::SliderInt("Light selected", &lightSelectedIndex, 0, (int)scene->lights.size() - 1)) {
 		lightSelectedIndex = glm::clamp(lightSelectedIndex, 0, (int)scene->lights.size() - 1);
 	}
 	scene->lights[lightSelectedIndex]->GUI();

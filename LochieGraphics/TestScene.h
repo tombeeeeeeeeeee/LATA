@@ -20,7 +20,7 @@ private:
 	Shader* skyBoxShader	= nullptr;
 
 	Mesh skybox;
-	GLuint skyboxTexture;
+	GLuint skyboxTexture = 0;
 
 	Model backpackModel;
 	Model cubeModel;

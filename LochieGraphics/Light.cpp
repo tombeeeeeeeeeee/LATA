@@ -72,7 +72,7 @@ void PointLight::GUI()
 	ImGui::SliderFloat(("Linear##" + tag).c_str(),    &linear,      0.f, 1.f);
 	ImGui::SliderFloat(("Quadratic##" + tag).c_str(), &quadratic,   0.f, 1.f);
 	ImGui::BeginDisabled();
-	ImGui::DragInt(("Index##" + tag).c_str(), &index, 0.01f, 0.f, 1.f);
+	ImGui::DragInt(("Index##" + tag).c_str(), &index, 0.01f, 0, 4); //TODO: Replace 4 with the correct number of lights
 	ImGui::EndDisabled();
 }
 

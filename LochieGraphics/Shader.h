@@ -26,10 +26,11 @@ private:
 	static GLuint CompileShader(std::string path, int type);
 	bool loaded = false;
 public:
-	static GLuint currentID;
+	static GLuint usingID;
 	// the program ID
-	GLuint ID;
-	// TODO: Contructor from one name that finds all the shaders of different types
+	GLuint GLID;
+	unsigned long long GUID = 0;
+	// TODO: Contructor from one name that finds all the shaders of different types, or custom shader file
 	Shader(std::string vertexPath, std::string fragmentPath);
 	void Load();
 	std::string vertexPath;

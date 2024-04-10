@@ -6,13 +6,12 @@
 #include <sstream>
 #include <fstream>
 
-GLuint Shader::currentID = 0;
+GLuint Shader::usingID = 0;
 
 Shader::Shader(std::string _vertexPath, std::string _fragmentPath) :
 	vertexPath(_vertexPath),
 	fragmentPath(_fragmentPath)
 {
-	// Shader Program
 	Load();
 }
 
@@ -45,22 +44,22 @@ void Shader::Load()
 	GLuint vertex = CompileShader(vertexPath, GL_VERTEX_SHADER);
 	GLuint fragment = CompileShader(fragmentPath, GL_FRAGMENT_SHADER);
 
-	ID = glCreateProgram();
-	glAttachShader(ID, vertex);
-	glAttachShader(ID, fragment);
-	glLinkProgram(ID);
+	GLID = glCreateProgram();
+	glAttachShader(GLID, vertex);
+	glAttachShader(GLID, fragment);
+	glLinkProgram(GLID);
 
 	// Print any linking errors
 	int success;
 	char infoLog[512];
-	glGetProgramiv(ID, GL_LINK_STATUS, &success);
+	glGetProgramiv(GLID, GL_LINK_STATUS, &success);
 	if (!success) {
-		glGetProgramInfoLog(ID, 512, NULL, infoLog);
+		glGetProgramInfoLog(GLID, 512, NULL, infoLog);
 		std::cout << "Shader error, program linking failed\n" << "Vertex path: " << vertexPath << "\n" << "Fragment path: " << fragmentPath << "\n" << infoLog << "\n";
 	}
 	else
 	{
-		std::cout << "Created shader ID: " << ID << " with vertex: " << vertexPath << " and fragment: " << fragmentPath << "\n";
+		std::cout << "Created shader ID: " << GLID << " with vertex: " << vertexPath << " and fragment: " << fragmentPath << "\n";
 	}
 
 	glDeleteShader(vertex);
@@ -71,10 +70,13 @@ void Shader::Load()
 
 GLint Shader::getUniformLocation(const std::string& name) const
 {
-	GLint location = glGetUniformLocation(ID, name.c_str());
+	if (usingID != GLID) {
+		std::cout << "Error: Using wrong shader when setting uniform\n";
+	}
+	GLint location = glGetUniformLocation(GLID, name.c_str());
 	if (location == -1) {
 		// TODO: Make a better error handling system instead of lagging and spamming the console
-		std::cout << "Couldn't find: \"" << name << "\" in shader ID" << ID << "\n";
+		std::cout << "Couldn't find: \"" << name << "\" in shader ID" << GLID << "\n";
 	}
 	return location;
 }
@@ -82,9 +84,9 @@ GLint Shader::getUniformLocation(const std::string& name) const
 
 void Shader::Use()
 {
-	if (currentID != ID) {
-		currentID = ID;
-		glUseProgram(ID);
+	if (usingID != GLID) {
+		usingID = GLID;
+		glUseProgram(GLID);
 	}
 }
 
@@ -155,5 +157,5 @@ void Shader::setMat4(const std::string& name, const glm::mat4& mat)
 
 void Shader::DeleteProgram()
 {
-	glDeleteProgram(ID);
+	glDeleteProgram(GLID);
 }

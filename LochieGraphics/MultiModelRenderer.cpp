@@ -31,7 +31,7 @@ MultiModelRenderer::MultiModelRenderer(Model* _model, Material* _material, std::
 void MultiModelRenderer::GUI()
 {
 	// TODO:
-	ImGui::Text(("Shader: " + std::to_string(material->getShader()->ID)).c_str());
+	ImGui::Text(("Shader: " + std::to_string(material->getShader()->GLID)).c_str());
 	for (unsigned int i = 0; i < transforms.size(); i++)
 	{
 		transforms[i].GUI();

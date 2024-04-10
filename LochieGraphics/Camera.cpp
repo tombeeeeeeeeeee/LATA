@@ -31,9 +31,10 @@ Camera::Camera() : Camera({ 0.f, 0.f, 0.f }, { 0.f, 1.f, 0.f }, -90.f, 0.0f, 2.5
 
 
 // TODO: this could be written without the lookAt function
+// TODO: Store postition and rotation in a matrix
 glm::mat4 Camera::GetViewMatrix() const
 {
-    return glm::lookAt(position, position + front, up);
+    return glm::lookAt(position, position + front, up); // TODO: Should be the inverse of the camera matrix
 }
 
 void Camera::ProcessKeyboard(Direction direction, float deltaTime)

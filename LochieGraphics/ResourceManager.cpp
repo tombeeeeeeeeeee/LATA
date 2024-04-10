@@ -8,54 +8,80 @@
 
 #include <iostream>
 
-std::unordered_map<std::string, Texture, ResourceManager::hashFNV1A> ResourceManager::textures;
-std::unordered_map<std::string, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
-std::unordered_map<std::string, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
-
+std::unordered_map<unsigned long long, Texture, ResourceManager::hashFNV1A> ResourceManager::textures;
+std::unordered_map<unsigned long long, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
+std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
+unsigned long long ResourceManager::guidCounter = 100;
 
 const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
 const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
-
-Texture* ResourceManager::GetTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
+Texture* ResourceManager::GetTexture(unsigned long long GUID)
 {
-	auto texture = textures.find(path);
-
+	auto texture = textures.find(GUID);
+	
 	if (texture == textures.end()) {
-		Texture newTexture(path, wrappingMode, flipOnLoad);
-		newTexture.type = type;
-
-		texture = textures.emplace(path, newTexture).first;
+		//std::cout << "Error: Unable to find texture of GUID: " << GUID << "\n";
+		return nullptr; // TODO: Should this return 'default' or 'missing' texture instead?
 	}
 
 	return &texture->second;
 }
 
-Shader* ResourceManager::GetShader(std::string vertexPath, std::string fragmentPath)
+Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
 {
-	std::string path = vertexPath + fragmentPath;
-	auto shader = shaders.find(path);
+	Texture newTexture(path, type, wrappingMode, flipOnLoad);
+	newTexture.GUID = GetNewGuid();
+	return &textures.emplace(newTexture.GUID, newTexture).first->second;
+}
+
+Shader* ResourceManager::GetShader(unsigned long long GUID)
+{
+	auto shader = shaders.find(GUID);
 
 	if (shader == shaders.end()) {
-		Shader newShader(vertexPath, fragmentPath);
-
-		shader = shaders.emplace(path, newShader).first;
+		//std::cout << "Error: Unable to find shader of GUID: " << GUID << "\n";
+		return nullptr; // return 'default' or 'missing' shader instead
 	}
 
 	return &shader->second;
 }
 
-Material* ResourceManager::GetMaterial(std::string name, Shader* shader)
+Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragmentPath)
 {
-	auto material = materials.find(name);
+	Shader newShader(vertexPath, fragmentPath);
+	newShader.GUID = GetNewGuid();
+	return &shaders.emplace(newShader.GUID, newShader).first->second;
+}
+
+Material* ResourceManager::GetMaterial(unsigned long long GUID)
+{
+	auto material = materials.find(GUID);
 
 	if (material == materials.end()) {
-		Material newMaterial(name, shader);
-
-		material = materials.emplace(name, newMaterial).first;
+		//std::cout << "Error: Unable to find material of GUID: " << GUID << "\n";
+		return nullptr; // return 'default' or 'missing' material instead
 	}
 
 	return &material->second;
+}
+
+
+Material* ResourceManager::LoadMaterial(std::string name, Shader* shader)
+{
+	Material newMaterial(name, shader);
+	newMaterial.GUID = GetNewGuid();
+	return &materials.emplace(newMaterial.GUID, newMaterial).first->second;
+}
+
+unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
+{
+	unsigned long long hash = offset;
+
+	hash ^= key;
+	hash *= prime;
+
+	return hash;
 }
 
 unsigned long long ResourceManager::hashFNV1A::operator()(std::string key) const
@@ -64,17 +90,6 @@ unsigned long long ResourceManager::hashFNV1A::operator()(std::string key) const
 	for (auto i = 0; i < key.size(); i++)
 	{
 		hash ^= key[i];
-		hash *= prime;
-	}
-	return hash;
-}
-
-unsigned long long ResourceManager::hashFNV1A::operator()(std::vector<Texture*> key) const
-{
-	unsigned long long hash = offset;
-	for (auto t = key.begin(); t != key.end(); t++)
-	{
-		hash ^= (*t)->ID;
 		hash *= prime;
 	}
 	return hash;
@@ -89,7 +104,7 @@ void ResourceManager::GUI()
 {
 	if (ImGui::CollapsingHeader("Textures")) {
 
-		if (ImGui::BeginTable("Resource Textures", 5)) {
+		if (ImGui::BeginTable("Resource Textures", 6)) {
 			ImGui::TableNextRow();
 
 			ImGui::TableSetColumnIndex(0);
@@ -102,9 +117,12 @@ void ResourceManager::GUI()
 			ImGui::Text("Flipped");
 
 			ImGui::TableSetColumnIndex(3);
-			ImGui::Text("ID");
+			ImGui::Text("GUID");
 
 			ImGui::TableSetColumnIndex(4);
+			ImGui::Text("glID");
+
+			ImGui::TableSetColumnIndex(5);
 			ImGui::Text("Reload");
 
 			for (auto i = ResourceManager::textures.begin(); i != ResourceManager::textures.end(); i++)
@@ -139,10 +157,13 @@ void ResourceManager::GUI()
 				ImGui::Checkbox(("##" + PointerToString(&i->second.flipped)).c_str(), &i->second.flipped);
 
 				ImGui::TableSetColumnIndex(3);
-				ImGui::Text(std::to_string(i->second.ID).c_str());
+				ImGui::Text(std::to_string(i->second.GUID).c_str());
 
 				ImGui::TableSetColumnIndex(4);
-				if (ImGui::Button(("Reload##" + std::to_string(i->second.ID)).c_str())) {
+				ImGui::Text(std::to_string(i->second.GLID).c_str());
+
+				ImGui::TableSetColumnIndex(5);
+				if (ImGui::Button(("Reload##" + std::to_string(i->second.GLID)).c_str())) {
 					i->second.Load();
 				}
 			}
@@ -173,7 +194,7 @@ void ResourceManager::GUI()
 	}
 	
 	if (ImGui::CollapsingHeader("Shaders")) {
-		if (ImGui::BeginTable("Shader list", 4)) {
+		if (ImGui::BeginTable("Shader list", 5)) {
 			ImGui::TableNextRow();
 
 			ImGui::TableSetColumnIndex(0);
@@ -183,9 +204,12 @@ void ResourceManager::GUI()
 			ImGui::Text("Fragment");
 
 			ImGui::TableSetColumnIndex(2);
-			ImGui::Text("ID");
+			ImGui::Text("GUID");
 
 			ImGui::TableSetColumnIndex(3);
+			ImGui::Text("glID");
+
+			ImGui::TableSetColumnIndex(4);
 			ImGui::Text("Reload");
 		}
 		for (auto i = ResourceManager::shaders.begin(); i != ResourceManager::shaders.end(); i++)
@@ -201,10 +225,13 @@ void ResourceManager::GUI()
 			ImGui::InputText(("##Fragment" + PointerToString(&i->second.fragmentPath)).c_str(), &i->second.fragmentPath);
 
 			ImGui::TableSetColumnIndex(2);
-			ImGui::Text(std::to_string(i->second.ID).c_str());
+			ImGui::Text(std::to_string(i->second.GUID).c_str());
 
 			ImGui::TableSetColumnIndex(3);
-			if (ImGui::Button(("Recompile##" + std::to_string(i->second.ID)).c_str())) {
+			ImGui::Text(std::to_string(i->second.GLID).c_str());
+
+			ImGui::TableSetColumnIndex(4);
+			if (ImGui::Button(("Recompile##" + std::to_string(i->second.GLID)).c_str())) {
 				i->second.Load();
 			}
 		}
@@ -212,6 +239,11 @@ void ResourceManager::GUI()
 	}
 }
 
+
+unsigned long long ResourceManager::GetNewGuid()
+{
+	return ++guidCounter;
+}
 
 void ResourceManager::UnloadAll()
 {
