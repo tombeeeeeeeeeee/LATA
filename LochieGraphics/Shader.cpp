@@ -8,9 +8,15 @@
 
 GLuint Shader::usingID = 0;
 
-Shader::Shader(std::string _vertexPath, std::string _fragmentPath) :
+int Shader::getFlag()
+{
+	return updateFlag;
+}
+
+Shader::Shader(std::string _vertexPath, std::string _fragmentPath, int _updateFlag) :
 	vertexPath(_vertexPath),
-	fragmentPath(_fragmentPath)
+	fragmentPath(_fragmentPath),
+	updateFlag(_updateFlag)
 {
 	Load();
 }

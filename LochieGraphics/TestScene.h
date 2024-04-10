@@ -52,6 +52,7 @@ public:
 	TestScene();
 	void Start() override;
 	void Update(float delta) override;
+	void Draw() override;
 	void GUI() override;
 	~TestScene() override;
 };

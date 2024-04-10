@@ -23,16 +23,18 @@ TestScene::TestScene()
 		&pointLights[3],
 		&spotlight,
 		&directionalLight
-	};	
+	};
 }
 
 void TestScene::Start()
 {
 	// Shaders
-	litNormalShader  = ResourceManager::LoadShader("shaders/litNormal.vert", "shaders/litNormal.frag");
-	litShader		 = ResourceManager::LoadShader("shaders/lit.vert",		"shaders/lit.frag");
-	lightCubeShader  = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag");
+	litNormalShader  = ResourceManager::LoadShader("shaders/litNormal.vert", "shaders/litNormal.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
+	litShader		 = ResourceManager::LoadShader("shaders/lit.vert",		"shaders/lit.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
+	lightCubeShader  = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
 	skyBoxShader	 = ResourceManager::LoadShader("shaders/cubemap.vert",	"shaders/cubemap.frag");
+	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader };
+
 	skybox.InitialiseCubeInsideOut();
 
 	std::vector<std::string> faces = std::vector<std::string>{
@@ -138,45 +140,33 @@ void TestScene::Update(float delta)
 
 	pointLights[0].position.x = 1.5f * (float)sin((float)glfwGetTime() * 2.f);
 	spotlight.position = camera->position;
+
 	spotlight.direction = camera->front;
-	for (auto i = lights.begin(); i != lights.end(); i++)
-	{
-		(*i)->ApplyToShader(litNormalShader);
-		(*i)->ApplyToShader(litShader);
-	}
 
 	MultiModelRenderer* lightCubeRenderer = (MultiModelRenderer*)lightCube->getRenderer();
 	for (int i = 0; i < sizeof(pointLights) / sizeof(pointLights[0]); i++)
 	{
-		//lightCubeRenderer->transforms[i].position = pointLights[i].position;
+		lightCubeRenderer->transforms[i].position = pointLights[i].position;
 	}
 	
-	// Shader
-	// TODO: Is there some way of having a shader system where if shaders have certain uniforms they get set, this could get messy with more shaders
-	litNormalShader->Use();
-	litNormalShader->setVec3("viewPos", camera->position);
-	litNormalShader->setMat4("vp", viewProjection);
-
-	litShader->Use();
-	litShader->setVec3("viewPos", camera->position);
-	litShader->setMat4("vp", viewProjection);
-
-	lightCubeShader->Use();
-	lightCubeShader->setMat4("vp", viewProjection);
-
-	skyBoxShader->Use();
-
 	// Different View Projection matrix for the skybox, as translations shouldn't affect it
 	glm::mat4 view = glm::mat4(glm::mat3(camera->GetViewMatrix()));
 	glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, 0.01f, 100.0f);
 	glm::mat4 vp = projection * view;
+	skyBoxShader->Use();
 	skyBoxShader->setMat4("vp", vp);
 
-
-	// TODO: Actual draw/update loop
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
 		(*i)->Update(delta);
+	}
+}
+
+void TestScene::Draw()
+{
+	// TODO: Actual draw/update loop
+	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+	{
 		(*i)->Draw();
 	}
 	// Skybox, 
@@ -184,7 +174,7 @@ void TestScene::Update(float delta)
 	glDepthFunc(GL_LEQUAL); // Change depth function
 	Texture::UseCubeMap(skyboxTexture, skyBoxShader);
 	skybox.Draw(); // Actually draw the skyBox
-	glDepthFunc(GL_LESS); // Change depth function back
+	glDepthFunc(GL_LESS); // Change depth function back //TODO: Can the depth function just stay lequal
 }
 
 void TestScene::GUI()

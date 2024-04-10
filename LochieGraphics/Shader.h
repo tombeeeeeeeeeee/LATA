@@ -19,19 +19,30 @@
 // note: recursion
 //
 
+
+//
+// Shader flags
+// 
+//
 class Shader
 {
 private:
 	GLint getUniformLocation(const std::string& name) const;
 	static GLuint CompileShader(std::string path, int type);
 	bool loaded = false;
+	int updateFlag;
 public:
+	enum Flags {
+		VPmatrix = 0b00000001,
+		Lit      = 0b00000010,
+	};
+	int getFlag();
 	static GLuint usingID;
 	// the program ID
 	GLuint GLID;
 	unsigned long long GUID = 0;
 	// TODO: Contructor from one name that finds all the shaders of different types, or custom shader file
-	Shader(std::string vertexPath, std::string fragmentPath);
+	Shader(std::string vertexPath, std::string fragmentPath, int _updateFlag = 0);
 	void Load();
 	std::string vertexPath;
 	std::string fragmentPath;

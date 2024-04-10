@@ -151,10 +151,10 @@ void SceneManager::Update()
 	ProcessInput(window);
 	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.01f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
-	scene->viewProjection = projection * view;
+	glm::mat4 viewProjection = projection * view;
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -162,6 +162,21 @@ void SceneManager::Update()
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
 	scene->Update(deltaTime);
+	for (auto s = scene->shaders.begin(); s != scene->shaders.end(); s++)
+	{
+		if (((*s)->getFlag() & Shader::Flags::Lit)) {
+			for (auto l = scene->lights.begin(); l != scene->lights.end(); l++)
+			{
+				(*l)->ApplyToShader(*s);
+				(*s)->setVec3("viewPos", camera.position);
+			}
+		}
+		if ((*s)->getFlag() & Shader::Flags::VPmatrix) {
+			(*s)->Use();
+			(*s)->setMat4("vp", viewProjection);
+		}
+	}
+	scene->Draw();
 	scene->gui.Update();
 
 	ImGui::Render();

@@ -27,6 +27,7 @@ public:
 
 	virtual void Start() {};
 	virtual void Update(float delta) = 0;
+	virtual void Draw() = 0;
 	// TODO: Maybe move some of the GUI code that is in the GUI class here
 	virtual void GUI() {};
 
@@ -35,9 +36,6 @@ public:
 
 	Scene(const Scene& other) = delete;
 	Scene& operator=(const Scene& other) = delete;
-
-	glm::mat4 viewProjection;
-
 
 	void Save();
 	void Load();

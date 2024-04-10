@@ -232,7 +232,7 @@ void Mesh::InitialiseCube()
 	Initialise(vertexCount, vertices);
 }
 
-void Mesh::InitialiseCubeInsideOut()
+void Mesh::InitialiseCubeInsideOut() // TODO: Name this more clear
 {
 	const unsigned int vertexCount = 36;
 	Vertex vertices[vertexCount] = {

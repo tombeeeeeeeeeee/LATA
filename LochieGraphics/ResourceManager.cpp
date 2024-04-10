@@ -16,71 +16,45 @@ unsigned long long ResourceManager::guidCounter = 100;
 const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
 const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
-Texture* ResourceManager::GetTexture(unsigned long long GUID)
-{
-	auto texture = textures.find(GUID);
-	
-	if (texture == textures.end()) {
-		//std::cout << "Error: Unable to find texture of GUID: " << GUID << "\n";
-		return nullptr; // TODO: Should this return 'default' or 'missing' texture instead?
-	}
+#define LoadResource(type, collection, ...)                         \
+type type##New(__VA_ARGS__ );                                       \
+type##New.GUID = GetNewGuid();                                      \
+return &collection.emplace(type##New.GUID, type##New).first->second \
 
-	return &texture->second;
+Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragmentPath, int flags)
+{
+	LoadResource(Shader, shaders, vertexPath, fragmentPath, flags);
 }
 
 Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
 {
-	Texture newTexture(path, type, wrappingMode, flipOnLoad);
-	newTexture.GUID = GetNewGuid();
-	return &textures.emplace(newTexture.GUID, newTexture).first->second;
+	LoadResource(Texture, textures, path, type, wrappingMode, flipOnLoad);
 }
-
-Shader* ResourceManager::GetShader(unsigned long long GUID)
-{
-	auto shader = shaders.find(GUID);
-
-	if (shader == shaders.end()) {
-		//std::cout << "Error: Unable to find shader of GUID: " << GUID << "\n";
-		return nullptr; // return 'default' or 'missing' shader instead
-	}
-
-	return &shader->second;
-}
-
-Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragmentPath)
-{
-	Shader newShader(vertexPath, fragmentPath);
-	newShader.GUID = GetNewGuid();
-	return &shaders.emplace(newShader.GUID, newShader).first->second;
-}
-
-Material* ResourceManager::GetMaterial(unsigned long long GUID)
-{
-	auto material = materials.find(GUID);
-
-	if (material == materials.end()) {
-		//std::cout << "Error: Unable to find material of GUID: " << GUID << "\n";
-		return nullptr; // return 'default' or 'missing' material instead
-	}
-
-	return &material->second;
-}
-
 
 Material* ResourceManager::LoadMaterial(std::string name, Shader* shader)
 {
-	Material newMaterial(name, shader);
-	newMaterial.GUID = GetNewGuid();
-	return &materials.emplace(newMaterial.GUID, newMaterial).first->second;
+	LoadResource(Material, materials, name, shader);
 }
+
+#define GetResource(type, collection)                    \
+type* ResourceManager::Get##type(unsigned long long GUID)\
+{                                                        \
+	auto search = collection.find(GUID);                 \
+	if (search == collection.end()){                     \
+		return nullptr;                                  \
+	}                                                    \
+	return &search->second;                              \
+}
+
+GetResource(Shader, shaders)
+GetResource(Texture, textures)
+GetResource(Material, materials)
 
 unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
 {
 	unsigned long long hash = offset;
-
 	hash ^= key;
 	hash *= prime;
-
 	return hash;
 }
 
@@ -178,21 +152,10 @@ void ResourceManager::GUI()
 		{
 			i->second.GUI();
 			ImGui::NewLine();
-
-
-
-
-			//ImGui::Text(i->first.c_str());
-			//for (auto j = i->second.textures.begin(); j != i->second.textures.end(); j++)
-			//{
-			//	if (j->second == nullptr) { continue; }
-			//	ImGui::Text(std::to_string((j->second)->ID).c_str());
-			//	ImGui::SameLine();
-			//}
-			//ImGui::NewLine();
 		}
 	}
 	
+	// TODO: GUI for shader flags
 	if (ImGui::CollapsingHeader("Shaders")) {
 		if (ImGui::BeginTable("Shader list", 5)) {
 			ImGui::TableNextRow();
