@@ -35,8 +35,13 @@ public:
 	enum Flags {
 		VPmatrix = 0b00000001,
 		Lit      = 0b00000010,
+		All      = 0b11111111,
 	};
 	int getFlag() const;
+	bool getFlag(int _flag) const;
+	void AddFlag(int _flag);
+	void RemoveFlag(int _flag);
+	void setFlag(int _flag, bool state);
 	static GLuint usingID;
 	// the program ID
 	GLuint GLID;

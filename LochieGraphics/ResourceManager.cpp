@@ -157,7 +157,7 @@ void ResourceManager::GUI()
 	
 	// TODO: GUI for shader flags
 	if (ImGui::CollapsingHeader("Shaders")) {
-		if (ImGui::BeginTable("Shader list", 5)) {
+		if (ImGui::BeginTable("Shader list", 7)) {
 			ImGui::TableNextRow();
 
 			ImGui::TableSetColumnIndex(0);
@@ -167,12 +167,18 @@ void ResourceManager::GUI()
 			ImGui::Text("Fragment");
 
 			ImGui::TableSetColumnIndex(2);
-			ImGui::Text("GUID");
+			ImGui::Text("Lit");
 
 			ImGui::TableSetColumnIndex(3);
-			ImGui::Text("glID");
+			ImGui::Text("VP matrix");
 
 			ImGui::TableSetColumnIndex(4);
+			ImGui::Text("GUID");
+
+			ImGui::TableSetColumnIndex(5);
+			ImGui::Text("glID");
+
+			ImGui::TableSetColumnIndex(6);
 			ImGui::Text("Reload");
 		}
 		for (auto i = ResourceManager::shaders.begin(); i != ResourceManager::shaders.end(); i++)
@@ -188,12 +194,24 @@ void ResourceManager::GUI()
 			ImGui::InputText(("##Fragment" + PointerToString(&i->second.fragmentPath)).c_str(), &i->second.fragmentPath);
 
 			ImGui::TableSetColumnIndex(2);
-			ImGui::Text(std::to_string(i->second.GUID).c_str());
+			bool lit = i->second.getFlag() & Shader::Flags::Lit;
+			if (ImGui::Checkbox(("##Lit" + PointerToString(&i->second)).c_str(), &lit)) {
+				i->second.setFlag(Shader::Flags::Lit, lit);
+			}
 
 			ImGui::TableSetColumnIndex(3);
-			ImGui::Text(std::to_string(i->second.GLID).c_str());
+			bool vp = i->second.getFlag() & Shader::Flags::VPmatrix;
+			if (ImGui::Checkbox(("##vp" + PointerToString(&i->second)).c_str(), &vp)) {
+				i->second.setFlag(Shader::Flags::VPmatrix, vp);
+			}
 
 			ImGui::TableSetColumnIndex(4);
+			ImGui::Text(std::to_string(i->second.GUID).c_str());
+
+			ImGui::TableSetColumnIndex(5);
+			ImGui::Text(std::to_string(i->second.GLID).c_str());
+
+			ImGui::TableSetColumnIndex(6);
 			if (ImGui::Button(("Recompile##" + std::to_string(i->second.GLID)).c_str())) {
 				i->second.Load();
 			}

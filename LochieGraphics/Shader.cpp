@@ -13,6 +13,32 @@ int Shader::getFlag() const
 	return updateFlag;
 }
 
+bool Shader::getFlag(int flag) const
+{
+	return (updateFlag & flag) == flag;
+}
+
+void Shader::AddFlag(int _flag)
+{
+	updateFlag |= _flag;
+}
+
+void Shader::RemoveFlag(int _flag)
+{
+	updateFlag &= ~_flag;
+}
+
+void Shader::setFlag(int _flag, bool state)
+{
+	if (state)
+	{
+		AddFlag(_flag);
+	}
+	else {
+		RemoveFlag(_flag);
+	}
+}
+
 Shader::Shader(std::string _vertexPath, std::string _fragmentPath, int _updateFlag) :
 	vertexPath(_vertexPath),
 	fragmentPath(_fragmentPath),
