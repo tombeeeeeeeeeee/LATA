@@ -7,6 +7,7 @@
 #include "Model.h"
 #include "SceneObject.h"
 #include "Light.h"
+#include "Skybox.h"
 #include "MessengerInterface.h"
 
 class TestScene : public Scene
@@ -19,8 +20,7 @@ private:
 	Shader* lightCubeShader = nullptr;
 	Shader* skyBoxShader	= nullptr;
 
-	Mesh skybox;
-	GLuint skyboxTexture = 0;
+	Skybox* skybox;
 
 	Model backpackModel;
 	Model cubeModel;

@@ -35,9 +35,7 @@ void TestScene::Start()
 	skyBoxShader	 = ResourceManager::LoadShader("shaders/cubemap.vert",	"shaders/cubemap.frag");
 	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader };
 
-	skybox.InitialiseCubeInsideOut();
-
-	std::vector<std::string> faces = std::vector<std::string>{
+	std::vector<std::string> skyboxFaces = std::vector<std::string>{
 		//"images/otherskybox/right.png",
 		//"images/otherskybox/left.png",
 		//"images/otherskybox/top.png",
@@ -51,16 +49,16 @@ void TestScene::Start()
 		"images/skybox/front.jpg",
 		"images/skybox/back.jpg"
 	};
-	// TODO: There are other ways to do a skybox, see: https://webglfundamentals.org/webgl/lessons/webgl-skybox.html for an example
-	skyboxTexture = Texture::LoadCubeMap(faces); //TODO: Should be using the resource manager
+	//TODO: Should be using the resource manager
+	skybox = new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces));
+	
 
-	Mesh cubeMesh(Mesh::presets::cube);
 	Material* boxMaterial = ResourceManager::LoadMaterial("box", litShader);
 	boxMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("images/container2.png", Texture::Type::diffuse),
 		ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::specular),
 	});
-	cubeModel.AddMesh(&cubeMesh);
+	cubeModel.AddMesh(new Mesh(Mesh::presets::cube));
 	boxes->setRenderer(new MultiModelRenderer(&cubeModel, boxMaterial, std::vector<Transform>
 	{
 		Transform({  0.0f,  0.0f,  0.00f }, { 00.f,   0.f, 00.f }),
@@ -83,12 +81,11 @@ void TestScene::Start()
 		lightCubeRenderer->transforms[i].scale = 0.2f;
 	}
 
-	Mesh grassMesh(Mesh::presets::doubleQuad);
 	Material* grassMaterial = ResourceManager::LoadMaterial("grass", litShader);
 	grassMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE, false),
 	});
-	grassModel.AddMesh(&grassMesh);
+	grassModel.AddMesh(new Mesh(Mesh::presets::doubleQuad));
 	grass->setRenderer(new MultiModelRenderer(&grassModel, grassMaterial, std::vector<Transform>{
 		Transform({  0.0f, 0.0f,   0.0f }, { 0.f,  20.f, 0.f }),
 		Transform({  2.0f, 0.0f, -15.0f }, { 0.f,  40.f, 0.f }),
@@ -136,7 +133,7 @@ void TestScene::Update(float delta)
 {
 	messengerInterface.Update();
 
-	pointLights[0].position.x = 1.5f * (float)sin((float)glfwGetTime() * 2.f);
+	pointLights[0].position.x = 1.5f * sin((float)glfwGetTime() * 2.f);
 	spotlight.position = camera->position;
 
 	spotlight.direction = camera->front;
@@ -148,11 +145,10 @@ void TestScene::Update(float delta)
 	}
 	
 	// Different View Projection matrix for the skybox, as translations shouldn't affect it
-	glm::mat4 view = glm::mat4(glm::mat3(camera->GetViewMatrix()));
-	glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, 0.01f, 100.0f);
-	glm::mat4 vp = projection * view;
-	skyBoxShader->Use();
-	skyBoxShader->setMat4("vp", vp);
+	glm::mat4 skyBoxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
+	glm::mat4 skyboxProjection = glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, 0.01f, 100.0f);
+	glm::mat4 skyBoxVP = skyboxProjection * skyBoxView;
+	skybox->Update(skyBoxVP);
 
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
@@ -167,12 +163,7 @@ void TestScene::Draw()
 	{
 		(*i)->Draw();
 	}
-	// Skybox, 
-	// TODO: Make a skybox sceneobject or something, the skybox stuff needs its own space/class
-	glDepthFunc(GL_LEQUAL); // Change depth function
-	Texture::UseCubeMap(skyboxTexture, skyBoxShader);
-	skybox.Draw(); // Actually draw the skyBox
-	glDepthFunc(GL_LESS); // Change depth function back //TODO: Can the depth function just stay lequal
+	skybox->Draw();
 }
 
 void TestScene::GUI()

@@ -10,6 +10,7 @@
 
 class Shader;
 
+// TODO: I think textures should be used slightly differently with materials, rather than always binding them starting from 1, as many textures should be bound at once and only if there is more than the limit (32/31?) should it actually be changed 
 class Texture
 {
 public:

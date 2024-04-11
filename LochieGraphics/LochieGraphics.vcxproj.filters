@@ -158,6 +158,9 @@
     <ClCompile Include="..\imgui\imgui_widgets.cpp">
       <Filter>Source Files\Third-Party\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
@@ -289,6 +292,7 @@
     <ClInclude Include="FixedSizeQueue.h">
       <Filter>Source Files\Misc</Filter>
     </ClInclude>
+    <ClInclude Include="Skybox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
