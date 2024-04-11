@@ -19,6 +19,7 @@ void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 	const aiScene* scene = aiImportFile(path.c_str(), Mesh::aiLoadFlag);
 
 	if (scene == nullptr) {
+		// TODO: assimp has error messages, get it and put it here
 		std::cout << "Error loading model at: " << path << "\n";
 		throw;
 	}
