@@ -54,8 +54,7 @@ void TestScene::Start()
 	// TODO: There are other ways to do a skybox, see: https://webglfundamentals.org/webgl/lessons/webgl-skybox.html for an example
 	skyboxTexture = Texture::LoadCubeMap(faces); //TODO: Should be using the resource manager
 
-	Mesh cubeMesh;
-	cubeMesh.InitialiseCube();
+	Mesh cubeMesh(Mesh::presets::cube);
 	Material* boxMaterial = ResourceManager::LoadMaterial("box", litShader);
 	boxMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("images/container2.png", Texture::Type::diffuse),
@@ -84,24 +83,23 @@ void TestScene::Start()
 		lightCubeRenderer->transforms[i].scale = 0.2f;
 	}
 
-	Mesh grassMesh;
-	grassMesh.InitialiseDoubleSidedQuad();
+	Mesh grassMesh(Mesh::presets::doubleQuad);
 	Material* grassMaterial = ResourceManager::LoadMaterial("grass", litShader);
 	grassMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE, false),
 	});
 	grassModel.AddMesh(&grassMesh);
 	grass->setRenderer(new MultiModelRenderer(&grassModel, grassMaterial, std::vector<Transform>{
-		Transform({ 0.0f,  0.0f,   0.0f }, { 0.f,  20.f, 0.f }),
-		Transform({ 2.0f,  0.0f, -15.0f }, { 0.f,  40.f, 0.f }),
-		Transform({ -1.5f, 0.0f, -03.5f }, { 0.f,  60.f, 0.f }),
+		Transform({  0.0f, 0.0f,   0.0f }, { 0.f,  20.f, 0.f }),
+		Transform({  2.0f, 0.0f, -15.0f }, { 0.f,  40.f, 0.f }),
+		Transform({ -1.5f, 0.0f,  -3.5f }, { 0.f,  60.f, 0.f }),
 		Transform({ -3.8f, 0.0f, -10.3f }, { 0.f,  80.f, 0.f }),
-		Transform({ 2.4f,  0.0f, -05.5f }, { 0.f, 100.f, 0.f }),
-		Transform({ -1.7f, 0.0f, -09.5f }, { 0.f, 120.f, 0.f }),
-		Transform({ 1.3f,  0.0f, -03.5f }, { 0.f, 140.f, 0.f }),
-		Transform({ 1.5f,  0.0f, -03.5f }, { 0.f, 160.f, 0.f }),
-		Transform({ 1.5f,  0.0f, -04.5f }, { 0.f, 180.f, 0.f }),
-		Transform({ -1.3f, 0.0f, -01.5f }, { 0.f, 200.f, 0.f }),
+		Transform({  2.4f, 0.0f,  -5.5f }, { 0.f, 100.f, 0.f }),
+		Transform({ -1.7f, 0.0f,  -9.5f }, { 0.f, 120.f, 0.f }),
+		Transform({  1.3f, 0.0f,  -3.5f }, { 0.f, 140.f, 0.f }),
+		Transform({  1.5f, 0.0f,  -3.5f }, { 0.f, 160.f, 0.f }),
+		Transform({  1.5f, 0.0f,  -4.5f }, { 0.f, 180.f, 0.f }),
+		Transform({ -1.3f, 0.0f,  -1.5f }, { 0.f, 200.f, 0.f }),
 	}));
 
 	backpackModel = Model("models/backpack/backpack.obj", false);

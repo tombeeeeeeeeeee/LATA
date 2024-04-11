@@ -36,7 +36,7 @@ public:
 		VPmatrix = 0b00000001,
 		Lit      = 0b00000010,
 	};
-	int getFlag();
+	int getFlag() const;
 	static GLuint usingID;
 	// the program ID
 	GLuint GLID;

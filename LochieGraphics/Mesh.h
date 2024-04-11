@@ -19,6 +19,12 @@ private:
 	GLuint VAO, VBO, IBO;
 
 public:
+	enum class presets {
+		cube,
+		quad,
+		doubleQuad,
+		cubeOppositeWind
+	};
 	static int aiLoadFlag;
 
 	void Draw();
@@ -26,6 +32,7 @@ public:
 	// TODO: Constructors for preset shapes 
 	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices);
 	Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);
+	Mesh(presets preset);
 	Mesh();
 	~Mesh();
 

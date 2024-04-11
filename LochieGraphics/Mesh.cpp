@@ -25,6 +25,32 @@ Mesh::Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexC
 	Initialise(vertexCount, vertices, indexCount, indices);
 }
 
+Mesh::Mesh(presets preset) :
+	triCount(0),
+	VAO(0),
+	VBO(0),
+	IBO(0)
+{
+	switch (preset)
+	{
+	case Mesh::presets::cube:
+		InitialiseCube();
+		break;
+	case Mesh::presets::quad:
+		InitialiseQuad();
+		break;
+	case Mesh::presets::doubleQuad:
+		InitialiseDoubleSidedQuad();
+		break;
+	case Mesh::presets::cubeOppositeWind:
+		InitialiseCubeInsideOut();
+		break;
+	default:
+		std::cout << "Error, unsuported preset attempted to create on creation\n";
+		break;
+	}
+}
+
 Mesh::Mesh() :
 	triCount(0),
 	VAO(0),

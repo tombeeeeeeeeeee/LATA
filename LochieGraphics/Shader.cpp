@@ -8,7 +8,7 @@
 
 GLuint Shader::usingID = 0;
 
-int Shader::getFlag()
+int Shader::getFlag() const
 {
 	return updateFlag;
 }

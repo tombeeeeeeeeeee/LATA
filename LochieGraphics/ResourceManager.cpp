@@ -16,10 +16,10 @@ unsigned long long ResourceManager::guidCounter = 100;
 const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
 const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
-#define LoadResource(type, collection, ...)                         \
-type type##New(__VA_ARGS__ );                                       \
-type##New.GUID = GetNewGuid();                                      \
-return &collection.emplace(type##New.GUID, type##New).first->second \
+#define LoadResource(type, collection, ...)                            \
+type newResource(__VA_ARGS__ );                                        \
+newResource.GUID = GetNewGuid();                                       \
+return &collection.emplace(newResource.GUID, newResource).first->second\
 
 Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragmentPath, int flags)
 {
@@ -221,4 +221,6 @@ void ResourceManager::UnloadAll()
 		i->second.DeleteProgram();
 	}
 	shaders.clear();
+
+	materials.clear();
 }
