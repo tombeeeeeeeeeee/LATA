@@ -29,6 +29,7 @@ private:
 	void LightMenu();
 	void HierarchyMenu();
 	void TransformTree(SceneObject* sceneObject);
+	void TransformDragDrop(SceneObject* sceneObject);
 	ImGuiTreeNodeFlags baseNodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 };
 

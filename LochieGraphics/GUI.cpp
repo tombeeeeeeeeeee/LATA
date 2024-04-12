@@ -77,6 +77,9 @@ void GUI::SceneObjectMenu()
 	if (sceneObjectSelected) {
 		sceneObjectSelected->GUI();
 	}
+	else {
+		ImGui::Text("Select a Scene Object in the Hierarchy Menu");
+	}
 
 	ImGui::End();
 }
@@ -122,17 +125,9 @@ void GUI::HierarchyMenu()
 		if ((*i)->transform.getParent()) { continue; }
 
 		TransformTree((*i));
-		
 	}
 
-	ImGui::NewLine();
-	ImGui::NewLine();
-
-
-	
-
 	ImGui::End();
-
 }
 
 void GUI::TransformTree(SceneObject* sceneObject)
@@ -146,22 +141,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
 			sceneObjectSelected = sceneObject;
 		}
-		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-		{
-			Transform* temp = &sceneObject->transform;
-			ImGui::SetDragDropPayload("Transform", &temp, sizeof(temp));
-			//ImGui::SetDragDropPayload("Transform", &sceneObject->transform, sizeof(&sceneObject->transform));
-			ImGui::Text(("Dragging Transform of:" + sceneObject->name).c_str());
-			ImGui::EndDragDropSource();
-		}
-		if (ImGui::BeginDragDropTarget()) {
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Transform"))
-			{
-				Transform* droppedTransform = *(Transform**)payload->Data;
-				droppedTransform->setParent(&sceneObject->transform);
-			}
-			ImGui::EndDragDropTarget();
-		}
+		TransformDragDrop(sceneObject);
 		if (nodeOpen) {
 			auto children = sceneObject->transform.getChildren();
 
@@ -178,24 +158,25 @@ void GUI::TransformTree(SceneObject* sceneObject)
 		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
 			sceneObjectSelected = sceneObject;
 		}
-		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		TransformDragDrop(sceneObject);
+	}
+}
+
+void GUI::TransformDragDrop(SceneObject* sceneObject)
+{
+	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+	{
+		Transform* temp = &sceneObject->transform;
+		ImGui::SetDragDropPayload("Transform", &temp, sizeof(temp));
+		ImGui::Text(("Transform of: " + sceneObject->name).c_str());
+		ImGui::EndDragDropSource();
+	}
+	if (ImGui::BeginDragDropTarget()) {
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Transform"))
 		{
-			Transform* temp = &sceneObject->transform;
-			ImGui::SetDragDropPayload("Transform", &temp, sizeof(temp));
-			//ImGui::SetDragDropPayload("Transform", &sceneObject->transform, sizeof(&sceneObject->transform));
-			ImGui::Text(("Dragging Transform of:" + sceneObject->name).c_str());
-			std::cout << "Starting dragging transform: " << &sceneObject->transform << "\n";
-			ImGui::EndDragDropSource();
+			Transform* droppedTransform = *(Transform**)payload->Data;
+			droppedTransform->setParent(&sceneObject->transform);
 		}
-		if (ImGui::BeginDragDropTarget()) {
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Transform"))
-			{
-				//IM_ASSERT(payload->DataSize == sizeof(Transform*));
-				Transform* droppedTransform = *(Transform**)payload->Data;
-				std::cout << "Stopped dragging transform:  " << droppedTransform << "\n";
-				droppedTransform->setParent(&sceneObject->transform);
-			}
-			ImGui::EndDragDropTarget();
-		}
+		ImGui::EndDragDropTarget();
 	}
 }

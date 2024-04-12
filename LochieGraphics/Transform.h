@@ -16,6 +16,7 @@ public:
 	Transform* getParent() const;
 	SceneObject* getSceneObject() const;
 	std::vector<Transform*> getChildren() const;
+	bool isChildOf(Transform* transform) const;
 	void setParent(Transform* newParent);
 	void AddChild(Transform* newChild);
 	void RemoveChild(Transform* oldChild);
@@ -26,10 +27,9 @@ public:
 	float scale;
 
 	Transform() = delete;
-	Transform(SceneObject* _sceneObject);
-	Transform(SceneObject* _sceneObject, glm::vec3 _position, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.f);
+	Transform(SceneObject* _sceneObject, glm::vec3 _position = { 0.f, 0.f, 0.f }, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.f);
 
-	// TODO: Cache these
+	// TODO: Cache these, prob use dirty flags
 	glm::mat4 getLocalMatrix() const;
 	glm::mat4 getGlobalMatrix() const;
 

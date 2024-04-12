@@ -23,8 +23,23 @@ std::vector<Transform*> Transform::getChildren() const
 	return children;
 }
 
+bool Transform::isChildOf(Transform* transform) const
+{
+	for (Transform* search = parent; search != nullptr; search = search->parent)
+	{
+		if (search == transform) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Transform::setParent(Transform* newParent)
 {
+	if (newParent->isChildOf(this)) {
+		std::cout << "Error, Unemplemented Behaviour, trying to set the parent of a transform as its child\n";
+		return;
+	}
 	if (parent) {
 		parent->RemoveChild(this);
 	}
@@ -63,15 +78,6 @@ void Transform::RemoveChild(Transform* oldChild)
 bool Transform::HasChildren()
 {
 	return !children.empty();
-}
-
-Transform::Transform(SceneObject* _sceneObject) :
-	sceneObject(_sceneObject),
-	parent(nullptr),
-	position({ 0.f, 0.f, 0.f }),
-	rotation({ 0.f, 0.f, 0.f }),
-	scale(1.0f)
-{
 }
 
 Transform::Transform(SceneObject* _sceneObject, glm::vec3 _position, glm::vec3 _rotation, float _scale) :
