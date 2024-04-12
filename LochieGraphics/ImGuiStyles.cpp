@@ -96,9 +96,9 @@ void ImGuiStyles::SetLocStyle()
 	colors[ImGuiCol_Button] = ImVec4(0.13f, 0.70f, 0.43f, 0.56f);
 	colors[ImGuiCol_ButtonHovered] = ImVec4(0.13f, 0.70f, 0.43f, 1.00f);
 	colors[ImGuiCol_ButtonActive] = ImVec4(0.13f, 0.70f, 0.43f, 1.00f);
-	colors[ImGuiCol_Header] = ImVec4(0.00f, 0.00f, 0.00f, 0.31f);
-	colors[ImGuiCol_HeaderHovered] = ImVec4(0.00f, 0.00f, 0.00f, 0.80f);
-	colors[ImGuiCol_HeaderActive] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
+	colors[ImGuiCol_Header] = ImVec4(0.00f, 0.47f, 0.00f, 0.31f);
+	colors[ImGuiCol_HeaderHovered] = ImVec4(0.00f, 0.65f, 0.00f, 0.80f);
+	colors[ImGuiCol_HeaderActive] = ImVec4(0.00f, 0.69f, 0.00f, 1.00f);
 	colors[ImGuiCol_Separator] = ImVec4(0.00f, 0.03f, 0.01f, 1.00f);
 	colors[ImGuiCol_SeparatorHovered] = ImVec4(0.00f, 0.03f, 0.01f, 1.00f);
 	colors[ImGuiCol_SeparatorActive] = ImVec4(0.00f, 0.03f, 0.01f, 1.00f);

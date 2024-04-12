@@ -25,7 +25,7 @@ ModelRenderer::ModelRenderer(Model* _model, Material* _material) :
 void ModelRenderer::Draw()
 {
 	material->Use();
-	material->getShader()->setMat4("model", sceneObject->transform.getMatrix());
+	material->getShader()->setMat4("model", sceneObject->transform.getGlobalMatrix());
 	model->Draw();
 }
 

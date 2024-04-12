@@ -1,7 +1,5 @@
 #include "TestScene.h"
 
-#include "MultiModelRenderer.h"
-
 #include "stb_image.h"
 
 #include <iostream>
@@ -60,45 +58,18 @@ void TestScene::Start()
 		ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::specular),
 	});
 	cubeModel.AddMesh(new Mesh(Mesh::presets::cube));
-	boxes->setRenderer(new MultiModelRenderer(&cubeModel, boxMaterial, std::vector<Transform>
-	{
-		Transform({  0.0f,  0.0f,  0.00f }, { 00.f,   0.f, 00.f }),
-		Transform({  2.0f,  5.0f, -15.0f }, { 20.f,   6.f, 10.f }),
-		Transform({ -1.5f, -2.2f, -2.50f }, { 40.f,  12.f, 20.f }),
-		Transform({ -3.8f, -2.0f, -12.3f }, { 60.f,  18.f, 30.f }),
-		Transform({  2.4f, -0.4f, -3.50f }, { 80.f,  24.f, 40.f }),
-		Transform({ -1.7f,  3.0f, -7.50f }, { 100.f, 30.f, 50.f }),
-		Transform({  1.3f, -2.0f, -2.50f }, { 120.f, 36.f, 60.f }),
-		Transform({  1.5f,  2.0f, -2.50f }, { 140.f, 42.f, 70.f }),
-		Transform({  1.5f,  0.2f, -1.50f }, { 160.f, 48.f, 80.f }),
-		Transform({ -1.3f,  1.0f, -1.50f }, { 180.f, 54.f, 90.f })
-	}));
+	boxes->setRenderer(new ModelRenderer(&cubeModel, boxMaterial));
 
 	Material* lightCubeMaterial = ResourceManager::LoadMaterial("lightCube", lightCubeShader);
-	MultiModelRenderer* lightCubeRenderer = new MultiModelRenderer(&cubeModel, lightCubeMaterial, std::vector<Transform>(sizeof(pointLights) / sizeof(pointLights[0])));
-	lightCube->setRenderer(lightCubeRenderer);
-	for (int i = 0; i < sizeof(pointLights) / sizeof(pointLights[0]); i++)
-	{
-		lightCubeRenderer->transforms[i].scale = 0.2f;
-	}
+	lightCube->setRenderer(new ModelRenderer(&cubeModel, lightCubeMaterial));
+	lightCube->transform.scale = 0.2f;
 
 	Material* grassMaterial = ResourceManager::LoadMaterial("grass", litShader);
 	grassMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE, false),
 	});
 	grassModel.AddMesh(new Mesh(Mesh::presets::doubleQuad));
-	grass->setRenderer(new MultiModelRenderer(&grassModel, grassMaterial, std::vector<Transform>{
-		Transform({  0.0f, 0.0f,   0.0f }, { 0.f,  20.f, 0.f }),
-		Transform({  2.0f, 0.0f, -15.0f }, { 0.f,  40.f, 0.f }),
-		Transform({ -1.5f, 0.0f,  -3.5f }, { 0.f,  60.f, 0.f }),
-		Transform({ -3.8f, 0.0f, -10.3f }, { 0.f,  80.f, 0.f }),
-		Transform({  2.4f, 0.0f,  -5.5f }, { 0.f, 100.f, 0.f }),
-		Transform({ -1.7f, 0.0f,  -9.5f }, { 0.f, 120.f, 0.f }),
-		Transform({  1.3f, 0.0f,  -3.5f }, { 0.f, 140.f, 0.f }),
-		Transform({  1.5f, 0.0f,  -3.5f }, { 0.f, 160.f, 0.f }),
-		Transform({  1.5f, 0.0f,  -4.5f }, { 0.f, 180.f, 0.f }),
-		Transform({ -1.3f, 0.0f,  -1.5f }, { 0.f, 200.f, 0.f }),
-	}));
+	grass->setRenderer(new ModelRenderer(&grassModel, grassMaterial));
 
 	backpackModel = Model("models/backpack/backpack.obj", false);
 	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", litNormalShader);
@@ -145,15 +116,9 @@ void TestScene::Update(float delta)
 	messengerInterface.Update();
 
 	pointLights[0].position.x = 1.5f * sin((float)glfwGetTime() * 2.f);
+	lightCube->transform.position = pointLights[0].position;
 	spotlight.position = camera->position;
-
 	spotlight.direction = camera->front;
-
-	MultiModelRenderer* lightCubeRenderer = (MultiModelRenderer*)lightCube->getRenderer();
-	for (int i = 0; i < sizeof(pointLights) / sizeof(pointLights[0]); i++)
-	{
-		lightCubeRenderer->transforms[i].position = pointLights[i].position;
-	}
 	
 	// Different View Projection matrix for the skybox, as translations shouldn't affect it
 	glm::mat4 skyBoxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
@@ -165,6 +130,8 @@ void TestScene::Update(float delta)
 	{
 		(*i)->Update(delta);
 	}
+
+	ImGui::ShowDemoWindow();
 }
 
 void TestScene::Draw()
@@ -179,7 +146,12 @@ void TestScene::Draw()
 
 void TestScene::GUI()
 {
+	if (!ImGui::Begin("Network Thing", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::End();
+		return;
+	}
 	messengerInterface.GUI();
+	ImGui::End();
 }
 
 TestScene::~TestScene()

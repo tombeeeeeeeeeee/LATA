@@ -5,12 +5,15 @@
 #include <string>
 
 class Scene;
+class SceneObject;
 
 // TODO: Not all the menus need to have the word menu in their name
 class GUI
 {
 public:
 	Scene* scene;
+
+	SceneObject* sceneObjectSelected = nullptr;
 
 	void Update();
 
@@ -24,6 +27,8 @@ private:
 	void SceneObjectMenu();
 	int lightSelectedIndex = 0;
 	void LightMenu();
-	void SceneSpecificMenu();
+	void HierarchyMenu();
+	void TransformTree(SceneObject* sceneObject);
+	ImGuiTreeNodeFlags baseNodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 };
 

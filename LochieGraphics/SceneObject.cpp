@@ -8,12 +8,12 @@
 #include "imgui_stdlib.h"
 
 SceneObject::SceneObject() :
-	transform(Transform({ 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f }, 1.0f))
+	transform(Transform(this, { 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f }, 1.0f))
 {
 }
 
 SceneObject::SceneObject(glm::vec3 _position, glm::vec3 _rotation, float _scale) :
-	transform(Transform(_position, _rotation, _scale))
+	transform(Transform(this, _position, _rotation, _scale))
 {
 }
 

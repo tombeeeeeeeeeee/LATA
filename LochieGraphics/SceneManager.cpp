@@ -293,6 +293,8 @@ void GLAPIENTRY SceneManager::ErrorMessageCallback(GLenum source, GLenum type, G
 
 void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	if (ImGui::GetIO().WantCaptureKeyboard) { return; }
+
 	if ((key == GLFW_KEY_F11 && action == GLFW_PRESS) || (key == GLFW_KEY_ENTER && action == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)) {
 		ToggleFullscreen();
 	}
@@ -313,6 +315,8 @@ void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int ac
 
 void SceneManager::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
+	if (ImGui::GetIO().WantCaptureMouse) { return; }
+
 	//std::cout << "mouse callbacked!\n";
 	if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_RIGHT) {
 		oppositeCameraMode = true;

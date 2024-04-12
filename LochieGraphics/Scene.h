@@ -3,10 +3,10 @@
 #include "SceneObject.h"
 #include "Camera.h"
 #include "Light.h"
-
-#include "GUI.h"
+#include "Transform.h"
 
 #include "Maths.h"
+#include "GUI.h"
 
 #include <string>
 
@@ -29,6 +29,7 @@ public:
 	virtual void Update(float delta) = 0;
 	virtual void Draw() = 0;
 	// TODO: Maybe move some of the GUI code that is in the GUI class here
+	void BaseGUI();
 	virtual void GUI() {};
 
 	Scene();

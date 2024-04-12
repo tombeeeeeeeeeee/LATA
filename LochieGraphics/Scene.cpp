@@ -1,7 +1,14 @@
 #include "Scene.h"
 
+#include "imgui.h"
+
 #include <fstream>
 #include <iostream>
+
+void Scene::BaseGUI()
+{
+
+}
 
 Scene::Scene()
 {

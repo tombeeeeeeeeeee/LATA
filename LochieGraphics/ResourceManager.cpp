@@ -73,7 +73,7 @@ ResourceManager::~ResourceManager()
 {
 	UnloadAll();
 }
-
+// TODO: This code needs to be moved to respective classes or something
 void ResourceManager::GUI()
 {
 	if (ImGui::CollapsingHeader("Textures")) {
@@ -155,7 +155,7 @@ void ResourceManager::GUI()
 		}
 	}
 	
-	// TODO: GUI for shader flags
+	// TODO: GUI for shader flags, there is a built in imgui thing
 	if (ImGui::CollapsingHeader("Shaders")) {
 		if (ImGui::BeginTable("Shader list", 7)) {
 			ImGui::TableNextRow();

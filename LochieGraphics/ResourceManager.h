@@ -13,6 +13,7 @@ public:
 	// TODO: Make resources be gathered from a GUID
 	static Shader* LoadShader(std::string vertexPath, std::string fragmentPath, int flags = 0);
 	static Texture* LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
+	// TODO: Should I be using hint file?
 	static Material* GetMaterial(unsigned long long GUID);
 	static Shader* GetShader(unsigned long long GUID);
 	static Texture* GetTexture(unsigned long long GUID);

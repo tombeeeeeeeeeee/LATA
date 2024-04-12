@@ -1,4 +1,5 @@
 #pragma once
+#include "SceneObject.h"
 
 #include "Transform.h"
 #include "ModelRenderer.h"
@@ -21,7 +22,6 @@ public:
 	std::string name = "Unnamed Scene Object";
 
 	Transform transform;
-
 
 	std::vector<Part*> parts;
 
