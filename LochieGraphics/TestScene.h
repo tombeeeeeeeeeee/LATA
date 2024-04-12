@@ -27,6 +27,7 @@ private:
 	Model grassModel;
 	Model soulSpearModel;
 	Model testRedBoxModel;
+	Model puppetModel;
 
 	SceneObject* backpack   = new SceneObject();
 	SceneObject* soulSpear  = new SceneObject();
@@ -34,6 +35,7 @@ private:
 	SceneObject* grass      = new SceneObject();
 	SceneObject* boxes      = new SceneObject();
 	SceneObject* lightCube  = new SceneObject();
+	SceneObject* puppet     = new SceneObject();
 
 	PointLight pointLights[4] = {
 		PointLight({ 0.05f, 0.05f, 0.05f }, { 1.0f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  3.2f,  2.0f }, 0.5f, 0.09f, 0.032f, 0),
@@ -42,10 +44,10 @@ private:
 		PointLight({ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  0.0f, -3.0f }, 1.0f, 0.09f, 0.032f, 3)
 	};
 	DirectionalLight directionalLight = DirectionalLight
-		(          { 0.05f, 0.05f, 0.05f }, { 0.0f, 1.0f, 0.4f }, { 0.5f, 0.5f, 0.5f }, { -0.2f, -1.0f, -0.3f });
+		(          { 0.05f, 0.05f, 0.05f }, { 0.4f, 0.4f, 0.4f }, { 0.5f, 0.5f, 0.5f }, { -0.2f, -1.0f, -0.3f });
 
 	Spotlight spotlight = 
-		Spotlight( { 0.95f, 0.05f, 0.05f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  0.0f,  0.0f }, 0.5f, 0.09f, 0.032f, { 0.0f, 0.0f, 0.0f }, glm::cos(glm::radians(10.f)), glm::cos(glm::radians(15.f)));
+		Spotlight( { 0.05f, 0.05f, 0.05f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  0.0f,  0.0f }, 0.5f, 0.09f, 0.032f, { 0.0f, 0.0f, 0.0f }, glm::cos(glm::radians(10.f)), glm::cos(glm::radians(15.f)));
 
 public:
 

@@ -77,13 +77,13 @@ void Texture::Load()
 	loaded = true;
 }
 
-GLuint Texture::LoadCubeMap(std::vector<std::string> faces)
+GLuint Texture::LoadCubeMap(std::string faces[6])
 {
 	unsigned int GLID;
 	glGenTextures(1, &GLID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, GLID);
 	int width, height, components;
-	for (unsigned int i = 0; i < faces.size(); i++)
+	for (unsigned int i = 0; i < 6; i++)
 	{
 		unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &components, 0);
 		if (data)

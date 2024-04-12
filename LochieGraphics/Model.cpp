@@ -13,7 +13,7 @@ Model::Model(std::string path, bool flipTexturesOnLoad)
 {
 	LoadModel(path, flipTexturesOnLoad);
 }
-
+// TODO: Models can no longer flip textures on load as they are always loaded seperatly now
 void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 {
 	const aiScene* scene = aiImportFile(path.c_str(), Mesh::aiLoadFlag);

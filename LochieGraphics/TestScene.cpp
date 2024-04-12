@@ -15,6 +15,7 @@ TestScene::TestScene()
 		backpack,
 		soulSpear,
 		testRedBox,
+		puppet,
 	};
 	lights = std::vector<Light*>{
 		&pointLights[0],
@@ -35,7 +36,7 @@ void TestScene::Start()
 	skyBoxShader     = ResourceManager::LoadShader("shaders/cubemap.vert",   "shaders/cubemap.frag");
 	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader };
 
-	std::vector<std::string> skyboxFaces = std::vector<std::string>{
+	std::string skyboxFaces[6] = {
 		//"images/otherskybox/right.png",
 		//"images/otherskybox/left.png",
 		//"images/otherskybox/top.png",
@@ -127,6 +128,16 @@ void TestScene::Start()
 	});
 	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, soulSpearMaterial));
 	soulSpear->transform.position = { 0.f, 1.f, 1.f };
+
+	puppetModel = Model(std::string("models/Character.fbx"));
+	Material* puppetMaterial = ResourceManager::LoadMaterial("puppet", litNormalShader);
+	puppetMaterial->AddTextures(std::vector<Texture*> {
+		ResourceManager::LoadTexture("images/puppet/DummyBaseMap.tga", Texture::Type::diffuse),
+		ResourceManager::LoadTexture("images/puppet/DummyNormalMap.tga", Texture::Type::normal),
+	});
+	puppet->transform.position.y -= 4;
+	puppet->transform.scale = 0.01;
+	puppet->setRenderer(new ModelRenderer(&puppetModel, puppetMaterial));
 }
 
 void TestScene::Update(float delta)

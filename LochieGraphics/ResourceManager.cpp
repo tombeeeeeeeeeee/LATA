@@ -88,7 +88,7 @@ void ResourceManager::GUI()
 			ImGui::Text("Type");
 
 			ImGui::TableSetColumnIndex(2);
-			ImGui::Text("Flipped");
+			ImGui::Text("Flip");
 
 			ImGui::TableSetColumnIndex(3);
 			ImGui::Text("GUID");

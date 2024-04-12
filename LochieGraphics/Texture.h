@@ -36,7 +36,12 @@ public:
 
 	void Load();
 
-	static GLuint LoadCubeMap(std::vector<std::string> faces);
+	/// <summary>
+	/// Given 6 faces, a cube map textured will be generated and returned
+	/// </summary>
+	/// <param name="faces">Expected in the order of: Right, Left, Top, Bottom, Front, Back</param>
+	/// <returns>The GLuint index of the cube map texture</returns>
+	static GLuint LoadCubeMap(std::string faces[6]);
 	static void UseCubeMap(GLuint GLID, Shader* shader);
 
 	void DeleteTexture();
