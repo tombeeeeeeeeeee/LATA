@@ -1,6 +1,7 @@
 #include "Mesh.h"
 
 #include "ResourceManager.h"
+#include "Model.h"
 
 #include "Graphics.h"
 
@@ -153,6 +154,14 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 		else {
 			vertices[i].tangent = { 0, 0, 0 };
 			vertices[i].biTangent = { 0, 0, 0 };
+		}
+
+		for (int j = 0; j < mesh->mNumBones; j++)
+		{
+			std::string boneName = mesh->mBones[j]->mName.C_Str();
+			//if ()
+
+			//vertices[i].boneIDs[j] = mesh->mBones[j].;
 		}
 	}
 

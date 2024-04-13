@@ -156,7 +156,7 @@
       <Filter>Source Files\Third-Party\imgui</Filter>
     </ClCompile>
     <ClCompile Include="Skybox.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -286,7 +286,9 @@
     <ClInclude Include="FixedSizeQueue.h">
       <Filter>Source Files\Misc</Filter>
     </ClInclude>
-    <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Skybox.h">
+      <Filter>Source Files\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -332,6 +334,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\solidColour.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\animate.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\animate.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

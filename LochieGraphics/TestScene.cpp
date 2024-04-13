@@ -14,6 +14,7 @@ TestScene::TestScene()
 		soulSpear,
 		testRedBox,
 		puppet,
+		xbot
 	};
 	lights = std::vector<Light*>{
 		&pointLights[0],
@@ -32,7 +33,8 @@ void TestScene::Start()
 	litShader        = ResourceManager::LoadShader("shaders/lit.vert",       "shaders/lit.frag",       Shader::Flags::Lit | Shader::Flags::VPmatrix);
 	lightCubeShader  = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
 	skyBoxShader     = ResourceManager::LoadShader("shaders/cubemap.vert",   "shaders/cubemap.frag");
-	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader };
+	animateShader    = ResourceManager::LoadShader("shaders/animate.vert",   "shaders/animate.frag", Shader::Flags::VPmatrix);
+	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader };
 
 	std::string skyboxFaces[6] = {
 		//"images/otherskybox/right.png",
@@ -100,7 +102,7 @@ void TestScene::Start()
 	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, soulSpearMaterial));
 	soulSpear->transform.position = { 0.f, 1.f, 1.f };
 
-	puppetModel = Model(std::string("models/Character.fbx"));
+	puppetModel.LoadModel(std::string("models/Character.fbx"));
 	Material* puppetMaterial = ResourceManager::LoadMaterial("puppet", litNormalShader);
 	puppetMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("images/puppet/DummyBaseMap.tga", Texture::Type::diffuse),
@@ -109,6 +111,15 @@ void TestScene::Start()
 	puppet->transform.position.y -= 4;
 	puppet->transform.scale = 0.01;
 	puppet->setRenderer(new ModelRenderer(&puppetModel, puppetMaterial));
+
+	xbotModel.LoadModel(std::string("models/X Bot.fbx"));
+	xbot->transform.scale = 0.01;
+	xbot->transform.position = { 0.f, -0.5f, 1.5f };
+	Material* xbotMaterial = ResourceManager::LoadMaterial("puppet", animateShader);
+	xbotMaterial->AddTextures(std::vector<Texture*> {
+		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse)
+	});
+	xbot->setRenderer(new ModelRenderer(&xbotModel, xbotMaterial));
 }
 
 void TestScene::Update(float delta)

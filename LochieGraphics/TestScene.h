@@ -18,7 +18,8 @@ private:
 	Shader* litNormalShader = nullptr;
 	Shader* litShader		= nullptr;
 	Shader* lightCubeShader = nullptr;
-	Shader* skyBoxShader	= nullptr;
+	Shader* skyBoxShader    = nullptr;
+	Shader* animateShader   = nullptr;
 
 	Skybox* skybox;
 
@@ -28,6 +29,7 @@ private:
 	Model soulSpearModel;
 	Model testRedBoxModel;
 	Model puppetModel;
+	Model xbotModel;
 
 	SceneObject* backpack   = new SceneObject();
 	SceneObject* soulSpear  = new SceneObject();
@@ -36,6 +38,8 @@ private:
 	SceneObject* boxes      = new SceneObject();
 	SceneObject* lightCube  = new SceneObject();
 	SceneObject* puppet     = new SceneObject();
+	SceneObject* xbot       = new SceneObject();
+
 
 	PointLight pointLights[4] = {
 		PointLight({ 0.05f, 0.05f, 0.05f }, { 1.0f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  3.2f,  2.0f }, 0.5f, 0.09f, 0.032f, 0),
