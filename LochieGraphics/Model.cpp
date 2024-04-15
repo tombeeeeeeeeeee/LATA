@@ -38,7 +38,7 @@ void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[i];
-		meshes[i].InitialiseFromAiMesh(path, scene, &boneNameIDs, mesh, flipTexturesOnLoad);
+		meshes[i].InitialiseFromAiMesh(path, scene, &boneInfoMap, mesh, flipTexturesOnLoad);
 	}
 
 	aiReleaseImport(scene);

@@ -3,6 +3,8 @@
 #include "ResourceManager.h"
 #include "Model.h"
 
+#include "AssimpMatrixToGLM.h"
+
 #include "Graphics.h"
 
 #include <vector>
@@ -10,7 +12,7 @@
 #include <unordered_map>
 
 //TODO: Look into more assimp load flags
-int Mesh::aiLoadFlag = aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate;
+int Mesh::aiLoadFlag = aiProcess_CalcTangentSpace /*| aiProcess_JoinIdenticalVertices | aiProcess_Triangulate*/;
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) :
 	triCount(0),
@@ -114,7 +116,7 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	Unbind();
 }
 
-void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::unordered_map<std::string, int>* boneNameIDs, aiMesh* mesh, bool flipTexturesOnLoad)
+void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::unordered_map<std::string, BoneInfo>* boneInfos, aiMesh* mesh, bool flipTexturesOnLoad)
 {
 	unsigned int facesCount = mesh->mNumFaces;
 	std::vector<GLuint> indices;
@@ -161,11 +163,14 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 		aiBone* bone = mesh->mBones[boneIndex];
 		std::string boneName = bone->mName.C_Str();
 
-		auto boneNameID = boneNameIDs->find(boneName);
-		if (boneNameID == boneNameIDs->end()) {
-			boneNameID = boneNameIDs->emplace(boneName, boneNameIDs->size()).first;
+		auto boneInfo = boneInfos->find(boneName);
+		if (boneInfo == boneInfos->end()) {
+			BoneInfo newBoneInfo;
+			newBoneInfo.id = boneInfos->size();
+			newBoneInfo.offset = AssimpMatrixToGLM(bone->mOffsetMatrix);
+			boneInfo = boneInfos->emplace(boneName, newBoneInfo).first;
 		}
-		int boneID = boneNameID->second;
+		int boneID = boneInfo->second.id;
 		
 		for (int weightIndex = 0; weightIndex < bone->mNumWeights; weightIndex++)
 		{
@@ -183,9 +188,6 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 			}
 		}
 
-			//if ()
-
-			//vertices[i].boneIDs[j] = mesh->mBones[j].;
 	}
 
 	// TODO: Move somewhere else

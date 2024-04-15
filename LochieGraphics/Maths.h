@@ -5,3 +5,4 @@
 
 #include "mat4x4.hpp"
 #include "gtc/matrix_transform.hpp"
+#include "gtc/quaternion.hpp"

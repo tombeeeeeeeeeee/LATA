@@ -45,6 +45,9 @@
     <Filter Include="Source Files\Misc">
       <UniqueIdentifier>{dfd8a0f8-c52f-4699-98a2-4ad3f47acaff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Resources\Animation">
+      <UniqueIdentifier>{4eb9cfad-9498-42ab-a0b9-e9dfdb6bb6d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -157,6 +160,18 @@
     </ClCompile>
     <ClCompile Include="Skybox.cpp">
       <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpMatrixToGLM.cpp">
+      <Filter>Source Files\Third-Party</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files\Resources\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Source Files\Resources\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Bone.cpp">
+      <Filter>Source Files\Resources\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -288,6 +303,21 @@
     </ClInclude>
     <ClInclude Include="Skybox.h">
       <Filter>Source Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpMatrixToGLM.h">
+      <Filter>Source Files\Third-Party</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Source Files\Resources\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>Source Files\Resources\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
+      <Filter>Source Files\Resources\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="BoneInfo.h">
+      <Filter>Source Files\Resources\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

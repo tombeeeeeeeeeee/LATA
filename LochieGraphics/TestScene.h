@@ -9,6 +9,7 @@
 #include "Light.h"
 #include "Skybox.h"
 #include "MessengerInterface.h"
+#include "Animator.h"
 
 class TestScene : public Scene
 {
@@ -30,6 +31,7 @@ private:
 	Model testRedBoxModel;
 	Model puppetModel;
 	Model xbotModel;
+	Model vampireModel;
 
 	SceneObject* backpack   = new SceneObject();
 	SceneObject* soulSpear  = new SceneObject();
@@ -39,6 +41,12 @@ private:
 	SceneObject* lightCube  = new SceneObject();
 	SceneObject* puppet     = new SceneObject();
 	SceneObject* xbot       = new SceneObject();
+	SceneObject* vampire    = new SceneObject();
+
+	Animation xbotChicken;
+	Animator xbotAnimator;
+	Animation vampireWalk;
+	Animator vampireAnimator;
 
 
 	PointLight pointLights[4] = {
