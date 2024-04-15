@@ -124,7 +124,7 @@ void TestScene::Start()
 	xbotAnimator = Animator(&xbotChicken);
 
 	vampireModel.LoadModel(std::string("models/dancing_vampire.dae"));
-	//vampire->transform.scale = 0.4;
+	vampire->transform.scale = 0.01;
 	//vampire->transform.position = { 0.f, -0.5f, 1.f };
 	Material* vampireMaterial = ResourceManager::LoadMaterial("vampire", animateShader);
 	vampireMaterial->AddTextures(std::vector<Texture*>{
@@ -141,8 +141,12 @@ void TestScene::Start()
 void TestScene::Update(float delta)
 {
 	xbotAnimator.UpdateAnimation(delta);
-	vampireAnimator.UpdateAnimation(delta);
+	//vampireAnimator.UpdateAnimation(delta);
 
+	//vampireAnimator.PlayAnimation(nullptr);
+	int timeThing = ((int)(glfwGetTime() * 4)) % 60;
+	animateShader->Use();
+	animateShader->setInt("selectedBone", timeThing);
 
 	messengerInterface.Update();
 
@@ -162,20 +166,22 @@ void TestScene::Update(float delta)
 		(*i)->Update(delta);
 	}
 
-	auto transforms = xbotAnimator.getFinalBoneMatrices();
+	//auto transforms = xbotAnimator.getFinalBoneMatrices();
 	animateShader->Use();
-	for (int i = 0; i < transforms.size(); i++) {
-		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", transforms[i]);
-	}
+	//for (int i = 0; i < transforms.size(); i++) {
+	//	animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", transforms[i]);
+	//}
 	animateShader->setMat4("projection", glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, 0.01f, 100.0f));
 	animateShader->setMat4("view", camera->GetViewMatrix());
 	animateShader->setMat4("model", xbot->transform.getGlobalMatrix());
-	xbot->Draw();
+	//xbot->Draw();
 
-	transforms = vampireAnimator.getFinalBoneMatrices();
+	auto transforms = vampireAnimator.getFinalBoneMatrices();
 	animateShader->Use();
 	for (int i = 0; i < transforms.size(); i++) {
 		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", transforms[i]);
+		auto temp = glm::mat4(1.f);
+		//animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", temp);
 	}
 	animateShader->setMat4("model", vampire->transform.getGlobalMatrix());
 	vampire->Draw();
