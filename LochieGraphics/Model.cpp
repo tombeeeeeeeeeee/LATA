@@ -32,14 +32,13 @@ void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 	// Make a map from bone name to index
 	// Send a pointer to the stuff
 	// Mesh will need to know the map
-	//scene->mRootNode.
 
 	meshes.resize(scene->mNumMeshes);
 	//meshes.reserve(scene->mNumMeshes);
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[i];
-		meshes[i].InitialiseFromAiMesh(path, scene, mesh, flipTexturesOnLoad);
+		meshes[i].InitialiseFromAiMesh(path, scene, &boneNameIDs, mesh, flipTexturesOnLoad);
 	}
 
 	aiReleaseImport(scene);

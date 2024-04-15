@@ -2,7 +2,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 
-#include <map>
+#include <unordered_map>
 
 class Model
 {
@@ -18,6 +18,7 @@ public:
 	//};
 	////TODO: unordered map should be good?
 	//std::map<std::string, BoneInfo> boneInfoMap;
+	std::unordered_map<std::string, int> boneNameIDs = {};
 
 	Model();
 	Model(std::string path, bool flipTexturesOnLoad = true);
@@ -26,7 +27,7 @@ public:
 	void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
 	void Draw();
 private:
-	//TODO: Model currently comepletly owns the meshes, this should not be the case
+	//TODO: Model currently comepletly owns the meshes, this should not be the case, actually with recent changed yes but there should be a model manager
 	std::vector<Mesh> meshes;
 };
 

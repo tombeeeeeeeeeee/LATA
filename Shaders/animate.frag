@@ -8,11 +8,13 @@ struct Material {
 out vec4 FragColor;
 
 in vec2 TexCoord;
+in vec4 firstBoneID;
 
 uniform Material material;
 
 void main()
 {
-	FragColor = texture(material.diffuse1, TexCoord);
+	FragColor = vec4(firstBoneID.x * 10, firstBoneID.y * 10, firstBoneID.z * 10, 1);
+//	FragColor = texture(material.diffuse1, TexCoord);
     //FragColor = vec4(TexCoord, 1, 1);
 }

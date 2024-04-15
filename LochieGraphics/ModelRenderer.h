@@ -11,6 +11,7 @@ class ModelRenderer : public Part
 {
 public:
 	Model* model;
+	// TODO: Should hold multiple materials, one for each mesh from the model
 	Material* material;
 	unsigned long long materialGUID;
 

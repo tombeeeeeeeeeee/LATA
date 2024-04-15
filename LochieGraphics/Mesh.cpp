@@ -10,7 +10,7 @@
 #include <unordered_map>
 
 //TODO: Look into more assimp load flags
-int Mesh::aiLoadFlag = aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices;
+int Mesh::aiLoadFlag = aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate;
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) :
 	triCount(0),
@@ -114,7 +114,7 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	Unbind();
 }
 
-void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* mesh, bool flipTexturesOnLoad)
+void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::unordered_map<std::string, int>* boneNameIDs, aiMesh* mesh, bool flipTexturesOnLoad)
 {
 	unsigned int facesCount = mesh->mNumFaces;
 	std::vector<GLuint> indices;
@@ -155,14 +155,37 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 			vertices[i].tangent = { 0, 0, 0 };
 			vertices[i].biTangent = { 0, 0, 0 };
 		}
+	}
+	for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
+	{
+		aiBone* bone = mesh->mBones[boneIndex];
+		std::string boneName = bone->mName.C_Str();
 
-		for (int j = 0; j < mesh->mNumBones; j++)
+		auto boneNameID = boneNameIDs->find(boneName);
+		if (boneNameID == boneNameIDs->end()) {
+			boneNameID = boneNameIDs->emplace(boneName, boneNameIDs->size()).first;
+		}
+		int boneID = boneNameID->second;
+		
+		for (int weightIndex = 0; weightIndex < bone->mNumWeights; weightIndex++)
 		{
-			std::string boneName = mesh->mBones[j]->mName.C_Str();
+			int vertexIndex = bone->mWeights[weightIndex].mVertexId;
+			int weight = bone->mWeights[weightIndex].mWeight;
+			Vertex* vertex = &vertices[vertexIndex];
+			
+			// Find empty bone/weight spot
+			for (int i = 0; i < MAX_BONES_PER_VERTEX; ++i)
+			{
+				if (vertex->boneIDs[i] >= 0) { continue; }
+				vertex->boneIDs[i] = boneID;
+				vertex->weights[i] = weight;
+				break;
+			}
+		}
+
 			//if ()
 
 			//vertices[i].boneIDs[j] = mesh->mBones[j].;
-		}
 	}
 
 	// TODO: Move somewhere else
@@ -184,16 +207,17 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, aiMesh* 
 
 void Mesh::InitialiseQuad()
 {
-	const unsigned int vertexCount = 6;
-	Vertex vertices[vertexCount] = {
-		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
-		{ { -0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } }, // Top left
-		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
-		{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
-		{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
-		{ {  0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } } // Bottom right
-	};
-	Initialise(vertexCount, vertices);
+	// TODO: Fix pre set shapes
+	//const unsigned int vertexCount = 6;
+	//Vertex vertices[vertexCount] = {
+	//	{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
+	//	{ { -0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } }, // Top left
+	//	{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
+	//	{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
+	//	{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
+	//	{ {  0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } } // Bottom right
+	//};
+	//Initialise(vertexCount, vertices);
 }
 
 // TODO: Maybe a function that initialises a shape as double sided instead of a specific version for each
@@ -323,6 +347,7 @@ void Mesh::InitialiseFromFile(std::string filename)
 	InitialiseIndexFromFile(filename.c_str(), 0);
 }
 
+// TODO: This whole function should probably go (as with the one above), all loading should no longer be done by the mesh and instead the model
 void Mesh::InitialiseIndexFromFile(std::string path, int i)
 {
 	const aiScene* scene = aiImportFile(path.c_str(), Mesh::aiLoadFlag);
@@ -331,8 +356,8 @@ void Mesh::InitialiseIndexFromFile(std::string path, int i)
 		return;
 	}
 	aiMesh* mesh = scene->mMeshes[i];
-
-	InitialiseFromAiMesh(path, scene, mesh);
+	
+	InitialiseFromAiMesh(path, scene, nullptr, mesh);
 
 	aiReleaseImport(scene);
 }
