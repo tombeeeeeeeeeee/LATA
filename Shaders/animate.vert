@@ -29,24 +29,6 @@ uniform int selectedBone;
 
 void main()
 {
-	_Colour = vec3(0);
-	for(int i = 0; i < 4; i++)
-	{
-		if(boneIDs[i] == selectedBone)
-		{
-			_Colour = vec3(1, 1, 0);
-		}
-        else if (boneIDs[0] != -1) {
-            _Colour.r = 1.0f;
-            if (boneIDs[1] != -1) {
-                _Colour.b = 1.0f;
-            }
-            if (boneIDs[2] != -1) {
-                _Colour.g = 1.0f;
-            }
-        }
-	}
-
     _Colour = boneWeights.xyz;
 
     vec4 totalPosition = { 0, 0, 0, 0 };
@@ -67,35 +49,17 @@ void main()
     mat4 viewModel = view * model;
     gl_Position =  projection * viewModel * totalPosition;
     TexCoord = aTexCoord;
-//    test = boneWeights[0];
-//    test2 = boneWeights[1];
-//    test3 = boneWeights[2];
-//    fragPos = vec3(model * vec4(aPos, 1.0));
-//    daBoneWeights = boneWeights;
+
+//    mat3 normalMatrix = transpose(inverse(mat3(BoneTransform)));
+//vec3 T = normalize(normalMatrix * aTangent);
+//vec3 B = normalize(normalMatrix * aBitangent);
+//vec3 N = normalize(normalMatrix * aNormal);
 //
-//    mat4 totalPosition = mat4(0);
-//    for(int i = 0 ; i < MAX_BONE_PER_VERT ; i++)
-//    {
-//        if (boneIDs[i] == -1) {
-//            continue;
-//        }
-//
-//        gl_Position = projection * view * model * vec4(aPos,1);
-//	    _Colour = vec3(0);
-//	    for(int i = 0; i < 4; i++)
-//	    {
-//		    if(boneIDs[i] == selectedBone)
-//		    {
-//			    _Colour = vec3(1, 1, 0);
-//		    }
-//	    }
-//        return;
-//    }
-//	
-//    gl_Position = projection * view * model * vec4(aPos, 1.0);
-    
-//    mat4 viewModel = view * model;
-//    gl_Position = projection * viewModel * totalPosition;
+//vs_out.TBN		=	mat3(T, B, N);
+//vs_out.FragPos		=	vec3(model * totalPosition);
+//vs_out.Normal		=	N;
+//vs_out.TexCoords	=	aTexCoords;
+
     fragPos = vec3(model * vec4(aPos, 1.0));
     TexCoord = aTexCoord;
 }

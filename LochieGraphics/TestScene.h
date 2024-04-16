@@ -47,7 +47,8 @@ private:
 	Animator xbotAnimator;
 	Animation vampireWalk;
 	Animator vampireAnimator;
-
+	Animation puppetAnimation;
+	Animator puppetAnimator;
 
 	PointLight pointLights[4] = {
 		PointLight({ 0.05f, 0.05f, 0.05f }, { 1.0f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  3.2f,  2.0f }, 0.5f, 0.09f, 0.032f, 0),

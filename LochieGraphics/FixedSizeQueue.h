@@ -23,8 +23,8 @@ public:
 template<typename T, size_t size>
 void FixedSizeQueue<T, size>::Push(T value)
 {
-	position = (position + 1) % size;
 	elements[position] = value;
+	position = (position + 1) % size;
 }
 
 template<typename T, size_t size>

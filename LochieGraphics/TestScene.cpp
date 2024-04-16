@@ -102,17 +102,17 @@ void TestScene::Start()
 	soulSpear->transform.position = { 0.f, 1.f, 1.f };
 
 	puppetModel.LoadModel(std::string("models/Character.fbx"));
-	Material* puppetMaterial = ResourceManager::LoadMaterial("puppet", litNormalShader);
+	Material* puppetMaterial = ResourceManager::LoadMaterial("puppet", animateShader);
 	puppetMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("images/puppet/DummyBaseMap.tga", Texture::Type::diffuse),
 			ResourceManager::LoadTexture("images/puppet/DummyNormalMap.tga", Texture::Type::normal),
 	});
 	puppet->transform.position.y -= 4;
-	puppet->transform.scale = 0.01;
+	puppet->transform.scale = 0.01f;
 	puppet->setRenderer(new ModelRenderer(&puppetModel, puppetMaterial));
 
 	xbotModel.LoadModel(std::string("models/X Bot.fbx"));
-	xbot->transform.scale = 0.01;
+	xbot->transform.scale = 0.01f;
 	xbot->transform.position = { 0.f, -0.5f, 1.5f };
 	Material* xbotMaterial = ResourceManager::LoadMaterial("puppet", animateShader);
 	xbotMaterial->AddTextures(std::vector<Texture*> {
@@ -135,19 +135,15 @@ void TestScene::Start()
 	vampireWalk = Animation("models/dancing_vampire.dae", &vampireModel);
 	vampireAnimator = Animator(&vampireWalk);
 
-
+	puppetAnimation = Animation("models/Character@LPunch4.fbx", &puppetModel);
+	puppetAnimator = Animator(nullptr);
 }
 
 void TestScene::Update(float delta)
 {
 	xbotAnimator.UpdateAnimation(delta);
 	vampireAnimator.UpdateAnimation(delta);
-
-	//vampireAnimator.PlayAnimation(nullptr);
-	int timeThing = ((int)(glfwGetTime() * 4)) % vampireModel.boneInfoMap.size();
-	animateShader->Use();
-	animateShader->setInt("selectedBone", timeThing);
-	
+	puppetAnimator.UpdateAnimation(delta);
 
 	messengerInterface.Update();
 
@@ -167,22 +163,20 @@ void TestScene::Update(float delta)
 		(*i)->Update(delta);
 	}
 
-	auto transforms = xbotAnimator.getFinalBoneMatrices();
+	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
 	animateShader->Use();
-	for (int i = 0; i < transforms.size(); i++) {
-		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", transforms[i]);
+	for (int i = 0; i < xBotTransforms.size(); i++) {
+		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", xBotTransforms[i]);
 	}
 	animateShader->setMat4("projection", glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, 0.01f, 100.0f));
 	animateShader->setMat4("view", camera->GetViewMatrix());
 	animateShader->setMat4("model", xbot->transform.getGlobalMatrix());
 	xbot->Draw();
 
-	transforms = vampireAnimator.getFinalBoneMatrices();
+	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
 	animateShader->Use();
-	for (int i = 0; i < transforms.size(); i++) {
-		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", transforms[i]);
-		auto temp = glm::mat4(1.f);
-		//animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", temp);
+	for (int i = 0; i < vampTransforms.size(); i++) {
+		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", vampTransforms[i]);
 	}
 	animateShader->setMat4("model", vampire->transform.getGlobalMatrix());
 	vampire->Draw();

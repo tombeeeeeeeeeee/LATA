@@ -158,7 +158,7 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 			vertices[i].biTangent = { 0, 0, 0 };
 		}
 	}
-	for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
+	for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
 	{
 		aiBone* bone = mesh->mBones[boneIndex];
 		std::string boneName = bone->mName.C_Str();
@@ -172,7 +172,7 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 		}
 		int boneID = boneInfo->second.id;
 		
-		for (int weightIndex = 0; weightIndex < bone->mNumWeights; weightIndex++)
+		for (unsigned int weightIndex = 0; weightIndex < bone->mNumWeights; weightIndex++)
 		{
 			int vertexIndex = bone->mWeights[weightIndex].mVertexId;
 			float weight = bone->mWeights[weightIndex].mWeight;

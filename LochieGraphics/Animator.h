@@ -20,7 +20,7 @@ public:
 
 	void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
 
-	std::vector<glm::mat4> getFinalBoneMatrices();
+	const std::vector<glm::mat4>& getFinalBoneMatrices();
 
 };
 

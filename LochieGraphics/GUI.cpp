@@ -34,7 +34,7 @@ void GUI::ResourceMenu()
 
 	// TODO: Make this graph better, have lines and stuff for specific frame rates
 	// Graph range top is 20fps
-	ImGui::PlotLines("Time per frame", SceneManager::frameTimes.elements, IM_ARRAYSIZE(SceneManager::frameTimes.elements), (int)SceneManager::frameTimes.position, nullptr, 0.00f, 0.05f, ImVec2(0.f, 80.0f));
+	ImGui::PlotLines("Time per frame", SceneManager::frameTimes.elements, IM_ARRAYSIZE(SceneManager::frameTimes.elements), 0/*(int)SceneManager::frameTimes.position*/, nullptr, 0.00f, 0.05f, ImVec2(400.f, 80.0f));
 	auto averageFrameTime = SceneManager::frameTimes.getMean();
 	ImGui::Text(("Average Frame Time: " + std::to_string(averageFrameTime)).c_str());
 	ImGui::Text(("Average FPS: " + std::to_string(1 / averageFrameTime)).c_str());
