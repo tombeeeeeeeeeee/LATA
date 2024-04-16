@@ -175,7 +175,7 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 		for (int weightIndex = 0; weightIndex < bone->mNumWeights; weightIndex++)
 		{
 			int vertexIndex = bone->mWeights[weightIndex].mVertexId;
-			int weight = bone->mWeights[weightIndex].mWeight;
+			float weight = bone->mWeights[weightIndex].mWeight;
 			Vertex* vertex = &vertices[vertexIndex];
 			
 			// Find empty bone/weight spot
@@ -184,6 +184,9 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 				if (vertex->boneIDs[i] >= 0) { continue; }
 				vertex->boneIDs[i] = boneID;
 				vertex->weights[i] = weight;
+				if (weight == 0) {
+					std::cout << "t";
+				}
 				break;
 			}
 		}
