@@ -112,8 +112,8 @@ void Transform::GUI()
 {
 	std::string tag = PointerToString(this);
 
-	ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0]);
-	ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &rotation[0]);
+	ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f);
+	ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &rotation[0], 0.1f);
 
-	ImGui::DragFloat(("Scale##transform" + tag).c_str(), &scale);
+	ImGui::DragFloat(("Scale##transform" + tag).c_str(), &scale, 0.1f);
 }

@@ -7,11 +7,11 @@
 TestScene::TestScene()
 {
 	sceneObjects = std::vector<SceneObject*>{
-		boxes,
-		grass,
-		lightCube,
+		//boxes,
+		//grass,
+		//lightCube,
 		backpack,
-		soulSpear,
+		//soulSpear,
 		testRedBox,
 		puppet,
 	};
@@ -28,11 +28,12 @@ TestScene::TestScene()
 void TestScene::Start()
 {
 	// Shaders
-	litNormalShader  = ResourceManager::LoadShader("shaders/litNormal.vert", "shaders/litNormal.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
-	litShader        = ResourceManager::LoadShader("shaders/lit.vert",       "shaders/lit.frag",       Shader::Flags::Lit | Shader::Flags::VPmatrix);
-	lightCubeShader  = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
-	skyBoxShader     = ResourceManager::LoadShader("shaders/cubemap.vert",   "shaders/cubemap.frag");
-	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader };
+	litNormalShader = ResourceManager::LoadShader("shaders/litNormal.vert", "shaders/litNormal.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
+	litShader = ResourceManager::LoadShader("shaders/lit.vert", "shaders/lit.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
+	lightCubeShader = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
+	skyBoxShader = ResourceManager::LoadShader("shaders/cubemap.vert", "shaders/cubemap.frag");
+	animateShader = ResourceManager::LoadShader("shaders/animate.vert", "shaders/animate.frag");
+	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader };
 
 	std::string skyboxFaces[6] = {
 		//"images/otherskybox/right.png",
@@ -50,12 +51,12 @@ void TestScene::Start()
 	};
 	//TODO: Should be using the resource manager
 	skybox = new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces));
-	
+
 
 	Material* boxMaterial = ResourceManager::LoadMaterial("box", litShader);
 	boxMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("images/container2.png", Texture::Type::diffuse),
-		ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::specular),
+			ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::specular),
 	});
 	cubeModel.AddMesh(new Mesh(Mesh::presets::cube));
 	boxes->setRenderer(new ModelRenderer(&cubeModel, boxMaterial));
@@ -75,8 +76,8 @@ void TestScene::Start()
 	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", litNormalShader);
 	backpackMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/backpack/diffuse.jpg", Texture::Type::diffuse, GL_REPEAT, false),
-		ResourceManager::LoadTexture("models/backpack/normal.png", Texture::Type::normal, GL_REPEAT, false),
-		ResourceManager::LoadTexture("models/backpack/specular.jpg", Texture::Type::specular, GL_REPEAT, false),
+			ResourceManager::LoadTexture("models/backpack/normal.png", Texture::Type::normal, GL_REPEAT, false),
+			ResourceManager::LoadTexture("models/backpack/specular.jpg", Texture::Type::specular, GL_REPEAT, false),
 	});
 	backpack->setRenderer(new ModelRenderer(&backpackModel, backpackMaterial));
 	backpack->transform.position = { -5.f, -1.f, 0.f };
@@ -85,7 +86,7 @@ void TestScene::Start()
 	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", litNormalShader);
 	testRedBoxMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::diffuse, GL_REPEAT, true),
-		ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true),
 	});
 	testRedBox->setRenderer(new ModelRenderer(&testRedBoxModel, testRedBoxMaterial));
 	testRedBox->transform.position = { 5.f, -3.f, 2.f };
@@ -94,25 +95,56 @@ void TestScene::Start()
 	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", litNormalShader);
 	soulSpearMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse, GL_REPEAT, true),
-		ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
-		ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
 	});
 	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, soulSpearMaterial));
 	soulSpear->transform.position = { 0.f, 1.f, 1.f };
 
-	puppetModel = Model(std::string("models/Character.fbx"));
-	Material* puppetMaterial = ResourceManager::LoadMaterial("puppet", litNormalShader);
+	puppetModel.LoadModel(std::string("models/Character.fbx"));
+	Material* puppetMaterial = ResourceManager::LoadMaterial("puppet", animateShader);
 	puppetMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("images/puppet/DummyBaseMap.tga", Texture::Type::diffuse),
-		ResourceManager::LoadTexture("images/puppet/DummyNormalMap.tga", Texture::Type::normal),
+			ResourceManager::LoadTexture("images/puppet/DummyNormalMap.tga", Texture::Type::normal),
 	});
 	puppet->transform.position.y -= 4;
-	puppet->transform.scale = 0.01;
+	puppet->transform.scale = 0.01f;
 	puppet->setRenderer(new ModelRenderer(&puppetModel, puppetMaterial));
+
+	xbotModel.LoadModel(std::string("models/X Bot.fbx"));
+	xbot->transform.scale = 0.01f;
+	xbot->transform.position = { 0.f, -0.5f, 1.5f };
+	Material* xbotMaterial = ResourceManager::LoadMaterial("puppet", animateShader);
+	xbotMaterial->AddTextures(std::vector<Texture*> {
+		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse)
+	});
+	xbot->setRenderer(new ModelRenderer(&xbotModel, xbotMaterial));
+
+	xbotChicken = Animation("models/Idle.fbx", &xbotModel);
+	xbotAnimator = Animator(&xbotChicken);
+
+	vampireModel.LoadModel(std::string("models/dancing_vampire.dae"));
+	//vampire->transform.scale = 0.01;
+	//vampire->transform.position = { 0.f, -0.5f, 1.f };
+	Material* vampireMaterial = ResourceManager::LoadMaterial("vampire", animateShader);
+	vampireMaterial->AddTextures(std::vector<Texture*>{
+		ResourceManager::LoadTexture("models/Vampire_diffuse.png", Texture::Type::diffuse)
+	});
+	vampire->setRenderer(new ModelRenderer(&vampireModel, vampireMaterial));
+
+	vampireWalk = Animation("models/dancing_vampire.dae", &vampireModel);
+	vampireAnimator = Animator(&vampireWalk);
+
+	puppetAnimation = Animation("models/Character@LPunch4.fbx", &puppetModel);
+	puppetAnimator = Animator(nullptr);
 }
 
 void TestScene::Update(float delta)
 {
+	xbotAnimator.UpdateAnimation(delta);
+	vampireAnimator.UpdateAnimation(delta);
+	puppetAnimator.UpdateAnimation(delta);
+
 	messengerInterface.Update();
 
 	pointLights[0].position.x = 1.5f * sin((float)glfwGetTime() * 2.f);
@@ -131,7 +163,23 @@ void TestScene::Update(float delta)
 		(*i)->Update(delta);
 	}
 
-	ImGui::ShowDemoWindow();
+	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
+	animateShader->Use();
+	for (int i = 0; i < xBotTransforms.size(); i++) {
+		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", xBotTransforms[i]);
+	}
+	animateShader->setMat4("projection", glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, 0.01f, 100.0f));
+	animateShader->setMat4("view", camera->GetViewMatrix());
+	animateShader->setMat4("model", xbot->transform.getGlobalMatrix());
+	xbot->Draw();
+
+	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
+	animateShader->Use();
+	for (int i = 0; i < vampTransforms.size(); i++) {
+		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", vampTransforms[i]);
+	}
+	animateShader->setMat4("model", vampire->transform.getGlobalMatrix());
+	vampire->Draw();
 }
 
 void TestScene::Draw()
