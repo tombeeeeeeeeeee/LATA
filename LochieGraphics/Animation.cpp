@@ -4,16 +4,21 @@
 
 #include <assimp/Importer.hpp>
 
+#include <iostream>
+
 Animation::Animation(const std::string& animationPath, Model* model)
 {
 	Assimp::Importer importer;
 	// TODO: what flags should be set here
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
-	assert(scene && scene->mRootNode);
+	if (!(scene && scene->mRootNode)) {
+		std::cout << "Error: Failed to load animation at: " << animationPath << "\n";
+		return;
+	}
 	auto animation = scene->mAnimations[0];
 	duration = (float)animation->mDuration;
 	ticksPerSecond = (float)animation->mTicksPerSecond;
-	ReadHeirarchyData(rootNode, scene->mRootNode);
+	ReadHierarchyData(rootNode, scene->mRootNode);
 	ReadMissingBones(animation, *model);
 }
 
@@ -40,12 +45,12 @@ float Animation::getDuration() const
 	return duration;
 }
 
-const AssimpNodeData& Animation::getRootNode()
+const AssimpNodeData& Animation::getRootNode() const
 {
 	return rootNode;
 }
 
-const std::unordered_map<std::string, BoneInfo>& Animation::getBoneIDMap()
+const std::unordered_map<std::string, BoneInfo>& Animation::getBoneIDMap() const
 {
 	return boneInfoMap;
 }
@@ -54,11 +59,11 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 {
 	int size = animation->mNumChannels;
 
-	auto& newBoneInfoMap = model.boneInfoMap;
+	std::unordered_map<std::string, BoneInfo> newBoneInfoMap = model.boneInfoMap;
 
 	for (int i = 0; i < size; i++)
 	{
-		auto channel = animation->mChannels[i];
+		aiNodeAnim* channel = animation->mChannels[i];
 		std::string boneName = channel->mNodeName.data;
 
 		if (newBoneInfoMap.find(boneName) == newBoneInfoMap.end()) {
@@ -69,9 +74,12 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 	boneInfoMap = newBoneInfoMap;
 }
 
-void Animation::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src)
+void Animation::ReadHierarchyData(AssimpNodeData& dest, const aiNode* src)
 {
-	assert(src);
+	if (!src) {
+		std::cout << "Error, Failed to read animation hierarchy\n";
+		return;
+	}
 
 	dest.name = src->mName.data;
 	dest.transformation = AssimpMatrixToGLM(src->mTransformation);
@@ -80,7 +88,7 @@ void Animation::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src)
 	for (unsigned int i = 0; i < src->mNumChildren; i++)
 	{
 		AssimpNodeData newData;
-		ReadHeirarchyData(newData, src->mChildren[i]);
+		ReadHierarchyData(newData, src->mChildren[i]);
 		dest.children.push_back(newData);
 	}
 }

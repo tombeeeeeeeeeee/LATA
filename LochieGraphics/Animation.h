@@ -2,23 +2,18 @@
 
 #include "Bone.h"
 #include "Model.h"
+#include "AssimpNodeData.h"
 
 #include "assimp/scene.h"
 
 #include <string>
 
-struct AssimpNodeData {
-	glm::mat4 transformation;
-	std::string name;
-	std::vector<AssimpNodeData> children;
-};
-
 class Animation
 {
 private:
 	float duration = 0;
-	float ticksPerSecond;
-	std::vector<Bone> bones;
+	float ticksPerSecond = 0.f;
+	std::vector<Bone> bones = {};
 	AssimpNodeData rootNode;
 	std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
@@ -33,13 +28,13 @@ public:
 
 	float getDuration() const;
 
-	const AssimpNodeData& getRootNode();
+	const AssimpNodeData& getRootNode() const;
 
-	const std::unordered_map<std::string, BoneInfo>& getBoneIDMap();
+	const std::unordered_map<std::string, BoneInfo>& getBoneIDMap() const;
 
 private:
 	void ReadMissingBones(const aiAnimation* animation, Model& model);
 
-	void ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src);
+	void ReadHierarchyData(AssimpNodeData& dest, const aiNode* src);
 };
 

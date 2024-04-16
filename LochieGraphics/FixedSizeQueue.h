@@ -39,7 +39,7 @@ inline size_t FixedSizeQueue<T, size>::getSize()
 	return count;
 }
 
-// TODO: As the container has a fixed size this could be calcualted by just removing the last and adding the latest, and so would be calculated on each push
+// TODO: As the container has a fixed size this could be calculated by just removing the last and adding the latest, and so would be calculated on each push
 template<typename T, size_t size>
 inline T FixedSizeQueue<T, size>::getMean() const
 {
