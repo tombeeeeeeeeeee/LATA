@@ -28,11 +28,6 @@ private:
 	std::vector<KeyRotation> rotations;
 	std::vector<KeyScale> scales;
 
-	// TODO: Could probably remove these three as it could be accessed via the vectors above
-	int numPositions;
-	int numRotations;
-	int numScales;
-
 	glm::mat4 localTransform;
 	std::string name;
 	int ID;

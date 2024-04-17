@@ -7,13 +7,15 @@
 TestScene::TestScene()
 {
 	sceneObjects = std::vector<SceneObject*>{
-		//boxes,
-		//grass,
-		//lightCube,
+		boxes,
+		grass,
+		lightCube,
 		backpack,
-		//soulSpear,
+		soulSpear,
 		testRedBox,
 		puppet,
+		vampire,
+		xbot
 	};
 	lights = std::vector<Light*>{
 		&pointLights[0],
@@ -99,7 +101,7 @@ void TestScene::Start()
 			ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
 	});
 	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, soulSpearMaterial));
-	soulSpear->transform.position = { 0.f, 1.f, 1.f };
+	soulSpear->transform.position = { 5.f, 1.f, 1.f };
 
 	puppetModel.LoadModel(std::string("models/Character.fbx"));
 	Material* puppetMaterial = ResourceManager::LoadMaterial("puppet", animateShader);
@@ -136,6 +138,7 @@ void TestScene::Start()
 	vampireAnimator = Animator(&vampireWalk);
 
 	puppetAnimation = Animation("models/Character@LPunch4.fbx", &puppetModel);
+	//puppetAnimator = Animator(&puppetAnimation);
 	puppetAnimator = Animator(nullptr);
 }
 

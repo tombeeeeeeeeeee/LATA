@@ -6,8 +6,8 @@
 #include <vector>
 
 // TODO: Rename class
-struct AssimpNodeData {
+struct NodeData {
 	glm::mat4 transformation;
 	std::string name;
-	std::vector<AssimpNodeData> children;
+	std::vector<NodeData> children;
 };

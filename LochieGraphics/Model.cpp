@@ -27,12 +27,6 @@ void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 		std::cout << "Loaded model at: " << path << "\n";
 	}
 
-
-	// TODO: load all bone names and general info about bones, here and assign indexes to each bone
-	// Make a map from bone name to index
-	// Send a pointer to the stuff
-	// Mesh will need to know the map
-
 	meshes.resize(scene->mNumMeshes);
 	//meshes.reserve(scene->mNumMeshes);
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)

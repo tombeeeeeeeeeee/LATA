@@ -5,22 +5,42 @@
 class Animator
 {
 private:
-
+	// The model transformation for each bone, stored in bone index order
 	std::vector<glm::mat4> finalBoneMatrices;
-	Animation* currentAnimation;
-	float currentTime;
+
+	// The current animation that is playing
+	Animation* currentAnimation = nullptr;
+
+	// The current time into the animation
+	float currentTime = 0.f;
 
 public:
 	Animator() {};
 	Animator(Animation* animation);
 
-	void UpdateAnimation(float dt);
+	/// <summary>
+	/// Updates the animation based on the time passed, this will recalculate all of the bone transformations.
+	/// </summary>
+	/// <param name="delta">time passed</param>
+	void UpdateAnimation(float delta);
 
+	/// <summary>
+	/// Changes the current animation to the given one, resets the current time back to zero.
+	/// </summary>
+	/// <param name="animation">The new animation to play</param>
 	void PlayAnimation(Animation* animation);
 
-	void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
+	/// <summary>
+	/// Calculates the bone transform of a node and it's children
+	/// </summary>
+	/// <param name="node">The node to calculate the transform of</param>
+	/// <param name="parentTransform">The parent transformation</param>
+	void CalculateBoneTransform(const NodeData* node, glm::mat4 parentTransform);
 
+	/// <summary>
+	/// Returns a reference to the bone matrices
+	/// </summary>
+	/// <returns>const reference vector of the bone transforms</returns>
 	const std::vector<glm::mat4>& getFinalBoneMatrices();
-
 };
 

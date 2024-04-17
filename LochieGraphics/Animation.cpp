@@ -15,9 +15,15 @@ Animation::Animation(const std::string& animationPath, Model* model)
 		std::cout << "Error: Failed to load animation at: " << animationPath << "\n";
 		return;
 	}
-	auto animation = scene->mAnimations[0];
+	aiAnimation* animation = scene->mAnimations[0];
 	duration = (float)animation->mDuration;
 	ticksPerSecond = (float)animation->mTicksPerSecond;
+	
+	// TODO: use this
+	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
+	globalTransformation = globalTransformation.Inverse();
+
+
 	ReadHierarchyData(rootNode, scene->mRootNode);
 	ReadMissingBones(animation, *model);
 }
@@ -27,11 +33,11 @@ Bone* Animation::FindBone(const std::string& name)
 	// TODO: A lot of iterators are used just to find stuff, see if it is something to be using more
 	auto search = std::find_if(bones.begin(), bones.end(), [&](const Bone& bone) {
 		return bone.getBoneName() == name;
-		});
+	});
+
 	if (search == bones.end()) {
 		return nullptr;
 	}
-
 	return &(*search);
 }
 
@@ -45,7 +51,7 @@ float Animation::getDuration() const
 	return duration;
 }
 
-const AssimpNodeData& Animation::getRootNode() const
+const NodeData& Animation::getRootNode() const
 {
 	return rootNode;
 }
@@ -57,11 +63,9 @@ const std::unordered_map<std::string, BoneInfo>& Animation::getBoneIDMap() const
 
 void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 {
-	int size = animation->mNumChannels;
+	std::unordered_map<std::string, BoneInfo>& newBoneInfoMap = model.boneInfoMap;
 
-	std::unordered_map<std::string, BoneInfo> newBoneInfoMap = model.boneInfoMap;
-
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < animation->mNumChannels; i++)
 	{
 		aiNodeAnim* channel = animation->mChannels[i];
 		std::string boneName = channel->mNodeName.data;
@@ -74,7 +78,7 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 	boneInfoMap = newBoneInfoMap;
 }
 
-void Animation::ReadHierarchyData(AssimpNodeData& dest, const aiNode* src)
+void Animation::ReadHierarchyData(NodeData& dest, const aiNode* src)
 {
 	if (!src) {
 		std::cout << "Error, Failed to read animation hierarchy\n";
@@ -87,7 +91,7 @@ void Animation::ReadHierarchyData(AssimpNodeData& dest, const aiNode* src)
 
 	for (unsigned int i = 0; i < src->mNumChildren; i++)
 	{
-		AssimpNodeData newData;
+		NodeData newData;
 		ReadHierarchyData(newData, src->mChildren[i]);
 		dest.children.push_back(newData);
 	}

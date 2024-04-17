@@ -1,10 +1,10 @@
 #include "Animator.h"
 
 Animator::Animator(Animation* animation) :
-    currentAnimation(animation),
-    currentTime(0.0f)
+    currentAnimation(animation)
 {
     //TODO: A plain 100 shouldn't be here
+    // If there is just a fixed max size than an array might just be better to use
     finalBoneMatrices.reserve(100);
 
     for (int i = 0; i < 100; i++) {
@@ -12,12 +12,12 @@ Animator::Animator(Animation* animation) :
     }
 }
 
-void Animator::UpdateAnimation(float dt)
+void Animator::UpdateAnimation(float delta)
 {
     if (!currentAnimation) {
         return;
     }
-    currentTime += currentAnimation->getTicksPerSecond() * dt;
+    currentTime += currentAnimation->getTicksPerSecond() * delta;
     currentTime = fmod(currentTime, currentAnimation->getDuration());
     CalculateBoneTransform(&currentAnimation->getRootNode(), glm::mat4(1.0f));
 }
@@ -28,7 +28,7 @@ void Animator::PlayAnimation(Animation* animation)
     currentTime = 0.0f;
 }
 
-void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
+void Animator::CalculateBoneTransform(const NodeData* node, glm::mat4 parentTransform)
 {
     std::string nodeName = node->name;
     glm::mat4 nodeTransform = node->transformation;
@@ -52,6 +52,7 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
         finalBoneMatrices[index] = globalTransformation * offset;
     }
 
+    // Recursively call on children
     for (int i = 0; i < node->children.size(); i++) {
         CalculateBoneTransform(&node->children[i], globalTransformation);
     }
