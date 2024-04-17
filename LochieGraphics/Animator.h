@@ -5,17 +5,21 @@
 class Animator
 {
 private:
-	// The model transformation for each bone, stored in bone index order
+	// The model transformation for each bone, stored in bone index order.
 	std::vector<glm::mat4> finalBoneMatrices;
 
-	// The current animation that is playing
+	// The current animation that is playing.
 	Animation* currentAnimation = nullptr;
-
-	// The current time into the animation
+	
+	// The current time into the animation.
 	float currentTime = 0.f;
 
 public:
 	Animator() {};
+	/// <summary>
+	/// Sets a starting animation.
+	/// </summary>
+	/// <param name="animation">The animation to play</param>
 	Animator(Animation* animation);
 
 	/// <summary>
@@ -31,14 +35,14 @@ public:
 	void PlayAnimation(Animation* animation);
 
 	/// <summary>
-	/// Calculates the bone transform of a node and it's children
+	/// Calculates the bone transform of a node and it's children.
 	/// </summary>
 	/// <param name="node">The node to calculate the transform of</param>
 	/// <param name="parentTransform">The parent transformation</param>
 	void CalculateBoneTransform(const NodeData* node, glm::mat4 parentTransform);
 
 	/// <summary>
-	/// Returns a reference to the bone matrices
+	/// Returns a reference to the bone matrices.
 	/// </summary>
 	/// <returns>const reference vector of the bone transforms</returns>
 	const std::vector<glm::mat4>& getFinalBoneMatrices();

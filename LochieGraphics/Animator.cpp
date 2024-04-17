@@ -31,23 +31,23 @@ void Animator::PlayAnimation(Animation* animation)
 void Animator::CalculateBoneTransform(const NodeData* node, glm::mat4 parentTransform)
 {
     std::string nodeName = node->name;
-    glm::mat4 nodeTransform = node->transformation;
-
+    glm::mat4 globalTransformation;
     Bone* Bone = currentAnimation->FindBone(nodeName);
 
     if (Bone)
     {
         Bone->Update(currentTime);
-        nodeTransform = Bone->getLocalTransform();
+        globalTransformation = parentTransform * Bone->getLocalTransform();
     }
-
-    glm::mat4 globalTransformation = parentTransform * nodeTransform;
+    else {
+        globalTransformation = parentTransform * node->transformation;
+    }
 
     auto& boneInfoMap = currentAnimation->getBoneIDMap();
     auto boneInfo = boneInfoMap.find(nodeName);
     if (boneInfo != boneInfoMap.end())
     {
-        int index = boneInfo->second.id;
+        int index = boneInfo->second.ID;
         glm::mat4 offset = boneInfo->second.offset;
         finalBoneMatrices[index] = globalTransformation * offset;
     }

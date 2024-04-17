@@ -142,7 +142,6 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 		else {
 			vertices[i].normal = { 1.f, 0.f, 0.f, 0.f };
 		}
-		// TODO: other tex coords?
 		if (mesh->mTextureCoords[0]) {
 			vertices[i].texCoord = { mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y };
 		}
@@ -165,12 +164,13 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 
 		auto boneInfo = boneInfos->find(boneName);
 		if (boneInfo == boneInfos->end()) {
-			BoneInfo newBoneInfo;
-			newBoneInfo.id = boneInfos->size();
-			newBoneInfo.offset = AssimpMatrixToGLM(bone->mOffsetMatrix);
+			BoneInfo newBoneInfo = {
+				boneInfos->size(),
+				AssimpMatrixToGLM(bone->mOffsetMatrix)
+			};
 			boneInfo = boneInfos->emplace(boneName, newBoneInfo).first;
 		}
-		int boneID = boneInfo->second.id;
+		int boneID = boneInfo->second.ID;
 		
 		for (unsigned int weightIndex = 0; weightIndex < bone->mNumWeights; weightIndex++)
 		{
@@ -184,13 +184,9 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 				if (vertex->boneIDs[i] >= 0) { continue; }
 				vertex->boneIDs[i] = boneID;
 				vertex->weights[i] = weight;
-				if (weight == 0) {
-					std::cout << "t";
-				}
 				break;
 			}
 		}
-
 	}
 
 	// TODO: Move somewhere else

@@ -11,10 +11,14 @@ Animation::Animation(const std::string& animationPath, Model* model)
 	Assimp::Importer importer;
 	// TODO: what flags should be set here
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
+	
+	// If either the scene or the root node is null, then the animation has failed to load
 	if (!(scene && scene->mRootNode)) {
 		std::cout << "Error: Failed to load animation at: " << animationPath << "\n";
 		return;
 	}
+
+	// Get animation info from the aiAnimation in the scene
 	aiAnimation* animation = scene->mAnimations[0];
 	duration = (float)animation->mDuration;
 	ticksPerSecond = (float)animation->mTicksPerSecond;
@@ -39,6 +43,14 @@ Bone* Animation::FindBone(const std::string& name)
 		return nullptr;
 	}
 	return &(*search);
+
+	//for (auto i = bones.begin(); i != bones.end(); i++)
+	//{
+	//	if (i->getBoneName() == name) {
+	//		return &(*i);
+	//	}
+	//}
+	//return nullptr;
 }
 
 float Animation::getTicksPerSecond() const
@@ -71,9 +83,9 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 		std::string boneName = channel->mNodeName.data;
 
 		if (newBoneInfoMap.find(boneName) == newBoneInfoMap.end()) {
-			newBoneInfoMap[boneName].id = boneInfoMap.size() + 1;
+			newBoneInfoMap[boneName].ID = boneInfoMap.size() + 1;
 		}
-		bones.push_back(Bone(channel->mNodeName.data, newBoneInfoMap[channel->mNodeName.data].id, channel));
+		bones.push_back(Bone(channel->mNodeName.data, newBoneInfoMap[channel->mNodeName.data].ID, channel));
 	}
 	boneInfoMap = newBoneInfoMap;
 }

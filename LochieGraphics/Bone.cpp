@@ -52,12 +52,12 @@ void Bone::Update(float animationTime)
 	localTransform = translation * rotation * scale;
 }
 
-glm::mat4 Bone::getLocalTransform() const
+const glm::mat4& Bone::getLocalTransform() const
 {
 	return localTransform;
 }
 
-std::string Bone::getBoneName() const
+const std::string& Bone::getBoneName() const
 {
 	return name;
 }
@@ -67,6 +67,7 @@ int Bone::getBoneID() const
 	return ID;
 }
 
+// TODO: These three get transform component index functions are basically the same and could maybe be written better
 int Bone::getPositionIndex(float animationTime) const
 {
 	for (int index = 1; index < positions.size(); index++)
@@ -76,7 +77,8 @@ int Bone::getPositionIndex(float animationTime) const
 		}
 	}
 	return 0;
-	//assert(0); //TODO: No asserts, here and the other get index
+	//TODO: No asserts, here and the other get index
+	//assert(0); 
 }
 
 int Bone::getRotationIndex(float animationTime) const
@@ -88,7 +90,8 @@ int Bone::getRotationIndex(float animationTime) const
 		}
 	}
 	return 0;
-	//assert(0); // TODO: remove
+	// TODO: remove
+	//assert(0);
 }
 
 int Bone::getScaleIndex(float animationTime) const
@@ -100,7 +103,8 @@ int Bone::getScaleIndex(float animationTime) const
 		}
 	}
 	return 0;
-	//assert(0); // TODO: remove
+	// TODO: remove
+	//assert(0); 
 }
 
 float Bone::getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const
