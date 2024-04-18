@@ -21,7 +21,7 @@ public:
 
 
 template<typename T, size_t size>
-void FixedSizeQueue<T, size>::Push(T value)
+inline void FixedSizeQueue<T, size>::Push(T value)
 {
 	elements[position] = value;
 	position = (position + 1) % size;
