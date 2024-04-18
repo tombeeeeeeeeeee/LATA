@@ -19,8 +19,10 @@ SceneObject::SceneObject(glm::vec3 _position, glm::vec3 _rotation, float _scale)
 
 void SceneObject::setRenderer(ModelRenderer* modelRenderer)
 {
+	if (renderer != nullptr) { return; }
 	renderer = modelRenderer;
 	renderer->sceneObject = this;
+	parts.push_back(modelRenderer);
 }
 
 ModelRenderer* SceneObject::getRenderer() const
@@ -43,9 +45,6 @@ void SceneObject::Update(float delta)
 
 void SceneObject::Draw() const
 {
-	if (renderer) {
-		renderer->Draw();
-	}
 	for (auto part = parts.begin(); part != parts.end(); part++)
 	{
 		(*part)->Draw();
@@ -56,9 +55,6 @@ void SceneObject::GUI()
 {
 	ImGui::InputText("Name", &name);
 	transform.GUI();
-	if (renderer) {
-		renderer->GUI();
-	}
 	for (auto i = parts.begin(); i != parts.end(); i++)
 	{
 		(*i)->GUI();
