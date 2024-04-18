@@ -8,7 +8,7 @@
 #include "imgui_stdlib.h"
 
 SceneObject::SceneObject() :
-	transform(Transform(this, { 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f }, 1.0f))
+	transform(Transform(this))
 {
 }
 

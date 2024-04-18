@@ -80,13 +80,24 @@ bool Transform::HasChildren()
 	return !children.empty();
 }
 
-Transform::Transform(SceneObject* _sceneObject, glm::vec3 _position, glm::vec3 _rotation, float _scale) :
+Transform::Transform(SceneObject* _sceneObject, glm::vec3 _position, glm::quat _quaternion, float _scale) :
 	sceneObject(_sceneObject),
 	parent(nullptr),
 	position(_position),
-	rotation(_rotation),
+	quaternion(_quaternion),
+	euler(glm::degrees(glm::eulerAngles(_quaternion))),
 	scale(_scale)
 {
+}
+
+glm::quat Transform::getRotation() const
+{
+	return quaternion;
+}
+
+glm::vec3 Transform::getEulerRotation() const
+{
+	return euler;
 }
 
 glm::mat4 Transform::getLocalMatrix() const
@@ -94,10 +105,17 @@ glm::mat4 Transform::getLocalMatrix() const
 	glm::mat4 matrix = glm::mat4(1.0f);
 	matrix = glm::translate(matrix, position);
 	matrix = glm::scale(matrix, glm::vec3(scale));
-	matrix = glm::rotate(matrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	matrix = glm::rotate(matrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	matrix = glm::rotate(matrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	matrix = matrix * glm::mat4_cast(quaternion);
+	//matrix = glm::rotate(matrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	//matrix = glm::rotate(matrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	//matrix = glm::rotate(matrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 	return matrix;
+}
+
+void Transform::setRotation(glm::quat _quat)
+{
+	quaternion = _quat;
+	euler = glm::degrees(glm::eulerAngles(quaternion));
 }
 
 glm::mat4 Transform::getGlobalMatrix() const
@@ -108,12 +126,27 @@ glm::mat4 Transform::getGlobalMatrix() const
 	return getLocalMatrix();
 }
 
+void Transform::setEulerRotation(glm::vec3 _euler)
+{
+	euler = _euler;
+	quaternion = glm::quat(glm::radians(euler));
+}
+
 void Transform::GUI()
 {
 	std::string tag = PointerToString(this);
 
 	ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f);
-	ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &rotation[0], 0.1f);
+
+	if (ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &euler[0], 0.1f)) {
+		setEulerRotation(euler);
+	}
+	ImGui::BeginDisabled();
+	if (ImGui::DragFloat4(("Quaternion##transform" + tag).c_str(), &quaternion[0], 0.1f)) {
+		setRotation(quaternion);
+		//setEulerRotation(euler);
+	}
+	ImGui::EndDisabled();
 
 	ImGui::DragFloat(("Scale##transform" + tag).c_str(), &scale, 0.1f);
 }
