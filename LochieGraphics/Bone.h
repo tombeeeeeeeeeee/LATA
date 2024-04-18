@@ -7,31 +7,18 @@
 #include <vector>
 #include <string>
 
-struct KeyPosition {
+struct Key {
 	glm::vec3 position;
-	float timeStamp;
-};
-
-struct KeyRotation {
 	glm::quat orientation;
-	float timeStamp;
-};
-
-struct KeyScale {
 	glm::vec3 scale;
+	
 	float timeStamp;
 };
 
 class Bone {
 private:
-	// The key positions.
-	std::vector<KeyPosition> positions;
-
-	// The key rotations.
-	std::vector<KeyRotation> rotations;
-
-	// The key scales.
-	std::vector<KeyScale> scales;
+	// The keys
+	std::vector<Key> keys;
 
 	// The local transformation of the bone.
 	glm::mat4 localTransform;
@@ -76,16 +63,12 @@ public:
 	/// <returns>The bone index as an int</returns>
 	int getBoneID() const;
 
-	int getPositionIndex(float animationTime) const;
-	int getRotationIndex(float animationTime) const;
-	int getScaleIndex(float animationTime) const;
+	int getIndex(float animationTime) const;
 
 private:
 	
 	float getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const;
 
-	glm::mat4 InterpolatePosition(float animationTime);
-	glm::mat4 InterpolateRotation(float animationTime);
-	glm::mat4 InterpolateScaling(float animationTime);
+	glm::mat4 Interpolate(float animationTime);
 
 };

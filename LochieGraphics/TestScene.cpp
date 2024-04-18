@@ -14,8 +14,8 @@ TestScene::TestScene()
 		soulSpear,
 		testRedBox,
 		puppet,
-		vampire,
-		xbot
+		//vampire,
+		//xbot
 	};
 	lights = std::vector<Light*>{
 		&pointLights[0],
@@ -166,23 +166,30 @@ void TestScene::Update(float delta)
 		(*i)->Update(delta);
 	}
 
-	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
 	animateShader->Use();
+	animateShader->setMat4("projection", glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, 0.01f, 100.0f));
+	animateShader->setMat4("view", camera->GetViewMatrix());
+
+	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
 	for (int i = 0; i < xBotTransforms.size(); i++) {
 		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", xBotTransforms[i]);
 	}
-	animateShader->setMat4("projection", glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, 0.01f, 100.0f));
-	animateShader->setMat4("view", camera->GetViewMatrix());
 	animateShader->setMat4("model", xbot->transform.getGlobalMatrix());
 	xbot->Draw();
 
 	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
-	animateShader->Use();
 	for (int i = 0; i < vampTransforms.size(); i++) {
 		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", vampTransforms[i]);
 	}
 	animateShader->setMat4("model", vampire->transform.getGlobalMatrix());
 	vampire->Draw();
+
+	auto& puppetTransforms = puppetAnimator.getFinalBoneMatrices();
+	for (int i = 0; i < vampTransforms.size(); i++) {
+		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", puppetTransforms[i]);
+	}
+	animateShader->setMat4("model", puppet->transform.getGlobalMatrix());
+	puppet->Draw();
 }
 
 void TestScene::Draw()
