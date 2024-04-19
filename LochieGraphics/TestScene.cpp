@@ -34,7 +34,7 @@ void TestScene::Start()
 	litShader = ResourceManager::LoadShader("shaders/lit.vert", "shaders/lit.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
 	lightCubeShader = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
 	skyBoxShader = ResourceManager::LoadShader("shaders/cubemap.vert", "shaders/cubemap.frag");
-	animateShader = ResourceManager::LoadShader("shaders/animate.vert", "shaders/animate.frag");
+	animateShader = ResourceManager::LoadShader("shaders/animate.vert", "shaders/animate.frag", Shader::Flags::Animated);
 	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader };
 
 	std::string skyboxFaces[6] = {
@@ -138,8 +138,7 @@ void TestScene::Start()
 	vampireAnimator = Animator(&vampireWalk);
 
 	puppetAnimation = Animation("models/Character@LPunch4.fbx", &puppetModel);
-	//puppetAnimator = Animator(&puppetAnimation);
-	puppetAnimator = Animator(nullptr);
+	puppetAnimator = Animator(&puppetAnimation);
 }
 
 void TestScene::Update(float delta)

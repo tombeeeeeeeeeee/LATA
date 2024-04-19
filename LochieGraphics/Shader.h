@@ -33,8 +33,10 @@ private:
 	int updateFlag;
 public:
 	enum Flags {
+		None     = 0b00000000,
 		VPmatrix = 0b00000001,
 		Lit      = 0b00000010,
+		Animated = 0b00000100,
 		All      = 0b11111111,
 	};
 	int getFlag() const;
