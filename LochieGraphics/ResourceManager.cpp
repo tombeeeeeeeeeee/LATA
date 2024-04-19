@@ -99,7 +99,7 @@ void ResourceManager::GUI()
 			ImGui::TableSetColumnIndex(5);
 			ImGui::Text("Reload");
 
-			for (auto i = ResourceManager::textures.begin(); i != ResourceManager::textures.end(); i++)
+			for (auto i = textures.begin(); i != textures.end(); i++)
 			{
 				ImGui::TableNextRow();
 
@@ -148,7 +148,7 @@ void ResourceManager::GUI()
 	// TODO: Should be able to change the stuff of materials
 	if (ImGui::CollapsingHeader("Materials")) {
 
-		for (auto i = ResourceManager::materials.begin(); i != ResourceManager::materials.end(); i++)
+		for (auto i = materials.begin(); i != materials.end(); i++)
 		{
 			i->second.GUI();
 			ImGui::NewLine();
@@ -181,7 +181,7 @@ void ResourceManager::GUI()
 			ImGui::TableSetColumnIndex(6);
 			ImGui::Text("Reload");
 		}
-		for (auto i = ResourceManager::shaders.begin(); i != ResourceManager::shaders.end(); i++)
+		for (auto i = shaders.begin(); i != shaders.end(); i++)
 		{
 			ImGui::TableNextRow();
 
@@ -213,10 +213,16 @@ void ResourceManager::GUI()
 
 			ImGui::TableSetColumnIndex(6);
 			if (ImGui::Button(("Recompile##" + std::to_string(i->second.GLID)).c_str())) {
-				i->second.Load();
+				i->second.Load(); //TODO: When a shader reloads the materials need to also reload
 			}
 		}
+
 		ImGui::EndTable();
+
+		if (ImGui::Button("Create new Shader")) {
+			LoadShader("", "", Shader::Flags::None); //TODO: Use some template shader
+		}
+
 	}
 }
 
