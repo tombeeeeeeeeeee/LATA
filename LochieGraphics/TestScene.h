@@ -21,6 +21,7 @@ private:
 	Shader* lightCubeShader = nullptr;
 	Shader* skyBoxShader    = nullptr;
 	Shader* animateShader   = nullptr;
+	Shader* pbrShader       = nullptr;
 
 	Skybox* skybox;
 

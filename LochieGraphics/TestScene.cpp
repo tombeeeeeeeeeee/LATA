@@ -35,7 +35,8 @@ void TestScene::Start()
 	lightCubeShader = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
 	skyBoxShader = ResourceManager::LoadShader("shaders/cubemap.vert", "shaders/cubemap.frag");
 	animateShader = ResourceManager::LoadShader("shaders/animate.vert", "shaders/animate.frag", Shader::Flags::Animated);
-	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader };
+	pbrShader = ResourceManager::LoadShader("shaders/pbr.vert", "shaders/pbr.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
+	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader, pbrShader };
 
 	std::string skyboxFaces[6] = {
 		//"images/otherskybox/right.png",
@@ -85,10 +86,13 @@ void TestScene::Start()
 	backpack->transform.position = { -5.f, -1.f, 0.f };
 
 	testRedBoxModel = Model("models/normalBoxTest/Box_normal_example.obj");
-	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", litNormalShader);
+	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", pbrShader);
 	testRedBoxMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::diffuse, GL_REPEAT, true),
+		ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Metallic.png", Texture::Type::metallic, GL_REPEAT, true),
+			//ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_AO.png", Texture::Type::ao, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Roughness.png", Texture::Type::roughness, GL_REPEAT, true),
 	});
 	testRedBox->setRenderer(new ModelRenderer(&testRedBoxModel, testRedBoxMaterial));
 	testRedBox->transform.position = { 5.f, -3.f, 2.f };

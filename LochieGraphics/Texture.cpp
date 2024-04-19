@@ -15,6 +15,10 @@ const std::unordered_map<Texture::Type, std::string> Texture::TypeNames =
 	{ Type::normal, "normal" },
 	{ Type::height, "height" },
 	{ Type::emission, "emission" }, // TODO: Should cubemap be a type?
+	{ Type::albedo, "albedo" },
+	{ Type::metallic, "metallic" },
+	{ Type::roughness, "roughness" },
+	{ Type::ao, "ao" },
 };
 
 Texture::Texture(std::string _path, Type _type, int _wrappingMode, bool flip) :

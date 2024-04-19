@@ -21,7 +21,11 @@ public:
 		normal,
 		height,
 		emission,
-		count
+		albedo,
+		metallic,
+		roughness,
+		ao,
+		count // When adding types ensure to add the type name to the unordered map below
 	};
 	static const std::unordered_map<Type, std::string> TypeNames;
 
