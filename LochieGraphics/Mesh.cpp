@@ -87,7 +87,7 @@ Mesh::Mesh(Mesh&& other) noexcept
 
 void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices)
 {
-	assert(VAO == 0);
+	assert(VAO == 0); // TODO: Remove the assert here, just put an error and return
 
 	GenAndBind();
 
@@ -112,7 +112,7 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 		triCount = vertexCount / 3;
 	}
 
-	// unbind buffers
+	// Unbind buffers
 	Unbind();
 }
 
