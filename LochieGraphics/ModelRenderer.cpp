@@ -6,6 +6,8 @@
 #include "SceneObject.h"
 #include "ResourceManager.h"
 
+#include "Utilities.h"
+
 #include "imgui.h"
 
 ModelRenderer::ModelRenderer(Model* _model, unsigned long long _materialGUID) :
@@ -32,6 +34,16 @@ void ModelRenderer::Draw()
 void ModelRenderer::GUI()
 {
 	// TODO:
-	ImGui::Text(("Shader: " + std::to_string(material->getShader()->GLID)).c_str());
+	ImGui::Text(("Model: " + PointerToString(model)).c_str());
+
+	std::string tag = PointerToString(this);
+	unsigned long long newMaterialGUID = materialGUID;
+	if (ImGui::InputScalar(("Material##" + PointerToString(&materialGUID)).c_str(), ImGuiDataType_U64, &newMaterialGUID)) {
+		Material* newMaterial = ResourceManager::GetMaterial(newMaterialGUID);
+		if (newMaterial) {
+			materialGUID = newMaterialGUID;
+			material = newMaterial;
+		}
+	}
 }
 
