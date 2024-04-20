@@ -31,7 +31,7 @@ Animation::Animation(const std::string& animationPath, Model* model)
 	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
 	globalTransformation = globalTransformation.Inverse();
 
-	rootNode = new Transform(new SceneObject());
+	rootNode = &(new SceneObject())->transform;
 	SceneManager::scene->sceneObjects.push_back(rootNode->getSceneObject());
 	
 	ReadHierarchyData(rootNode, scene->mRootNode);
@@ -104,6 +104,9 @@ void Animation::ReadHierarchyData(Transform* dest, const aiNode* src)
 	}
 
 	dest->getSceneObject()->name = src->mName.data;
+	if (dest->getSceneObject()->name == "RootNode") {
+		std::cout << "t";
+	}
 
 	aiVector3D pos;
 	aiQuaternion rot;
@@ -120,7 +123,7 @@ void Animation::ReadHierarchyData(Transform* dest, const aiNode* src)
 
 	for (unsigned int i = 0; i < src->mNumChildren; i++)
 	{
-		Transform* newData = new Transform(new SceneObject);
+		Transform* newData = &(new SceneObject())->transform;
 		ReadHierarchyData(newData, src->mChildren[i]);
 		
 		//dest->AddChild(newData);

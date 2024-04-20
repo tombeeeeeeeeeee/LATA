@@ -45,10 +45,11 @@ void Transform::setParent(Transform* newParent)
 	if (parent) {
 		parent->RemoveChild(this);
 	}
-	parent = newParent;
-	if (newParent) {
-		newParent->AddChild(this);
+	if (!newParent) {
+		parent = nullptr;
+		return;
 	}
+	newParent->AddChild(this);
 }
 
 void Transform::AddChild(Transform* newChild)
