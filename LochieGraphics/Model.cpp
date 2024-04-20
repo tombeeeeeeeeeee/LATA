@@ -50,3 +50,8 @@ void Model::Draw()
 		mesh->Draw();
 	}
 }
+
+const std::vector<Mesh>& Model::getMeshes() const
+{
+	return meshes;
+}
