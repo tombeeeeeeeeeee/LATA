@@ -206,19 +206,20 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 	delete[] vertices;
 }
 
-void Mesh::InitialiseQuad()
+void Mesh::InitialiseQuad(float size)
 {
 	// TODO: Fix pre set shapes
-	//const unsigned int vertexCount = 6;
-	//Vertex vertices[vertexCount] = {
-	//	{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
-	//	{ { -0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } }, // Top left
-	//	{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
-	//	{ {  0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } }, // Top right
-	//	{ { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Bottom left
-	//	{ {  0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } } // Bottom right
-	//};
-	//Initialise(vertexCount, vertices);
+	// TODO: This might be 'upside down' cause its only being used for the framebuffer atm
+	const unsigned int vertexCount = 6;
+	Vertex vertices[vertexCount] = {
+		{ {  size,  size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } }, // Top right
+		{ { -size,  size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Top left
+		{ { -size, -size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } }, // Bottom left
+		{ {  size,  size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } }, // Top right
+		{ { -size, -size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } }, // Bottom left
+		{ {  size, -size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } } // Bottom right
+	};
+	Initialise(vertexCount, vertices);
 }
 
 // TODO: Maybe a function that initialises a shape as double sided instead of a specific version for each

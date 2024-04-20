@@ -50,7 +50,7 @@ public:
 	// UV Sphere
 	// Quad Sphere
 	// Goldberg Polyhedra
-	void InitialiseQuad();
+	void InitialiseQuad(float size = 0.5f);
 	void InitialiseDoubleSidedQuad();
 	void InitialiseCube();
 	void InitialiseCubeInsideOut();
