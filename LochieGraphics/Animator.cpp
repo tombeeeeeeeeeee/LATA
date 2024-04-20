@@ -1,5 +1,7 @@
 #include "Animator.h"
 
+#include "SceneObject.h"
+
 Animator::Animator(Animation* animation) :
     currentAnimation(animation)
 {
@@ -19,7 +21,7 @@ void Animator::UpdateAnimation(float delta)
     }
     currentTime += currentAnimation->getTicksPerSecond() * delta;
     currentTime = fmod(currentTime, currentAnimation->getDuration());
-    CalculateBoneTransform(&currentAnimation->getRootNode(), glm::mat4(1.0f));
+    CalculateBoneTransform(currentAnimation->getRootNode(), glm::mat4(1.0f));
 }
 
 void Animator::PlayAnimation(Animation* animation)
@@ -28,9 +30,9 @@ void Animator::PlayAnimation(Animation* animation)
     currentTime = 0.0f;
 }
 
-void Animator::CalculateBoneTransform(const NodeData* node, glm::mat4 parentTransform)
+void Animator::CalculateBoneTransform(const Transform* node, glm::mat4 parentTransform)
 {
-    std::string nodeName = node->name;
+    std::string nodeName = node->getSceneObject()->name;
     glm::mat4 globalTransformation;
     Bone* Bone = currentAnimation->FindBone(nodeName);
 
@@ -40,7 +42,7 @@ void Animator::CalculateBoneTransform(const NodeData* node, glm::mat4 parentTran
         globalTransformation = parentTransform * Bone->getLocalTransform();
     }
     else {
-        globalTransformation = parentTransform * node->transformation;
+        globalTransformation = parentTransform * node->getLocalMatrix();
     }
 
     auto& boneInfoMap = currentAnimation->getBoneIDMap();
@@ -53,8 +55,8 @@ void Animator::CalculateBoneTransform(const NodeData* node, glm::mat4 parentTran
     }
 
     // Recursively call on children
-    for (int i = 0; i < node->children.size(); i++) {
-        CalculateBoneTransform(&node->children[i], globalTransformation);
+    for (int i = 0; i < node->getChildren().size(); i++) {
+        CalculateBoneTransform(node->getChildren()[i], globalTransformation);
     }
 }
 

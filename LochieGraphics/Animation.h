@@ -3,6 +3,7 @@
 #include "Bone.h"
 #include "Model.h"
 #include "NodeData.h"
+#include "Transform.h"
 
 #include "assimp/scene.h"
 
@@ -21,7 +22,7 @@ private:
 	std::vector<Bone> bones = {};
 
 	// The root node of the bones
-	NodeData rootNode;
+	Transform* rootNode;
 
 	// String to bone infos
 	std::unordered_map<std::string, BoneInfo> boneInfoMap;
@@ -48,13 +49,13 @@ public:
 
 	float getDuration() const;
 
-	const NodeData& getRootNode() const;
+	const Transform* getRootNode() const;
 
 	const std::unordered_map<std::string, BoneInfo>& getBoneIDMap() const;
 
 private:
 	void ReadMissingBones(const aiAnimation* animation, Model& model);
 
-	void ReadHierarchyData(NodeData& dest, const aiNode* src);
+	void ReadHierarchyData(Transform* dest, const aiNode* src);
 };
 

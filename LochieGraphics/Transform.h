@@ -11,7 +11,7 @@ class Transform
 private:
 	Transform* parent = nullptr;
 	std::vector<Transform*> children = {};
-	SceneObject* sceneObject;
+	SceneObject* sceneObject = nullptr;
 	glm::quat quaternion;
 	glm::vec3 euler;
 public:

@@ -36,9 +36,11 @@ bool Transform::isChildOf(Transform* transform) const
 
 void Transform::setParent(Transform* newParent)
 {
-	if (newParent->isChildOf(this)) {
-		std::cout << "Error, Unemplemented Behaviour, trying to set the parent of a transform as its child\n";
-		return;
+	if (newParent) {
+		if (newParent->isChildOf(this)) {
+			std::cout << "Error, Unemplemented Behaviour, trying to set the parent of a transform as its child\n";
+			return;
+		}
 	}
 	if (parent) {
 		parent->RemoveChild(this);

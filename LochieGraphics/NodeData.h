@@ -6,8 +6,8 @@
 #include <vector>
 
 // TODO: Rename class
-struct NodeData {
-	glm::mat4 transformation;
-	std::string name;
-	std::vector<NodeData> children;
-};
+//struct NodeData {
+//	glm::mat4 transformation;
+//	std::string name;
+//	std::vector<NodeData> children;
+//};

@@ -1,6 +1,8 @@
 #include "Animation.h"
 
+#include "SceneObject.h"
 #include "AssimpMatrixToGLM.h"
+#include "SceneManager.h"
 
 #include <assimp/Importer.hpp>
 
@@ -10,7 +12,9 @@ Animation::Animation(const std::string& animationPath, Model* model)
 {
 	Assimp::Importer importer;
 	// TODO: what flags should be set here
+	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
+
 	
 	// If either the scene or the root node is null, then the animation has failed to load
 	if (!(scene && scene->mRootNode)) {
@@ -27,7 +31,9 @@ Animation::Animation(const std::string& animationPath, Model* model)
 	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
 	globalTransformation = globalTransformation.Inverse();
 
-
+	rootNode = new Transform(new SceneObject());
+	SceneManager::scene->sceneObjects.push_back(rootNode->getSceneObject());
+	
 	ReadHierarchyData(rootNode, scene->mRootNode);
 	ReadMissingBones(animation, *model);
 }
@@ -63,7 +69,7 @@ float Animation::getDuration() const
 	return duration;
 }
 
-const NodeData& Animation::getRootNode() const
+const Transform* Animation::getRootNode() const
 {
 	return rootNode;
 }
@@ -90,21 +96,37 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 	boneInfoMap = newBoneInfoMap;
 }
 
-void Animation::ReadHierarchyData(NodeData& dest, const aiNode* src)
+void Animation::ReadHierarchyData(Transform* dest, const aiNode* src)
 {
 	if (!src) {
 		std::cout << "Error, Failed to read animation hierarchy\n";
 		return;
 	}
 
-	dest.name = src->mName.data;
-	dest.transformation = AssimpMatrixToGLM(src->mTransformation);
-	dest.children.reserve(src->mNumChildren);
+	dest->getSceneObject()->name = src->mName.data;
+
+	aiVector3D pos;
+	aiQuaternion rot;
+	aiVector3D scale;
+
+	src->mTransformation.Decompose(scale, rot, pos);
+	dest->position = AssimpVecToGLM(pos);
+	dest->setRotation(AssimpQuatToGLM(rot)); // TODO: should be quat instead
+	dest->scale = scale.x;
+	
+	
+	//dest.transform.chi children.reserve(src->mNumChildren);
+
 
 	for (unsigned int i = 0; i < src->mNumChildren; i++)
 	{
-		NodeData newData;
+		Transform* newData = new Transform(new SceneObject);
 		ReadHierarchyData(newData, src->mChildren[i]);
-		dest.children.push_back(newData);
+		
+		//dest->AddChild(newData);
+		newData->setParent(dest);
+
+		SceneManager::scene->sceneObjects.push_back(newData->getSceneObject());
+
 	}
 }

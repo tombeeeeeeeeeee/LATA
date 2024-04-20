@@ -16,8 +16,9 @@ enum class WindowModes {
 
 class SceneManager
 {
-private:
+public:
 	static Scene* scene;
+private:
 
 	// Window
 	static WindowModes windowMode;

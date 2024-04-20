@@ -39,7 +39,7 @@ public:
 	/// </summary>
 	/// <param name="node">The node to calculate the transform of</param>
 	/// <param name="parentTransform">The parent transformation</param>
-	void CalculateBoneTransform(const NodeData* node, glm::mat4 parentTransform);
+	void CalculateBoneTransform(const Transform* node, glm::mat4 parentTransform);
 
 	/// <summary>
 	/// Returns a reference to the bone matrices.
