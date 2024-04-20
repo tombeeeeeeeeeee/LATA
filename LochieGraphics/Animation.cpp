@@ -8,13 +8,13 @@
 
 #include <iostream>
 
-Animation::Animation(const std::string& animationPath, Model* model)
+Animation::Animation(const std::string& animationPath, Model* _model) :
+	model(_model)
 {
 	Assimp::Importer importer;
 	// TODO: what flags should be set here
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
-
 	
 	// If either the scene or the root node is null, then the animation has failed to load
 	if (!(scene && scene->mRootNode)) {
@@ -31,10 +31,10 @@ Animation::Animation(const std::string& animationPath, Model* model)
 	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
 	globalTransformation = globalTransformation.Inverse();
 
-	rootNode = &(new SceneObject())->transform;
-	SceneManager::scene->sceneObjects.push_back(rootNode->getSceneObject());
+	//rootNode = &(new SceneObject())->transform;
+	//SceneManager::scene->sceneObjects.push_back(rootNode->getSceneObject());
 	
-	ReadHierarchyData(rootNode, scene->mRootNode);
+	//ReadHierarchyData(rootNode, scene->mRootNode);
 	ReadMissingBones(animation, *model);
 }
 
@@ -71,7 +71,7 @@ float Animation::getDuration() const
 
 const Transform* Animation::getRootNode() const
 {
-	return rootNode;
+	return &model->root->transform;
 }
 
 const std::unordered_map<std::string, BoneInfo>& Animation::getBoneIDMap() const
@@ -83,7 +83,7 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 {
 	std::unordered_map<std::string, BoneInfo>& newBoneInfoMap = model.boneInfoMap;
 
-	for (int i = 0; i < animation->mNumChannels; i++)
+	for (unsigned int i = 0; i < animation->mNumChannels; i++)
 	{
 		aiNodeAnim* channel = animation->mChannels[i];
 		std::string boneName = channel->mNodeName.data;
@@ -114,7 +114,7 @@ void Animation::ReadHierarchyData(Transform* dest, const aiNode* src)
 
 	src->mTransformation.Decompose(scale, rot, pos);
 	dest->position = AssimpVecToGLM(pos);
-	dest->setRotation(AssimpQuatToGLM(rot)); // TODO: should be quat instead
+	dest->setRotation(AssimpQuatToGLM(rot));
 	dest->scale = scale.x;
 	
 	
@@ -129,7 +129,7 @@ void Animation::ReadHierarchyData(Transform* dest, const aiNode* src)
 		//dest->AddChild(newData);
 		newData->setParent(dest);
 
-		SceneManager::scene->sceneObjects.push_back(newData->getSceneObject());
+		//SceneManager::scene->sceneObjects.push_back(newData->getSceneObject());
 
 	}
 }

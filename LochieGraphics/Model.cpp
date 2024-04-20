@@ -1,5 +1,9 @@
 #include "Model.h"
 
+#include "Animation.h"
+#include "SceneObject.h"
+#include "SceneManager.h"
+
 #include <iostream>
 #include <assimp/Importer.hpp>
 #include "assimp/postprocess.h"
@@ -16,9 +20,14 @@ Model::Model(std::string path, bool flipTexturesOnLoad)
 // TODO: Models can no longer flip textures on load as they are always loaded seperatly now
 void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 {
-	//Assimp::Importer importer;
+	Assimp::Importer importer;
 
-	const aiScene* scene = aiImportFile(path.c_str(), Mesh::aiLoadFlag);
+	//const aiScene* scene = aiImportFile(path.c_str(), Mesh::aiLoadFlag);
+
+
+
+	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+	const aiScene* scene = importer.ReadFile(path.c_str(), Mesh::aiLoadFlag);
 
 	if (scene == nullptr) {
 		// TODO: assimp has error messages, get it and put it here
@@ -37,7 +46,11 @@ void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 		meshes[i].InitialiseFromAiMesh(path, scene, &boneInfoMap, mesh, flipTexturesOnLoad);
 	}
 
-	aiReleaseImport(scene);
+	root = new SceneObject();
+	//SceneManager::scene->sceneObjects.push_back(root);
+	Animation::ReadHierarchyData(&root->transform, scene->mRootNode);
+	// TODO: Do I need to do this, check exactly what should be done
+	//aiReleaseImport(scene);
 }
 
 void Model::AddMesh(Mesh* mesh)

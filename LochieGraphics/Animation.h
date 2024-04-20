@@ -21,13 +21,16 @@ private:
 	// The bones apart of the model for this animation
 	std::vector<Bone> bones = {};
 
-	// The root node of the bones
-	Transform* rootNode;
+	//// The root node of the bones
+	//Transform* rootNode;
 
 	// String to bone infos
 	std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
 public:
+
+	Model* model = nullptr;
+
 	Animation() {};
 
 	/// <summary>
@@ -35,7 +38,7 @@ public:
 	/// </summary>
 	/// <param name="animationPath">The path to the animation file</param>
 	/// <param name="model">The model this animation is for</param>
-	Animation(const std::string& animationPath, Model* model);
+	Animation(const std::string& animationPath, Model* _model);
 	
 	/// <summary>
 	/// Returns a pointer to the bone with the given name.
@@ -56,6 +59,8 @@ public:
 private:
 	void ReadMissingBones(const aiAnimation* animation, Model& model);
 
-	void ReadHierarchyData(Transform* dest, const aiNode* src);
+	// TODO: move this?
+public:
+	static void ReadHierarchyData(Transform* dest, const aiNode* src);
 };
 

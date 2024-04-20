@@ -5,6 +5,8 @@
 
 #include <unordered_map>
 
+class SceneObject;
+
 class Model
 {
 public:
@@ -13,6 +15,8 @@ public:
 
 	Model();
 	Model(std::string path, bool flipTexturesOnLoad = true);
+
+	SceneObject* root;
 
 	void LoadModel(std::string path, bool flipTexturesOnLoad = true);
 	void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
