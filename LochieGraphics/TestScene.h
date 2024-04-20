@@ -23,6 +23,8 @@ private:
 	Shader* animateShader   = nullptr;
 	Shader* pbrShader       = nullptr;
 	Shader* screenShader    = nullptr;
+	Shader* shadowMapDepth  = nullptr;
+	Shader* shadowMapping   = nullptr;
 
 	Skybox* skybox;
 
@@ -39,6 +41,10 @@ private:
 	unsigned int framebuffer;
 	unsigned int textureColorbuffer;
 	unsigned int rbo;
+
+	unsigned int depthMapFBO;
+	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+	unsigned int depthMap;
 
 
 	SceneObject* backpack   = new SceneObject();
@@ -82,4 +88,8 @@ public:
 	void OnWindowResize() override;
 
 	~TestScene() override;
+
+private:
+
+	void LoadRenderBuffer();
 };
