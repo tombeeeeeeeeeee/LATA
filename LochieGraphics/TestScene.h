@@ -22,6 +22,7 @@ private:
 	Shader* skyBoxShader    = nullptr;
 	Shader* animateShader   = nullptr;
 	Shader* pbrShader       = nullptr;
+	Shader* screenShader    = nullptr;
 
 	Skybox* skybox;
 
@@ -33,6 +34,12 @@ private:
 	Model puppetModel;
 	Model xbotModel;
 	Model vampireModel;
+
+	Mesh screenQuad;
+	unsigned int framebuffer;
+	unsigned int textureColorbuffer;
+	unsigned int rbo;
+
 
 	SceneObject* backpack   = new SceneObject();
 	SceneObject* soulSpear  = new SceneObject();
@@ -67,8 +74,12 @@ public:
 
 	TestScene();
 	void Start() override;
+	void EarlyUpdate() override;
 	void Update(float delta) override;
 	void Draw() override;
 	void GUI() override;
+
+	void OnWindowResize() override;
+
 	~TestScene() override;
 };

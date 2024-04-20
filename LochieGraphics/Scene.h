@@ -26,11 +26,14 @@ public:
 	unsigned int* windowHeight;
 
 	virtual void Start() {};
+	virtual void EarlyUpdate() {};
 	virtual void Update(float delta) = 0;
 	virtual void Draw() = 0;
 	// TODO: Maybe move some of the GUI code that is in the GUI class here
 	void BaseGUI();
 	virtual void GUI() {};
+
+	virtual void OnWindowResize() {};
 
 	Scene();
 	virtual ~Scene();

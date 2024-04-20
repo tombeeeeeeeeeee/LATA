@@ -38,7 +38,8 @@ SceneManager::SceneManager(Scene* _scene)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	glfwWindowHint(GLFW_SAMPLES, 16); // for MSAA
+	//TODO:
+	//glfwWindowHint(GLFW_SAMPLES, 16); // for MSAA
 
 
 #if _DEBUG  
@@ -106,8 +107,9 @@ SceneManager::SceneManager(Scene* _scene)
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
 
+	//TODO:
 	// MSAA
-	glEnable(GL_MULTISAMPLE);
+	//glEnable(GL_MULTISAMPLE);
 
 	// Draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -152,6 +154,8 @@ void SceneManager::Update()
 	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.01f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 viewProjection = projection * view;
+
+	scene->EarlyUpdate();
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -212,6 +216,8 @@ void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int he
 	glViewport(0, 0, width, height);
 	windowWidth = width;
 	windowHeight = height;
+
+	scene->OnWindowResize();
 }
 
 void SceneManager::MouseMoveCallback(GLFWwindow* window, double xposIn, double yposIn)

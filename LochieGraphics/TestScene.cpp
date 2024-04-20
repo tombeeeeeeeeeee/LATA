@@ -36,7 +36,10 @@ void TestScene::Start()
 	skyBoxShader = ResourceManager::LoadShader("shaders/cubemap.vert", "shaders/cubemap.frag");
 	animateShader = ResourceManager::LoadShader("shaders/animate.vert", "shaders/animate.frag", Shader::Flags::Animated);
 	pbrShader = ResourceManager::LoadShader("shaders/pbr.vert", "shaders/pbr.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
-	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader, pbrShader };
+	screenShader = ResourceManager::LoadShader("shaders/framebuffer.vert", "shaders/framebuffer.frag");
+
+	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader, pbrShader, screenShader };
+
 
 	std::string skyboxFaces[6] = {
 		//"images/otherskybox/right.png",
@@ -63,6 +66,8 @@ void TestScene::Start()
 	});
 	cubeModel.AddMesh(new Mesh(Mesh::presets::cube));
 	boxes->setRenderer(new ModelRenderer(&cubeModel, boxMaterial));
+	boxes->transform.scale = 30.0f;
+	boxes->transform.position = { 0.f , -20.f, 0.f };
 
 	Material* lightCubeMaterial = ResourceManager::LoadMaterial("lightCube", lightCubeShader);
 	lightCube->setRenderer(new ModelRenderer(&cubeModel, lightCubeMaterial));
@@ -143,6 +148,39 @@ void TestScene::Start()
 
 	puppetAnimation = Animation("models/Character@LPunch4.fbx", &puppetModel);
 	puppetAnimator = Animator(&puppetAnimation);
+
+	screenQuad.InitialiseQuad(1.0f);
+
+	glGenFramebuffers(1, &framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	// create a color attachment texture
+	glGenTextures(1, &textureColorbuffer);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, *windowWidth, *windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+	// create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	// use a single renderbuffer object for both a depth AND stencil buffer.
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, *windowWidth, *windowHeight);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
+	// now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << "\n";
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+}
+
+void TestScene::EarlyUpdate()
+{
+	// bind to framebuffer and draw scene as we normally would to color texture 
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
 }
 
 void TestScene::Update(float delta)
@@ -203,6 +241,18 @@ void TestScene::Draw()
 		(*i)->Draw();
 	}
 	skybox->Draw();
+
+	// now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+
+	screenShader->Use();
+	//glBindVertexArray(screenQuad);
+	glActiveTexture(GL_TEXTURE0 + 1);
+	screenShader->setSampler("screenTexture", 1);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
+	screenQuad.Draw();
+	//glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 void TestScene::GUI()
@@ -215,6 +265,41 @@ void TestScene::GUI()
 	ImGui::End();
 }
 
+void TestScene::OnWindowResize()
+{
+	glDeleteRenderbuffers(1, &rbo);
+	glDeleteFramebuffers(1, &framebuffer);
+	glDeleteTextures(1, &textureColorbuffer);
+
+
+	glGenFramebuffers(1, &framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	// create a color attachment texture
+	glGenTextures(1, &textureColorbuffer);
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, *windowWidth, *windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+	// create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	// use a single renderbuffer object for both a depth AND stencil buffer.
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, *windowWidth, *windowHeight);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
+	// now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << "\n";
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 TestScene::~TestScene()
 {
+	glDeleteRenderbuffers(1, &rbo);
+	glDeleteFramebuffers(1, &framebuffer);
+	glDeleteTextures(1, &textureColorbuffer);
+
 }
