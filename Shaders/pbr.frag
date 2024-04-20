@@ -61,7 +61,8 @@ uniform Material material;
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
-vec3 fresnelSchlick(float cosTheta, vec3 F0);
+vec3 FresnelSchlick(float cosTheta, vec3 F0);
+vec3 Radiance(vec3 lightDir, float distanceToLight, vec3 normal, float constant, float linear, float quadratic, vec3 diffuse);
 
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal);
 vec3 CalcPointLight(PointLight light, int index, vec3 normal);
@@ -70,8 +71,6 @@ vec3 CalcSpotlight(Spotlight light, vec3 normal);
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight);
 
 vec3 viewDir;
-//vec4 diffuseColour;
-//vec4 specularColour;
 
 vec3 F0;
 
@@ -113,7 +112,7 @@ void main()
     }
     
     // Spot light
-    //result += max(CalcSpotlight(spotlight, normal), 0);
+    result += max(CalcSpotlight(spotlight, normal), 0);
 
     // Alpha discarding 
 //    if(texture(material.albedo1, TexCoords).a < alphaDiscard) {
@@ -157,10 +156,36 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
     return ggx1 * ggx2;
 }
 
-vec3 fresnelSchlick(float cosTheta, vec3 F0)
+vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }  
+
+vec3 Radiance(vec3 lightDir, float distanceToLight, vec3 normal, float constant, float linear, float quadratic, vec3 diffuse) {
+    
+    // calculate per-light radiance
+    vec3 H = normalize(viewDir + lightDir);
+    float attenuation = CalcAttenuation(constant, linear, quadratic, distanceToLight);
+    // float attenuation = 1.0 / (distance * distance); // TODO: Switch with function?
+    vec3 radiance     = diffuse * attenuation;        
+        
+    // cook-torrance brdf
+    float NDF = DistributionGGX(normal, H, roughness);        
+    float G   = GeometrySmith(normal, viewDir, lightDir, roughness);      
+    vec3 F    = FresnelSchlick(max(dot(H, viewDir), 0.0), F0);       
+        
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;
+        
+    vec3 numerator    = NDF * G * F;
+    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(dot(normal, lightDir), 0.0) + 0.0001;
+    vec3 specular     = numerator / denominator;  
+            
+    // add to outgoing radiance Lo
+    float NdotL = max(dot(normal, lightDir), 0.0);                
+    return (kD * albedo / PI + specular) * radiance * NdotL; 
+}
 
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal)
 {
@@ -187,41 +212,12 @@ vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal)
 
 vec3 CalcPointLight(PointLight light, int i, vec3 normal)
 {
-    // calculate per-light radiance
-    vec3 lightDir = normalize(TangentPointLightsPos[i] - TangentFragPos);
-    vec3 H = normalize(viewDir + lightDir);
-    float distance    = length(light.position - FragPos);
-    float distanceToLight = length(TangentPointLightsPos[i] - TangentFragPos);
-    float attenuation = CalcAttenuation(light.constant, light.linear, light.quadratic, distanceToLight);
-    // float attenuation = 1.0 / (distance * distance); // TODO: Switch with function?
-    vec3 radiance     = light.diffuse * attenuation;        
-        
-    // cook-torrance brdf
-    float NDF = DistributionGGX(normal, H, roughness);        
-    float G   = GeometrySmith(normal, viewDir, lightDir, roughness);      
-    vec3 F    = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);       
-        
-    vec3 kS = F;
-    vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - metallic;
-        
-    vec3 numerator    = NDF * G * F;
-    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(dot(normal, lightDir), 0.0) + 0.0001;
-    vec3 specular     = numerator / denominator;  
-            
-    // add to outgoing radiance Lo
-    float NdotL = max(dot(normal, lightDir), 0.0);                
-    return (kD * albedo / PI + specular) * radiance * NdotL; 
+    vec3 radiance = Radiance(normalize(TangentPointLightsPos[i] - TangentFragPos), length(TangentPointLightsPos[i] - TangentFragPos), normal, light.constant, light.linear, light.quadratic, light.diffuse);
 
-//    vec3 lightDir = normalize(TangentPointLightsPos[i] - TangentFragPos);
-//
-//    // Ambient
-//    vec3 ambient = light.ambient * vec3(diffuseColour);
-//
-//    // Diffuse
-//    float diff = max(dot(lightDir, normal), 0.0);
-//    vec3 diffuse = light.diffuse * diff * vec3(diffuseColour);
-//
+    vec3 ambient = light.ambient * albedo;
+
+    return radiance + ambient;
+
 //    // Specular
 //    vec3 reflectDir = reflect(-lightDir, normal);
 //    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
@@ -239,30 +235,20 @@ vec3 CalcPointLight(PointLight light, int i, vec3 normal)
     
 }
 
-//vec3 CalcSpotlight(Spotlight light, vec3 normal) {
+vec3 CalcSpotlight(Spotlight light, vec3 normal) {
 //    
 //    vec3 lightDir = normalize(TangentSpotlightPos - TangentFragPos);
 //
-//    // Spotlight stuff
-//    float theta = dot(normalize(light.position - FragPos), normalize(-light.direction));
-//    float epsilon = light.cutOff - light.outerCutOff;
-//    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
-//
-//    // Ambient
-//    vec3 ambient = light.ambient * diffuseColour.rgb;
-//    
-//    // Diffuse
-//    float diff = max(dot(normal, lightDir), 0.0);
-//    vec3 diffuse = light.diffuse * diff * diffuseColour.rgb;
-//
-//    // Specular
-//    vec3 reflectDir = reflect(-lightDir, normal);
-//    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-//    vec3 specular = light.specular * spec * specularColour.rgb;
-//    
-//    // Attenuation
-//    float distanceToLight  = length(TangentSpotlightPos - TangentFragPos);
-//    float attenuation = CalcAttenuation(light.constant, light.linear, light.quadratic, distanceToLight);    
+    // Spotlight stuff
+    float theta = dot(normalize(light.position - FragPos), normalize(-light.direction));
+    float epsilon = light.cutOff - light.outerCutOff;
+    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+
+    vec3 radiance = Radiance(normalize(TangentSpotlightPos - TangentFragPos), length(TangentSpotlightPos - TangentFragPos), normal, light.constant, light.linear, light.quadratic, light.diffuse);
+
+    vec3 ambient = light.ambient * albedo;
+
+    return (radiance + ambient) * intensity;     
 //    
 //    ambient  *= attenuation * intensity;
 //    diffuse  *= attenuation * intensity;
@@ -270,7 +256,7 @@ vec3 CalcPointLight(PointLight light, int i, vec3 normal)
 //
 //    // Combine results
 //    return ambient + diffuse + specular;
-//}
+}
 
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight) {
     return 1.0 / (constant + linear * distanceToLight + quadratic * (distanceToLight * distanceToLight));
