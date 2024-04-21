@@ -139,4 +139,7 @@ void Camera::GUI()
     ImGui::DragFloat("Movement Speed##Camera", &movementSpeed);
     ImGui::DragFloat("Sensitivity##Camera", &sensitivity);
     ImGui::DragFloat("FOV##Camera", &fov);
+
+    ImGui::DragFloat("Near plane##Camera", &nearPlane, 0.01f, 0.01f, FLT_MAX);
+    ImGui::DragFloat("Far plane##Camera", &farPlane, 0.01f, 0.01f, FLT_MAX);
 }
