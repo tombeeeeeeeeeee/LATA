@@ -16,7 +16,22 @@ enum class WindowModes {
 
 class SceneManager
 {
+private:
+
+	// Camera
+	static Camera camera;
+	static float lastX;
+	static float lastY;
+	static bool firstMouse;
+	static bool lockedCamera;
+	static bool oppositeCameraMode;
+
+	// Time
+	static float deltaTime;
+	float lastFrame = 0.0f;
 public:
+	static FixedSizeQueue<float, 300> frameTimes;
+
 	static Scene* scene;
 private:
 
@@ -39,21 +54,6 @@ private:
 
 	static void ProcessInput(GLFWwindow* window);
 	static void ToggleFullscreen(); // TODO: fullscreen for correct monitor and remember size and pos
-
-	// Time
-	static float deltaTime;
-	float lastFrame = 0.0f;
-public:
-	static FixedSizeQueue<float, 300> frameTimes;
-private:
-
-	// Camera
-	static Camera camera;
-	static float lastX;
-	static float lastY;
-	static bool firstMouse;
-	static bool lockedCamera;
-	static bool oppositeCameraMode;
 	
 public:
 
@@ -65,5 +65,6 @@ public:
 
 	void Update();
 	bool ShouldClose() const;
+
 };
 

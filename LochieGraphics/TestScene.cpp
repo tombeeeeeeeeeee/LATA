@@ -13,7 +13,7 @@ TestScene::TestScene()
 		backpack,
 		soulSpear,
 		testRedBox,
-		puppet,
+		//puppet,
 		//vampire,
 		//xbot
 	};
@@ -250,7 +250,7 @@ void TestScene::Draw()
 	float near_plane = camera->nearPlane, far_plane = camera->farPlane;
 	//lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
 	lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-	lightView = glm::lookAt((-5.f * directionalLight.direction), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+	lightView = glm::lookAt((-20.f * directionalLight.direction), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	lightSpaceMatrix = lightProjection * lightView;
 	// render scene from light's point of view 
 	shadowMapDepth->Use();
@@ -260,14 +260,14 @@ void TestScene::Draw()
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
-
+	//glCullFace(GL_FRONT);
 	//RENDER SCENE
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
 		(*i)->Draw(shadowMapDepth); // TODO: Make the shadow map depth support animated
 	}
 	skybox->Draw();
-
+	//glCullFace(GL_BACK);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
