@@ -206,18 +206,18 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 	delete[] vertices;
 }
 
-void Mesh::InitialiseQuad(float size)
+void Mesh::InitialiseQuad(float size, float offset)
 {
 	// TODO: Fix pre set shapes
 	// TODO: This might be 'upside down' cause its only being used for the framebuffer atm
 	const unsigned int vertexCount = 6;
 	Vertex vertices[vertexCount] = {
-		{ {  size,  size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } }, // Top right
-		{ { -size,  size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Top left
-		{ { -size, -size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } }, // Bottom left
-		{ {  size,  size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } }, // Top right
-		{ { -size, -size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } }, // Bottom left
-		{ {  size, -size, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } } // Bottom right
+		{ {  size + offset,  size + offset, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } }, // Top right
+		{ { -size + offset,  size + offset, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 1.0f } }, // Top left
+		{ { -size + offset, -size + offset, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } }, // Bottom left
+		{ {  size + offset,  size + offset, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } }, // Top right
+		{ { -size + offset, -size + offset, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 0.0f, 0.0f } }, // Bottom left
+		{ {  size + offset, -size + offset, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 0.0f } } // Bottom right
 	};
 	Initialise(vertexCount, vertices);
 }

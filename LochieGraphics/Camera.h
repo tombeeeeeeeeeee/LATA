@@ -25,6 +25,9 @@ public:
     float sensitivity;
     float fov;
 
+    float nearPlane;
+    float farPlane;
+
     enum Direction {
         FORWARD,
         BACKWARD,

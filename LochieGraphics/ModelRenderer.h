@@ -18,7 +18,7 @@ public:
 	ModelRenderer(Model* _model, unsigned long long _materialGUID);
 	ModelRenderer(Model* _model, Material* _material);
 
-	virtual void Draw() override;
+	virtual void Draw(Shader* override) override;
 	virtual void GUI() override;
 };
 

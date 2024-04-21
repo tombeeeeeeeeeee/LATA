@@ -24,10 +24,15 @@ ModelRenderer::ModelRenderer(Model* _model, Material* _material) :
 	materialGUID = material->GUID;
 }
 
-void ModelRenderer::Draw()
+void ModelRenderer::Draw(Shader* override)
 {
-	material->Use();
-	material->getShader()->setMat4("model", sceneObject->transform.getGlobalMatrix());
+	if (!override/* || material->getShader() == override*/) {
+		material->Use();
+		material->getShader()->setMat4("model", sceneObject->transform.getGlobalMatrix());
+	}
+	else {
+		override->setMat4("model", sceneObject->transform.getGlobalMatrix());
+	}
 	model->Draw();
 }
 

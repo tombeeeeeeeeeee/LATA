@@ -114,6 +114,8 @@ SceneManager::SceneManager(Scene* _scene)
 	// Draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	camera.nearPlane = 0.5f;
+	camera.farPlane = 30.0f;
 	scene->camera = &camera;
 
 	scene->windowWidth = &windowWidth;
@@ -151,14 +153,15 @@ void SceneManager::Update()
 	frameTimes.Push(deltaTime);
 
 	ProcessInput(window);
-	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, 0.01f, 100.0f);
+	
+	glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, camera.nearPlane, camera.farPlane);
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 viewProjection = projection * view;
 
 	scene->EarlyUpdate();
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();

@@ -102,11 +102,11 @@ void Material::Use()
 	// Unbinds any extra assigned textures, this is so if a mesh only has one diffuse, the previously set specular from another mesh isn't used.
 	//for (unsigned int i = textures.size(); i < textures.size() + 5; i++)
 	// TODO: This might not be needed anymore
-	for (unsigned int i = 0; i < 10; i++)
-	{
-		glActiveTexture(GL_TEXTURE0 + i );
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+	//for (unsigned int i = 0; i < 10; i++)
+	//{
+	//	glActiveTexture(GL_TEXTURE0 + i );
+	//	glBindTexture(GL_TEXTURE_2D, 0);
+	//}
 
 	int count = 1;
 	for (auto i = texturePointers.begin(); i != texturePointers.end(); i++)

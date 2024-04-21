@@ -43,11 +43,11 @@ void SceneObject::Update(float delta)
 	}
 }
 
-void SceneObject::Draw() const
+void SceneObject::Draw(Shader* override) const
 {
 	for (auto part = parts.begin(); part != parts.end(); part++)
 	{
-		(*part)->Draw();
+		(*part)->Draw(override);
 	}
 }
 
