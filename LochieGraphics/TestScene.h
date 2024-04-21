@@ -25,6 +25,7 @@ private:
 	Shader* screenShader    = nullptr;
 	Shader* shadowMapDepth  = nullptr;
 	Shader* shadowMapping   = nullptr;
+	Shader* shadowDebug     = nullptr;
 
 	Skybox* skybox;
 
@@ -38,14 +39,17 @@ private:
 	Model vampireModel;
 
 	Mesh screenQuad;
-	unsigned int framebuffer;
-	unsigned int textureColorbuffer;
-	unsigned int rbo;
+	//unsigned int framebuffer;
+	//unsigned int textureColorbuffer;
+	//unsigned int rbo;
 
 	unsigned int depthMapFBO;
-	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+	// pow(2, 10) is 1024
+	const unsigned int SHADOW_WIDTH = pow(2, 12), SHADOW_HEIGHT = pow(2, 12);
 	unsigned int depthMap;
 
+	unsigned int quadVAO = 0;
+	unsigned int quadVBO = 0;
 
 	SceneObject* backpack   = new SceneObject();
 	SceneObject* soulSpear  = new SceneObject();
@@ -71,7 +75,7 @@ private:
 		PointLight({ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  0.0f, -3.0f }, 1.0f, 0.09f, 0.032f, 3)
 	};
 	DirectionalLight directionalLight = DirectionalLight
-		(          { 0.05f, 0.05f, 0.05f }, { 0.4f, 0.4f, 0.4f }, { 0.5f, 0.5f, 0.5f }, { -0.2f, -1.0f, -0.3f });
+		(          { 0.05f, 0.05f, 0.05f }, { 0.4f, 0.4f, 0.4f }, { 0.5f, 0.5f, 0.5f }, { -0.533f, -0.533f, -0.533f });
 
 	Spotlight spotlight = 
 		Spotlight( { 0.05f, 0.05f, 0.05f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  0.0f,  0.0f }, 0.5f, 0.09f, 0.032f, { 0.0f, 0.0f, 0.0f }, glm::cos(glm::radians(10.f)), glm::cos(glm::radians(15.f)));
