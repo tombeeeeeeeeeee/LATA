@@ -12,7 +12,6 @@ out vec4 daBoneWeights;
 out float test;
 out float test2;
 out float test3;
-out vec3 _Colour;
 out vec3 fragPos;
 
 uniform mat4 model;
@@ -29,8 +28,6 @@ uniform int selectedBone;
 
 void main()
 {
-    _Colour = boneWeights.xyz;
-
     vec4 totalPosition = { 0, 0, 0, 0 };
     for(int i = 0 ; i < MAX_BONE_PER_VERT ; i++)
     {

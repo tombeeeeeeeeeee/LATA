@@ -13,14 +13,13 @@ in float test;
 in float test2;
 in float test3;
 in vec3 fragPos;
-in vec3 _Colour;
 
 
 uniform Material material;
 
 void main()
 {
-    FragColor = vec4(_Colour * 0.1f + texture(material.diffuse1, TexCoord).xyz * 0.9f, 1);
+    FragColor = vec4(texture(material.diffuse1, TexCoord).xyz * 0.9f, 1);
 //    FragColor = vec4(test / 70.0f, test2 / 70.0f, test3 / 70.0f, 1);
 //    FragColor = vec4(test, test2, test3, 1);
 //    FragColor = vec4(fragPos, 1.0);
