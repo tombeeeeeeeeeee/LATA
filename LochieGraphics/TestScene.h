@@ -28,6 +28,8 @@ private:
 	Shader* shadowDebug     = nullptr;
 
 	Skybox* skybox;
+	int skyboxIndex;
+	std::vector<Skybox*> skyboxes;
 
 	Model backpackModel;
 	Model cubeModel;
