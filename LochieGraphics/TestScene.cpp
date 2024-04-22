@@ -70,7 +70,7 @@ void TestScene::Start()
 	cubeModel.AddMesh(new Mesh(Mesh::presets::cube));
 	boxes->setRenderer(new ModelRenderer(&cubeModel, boxMaterial));
 	boxes->transform.scale = 30.0f;
-	boxes->transform.position = { 0.f , -20.f, 0.f };
+	boxes->transform.position = { 0.f, -20.f, 0.f };
 
 	Material* lightCubeMaterial = ResourceManager::LoadMaterial("lightCube", lightCubeShader);
 	lightCube->setRenderer(new ModelRenderer(&cubeModel, lightCubeMaterial));
@@ -160,7 +160,7 @@ void TestScene::Start()
 	// create depth texture
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -176,8 +176,6 @@ void TestScene::Start()
 
 	shadowDebug->Use();
 	shadowDebug->setInt("depthMap", 0);
-
-	shadowMapping->setSampler("shadowMap", 17);
 }
 
 void TestScene::EarlyUpdate()
@@ -189,9 +187,7 @@ void TestScene::EarlyUpdate()
 
 void TestScene::Update(float delta)
 {
-	xbotAnimator.UpdateAnimation(delta);
-	vampireAnimator.UpdateAnimation(delta);
-	puppetAnimator.UpdateAnimation(delta);
+	
 
 	messengerInterface.Update();
 
@@ -211,30 +207,10 @@ void TestScene::Update(float delta)
 		(*i)->Update(delta);
 	}
 
-	animateShader->Use();
-	animateShader->setMat4("projection", glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, camera->nearPlane, camera->farPlane));
-	animateShader->setMat4("view", camera->GetViewMatrix());
+	xbotAnimator.UpdateAnimation(delta);
+	vampireAnimator.UpdateAnimation(delta);
+	puppetAnimator.UpdateAnimation(delta);
 
-	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
-	for (int i = 0; i < xBotTransforms.size(); i++) {
-		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", xBotTransforms[i]);
-	}
-	animateShader->setMat4("model", xbot->transform.getGlobalMatrix());
-	xbot->Draw();
-
-	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
-	for (int i = 0; i < vampTransforms.size(); i++) {
-		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", vampTransforms[i]);
-	}
-	animateShader->setMat4("model", vampire->transform.getGlobalMatrix());
-	vampire->Draw();
-
-	auto& puppetTransforms = puppetAnimator.getFinalBoneMatrices();
-	for (int i = 0; i < vampTransforms.size(); i++) {
-		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", puppetTransforms[i]);
-	}
-	animateShader->setMat4("model", puppet->transform.getGlobalMatrix());
-	puppet->Draw();
 }
 
 void TestScene::Draw()
@@ -243,20 +219,18 @@ void TestScene::Draw()
 	//glEnable(GL_DEPTH_TEST);
 
 	//glDepthFunc(GL_LESS);
+	
+
 	// 1. render depth of scene to texture (from light's perspective)
 		// --------------------------------------------------------------
-	glm::mat4 lightProjection, lightView;
 	glm::mat4 lightSpaceMatrix;
-	float near_plane = camera->nearPlane, far_plane = camera->farPlane;
-	//lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
-	lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-	lightView = glm::lookAt((-20.f * directionalLight.direction), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-	lightSpaceMatrix = lightProjection * lightView;
+	Light* light = &pointLights[0];
+	lightSpaceMatrix = light->getShadowViewProjection();
 	// render scene from light's point of view 
 	shadowMapDepth->Use();
 	shadowMapDepth->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	glViewport(0, 0, light->shadowTexWidth, light->shadowTexHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
@@ -282,12 +256,10 @@ void TestScene::Draw()
 	// 2. render scene as normal using the generated depth/shadow map  
 	// --------------------------------------------------------------
 	shadowMapping->Use();
-	glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, camera->nearPlane, camera->farPlane);
-	glm::mat4 view = camera->GetViewMatrix();
-	shadowMapping->setMat4("vp", projection * view);
+
 	// set light uniforms
 	shadowMapping->setVec3("viewPos", camera->position);
-	shadowMapping->setVec3("lightPos", (-5.f * directionalLight.direction));
+	shadowMapping->setVec3("lightPos", light->getPos());
 	shadowMapping->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
 	shadowMapping->setSampler("shadowMap", 17);
@@ -304,13 +276,56 @@ void TestScene::Draw()
 
 
 
+
+
+
+
+
+
+
+
+	animateShader->Use();
+	animateShader->setMat4("projection", glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, camera->nearPlane, camera->farPlane));
+	animateShader->setMat4("view", camera->GetViewMatrix());
+
+	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
+	for (int i = 0; i < xBotTransforms.size(); i++) {
+		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", xBotTransforms[i]);
+	}
+	animateShader->setMat4("model", xbot->transform.getGlobalMatrix());
+	xbot->Draw();
+
+	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
+	for (int i = 0; i < vampTransforms.size(); i++) {
+		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", vampTransforms[i]);
+	}
+	animateShader->setMat4("model", vampire->transform.getGlobalMatrix());
+	vampire->Draw();
+
+	auto& puppetTransforms = puppetAnimator.getFinalBoneMatrices();
+	for (int i = 0; i < vampTransforms.size(); i++) {
+		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", puppetTransforms[i]);
+	}
+	animateShader->setMat4("model", puppet->transform.getGlobalMatrix());
+	//puppet->Draw();
+
+
+
+
+
+
+
+
+
+
 	// render Depth map to quad for visual debugging
 	// ---------------------------------------------
 	shadowDebug->Use();
-	shadowDebug->setFloat("near_plane", near_plane);
-	shadowDebug->setFloat("far_plane", far_plane);
+	shadowDebug->setFloat("near_plane", light->shadowNearPlane);
+	shadowDebug->setFloat("far_plane", light->shadowFarPlane);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
+	// Uncomment this to see the light POV
 	screenQuad.Draw();
 
 

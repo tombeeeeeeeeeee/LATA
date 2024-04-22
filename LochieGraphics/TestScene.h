@@ -44,8 +44,6 @@ private:
 	//unsigned int rbo;
 
 	unsigned int depthMapFBO;
-	// pow(2, 10) is 1024
-	const unsigned int SHADOW_WIDTH = pow(2, 12), SHADOW_HEIGHT = pow(2, 12);
 	unsigned int depthMap;
 
 	unsigned int quadVAO = 0;
