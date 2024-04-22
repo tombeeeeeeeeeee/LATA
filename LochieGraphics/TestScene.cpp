@@ -14,6 +14,8 @@ TestScene::TestScene()
 		backpack,
 		soulSpear,
 		testRedBox,
+		tires,
+		//bottle
 		//puppet,
 		//vampire,
 		//xbot
@@ -91,14 +93,37 @@ void TestScene::Start()
 	grass->setRenderer(new ModelRenderer(&grassModel, grassMaterial));
 
 	backpackModel = Model("models/backpack/backpack.obj", false);
-	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", litNormalShader);
+	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", pbrShader);
 	backpackMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::LoadTexture("models/backpack/diffuse.jpg", Texture::Type::diffuse, GL_REPEAT, false),
+		ResourceManager::LoadTexture("models/backpack/diffuse.jpg", Texture::Type::albedo, GL_REPEAT, false),
 			ResourceManager::LoadTexture("models/backpack/normal.png", Texture::Type::normal, GL_REPEAT, false),
-			ResourceManager::LoadTexture("models/backpack/specular.jpg", Texture::Type::specular, GL_REPEAT, false),
+			ResourceManager::LoadTexture("models/backpack/specular.jpg", Texture::Type::metallic, GL_REPEAT, false),
+			ResourceManager::LoadTexture("models/backpack/roughness.jpg", Texture::Type::roughness, GL_REPEAT, false),
+
+
 	});
 	backpack->setRenderer(new ModelRenderer(&backpackModel, backpackMaterial));
 	backpack->transform.position = { -5.f, -1.f, 0.f };
+
+	bottleModel = Model("models/thermos-hydration-bottle-24oz/Thermos2.fbx", false);
+	Material* bottleMaterial = ResourceManager::LoadMaterial("bottle", pbrShader);
+	bottleMaterial->AddTextures(std::vector<Texture*>{
+		ResourceManager::LoadTexture("models/thermos-hydration-bottle-24oz/Thermos_albedo.jpg", Texture::Type::albedo, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/thermos-hydration-bottle-24oz/Thermos_normal.png", Texture::Type::normal, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/thermos-hydration-bottle-24oz/Thermos_metallic.jpg", Texture::Type::metallic, GL_REPEAT, true), 
+			ResourceManager::LoadTexture("models/thermos-hydration-bottle-24oz/Thermos_roughness.jpg", Texture::Type::roughness, GL_REPEAT, true),
+	});
+	bottle->setRenderer(new ModelRenderer(&bottleModel, bottleMaterial));
+
+	tiresModel = Model("models/old-tires-dirt-low-poly/model.dae", false);
+	Material* tiresMaterial = ResourceManager::LoadMaterial("tires", pbrShader);
+	tiresMaterial->AddTextures(std::vector<Texture*>{
+		ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_albedo.jpeg", Texture::Type::albedo, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_normal.png", Texture::Type::normal, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_metallic.jpeg", Texture::Type::metallic, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_roughness.jpeg", Texture::Type::roughness, GL_REPEAT, true)
+	});
+	tires->setRenderer(new ModelRenderer(&tiresModel, tiresMaterial));
 
 	testRedBoxModel = Model("models/normalBoxTest/Box_normal_example.obj");
 	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", pbrShader);

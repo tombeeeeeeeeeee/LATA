@@ -39,16 +39,18 @@ private:
 	Model puppetModel;
 	Model xbotModel;
 	Model vampireModel;
+	Model bottleModel;
+	Model tiresModel;
 
 	Mesh screenQuad;
-	//unsigned int framebuffer;
+	//unsigned int framebuffer; // TODO: Re imp framebuffer for post processing affects
 	//unsigned int textureColorbuffer;
 	//unsigned int rbo;
 
-	unsigned int depthMapFBO;
+	unsigned int depthMapFBO; // TODO: Try to have this somewhere else
 	unsigned int depthMap;
 
-	unsigned int quadVAO = 0;
+	unsigned int quadVAO = 0; // TODO: I don't even think these need to be here anymore, remove
 	unsigned int quadVBO = 0;
 
 	SceneObject* backpack   = new SceneObject();
@@ -60,6 +62,8 @@ private:
 	SceneObject* puppet     = new SceneObject();
 	SceneObject* xbot       = new SceneObject();
 	SceneObject* vampire    = new SceneObject();
+	SceneObject* bottle     = new SceneObject();
+	SceneObject* tires      = new SceneObject();
 
 	Animation xbotChicken;
 	Animator xbotAnimator;

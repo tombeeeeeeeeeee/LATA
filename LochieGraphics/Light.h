@@ -10,7 +10,7 @@ struct Light
     glm::vec3 diffuse;
     glm::vec3 specular;
 
-    float shadowNearPlane = 0.1f;
+    float shadowNearPlane = 1.f;
     float shadowFarPlane = 100.0f;
     // pow(2, 10) is 1024
     unsigned int shadowTexWidth = (unsigned int)pow(2, 12);
@@ -52,7 +52,7 @@ struct PointLight : public Light {
     void ApplyToShader(Shader* shader) override;
     void GUI() override;
 
-    float projectionFov = 45.f;
+    float projectionFov = 150.f;
     glm::vec3 getPos() const override;
     glm::mat4 getShadowProjection() const override;
     glm::mat4 getShadowView() const override;
