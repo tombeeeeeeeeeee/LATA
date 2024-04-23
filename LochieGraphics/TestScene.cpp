@@ -43,8 +43,11 @@ void TestScene::Start()
 	shadowMapDepth = ResourceManager::LoadShader("shaders/simpleDepthShader.vert", "shaders/simpleDepthShader.frag");
 	shadowMapping = ResourceManager::LoadShader("shaders/shadowMapping.vert", "shaders/shadowMapping.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
 	shadowDebug = ResourceManager::LoadShader("shaders/shadowDebug.vert", "shaders/shadowDebug.frag");
+	
 
-	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader, pbrShader, screenShader, shadowMapDepth, shadowMapping, shadowDebug };
+	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader, pbrShader, screenShader, shadowMapDepth, shadowMapping, shadowDebug,
+		ResourceManager::LoadShader("shaders/simpleTextured.vert", "shaders/simpleTextured.frag", Shader::Flags::VPmatrix),
+	};
 
 
 	// TODO: This
@@ -70,6 +73,7 @@ void TestScene::Start()
 	//TODO: Should be using the resource manager
 	//skybox = new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces));
 	skybox = skyboxes[5];
+	skyboxIndex = 5;
 
 	Material* boxMaterial = ResourceManager::LoadMaterial("box", shadowMapping);
 	boxMaterial->AddTextures(std::vector<Texture*> {
@@ -79,7 +83,7 @@ void TestScene::Start()
 	cubeModel.AddMesh(new Mesh(Mesh::presets::cube));
 	boxes->setRenderer(new ModelRenderer(&cubeModel, boxMaterial));
 	boxes->transform.scale = 30.0f;
-	boxes->transform.position = { 0.f, -20.f, 0.f };
+	boxes->transform.position = { 0.f, -15.450f, 0.f };
 
 	Material* lightCubeMaterial = ResourceManager::LoadMaterial("lightCube", lightCubeShader);
 	lightCube->setRenderer(new ModelRenderer(&cubeModel, lightCubeMaterial));
@@ -91,6 +95,8 @@ void TestScene::Start()
 	});
 	grassModel.AddMesh(new Mesh(Mesh::presets::doubleQuad));
 	grass->setRenderer(new ModelRenderer(&grassModel, grassMaterial));
+	grass->transform.position = { 1.9f, 0.f, 2.6f };
+	grass->transform.setEulerRotation({ 0.f, -43.2f, 0.f });
 
 	backpackModel = Model("models/backpack/backpack.obj", false);
 	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", pbrShader);
@@ -103,7 +109,8 @@ void TestScene::Start()
 
 	});
 	backpack->setRenderer(new ModelRenderer(&backpackModel, backpackMaterial));
-	backpack->transform.position = { -5.f, -1.f, 0.f };
+	backpack->transform.position = { -4.5f, 1.7f, 0.f };
+	backpack->transform.setEulerRotation({0.f, 52.6f, 0.f});
 
 	bottleModel = Model("models/thermos-hydration-bottle-24oz/Thermos2.fbx", false);
 	Material* bottleMaterial = ResourceManager::LoadMaterial("bottle", pbrShader);
@@ -124,6 +131,7 @@ void TestScene::Start()
 			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_roughness.jpeg", Texture::Type::roughness, GL_REPEAT, true)
 	});
 	tires->setRenderer(new ModelRenderer(&tiresModel, tiresMaterial));
+	tires->transform.position = {-0.1f, 0.f, 1.2f};
 
 	testRedBoxModel = Model("models/normalBoxTest/Box_normal_example.obj");
 	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", pbrShader);
@@ -135,7 +143,8 @@ void TestScene::Start()
 			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Roughness.png", Texture::Type::roughness, GL_REPEAT, true),
 	});
 	testRedBox->setRenderer(new ModelRenderer(&testRedBoxModel, testRedBoxMaterial));
-	testRedBox->transform.position = { 5.f, -3.f, 2.f };
+	testRedBox->transform.position = { 0.6f, 3.5f, -3.5f };
+	testRedBox->transform.setEulerRotation({ 4.3f, -17.2f, -69.5f});
 
 	soulSpearModel = Model(std::string("models/soulspear/soulspear.obj"), true);
 	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", litNormalShader);
@@ -166,19 +175,21 @@ void TestScene::Start()
 	});
 	xbot->setRenderer(new ModelRenderer(&xbotModel, xbotMaterial));
 
-	xbotChicken = Animation("models/Idle.fbx", &xbotModel);
+	xbotChicken = Animation("models/Chicken Dance.fbx", &xbotModel);
 	xbotAnimator = Animator(&xbotChicken);
 
-	vampireModel.LoadModel(std::string("models/dancing_vampire.dae"));
-	//vampire->transform.scale = 0.01;
+	vampireModel.LoadModel(std::string("models/Skinning Test.fbx"));
+	vampire->transform.scale = 0.01;
 	//vampire->transform.position = { 0.f, -0.5f, 1.f };
 	Material* vampireMaterial = ResourceManager::LoadMaterial("vampire", animateShader);
 	vampireMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/Vampire_diffuse.png", Texture::Type::diffuse)
 	});
 	vampire->setRenderer(new ModelRenderer(&vampireModel, vampireMaterial));
+	vampire->transform.position = { 1.6f, -0.5f, -2.f };
 
-	vampireWalk = Animation("models/dancing_vampire.dae", &vampireModel);
+
+	vampireWalk = Animation("models/Skinning Test.fbx", &vampireModel);
 	vampireAnimator = Animator(&vampireWalk);
 
 	puppetAnimation = Animation("models/Character@LPunch4.fbx", &puppetModel);
@@ -256,7 +267,7 @@ void TestScene::Draw()
 	// 1. render depth of scene to texture (from light's perspective)
 		// --------------------------------------------------------------
 	glm::mat4 lightSpaceMatrix;
-	Light* light = &pointLights[0];
+	Light* light = &directionalLight;
 	lightSpaceMatrix = light->getShadowViewProjection();
 	// render scene from light's point of view 
 	shadowMapDepth->Use();
@@ -358,7 +369,9 @@ void TestScene::Draw()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 	// Uncomment this to see the light POV
-	//screenQuad.Draw();
+	if (showShadowDebug) {
+		screenQuad.Draw();
+	}
 
 
 
@@ -400,6 +413,14 @@ void TestScene::GUI()
 		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, skyboxes.size() - 1)) {
 			skybox = skyboxes[skyboxIndex];
 		}
+		ImGui::End();
+	}
+
+	if (!ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::End();
+	}
+	else {
+		ImGui::Checkbox("Show shadow debug", &showShadowDebug);
 		ImGui::End();
 	}
 }
