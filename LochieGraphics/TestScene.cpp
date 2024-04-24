@@ -179,7 +179,7 @@ void TestScene::Start()
 	xbotAnimator = Animator(&xbotChicken);
 
 	vampireModel.LoadModel(std::string("models/Skinning Test.fbx"));
-	vampire->transform.scale = 0.01;
+	vampire->transform.scale = 0.01f;
 	//vampire->transform.position = { 0.f, -0.5f, 1.f };
 	Material* vampireMaterial = ResourceManager::LoadMaterial("vampire", animateShader);
 	vampireMaterial->AddTextures(std::vector<Texture*>{
@@ -199,7 +199,7 @@ void TestScene::Start()
 
 	LoadRenderBuffer();
 
-	glGenFramebuffers(1, &depthMapFBO);
+
 	// create depth texture
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
@@ -208,15 +208,10 @@ void TestScene::Start()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+	float borderColor[] = { 1.0, 0.0, 0.0, 1.0 };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	// attach depth texture as FBO's depth buffer
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+	shadowFrameBuffer = new FrameBuffer(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, (GLuint)0, depthMap);
 	shadowDebug->Use();
 	shadowDebug->setInt("depthMap", 0);
 }
@@ -267,14 +262,14 @@ void TestScene::Draw()
 	// 1. render depth of scene to texture (from light's perspective)
 		// --------------------------------------------------------------
 	glm::mat4 lightSpaceMatrix;
-	Light* light = &directionalLight;
+	Light* light = &pointLights[0];
 	lightSpaceMatrix = light->getShadowViewProjection();
 	// render scene from light's point of view 
 	shadowMapDepth->Use();
 	shadowMapDepth->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
 	glViewport(0, 0, light->shadowTexWidth, light->shadowTexHeight);
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	shadowFrameBuffer->Bind();
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	//glCullFace(GL_FRONT);
@@ -286,12 +281,12 @@ void TestScene::Draw()
 	skybox->Draw();
 	//glCullFace(GL_BACK);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	FrameBuffer::Unbind();
 
 
 
 
-
+	// TODO: move viewport changing stuff into FrameBuffer
 	// reset viewport
 	glViewport(0, 0, *windowWidth, *windowHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -440,7 +435,7 @@ TestScene::~TestScene()
 	//glDeleteRenderbuffers(1, &rbo);
 	//glDeleteFramebuffers(1, &framebuffer);
 	//glDeleteTextures(1, &textureColorbuffer);
-
+	
 }
 
 void TestScene::LoadRenderBuffer()

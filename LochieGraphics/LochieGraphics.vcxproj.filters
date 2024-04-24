@@ -15,9 +15,6 @@
     <Filter Include="Source Files\Networking">
       <UniqueIdentifier>{76031ace-e721-45b9-abe8-8bd85f986b07}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Resources">
-      <UniqueIdentifier>{242ffe14-7501-4c9a-8f83-4572fe6fd244}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Parts">
       <UniqueIdentifier>{81dc77f3-dadb-42f2-aed9-61345147e743}</UniqueIdentifier>
     </Filter>
@@ -33,9 +30,6 @@
     <Filter Include="Source Files\Scene Management">
       <UniqueIdentifier>{72005ac3-ad82-46d2-b2e6-527517855f9a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Scenes">
-      <UniqueIdentifier>{58c09f07-be91-4c07-ae07-ca0fb18dc47f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Networking\Messenger">
       <UniqueIdentifier>{7aa7a8ad-c989-4174-96b9-90360e672617}</UniqueIdentifier>
     </Filter>
@@ -45,7 +39,10 @@
     <Filter Include="Source Files\Misc">
       <UniqueIdentifier>{dfd8a0f8-c52f-4699-98a2-4ad3f47acaff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Resources\Animation">
+    <Filter Include="Source Files\Rendering">
+      <UniqueIdentifier>{242ffe14-7501-4c9a-8f83-4572fe6fd244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering\Animation">
       <UniqueIdentifier>{4eb9cfad-9498-42ab-a0b9-e9dfdb6bb6d0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -78,16 +75,16 @@
       <Filter>Source Files\Networking</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Source Files\Parts</Filter>
@@ -102,13 +99,13 @@
       <Filter>Source Files\Parts</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files\Parts</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files\Scene Management</Filter>
@@ -120,10 +117,7 @@
       <Filter>Source Files\Scene Management</Filter>
     </ClCompile>
     <ClCompile Include="Vertex.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="TestScene.cpp">
-      <Filter>Source Files\Scenes</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Utilities.cpp">
       <Filter>Source Files\Misc</Filter>
@@ -159,19 +153,25 @@
       <Filter>Source Files\Third-Party\imgui</Filter>
     </ClCompile>
     <ClCompile Include="Skybox.cpp">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="AssimpMatrixToGLM.cpp">
       <Filter>Source Files\Third-Party</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp">
-      <Filter>Source Files\Resources\Animation</Filter>
+      <Filter>Source Files\Rendering\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Animator.cpp">
-      <Filter>Source Files\Resources\Animation</Filter>
+      <Filter>Source Files\Rendering\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Bone.cpp">
-      <Filter>Source Files\Resources\Animation</Filter>
+      <Filter>Source Files\Rendering\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>Source Files\Scene Management</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -212,16 +212,16 @@
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Source Files\Scene Management</Filter>
@@ -233,7 +233,7 @@
       <Filter>Source Files\Scene Management</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Graphics.h">
       <Filter>Source Files\Third-Party</Filter>
@@ -247,14 +247,11 @@
     <ClInclude Include="Maths.h">
       <Filter>Source Files\Third-Party</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h">
-      <Filter>Source Files\Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>Source Files\Third-Party\stb</Filter>
@@ -302,25 +299,31 @@
       <Filter>Source Files\Misc</Filter>
     </ClInclude>
     <ClInclude Include="Skybox.h">
-      <Filter>Source Files\Resources</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="AssimpMatrixToGLM.h">
       <Filter>Source Files\Third-Party</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
-      <Filter>Source Files\Resources\Animation</Filter>
+      <Filter>Source Files\Rendering\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Animator.h">
-      <Filter>Source Files\Resources\Animation</Filter>
+      <Filter>Source Files\Rendering\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Bone.h">
-      <Filter>Source Files\Resources\Animation</Filter>
+      <Filter>Source Files\Rendering\Animation</Filter>
     </ClInclude>
     <ClInclude Include="BoneInfo.h">
-      <Filter>Source Files\Resources\Animation</Filter>
+      <Filter>Source Files\Rendering\Animation</Filter>
     </ClInclude>
     <ClInclude Include="NodeData.h">
-      <Filter>Source Files\Resources\Animation</Filter>
+      <Filter>Source Files\Rendering\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>Source Files\Scene Management</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

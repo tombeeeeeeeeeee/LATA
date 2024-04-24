@@ -10,6 +10,7 @@
 #include "Skybox.h"
 #include "MessengerInterface.h"
 #include "Animator.h"
+#include "FrameBuffer.h"
 
 class TestScene : public Scene
 {
@@ -47,8 +48,8 @@ private:
 	//unsigned int textureColorbuffer;
 	//unsigned int rbo;
 
-	unsigned int depthMapFBO; // TODO: Try to have this somewhere else
-	unsigned int depthMap;
+	FrameBuffer* shadowFrameBuffer = nullptr;
+	GLuint depthMap;
 
 	unsigned int quadVAO = 0; // TODO: I don't even think these need to be here anymore, remove
 	unsigned int quadVBO = 0;
