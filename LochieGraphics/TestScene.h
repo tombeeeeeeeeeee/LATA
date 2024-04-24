@@ -28,8 +28,8 @@ private:
 	Shader* shadowMapping   = nullptr;
 	Shader* shadowDebug     = nullptr;
 
-	Skybox* skybox;
-	int skyboxIndex;
+	Skybox* skybox = nullptr;
+	int skyboxIndex = 0;
 	std::vector<Skybox*> skyboxes;
 
 	Model backpackModel;
@@ -49,7 +49,7 @@ private:
 	//unsigned int rbo;
 
 	FrameBuffer* shadowFrameBuffer = nullptr;
-	GLuint depthMap;
+	GLuint depthMap = 0;
 
 	unsigned int quadVAO = 0; // TODO: I don't even think these need to be here anymore, remove
 	unsigned int quadVBO = 0;

@@ -435,7 +435,7 @@ TestScene::~TestScene()
 	//glDeleteRenderbuffers(1, &rbo);
 	//glDeleteFramebuffers(1, &framebuffer);
 	//glDeleteTextures(1, &textureColorbuffer);
-	
+	delete shadowFrameBuffer;
 }
 
 void TestScene::LoadRenderBuffer()
