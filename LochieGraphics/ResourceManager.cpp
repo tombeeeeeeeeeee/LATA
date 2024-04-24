@@ -31,6 +31,11 @@ Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int 
 	LoadResource(Texture, textures, path, type, wrappingMode, flipOnLoad);
 }
 
+Texture* ResourceManager::LoadTexture(unsigned int width, unsigned int height, GLenum format, unsigned char* data, GLint wrappingMode, GLenum dataType, bool mipMaps, GLint minFilter, GLint magFilter)
+{
+	LoadResource(Texture, textures, width, height, format, data, wrappingMode, dataType, mipMaps, minFilter, magFilter);
+}
+
 Material* ResourceManager::LoadMaterial(std::string name, Shader* shader)
 {
 	LoadResource(Material, materials, name, shader);

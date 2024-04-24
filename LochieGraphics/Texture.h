@@ -31,14 +31,17 @@ public:
 
 	unsigned long long GUID;
 	GLuint GLID;
-	Type type;
-	std::string path;
-	int wrappingMode;
+	Type type = Type::diffuse;
+	std::string path = "";
+	GLenum wrappingMode;
 	bool flipped; //TODO: rename to flip?
 	bool loaded = false;
 	Texture(std::string _path, Type _type, int _wrappingMode, bool flip = false);
 
 	void Load();
+
+	Texture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_RGBA, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
+	static GLuint CreateTexture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_RGBA, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
 
 	/// <summary>
 	/// Given 6 faces, a cube map textured will be generated and returned
@@ -49,5 +52,9 @@ public:
 	static void UseCubeMap(GLuint GLID, Shader* shader);
 
 	void DeleteTexture();
+
+private:
+
+	Texture() = default;
 };
 

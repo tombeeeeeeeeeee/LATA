@@ -201,14 +201,8 @@ void TestScene::Start()
 
 
 	// create depth texture
-	glGenTextures(1, &depthMap);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	float borderColor[] = { 1.0, 0.0, 0.0, 1.0 };
+	depthMap = ResourceManager::LoadTexture(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, GL_DEPTH_COMPONENT, nullptr, GL_CLAMP_TO_BORDER, GL_FLOAT, false, GL_NEAREST, GL_NEAREST)->GLID;
+	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	// attach depth texture as FBO's depth buffer
 	shadowFrameBuffer = new FrameBuffer(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, (GLuint)0, depthMap);
