@@ -89,7 +89,7 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 		std::string boneName = channel->mNodeName.data;
 
 		if (newBoneInfoMap.find(boneName) == newBoneInfoMap.end()) {
-			newBoneInfoMap[boneName].ID = boneInfoMap.size() + 1;
+			newBoneInfoMap[boneName].ID = (unsigned int)boneInfoMap.size() + 1;
 		}
 		bones.push_back(Bone(channel->mNodeName.data, newBoneInfoMap[channel->mNodeName.data].ID, channel));
 	}

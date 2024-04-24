@@ -405,7 +405,7 @@ void TestScene::GUI()
 		ImGui::End();
 	}
 	else {
-		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, skyboxes.size() - 1)) {
+		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, (unsigned int)(skyboxes.size() - 1))) {
 			skybox = skyboxes[skyboxIndex];
 		}
 		ImGui::End();

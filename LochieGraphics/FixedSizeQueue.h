@@ -8,7 +8,7 @@ class FixedSizeQueue
 private:
 	size_t count = size;
 public:
-	T elements[size];
+	T elements[size] = {};
 	size_t position = 0;
 
 	void Push(T value);
