@@ -65,4 +65,7 @@ void FrameBuffer::Unbind()
 FrameBuffer::~FrameBuffer()
 {
 	glDeleteFramebuffers(1, &FBO);
+	if (useRBO) {
+		glDeleteRenderbuffers(1, &RBO);
+	}
 }
