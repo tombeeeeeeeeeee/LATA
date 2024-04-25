@@ -398,4 +398,6 @@ TestScene::~TestScene()
 	//glDeleteFramebuffers(1, &framebuffer);
 	//glDeleteTextures(1, &textureColorbuffer);
 	delete shadowFrameBuffer;
+	delete screenFrameBuffer;
+	
 }
