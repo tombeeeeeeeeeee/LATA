@@ -38,16 +38,17 @@ private:
 	Model bottleModel;
 	Model tiresModel;
 
+	Mesh shadowDebugQuad;
 	Mesh screenQuad;
-	//unsigned int framebuffer; // TODO: Re imp framebuffer for post processing affects
-	//unsigned int textureColorbuffer;
-	//unsigned int rbo;
+	
+	Texture* screenColourBuffer = nullptr;
+
+
+	FrameBuffer* screenFrameBuffer = nullptr;
+	Texture* screenTexture = nullptr;
 
 	FrameBuffer* shadowFrameBuffer = nullptr;
 	Texture* depthMap = nullptr;
-
-	unsigned int quadVAO = 0; // TODO: I don't even think these need to be here anymore, remove
-	unsigned int quadVBO = 0;
 
 	bool showShadowDebug = false;
 
@@ -94,8 +95,4 @@ public:
 	void OnWindowResize() override;
 
 	~TestScene() override;
-
-private:
-
-	void LoadRenderBuffer();
 };

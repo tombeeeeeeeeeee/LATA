@@ -49,10 +49,13 @@ public:
 
 	Texture(std::string _path, Type _type, int _wrappingMode, bool flip = false);
 
+	// TODO: bind function
+
 	void Load();
 
 	Texture(int _width, int _height, GLenum _format, unsigned char* _data, GLint _wrappingMode, GLenum _dataType, bool _mipMaps, GLint _minFilter, GLint _magFilter);
 	static GLuint CreateTexture(int width, int height, GLenum format, unsigned char* data, GLint wrappingMode, GLenum dataType, bool mipMaps, GLint minFilter, GLint magFilter);
+	void setWidthHeight(int _width, int _height);
 
 	/// <summary>
 	/// Given 6 faces, a cube map textured will be generated and returned

@@ -39,7 +39,7 @@ SceneManager::SceneManager(Scene* _scene)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	//TODO:
-	glfwWindowHint(GLFW_SAMPLES, 16); // for MSAA
+	//glfwWindowHint(GLFW_SAMPLES, 16); // for MSAA
 
 
 #if _DEBUG  
@@ -109,7 +109,7 @@ SceneManager::SceneManager(Scene* _scene)
 
 	//TODO:
 	// MSAA
-	glEnable(GL_MULTISAMPLE);
+	//glEnable(GL_MULTISAMPLE);
 
 	// Draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -158,6 +158,7 @@ void SceneManager::Update()
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 viewProjection = projection * view;
 
+	//// TODO: Actual draw/update loop
 	scene->EarlyUpdate();
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);

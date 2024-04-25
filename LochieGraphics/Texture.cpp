@@ -107,6 +107,13 @@ GLuint Texture::CreateTexture(int width, int height, GLenum format, unsigned cha
 	return ID;
 }
 
+void Texture::setWidthHeight(int _width, int _height)
+{
+	width = _width;
+	height = _height;
+	Load();
+}
+
 GLuint Texture::LoadCubeMap(std::string faces[6])
 {
 	unsigned int GLID;

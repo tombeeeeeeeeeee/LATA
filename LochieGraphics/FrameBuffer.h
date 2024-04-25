@@ -6,16 +6,21 @@
 
 class FrameBuffer
 {
-public:
+private:
 	GLuint FBO;
+	GLuint RBO;
+	bool useRBO;
 	unsigned int width;
 	unsigned int height;
 	Texture* colourTexture;
 	Texture* depthTexture;
 
-	FrameBuffer(unsigned int _width, unsigned int _height, Texture* _colourTexture, Texture* _depthTexture);
+public:
+	FrameBuffer(unsigned int _width, unsigned int _height, Texture* _colourTexture, Texture* _depthTexture, bool _useRBO);
+	
+	void setWidthHeight(unsigned int _width, unsigned int _height);
 
-	void RefreshTextures();
+	void Load();
 
 	void Bind();
 
