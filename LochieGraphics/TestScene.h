@@ -17,11 +17,12 @@ class TestScene : public Scene
 private:
 	MessengerInterface messengerInterface;
 
-	Shader* animateShader   = nullptr;
+	//Shader* animateShader   = nullptr;
 	Shader* screenShader    = nullptr;
 	Shader* shadowMapDepth  = nullptr;
 	Shader* shadowMapping   = nullptr;
 	Shader* shadowDebug     = nullptr;
+	Shader* superShader     = nullptr;
 
 	Skybox* skybox = nullptr;
 	int skyboxIndex = 0;

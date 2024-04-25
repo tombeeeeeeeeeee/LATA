@@ -8,10 +8,6 @@ struct Material {
 out vec4 FragColor;
 
 in vec2 TexCoord;
-//in vec4 daBoneWeights;
-in float test;
-in float test2;
-in float test3;
 in vec3 fragPos;
 
 

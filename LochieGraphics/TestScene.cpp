@@ -37,16 +37,17 @@ void TestScene::Start()
 	Shader* litShader = ResourceManager::LoadShader("shaders/lit.vert", "shaders/lit.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
 	Shader* lightCubeShader = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
 	Shader* skyBoxShader = ResourceManager::LoadShader("shaders/cubemap.vert", "shaders/cubemap.frag");
-	animateShader = ResourceManager::LoadShader("shaders/animate.vert", "shaders/animate.frag", Shader::Flags::Animated);
+	Shader* animateShader = ResourceManager::LoadShader("shaders/animate.vert", "shaders/animate.frag", Shader::Flags::Animated);
 	Shader* pbrShader = ResourceManager::LoadShader("shaders/pbr.vert", "shaders/pbr.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
 	screenShader = ResourceManager::LoadShader("shaders/framebuffer.vert", "shaders/framebuffer.frag");
 	shadowMapDepth = ResourceManager::LoadShader("shaders/simpleDepthShader.vert", "shaders/simpleDepthShader.frag");
 	shadowMapping = ResourceManager::LoadShader("shaders/shadowMapping.vert", "shaders/shadowMapping.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
 	shadowDebug = ResourceManager::LoadShader("shaders/shadowDebug.vert", "shaders/shadowDebug.frag");
-	
+	Shader* simpleTextured = ResourceManager::LoadShader("shaders/simpleTextured.vert", "shaders/simpleTextured.frag", Shader::Flags::VPmatrix);
+	superShader = ResourceManager::LoadShader("shaders/superShader.vert", "shaders/superShader.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
 
 	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader, pbrShader, screenShader, shadowMapDepth, shadowMapping, shadowDebug,
-		ResourceManager::LoadShader("shaders/simpleTextured.vert", "shaders/simpleTextured.frag", Shader::Flags::VPmatrix),
+		simpleTextured, superShader
 	};
 
 
@@ -155,7 +156,7 @@ void TestScene::Start()
 	soulSpear->transform.position = { 5.f, 1.f, 1.f };
 
 	puppetModel.LoadModel(std::string("models/Character.fbx"));
-	Material* puppetMaterial = ResourceManager::LoadMaterial("puppet", animateShader);
+	Material* puppetMaterial = ResourceManager::LoadMaterial("puppet", superShader);
 	puppetMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("images/puppet/DummyBaseMap.tga", Texture::Type::diffuse),
 			ResourceManager::LoadTexture("images/puppet/DummyNormalMap.tga", Texture::Type::normal),
@@ -167,7 +168,7 @@ void TestScene::Start()
 	xbotModel.LoadModel(std::string("models/X Bot.fbx"));
 	xbot->transform.scale = 0.01f;
 	xbot->transform.position = { 0.f, -0.5f, 1.5f };
-	Material* xbotMaterial = ResourceManager::LoadMaterial("puppet", animateShader);
+	Material* xbotMaterial = ResourceManager::LoadMaterial("puppet", superShader);
 	xbotMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse)
 	});
@@ -179,7 +180,7 @@ void TestScene::Start()
 	vampireModel.LoadModel(std::string("models/Skinning Test.fbx"));
 	vampire->transform.scale = 0.01f;
 	//vampire->transform.position = { 0.f, -0.5f, 1.f };
-	Material* vampireMaterial = ResourceManager::LoadMaterial("vampire", animateShader);
+	Material* vampireMaterial = ResourceManager::LoadMaterial("vampire", superShader);
 	vampireMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/Vampire_diffuse.png", Texture::Type::diffuse)
 	});
@@ -210,6 +211,8 @@ void TestScene::Start()
 
 	// create shadow depth texture
 	depthMap = ResourceManager::LoadTexture(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, GL_DEPTH_COMPONENT, nullptr, GL_CLAMP_TO_BORDER, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
+	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 }; // TODO: Move to be apart of texture
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	shadowFrameBuffer = new FrameBuffer(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, nullptr, depthMap, false);
 	shadowDebug->Use();
 	shadowDebug->setInt("depthMap", 0);
@@ -299,29 +302,29 @@ void TestScene::Draw()
 	skybox->Draw();
 
 	// Draw animated stuff
-	animateShader->Use();
-	animateShader->setMat4("projection", glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, camera->nearPlane, camera->farPlane));
-	animateShader->setMat4("view", camera->GetViewMatrix());
+	superShader->Use();
+	glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, camera->nearPlane, camera->farPlane);
+	superShader->setMat4("vp", projection * camera->GetViewMatrix());
 
 	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
 	for (int i = 0; i < xBotTransforms.size(); i++) {
-		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", xBotTransforms[i]);
+		superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", xBotTransforms[i]);
 	}
-	animateShader->setMat4("model", xbot->transform.getGlobalMatrix());
+	superShader->setMat4("model", xbot->transform.getGlobalMatrix());
 	xbot->Draw();
 
 	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
 	for (int i = 0; i < vampTransforms.size(); i++) {
-		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", vampTransforms[i]);
+		superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", vampTransforms[i]);
 	}
-	animateShader->setMat4("model", vampire->transform.getGlobalMatrix());
+	superShader->setMat4("model", vampire->transform.getGlobalMatrix());
 	vampire->Draw();
 
 	auto& puppetTransforms = puppetAnimator.getFinalBoneMatrices();
 	for (int i = 0; i < vampTransforms.size(); i++) {
-		animateShader->setMat4("boneMatrices[" + std::to_string(i) + "]", puppetTransforms[i]);
+		superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", puppetTransforms[i]);
 	}
-	animateShader->setMat4("model", puppet->transform.getGlobalMatrix());
+	superShader->setMat4("model", puppet->transform.getGlobalMatrix());
 	//puppet->Draw();
 
 

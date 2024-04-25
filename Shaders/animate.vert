@@ -8,10 +8,6 @@ layout (location = 5) in ivec4 boneIDs;
 layout (location = 6) in vec4 boneWeights;
 
 out vec2 TexCoord;
-out vec4 daBoneWeights;
-out float test;
-out float test2;
-out float test3;
 out vec3 fragPos;
 
 uniform mat4 model;
