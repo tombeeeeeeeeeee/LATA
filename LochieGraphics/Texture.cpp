@@ -33,9 +33,15 @@ Texture::Texture(std::string _path, Type _type, int _wrappingMode, bool flip) :
 void Texture::Load()
 {
 	if (loaded) { DeleteTexture(); }
+	if (path == "") {
+		GLID = CreateTexture(width, height, format, nullptr, wrappingMode, dataType, mipMapped, minFilter, maxFilter);
+		loaded = true;
+		return;
+	}
+
 	stbi_set_flip_vertically_on_load(flipped);
 
-	int width, height, components;
+	int components;
 	unsigned char* data = stbi_load(path.c_str(), &width, &height, &components, STBI_default);
 	if (!data) {
 		std::cout << "Texture failed to load, path: " << path << "\n";
@@ -60,7 +66,7 @@ void Texture::Load()
 	default:
 		std::cout << "Texture failed to load, could not be read correctly, path: " << path << "\n";
 		stbi_image_free(data);
-		return; // Return instead
+		return; // Return instead of break
 	}
 
 	GLID = CreateTexture(width, height, format, data, wrappingMode, GL_UNSIGNED_BYTE, true, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
@@ -68,14 +74,20 @@ void Texture::Load()
 	loaded = true;
 }
 
-Texture::Texture(unsigned int width, unsigned int height, GLenum format, unsigned char* data, GLint wrappingMode, GLenum dataType, bool mipMaps, GLint minFilter, GLint magFilter)
+Texture::Texture(int _width, int _height, GLenum _format, unsigned char* data, GLint _wrappingMode, GLenum _dataType, bool _mipMaps, GLint _minFilter, GLint _magFilter) :
+	width(_width),
+	height(_height),
+	format(_format),
+	wrappingMode(_wrappingMode),
+	dataType(_dataType),
+	mipMapped(_mipMaps),
+	minFilter(_minFilter),
+	maxFilter(_magFilter)
 {
-	if (loaded) { DeleteTexture(); }
-	GLID = CreateTexture(width, height, format, data, wrappingMode, dataType, mipMaps, minFilter, magFilter);
-	loaded = true;
+	Load();
 }
 
-GLuint Texture::CreateTexture(unsigned int width, unsigned int height, GLenum format, unsigned char* data, GLint wrappingMode, GLenum dataType, bool mipMaps, GLint minFilter, GLint magFilter)
+GLuint Texture::CreateTexture(int width, int height, GLenum format, unsigned char* data, GLint wrappingMode, GLenum dataType, bool mipMaps, GLint minFilter, GLint magFilter)
 {
 	GLuint ID;
 	glGenTextures(1, &ID);

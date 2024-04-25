@@ -10,12 +10,12 @@ public:
 	GLuint FBO;
 	unsigned int width;
 	unsigned int height;
-	// TODO:
-	// Texture* texture;
-	GLuint colourTexID;
-	GLuint depthTextureID;
+	Texture* colourTexture;
+	Texture* depthTexture;
 
-	FrameBuffer(unsigned int _width, unsigned int _height, GLuint _colourTexID, GLuint _depthTexID);
+	FrameBuffer(unsigned int _width, unsigned int _height, Texture* _colourTexture, Texture* _depthTexture);
+
+	void RefreshTextures();
 
 	void Bind();
 

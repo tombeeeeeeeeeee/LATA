@@ -201,11 +201,11 @@ void TestScene::Start()
 
 
 	// create depth texture
-	depthMap = ResourceManager::LoadTexture(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, GL_DEPTH_COMPONENT, nullptr, GL_CLAMP_TO_BORDER, GL_FLOAT, false, GL_NEAREST, GL_NEAREST)->GLID;
+	depthMap = ResourceManager::LoadTexture(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, GL_DEPTH_COMPONENT, nullptr, GL_CLAMP_TO_BORDER, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
 	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	// attach depth texture as FBO's depth buffer
-	shadowFrameBuffer = new FrameBuffer(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, (GLuint)0, depthMap);
+	shadowFrameBuffer = new FrameBuffer(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, nullptr, depthMap);
 	shadowDebug->Use();
 	shadowDebug->setInt("depthMap", 0);
 }
@@ -219,7 +219,8 @@ void TestScene::EarlyUpdate()
 
 void TestScene::Update(float delta)
 {
-	
+	// TODO: rather then constanty refreshing the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
+	shadowFrameBuffer->RefreshTextures();
 
 	messengerInterface.Update();
 
@@ -296,7 +297,7 @@ void TestScene::Draw()
 
 	shadowMapping->setSampler("shadowMap", 17);
 	glActiveTexture(GL_TEXTURE17);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap->GLID);
 	
 	// RENDER SCENE
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
@@ -356,7 +357,7 @@ void TestScene::Draw()
 	shadowDebug->setFloat("near_plane", light->shadowNearPlane);
 	shadowDebug->setFloat("far_plane", light->shadowFarPlane);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap->GLID);
 	// Uncomment this to see the light POV
 	if (showShadowDebug) {
 		screenQuad.Draw();

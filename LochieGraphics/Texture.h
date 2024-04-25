@@ -28,20 +28,31 @@ public:
 		count // When adding types ensure to add the type name to the unordered map below
 	};
 	static const std::unordered_map<Type, std::string> TypeNames;
+	
 
 	unsigned long long GUID;
 	GLuint GLID;
-	Type type = Type::diffuse;
+
 	std::string path = "";
+	int width;
+	int height;
+	Type type = Type::diffuse;
 	GLenum wrappingMode;
+	GLenum format;
+	GLenum dataType;
+	bool mipMapped;
+	GLint minFilter;
+	GLint maxFilter;
 	bool flipped; //TODO: rename to flip?
+
 	bool loaded = false;
+
 	Texture(std::string _path, Type _type, int _wrappingMode, bool flip = false);
 
 	void Load();
 
-	Texture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_RGBA, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
-	static GLuint CreateTexture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_RGBA, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
+	Texture(int _width, int _height, GLenum _format, unsigned char* _data, GLint _wrappingMode, GLenum _dataType, bool _mipMaps, GLint _minFilter, GLint _magFilter);
+	static GLuint CreateTexture(int width, int height, GLenum format, unsigned char* data, GLint wrappingMode, GLenum dataType, bool mipMaps, GLint minFilter, GLint magFilter);
 
 	/// <summary>
 	/// Given 6 faces, a cube map textured will be generated and returned

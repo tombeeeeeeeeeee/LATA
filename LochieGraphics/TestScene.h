@@ -49,7 +49,7 @@ private:
 	//unsigned int rbo;
 
 	FrameBuffer* shadowFrameBuffer = nullptr;
-	GLuint depthMap = 0;
+	Texture* depthMap;
 
 	unsigned int quadVAO = 0; // TODO: I don't even think these need to be here anymore, remove
 	unsigned int quadVBO = 0;
