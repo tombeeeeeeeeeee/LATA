@@ -17,12 +17,7 @@ class TestScene : public Scene
 private:
 	MessengerInterface messengerInterface;
 
-	Shader* litNormalShader = nullptr;
-	Shader* litShader		= nullptr;
-	Shader* lightCubeShader = nullptr;
-	Shader* skyBoxShader    = nullptr;
 	Shader* animateShader   = nullptr;
-	Shader* pbrShader       = nullptr;
 	Shader* screenShader    = nullptr;
 	Shader* shadowMapDepth  = nullptr;
 	Shader* shadowMapping   = nullptr;
@@ -49,7 +44,7 @@ private:
 	//unsigned int rbo;
 
 	FrameBuffer* shadowFrameBuffer = nullptr;
-	Texture* depthMap;
+	Texture* depthMap = nullptr;
 
 	unsigned int quadVAO = 0; // TODO: I don't even think these need to be here anymore, remove
 	unsigned int quadVBO = 0;
