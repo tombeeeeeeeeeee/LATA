@@ -271,6 +271,22 @@ void TestScene::Draw()
 	//RENDER SCENE
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
+		auto* currentRenderer = (*i)->getRenderer();
+		if (currentRenderer) {
+			Texture* alphaMap = currentRenderer->material->getFirstTextureOfType(Texture::Type::diffuse);
+			if (!alphaMap) {
+				alphaMap = currentRenderer->material->getFirstTextureOfType(Texture::Type::albedo);
+			}
+			if (alphaMap) {
+				glActiveTexture(GL_TEXTURE0 + 1);
+				glBindTexture(GL_TEXTURE_2D, alphaMap->GLID);
+				shadowMapDepth->setSampler("alphaDiscardMap", 1);
+			}
+			else {
+				// TODO:
+				shadowMapDepth->setSampler("alphaDiscardMap", 0); 
+			}
+		}
 		(*i)->Draw(shadowMapDepth); // TODO: Make the shadow map depth support animated
 	}
 	skybox->Draw();
