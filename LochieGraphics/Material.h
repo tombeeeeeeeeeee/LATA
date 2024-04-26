@@ -28,6 +28,8 @@ public:
 	void AddTextures(std::vector<Texture*> _textures);
 	void Use();
 
+	Texture* getFirstTextureOfType(Texture::Type type) const;
+
 	// Will re get all of the texture pointers using the texture GUIDs
 	void Refresh();
 

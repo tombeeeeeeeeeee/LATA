@@ -127,6 +127,17 @@ void Material::Use()
 	}
 }
 
+Texture* Material::getFirstTextureOfType(Texture::Type type) const
+{
+	for (auto i = texturePointers.begin(); i != texturePointers.end(); i++)
+	{
+		if (i->second->type == type) {
+			return i->second;
+		}
+	}
+	return nullptr;
+}
+
 void Material::Refresh()
 {
 	for (auto i = textureGUIDs.begin(); i != textureGUIDs.end(); i++)
