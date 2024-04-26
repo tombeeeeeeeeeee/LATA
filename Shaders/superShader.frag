@@ -104,6 +104,9 @@ in vec4 lightSpaceFragPos;
 
 void main()
 {
+    
+
+
     albedo = texture(material.albedo1, texCoords).rgb;
     metallic = texture(material.metallic1, texCoords).r;
     roughness = texture(material.roughness1, texCoords).r;
@@ -133,7 +136,7 @@ void main()
 //    if(texture(material.albedo1, TexCoords).a < alphaDiscard) {
 //        discard;
 //    }
-    fragColor = vec4(result, 1.0);
+    fragColor = vec4((result * 0.99) + (tangentNormal * 0.01), 1.0);
 }
 
 

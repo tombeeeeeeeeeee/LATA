@@ -75,15 +75,37 @@ void main()
     normal = aNormal;
     texCoords = aTexCoords;
     lightSpaceFragPos = lightSpaceMatrix * vec4(fragPos, 1.0);
+    vec4 pos;
 
     // Normal calculations
     mat3 normalMatrix;
-    if (aBoneIDs[0] == -1) {
-        //normalMatrix = transpose(inverse(mat3(totalPosition)));
+    
+    
+    
+
+    // Animation
+    mat4 totalPosition = mat4(0.0);
+
+    if (aBoneIDs[0] != -1) {
+        for(int i = 0 ; i < MAX_BONE_INFLUENCE ; i++)
+        {
+            if(aBoneIDs[i] == -1) {
+                continue;
+            }
+     
+    //        vec4 localPosition = boneMatrices[aBoneIDs[i]] * vec4(aPos,1.0f);
+            totalPosition += boneMatrices[aBoneIDs[i]] * aBoneWeights[i];
+            vec3 localNormal = mat3(boneMatrices[aBoneIDs[i]]) * aNormal;
+        }
+        normalMatrix = transpose(inverse(mat3(totalPosition)));
+        pos = vp * model * (totalPosition * vec4(aPos, 1.0));
     }
     else {
         normalMatrix = transpose(inverse(mat3(model)));
+        pos = vp * vec4(fragPos, 1.0);
     }
+    
+
     vec3 T = normalize(normalMatrix * aTangent);
     vec3 N = normalize(normalMatrix * aNormal);
     T = normalize(T - dot(T, N) * N);
@@ -102,24 +124,6 @@ void main()
     
     tangentViewPos = TBN * viewPos;
     tangentFragPos = TBN * fragPos;
-
-    // Animation
-    mat4 totalPosition = mat4(0.0);
-
-    if (aBoneIDs[0] == -1) {
-        gl_Position = vp * vec4(fragPos, 1.0);
-        return;
-    }
-    for(int i = 0 ; i < MAX_BONE_INFLUENCE ; i++)
-    {
-        if(aBoneIDs[i] == -1) {
-            continue;
-        }
-     
-//        vec4 localPosition = boneMatrices[aBoneIDs[i]] * vec4(aPos,1.0f);
-        totalPosition += boneMatrices[aBoneIDs[i]] * aBoneWeights[i];
-        vec3 localNormal = mat3(boneMatrices[aBoneIDs[i]]) * aNormal;
-    }
 		
-    gl_Position = vp * model * (totalPosition * vec4(aPos,1.0f));
+    gl_Position = pos;
 }
