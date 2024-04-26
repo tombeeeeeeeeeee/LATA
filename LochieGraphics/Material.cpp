@@ -131,6 +131,7 @@ Texture* Material::getFirstTextureOfType(Texture::Type type) const
 {
 	for (auto i = texturePointers.begin(); i != texturePointers.end(); i++)
 	{
+		if (!i->second) { continue; }
 		if (i->second->type == type) {
 			return i->second;
 		}
