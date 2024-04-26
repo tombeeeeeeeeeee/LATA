@@ -2,7 +2,6 @@
 
 #include "Bone.h"
 #include "Model.h"
-#include "NodeData.h"
 #include "Transform.h"
 
 #include "assimp/scene.h"

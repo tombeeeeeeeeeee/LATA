@@ -175,7 +175,10 @@ void TestScene::Start()
 	xbot->setRenderer(new ModelRenderer(&xbotModel, xbotMaterial));
 
 	xbotChicken = Animation("models/Chicken Dance.fbx", &xbotModel);
+	xbotIdle = Animation("models/Ymca Dance.fbx", &xbotModel);
 	xbotAnimator = Animator(&xbotChicken);
+	xbotOtherAnimator = Animator(&xbotIdle);
+	xbotBlendedAnimator = BlendedAnimator(&xbotChicken, &xbotIdle);
 
 	vampireModel.LoadModel(std::string("models/Skinning Test.fbx"));
 	vampire->transform.scale = 0.01f;
@@ -248,6 +251,8 @@ void TestScene::Update(float delta)
 	}
 
 	xbotAnimator.UpdateAnimation(delta);
+	xbotOtherAnimator.UpdateAnimation(delta);
+	xbotBlendedAnimator.UpdateAnimation(delta);
 	vampireAnimator.UpdateAnimation(delta);
 	puppetAnimator.UpdateAnimation(delta);
 
@@ -258,7 +263,35 @@ void TestScene::Draw()
 	glEnable(GL_DEPTH_TEST);
 
 	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
+	auto& xBotOtherTransforms = xbotOtherAnimator.getFinalBoneMatrices();
 	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
+
+	auto& xbotInterpolatedAnimations = xbotBlendedAnimator.getFinalBoneMatrices();
+	//std::vector<glm::mat4> xbotInterpolatedAnimations;
+	//xbotInterpolatedAnimations.reserve(xBotTransforms.size());
+	////float lerpAmount = sinf(glfwGetTime()) * 2 - 1;
+	//for (size_t i = 0; i < xBotTransforms.size(); i++)
+	//{
+	//	glm::vec3 pos1 = xBotTransforms[i][3];
+	//	glm::vec3 pos2 = xBotOtherTransforms[i][3];
+
+	//	glm::quat quat1 = glm::quat_cast(xBotTransforms[i]);
+	//	glm::quat quat2 = glm::quat_cast(xBotOtherTransforms[i]);
+
+
+	//	//glm::vec3 lerpPos = pos1 + (pos2 - pos1) * lerpAmount;
+	//	glm::vec3 lerpPos = pos1 * (1.f - lerpAmount) + pos2 * lerpAmount;
+	//	glm::quat slerpQuat = glm::slerp(quat1, quat2, lerpAmount);
+	//	// TODO: Scale
+
+
+	//	glm::mat4 m = glm::mat4(1.0f);
+	//	m = glm::translate(m, lerpPos);
+	//	//m = glm::scale(m, glm::vec3(scale));
+	//	m = m * glm::mat4_cast(slerpQuat);
+	//	xbotInterpolatedAnimations.push_back(m);
+	//}
+
 
 	// Render depth of scene to texture (from light's perspective)
 	glm::mat4 lightSpaceMatrix;
@@ -298,8 +331,8 @@ void TestScene::Draw()
 	}
 
 
-	for (int i = 0; i < xBotTransforms.size(); i++) {
-		shadowMapDepth->setMat4("boneMatrices[" + std::to_string(i) + "]", xBotTransforms[i]);
+	for (int i = 0; i < xbotInterpolatedAnimations.size(); i++) {
+		shadowMapDepth->setMat4("boneMatrices[" + std::to_string(i) + "]", xbotInterpolatedAnimations[i]);
 	}
 	shadowMapDepth->setMat4("model", xbot->transform.getGlobalMatrix());
 	xbot->Draw(shadowMapDepth);
@@ -354,8 +387,8 @@ void TestScene::Draw()
 	glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, camera->nearPlane, camera->farPlane);
 	superShader->setMat4("vp", projection * camera->GetViewMatrix());
 
-	for (int i = 0; i < xBotTransforms.size(); i++) {
-		superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", xBotTransforms[i]);
+	for (int i = 0; i < xbotInterpolatedAnimations.size(); i++) {
+		superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", xbotInterpolatedAnimations[i]);
 	}
 	superShader->setMat4("model", xbot->transform.getGlobalMatrix());
 	xbot->Draw();
@@ -424,6 +457,7 @@ void TestScene::GUI()
 		ImGui::End();
 	}
 	else {
+		ImGui::SliderFloat("Animation trans", &xbotBlendedAnimator.lerpAmount, 0.f, 1.0f);
 		ImGui::Checkbox("Show shadow debug", &showShadowDebug);
 		ImGui::End();
 	}

@@ -11,6 +11,7 @@
 #include "MessengerInterface.h"
 #include "Animator.h"
 #include "FrameBuffer.h"
+#include "BlendedAnimator.h"
 
 class TestScene : public Scene
 {
@@ -66,7 +67,12 @@ private:
 	SceneObject* tires      = new SceneObject();
 
 	Animation xbotChicken;
-	Animator xbotAnimator;
+	Animation xbotIdle;
+	Animator xbotAnimator; // TODO: Make a better or new animator class that can go between two animations
+	Animator xbotOtherAnimator;
+	BlendedAnimator xbotBlendedAnimator;
+	float lerpAmount = 0.f;
+
 	Animation vampireWalk;
 	Animator vampireAnimator;
 	Animation puppetAnimation;
