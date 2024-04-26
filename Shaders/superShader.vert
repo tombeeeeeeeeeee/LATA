@@ -63,10 +63,10 @@ out vec3 tangentPointLightsPos[MAX_POINT_LIGHTS];
 out mat3 inverseTBN;
 
 // Shadows
-uniform mat4 lightSpaceMatrix;
+uniform mat4 directionalLightSpaceMatrix;
 
 out vec3 normal;
-out vec4 lightSpaceFragPos;
+out vec4 directionalLightSpaceFragPos;
 
 // Main
 void main()
@@ -74,7 +74,6 @@ void main()
     fragPos = vec3(model * vec4(aPos, 1.0));
     normal = aNormal;
     texCoords = aTexCoords;
-    lightSpaceFragPos = lightSpaceMatrix * vec4(fragPos, 1.0);
     vec4 pos;
 
     // Normal calculations
@@ -98,11 +97,16 @@ void main()
             vec3 localNormal = mat3(boneMatrices[aBoneIDs[i]]) * aNormal;
         }
         normalMatrix = transpose(inverse(mat3(totalPosition)));
+        directionalLightSpaceFragPos = directionalLightSpaceMatrix * (model * (totalPosition * vec4(aPos, 1.0)));
+        
+
         pos = vp * model * (totalPosition * vec4(aPos, 1.0));
     }
     else {
         normalMatrix = transpose(inverse(mat3(model)));
+        directionalLightSpaceFragPos = directionalLightSpaceMatrix * vec4(fragPos, 1.0); // frag is also timesed by model
         pos = vp * vec4(fragPos, 1.0);
+
     }
     
 

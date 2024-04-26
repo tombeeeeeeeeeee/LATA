@@ -100,7 +100,7 @@ void TestScene::Start()
 	grass->transform.setEulerRotation({ 0.f, -43.2f, 0.f });
 
 	backpackModel = Model("models/backpack/backpack.obj", false);
-	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", pbrShader);
+	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", superShader);
 	backpackMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/backpack/diffuse.jpg", Texture::Type::albedo, GL_REPEAT, false),
 			ResourceManager::LoadTexture("models/backpack/normal.png", Texture::Type::normal, GL_REPEAT, false),
@@ -133,7 +133,7 @@ void TestScene::Start()
 	tires->transform.position = {-0.1f, 0.f, 1.2f};
 
 	testRedBoxModel = Model("models/normalBoxTest/Box_normal_example.obj");
-	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", pbrShader);
+	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", superShader);
 	testRedBoxMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true),
@@ -158,7 +158,7 @@ void TestScene::Start()
 	puppetModel.LoadModel(std::string("models/Character.fbx"));
 	Material* puppetMaterial = ResourceManager::LoadMaterial("puppet", superShader);
 	puppetMaterial->AddTextures(std::vector<Texture*> {
-		ResourceManager::LoadTexture("images/puppet/DummyBaseMap.tga", Texture::Type::diffuse),
+		ResourceManager::LoadTexture("images/puppet/DummyBaseMap.tga", Texture::Type::albedo),
 			ResourceManager::LoadTexture("images/puppet/DummyNormalMap.tga", Texture::Type::normal),
 	});
 	puppet->transform.position.y -= 4;
@@ -182,7 +182,8 @@ void TestScene::Start()
 	//vampire->transform.position = { 0.f, -0.5f, 1.f };
 	Material* vampireMaterial = ResourceManager::LoadMaterial("vampire", superShader);
 	vampireMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::LoadTexture("models/Vampire_diffuse.png", Texture::Type::diffuse)
+		ResourceManager::LoadTexture("models/Vampire_diffuse.png", Texture::Type::albedo),
+			ResourceManager::LoadTexture("models/Vampire_normal.png", Texture::Type::normal)
 	});
 	vampire->setRenderer(new ModelRenderer(&vampireModel, vampireMaterial));
 	vampire->transform.position = { 1.6f, -0.5f, -2.f };
@@ -256,12 +257,17 @@ void TestScene::Draw()
 {
 	glEnable(GL_DEPTH_TEST);
 
+	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
+	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
+
 	// Render depth of scene to texture (from light's perspective)
 	glm::mat4 lightSpaceMatrix;
-	Light* light = &pointLights[0];
+	Light* light = &directionalLight;
 	lightSpaceMatrix = light->getShadowViewProjection();
 	shadowMapDepth->Use();
 	shadowMapDepth->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+	//shadowMapDepth//->Use();
+	//superShader->setMat4("directionalLightSpaceFragPos", lightSpaceMatrix);
 
 	glViewport(0, 0, light->shadowTexWidth, light->shadowTexHeight);
 	shadowFrameBuffer->Bind();
@@ -271,13 +277,14 @@ void TestScene::Draw()
 	//RENDER SCENE
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
-		auto* currentRenderer = (*i)->getRenderer();
+		ModelRenderer* currentRenderer = (*i)->getRenderer();
 		if (currentRenderer) {
 			Texture* alphaMap = currentRenderer->material->getFirstTextureOfType(Texture::Type::diffuse);
 			if (!alphaMap) {
 				alphaMap = currentRenderer->material->getFirstTextureOfType(Texture::Type::albedo);
 			}
 			if (alphaMap) {
+				// TODO: Really should be using a Texture bind function here.
 				glActiveTexture(GL_TEXTURE0 + 1);
 				glBindTexture(GL_TEXTURE_2D, alphaMap->GLID);
 				shadowMapDepth->setSampler("alphaDiscardMap", 1);
@@ -289,6 +296,20 @@ void TestScene::Draw()
 		}
 		(*i)->Draw(shadowMapDepth); // TODO: Make the shadow map depth support animated
 	}
+
+
+	for (int i = 0; i < xBotTransforms.size(); i++) {
+		shadowMapDepth->setMat4("boneMatrices[" + std::to_string(i) + "]", xBotTransforms[i]);
+	}
+	shadowMapDepth->setMat4("model", xbot->transform.getGlobalMatrix());
+	xbot->Draw(shadowMapDepth);
+
+	for (int i = 0; i < vampTransforms.size(); i++) {
+		shadowMapDepth->setMat4("boneMatrices[" + std::to_string(i) + "]", vampTransforms[i]);
+	}
+	shadowMapDepth->setMat4("model", vampire->transform.getGlobalMatrix());
+	vampire->Draw(shadowMapDepth);
+
 	skybox->Draw();
 	//glCullFace(GL_BACK);
 
@@ -310,6 +331,17 @@ void TestScene::Draw()
 	glActiveTexture(GL_TEXTURE17);
 	glBindTexture(GL_TEXTURE_2D, depthMap->GLID);
 	
+	superShader->Use();
+
+	// set light uniforms
+	superShader->setVec3("viewPos", camera->position);
+	superShader->setVec3("lightPos", light->getPos());
+	superShader->setMat4("directionalLightSpaceMatrix", lightSpaceMatrix);
+
+	superShader->setSampler("shadowMap", 17);
+	glActiveTexture(GL_TEXTURE17);
+	glBindTexture(GL_TEXTURE_2D, depthMap->GLID);
+
 	// RENDER SCENE
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
@@ -322,25 +354,23 @@ void TestScene::Draw()
 	glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, camera->nearPlane, camera->farPlane);
 	superShader->setMat4("vp", projection * camera->GetViewMatrix());
 
-	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
 	for (int i = 0; i < xBotTransforms.size(); i++) {
 		superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", xBotTransforms[i]);
 	}
 	superShader->setMat4("model", xbot->transform.getGlobalMatrix());
 	xbot->Draw();
 
-	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
 	for (int i = 0; i < vampTransforms.size(); i++) {
 		superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", vampTransforms[i]);
 	}
 	superShader->setMat4("model", vampire->transform.getGlobalMatrix());
 	vampire->Draw();
 
-	auto& puppetTransforms = puppetAnimator.getFinalBoneMatrices();
-	for (int i = 0; i < vampTransforms.size(); i++) {
-		superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", puppetTransforms[i]);
-	}
-	superShader->setMat4("model", puppet->transform.getGlobalMatrix());
+	//auto& puppetTransforms = puppetAnimator.getFinalBoneMatrices();
+	//for (int i = 0; i < vampTransforms.size(); i++) {
+	//	superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", puppetTransforms[i]);
+	//}
+	//superShader->setMat4("model", puppet->transform.getGlobalMatrix());
 	//puppet->Draw();
 
 
