@@ -12,8 +12,6 @@
 #include "assimp/postprocess.h"
 
 
-
-// TODO: Meshes cannot be shared across models atm, as they are owned by the models
 class Mesh
 {
 private:
@@ -31,7 +29,6 @@ public:
 
 	void Draw();
 
-	// TODO: Constructors for preset shapes 
 	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices);
 	Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);
 	Mesh(presets preset);

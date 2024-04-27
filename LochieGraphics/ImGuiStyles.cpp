@@ -129,12 +129,7 @@ void ImGuiStyles::SetLocStyle()
 	colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 
 	// TODO: colours idk
-	// menu bar bg
-	// header
-	// header hovered
-	// header active
 	// nav stuff
 	// plotting stuff
-	// table stuff
 	// modal window dim bg
 }
