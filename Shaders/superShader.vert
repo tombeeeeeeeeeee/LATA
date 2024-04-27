@@ -71,7 +71,7 @@ out vec4 directionalLightSpaceFragPos;
 // Main
 void main()
 {
-    fragPos = vec3(model * vec4(aPos, 1.0));
+    fragPos = vec3(model * vec4(aPos, 1.0)); // TODO: fragPos should be worked out later, value will be different when animated
     normal = aNormal;
     texCoords = aTexCoords;
     vec4 pos;
