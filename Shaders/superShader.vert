@@ -3,7 +3,7 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoords;
 layout (location = 3) in vec3 aTangent;
-layout (location = 4) in vec3 aBiTangent;
+layout (location = 4) in vec3 aBiTangent; // TODO: Actually use
 layout (location = 5) in ivec4 aBoneIDs;
 layout (location = 6) in vec4 aBoneWeights;
 
@@ -71,7 +71,6 @@ out vec4 directionalLightSpaceFragPos;
 // Main
 void main()
 {
-    fragPos = vec3(model * vec4(aPos, 1.0)); // TODO: fragPos should be worked out later, value will be different when animated
     normal = aNormal;
     texCoords = aTexCoords;
     vec4 pos;
@@ -80,35 +79,26 @@ void main()
     mat3 normalMatrix;
     
     
-    
-
     // Animation
-    mat4 totalPosition = mat4(0.0);
 
     if (aBoneIDs[0] != -1) {
+        mat4 totalPosition = mat4(0.0);
         for(int i = 0 ; i < MAX_BONE_INFLUENCE ; i++)
         {
             if(aBoneIDs[i] == -1) {
                 continue;
-            }
-     
-    //        vec4 localPosition = boneMatrices[aBoneIDs[i]] * vec4(aPos,1.0f);
+            }     
             totalPosition += boneMatrices[aBoneIDs[i]] * aBoneWeights[i];
             vec3 localNormal = mat3(boneMatrices[aBoneIDs[i]]) * aNormal;
         }
         normalMatrix = transpose(inverse(mat3(totalPosition)));
-        directionalLightSpaceFragPos = directionalLightSpaceMatrix * (model * (totalPosition * vec4(aPos, 1.0)));
-        
-
-        pos = vp * model * (totalPosition * vec4(aPos, 1.0));
+        fragPos = vec3(model * (totalPosition * vec4(aPos, 1.0)));
     }
     else {
         normalMatrix = transpose(inverse(mat3(model)));
-        directionalLightSpaceFragPos = directionalLightSpaceMatrix * vec4(fragPos, 1.0); // frag is also timesed by model
-        pos = vp * vec4(fragPos, 1.0);
-
+        fragPos = vec3(model * vec4(aPos, 1.0));
     }
-    
+    directionalLightSpaceFragPos = directionalLightSpaceMatrix * vec4(fragPos, 1.0); // frag is also timesed by model
 
     vec3 T = normalize(normalMatrix * aTangent);
     vec3 N = normalize(normalMatrix * aNormal);
@@ -129,5 +119,5 @@ void main()
     tangentViewPos = TBN * viewPos;
     tangentFragPos = TBN * fragPos;
 		
-    gl_Position = pos;
+    gl_Position = vp * vec4(fragPos, 1.0);
 }

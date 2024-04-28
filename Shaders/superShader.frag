@@ -97,9 +97,6 @@ in mat3 inverseTBN;
 
 void main()
 {
-    
-
-
     albedo = texture(material.albedo1, texCoords).rgb;
     metallic = texture(material.metallic1, texCoords).r;
     roughness = texture(material.roughness1, texCoords).r;
