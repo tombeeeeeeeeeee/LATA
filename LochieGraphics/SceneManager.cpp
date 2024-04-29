@@ -226,7 +226,11 @@ void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int he
 
 void SceneManager::MouseMoveCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	if ((lockedCamera && !oppositeCameraMode) || (!lockedCamera && oppositeCameraMode)) { return; }
+	// If in camera move mode
+	if ((lockedCamera && !oppositeCameraMode) || (!lockedCamera && oppositeCameraMode)) { 
+		
+		return;
+	}
 	glfwSetCursorPos(window, 0, 0);
 	if (firstMouse)
 	{

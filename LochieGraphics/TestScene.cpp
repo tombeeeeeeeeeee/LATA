@@ -5,6 +5,8 @@
 #include <iostream>
 #include <array>
 
+bool terrible = false;
+
 TestScene::TestScene()
 {
 	sceneObjects = std::vector<SceneObject*>{
@@ -178,8 +180,10 @@ void TestScene::Start()
 	screenQuad.InitialiseQuad(1.f, 0.0f);
 	buttonQuad.InitialiseQuad(0.25f, 0.f);
 
-	buttonTexture = ResourceManager::LoadTexture("images/Button.png", Texture::Type::albedo);
-
+	//terrible = true;
+	buttonTexture = ResourceManager::LoadTexture("images/thisOneMightBeIt.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE, true);
+	//buttonTexture = ResourceManager::LoadTexture("images/testButtonWorking.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE, true);
+	terrible = false;
 	// Create colour attachment texture for fullscreen framebuffer
 	screenColourBuffer = ResourceManager::LoadTexture(*windowWidth, *windowHeight, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
 	
@@ -202,6 +206,11 @@ void TestScene::EarlyUpdate()
 
 void TestScene::Update(float delta)
 {
+	//if ()
+
+
+
+
 	// TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
 	shadowFrameBuffer->Load();
 
@@ -309,6 +318,7 @@ void TestScene::Draw()
 	superShader->Use();
 
 	// set light uniforms
+	// TODO: Shouldn't need to set light uniforms here, use the shader flags and make one for shadowed
 	superShader->setVec3("viewPos", camera->position);
 	superShader->setVec3("lightPos", light->getPos());
 	superShader->setMat4("directionalLightSpaceMatrix", lightSpaceMatrix);
@@ -414,5 +424,4 @@ TestScene::~TestScene()
 	//glDeleteTextures(1, &textureColorbuffer);
 	delete shadowFrameBuffer;
 	delete screenFrameBuffer;
-	
 }

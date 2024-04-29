@@ -29,7 +29,7 @@ Texture::Texture(std::string _path, Type _type, int _wrappingMode, bool flip) :
 {
 	Load();
 }
-
+extern bool terrible;
 void Texture::Load()
 {
 	if (loaded) { DeleteTexture(); }
@@ -46,6 +46,17 @@ void Texture::Load()
 	if (!data) {
 		std::cout << "Texture failed to load, path: " << path << "\n";
 		return;
+	}
+
+	if (terrible)
+	{
+
+		for (int i = 0; i < width * height * 3; i++)
+		{
+			int pixelsCovered = i / 3;
+			data[i] = data[i + pixelsCovered];
+		}
+
 	}
 
 	GLenum format;
