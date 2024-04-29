@@ -15,8 +15,6 @@ TestScene::TestScene()
 		soulSpear,
 		testRedBox,
 		tires,
-		//bottle
-		//puppet,
 		//vampire,
 		//xbot
 	};
@@ -45,13 +43,14 @@ void TestScene::Start()
 	shadowDebug = ResourceManager::LoadShader("shaders/shadowDebug.vert", "shaders/shadowDebug.frag");
 	Shader* simpleTextured = ResourceManager::LoadShader("shaders/simpleTextured.vert", "shaders/simpleTextured.frag", Shader::Flags::VPmatrix);
 	superShader = ResourceManager::LoadShader("shaders/superShader.vert", "shaders/superShader.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
+	uiShader = ResourceManager::LoadShader("shaders/ui.vert", "shaders/ui.frag");
 
 	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader, pbrShader, screenShader, shadowMapDepth, shadowMapping, shadowDebug,
-		simpleTextured, superShader
+		simpleTextured, superShader, simpleTextured,
 	};
 
 
-	// TODO: This
+	// TODO: This nees to be cleaned up
 	std::array<std::string, 6> skyboxFaces;
 	skyboxFaces = { "images/skybox/right.jpg", "images/skybox/left.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
 	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
@@ -110,17 +109,7 @@ void TestScene::Start()
 	backpack->setRenderer(new ModelRenderer(&backpackModel, backpackMaterial));
 	backpack->transform.position = { -4.5f, 1.7f, 0.f };
 	backpack->transform.setEulerRotation({0.f, 52.6f, 0.f});
-
-	bottleModel = Model("models/thermos-hydration-bottle-24oz/Thermos2.fbx", false);
-	Material* bottleMaterial = ResourceManager::LoadMaterial("bottle", pbrShader);
-	bottleMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::LoadTexture("models/thermos-hydration-bottle-24oz/Thermos_albedo.jpg", Texture::Type::albedo, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/thermos-hydration-bottle-24oz/Thermos_normal.png", Texture::Type::normal, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/thermos-hydration-bottle-24oz/Thermos_metallic.jpg", Texture::Type::metallic, GL_REPEAT, true), 
-			ResourceManager::LoadTexture("models/thermos-hydration-bottle-24oz/Thermos_roughness.jpg", Texture::Type::roughness, GL_REPEAT, true),
-	});
-	bottle->setRenderer(new ModelRenderer(&bottleModel, bottleMaterial));
-
+	
 	tiresModel = Model("models/old-tires-dirt-low-poly/model.dae", false);
 	Material* tiresMaterial = ResourceManager::LoadMaterial("tires", pbrShader);
 	tiresMaterial->AddTextures(std::vector<Texture*>{
@@ -155,16 +144,6 @@ void TestScene::Start()
 	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, soulSpearMaterial));
 	soulSpear->transform.position = { 5.f, 1.f, 1.f };
 
-	puppetModel.LoadModel(std::string("models/Character.fbx"));
-	Material* puppetMaterial = ResourceManager::LoadMaterial("puppet", superShader);
-	puppetMaterial->AddTextures(std::vector<Texture*> {
-		ResourceManager::LoadTexture("images/puppet/DummyBaseMap.tga", Texture::Type::albedo),
-			ResourceManager::LoadTexture("images/puppet/DummyNormalMap.tga", Texture::Type::normal),
-	});
-	puppet->transform.position.y -= 4;
-	puppet->transform.scale = 0.01f;
-	puppet->setRenderer(new ModelRenderer(&puppetModel, puppetMaterial));
-
 	xbotModel.LoadModel(std::string("models/X Bot.fbx"));
 	xbot->transform.scale = 0.01f;
 	xbot->transform.position = { 0.f, -0.5f, 1.5f };
@@ -195,36 +174,30 @@ void TestScene::Start()
 	vampireWalk = Animation("models/Skinning Test.fbx", &vampireModel);
 	vampireAnimator = Animator(&vampireWalk);
 
-	puppetAnimation = Animation("models/Character@LPunch4.fbx", &puppetModel);
-	puppetAnimator = Animator(&puppetAnimation);
-
 	shadowDebugQuad.InitialiseQuad(0.5f, 0.5f);
 	screenQuad.InitialiseQuad(1.f, 0.0f);
+	buttonQuad.InitialiseQuad(0.25f, 0.f);
 
+	buttonTexture = ResourceManager::LoadTexture("images/Button.png", Texture::Type::albedo);
 
-	// create a color attachment texture
+	// Create colour attachment texture for fullscreen framebuffer
 	screenColourBuffer = ResourceManager::LoadTexture(*windowWidth, *windowHeight, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
-
 	
+	// Make fullscreen framebuffer
 	screenFrameBuffer = new FrameBuffer(*windowWidth, *windowHeight, screenColourBuffer, nullptr, true);
-	screenFrameBuffer->Bind();
-	
 
-	FrameBuffer::Unbind();
-
-
-	// create shadow depth texture
+	// TODO: Should be done for each light
+	// Create shadow depth texture for the light
 	depthMap = ResourceManager::LoadTexture(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, GL_DEPTH_COMPONENT, nullptr, GL_CLAMP_TO_BORDER, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
 	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 }; // TODO: Move to be apart of texture
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	shadowFrameBuffer = new FrameBuffer(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, nullptr, depthMap, false);
 	shadowDebug->Use();
-	shadowDebug->setInt("depthMap", 0);
+	shadowDebug->setInt("depthMap", 1);
 }
 
 void TestScene::EarlyUpdate()
 {
-	//// bind to framebuffer and draw scene as we normally would to color texture 
 }
 
 void TestScene::Update(float delta)
@@ -234,13 +207,16 @@ void TestScene::Update(float delta)
 
 	messengerInterface.Update();
 
-	pointLights[0].position.x = 1.5f * sin((float)glfwGetTime() * 2.f);
+	pointLights[0].position.x = 1.5f * sinf((float)glfwGetTime() * 2.f);
 	lightCube->transform.position = pointLights[0].position;
 	spotlight.position = camera->position;
 	spotlight.direction = camera->front;
 	
+	// TODO: Skybox class exists, could try to work out the vp there
 	// Different View Projection matrix for the skybox, as translations shouldn't affect it
+	// TODO: Would like to make this below function more clear, maybe serperate into like a remove translation function or something
 	glm::mat4 skyBoxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
+	// TODO: This math shouldn't be here, maybe move to camera class or get the projection from scenemanager
 	glm::mat4 skyboxProjection = glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, camera->nearPlane, camera->farPlane);
 	glm::mat4 skyBoxVP = skyboxProjection * skyBoxView;
 	skybox->Update(skyBoxVP);
@@ -254,44 +230,15 @@ void TestScene::Update(float delta)
 	xbotOtherAnimator.UpdateAnimation(delta);
 	xbotBlendedAnimator.UpdateAnimation(delta);
 	vampireAnimator.UpdateAnimation(delta);
-	puppetAnimator.UpdateAnimation(delta);
-
 }
 
 void TestScene::Draw()
 {
-	glEnable(GL_DEPTH_TEST);
-
 	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
 	auto& xBotOtherTransforms = xbotOtherAnimator.getFinalBoneMatrices();
 	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
 
 	auto& xbotInterpolatedAnimations = xbotBlendedAnimator.getFinalBoneMatrices();
-	//std::vector<glm::mat4> xbotInterpolatedAnimations;
-	//xbotInterpolatedAnimations.reserve(xBotTransforms.size());
-	////float lerpAmount = sinf(glfwGetTime()) * 2 - 1;
-	//for (size_t i = 0; i < xBotTransforms.size(); i++)
-	//{
-	//	glm::vec3 pos1 = xBotTransforms[i][3];
-	//	glm::vec3 pos2 = xBotOtherTransforms[i][3];
-
-	//	glm::quat quat1 = glm::quat_cast(xBotTransforms[i]);
-	//	glm::quat quat2 = glm::quat_cast(xBotOtherTransforms[i]);
-
-
-	//	//glm::vec3 lerpPos = pos1 + (pos2 - pos1) * lerpAmount;
-	//	glm::vec3 lerpPos = pos1 * (1.f - lerpAmount) + pos2 * lerpAmount;
-	//	glm::quat slerpQuat = glm::slerp(quat1, quat2, lerpAmount);
-	//	// TODO: Scale
-
-
-	//	glm::mat4 m = glm::mat4(1.0f);
-	//	m = glm::translate(m, lerpPos);
-	//	//m = glm::scale(m, glm::vec3(scale));
-	//	m = m * glm::mat4_cast(slerpQuat);
-	//	xbotInterpolatedAnimations.push_back(m);
-	//}
-
 
 	// Render depth of scene to texture (from light's perspective)
 	glm::mat4 lightSpaceMatrix;
@@ -299,8 +246,6 @@ void TestScene::Draw()
 	lightSpaceMatrix = light->getShadowViewProjection();
 	shadowMapDepth->Use();
 	shadowMapDepth->setMat4("lightSpaceMatrix", lightSpaceMatrix);
-	//shadowMapDepth//->Use();
-	//superShader->setMat4("directionalLightSpaceFragPos", lightSpaceMatrix);
 
 	glViewport(0, 0, light->shadowTexWidth, light->shadowTexHeight);
 	shadowFrameBuffer->Bind();
@@ -318,8 +263,7 @@ void TestScene::Draw()
 			}
 			if (alphaMap) {
 				// TODO: Really should be using a Texture bind function here.
-				glActiveTexture(GL_TEXTURE0 + 1);
-				glBindTexture(GL_TEXTURE_2D, alphaMap->GLID);
+				alphaMap->Bind(1);
 				shadowMapDepth->setSampler("alphaDiscardMap", 1);
 			}
 			else {
@@ -327,7 +271,7 @@ void TestScene::Draw()
 				shadowMapDepth->setSampler("alphaDiscardMap", 0); 
 			}
 		}
-		(*i)->Draw(shadowMapDepth); // TODO: Make the shadow map depth support animated
+		(*i)->Draw(shadowMapDepth);
 	}
 
 
@@ -348,7 +292,6 @@ void TestScene::Draw()
 
 	// Render scene with shadow map, to the screen framebuffer
 	screenFrameBuffer->Bind();
-	glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
 
 	// TODO: move viewport changing stuff into FrameBuffer
 	glViewport(0, 0, *windowWidth, *windowHeight);
@@ -360,9 +303,8 @@ void TestScene::Draw()
 	shadowMapping->setVec3("lightPos", light->getPos());
 	shadowMapping->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
+	depthMap->Bind(17);
 	shadowMapping->setSampler("shadowMap", 17);
-	glActiveTexture(GL_TEXTURE17);
-	glBindTexture(GL_TEXTURE_2D, depthMap->GLID);
 	
 	superShader->Use();
 
@@ -372,8 +314,7 @@ void TestScene::Draw()
 	superShader->setMat4("directionalLightSpaceMatrix", lightSpaceMatrix);
 
 	superShader->setSampler("shadowMap", 17);
-	glActiveTexture(GL_TEXTURE17);
-	glBindTexture(GL_TEXTURE_2D, depthMap->GLID);
+	depthMap->Bind(17);
 
 	// RENDER SCENE
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
@@ -399,38 +340,34 @@ void TestScene::Draw()
 	superShader->setMat4("model", vampire->transform.getGlobalMatrix());
 	vampire->Draw();
 
-	//auto& puppetTransforms = puppetAnimator.getFinalBoneMatrices();
-	//for (int i = 0; i < vampTransforms.size(); i++) {
-	//	superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", puppetTransforms[i]);
-	//}
-	//superShader->setMat4("model", puppet->transform.getGlobalMatrix());
-	//puppet->Draw();
-
-
-
-	// render Depth map to quad for visual debugging
-	// ---------------------------------------------
-	shadowDebug->Use();
-	shadowDebug->setFloat("near_plane", light->shadowNearPlane);
-	shadowDebug->setFloat("far_plane", light->shadowFarPlane);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, depthMap->GLID);
-	// Uncomment this to see the light POV
 	if (showShadowDebug) {
+		// Debug render the light depth map
+		shadowDebug->Use();
+		shadowDebug->setFloat("near_plane", light->shadowNearPlane);
+		shadowDebug->setFloat("far_plane", light->shadowFarPlane);
+		depthMap->Bind(1);
 		shadowDebugQuad.Draw();
 	}
 
 
-	// now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
+	// Unbind framebuffer
 	FrameBuffer::Unbind();
-	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+	glDisable(GL_DEPTH_TEST); // Disable depth test for fullscreen quad
 
 	screenShader->Use();
-	//glBindVertexArray(screenQuad);
-	glActiveTexture(GL_TEXTURE0 + 1);
+	screenColourBuffer->Bind(1);
 	screenShader->setSampler("screenTexture", 1);
-	glBindTexture(GL_TEXTURE_2D, screenColourBuffer->GLID);	// use the color attachment texture as the texture of the quad plane
 	screenQuad.Draw();
+
+	//screenShader->Use();
+	//screenShader->setSampler("screenTexture", 1);
+	uiShader->Use();
+	buttonTexture->Bind(1);
+	uiShader->setSampler("image", 1);
+	buttonQuad.Draw();
+
+	// Re enable the depth test
+	glEnable(GL_DEPTH_TEST);
 }
 
 void TestScene::GUI()
@@ -465,20 +402,15 @@ void TestScene::GUI()
 
 void TestScene::OnWindowResize()
 {
-	//glDeleteRenderbuffers(1, &rbo);
-	//glDeleteFramebuffers(1, &framebuffer);
 	//glDeleteTextures(1, &textureColorbuffer);
 
 	screenColourBuffer->setWidthHeight((int)*windowWidth, (int)*windowHeight);
-	
 	screenFrameBuffer->setWidthHeight(*windowWidth, *windowHeight);
-
 }
 
 TestScene::~TestScene()
 {
-	//glDeleteRenderbuffers(1, &rbo);
-	//glDeleteFramebuffers(1, &framebuffer);
+	// TODO: Not deleting the textures properly
 	//glDeleteTextures(1, &textureColorbuffer);
 	delete shadowFrameBuffer;
 	delete screenFrameBuffer;

@@ -104,20 +104,18 @@ void Material::Use()
 	// TODO: This might not be needed anymore
 	//for (unsigned int i = 0; i < 10; i++)
 	//{
-	//	glActiveTexture(GL_TEXTURE0 + i );
-	//	glBindTexture(GL_TEXTURE_2D, 0);
+	//	Texture::ClearBind(i);
 	//}
 
 	int count = 1;
 	for (auto i = texturePointers.begin(); i != texturePointers.end(); i++)
 	{
-		glActiveTexture(GL_TEXTURE0 + count); // TODO: Move some of this to texture
 		shader->setSampler(i->first, count);
 		if (i->second) {
-			glBindTexture(GL_TEXTURE_2D, i->second->GLID);
+			i->second->Bind(count);
 		}
 		else {
-			glBindTexture(GL_TEXTURE_2D, 0);
+			Texture::ClearBind(count);
 		}
 		count++;
 	}

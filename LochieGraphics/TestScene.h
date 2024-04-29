@@ -18,12 +18,13 @@ class TestScene : public Scene
 private:
 	MessengerInterface messengerInterface;
 
-	//Shader* animateShader   = nullptr;
 	Shader* screenShader    = nullptr;
 	Shader* shadowMapDepth  = nullptr;
 	Shader* shadowMapping   = nullptr;
 	Shader* shadowDebug     = nullptr;
 	Shader* superShader     = nullptr;
+	Shader* simpleTextured  = nullptr;
+	Shader* uiShader        = nullptr;
 
 	Skybox* skybox = nullptr;
 	int skyboxIndex = 0;
@@ -34,17 +35,17 @@ private:
 	Model grassModel;
 	Model soulSpearModel;
 	Model testRedBoxModel;
-	Model puppetModel;
 	Model xbotModel;
 	Model vampireModel;
-	Model bottleModel;
 	Model tiresModel;
 
 	Mesh shadowDebugQuad;
 	Mesh screenQuad;
+	Mesh buttonQuad;
 	
-	Texture* screenColourBuffer = nullptr;
+	Texture* buttonTexture;
 
+	Texture* screenColourBuffer = nullptr;
 
 	FrameBuffer* screenFrameBuffer = nullptr;
 	Texture* screenTexture = nullptr;
@@ -75,8 +76,6 @@ private:
 
 	Animation vampireWalk;
 	Animator vampireAnimator;
-	Animation puppetAnimation;
-	Animator puppetAnimator;
 
 	PointLight pointLights[4] = {
 		PointLight({ 0.00f, 0.00f, 0.00f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  5.2f,  2.0f }, 0.2f, 0.09f, 0.032f, 0),

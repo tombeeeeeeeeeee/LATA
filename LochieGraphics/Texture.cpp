@@ -114,6 +114,31 @@ void Texture::setWidthHeight(int _width, int _height)
 	Load();
 }
 
+void Texture::Bind(int indexToBindTo)
+{
+	int bindTo = indexToBindTo + GL_TEXTURE0;
+	if (bindTo == GL_TEXTURE0) {
+		std::cout << "Warning! Please don't bind to 0\n";
+	}
+	else if (bindTo > GL_TEXTURE31 || bindTo < GL_TEXTURE0) {
+		std::cout << "Error! Trying to bind to invalid index of: " << indexToBindTo << "\nIndex must be within 0-31\n";
+		return;
+	}
+	glActiveTexture(bindTo);
+	glBindTexture(GL_TEXTURE_2D, GLID);
+}
+
+void Texture::ClearBind(int indexToClearBind)
+{
+	int bindTo = indexToClearBind + GL_TEXTURE0;
+	if (bindTo > GL_TEXTURE31 || bindTo < GL_TEXTURE0) {
+		std::cout << "Error! Trying to clear bind of invalid index: " << indexToClearBind << "\nIndex must be within 0-31\n";
+		return;
+	}
+	glActiveTexture(bindTo);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 GLuint Texture::LoadCubeMap(std::string faces[6])
 {
 	unsigned int GLID;
