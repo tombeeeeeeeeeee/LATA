@@ -43,7 +43,9 @@ private:
 	Mesh screenQuad;
 	Mesh buttonQuad;
 	
-	Texture* buttonTexture;
+	bool animateBlendDirectionRight = false;
+	bool showButton = true;
+	Texture* buttonTexture = nullptr;
 
 	Texture* screenColourBuffer = nullptr;
 

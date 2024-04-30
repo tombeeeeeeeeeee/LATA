@@ -5,8 +5,6 @@
 #include <iostream>
 #include <array>
 
-bool terrible = false;
-
 TestScene::TestScene()
 {
 	sceneObjects = std::vector<SceneObject*>{
@@ -180,10 +178,9 @@ void TestScene::Start()
 	screenQuad.InitialiseQuad(1.f, 0.0f);
 	buttonQuad.InitialiseQuad(0.25f, 0.f);
 
-	//terrible = true;
 	buttonTexture = ResourceManager::LoadTexture("images/thisOneMightBeIt.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE, true);
 	//buttonTexture = ResourceManager::LoadTexture("images/testButtonWorking.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE, true);
-	terrible = false;
+
 	// Create colour attachment texture for fullscreen framebuffer
 	screenColourBuffer = ResourceManager::LoadTexture(*windowWidth, *windowHeight, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
 	
@@ -206,8 +203,15 @@ void TestScene::EarlyUpdate()
 
 void TestScene::Update(float delta)
 {
-	xbotBlendedAnimator.lerpAmount -= delta / 5;
-	if (xbotBlendedAnimator.lerpAmount < 0) { xbotBlendedAnimator.lerpAmount = 0; }
+	if (animateBlendDirectionRight) {
+		xbotBlendedAnimator.lerpAmount += delta;
+		if (xbotBlendedAnimator.lerpAmount > 1.f) { xbotBlendedAnimator.lerpAmount = 1.f; }
+	}
+	else
+	{
+		xbotBlendedAnimator.lerpAmount -= delta;
+		if (xbotBlendedAnimator.lerpAmount < 0) { xbotBlendedAnimator.lerpAmount = 0; }
+	}
 
 	// TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
 	shadowFrameBuffer->Load();
@@ -367,12 +371,14 @@ void TestScene::Draw()
 	screenShader->setSampler("screenTexture", 1);
 	screenQuad.Draw();
 
-	//screenShader->Use();
-	//screenShader->setSampler("screenTexture", 1);
-	uiShader->Use();
-	buttonTexture->Bind(1);
-	uiShader->setSampler("image", 1);
-	buttonQuad.Draw();
+	if (showButton) {
+		//screenShader->Use();
+		//screenShader->setSampler("screenTexture", 1);
+		uiShader->Use();
+		buttonTexture->Bind(1);
+		uiShader->setSampler("image", 1);
+		buttonQuad.Draw();
+	}
 
 	// Re enable the depth test
 	glEnable(GL_DEPTH_TEST);
@@ -384,7 +390,7 @@ void TestScene::OnMouseDown()
 	if (cursorPos->x > 0.375f && cursorPos->x < 0.625f && cursorPos->y > 0.375f && cursorPos->y < 0.625f)
 	{
 		std::cout << "Button pressed!\n";
-		xbotBlendedAnimator.lerpAmount = 1.0f;
+		animateBlendDirectionRight = !animateBlendDirectionRight;
 		// Cursor is hovered on button
 		//if ()
 	}
@@ -416,6 +422,7 @@ void TestScene::GUI()
 	else {
 		ImGui::SliderFloat("Animation trans", &xbotBlendedAnimator.lerpAmount, 0.f, 1.0f);
 		ImGui::Checkbox("Show shadow debug", &showShadowDebug);
+		ImGui::Checkbox("Show the red button that toggles animation", &showButton);
 		ImGui::End();
 	}
 }

@@ -13,6 +13,8 @@
 //TODO: move some of these to their own classes
 void GUI::Update()
 {
+	// TODO: GUI Shouldn't exist for a build version
+	//if (true) { return; }
 	TestMenu();
 	ResourceMenu();
 	CameraMenu();

@@ -29,7 +29,7 @@ Texture::Texture(std::string _path, Type _type, int _wrappingMode, bool flip) :
 {
 	Load();
 }
-extern bool terrible;
+
 void Texture::Load()
 {
 	if (loaded) { DeleteTexture(); }
@@ -48,17 +48,7 @@ void Texture::Load()
 		return;
 	}
 
-	if (terrible)
-	{
-
-		for (int i = 0; i < width * height * 3; i++)
-		{
-			int pixelsCovered = i / 3;
-			data[i] = data[i + pixelsCovered];
-		}
-
-	}
-
+	// TODO: The amount of components can sometimes be read incorrectly, continue to look into and figure out.
 	GLenum format;
 	switch (components)
 	{
