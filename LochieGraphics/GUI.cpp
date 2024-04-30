@@ -95,10 +95,12 @@ void GUI::LightMenu()
 		return;
 	}
 
-	if (ImGui::SliderInt("Light selected", &lightSelectedIndex, 0, (int)scene->lights.size() - 1)) {
-		lightSelectedIndex = glm::clamp(lightSelectedIndex, 0, (int)scene->lights.size() - 1);
+	if (ImGui::SliderInt("Light selected", &lightSelectedIndex, 0, scene->lights.size() ? ((int)(scene->lights.size() - 1)) : 0 )) {
+		lightSelectedIndex = glm::clamp(lightSelectedIndex, 0, scene->lights.size() ? ((int)(scene->lights.size() - 1)) : 0);
 	}
-	scene->lights[lightSelectedIndex]->GUI();
+	if (lightSelectedIndex < scene->lights.size() && scene->lights[lightSelectedIndex] != nullptr) {
+		scene->lights[lightSelectedIndex]->GUI();
+	}
 
 	ImGui::End();
 }
