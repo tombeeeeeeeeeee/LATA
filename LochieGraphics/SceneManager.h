@@ -26,6 +26,8 @@ private:
 	static bool lockedCamera;
 	static bool oppositeCameraMode;
 
+	static glm::vec2 cursorPos;
+
 	// Time
 	static float deltaTime;
 	float lastFrame = 0.0f;

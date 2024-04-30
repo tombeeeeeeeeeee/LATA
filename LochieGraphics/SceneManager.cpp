@@ -16,6 +16,7 @@ unsigned int SceneManager::windowHeight = 1080 / 2;
 WindowModes SceneManager::windowMode = WindowModes::windowed;
 GLFWwindow* SceneManager::window = nullptr;
 Scene* SceneManager::scene = nullptr;
+glm::vec2 SceneManager::cursorPos = { 0, 0 };
 
 float SceneManager::deltaTime = 0.0f;
 FixedSizeQueue<float, 300> SceneManager::frameTimes;
@@ -24,7 +25,7 @@ Camera SceneManager::camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float SceneManager::lastX = 600;
 float SceneManager::lastY = 400;
 bool SceneManager::firstMouse = true;
-bool SceneManager::lockedCamera = false; // TODO: better names for these variables that change input mode
+bool SceneManager::lockedCamera = true; // TODO: better names for these variables that change input mode
 bool SceneManager::oppositeCameraMode = false;
 
 SceneManager::SceneManager(Scene* _scene)
@@ -64,7 +65,8 @@ SceneManager::SceneManager(Scene* _scene)
 
 	glfwMakeContextCurrent(window);
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	RefreshInputMode();
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	
 	if (!gladLoadGL())
 	{
@@ -120,6 +122,8 @@ SceneManager::SceneManager(Scene* _scene)
 
 	scene->windowWidth = &windowWidth;
 	scene->windowHeight = &windowHeight;
+
+	scene->cursorPos = &cursorPos;
 
 	scene->Start();
 
@@ -226,9 +230,9 @@ void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int he
 
 void SceneManager::MouseMoveCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	// If in camera move mode
+	// If not in camera move mode
 	if ((lockedCamera && !oppositeCameraMode) || (!lockedCamera && oppositeCameraMode)) { 
-		
+		cursorPos = { xposIn / windowWidth, yposIn / windowHeight };
 		return;
 	}
 	glfwSetCursorPos(window, 0, 0);
@@ -339,6 +343,10 @@ void SceneManager::MouseButtonCallback(GLFWwindow* window, int button, int actio
 	else if (action == GLFW_RELEASE && button == GLFW_MOUSE_BUTTON_RIGHT) {
 		oppositeCameraMode = false;
 		RefreshInputMode();
+	}
+
+	if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
+		scene->OnMouseDown();
 	}
 }
 

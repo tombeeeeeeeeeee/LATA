@@ -206,10 +206,8 @@ void TestScene::EarlyUpdate()
 
 void TestScene::Update(float delta)
 {
-	//if ()
-
-
-
+	xbotBlendedAnimator.lerpAmount -= delta / 5;
+	if (xbotBlendedAnimator.lerpAmount < 0) { xbotBlendedAnimator.lerpAmount = 0; }
 
 	// TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
 	shadowFrameBuffer->Load();
@@ -378,6 +376,18 @@ void TestScene::Draw()
 
 	// Re enable the depth test
 	glEnable(GL_DEPTH_TEST);
+}
+
+void TestScene::OnMouseDown()
+{
+	// TODO: Make a button class
+	if (cursorPos->x > 0.375f && cursorPos->x < 0.625f && cursorPos->y > 0.375f && cursorPos->y < 0.625f)
+	{
+		std::cout << "Button pressed!\n";
+		xbotBlendedAnimator.lerpAmount = 1.0f;
+		// Cursor is hovered on button
+		//if ()
+	}
 }
 
 void TestScene::GUI()

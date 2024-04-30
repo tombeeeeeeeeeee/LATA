@@ -17,6 +17,7 @@ public:
 	std::string windowName = "Lochie's Scene";
 
 	Camera* camera;
+	glm::vec2* cursorPos;
 	GUI gui;
 	std::vector<SceneObject*> sceneObjects;
 	std::vector<Light*> lights;
@@ -29,6 +30,7 @@ public:
 	virtual void EarlyUpdate() {};
 	virtual void Update(float delta) = 0;
 	virtual void Draw() = 0;
+	virtual void OnMouseDown() {};
 	// TODO: Maybe move some of the GUI code that is in the GUI class here
 	void BaseGUI();
 	virtual void GUI() {};

@@ -84,7 +84,7 @@ private:
 		PointLight({ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  0.0f, -3.0f }, 1.0f, 0.09f, 0.032f, 3)
 	};
 	DirectionalLight directionalLight = DirectionalLight
-		(          { 0.00f, 0.00f, 0.00f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { -0.533f, -0.533f, -0.533f });
+		(          { 0.00f, 0.00f, 0.00f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { -0.533f, -0.533f, -0.533f });
 
 	Spotlight spotlight = 
 		Spotlight( { 0.05f, 0.05f, 0.05f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, {  0.0f,  0.0f,  0.0f }, 0.5f, 0.09f, 0.032f, { 0.0f, 0.0f, 0.0f }, glm::cos(glm::radians(10.f)), glm::cos(glm::radians(15.f)));
@@ -96,6 +96,7 @@ public:
 	void EarlyUpdate() override;
 	void Update(float delta) override;
 	void Draw() override;
+	void OnMouseDown() override;
 	void GUI() override;
 
 	void OnWindowResize() override;
