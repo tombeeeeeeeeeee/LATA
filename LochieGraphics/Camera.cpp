@@ -115,7 +115,7 @@ void Camera::UpdateVectors()
 
 void Camera::GUI()
 {
-    ImGui::DragFloat3("Position##Camera", &position[0]);
+    ImGui::DragFloat3("Position##Camera", &position[0], 0.1f);
 
     ImGui::BeginDisabled();
     ImGui::DragFloat3("Front##Camera", &front[0]);
@@ -123,22 +123,22 @@ void Camera::GUI()
     ImGui::DragFloat3("Right##Camera", &right[0]);
     ImGui::EndDisabled();
 
-
-    if (ImGui::DragFloat3("World up##Camera", &worldUp[0])) {
+    // TODO: Should probably also disable this but looks interesting.
+    if (ImGui::DragFloat3("World up##Camera", &worldUp[0], 0.1f)) {
         UpdateVectors();
     }
 
-    if (ImGui::DragFloat("Yaw##Camera", &yaw)) {
+    if (ImGui::DragFloat("Yaw##Camera", &yaw, 0.1f)) {
         UpdateVectors();
     }
 
-    if (ImGui::DragFloat("Pitch##Camera", &pitch)) {
+    if (ImGui::DragFloat("Pitch##Camera", &pitch, 0.1f)) {
         UpdateVectors();
     }
 
-    ImGui::DragFloat("Movement Speed##Camera", &movementSpeed);
-    ImGui::DragFloat("Sensitivity##Camera", &sensitivity);
-    ImGui::DragFloat("FOV##Camera", &fov);
+    ImGui::DragFloat("Movement Speed##Camera", &movementSpeed, 0.1f);
+    ImGui::DragFloat("Sensitivity##Camera", &sensitivity, 0.1f);
+    ImGui::DragFloat("FOV##Camera", &fov, 0.1f);
 
     ImGui::DragFloat("Near plane##Camera", &nearPlane, 0.01f, 0.01f, FLT_MAX);
     ImGui::DragFloat("Far plane##Camera", &farPlane, 0.01f, 0.01f, FLT_MAX);
