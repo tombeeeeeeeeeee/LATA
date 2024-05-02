@@ -34,7 +34,7 @@ void main()
     int index = getIndex(clamp(int(TexCoord.x * rows), 0, rows), clamp(int(TexCoord.y * collumns), 0, collumns));
     colour.x = vectorMap[index].x / 2 + 0.5;
     colour.y = vectorMap[index].y / 2 + 0.5;
-    colour.z = 0.0;
+    colour.z = -vectorMap[index].x / 2 + 0.5;
     
     //colour = vec3(1, 0, 1);
     

@@ -62,7 +62,7 @@ void WeatherScene::OnMouseDown()
 
 	std::cout << glm::distance(total, glm::vec2(0, 0)) << "\n";
 
-	for (size_t i = 0; i < 1; i++)
+	for (size_t i = 0; i < 100; i++)
 	{
 		Next();
 	}
@@ -93,7 +93,7 @@ void WeatherScene::Next()
 			//vectorMap(row - 1, col) += 
 
 			//vectorMap(row, col) += total;
-			//vectorMap(row, col) /= 9.f;
+			//vectorMap(row, col) /= 9.f;	
 		}
 	}
 
