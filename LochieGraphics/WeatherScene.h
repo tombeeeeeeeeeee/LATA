@@ -3,7 +3,9 @@
 
 #include "Mesh.h"
 
-#include "Array2D.h"
+
+#include "Weather.h"
+
 
 class WeatherScene : public Scene
 {
@@ -23,24 +25,14 @@ public:
 
 
 private:
-	Array2D<glm::vec2, 20, 20> vectorMap;
-	//std::vector<glm::vec2> vectorMap;
-	//int collumns = 20;
-	//int rows = 20;
-	//int getIndex(int row, int col) const;
-	//int getRow(int index) const;
-	//int getCol(int index) const;
-	//void getRowCol(int index, int& row, int& col) const;
 
-	
-	Shader* shader;
+	Weather weather;
+
+
+	Shader* shader = nullptr;
 
 	Mesh quad;
 	
-	//std::vector<unsigned char> ConvertToTextureData();
-
-	void Next();
-
 	void SendToShader();
 };
 
