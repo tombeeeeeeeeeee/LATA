@@ -4,8 +4,6 @@
 #include "Shader.h"
 #include "Material.h"
 
-#include "Graphics.h"
-
 #include <string>
 
 //TODO: Maybe get shader without needing both the fragment and vertex shader, it could just find them both if they have the same name and just differing extension or custom file format that stores the name of the others
