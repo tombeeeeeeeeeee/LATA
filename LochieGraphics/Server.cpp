@@ -3,7 +3,7 @@
 #include<string>
 
 
-void Server::Start()
+bool Server::Start()
 {
 	std::cout << "Starting Server...\n";
 
@@ -11,30 +11,29 @@ void Server::Start()
 	
 	if (!CommonSetup(&info, &listenSocket))
 
-	if (!SetSocketNonBlocking(&listenSocket, &info)) { return; }
+	if (!SetSocketNonBlocking(&listenSocket, &info)) { return false; }
 	
 	// Bind listening socket to address
-	if (!BindSocket(&listenSocket, &info, port)) { return; };
+	if (!BindSocket(&listenSocket, &info, port)) { return false; };
 
 	freeaddrinfo(info);
 
 	// Listen
-	if (!ListenOnSocket(&listenSocket)) { return; }
+	if (!ListenOnSocket(&listenSocket)) { return false; }
 	
 	started = true;
+	return true;
 }
 
 void Server::Run()
 {
-	int iResult;
-
 	for (int i = 0; i < DEFAULT_CLIENT_LIMIT; i++)
 	{
 		if (clientSockets[i] == INVALID_SOCKET) { continue; }
 
 		if (!SocketReadable(&clientSockets[i])) { continue; }
 
-		iResult = recv(clientSockets[i], recvbuf[i], recvbuflen, 0);
+		int iResult = recv(clientSockets[i], recvbuf[i], recvbuflen, 0);
 		if (iResult > 0) {
 			std::cout << "Bytes received: " << iResult << "\n";
 			std::cout << recvbuf[i] << "\n";
@@ -56,14 +55,17 @@ void Server::Run()
 
 void Server::CheckConnectClient()
 {
+	// If reading will block, return early
+	if (!SocketReadable(&listenSocket)) {
+		return;
+	}
+
 	// Find avaliable client spot
 	for (int i = 0; i < DEFAULT_CLIENT_LIMIT; i++)
 	{
+		// Client slot already being used
 		if (clientSockets[i] != INVALID_SOCKET) { continue; }
-
-		if (!SocketReadable(&listenSocket)) {
-			return; // TODO: move before for loop
-		}
+		
 		std::cout << "New client connecting...: " << "\n";
 
 		// Accept a client socket
@@ -99,8 +101,6 @@ bool Server::BindSocket(SOCKET* soc, addrinfo** info, std::string port)
 	server_address.sin_addr.S_un.S_addr = INADDR_ANY; // Bind to no particular address (any)
 
 	int error = bind(*soc, (sockaddr*)&server_address, sizeof(server_address));
-	// Old
-	//int error = bind(*soc, (*info)->ai_addr, (int)(*info)->ai_addrlen);
 	if (error == SOCKET_ERROR) {
 		std::cout << "bind failed with error: " << WSAGetLastError() << "\n";
 		closesocket(*soc);

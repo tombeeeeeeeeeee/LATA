@@ -1,12 +1,12 @@
 #include "Client.h"
 
-void Client::Start()
+bool Client::Start()
 {
 	std::cout << "Starting Client...\n";
 
 	addrinfo* info = nullptr;
 
-	if (!CommonSetup(&info, &connectSocket)) { return; }
+	if (!CommonSetup(&info, &connectSocket)) { return false; }
 
 	int iResult;
 	// Connect to server.
@@ -16,21 +16,23 @@ void Client::Start()
 		connectSocket = INVALID_SOCKET;
 		std::cout << "Unable to connect to server: " << WSAGetLastError() << "\n";
 		WSACleanup();
-		return;
+		return false;
 	}
 
-	if (!SetSocketNonBlocking(&connectSocket, &info)) { return; }
+	if (!SetSocketNonBlocking(&connectSocket, &info)) { return false; }
 
 	freeaddrinfo(info);
+	return true;
 }
 
-void Client::Run() // check if gonna block
+void Client::Run()
 {
 	int iResult;
 
 	char recvbuf[DEFAULT_BUFLEN];
 	int recvbuflen = DEFAULT_BUFLEN;
 
+	// Check if it is going to block
 	if (!SocketReadable(&connectSocket)) { return; }
 
 	iResult = recv(connectSocket, recvbuf, recvbuflen, 0);

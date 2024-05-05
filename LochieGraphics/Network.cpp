@@ -4,15 +4,18 @@ ULONG Network::uNonBlockingMode = 1;
 
 bool Network::CommonSetup(addrinfo** info, SOCKET* soc)
 {
+	// Initialise WinSock
 	if (!InitWinsock()) { return false; }
 
 	addrinfo hints;
 
 	ZeroMemory(&hints, sizeof(hints));
-	hints.ai_family = AF_INET; // IPv4 (AF_INET)		// IPv6 (AF_INET6)
+	// AF_INET is IPv4, AF_INET6 is IPv6
+	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
-	hints.ai_flags = AI_PASSIVE; // Only needed for the server, but ignored for client (only gets used for a bind call)
+	// Only needed for the server, but ignored for client (only gets used for a bind call)
+	hints.ai_flags = AI_PASSIVE;
 
 	if (!GetAddressInfo(address, port, &hints, info)) { return false; }
 

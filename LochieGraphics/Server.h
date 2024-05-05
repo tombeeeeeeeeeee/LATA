@@ -8,7 +8,7 @@ typedef void(*RecieveCallback)(const char* buffer);
 class Server : public Network
 {
 public:
-	void Start() override;
+	bool Start() override;
 	void Run() override;
 	void CheckConnectClient(); //TODO: prob could just be called in the run loop, but keep seperate maybe cause not always wanna check for clients
 

@@ -10,7 +10,7 @@ private:
 	SOCKET connectSocket = INVALID_SOCKET;
 
 public:
-	void Start() override;
+	bool Start() override;
 	void Run() override;
 	void Send(const char* sendBuf);
 	void Disconnect();
