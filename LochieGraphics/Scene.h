@@ -28,8 +28,8 @@ public:
 
 	virtual void Start() {};
 	virtual void EarlyUpdate() {};
-	virtual void Update(float delta) = 0;
-	virtual void Draw() = 0;
+	virtual void Update(float delta) {};
+	virtual void Draw() {};
 	virtual void OnMouseDown() {};
 	// TODO: Maybe move some of the GUI code that is in the GUI class here
 	void BaseGUI();
