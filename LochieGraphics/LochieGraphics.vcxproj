@@ -114,13 +114,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)GLFW;$(SolutionDir)glm;$(SolutionDir)imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)enet/include;$(SolutionDir)GLFW;$(SolutionDir)glm;$(SolutionDir)imgui</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)GLFW</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Ws2_32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies);$(SolutionDir)GLFW\glfw3.lib;$(SolutionDir)assimp\out\build\x64-Debug\lib\assimp-vc143-mtd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)GLFW;$(SolutionDir)enet</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies);$(SolutionDir)GLFW\glfw3.lib;enet64.lib;winmm.lib;$(SolutionDir)assimp\out\build\x64-Debug\lib\assimp-vc143-mtd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,15 +131,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)GLFW;$(SolutionDir)glm;$(SolutionDir)imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)enet/include;$(SolutionDir)GLFW;$(SolutionDir)glm;$(SolutionDir)imgui</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)GLFW</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Ws2_32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies);$(SolutionDir)GLFW\glfw3.lib;$(SolutionDir)assimp\out\build\x64-Release\lib\assimp-vc143-mt.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)GLFW;$(SolutionDir)enet</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Ws2_32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies);$(SolutionDir)GLFW\glfw3.lib;enet64.lib;winmm.lib;$(SolutionDir)assimp\out\build\x64-Release\lib\assimp-vc143-mt.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -158,6 +158,7 @@
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="eNetTest.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="GUI.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="Array2D.h" />
     <ClInclude Include="AssimpMatrixToGLM.h" />
     <ClInclude Include="BlendedAnimator.h" />
+    <ClInclude Include="eNetTest.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="BoneInfo.h" />

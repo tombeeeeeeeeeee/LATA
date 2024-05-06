@@ -3,10 +3,11 @@
 
 #include "TestScene.h"
 #include "WeatherScene.h"
+#include "eNetTest.h"
 
 int main()
 {
-	SceneManager sceneManager(new TestScene());
+	SceneManager sceneManager(new eNetTestScene());
 	while (!sceneManager.ShouldClose())
 	{
 		sceneManager.Update();
