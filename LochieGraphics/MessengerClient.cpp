@@ -5,12 +5,12 @@ void MessengerClient::RecieveMessage(const char* message)
 	messages.push_back(message);
 }
 
-void MessengerClient::Start(std::string add, std::string port)
+bool MessengerClient::Start(std::string add, std::string port)
 {
 	client.address = add;
 	client.port = port;
 	client.recieveCallback = RecieveMessage;
-	client.Start();
+	return client.Start();
 }
 
 void MessengerClient::Update()

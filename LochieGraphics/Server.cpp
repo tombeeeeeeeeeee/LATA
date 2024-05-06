@@ -55,16 +55,16 @@ void Server::Run()
 
 void Server::CheckConnectClient()
 {
-	// If reading will block, return early
-	if (!SocketReadable(&listenSocket)) {
-		return;
-	}
-
 	// Find avaliable client spot
 	for (int i = 0; i < DEFAULT_CLIENT_LIMIT; i++)
 	{
 		// Client slot already being used
 		if (clientSockets[i] != INVALID_SOCKET) { continue; }
+
+		// If reading will block, return early
+		if (!SocketReadable(&listenSocket)) {
+			return;
+		}
 		
 		std::cout << "New client connecting...: " << "\n";
 

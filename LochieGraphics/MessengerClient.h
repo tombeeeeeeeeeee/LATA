@@ -10,7 +10,7 @@ class MessengerClient : public MessengerNetwork
 	static void RecieveMessage(const char* message);
 public:
 
-	void Start(std::string add, std::string port) override;
+	bool Start(std::string add, std::string port) override;
 	void Update() override;
 	void Close() override;
 

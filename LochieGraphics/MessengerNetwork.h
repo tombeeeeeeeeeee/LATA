@@ -8,7 +8,7 @@ class MessengerNetwork
 public:
 	static std::vector<std::string> messages;
 
-	virtual void Start(std::string add, std::string port) = 0;
+	virtual bool Start(std::string add, std::string port) = 0;
 	virtual void Update() = 0;
 	virtual void Close() = 0;
 

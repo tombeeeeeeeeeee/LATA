@@ -2,12 +2,12 @@
 
 Server MessengerServer::server;
 
-void MessengerServer::Start(std::string add, std::string port)
+bool MessengerServer::Start(std::string add, std::string port)
 {
 	server.address = add;
 	server.port = port;
 	server.recieveCallback = RecieveMessage;
-	server.Start();
+	return server.Start();
 }
 
 void MessengerServer::Update()

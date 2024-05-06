@@ -8,14 +8,19 @@
 
 void MessengerInterface::Start()
 {
-	started = true;
 	if (serverTicked) {
 		messenger = new MessengerServer();
 	}
 	else {
 		messenger = new MessengerClient();
 	}
-	messenger->Start(address, std::to_string(port));
+	started = messenger->Start(address, std::to_string(port));
+	if (!started) {
+		std::cout << "Error: Failed to start messenger\n";
+		messenger->Close();
+		delete messenger;
+		messenger = nullptr;
+	}
 }
 
 // TODO: Really shouldn't be a gui function
