@@ -4,6 +4,8 @@
 #include "Transform.h"
 #include "ModelRenderer.h"
 
+#include "Serialisation.h"
+
 #include "Maths.h"
 
 #include <vector>
@@ -39,6 +41,8 @@ public:
 	void Update(float delta);
 	void Draw(Shader* override = nullptr) const;
 	void GUI();
+
+	toml::table Serialise();
 };
 
 

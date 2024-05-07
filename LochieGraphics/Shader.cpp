@@ -191,3 +191,14 @@ void Shader::DeleteProgram()
 {
 	glDeleteProgram(GLID);
 }
+
+toml::table Shader::Serialise()
+{
+	return toml::table{
+		// TODO: Should not be converting a GUID (of type (unsigned long long) to type of (long long))
+		{ "guid", (long long)GUID },
+		{ "vertex", vertexPath },
+		{ "fragment", fragmentPath },
+		{ "flags", updateFlag }
+	};
+}

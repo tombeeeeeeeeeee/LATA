@@ -2,8 +2,6 @@
 
 #include "imgui.h"
 
-#include "toml.hpp"
-
 #include <fstream>
 #include <iostream>
 
@@ -32,55 +30,22 @@ void Scene::Save()
 	auto savedShaders = toml::array();
 	for (auto i = shaders.begin(); i != shaders.end(); i++)
 	{
-		savedShaders.push_back(
-			toml::table{
-				// TODO: Should not be converting a GUID (of type (unsigned long long) to type of (long long))
-				{ "guid", (long long)(*i)->GUID },
-				{ "vertex", (*i)->vertexPath },
-				{ "fragment", (*i)->fragmentPath },
-				{ "flags", (*i)->getFlag()}
-			}
-		);
+		savedShaders.push_back((*i)->Serialise());
 	}
 
 	file << toml::table{ {"Shaders", savedShaders} } << "\n\n";
-
-	// TODO: Move to camera
-	auto cam = toml::table{
-		{ "Camera", toml::table {
-			{ "position", toml::array{ camera->position.x, camera->position.y, camera->position.z } },
-			{ "rotation", toml::array{ camera->yaw, camera->pitch } },
-			{ "fov", camera->fov }
-			}
-		}
-	};
 	
-	file << cam << "\n\n";
+	file << toml::table{ { "Camera", camera->Serialise() } } << "\n\n";
 
 	auto savedSceneObjects = toml::array();
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
-		auto sceneObject = toml::table{
-			{ "name", (*i)->name },
-			{ "hasRenderer", (*i)->getRenderer() != nullptr}
-		};
-		savedSceneObjects.push_back(sceneObject);
+		savedSceneObjects.push_back((*i)->Serialise());
 	}
 	
 	file << toml::table{ { "SceneObjects", savedSceneObjects } };
-	//file << "Camera\n";
-
-	//file << camera->position.x << " " << camera->position.y << " " << camera->position.z << "\n";
-
-	//file << sceneObjects.size() << "\n";
-	//for (auto i = sceneObjects.begin(); i < sceneObjects.end(); i++)
-	//{
-	//	file << "SceneObject\n";
-	//	file << (*i)->name << "\n";
-	//}
 
 	file.close();
-
 }
 
 void Scene::Load()

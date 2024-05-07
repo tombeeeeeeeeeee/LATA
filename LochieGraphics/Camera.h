@@ -3,6 +3,8 @@
 #include "Maths.h"
 #include "Graphics.h"
 
+#include "Serialisation.h"
+
 #include <vector>
 
 // TODO: Make this fit better with the sceneObject system
@@ -21,6 +23,7 @@ public:
     float yaw;
     float pitch;
     // camera options
+    // TODO: Move speed shouldn't be build into the camera
     float movementSpeed;
     float sensitivity;
     float fov;
@@ -55,6 +58,8 @@ public:
     void ProcessMouseScroll(float yoffset);
 
     void GUI();
+
+    toml::table Serialise();
 
     // TODO: Should probably be private
 //private:

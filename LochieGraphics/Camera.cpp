@@ -73,7 +73,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
     yaw += xoffset;
     pitch += yoffset;
 
-    // make sure that when pitch is out of bounds, screen doesn't get flipped
+    // Ensure that when the pitch is out of bounds that the screen does not flip
     if (constrainPitch)
     {
         if (pitch > 89.0f) {
@@ -84,9 +84,8 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
         }
     }
 
-    // update Front, Right and Up Vectors using the updated Euler angles
+    // Update Front, Right and Up Vectors using the updated Euler angles
     UpdateVectors();
-
 }
 
 
@@ -142,4 +141,13 @@ void Camera::GUI()
 
     ImGui::DragFloat("Near plane##Camera", &nearPlane, 0.01f, 0.01f, FLT_MAX);
     ImGui::DragFloat("Far plane##Camera", &farPlane, 0.01f, 0.01f, FLT_MAX);
+}
+
+toml::table Camera::Serialise()
+{
+    return toml::table{ 
+        { "position", toml::array{ position.x, position.y, position.z } },
+        { "rotation", toml::array{ yaw, pitch } },
+        { "fov", fov }
+    };
 }

@@ -60,3 +60,11 @@ void SceneObject::GUI()
 		(*i)->GUI();
 	}
 }
+
+toml::table SceneObject::Serialise()
+{
+	return toml::table{
+		{ "name", name },
+		{ "hasRenderer", renderer != nullptr}
+	};
+}

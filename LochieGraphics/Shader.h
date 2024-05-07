@@ -4,6 +4,8 @@
 
 #include "Maths.h"
 
+#include "Serialisation.h"
+
 #include <string>
 
 
@@ -73,4 +75,6 @@ public:
 	void setMat4(const std::string& name, const glm::mat4& mat);
 
 	void DeleteProgram();
+
+	toml::table Serialise();
 };
