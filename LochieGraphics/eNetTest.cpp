@@ -117,10 +117,6 @@ void eNetTestScene::GUI()
 		}
 	}
 
-
-
 	ImGui::End();
 	
 }
-
-

@@ -7,7 +7,7 @@
 
 int main()
 {
-	SceneManager sceneManager(new eNetTestScene());
+	SceneManager sceneManager(new TestScene());
 	while (!sceneManager.ShouldClose())
 	{
 		sceneManager.Update();
