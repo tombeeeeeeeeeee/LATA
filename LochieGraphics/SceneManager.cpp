@@ -329,6 +329,8 @@ void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int ac
 	if (key == GLFW_KEY_SLASH && action == GLFW_PRESS) {
 		scene->Load();
 	}
+
+	scene->OnKeyDown(key, action);
 }
 
 void SceneManager::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
@@ -376,6 +378,11 @@ void SceneManager::ProcessInput(GLFWwindow* window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
 		camera.ProcessKeyboard(Camera::DOWN, deltaTime);
+	}
+
+	for (auto i = scene->inputKeyWatch.begin(); i != scene->inputKeyWatch.end(); i++)
+	{
+		scene->OnKey(*i, glfwGetKey(window, *i));
 	}
 }
 

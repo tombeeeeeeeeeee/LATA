@@ -10,14 +10,37 @@ void eNetTestScene::Start()
 		std::cout << "Error, Enet failed to initialise \n";
 		return;
 	}
+	inputKeyWatch = { GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D };
 }
 
 void eNetTestScene::Update(float delta)
 {
 	if (started) {
+		
+		
 		Receive();
+
+		if (glfwGetKeyScancode(GLFW_KEY_W) == GLFW_PRESS) {
+			ENetPacket* packet = enet_packet_create(&newPlayerPacket, sizeof(newPlayerPacket), ENET_PACKET_FLAG_RELIABLE);
+			enet_peer_send(peer, 0, packet);
+		}
 	}
 }
+
+void eNetTestScene::OnKey(int key, int action)
+{
+	if (action != GLFW_PRESS) { return; }
+	switch (key)
+	{
+	case GLFW_KEY_W:
+		//ENetPacket* packet = enet_packet_create(&newPlayerPacket, sizeof(newPlayerPacket), ENET_PACKET_FLAG_RELIABLE);
+		enet_peer_send(peer, 0, enet_packet_create(&newPlayerPacket, sizeof(newPlayerPacket), ENET_PACKET_FLAG_RELIABLE));
+		break;
+	default:
+		break;
+	}
+}
+
 
 void eNetTestScene::StartServerOrClient()
 {
@@ -70,6 +93,7 @@ void eNetTestScene::Receive()
 	}
 }
 
+
 eNetTestScene::~eNetTestScene()
 {
 	enet_deinitialize();
@@ -106,10 +130,9 @@ void eNetTestScene::GUI()
 		ImGui::DragInt("player id", &newPlayerPacket.index, 0.1f);
 		ImGui::DragInt("enum thing (5)", &newPlayerPacket.temp);
 
-		if (ImGui::DragFloat("X", &newPlayerPacket.posX, 0.01f)) {
+		if (ImGui::DragFloat("X", &newPlayerPacket.posX, 0.001f)) {
 			ENetPacket* packet = enet_packet_create(&newPlayerPacket, sizeof(newPlayerPacket), ENET_PACKET_FLAG_RELIABLE);
 			enet_peer_send(peer, 0, packet);
-
 		}
 		if (ImGui::DragFloat("Y", &newPlayerPacket.posY, 0.01f)) {
 			ENetPacket* packet = enet_packet_create(&newPlayerPacket, sizeof(newPlayerPacket), ENET_PACKET_FLAG_RELIABLE);

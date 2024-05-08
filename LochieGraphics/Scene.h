@@ -23,6 +23,8 @@ public:
 	std::vector<Light*> lights;
 	std::vector<Shader*> shaders;
 
+	std::vector<int> inputKeyWatch{};
+
 	unsigned int* windowWidth;
 	unsigned int* windowHeight;
 
@@ -31,6 +33,8 @@ public:
 	virtual void Update(float delta) {};
 	virtual void Draw() {};
 	virtual void OnMouseDown() {};
+	virtual void OnKeyDown(int key, int action) {};
+	virtual void OnKey(int key, int action) {};
 	// TODO: Maybe move some of the GUI code that is in the GUI class here
 	void BaseGUI();
 	virtual void GUI() {};

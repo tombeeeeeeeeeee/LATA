@@ -13,6 +13,8 @@ public:
 
 	void Update(float delta) override;
 
+	void OnKey(int key, int action) override;
+	
 
 	~eNetTestScene();
 
@@ -23,6 +25,7 @@ private:
 	void StartServerOrClient();
 
 	void Receive();
+
 
 	std::string ipToConnectTo;
 
