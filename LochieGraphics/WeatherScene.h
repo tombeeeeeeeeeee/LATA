@@ -16,7 +16,7 @@ public:
 	void Start() override;
 	void EarlyUpdate() override {};
 	void Update(float delta) override;
-	void Draw() override {};
+	void Draw() override;
 	void OnMouseDown() override;
 	void GUI() override {};
 
@@ -34,6 +34,5 @@ private:
 
 	Mesh quad;
 	
-	void SendToShader();
 };
 

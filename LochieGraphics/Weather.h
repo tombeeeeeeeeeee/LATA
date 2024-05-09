@@ -8,10 +8,16 @@ class Weather
 {
 public:
 
+	class Cell {
+	public:
+		glm::vec2 windVelocity;
+		
+	};
+
 	Weather();
 	void Update();
 	
-	Array2D<glm::vec2, 20, 20> vectorMap;
+	Array2D<Cell, 100, 100> map;
 
 };
 

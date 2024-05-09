@@ -6,29 +6,36 @@
 
 void WeatherScene::Start()
 {
-	quad.InitialiseQuad();
+	quad.InitialiseQuad(0.009f);
 
 	shader = ResourceManager::LoadShader("shaders/weather.vert", "shaders/weather.frag");
 }
 
 void WeatherScene::Update(float delta)
 {
+	
+}
+
+void WeatherScene::Draw()
+{
 	shader->Use();
-	SendToShader();
-	quad.Draw();
+
+	for (size_t c = 0; c < weather.map.getColCount() - 1; c++)
+	{
+		for (size_t r = 0; r < weather.map.getRowCount() - 1; r++)
+		{
+			Weather::Cell cell = weather.map(r, c);
+			
+			shader->setVec2("wind", cell.windVelocity);
+
+			shader->setVec2("pos", r * 0.009f - 0.50f, c * 0.009f - 0.5f);
+
+			quad.Draw();
+		}
+	}
 }
 
 void WeatherScene::OnMouseDown()
 {
 	weather.Update();
-}
-
-void WeatherScene::SendToShader()
-{
-	int index = 0;
-	for (auto i = weather.vectorMap.Begin(); i != weather.vectorMap.End(); i++)
-	{
-		shader->setVec2("vectorMap[" + std::to_string(index) + "]", *i);
-		index++;
-	}
 }
