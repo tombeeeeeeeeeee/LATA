@@ -87,8 +87,11 @@ Mesh::Mesh(Mesh&& other) noexcept
 
 void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices)
 {
-	assert(VAO == 0); // TODO: Remove the assert here, just put an error and return
-
+	if (VAO != 0) {
+		std::cout << "Error, trying to load a mesh on already loaded mesh!\n";
+		return;
+	}
+	
 	GenAndBind();
 
 	// fill vertex buffer
@@ -208,8 +211,6 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 
 void Mesh::InitialiseQuad(float size, float offset)
 {
-	// TODO: Fix pre set shapes
-	// TODO: This might be 'upside down' cause its only being used for the framebuffer atm
 	const unsigned int vertexCount = 6;
 	Vertex vertices[vertexCount] = {
 		{ {  size + offset,  size + offset, 0.0f, 1.0f }, { 0.0f, 0.0f,  1.0f, 0.0f }, { 1.0f, 1.0f } }, // Top right
