@@ -13,7 +13,7 @@
 //TODO: move some of these to their own classes
 void GUI::Update()
 {
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("Save")) {
@@ -51,7 +51,7 @@ void GUI::Update()
 
 void GUI::ResourceMenu()
 {
-	if (!ImGui::Begin("Resource Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Resource Menu", &showResourceMenu, defaultWindowFlags)) {
 		ImGui::End();
 		return;
 	}
@@ -70,7 +70,7 @@ void GUI::ResourceMenu()
 
 void GUI::TestMenu()
 {
-	if (!ImGui::Begin("Controls Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Controls Menu", &showTestMenu, defaultWindowFlags)) {
 		ImGui::End();
 		return;
 	}
@@ -85,7 +85,7 @@ void GUI::TestMenu()
 
 void GUI::CameraMenu()
 {
-	if (!ImGui::Begin("Camera Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Camera Menu", &showCameraMenu, defaultWindowFlags)) {
 		ImGui::End();
 		return;
 	}
@@ -97,7 +97,7 @@ void GUI::CameraMenu()
 
 void GUI::SceneObjectMenu()
 {
-	if (!ImGui::Begin("Scene Object Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Scene Object Menu", &showSceneObjectMenu, defaultWindowFlags)) {
 		ImGui::End();
 		return;
 	}
@@ -114,7 +114,7 @@ void GUI::SceneObjectMenu()
 
 void GUI::LightMenu()
 {
-	if (!ImGui::Begin("Light Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Light Menu", &showLightMenu, defaultWindowFlags)) {
 		ImGui::End();
 		return;
 	}
@@ -131,7 +131,7 @@ void GUI::LightMenu()
 
 void GUI::HierarchyMenu()
 {
-	if (!ImGui::Begin("Hierarchy Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Hierarchy Menu", &showHierarchyMenu, defaultWindowFlags)) {
 		ImGui::End();
 		return;
 	}

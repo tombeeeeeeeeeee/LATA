@@ -18,6 +18,9 @@ public:
 	void Update();
 
 private:
+
+	ImGuiWindowFlags defaultWindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize;
+
 	bool showResourceMenu = false;
 	void ResourceMenu();
 
