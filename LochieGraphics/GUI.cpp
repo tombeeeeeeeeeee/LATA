@@ -13,14 +13,38 @@
 //TODO: move some of these to their own classes
 void GUI::Update()
 {
+	ImGui::ShowDemoWindow();
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("File")) {
+			if (ImGui::MenuItem("Save")) {
+				scene->Save();
+			}
+			if (ImGui::MenuItem("Load")) {
+				scene->Load();
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Windows")) {
+			ImGui::MenuItem("Test Menu", NULL, &showTestMenu);
+			ImGui::MenuItem("Resource Menu", NULL, &showResourceMenu);
+			ImGui::MenuItem("Camera Menu", NULL, &showCameraMenu);
+			ImGui::MenuItem("SceneObject Menu", NULL, &showSceneObjectMenu);
+			ImGui::MenuItem("Light Menu", NULL, &showLightMenu);
+			ImGui::MenuItem("Hierarchy Menu", NULL, &showHierarchyMenu);
+
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
 	// TODO: GUI Shouldn't exist for a build version
 	//if (true) { return; }
-	TestMenu();
-	ResourceMenu();
-	CameraMenu();
-	SceneObjectMenu();
-	LightMenu();
-	HierarchyMenu();
+	if (showTestMenu)        { TestMenu();        }
+	if (showResourceMenu)    { ResourceMenu();    }
+	if (showCameraMenu)      { CameraMenu();      }
+	if (showSceneObjectMenu) { SceneObjectMenu(); }
+	if (showLightMenu)       { LightMenu();       }
+	if (showHierarchyMenu)   { HierarchyMenu();   }
 	scene->BaseGUI();
 	scene->GUI();
 }
@@ -47,7 +71,7 @@ void GUI::ResourceMenu()
 void GUI::TestMenu()
 {
 	if (!ImGui::Begin("Controls Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::End();	
+		ImGui::End();
 		return;
 	}
 
@@ -95,7 +119,7 @@ void GUI::LightMenu()
 		return;
 	}
 
-	if (ImGui::SliderInt("Light selected", &lightSelectedIndex, 0, scene->lights.size() ? ((int)(scene->lights.size() - 1)) : 0 )) {
+	if (ImGui::SliderInt("Light selected", &lightSelectedIndex, 0, scene->lights.size() ? ((int)(scene->lights.size() - 1)) : 0)) {
 		lightSelectedIndex = glm::clamp(lightSelectedIndex, 0, scene->lights.size() ? ((int)(scene->lights.size() - 1)) : 0);
 	}
 	if (lightSelectedIndex < scene->lights.size() && scene->lights[lightSelectedIndex] != nullptr) {

@@ -18,15 +18,24 @@ public:
 	void Update();
 
 private:
-
+	bool showResourceMenu = false;
 	void ResourceMenu();
+
+	bool showTestMenu = false;
 	void TestMenu();
+	
+	bool showCameraMenu = false;
 	void CameraMenu();
-	//TODO: functions will probably break if the vectors are empty
+	
 	int sceneObjectSelectedIndex = 0;
+	bool showSceneObjectMenu = false;
 	void SceneObjectMenu();
+	
 	int lightSelectedIndex = 0;
+	bool showLightMenu = false;
 	void LightMenu();
+	
+	bool showHierarchyMenu = false;
 	void HierarchyMenu();
 	void TransformTree(SceneObject* sceneObject);
 	void TransformDragDrop(SceneObject* sceneObject);
