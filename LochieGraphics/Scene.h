@@ -16,12 +16,12 @@ class Scene
 public:
 	std::string windowName = "Lochie's Scene";
 
-	Camera* camera;
-	glm::vec2* cursorPos;
+	Camera* camera = nullptr;
+	glm::vec2* cursorPos = nullptr;
 	GUI gui;
-	std::vector<SceneObject*> sceneObjects;
-	std::vector<Light*> lights;
-	std::vector<Shader*> shaders;
+	std::vector<SceneObject*> sceneObjects = {};
+	std::vector<Light*> lights = {};
+	std::vector<Shader*> shaders = {};
 
 	std::vector<int> inputKeyWatch{};
 
