@@ -50,7 +50,7 @@ void TestScene::Start()
 	};
 
 
-	// TODO: This nees to be cleaned up
+	// TODO: This needs to be cleaned up
 	std::array<std::string, 6> skyboxFaces;
 	skyboxFaces = { "images/skybox/right.jpg", "images/skybox/left.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
 	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));

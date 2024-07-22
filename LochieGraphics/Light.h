@@ -6,6 +6,7 @@
 
 struct Light
 {
+    // TODO: Could probably just do with a single colour for the light
     glm::vec3 ambient; // TODO: Don't keep ambient per light
     glm::vec3 diffuse;
     glm::vec3 specular;

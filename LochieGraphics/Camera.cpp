@@ -31,7 +31,7 @@ Camera::Camera() : Camera({ 0.f, 0.f, 0.f }, { 0.f, 1.f, 0.f }, -90.f, 0.0f, 2.5
 
 
 // TODO: this could be written without the lookAt function
-// TODO: Store postition and rotation in a matrix
+// TODO: Store postition and rotation in a matrix, could use the Transform class
 glm::mat4 Camera::GetViewMatrix() const
 {
     return glm::lookAt(position, position + front, up); // TODO: Should be the inverse of the camera matrix

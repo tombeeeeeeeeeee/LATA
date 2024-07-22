@@ -15,6 +15,7 @@ class Model;
 class Shader;
 
 // TODO: Make version of the SceneObject that draws the same model in multiple spots, using instancing
+// TODO: Look into how instancing should be handled
 class SceneObject
 {
 private:

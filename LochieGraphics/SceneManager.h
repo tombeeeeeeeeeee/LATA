@@ -36,6 +36,7 @@ public:
 
 	static Scene* scene;
 private:
+	// TODO: Perhaps variables that need to be accessed by both the scene and scene manager class should be in a seperate class (such as these window height/width)
 
 	// Window
 	static WindowModes windowMode;

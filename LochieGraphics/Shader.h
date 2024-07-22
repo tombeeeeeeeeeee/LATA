@@ -59,7 +59,7 @@ public:
 	void Use();
 	// Uniform functions
 	//TODO: these can be called without any warning when the shader program is not being used, it should either use the shader or send message maybe
-	// TODO: These can be const and have seen them as such, should they?
+	// Although these can be set as const, it does not feel right and I will not be
 	void setBool(const std::string& name, bool value);
 	void setSampler(const std::string& name, GLuint value);
 	void setInt(const std::string& name, int value);
