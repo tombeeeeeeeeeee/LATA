@@ -45,9 +45,6 @@
     <Filter Include="Source Files\Rendering\Animation">
       <UniqueIdentifier>{4eb9cfad-9498-42ab-a0b9-e9dfdb6bb6d0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Weather">
-      <UniqueIdentifier>{560120dc-bd17-4075-b93f-13fb8538c8fe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Networking\eNet">
       <UniqueIdentifier>{be834839-75de-4247-8b62-241ef958309b}</UniqueIdentifier>
     </Filter>
@@ -181,12 +178,6 @@
     </ClCompile>
     <ClCompile Include="BlendedAnimator.cpp">
       <Filter>Source Files\Rendering\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="WeatherScene.cpp">
-      <Filter>Source Files\Weather</Filter>
-    </ClCompile>
-    <ClCompile Include="Weather.cpp">
-      <Filter>Source Files\Weather</Filter>
     </ClCompile>
     <ClCompile Include="Serialisation.h">
       <Filter>Source Files\Third-Party</Filter>
@@ -346,15 +337,6 @@
     <ClInclude Include="BlendedAnimator.h">
       <Filter>Source Files\Rendering\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="WeatherScene.h">
-      <Filter>Source Files\Weather</Filter>
-    </ClInclude>
-    <ClInclude Include="Array2D.h">
-      <Filter>Source Files\Weather</Filter>
-    </ClInclude>
-    <ClInclude Include="Weather.h">
-      <Filter>Source Files\Weather</Filter>
-    </ClInclude>
     <ClInclude Include="toml.hpp">
       <Filter>Source Files\Third-Party</Filter>
     </ClInclude>
@@ -455,12 +437,6 @@
     </None>
     <None Include="..\Shaders\ui.vert">
       <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\weather.frag">
-      <Filter>Source Files\Weather</Filter>
-    </None>
-    <None Include="..\Shaders\weather.vert">
-      <Filter>Source Files\Weather</Filter>
     </None>
   </ItemGroup>
 </Project>
