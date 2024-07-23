@@ -18,6 +18,7 @@ public:
     glm::vec3 up;
     glm::vec3 right;
     glm::vec3 worldUp;
+
     // euler Angles
     //TODO: Roll
     float yaw;

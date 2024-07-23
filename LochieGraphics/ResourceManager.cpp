@@ -26,6 +26,16 @@ Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragment
 	LoadResource(Shader, shaders, vertexPath, fragmentPath, flags);
 }
 
+Shader* ResourceManager::LoadShader(std::string sharedName, int flags)
+{
+	LoadResource(Shader, shaders, "shaders/" + sharedName + ".vert", "shaders/" + sharedName + ".frag", flags);
+}
+
+Shader* ResourceManager::LoadShaderDefaultVert(std::string fragmentName, int flags)
+{
+	LoadResource(Shader, shaders, "shaders/default.vert", "shaders/" + fragmentName + ".frag", flags);
+}
+
 Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
 {
 	LoadResource(Texture, textures, path, type, wrappingMode, flipOnLoad);

@@ -19,8 +19,11 @@ public:
 	Camera* camera = nullptr;
 	glm::vec2* cursorPos = nullptr;
 	GUI gui;
-	std::vector<SceneObject*> sceneObjects = {};
-	std::vector<Light*> lights = {};
+
+	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};
+	std::unordered_map<unsigned long long, Transform> transforms = {};
+	std::unordered_map<unsigned long long, Light> lights = {};
+
 	std::vector<Shader*> shaders = {};
 
 	std::vector<int> inputKeyWatch{};

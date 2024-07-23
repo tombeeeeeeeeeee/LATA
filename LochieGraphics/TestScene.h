@@ -25,6 +25,7 @@ private:
 	Shader* superShader     = nullptr;
 	Shader* simpleTextured  = nullptr;
 	Shader* uiShader        = nullptr;
+	Shader* hdrBloom		= nullptr;
 
 	Skybox* skybox = nullptr;
 	int skyboxIndex = 0;

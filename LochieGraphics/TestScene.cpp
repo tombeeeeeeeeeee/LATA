@@ -44,6 +44,7 @@ void TestScene::Start()
 	Shader* simpleTextured = ResourceManager::LoadShader("shaders/simpleTextured.vert", "shaders/simpleTextured.frag", Shader::Flags::VPmatrix);
 	superShader = ResourceManager::LoadShader("shaders/superShader.vert", "shaders/superShader.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
 	uiShader = ResourceManager::LoadShader("shaders/ui.vert", "shaders/ui.frag");
+	hdrBloom = ResourceManager::LoadShaderDefaultVert("shaders/HDRBloom.frag");
 
 	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader, pbrShader, screenShader, shadowMapDepth, shadowMapping, shadowDebug,
 		simpleTextured, superShader, simpleTextured,

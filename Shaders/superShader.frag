@@ -47,9 +47,8 @@ uniform Material material;
 in vec2 texCoords;
 in vec3 fragPos;
 
-out vec4 fragColor;
-
-
+layout (location = 0) out vec4 screenColour;
+layout (location = 1) out vec4 bloomColour;
 
 // Lighting
 #define PI 3.1415926535
@@ -95,6 +94,15 @@ in vec3 tangentPointLightsPos[MAX_POINT_LIGHTS];
 in mat3 inverseTBN;
 
 
+// IBL
+uniform samplerCube irradianceMap;	
+uniform samplerCube prefilterMap;	
+uniform sampler2D brdfLUT;			
+
+const float MAX_REFLECTION_LOD = 4.0;
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
+vec3 specularIBL(vec3 trueNormal, vec3 viewDirection, vec3 albedo, float roughness, float metallic, float ao);
+
 void main()
 {
     albedo = texture(material.albedo1, texCoords).rgb;
@@ -103,7 +111,7 @@ void main()
     //ao = texture(material.ao1, texCoords).r;
 
 //    float directionalLightShadow = ( 1 - ShadowCalculation(directionalLightSpaceFragPos));
-    //fragColor = vec4(directionalLightShadow * albedo, 1.0);
+    //screenColor = vec4(directionalLightShadow * albedo, 1.0);
     //return;
     
     vec3 tangentNormal = normalize(texture(material.normal1, texCoords).rgb * 2.0 - 1.0);
@@ -128,11 +136,21 @@ void main()
     // Spot light
     result += max(CalcSpotlight(spotlight, tangentNormal), 0);
 
+    result += specularIBL();
+
+    float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
+	if(brightness > 1)
+	{ 
+		bloomColour = vec4(result, min(brightness - 1.0, 1.0));
+	}
+	else bloomColour = vec4(0.0, 0.0, 0.0, 1.0);
+
+
     // Alpha discarding 
 //    if(texture(material.albedo1, TexCoords).a < alphaDiscard) {
 //        discard;
 //    }
-    fragColor = vec4(result, 1.0);
+    screenColor = vec4(result, 1.0);
 }
 
 
@@ -176,6 +194,11 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}  
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }  
 
 vec3 Radiance(vec3 lightDir, float distanceToLight, vec3 normal, float constant, float linear, float quadratic, vec3 diffuse) {
@@ -304,4 +327,21 @@ vec3 CalcSpotlight(Spotlight light, vec3 normal) {
 
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight) {
     return 1.0 / (constant + linear * distanceToLight + quadratic * (distanceToLight * distanceToLight));
+}
+
+vec3 specularIBL(vec3 trueNormal, vec3 viewDirection, vec3 albedo, float roughness, float metallic, float ao)
+{
+    vec3 reflected = reflect(-viewDirection, trueNormal); 
+	vec3 kS = fresnelSchlickRoughness(max(dot(trueNormal, viewDirection), 0.0), F0, roughness);
+	vec3 kD = vec3(1.0) - kS;
+	kD *= 1.0 - metallic;
+    vec3 irradiance = fragmentColour * texture(irradianceMap, trueNormal).rgb;
+
+    vec3 diffuse = irradiance * albedo;
+	vec3 additionalAmbient = (kD * ambientLightColour) * ao;
+    vec3 prefilteredColor = textureLod(prefilterMap, reflected,  roughness * MAX_REFLECTION_LOD).rgb;    
+    vec2 brdf  = texture(brdfLUT, vec2(max(dot(trueNormal, viewDirection), 0.0), roughness)).rg;
+    vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
+
+    vec3 ambient = (kD * diffuse + specular) * ao;
 }

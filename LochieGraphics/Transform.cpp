@@ -121,6 +121,7 @@ void Transform::setRotation(glm::quat _quat)
 	euler = glm::degrees(glm::eulerAngles(quaternion));
 }
 
+//TODO: Cache global matrix
 glm::mat4 Transform::getGlobalMatrix() const
 {
 	if (parent) {
