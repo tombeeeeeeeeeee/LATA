@@ -16,8 +16,6 @@ public:
 	Model();
 	Model(std::string path, bool flipTexturesOnLoad = true);
 
-	SceneObject* root;
-
 	void LoadModel(std::string path, bool flipTexturesOnLoad = true);
 	void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
 	void Draw();

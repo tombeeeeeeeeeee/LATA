@@ -252,16 +252,7 @@ void TestScene::Draw()
 
 	auto& xbotInterpolatedAnimations = xbotBlendedAnimator.getFinalBoneMatrices();
 
-	// Render depth of scene to texture (from light's perspective)
-	glm::mat4 lightSpaceMatrix;
-	Light* light = &directionalLight;
-	lightSpaceMatrix = light->getShadowViewProjection();
-	shadowMapDepth->Use();
-	shadowMapDepth->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-	glViewport(0, 0, light->shadowTexWidth, light->shadowTexHeight);
-	shadowFrameBuffer->Bind();
-	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	//glCullFace(GL_FRONT);
 	//RENDER SCENE
