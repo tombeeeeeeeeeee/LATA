@@ -1,6 +1,9 @@
 #pragma once
 #include "glad.h"
 #include "Light.h"
+#include "Transform.h"
+#include "ModelRenderer.h"
+
 
 #include "unordered_map"
 
@@ -63,8 +66,8 @@ private:
     std::vector<unsigned int>* shaders;
 
     void BindLightUniform(unsigned int shaderProgram,
-        std::unordered_map<unsigned int, LightComponent>& lightComponents,
-        std::unordered_map<unsigned int, TransformComponent>& transComponents);
+        std::unordered_map<unsigned int, Light>& lightComponents,
+        std::unordered_map<unsigned int, Transform>& transComponents);
 
     void HDRBufferSetUp();
     void OutputBufferSetUp();
