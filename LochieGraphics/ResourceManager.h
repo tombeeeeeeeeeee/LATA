@@ -14,7 +14,7 @@ public:
 	// TODO: Make resources be gathered from a GUID
 	static Shader* LoadShader(std::string vertexPath, std::string fragmentPath, int flags = 0);
 	static Shader* LoadShader(std::string sharedName, int flags = 0);
-	static Shader* LoadShaderDefaultVertec(std::string fragmentName, int flags = 0);
+	static Shader* LoadShaderDefaultVert(std::string fragmentName, int flags = 0);
 	static Texture* LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 
 	// TODO: See if this function can be cleaned up

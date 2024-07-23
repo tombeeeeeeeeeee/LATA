@@ -10,10 +10,9 @@ class Transform
 {
 private:
 	Transform* parent = nullptr;
-	std::vector<Transform*> children = {};
-	SceneObject* sceneObject = nullptr;
+	std::vector<long long unsigned int> children = {};
 	glm::quat quaternion;
-	glm::vec3 euler;
+
 public:
 	Transform* getParent() const;
 	SceneObject* getSceneObject() const;

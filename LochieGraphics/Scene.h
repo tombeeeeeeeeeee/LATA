@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Transform.h"
+#include "ModelRenderer.h"
 
 #include "Maths.h"
 #include "GUI.h"

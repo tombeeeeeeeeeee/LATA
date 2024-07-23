@@ -48,6 +48,9 @@
     <Filter Include="Source Files\Networking\eNet">
       <UniqueIdentifier>{be834839-75de-4247-8b62-241ef958309b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Systems">
+      <UniqueIdentifier>{f60ce024-c93b-46e0-9a13-7117129651af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -184,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="eNetTest.cpp">
       <Filter>Source Files\Networking\eNet</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -343,6 +349,9 @@
     <ClInclude Include="eNetTest.h">
       <Filter>Source Files\Networking\eNet</Filter>
     </ClInclude>
+    <ClInclude Include="RenderSystem.h">
+      <Filter>Source Files\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -436,6 +445,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\ui.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="HDRBloom.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="default.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

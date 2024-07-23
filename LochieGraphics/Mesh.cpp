@@ -59,7 +59,9 @@ Mesh::Mesh() :
 	triCount(0),
 	VAO(0),
 	VBO(0),
-	IBO(0)
+	IBO(0),
+	max(glm::zero<glm::vec3>()),
+	min(glm::zero<glm::vec3>())
 {
 }
 
@@ -78,11 +80,15 @@ Mesh::Mesh(Mesh&& other) noexcept
 	VAO = other.VAO;
 	VBO = other.VBO;
 	IBO = other.IBO;
-	
+	max = other.max;
+	min = other.min;
+
 	other.triCount = 0;
 	other.VAO = 0;
 	other.VBO = 0;
 	other.IBO = 0;
+	other.max = glm::zero<glm::vec3>();
+	other.min = glm::zero<glm::vec3>();
 }
 
 void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices)
@@ -121,7 +127,11 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 
 void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::unordered_map<std::string, BoneInfo>* boneInfos, aiMesh* mesh, bool flipTexturesOnLoad)
 {
+	max = AssimpVecToGLM(mesh->mAABB.mMax);
+	min = AssimpVecToGLM(mesh->mAABB.mMin);
+
 	unsigned int facesCount = mesh->mNumFaces;
+
 	std::vector<GLuint> indices;
 	for (unsigned int i = 0; i < facesCount; i++)
 	{

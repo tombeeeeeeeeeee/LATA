@@ -17,6 +17,7 @@ class Mesh
 private:
 	unsigned int triCount;
 	GLuint VAO, VBO, IBO;
+	glm::vec3 max, min;
 
 public:
 	enum class presets {
