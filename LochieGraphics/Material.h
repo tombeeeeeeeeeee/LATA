@@ -22,6 +22,7 @@ public:
 	Shader* getShader();
 	unsigned long long GUID;
 	std::string name;
+	glm::vec3 colour;
 	
 	// TODO: Think about better ways to have this rather than having a map for each type
 	std::unordered_map<std::string, float> floats;

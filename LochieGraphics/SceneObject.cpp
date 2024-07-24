@@ -2,7 +2,6 @@
 
 #include "Shader.h"
 #include "Model.h"
-#include "ModelRenderer.h"
 
 #include "imgui.h"
 #include "imgui_stdlib.h"

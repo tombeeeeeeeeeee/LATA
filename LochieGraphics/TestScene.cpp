@@ -18,38 +18,45 @@ TestScene::TestScene()
 		//vampire,
 		//xbot
 	};
-	lights = std::vector<Light*>{
-		&pointLights[0],
-		&pointLights[1],
-		&pointLights[2],
-		&pointLights[3],
-		&spotlight,
-		&directionalLight
+	lights = std::vector<Light>{
+		pointLights[0],
+		pointLights[1],
+		pointLights[2],
+		pointLights[3],
+		spotlight,
+		directionalLight
 	};
 }
 
 void TestScene::Start()
 {
 	// Shaders
-	Shader* litNormalShader = ResourceManager::LoadShader("shaders/litNormal.vert", "shaders/litNormal.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
-	Shader* litShader = ResourceManager::LoadShader("shaders/lit.vert", "shaders/lit.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
 	Shader* lightCubeShader = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
 	Shader* skyBoxShader = ResourceManager::LoadShader("shaders/cubemap.vert", "shaders/cubemap.frag");
 	Shader* animateShader = ResourceManager::LoadShader("shaders/animate.vert", "shaders/animate.frag", Shader::Flags::Animated);
 	Shader* pbrShader = ResourceManager::LoadShader("shaders/pbr.vert", "shaders/pbr.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
-	screenShader = ResourceManager::LoadShader("shaders/framebuffer.vert", "shaders/framebuffer.frag");
+	screenShader = ResourceManager::LoadShaderDefaultVert("HDRBloom");
 	shadowMapDepth = ResourceManager::LoadShader("shaders/simpleDepthShader.vert", "shaders/simpleDepthShader.frag");
 	shadowMapping = ResourceManager::LoadShader("shaders/shadowMapping.vert", "shaders/shadowMapping.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
 	shadowDebug = ResourceManager::LoadShader("shaders/shadowDebug.vert", "shaders/shadowDebug.frag");
 	Shader* simpleTextured = ResourceManager::LoadShader("shaders/simpleTextured.vert", "shaders/simpleTextured.frag", Shader::Flags::VPmatrix);
 	superShader = ResourceManager::LoadShader("shaders/superShader.vert", "shaders/superShader.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
 	uiShader = ResourceManager::LoadShader("shaders/ui.vert", "shaders/ui.frag");
-	hdrBloom = ResourceManager::LoadShaderDefaultVert("shaders/HDRBloom.frag");
+	Shader* prefilter = ResourceManager::LoadShader("prefilter", Shader::Flags::VPmatrix);
+	Shader* irradiance = ResourceManager::LoadShader("irradiance", Shader::Flags::VPmatrix);
+	Shader* brdf = ResourceManager::LoadShaderDefaultVert("brdf");
+	Shader* downSample = ResourceManager::LoadShaderDefaultVert("downSample");
+	Shader* upSample = ResourceManager::LoadShaderDefaultVert("upSample");
 
-	shaders = std::vector<Shader*>{ litNormalShader, litShader, lightCubeShader, skyBoxShader, animateShader, pbrShader, screenShader, shadowMapDepth, shadowMapping, shadowDebug,
-		simpleTextured, superShader, simpleTextured,
+	shaders = std::vector<Shader*>{ 
+		lightCubeShader, skyBoxShader, 
+		animateShader, pbrShader, 
+		screenShader, shadowMapDepth, 
+		shadowMapping, shadowDebug,
+		simpleTextured, superShader,
+		prefilter, irradiance,
+		brdf, 
 	};
-
 
 	// TODO: This needs to be cleaned up
 	std::array<std::string, 6> skyboxFaces;
@@ -252,128 +259,7 @@ void TestScene::Draw()
 
 	auto& xbotInterpolatedAnimations = xbotBlendedAnimator.getFinalBoneMatrices();
 
-
-	
-	//glCullFace(GL_FRONT);
-	//RENDER SCENE
-	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
-	{
-		ModelRenderer* currentRenderer = (*i)->getRenderer();
-		if (currentRenderer) {
-			Texture* alphaMap = currentRenderer->material->getFirstTextureOfType(Texture::Type::diffuse);
-			if (!alphaMap) {
-				alphaMap = currentRenderer->material->getFirstTextureOfType(Texture::Type::albedo);
-			}
-			if (alphaMap) {
-				// TODO: Really should be using a Texture bind function here.
-				alphaMap->Bind(1);
-				shadowMapDepth->setSampler("alphaDiscardMap", 1);
-			}
-			else {
-				// TODO:
-				shadowMapDepth->setSampler("alphaDiscardMap", 0); 
-			}
-		}
-		(*i)->Draw(shadowMapDepth);
-	}
-
-
-	for (int i = 0; i < xbotInterpolatedAnimations.size(); i++) {
-		shadowMapDepth->setMat4("boneMatrices[" + std::to_string(i) + "]", xbotInterpolatedAnimations[i]);
-	}
-	shadowMapDepth->setMat4("model", xbot->transform.getGlobalMatrix());
-	xbot->Draw(shadowMapDepth);
-
-	for (int i = 0; i < vampTransforms.size(); i++) {
-		shadowMapDepth->setMat4("boneMatrices[" + std::to_string(i) + "]", vampTransforms[i]);
-	}
-	shadowMapDepth->setMat4("model", vampire->transform.getGlobalMatrix());
-	vampire->Draw(shadowMapDepth);
-
-	skybox->Draw();
-	//glCullFace(GL_BACK);
-
-	// Render scene with shadow map, to the screen framebuffer
-	screenFrameBuffer->Bind();
-
-	// TODO: move viewport changing stuff into FrameBuffer
-	glViewport(0, 0, *windowWidth, *windowHeight);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	shadowMapping->Use();
-
-	// set light uniforms
-	shadowMapping->setVec3("viewPos", camera->position);
-	shadowMapping->setVec3("lightPos", light->getPos());
-	shadowMapping->setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-	depthMap->Bind(17);
-	shadowMapping->setSampler("shadowMap", 17);
-	
-	superShader->Use();
-
-	// set light uniforms
-	// TODO: Shouldn't need to set light uniforms here, use the shader flags and make one for shadowed
-	superShader->setVec3("viewPos", camera->position);
-	superShader->setVec3("lightPos", light->getPos());
-	superShader->setMat4("directionalLightSpaceMatrix", lightSpaceMatrix);
-
-	superShader->setSampler("shadowMap", 17);
-	depthMap->Bind(17);
-
-	// RENDER SCENE
-	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
-	{
-		(*i)->Draw();
-	}
-	skybox->Draw();
-
-	// Draw animated stuff
-	superShader->Use();
-	glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, camera->nearPlane, camera->farPlane);
-	superShader->setMat4("vp", projection * camera->GetViewMatrix());
-
-	for (int i = 0; i < xbotInterpolatedAnimations.size(); i++) {
-		superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", xbotInterpolatedAnimations[i]);
-	}
-	superShader->setMat4("model", xbot->transform.getGlobalMatrix());
-	xbot->Draw();
-
-	for (int i = 0; i < vampTransforms.size(); i++) {
-		superShader->setMat4("boneMatrices[" + std::to_string(i) + "]", vampTransforms[i]);
-	}
-	superShader->setMat4("model", vampire->transform.getGlobalMatrix());
-	vampire->Draw();
-
-	if (showShadowDebug) {
-		// Debug render the light depth map
-		shadowDebug->Use();
-		shadowDebug->setFloat("near_plane", light->shadowNearPlane);
-		shadowDebug->setFloat("far_plane", light->shadowFarPlane);
-		depthMap->Bind(1);
-		shadowDebugQuad.Draw();
-	}
-
-
-	// Unbind framebuffer
-	FrameBuffer::Unbind();
-	glDisable(GL_DEPTH_TEST); // Disable depth test for fullscreen quad
-
-	screenShader->Use();
-	screenColourBuffer->Bind(1);
-	screenShader->setSampler("screenTexture", 1);
-	screenQuad.Draw();
-
-	if (showButton) {
-		//screenShader->Use();
-		//screenShader->setSampler("screenTexture", 1);
-		uiShader->Use();
-		buttonTexture->Bind(1);
-		uiShader->setSampler("image", 1);
-		buttonQuad.Draw();
-	}
-
-	// Re enable the depth test
-	glEnable(GL_DEPTH_TEST);
+	renderSystem->Update();
 }
 
 void TestScene::OnMouseDown()
@@ -425,6 +311,8 @@ void TestScene::OnWindowResize()
 
 	screenColourBuffer->setWidthHeight((int)*windowWidth, (int)*windowHeight);
 	screenFrameBuffer->setWidthHeight(*windowWidth, *windowHeight);
+	renderSystem->SCREEN_HEIGHT = *windowHeight;
+	renderSystem->SCREEN_WIDTH = *windowWidth;
 }
 
 TestScene::~TestScene()

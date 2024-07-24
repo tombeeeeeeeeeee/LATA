@@ -5,11 +5,13 @@
 #include "Light.h"
 #include "Transform.h"
 #include "ModelRenderer.h"
+#include "shaderEnum.h"
 
 #include "Maths.h"
 #include "GUI.h"
 
 #include <string>
+#include "RenderSystem.h"
 
 
 class Scene
@@ -21,9 +23,11 @@ public:
 	glm::vec2* cursorPos = nullptr;
 	GUI gui;
 
+	std::vector<SceneObject*> sceneObjects = {};
+
 	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};
 	std::unordered_map<unsigned long long, Transform> transforms = {};
-	std::unordered_map<unsigned long long, Light> lights = {};
+	std::vector<Light> lights = {};
 
 	std::vector<Shader*> shaders = {};
 
@@ -31,6 +35,8 @@ public:
 
 	unsigned int* windowWidth;
 	unsigned int* windowHeight;
+
+	RenderSystem* renderSystem;
 
 	virtual void Start() {};
 	virtual void EarlyUpdate() {};

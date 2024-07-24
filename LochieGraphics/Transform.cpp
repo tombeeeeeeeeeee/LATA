@@ -13,11 +13,6 @@ Transform* Transform::getParent() const
 	return parent;
 }
 
-SceneObject* Transform::getSceneObject() const
-{
-	return sceneObject;
-}
-
 std::vector<Transform*> Transform::getChildren() const
 {
 	return children;
@@ -83,13 +78,11 @@ bool Transform::HasChildren()
 	return !children.empty();
 }
 
-Transform::Transform(SceneObject* _sceneObject, glm::vec3 _position, glm::quat _quaternion, float _scale) :
-	sceneObject(_sceneObject),
+Transform::Transform(glm::vec3 _position, glm::quat _quaternion, float _scale) :
 	parent(nullptr),
 	position(_position),
 	quaternion(_quaternion),
-	euler(glm::degrees(glm::eulerAngles(_quaternion))),
-	scale(_scale)
+	scale({ scale, scale, scale })
 {
 }
 
@@ -100,7 +93,7 @@ glm::quat Transform::getRotation() const
 
 glm::vec3 Transform::getEulerRotation() const
 {
-	return euler;
+	return glm::eulerAngles(quaternion);
 }
 
 glm::mat4 Transform::getLocalMatrix() const
@@ -118,7 +111,6 @@ glm::mat4 Transform::getLocalMatrix() const
 void Transform::setRotation(glm::quat _quat)
 {
 	quaternion = _quat;
-	euler = glm::degrees(glm::eulerAngles(quaternion));
 }
 
 //TODO: Cache global matrix
@@ -132,13 +124,14 @@ glm::mat4 Transform::getGlobalMatrix() const
 
 void Transform::setEulerRotation(glm::vec3 _euler)
 {
-	euler = _euler;
-	quaternion = glm::quat(glm::radians(euler));
+	quaternion = glm::quat(glm::radians(_euler));
 }
 
 void Transform::GUI()
 {
 	std::string tag = PointerToString(this);
+
+	glm::vec3 euler = getEulerRotation();
 
 	ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f);
 
@@ -148,9 +141,8 @@ void Transform::GUI()
 	ImGui::BeginDisabled();
 	if (ImGui::DragFloat4(("Quaternion##transform" + tag).c_str(), &quaternion[0], 0.1f)) {
 		setRotation(quaternion);
-		//setEulerRotation(euler);
 	}
 	ImGui::EndDisabled();
 
-	ImGui::DragFloat(("Scale##transform" + tag).c_str(), &scale, 0.1f);
+	ImGui::DragFloat3(("Scale##transform" + tag).c_str(), &scale[0], 0.1f);
 }

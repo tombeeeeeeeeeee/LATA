@@ -11,9 +11,7 @@ struct Material {
 
 struct DirectionalLight {
     vec3 direction;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
 };
 
 struct PointLight {
@@ -21,9 +19,7 @@ struct PointLight {
     float constant;
     float linear;
     float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
 };
 
 struct Spotlight {
@@ -31,9 +27,7 @@ struct Spotlight {
     float constant;
     float linear;
     float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
     vec3 direction;
     float cutOff;
     float outerCutOff;
@@ -191,12 +185,10 @@ vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal)
 {
     vec3 lightDir = normalize(-light.direction);
 
-    // Ambient
-    vec3 ambient = light.ambient * albedo;
 
     // Diffuse
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = light.diffuse * diff * albedo;
+    vec3 diffuse = light.colour * diff * albedo;
 
     // TODO: Fix this for pbr workflow
 //    // Specular
@@ -206,17 +198,15 @@ vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal)
 
     // Combine results
     // TODO: fix
-//    return ambient + diffuse + specular;
-    return ambient + diffuse;
+    // return ambient + diffuse + specular;
+    return diffuse;
 }
 
 vec3 CalcPointLight(PointLight light, int i, vec3 normal)
 {
-    vec3 radiance = Radiance(normalize(TangentPointLightsPos[i] - TangentFragPos), length(TangentPointLightsPos[i] - TangentFragPos), normal, light.constant, light.linear, light.quadratic, light.diffuse);
+    vec3 radiance = Radiance(normalize(TangentPointLightsPos[i] - TangentFragPos), length(TangentPointLightsPos[i] - TangentFragPos), normal, light.constant, light.linear, light.quadratic, light.colour);
 
-    vec3 ambient = light.ambient * albedo;
-
-    return radiance + ambient;
+    return radiance;
 
 //    // Specular
 //    vec3 reflectDir = reflect(-lightDir, normal);
@@ -244,11 +234,11 @@ vec3 CalcSpotlight(Spotlight light, vec3 normal) {
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
-    vec3 radiance = Radiance(normalize(TangentSpotlightPos - TangentFragPos), length(TangentSpotlightPos - TangentFragPos), normal, light.constant, light.linear, light.quadratic, light.diffuse);
+    vec3 radiance = Radiance(normalize(TangentSpotlightPos - TangentFragPos), length(TangentSpotlightPos - TangentFragPos), normal, light.constant, light.linear, light.quadratic, light.colour);
 
     vec3 ambient = light.ambient * albedo;
 
-    return (radiance + ambient) * intensity;     
+    return radiance * intensity;     
 //    
 //    ambient  *= attenuation * intensity;
 //    diffuse  *= attenuation * intensity;

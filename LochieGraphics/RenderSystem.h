@@ -3,8 +3,13 @@
 #include "Light.h"
 #include "Transform.h"
 #include "ModelRenderer.h"
+#include "Animator.h"
+#include "Camera.h"
 
+#include "FrameBuffer.h"
+#include "shaderEnum.h"
 
+#include <iostream>
 #include "unordered_map"
 
 struct bloomMip
@@ -19,7 +24,10 @@ const int bloomMipMapCount = 6;
 class RenderSystem
 {
 public:
-    void Start();
+    void Start(
+        unsigned int _skyboxTexture,
+        std::vector<Shader*> _shaders
+    );
 
     void SetIrradianceMap(unsigned int skybox);
     void SetPrefilteredMap(unsigned int skybox);
@@ -30,7 +38,16 @@ public:
     void OutputBufferUpdate();
 
 
-	void Update();
+    void Update(
+        std::unordered_map<unsigned long long, ModelRenderer>& renders,
+        std::unordered_map<unsigned long long, Transform>& transforms,
+        std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
+        std::unordered_map<unsigned long long, Animator>& animators,
+        FrameBuffer* screenBuffer,
+        Camera* camera
+    );
+
+    int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 private:
     /// <summary>
@@ -58,16 +75,36 @@ private:
     /// <summary>
     /// List of entities in order of the shader they use.
     /// </summary>
-    std::array<std::vector<unsigned int>, Shader::count> entityShaderOrder;
+    std::vector<std::vector<unsigned int>> entityShaderOrder;
 
     /// <summary>
     /// shader programs
     /// </summary>
-    std::vector<unsigned int>* shaders;
+    std::vector<Shader*>* shaders;
 
-    void BindLightUniform(unsigned int shaderProgram,
-        std::unordered_map<unsigned int, Light>& lightComponents,
-        std::unordered_map<unsigned int, Transform>& transComponents);
+
+    void DrawAnimation(
+        Shader* shader,
+        std::unordered_map<unsigned long long, Animator>& animators,
+        std::unordered_map<unsigned long long, Transform>& transforms,
+        std::unordered_map<unsigned long long, ModelRenderer>& renderers,
+        bool useCachedShader = true
+        );
+
+    void DrawRenderers(
+        std::unordered_map<unsigned long long, ModelRenderer>& renderers,
+        std::unordered_map<unsigned long long, Transform>& transforms
+        );
+
+    void DrawRenderers(
+        std::unordered_map<unsigned long long, ModelRenderer>& renderers,
+        std::unordered_map<unsigned long long, Transform>& transforms,
+        Shader* shader
+        );
+
+    //void BindLightUniform(unsigned int shaderProgram,
+    //    std::unordered_map<unsigned int, Light>& lightComponents,
+    //    std::unordered_map<unsigned int, Transform>& transComponents);
 
     void HDRBufferSetUp();
     void OutputBufferSetUp();
@@ -104,7 +141,6 @@ private:
     void RenderCube();
     unsigned int cubeVAO = 0;
     unsigned int cubeVBO = 0;
-
 
 
     //Captures for CubeMap

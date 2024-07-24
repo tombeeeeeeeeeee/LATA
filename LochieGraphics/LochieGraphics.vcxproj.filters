@@ -352,6 +352,9 @@
     <ClInclude Include="RenderSystem.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="shaderEnum.h">
+      <Filter>Source Files\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -451,6 +454,27 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="default.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="prefilter.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="prefilter.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="irradiance.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="irradiance.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="brdf.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="upSample.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="downSample.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

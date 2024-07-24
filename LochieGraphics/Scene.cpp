@@ -17,10 +17,11 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	for (int i = 0; i < sceneObjects.size(); i++)
-	{
-		delete sceneObjects[i];
-	}
+	//TODO: clear sceneobjects.
+	//for (int i = 0; i < sceneObjects.size(); i++)
+	//{
+	//	delete sceneObjects[i];
+	//}
 }
 
 void Scene::Save()
@@ -38,10 +39,13 @@ void Scene::Save()
 	file << toml::table{ { "Camera", camera->Serialise() } } << "\n\n";
 
 	auto savedSceneObjects = toml::array();
-	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
-	{
-		savedSceneObjects.push_back((*i)->Serialise());
-	}
+
+	//TODO: add partBitMask to sceneObjects.
+	//TODO: Make serialise function in SceneManager? Or is it Scene?
+	//for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+	//{
+	//	savedSceneObjects.push_back((*i)->Serialise());
+	//}
 	
 	file << toml::table{ { "SceneObjects", savedSceneObjects } };
 
