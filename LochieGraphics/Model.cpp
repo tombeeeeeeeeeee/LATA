@@ -46,9 +46,10 @@ void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 		meshes[i].InitialiseFromAiMesh(path, scene, &boneInfoMap, mesh, flipTexturesOnLoad);
 	}
 
+	//ASK: What is this?
 	root = new SceneObject();
 	//SceneManager::scene->sceneObjects.push_back(root);
-	Animation::ReadHierarchyData(&root->transform, scene->mRootNode);
+	Animation::ReadHierarchyData(root->transform(), scene->mRootNode);
 	// TODO: Do I need to do this, check exactly what should be done
 	//aiReleaseImport(scene);
 }

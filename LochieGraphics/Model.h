@@ -13,6 +13,8 @@ public:
 
 	std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
+	SceneObject* root;
+
 	Model();
 	Model(std::string path, bool flipTexturesOnLoad = true);
 
@@ -20,7 +22,7 @@ public:
 	void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
 	void Draw();
 	const std::vector<Mesh>& getMeshes() const;
-private:
+
 	//TODO: Model currently comepletly owns the meshes, this should not be the case, actually with recent changed yes but there should be a model manager
 	std::vector<Mesh> meshes;
 };

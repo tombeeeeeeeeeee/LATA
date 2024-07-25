@@ -6,6 +6,7 @@
 #include "Animator.h"
 #include "Camera.h"
 #include "Mesh.h"
+#include "Skybox.h"
 
 #include "FrameBuffer.h"
 #include "shaderEnum.h"
@@ -27,7 +28,9 @@ class RenderSystem
 public:
     void Start(
         unsigned int _skyboxTexture,
-        std::vector<Shader*> _shaders
+        Skybox* skybox,
+        std::vector<Shader*> _shaders,
+        Light* shadowCaster
     );
 
     void SetIrradianceMap(unsigned int skybox);
@@ -37,24 +40,29 @@ public:
 
     void HDRBufferUpdate();
     void OutputBufferUpdate();
-
+    void BloomUpdate();
 
     void Update(
         std::unordered_map<unsigned long long, ModelRenderer>& renders,
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
         std::unordered_map<unsigned long long, Animator>& animators,
-        FrameBuffer* screenBuffer,
         Camera* camera
     );
 
+    void ScreenResize(int width, int height);
+
     int SCREEN_WIDTH, SCREEN_HEIGHT;
+
+    bool showShadowDebug = false;
 
 private:
 
     Mesh shadowDebugQuad;
     Mesh screenQuad;
     Mesh buttonQuad;
+
+    Skybox* skyBox;
 
     Texture* screenColourBuffer = nullptr;
 
@@ -64,7 +72,7 @@ private:
     FrameBuffer* shadowFrameBuffer = nullptr;
     Texture* depthMap = nullptr;
 
-    bool showShadowDebug = false;
+    Light* shadowCaster;
 
     /// <summary>
     /// Missing Texture VRAM location
@@ -100,11 +108,10 @@ private:
 
 
     void DrawAnimation(
-        Shader* shader,
         std::unordered_map<unsigned long long, Animator>& animators,
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-        bool useCachedShader = true
+        Shader* shader = nullptr
         );
 
     void DrawRenderers(

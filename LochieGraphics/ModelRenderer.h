@@ -17,6 +17,9 @@ public:
 	Material* material;
 	unsigned long long materialGUID;
 
+	//ASK: Made to ease errors with unordered maps
+	ModelRenderer();
+
 	ModelRenderer(Model* _model, unsigned long long _materialGUID);
 	ModelRenderer(Model* _model, Material* _material);
 

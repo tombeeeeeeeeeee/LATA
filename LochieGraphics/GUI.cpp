@@ -122,8 +122,8 @@ void GUI::LightMenu()
 	if (ImGui::SliderInt("Light selected", &lightSelectedIndex, 0, scene->lights.size() ? ((int)(scene->lights.size() - 1)) : 0)) {
 		lightSelectedIndex = glm::clamp(lightSelectedIndex, 0, scene->lights.size() ? ((int)(scene->lights.size() - 1)) : 0);
 	}
-	if (lightSelectedIndex < scene->lights.size() && scene->lights[lightSelectedIndex] != nullptr) {
-		scene->lights[lightSelectedIndex]->GUI();
+	if (lightSelectedIndex < scene->lights.size() /*&& scene->lights[lightSelectedIndex] != nullptr*/) {
+		scene->lights[lightSelectedIndex].GUI();
 	}
 
 	ImGui::End();
@@ -152,7 +152,7 @@ void GUI::HierarchyMenu()
 	}
 	for (auto i = scene->sceneObjects.begin(); i != scene->sceneObjects.end(); i++)
 	{
-		if ((*i)->transform.getParent()) { continue; }
+		if ((*i)->transform()->getParent()) { continue; }
 
 		TransformTree((*i));
 	}
@@ -166,14 +166,14 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	if (sceneObjectSelected == sceneObject) {
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
-	if (sceneObject->transform.HasChildren()) {
+	if (sceneObject->transform()->HasChildren()) {
 		bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + PointerToString(sceneObject)).c_str(), nodeFlags);
 		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
 			sceneObjectSelected = sceneObject;
 		}
 		TransformDragDrop(sceneObject);
 		if (nodeOpen) {
-			auto children = sceneObject->transform.getChildren();
+			auto children = sceneObject->transform()->getChildren();
 
 			for (auto child = children.begin(); child != children.end(); child++)
 			{
@@ -196,7 +196,7 @@ void GUI::TransformDragDrop(SceneObject* sceneObject)
 {
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 	{
-		Transform* temp = &sceneObject->transform;
+		Transform* temp = sceneObject->transform();
 		ImGui::SetDragDropPayload("Transform", &temp, sizeof(temp));
 		ImGui::Text(("Transform of: " + sceneObject->name).c_str());
 		ImGui::EndDragDropSource();
@@ -205,7 +205,7 @@ void GUI::TransformDragDrop(SceneObject* sceneObject)
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Transform"))
 		{
 			Transform* droppedTransform = *(Transform**)payload->Data;
-			droppedTransform->setParent(&sceneObject->transform);
+			droppedTransform->setParent(sceneObject->transform());
 		}
 		ImGui::EndDragDropTarget();
 	}

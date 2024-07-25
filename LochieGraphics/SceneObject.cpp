@@ -72,10 +72,10 @@ ModelRenderer* SceneObject::renderer()
 	return nullptr;
 }
 
-toml::table SceneObject::Serialise()
-{
-	return toml::table{
-		{ "name", name },
-		{ "hasRenderer", parts & Parts::modelRenderer}
-	};
-}
+//toml::table SceneObject::Serialise()
+//{
+//	return toml::table{
+//		{ "name", name },
+//		{ "hasRenderer", parts & Parts::modelRenderer}
+//	};
+//}

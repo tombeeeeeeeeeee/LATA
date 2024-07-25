@@ -2,7 +2,7 @@
 enum ShaderIndex
 {
 	lightCube,
-	skyBox,
+	skyBoxShader,
 	animate,
 	pbr,
 	screen,

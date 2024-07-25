@@ -10,6 +10,11 @@
 
 #include "imgui.h"
 
+ModelRenderer::ModelRenderer()
+{
+	material = nullptr;
+}
+
 ModelRenderer::ModelRenderer(Model* _model, unsigned long long _materialGUID) :
 	model(_model),
 	materialGUID(_materialGUID)
@@ -26,14 +31,14 @@ ModelRenderer::ModelRenderer(Model* _model, Material* _material) :
 
 void ModelRenderer::Draw(Shader* override)
 {
-	if (!override/* || material->getShader() == override*/) {
-		material->Use();
-		material->getShader()->setMat4("model", sceneObject->transform.getGlobalMatrix());
-	}
-	else {
-		override->setMat4("model", sceneObject->transform.getGlobalMatrix());
-	}
-	model->Draw();
+	//if (!override/* || material->getShader() == override*/) {
+	//	material->Use();
+	//	material->getShader()->setMat4("model", sceneObject->transform().getGlobalMatrix());
+	//}
+	//else {
+	//	override->setMat4("model", sceneObject->transform().getGlobalMatrix());
+	//}
+	//model->Draw();
 }
 
 void ModelRenderer::GUI()

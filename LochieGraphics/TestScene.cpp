@@ -90,21 +90,21 @@ void TestScene::Start()
 	});
 	cubeModel.AddMesh(new Mesh(Mesh::presets::cube));
 	boxes->setRenderer(new ModelRenderer(&cubeModel, boxMaterial));
-	boxes->transform.scale = 30.0f;
-	boxes->transform.position = { 0.f, -15.450f, 0.f };
+	boxes->transform()->setScale(30.0f);
+	boxes->transform()->setPosition({ 0.f, -15.450f, 0.f });
 
 	Material* lightCubeMaterial = ResourceManager::LoadMaterial("lightCube", lightCubeShader);
 	lightCube->setRenderer(new ModelRenderer(&cubeModel, lightCubeMaterial));
-	lightCube->transform.scale = 0.2f;
+	lightCube->transform()->setScale(0.2f);
 
-	Material* grassMaterial = ResourceManager::LoadMaterial("grass", litShader);
+	Material* grassMaterial = ResourceManager::LoadMaterial("grass", superShader);
 	grassMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE, false),
 	});
 	grassModel.AddMesh(new Mesh(Mesh::presets::doubleQuad));
 	grass->setRenderer(new ModelRenderer(&grassModel, grassMaterial));
-	grass->transform.position = { 1.9f, 0.f, 2.6f };
-	grass->transform.setEulerRotation({ 0.f, -43.2f, 0.f });
+	grass->transform()->setPosition({ 1.9f, 0.f, 2.6f });
+	grass->transform()->setEulerRotation({ 0.f, -43.2f, 0.f });
 
 	backpackModel = Model("models/backpack/backpack.obj", false);
 	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", superShader);
@@ -115,8 +115,8 @@ void TestScene::Start()
 			ResourceManager::LoadTexture("models/backpack/roughness.jpg", Texture::Type::roughness, GL_REPEAT, false),
 	});
 	backpack->setRenderer(new ModelRenderer(&backpackModel, backpackMaterial));
-	backpack->transform.position = { -4.5f, 1.7f, 0.f };
-	backpack->transform.setEulerRotation({0.f, 52.6f, 0.f});
+	backpack->transform()->setPosition({ -4.5f, 1.7f, 0.f });
+	backpack->transform()->setEulerRotation({0.f, 52.6f, 0.f});
 	
 	tiresModel = Model("models/old-tires-dirt-low-poly/model.dae", false);
 	Material* tiresMaterial = ResourceManager::LoadMaterial("tires", pbrShader);
@@ -127,7 +127,7 @@ void TestScene::Start()
 			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_roughness.jpeg", Texture::Type::roughness, GL_REPEAT, true)
 	});
 	tires->setRenderer(new ModelRenderer(&tiresModel, tiresMaterial));
-	tires->transform.position = {-0.1f, 0.f, 1.2f};
+	tires->transform()->setPosition({-0.1f, 0.f, 1.2f});
 
 	testRedBoxModel = Model("models/normalBoxTest/Box_normal_example.obj");
 	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", superShader);
@@ -139,22 +139,22 @@ void TestScene::Start()
 			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Roughness.png", Texture::Type::roughness, GL_REPEAT, true),
 	});
 	testRedBox->setRenderer(new ModelRenderer(&testRedBoxModel, testRedBoxMaterial));
-	testRedBox->transform.position = { 0.6f, 3.5f, -3.5f };
-	testRedBox->transform.setEulerRotation({ 4.3f, -17.2f, -69.5f});
+	testRedBox->transform()->setPosition({ 0.6f, 3.5f, -3.5f });
+	testRedBox->transform()->setEulerRotation({ 4.3f, -17.2f, -69.5f});
 
 	soulSpearModel = Model(std::string("models/soulspear/soulspear.obj"), true);
-	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", litNormalShader);
+	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", superShader);
 	soulSpearMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
 	});
 	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, soulSpearMaterial));
-	soulSpear->transform.position = { 5.f, 1.f, 1.f };
+	soulSpear->transform()->setPosition({ 5.f, 1.f, 1.f });
 
 	xbotModel.LoadModel(std::string("models/X Bot.fbx"));
-	xbot->transform.scale = 0.01f;
-	xbot->transform.position = { 0.f, -0.5f, 1.5f };
+	xbot->transform()->setScale(0.01f);
+	xbot->transform()->setPosition({ 0.f, -0.5f, 1.5f });
 	Material* xbotMaterial = ResourceManager::LoadMaterial("puppet", superShader);
 	xbotMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse)
@@ -168,41 +168,19 @@ void TestScene::Start()
 	xbotBlendedAnimator = BlendedAnimator(&xbotChicken, &xbotIdle);
 
 	vampireModel.LoadModel(std::string("models/Skinning Test.fbx"));
-	vampire->transform.scale = 0.01f;
-	//vampire->transform.position = { 0.f, -0.5f, 1.f };
+	vampire->transform()->setScale(0.01f);
+	//vampire->transform()->setPosition({ 0.f, -0.5f, 1.f };
 	Material* vampireMaterial = ResourceManager::LoadMaterial("vampire", superShader);
 	vampireMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/Vampire_diffuse.png", Texture::Type::albedo),
 			ResourceManager::LoadTexture("models/Vampire_normal.png", Texture::Type::normal)
 	});
 	vampire->setRenderer(new ModelRenderer(&vampireModel, vampireMaterial));
-	vampire->transform.position = { 1.6f, -0.5f, -2.f };
+	vampire->transform()->setPosition({ 1.6f, -0.5f, -2.f });
 
 
 	vampireWalk = Animation("models/Skinning Test.fbx", &vampireModel);
 	vampireAnimator = Animator(&vampireWalk);
-
-	shadowDebugQuad.InitialiseQuad(0.5f, 0.5f);
-	screenQuad.InitialiseQuad(1.f, 0.0f);
-	buttonQuad.InitialiseQuad(0.25f, 0.f);
-
-	buttonTexture = ResourceManager::LoadTexture("images/thisOneMightBeIt.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE, true);
-	//buttonTexture = ResourceManager::LoadTexture("images/testButtonWorking.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE, true);
-
-	// Create colour attachment texture for fullscreen framebuffer
-	screenColourBuffer = ResourceManager::LoadTexture(*windowWidth, *windowHeight, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
-	
-	// Make fullscreen framebuffer
-	screenFrameBuffer = new FrameBuffer(*windowWidth, *windowHeight, screenColourBuffer, nullptr, true);
-
-	// TODO: Should be done for each light
-	// Create shadow depth texture for the light
-	depthMap = ResourceManager::LoadTexture(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, GL_DEPTH_COMPONENT, nullptr, GL_CLAMP_TO_BORDER, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
-	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 }; // TODO: Move to be apart of texture
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-	shadowFrameBuffer = new FrameBuffer(directionalLight.shadowTexWidth, directionalLight.shadowTexHeight, nullptr, depthMap, false);
-	shadowDebug->Use();
-	shadowDebug->setInt("depthMap", 1);
 }
 
 void TestScene::EarlyUpdate()
@@ -211,23 +189,22 @@ void TestScene::EarlyUpdate()
 
 void TestScene::Update(float delta)
 {
-	if (animateBlendDirectionRight) {
-		xbotBlendedAnimator.lerpAmount += delta;
-		if (xbotBlendedAnimator.lerpAmount > 1.f) { xbotBlendedAnimator.lerpAmount = 1.f; }
-	}
-	else
-	{
+	//if (animateBlendDirectionRight) {
+	//	xbotBlendedAnimator.lerpAmount += delta;
+	//	if (xbotBlendedAnimator.lerpAmount > 1.f) { xbotBlendedAnimator.lerpAmount = 1.f; }
+	//}
+	//else
+	//{
 		xbotBlendedAnimator.lerpAmount -= delta;
 		if (xbotBlendedAnimator.lerpAmount < 0) { xbotBlendedAnimator.lerpAmount = 0; }
-	}
+	//}
 
-	// TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
-	shadowFrameBuffer->Load();
+
 
 	messengerInterface.Update();
 
 	pointLights[0].position.x = 1.5f * sinf((float)glfwGetTime() * 2.f);
-	lightCube->transform.position = pointLights[0].position;
+	lightCube->transform()->setPosition(pointLights[0].position);
 	spotlight.position = camera->position;
 	spotlight.direction = camera->front;
 	
@@ -259,19 +236,17 @@ void TestScene::Draw()
 
 	auto& xbotInterpolatedAnimations = xbotBlendedAnimator.getFinalBoneMatrices();
 
-	renderSystem->Update();
+	renderSystem->Update(
+		renderers,
+		transforms,
+		renderers,
+		//TODO: Make Animation list
+	);
 }
 
 void TestScene::OnMouseDown()
 {
-	// TODO: Make a button class
-	if (cursorPos->x > 0.375f && cursorPos->x < 0.625f && cursorPos->y > 0.375f && cursorPos->y < 0.625f)
-	{
-		std::cout << "Button pressed!\n";
-		animateBlendDirectionRight = !animateBlendDirectionRight;
-		// Cursor is hovered on button
-		//if ()
-	}
+
 }
 
 void TestScene::GUI()
@@ -293,14 +268,12 @@ void TestScene::GUI()
 		}
 		ImGui::End();
 	}
-
 	if (!ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
 	}
 	else {
 		ImGui::SliderFloat("Animation trans", &xbotBlendedAnimator.lerpAmount, 0.f, 1.0f);
-		ImGui::Checkbox("Show shadow debug", &showShadowDebug);
-		ImGui::Checkbox("Show the red button that toggles animation", &showButton);
+		ImGui::Checkbox("Show shadow debug", &renderSystem->showShadowDebug);
 		ImGui::End();
 	}
 }
@@ -308,17 +281,14 @@ void TestScene::GUI()
 void TestScene::OnWindowResize()
 {
 	//glDeleteTextures(1, &textureColorbuffer);
-
-	screenColourBuffer->setWidthHeight((int)*windowWidth, (int)*windowHeight);
-	screenFrameBuffer->setWidthHeight(*windowWidth, *windowHeight);
-	renderSystem->SCREEN_HEIGHT = *windowHeight;
-	renderSystem->SCREEN_WIDTH = *windowWidth;
+	renderSystem->ScreenResize(*windowWidth, *windowHeight);
 }
 
 TestScene::~TestScene()
 {
 	// TODO: Not deleting the textures properly
+	// TODO: Move to Render System
 	//glDeleteTextures(1, &textureColorbuffer);
-	delete shadowFrameBuffer;
-	delete screenFrameBuffer;
+	//delete shadowFrameBuffer;
+	//delete screenFrameBuffer;
 }

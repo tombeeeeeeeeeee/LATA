@@ -59,8 +59,8 @@ public:
 	void setRenderer(ModelRenderer* renderer);
 	ModelRenderer* renderer();
 
-	void setAnimator(Animator* animator);
-	Animator* animator();
+	//void setAnimator(Animator* animator);
+	//Animator* animator();
 
 	//void setLight(Light light);
 	//Light* light();

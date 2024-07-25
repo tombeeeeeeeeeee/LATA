@@ -1,14 +1,21 @@
 #include "RenderSystem.h"
+#include "ResourceManager.h"
 #include "Maths.h"
 
-void RenderSystem::Start(unsigned int _skyboxTexture, std::vector<Shader*> _shaders)
+void RenderSystem::Start(
+    unsigned int _skyboxTexture,
+    Skybox* _skybox,
+    std::vector<Shader*> _shaders,
+    Light* _shadowCaster
+)
 {
     skyboxTexture = _skyboxTexture;
     shaders = &_shaders;
     IBLBufferSetup(skyboxTexture);
     HDRBufferSetUp();
     BloomSetup();
-
+    shadowCaster = _shadowCaster;
+    skyBox = _skybox;
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glEnable(GL_CULL_FACE);
@@ -16,6 +23,25 @@ void RenderSystem::Start(unsigned int _skyboxTexture, std::vector<Shader*> _shad
     glFrontFace(GL_CCW);
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+    shadowDebugQuad.InitialiseQuad(0.5f, 0.5f);
+    screenQuad.InitialiseQuad(1.f, 0.0f);
+
+    // Create colour attachment texture for fullscreen framebuffer
+    screenColourBuffer = ResourceManager::LoadTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
+
+    // Make fullscreen framebuffer
+    screenFrameBuffer = new FrameBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, screenColourBuffer, nullptr, true);
+
+    // TODO: Should be done for each light
+    // Create shadow depth texture for the light
+    depthMap = ResourceManager::LoadTexture(shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight, GL_DEPTH_COMPONENT, nullptr, GL_CLAMP_TO_BORDER, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
+    float borderColor[] = { 1.0, 1.0, 1.0, 1.0 }; // TODO: Move to be apart of texture
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    shadowFrameBuffer = new FrameBuffer(shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight, nullptr, depthMap, false);
+    (*shaders)[ShaderIndex::shadowDebug]->Use();
+    (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
+
 
     glUseProgram((*shaders)[ShaderIndex::super]->GLID);
 }
@@ -191,25 +217,58 @@ void RenderSystem::OutputBufferUpdate()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void RenderSystem::BloomUpdate()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+
+    glm::vec2 mipSize((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT);
+    glm::ivec2 mipIntSize((int)SCREEN_WIDTH, (int)SCREEN_HEIGHT);
+
+    for (GLuint i = 0; i < bloomMipMapCount; i++)
+    {
+        mipSize *= 0.5f;
+        mipIntSize /= 2;
+        bloomMips[i].size = mipSize;
+        bloomMips[i].intSize = mipIntSize;
+
+        glGenTextures(1, &bloomMips[i].texture);
+        glBindTexture(GL_TEXTURE_2D, bloomMips[i].texture);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F,
+            (int)mipSize.x, (int)mipSize.y,
+            0, GL_RGB, GL_FLOAT, nullptr);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    }
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+        GL_TEXTURE_2D, bloomMips[0].texture, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void RenderSystem::Update(
     std::unordered_map<unsigned long long, ModelRenderer>& renders,
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
     std::unordered_map<unsigned long long, Animator>& animators,
-    FrameBuffer* screenBuffer,
     Camera* camera
 )
 {
+    // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
+    shadowFrameBuffer->Load();
+
     //TODO: TO make more flexible?
 	// Render depth of scene to texture (from light's perspective)
 	glm::mat4 lightSpaceMatrix;
-	Light* light = &directionalLight;
-	lightSpaceMatrix = light->getShadowViewProjection();
+	lightSpaceMatrix = shadowCaster->getShadowViewProjection();
 	
 	(*shaders)[shadowMapDepth]->Use();
     (*shaders)[shadowMapDepth]->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-	glViewport(0, 0, light->shadowTexWidth, light->shadowTexHeight);
+	glViewport(0, 0, shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight);
 	shadowFrameBuffer->Bind();
 	glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -234,18 +293,25 @@ void RenderSystem::Update(
             (*shaders)[shadowMapDepth]->setSampler("alphaDiscardMap", 0);
         }
 
+        (*shaders)[shadowMapDepth]->setMat4("model", transforms[i->first].getGlobalMatrix());
+       
+        Model* model = currentRenderer.model;
+
         //DRAW USING SHADOW MAP FOR CURRENT TRANSFORM
-        (*i)->Draw(shadowMapDepth);
+        for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
+        {
+            mesh->Draw();
+        }
     }
 
-    DrawAnimation((*shaders)[shadowMapDepth], animators, transforms, shadowCasters, false);
+    DrawAnimation(animators, transforms, shadowCasters, (*shaders)[shadowMapDepth]);
     
     //TODO: LEARN SKYBOX DRAW
-    skybox->Draw();
+    skyBox->Draw();
     //glCullFace(GL_BACK);
 
     // Render scene with shadow map, to the screen framebuffer
-    screenBuffer->Bind();
+    screenFrameBuffer->Bind();
 
     // TODO: move viewport changing stuff into FrameBuffer
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -254,7 +320,7 @@ void RenderSystem::Update(
 
     // set light uniforms
     (*shaders)[ShaderIndex::shadowMapping]->setVec3("viewPos", camera->position);
-    (*shaders)[ShaderIndex::shadowMapping]->setVec3("lightPos", light->getPos());
+    (*shaders)[ShaderIndex::shadowMapping]->setVec3("lightPos", shadowCaster->getPos());
     (*shaders)[ShaderIndex::shadowMapping]->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
     //TODO:
@@ -266,7 +332,7 @@ void RenderSystem::Update(
     // set light uniforms
     // TODO: Shouldn't need to set light uniforms here, use the shader flags and make one for shadowed
     (*shaders)[ShaderIndex::super]->setVec3("viewPos", camera->position);
-    (*shaders)[ShaderIndex::super]->setVec3("lightPos", light->getPos());
+    (*shaders)[ShaderIndex::super]->setVec3("lightPos", shadowCaster->getPos());
     (*shaders)[ShaderIndex::super]->setMat4("directionalLightSpaceMatrix", lightSpaceMatrix);
 
     (*shaders)[ShaderIndex::super]->setSampler("shadowMap", 17);
@@ -276,20 +342,20 @@ void RenderSystem::Update(
     // RENDER SCENE
 
     DrawRenderers(renders, transforms);
-    skybox->Draw();
+    skyBox->Draw();
 
     // Draw animated stuff
     (*shaders)[ShaderIndex::super]->Use();
     glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, camera->nearPlane, camera->farPlane);
     (*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
 
-    DrawAnimation((*shaders)[ShaderIndex::super], animators, transforms, renders);
+    DrawAnimation(animators, transforms, renders, (*shaders)[ShaderIndex::super]);
 
     if (showShadowDebug) {
         // Debug render the light depth map
         (*shaders)[ShaderIndex::shadowDebug]->Use();
-        (*shaders)[ShaderIndex::shadowDebug]->setFloat("near_plane", light->shadowNearPlane);
-        (*shaders)[ShaderIndex::shadowDebug]->setFloat("far_plane", light->shadowFarPlane);
+        (*shaders)[ShaderIndex::shadowDebug]->setFloat("near_plane", shadowCaster->shadowNearPlane);
+        (*shaders)[ShaderIndex::shadowDebug]->setFloat("far_plane", shadowCaster->shadowFarPlane);
         depthMap->Bind(1);
 
         //TODO: Make Shadow Debug Quad
@@ -310,12 +376,24 @@ void RenderSystem::Update(
     glEnable(GL_DEPTH_TEST);
 }
 
+void RenderSystem::ScreenResize(int width, int height)
+{
+    SCREEN_HEIGHT = height;
+    SCREEN_WIDTH = width;
+
+    screenColourBuffer->setWidthHeight((int)width, (int)height);
+    screenFrameBuffer->setWidthHeight(width, height);
+
+    HDRBufferUpdate();
+    OutputBufferUpdate();
+    BloomUpdate();
+}
+
 void RenderSystem::DrawAnimation(
-    Shader* shader, 
     std::unordered_map<unsigned long long, Animator>& animators,
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-    bool useCachedShader
+    Shader* shader
 )
 {
     for (auto iter = animators.begin(); iter != animators.end(); iter++)
@@ -327,21 +405,40 @@ void RenderSystem::DrawAnimation(
         }
         shader->setMat4("model", transforms[iter->first].getGlobalMatrix());
 
-        //if (useCachedShader)
-            //TODO: DRAW AGAIN!
-        //else
-            //TODO: DRAW AGAIN!
+        ModelRenderer animationRenderer = renderers[iter->first];
+        if (!shader)
+        {
+            animationRenderer.material->Use();
+            animationRenderer.material->getShader()->setMat4("model", transforms[iter->first].getGlobalMatrix());
+        }
+        else 
+        {
+        	shader->setMat4("model", transforms[iter->first].getGlobalMatrix());
+        }
+
+        Model* model = animationRenderer.model;
+        for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
+        {
+            mesh->Draw();
+        }
     }
 }
 
 void RenderSystem::DrawRenderers(
     std::unordered_map<unsigned long long, ModelRenderer>& renderers, 
-    std::unordered_map<unsigned long long, Transform>& transforms)
+    std::unordered_map<unsigned long long, Transform>& transforms
+)
 {
     for (auto i = renderers.begin(); i != renderers.end(); i++)
     {
-        //TODO: 
-        (*i)->Draw();
+        i->second.material->Use();
+        i->second.material->getShader()->setMat4("model", transforms[i->first].getGlobalMatrix());
+
+        Model* model = i->second.model;
+        for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
+        {
+            mesh->Draw();
+        }
     }
 }
 

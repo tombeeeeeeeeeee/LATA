@@ -71,7 +71,7 @@ float Animation::getDuration() const
 
 const Transform* Animation::getRootNode() const
 {
-	return &model->root->transform;
+	return model->root->transform();
 }
 
 const std::unordered_map<std::string, BoneInfo>& Animation::getBoneIDMap() const
@@ -113,9 +113,9 @@ void Animation::ReadHierarchyData(Transform* dest, const aiNode* src)
 	aiVector3D scale;
 
 	src->mTransformation.Decompose(scale, rot, pos);
-	dest->position = AssimpVecToGLM(pos);
+	dest->getPosition() = AssimpVecToGLM(pos);
 	dest->setRotation(AssimpQuatToGLM(rot));
-	dest->scale = scale.x;
+	dest->setScale(scale.x);
 	
 	
 	//dest.transform.chi children.reserve(src->mNumChildren);
@@ -123,7 +123,7 @@ void Animation::ReadHierarchyData(Transform* dest, const aiNode* src)
 
 	for (unsigned int i = 0; i < src->mNumChildren; i++)
 	{
-		Transform* newData = &(new SceneObject())->transform;
+		Transform* newData = (new SceneObject())->transform();
 		ReadHierarchyData(newData, src->mChildren[i]);
 		
 		//dest->AddChild(newData);
