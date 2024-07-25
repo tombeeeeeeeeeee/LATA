@@ -219,6 +219,26 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 	delete[] vertices;
 }
 
+unsigned int Mesh::getTriCount()
+{
+	return triCount;
+}
+
+GLuint Mesh::getVAO()
+{
+	return VAO;
+}
+
+GLuint Mesh::getVBO()
+{
+	return VBO;
+}
+
+GLuint Mesh::getIBO()
+{
+	return IBO;
+}
+
 void Mesh::InitialiseQuad(float size, float offset)
 {
 	const unsigned int vertexCount = 6;

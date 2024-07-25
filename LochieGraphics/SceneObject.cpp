@@ -1,56 +1,81 @@
 #include "SceneObject.h"
 
+#include "ResourceManager.h"
+
 #include "Shader.h"
 #include "Model.h"
 
 #include "imgui.h"
 #include "imgui_stdlib.h"
 
-SceneObject::SceneObject() :
+SceneObject::SceneObject(Scene* _scene) :
+	scene(_scene)
 {
+	GUID = ResourceManager::GetNewGuid();
+	scene->transforms[GUID] = Transform();
 }
 
-SceneObject::SceneObject(glm::vec3 _position, glm::vec3 _rotation, float _scale) :
-	transform(Transform(this, _position, _rotation, _scale))
+SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation, float _scale) :
+	scene(_scene)
 {
+	GUID = ResourceManager::GetNewGuid();
+	scene->transforms[GUID] = Transform(_position, _rotation, _scale);
 }
 
 
 SceneObject::~SceneObject()
 {
-	delete renderer;
-}
-
-void SceneObject::Update(float delta)
-{
-	for (auto part = parts.begin(); part != parts.end(); part++)
-	{
-		(*part)->Update();
-	}
-}
-
-void SceneObject::Draw(Shader* override) const
-{
-	for (auto part = parts.begin(); part != parts.end(); part++)
-	{
-		(*part)->Draw(override);
-	}
+	
 }
 
 void SceneObject::GUI()
 {
 	ImGui::InputText("Name", &name);
-	transform.GUI();
-	for (auto i = parts.begin(); i != parts.end(); i++)
+	scene->transforms[GUID].GUI();
+
+	if ((parts & Parts::modelRenderer))
+		scene->renderers[GUID].GUI();
+	
+	//TODO Add animator parts;
+	//if ((parts & Parts::animator)
+	//	scene->animators[GUID].GUI();
+}
+
+void SceneObject::setTransform(Transform* transform)
+{
+	scene->transforms[GUID] = (*transform);
+}
+
+Transform* SceneObject::transform()
+{
+	return &(scene->transforms[GUID]);
+}
+
+void SceneObject::setRenderer(ModelRenderer* renderer)
+{
+	if (renderer)
 	{
-		(*i)->GUI();
+		parts |= Parts::modelRenderer;
+		scene->renderers[GUID] = *renderer;
 	}
+	else
+	{
+		parts &= ~Parts::modelRenderer;
+		scene->renderers.erase(GUID);
+	}
+}
+
+ModelRenderer* SceneObject::renderer()
+{
+	if (parts & Parts::modelRenderer)
+		return &(scene->renderers[GUID]);
+	return nullptr;
 }
 
 toml::table SceneObject::Serialise()
 {
 	return toml::table{
 		{ "name", name },
-		{ "hasRenderer", renderer != nullptr}
+		{ "hasRenderer", parts & Parts::modelRenderer}
 	};
 }

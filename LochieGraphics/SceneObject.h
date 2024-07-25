@@ -25,6 +25,7 @@ enum Parts
 	animator = 1 << 2,
 	rigidBody = 1 << 3,
 	light = 1 << 4,
+	count = 1 << 5,
 };
 
 class Scene;
@@ -48,8 +49,26 @@ public:
 	SceneObject& operator=(const SceneObject& other) = delete;
 
 	void Update(float delta);
-	void Draw(Shader* override = nullptr) const;
 	void GUI();
+
+#pragma region Part Get and Set
+
+	void setTransform(Transform* transform);
+	Transform* transform();
+
+	void setRenderer(ModelRenderer* renderer);
+	ModelRenderer* renderer();
+
+	void setAnimator(Animator* animator);
+	Animator* animator();
+
+	//void setLight(Light light);
+	//Light* light();
+
+	//void setRigidBody(RigidBody* rb);
+	//RigidBody* rigidbody();
+#pragma endregion
+
 };
 
 

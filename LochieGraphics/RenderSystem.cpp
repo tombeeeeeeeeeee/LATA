@@ -293,7 +293,7 @@ void RenderSystem::Update(
         depthMap->Bind(1);
 
         //TODO: Make Shadow Debug Quad
-        shadowDebugQuad.Draw();
+        DrawMesh(shadowDebugQuad);
     }
 
 
@@ -343,6 +343,22 @@ void RenderSystem::DrawRenderers(
         //TODO: 
         (*i)->Draw();
     }
+}
+
+void RenderSystem::DrawMesh(Mesh& mesh)
+{
+    glBindVertexArray(mesh.getVAO());
+    if (mesh.getIBO() != 0) {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.getIBO());
+        glDrawElements(GL_TRIANGLES, 3 * mesh.getTriCount(), GL_UNSIGNED_INT, 0);
+    }
+    else {
+        glDrawArrays(GL_TRIANGLES, 0, 3 * mesh.getTriCount());
+    }
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void RenderSystem::HDRBufferSetUp()

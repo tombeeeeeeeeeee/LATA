@@ -11,10 +11,10 @@ class Transform
 private:
 	Transform* parent = nullptr;
 	std::vector<Transform*> children = {};
-	glm::quat quaternion;
-	glm::vec3 position;
-	glm::vec3 scale;
-	glm::mat4 globalMatrix;
+	glm::quat quaternion = glm::identity<glm::quat>();
+	glm::vec3 position = glm::zero<glm::vec3>();
+	glm::vec3 scale = {1,1,1};
+	glm::mat4 globalMatrix = glm::identity<glm::mat4>();
 
 public:
 	Transform* getParent() const;
@@ -40,7 +40,6 @@ public:
 
 	void UpdateGlobalMatrixCascading();
 
-	Transform() = delete;
 	Transform(glm::vec3 _position = { 0.f, 0.f, 0.f }, glm::quat _quaternion = glm::quat({0.f, 0.f, 0.0f}), float _scale = 1.f);
 
 	glm::mat4 getLocalMatrix() const;

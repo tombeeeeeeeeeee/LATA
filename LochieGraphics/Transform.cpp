@@ -36,6 +36,11 @@ void Transform::setParent(Transform* newParent)
 			std::cout << "Error, Unemplemented Behaviour, trying to set the parent of a transform as its child\n";
 			return;
 		}
+		else if(newParent == this)
+		{
+			std::cout << "Error, Unemplemented Behaviour, trying to set a transform as its own child\n";
+			return;
+		}
 	}
 	if (parent) {
 		parent->RemoveChild(this);
@@ -50,6 +55,11 @@ void Transform::setParent(Transform* newParent)
 
 void Transform::AddChild(Transform* newChild)
 {
+	if (newChild == this)
+	{
+		std::cout << "Error, Unemplemented Behaviour, trying to set a transform as its own child\n";
+		return;
+	}
 	if (std::find(children.begin(), children.end(), newChild) != children.end()) {
 		// Child already exists as a child
 		if (newChild->parent != this) {

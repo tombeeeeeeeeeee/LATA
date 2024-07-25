@@ -56,6 +56,12 @@ public:
 	void InitialiseFromFile(std::string filename);
 	void InitialiseIndexFromFile(std::string filename, int i);
 	void InitialiseFromAiMesh(std::string path, const aiScene* scene, std::unordered_map<std::string, BoneInfo>* boneInfo, aiMesh* mesh, bool flipTexturesOnLoad = true);
+
+	unsigned int getTriCount();
+	GLuint getVAO();
+	GLuint getVBO();
+	GLuint getIBO();
+
 private:
 	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);
 

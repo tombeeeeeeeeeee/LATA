@@ -5,6 +5,7 @@
 #include "ModelRenderer.h"
 #include "Animator.h"
 #include "Camera.h"
+#include "Mesh.h"
 
 #include "FrameBuffer.h"
 #include "shaderEnum.h"
@@ -116,6 +117,8 @@ private:
         std::unordered_map<unsigned long long, Transform>& transforms,
         Shader* shader
         );
+
+    void DrawMesh(Mesh& mesh);
 
     //void BindLightUniform(unsigned int shaderProgram,
     //    std::unordered_map<unsigned int, Light>& lightComponents,
