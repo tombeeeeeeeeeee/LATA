@@ -50,6 +50,21 @@ public:
     int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 private:
+
+    Mesh shadowDebugQuad;
+    Mesh screenQuad;
+    Mesh buttonQuad;
+
+    Texture* screenColourBuffer = nullptr;
+
+    FrameBuffer* screenFrameBuffer = nullptr;
+    Texture* screenTexture = nullptr;
+
+    FrameBuffer* shadowFrameBuffer = nullptr;
+    Texture* depthMap = nullptr;
+
+    bool showShadowDebug = false;
+
     /// <summary>
     /// Missing Texture VRAM location
     /// </summary>

@@ -40,23 +40,6 @@ private:
 	Model vampireModel;
 	Model tiresModel;
 
-	Mesh shadowDebugQuad;
-	Mesh screenQuad;
-	Mesh buttonQuad;
-	
-	bool animateBlendDirectionRight = false;
-	bool showButton = true;
-	Texture* buttonTexture = nullptr;
-
-	Texture* screenColourBuffer = nullptr;
-
-	FrameBuffer* screenFrameBuffer = nullptr;
-	Texture* screenTexture = nullptr;
-
-	FrameBuffer* shadowFrameBuffer = nullptr;
-	Texture* depthMap = nullptr;
-
-	bool showShadowDebug = false;
 
 	SceneObject* backpack   = new SceneObject(this);
 	SceneObject* soulSpear  = new SceneObject(this);

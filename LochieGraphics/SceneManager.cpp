@@ -179,7 +179,7 @@ void SceneManager::Update()
 		if (((*s)->getFlag() & Shader::Flags::Lit)) {
 			for (auto l = scene->lights.begin(); l != scene->lights.end(); l++)
 			{
-				(*l)->ApplyToShader(*s);
+				l->ApplyToShader(*s);
 				(*s)->setVec3("viewPos", camera.position);
 			}
 		}

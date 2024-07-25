@@ -45,6 +45,7 @@ void Transform::setParent(Transform* newParent)
 		return;
 	}
 	newParent->AddChild(this);
+	UpdateGlobalMatrixCascading();
 }
 
 void Transform::AddChild(Transform* newChild)
@@ -58,6 +59,7 @@ void Transform::AddChild(Transform* newChild)
 	}
 	children.push_back(newChild);
 	newChild->parent = this;
+	newChild->UpdateGlobalMatrixCascading();
 }
 
 void Transform::RemoveChild(Transform* oldChild)
@@ -70,6 +72,7 @@ void Transform::RemoveChild(Transform* oldChild)
 	}
 
 	(*childIterator)->parent = nullptr;
+	(*childIterator)->UpdateGlobalMatrixCascading();
 	children.erase(childIterator);
 }
 
@@ -84,6 +87,7 @@ Transform::Transform(glm::vec3 _position, glm::quat _quaternion, float _scale) :
 	quaternion(_quaternion),
 	scale({ scale, scale, scale })
 {
+	UpdateGlobalMatrixCascading();
 }
 
 glm::quat Transform::getRotation() const
@@ -111,6 +115,7 @@ glm::mat4 Transform::getLocalMatrix() const
 void Transform::setRotation(glm::quat _quat)
 {
 	quaternion = _quat;
+	UpdateGlobalMatrixCascading();
 }
 
 //TODO: Cache global matrix
@@ -125,6 +130,49 @@ glm::mat4 Transform::getGlobalMatrix() const
 void Transform::setEulerRotation(glm::vec3 _euler)
 {
 	quaternion = glm::quat(glm::radians(_euler));
+	UpdateGlobalMatrixCascading();
+}
+
+glm::vec3 Transform::getScale()
+{
+	return scale;
+}
+
+void Transform::setScale(float _scale)
+{
+	scale = { scale, scale, scale };
+}
+
+void Transform::setScale(glm::vec3 _scale)
+{
+	scale = _scale;
+}
+
+glm::vec3 Transform::getPosition()
+{
+	return position;
+}
+
+glm::vec3 Transform::getGlobalPosition()
+{
+	return { globalMatrix[3][0], globalMatrix[3][1], globalMatrix[3][2] };
+}
+
+void Transform::setPosition(glm::vec3 pos)
+{
+	position = pos;
+}
+
+void Transform::UpdateGlobalMatrixCascading()
+{
+	if (parent == nullptr)
+		globalMatrix = getLocalMatrix();
+	else
+		globalMatrix = parent->getGlobalMatrix() * getLocalMatrix();
+	for (Transform* child : children)
+	{
+		child->UpdateGlobalMatrixCascading();
+	}
 }
 
 void Transform::GUI()
