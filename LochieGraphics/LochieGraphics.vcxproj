@@ -251,10 +251,16 @@
   <ItemGroup>
     <None Include="..\Shaders\animate.frag" />
     <None Include="..\Shaders\animate.vert" />
+    <None Include="..\Shaders\brdf.frag" />
     <None Include="..\Shaders\cubemap.frag" />
     <None Include="..\Shaders\cubemap.vert" />
+    <None Include="..\Shaders\default.vert" />
+    <None Include="..\Shaders\downSample.frag" />
     <None Include="..\Shaders\framebuffer.frag" />
     <None Include="..\Shaders\framebuffer.vert" />
+    <None Include="..\Shaders\HDRBloom.frag" />
+    <None Include="..\Shaders\irradiance.frag" />
+    <None Include="..\Shaders\irradiance.vert" />
     <None Include="..\Shaders\lightCube.frag" />
     <None Include="..\Shaders\lightCube.vert" />
     <None Include="..\Shaders\lit.frag" />
@@ -265,6 +271,8 @@
     <None Include="..\Shaders\oldShader.vert" />
     <None Include="..\Shaders\pbr.frag" />
     <None Include="..\Shaders\pbr.vert" />
+    <None Include="..\Shaders\prefilter.frag" />
+    <None Include="..\Shaders\prefilter.vert" />
     <None Include="..\Shaders\screenShader.frag" />
     <None Include="..\Shaders\screenShader.vert" />
     <None Include="..\Shaders\shadowDebug.frag" />
@@ -280,15 +288,7 @@
     <None Include="..\Shaders\superShader.vert" />
     <None Include="..\Shaders\ui.frag" />
     <None Include="..\Shaders\ui.vert" />
-    <None Include="brdf.frag" />
-    <None Include="downSample.frag" />
-    <None Include="HDRBloom.frag" />
-    <None Include="default.vert" />
-    <None Include="irradiance.frag" />
-    <None Include="irradiance.vert" />
-    <None Include="prefilter.frag" />
-    <None Include="prefilter.vert" />
-    <None Include="upSample.frag" />
+    <None Include="..\Shaders\upSample.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

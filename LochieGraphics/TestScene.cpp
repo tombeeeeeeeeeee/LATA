@@ -1,7 +1,7 @@
 #include "TestScene.h"
 
 #include "stb_image.h"
-
+#include "SceneManager.h"
 #include <iostream>
 #include <array>
 
@@ -18,18 +18,19 @@ TestScene::TestScene()
 		//vampire,
 		//xbot
 	};
-	lights = std::vector<Light>{
-		pointLights[0],
-		pointLights[1],
-		pointLights[2],
-		pointLights[3],
-		spotlight,
-		directionalLight
+	lights = std::vector<Light*>{
+		&pointLights[0],
+		&pointLights[1],
+		&pointLights[2],
+		&pointLights[3],
+		&spotlight,
+		&directionalLight
 	};
 }
 
 void TestScene::Start()
 {
+	renderSystem = new RenderSystem(SceneManager::window);
 	// Shaders
 	Shader* lightCubeShader = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
 	Shader* skyBoxShader = ResourceManager::LoadShader("shaders/cubemap.vert", "shaders/cubemap.frag");
@@ -40,10 +41,10 @@ void TestScene::Start()
 	shadowMapping = ResourceManager::LoadShader("shaders/shadowMapping.vert", "shaders/shadowMapping.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
 	shadowDebug = ResourceManager::LoadShader("shaders/shadowDebug.vert", "shaders/shadowDebug.frag");
 	Shader* simpleTextured = ResourceManager::LoadShader("shaders/simpleTextured.vert", "shaders/simpleTextured.frag", Shader::Flags::VPmatrix);
-	superShader = ResourceManager::LoadShader("shaders/superShader.vert", "shaders/superShader.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
+	superShader = ResourceManager::LoadShader("shaders/superShader.vert", "shaders/superShader.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec);
 	uiShader = ResourceManager::LoadShader("shaders/ui.vert", "shaders/ui.frag");
-	Shader* prefilter = ResourceManager::LoadShader("prefilter", Shader::Flags::VPmatrix);
-	Shader* irradiance = ResourceManager::LoadShader("irradiance", Shader::Flags::VPmatrix);
+	Shader* prefilter = ResourceManager::LoadShader("prefilter");
+	Shader* irradiance = ResourceManager::LoadShader("irradiance");
 	Shader* brdf = ResourceManager::LoadShaderDefaultVert("brdf");
 	Shader* downSample = ResourceManager::LoadShaderDefaultVert("downSample");
 	Shader* upSample = ResourceManager::LoadShaderDefaultVert("upSample");
@@ -55,7 +56,7 @@ void TestScene::Start()
 		shadowMapping, shadowDebug,
 		simpleTextured, superShader,
 		prefilter, irradiance,
-		brdf, 
+		brdf, downSample, upSample
 	};
 
 	// TODO: This needs to be cleaned up
@@ -119,7 +120,7 @@ void TestScene::Start()
 	backpack->transform()->setEulerRotation({0.f, 52.6f, 0.f});
 	
 	tiresModel = Model("models/old-tires-dirt-low-poly/model.dae", false);
-	Material* tiresMaterial = ResourceManager::LoadMaterial("tires", pbrShader);
+	Material* tiresMaterial = ResourceManager::LoadMaterial("tires", superShader);
 	tiresMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_albedo.jpeg", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_normal.png", Texture::Type::normal, GL_REPEAT, true),
@@ -166,6 +167,7 @@ void TestScene::Start()
 	xbotAnimator = Animator(&xbotChicken);
 	xbotOtherAnimator = Animator(&xbotIdle);
 	xbotBlendedAnimator = BlendedAnimator(&xbotChicken, &xbotIdle);
+	xbot->setAnimator(&xbotBlendedAnimator);
 
 	vampireModel.LoadModel(std::string("models/Skinning Test.fbx"));
 	vampire->transform()->setScale(0.01f);
@@ -181,6 +183,13 @@ void TestScene::Start()
 
 	vampireWalk = Animation("models/Skinning Test.fbx", &vampireModel);
 	vampireAnimator = Animator(&vampireWalk);
+	vampire->setAnimator(&vampireAnimator);
+	
+	renderSystem->Start(
+		skybox,
+		&shaders,
+		&directionalLight
+	);
 }
 
 void TestScene::EarlyUpdate()
@@ -240,7 +249,8 @@ void TestScene::Draw()
 		renderers,
 		transforms,
 		renderers,
-		//TODO: Make Animation list
+		animators,
+		camera
 	);
 }
 
@@ -265,6 +275,7 @@ void TestScene::GUI()
 	else {
 		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, (unsigned int)(skyboxes.size() - 1))) {
 			skybox = skyboxes[skyboxIndex];
+			renderSystem->skyBox = skybox;
 		}
 		ImGui::End();
 	}

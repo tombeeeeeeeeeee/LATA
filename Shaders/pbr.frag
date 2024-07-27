@@ -1,5 +1,5 @@
 #version 460 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
 
 struct Material {
     sampler2D normal1;
@@ -236,7 +236,6 @@ vec3 CalcSpotlight(Spotlight light, vec3 normal) {
 
     vec3 radiance = Radiance(normalize(TangentSpotlightPos - TangentFragPos), length(TangentSpotlightPos - TangentFragPos), normal, light.constant, light.linear, light.quadratic, light.colour);
 
-    vec3 ambient = light.ambient * albedo;
 
     return radiance * intensity;     
 //    

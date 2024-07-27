@@ -1,5 +1,6 @@
 #version 460 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 bloomColour;
 
 struct Material {
     sampler2D diffuse1;
@@ -95,6 +96,14 @@ void main()
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;    
     
     FragColor = vec4(lighting, 1.0);
+    if(dot(lighting, vec3(0.2126, 0.7152, 0.0722)) > 1)
+    {
+        bloomColour = vec4(lighting,1.0);
+    }
+    else
+    {
+        bloomColour = vec4(0.0,0.0,0.0,1.0);
+    }
 //    vec3 diffuseColour = texture(material.diffuse1, TexCoords).rgb;
 //    vec3 normal = normalize(Normal);
 //    vec3 lightColor = vec3(0.3);

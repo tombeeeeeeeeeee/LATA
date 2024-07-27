@@ -47,7 +47,7 @@ void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 	}
 
 	//ASK: What is this?
-	root = new SceneObject();
+	root = new SceneObject(SceneManager::scene);
 	//SceneManager::scene->sceneObjects.push_back(root);
 	Animation::ReadHierarchyData(root->transform(), scene->mRootNode);
 	// TODO: Do I need to do this, check exactly what should be done

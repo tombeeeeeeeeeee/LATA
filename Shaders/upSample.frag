@@ -25,17 +25,17 @@ void main()
     // d - e - f
     // g - h - i
     // === ('e' is the current texel) ===
-    vec3 a = texture(srcTexture, vec2(TexCoords.x - x, TexCoords.y + y)).rgb;
-    vec3 b = texture(srcTexture, vec2(TexCoords.x,     TexCoords.y + y)).rgb;
-    vec3 c = texture(srcTexture, vec2(TexCoords.x + x, TexCoords.y + y)).rgb;
+    vec3 a = texture(srcTexture, vec2(texCoords.x - x, texCoords.y + y)).rgb;
+    vec3 b = texture(srcTexture, vec2(texCoords.x,     texCoords.y + y)).rgb;
+    vec3 c = texture(srcTexture, vec2(texCoords.x + x, texCoords.y + y)).rgb;
                                                        
-    vec3 d = texture(srcTexture, vec2(TexCoords.x - x, TexCoords.y)).rgb;
-    vec3 e = texture(srcTexture, vec2(TexCoords.x,     TexCoords.y)).rgb;
-    vec3 f = texture(srcTexture, vec2(TexCoords.x + x, TexCoords.y)).rgb;
+    vec3 d = texture(srcTexture, vec2(texCoords.x - x, texCoords.y)).rgb;
+    vec3 e = texture(srcTexture, vec2(texCoords.x,     texCoords.y)).rgb;
+    vec3 f = texture(srcTexture, vec2(texCoords.x + x, texCoords.y)).rgb;
                                                        
-    vec3 g = texture(srcTexture, vec2(TexCoords.x - x, TexCoords.y - y)).rgb;
-    vec3 h = texture(srcTexture, vec2(TexCoords.x,     TexCoords.y - y)).rgb;
-    vec3 i = texture(srcTexture, vec2(TexCoords.x + x, TexCoords.y - y)).rgb;
+    vec3 g = texture(srcTexture, vec2(texCoords.x - x, texCoords.y - y)).rgb;
+    vec3 h = texture(srcTexture, vec2(texCoords.x,     texCoords.y - y)).rgb;
+    vec3 i = texture(srcTexture, vec2(texCoords.x + x, texCoords.y - y)).rgb;
 
     // Apply weighted distribution, by using a 3x3 tent filter:
     //  1   | 1 2 1 |

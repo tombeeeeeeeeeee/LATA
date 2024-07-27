@@ -15,8 +15,8 @@ void main()
     // to bloom or not to bloom
     vec3 result = vec3(0.0);
 
-    vec3 hdrColor = texture(scene, TexCoords).rgb;
-    vec3 bloomColor = texture(bloomBlur, TexCoords).rgb;
+    vec3 hdrColor = texture(scene, texCoords).rgb;
+    vec3 bloomColor = texture(bloomBlur, texCoords).rgb;
     result = mix(hdrColor, bloomColor, bloomStrength); // linear interpolation
 
     // tone mapping

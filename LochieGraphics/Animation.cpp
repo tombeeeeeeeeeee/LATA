@@ -123,7 +123,7 @@ void Animation::ReadHierarchyData(Transform* dest, const aiNode* src)
 
 	for (unsigned int i = 0; i < src->mNumChildren; i++)
 	{
-		Transform* newData = (new SceneObject())->transform();
+		Transform* newData = (new SceneObject(SceneManager::scene))->transform();
 		ReadHierarchyData(newData, src->mChildren[i]);
 		
 		//dest->AddChild(newData);

@@ -12,6 +12,7 @@
 #include "shaderEnum.h"
 
 #include <iostream>
+#include "Graphics.h"
 #include "unordered_map"
 
 struct bloomMip
@@ -26,10 +27,12 @@ const int bloomMipMapCount = 6;
 class RenderSystem
 {
 public:
+
+    RenderSystem(GLFWwindow* window);
+
     void Start(
-        unsigned int _skyboxTexture,
         Skybox* skybox,
-        std::vector<Shader*> _shaders,
+        std::vector<Shader*>* _shaders,
         Light* shadowCaster
     );
 
@@ -56,13 +59,13 @@ public:
 
     bool showShadowDebug = false;
 
+    Skybox* skyBox;
+
 private:
 
     Mesh shadowDebugQuad;
     Mesh screenQuad;
     Mesh buttonQuad;
-
-    Skybox* skyBox;
 
     Texture* screenColourBuffer = nullptr;
 

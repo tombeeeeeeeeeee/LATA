@@ -34,6 +34,7 @@ private:
 public:
 	static FixedSizeQueue<float, 300> frameTimes;
 
+	static GLFWwindow* window;
 	static Scene* scene;
 private:
 	// TODO: Perhaps variables that need to be accessed by both the scene and scene manager class should be in a seperate class (such as these window height/width)
@@ -42,7 +43,6 @@ private:
 	static WindowModes windowMode;
 	static unsigned int windowWidth;
 	static unsigned int windowHeight;
-	static GLFWwindow* window;
 
 	// Callbacks //TODO: change how these functions are called, look at other examples on how callbacks can be handled
 	static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);

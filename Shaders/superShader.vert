@@ -9,9 +9,7 @@ layout (location = 6) in vec4 aBoneWeights;
 
 struct DirectionalLight {
     vec3 direction;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
 };
 
 struct PointLight {
@@ -19,9 +17,7 @@ struct PointLight {
     float constant;
     float linear;
     float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
 };
 
 struct Spotlight {
@@ -29,9 +25,7 @@ struct Spotlight {
     float constant;
     float linear;
     float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
     vec3 direction;
     float cutOff;
     float outerCutOff;
@@ -41,7 +35,9 @@ struct Spotlight {
 // General
 uniform mat4 vp;
 uniform mat4 model;
+uniform vec3 materialColour;
 
+out vec3 fragmentColour;
 out vec2 texCoords;
 out vec3 fragPos;
 

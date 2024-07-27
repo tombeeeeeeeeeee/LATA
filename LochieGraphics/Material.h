@@ -15,15 +15,15 @@ private:
 	void GetShaderUniforms();
 	Shader* shader;
 	unsigned long long shaderGUID;
-	std::unordered_map<std::string, Texture*> texturePointers;
 	std::unordered_map<std::string, unsigned long long> textureGUIDs;
 public:
+	std::unordered_map<std::string, Texture*> texturePointers;
 	Material(std::string _name, Shader* _shader);
 	void setShader(Shader* _shader);
 	Shader* getShader();
 	unsigned long long GUID;
 	std::string name;
-	glm::vec3 colour;
+	glm::vec3 colour = {1.0f,1.0f,1.0f};
 	
 	// TODO: Think about better ways to have this rather than having a map for each type
 	std::unordered_map<std::string, float> floats;

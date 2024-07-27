@@ -2,20 +2,33 @@
 #include "ResourceManager.h"
 #include "Maths.h"
 
+RenderSystem::RenderSystem(GLFWwindow* _window)
+{
+    window = _window;
+}
+
 void RenderSystem::Start(
-    unsigned int _skyboxTexture,
     Skybox* _skybox,
-    std::vector<Shader*> _shaders,
+    std::vector<Shader*>* _shaders,
     Light* _shadowCaster
 )
 {
-    skyboxTexture = _skyboxTexture;
-    shaders = &_shaders;
+    if (SCREEN_WIDTH == 0)
+    {
+        int scrWidth, scrHeight;
+        glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
+        SCREEN_WIDTH  = scrWidth;
+        SCREEN_HEIGHT = scrHeight;
+    }
+    shaders = _shaders;
+    skyBox = _skybox;
+    skyboxTexture = skyBox->texture;
+
     IBLBufferSetup(skyboxTexture);
     HDRBufferSetUp();
+    OutputBufferSetUp();
     BloomSetup();
     shadowCaster = _shadowCaster;
-    skyBox = _skybox;
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glEnable(GL_CULL_FACE);
@@ -41,9 +54,11 @@ void RenderSystem::Start(
     shadowFrameBuffer = new FrameBuffer(shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight, nullptr, depthMap, false);
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
-
-
     glUseProgram((*shaders)[ShaderIndex::super]->GLID);
+    (*shaders)[ShaderIndex::super]->setInt("irradianceMap", 7);
+    (*shaders)[ShaderIndex::super]->setInt("prefilterMap", 8);
+    (*shaders)[ShaderIndex::super]->setInt("brdfLUT", 9);
+
 }
 
 void RenderSystem::SetIrradianceMap(unsigned int skybox)
@@ -244,7 +259,7 @@ void RenderSystem::BloomUpdate()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1,
         GL_TEXTURE_2D, bloomMips[0].texture, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -257,8 +272,16 @@ void RenderSystem::Update(
     Camera* camera
 )
 {
+    if (skyboxTexture == 0 && skyBox->texture != 0)
+    {
+        skyboxTexture = skyBox->texture;
+        IBLBufferSetup(skyboxTexture);
+    }
+
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
     shadowFrameBuffer->Load();
+
+    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     //TODO: TO make more flexible?
 	// Render depth of scene to texture (from light's perspective)
@@ -270,7 +293,7 @@ void RenderSystem::Update(
 
 	glViewport(0, 0, shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight);
 	shadowFrameBuffer->Bind();
-	glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
     //glCullFace(GL_FRONT);
@@ -307,7 +330,7 @@ void RenderSystem::Update(
     DrawAnimation(animators, transforms, shadowCasters, (*shaders)[shadowMapDepth]);
     
     //TODO: LEARN SKYBOX DRAW
-    skyBox->Draw();
+    //skyBox->Draw();
     //glCullFace(GL_BACK);
 
     // Render scene with shadow map, to the screen framebuffer
@@ -338,10 +361,17 @@ void RenderSystem::Update(
     (*shaders)[ShaderIndex::super]->setSampler("shadowMap", 17);
     //TODO:
     depthMap->Bind(17);
-
     // RENDER SCENE
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers(2, attachments);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     DrawRenderers(renders, transforms);
+
     skyBox->Draw();
 
     // Draw animated stuff
@@ -350,6 +380,8 @@ void RenderSystem::Update(
     (*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
 
     DrawAnimation(animators, transforms, renders, (*shaders)[ShaderIndex::super]);
+
+    RenderBloom(bloomBuffer);
 
     if (showShadowDebug) {
         // Debug render the light depth map
@@ -362,16 +394,35 @@ void RenderSystem::Update(
         DrawMesh(shadowDebugQuad);
     }
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Unbind framebuffer
-    FrameBuffer::Unbind();
+    //FrameBuffer::Unbind();
     glDisable(GL_DEPTH_TEST); // Disable depth test for fullscreen quad
 
-    (*shaders)[ShaderIndex::screen]->Use();
-    screenColourBuffer->Bind(1);
-    (*shaders)[ShaderIndex::screen]->setSampler("screenTexture", 1);
+
+    screenFrameBuffer->Bind();
+
+    //FrameBuffer Rendering
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    //HDR
+    glUseProgram((*shaders)[ShaderIndex::screen]->GLID);
+
+    glUniform1i(glGetUniformLocation((*shaders)[ShaderIndex::screen]->GLID, "scene"), 1);
+    glUniform1i(glGetUniformLocation((*shaders)[ShaderIndex::screen]->GLID, "bloomBlur"), 2);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, colorBuffer);
+
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, bloomMips[0].texture);
+
+    glUniform1f(glGetUniformLocation((*shaders)[ShaderIndex::screen]->GLID, "exposure"), exposure);
+
     RenderQuad();
 
+    screenFrameBuffer->Unbind();
     // Re enable the depth test
     glEnable(GL_DEPTH_TEST);
 }
@@ -432,7 +483,23 @@ void RenderSystem::DrawRenderers(
     for (auto i = renderers.begin(); i != renderers.end(); i++)
     {
         i->second.material->Use();
-        i->second.material->getShader()->setMat4("model", transforms[i->first].getGlobalMatrix());
+        Shader* curShader = i->second.material->getShader();
+        curShader->setMat4("model", transforms[i->first].getGlobalMatrix());
+        int samplerCount = i->second.material->texturePointers.size();
+        //if (curShader->getFlag(Shader::Flags::Spec))
+        //{
+            glActiveTexture(GL_TEXTURE0 + 7);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+
+            glActiveTexture(GL_TEXTURE0 + 8);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+
+            glActiveTexture(GL_TEXTURE0 + 9);
+            glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+        //}
+
+        glUniform3fv(glGetUniformLocation(curShader->GLID, "materialColour"), 1, &i->second.material->colour[0]);
+
 
         Model* model = i->second.model;
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
@@ -481,7 +548,6 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
 
     SetPrefilteredMap(skybox);
 
-    if(brdfLUTTexture != 0)
     glGenTextures(1, &brdfLUTTexture);
     // pre-allocate enough memory for the LUT texture.
     glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
@@ -518,19 +584,34 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
 
 void RenderSystem::BloomSetup()
 {
-    if (outputFBO == 0) return;
+    glGenFramebuffers(1, &mFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
 
-    // create unsigned int color buffer
-    glBindTexture(GL_TEXTURE_2D, outputTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_INT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // attach buffer
-    glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, outputTexture, 0);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "Framebuffer not complete!" << std::endl;
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glm::vec2 mipSize((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT);
+    glm::ivec2 mipIntSize((int)SCREEN_WIDTH, (int)SCREEN_HEIGHT);
+    for (GLuint i = 0; i < bloomMipMapCount; i++)
+    {
+        bloomMip mip;
+
+        mipSize *= 0.5f;
+        mipIntSize /= 2;
+        mip.size = mipSize;
+        mip.intSize = mipIntSize;
+
+        glGenTextures(1, &mip.texture);
+        glBindTexture(GL_TEXTURE_2D, mip.texture);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F,
+            (int)mipSize.x, (int)mipSize.y,
+            0, GL_RGB, GL_FLOAT, nullptr);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        bloomMips.push_back(mip);
+    }
 }
 
 void RenderSystem::RenderBloom(unsigned int srcTexture)

@@ -12,20 +12,24 @@ SceneObject::SceneObject(Scene* _scene) :
 	scene(_scene)
 {
 	GUID = ResourceManager::GetNewGuid();
-	scene->transforms[GUID] = Transform();
+	scene->transforms[GUID] = Transform(this);
 }
 
 SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation, float _scale) :
 	scene(_scene)
 {
 	GUID = ResourceManager::GetNewGuid();
-	scene->transforms[GUID] = Transform(_position, _rotation, _scale);
+	scene->transforms[GUID] = Transform(this,_position, _rotation, _scale);
 }
 
 
 SceneObject::~SceneObject()
 {
 	
+}
+
+void SceneObject::Update(float delta)
+{
 }
 
 void SceneObject::GUI()
@@ -69,6 +73,27 @@ ModelRenderer* SceneObject::renderer()
 {
 	if (parts & Parts::modelRenderer)
 		return &(scene->renderers[GUID]);
+	return nullptr;
+}
+
+void SceneObject::setAnimator(Animator* animator)
+{
+	if (animator)
+	{
+		parts |= Parts::animator;
+		scene->animators[GUID] = *animator;
+	}
+	else
+	{
+		parts &= ~Parts::animator;
+		scene->animators.erase(GUID);
+	}
+}
+
+Animator* SceneObject::animator()
+{
+	if (parts & Parts::animator)
+		return &(scene->animators[GUID]);
 	return nullptr;
 }
 

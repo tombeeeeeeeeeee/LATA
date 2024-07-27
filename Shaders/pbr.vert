@@ -7,9 +7,7 @@ layout (location = 4) in vec3 aBiTangent;
 
 struct DirectionalLight {
     vec3 direction;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
 };
 
 struct PointLight {
@@ -17,9 +15,7 @@ struct PointLight {
     float constant;
     float linear;
     float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
 };
 
 struct Spotlight {
@@ -27,9 +23,7 @@ struct Spotlight {
     float constant;
     float linear;
     float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
     vec3 direction;
     float cutOff;
     float outerCutOff;

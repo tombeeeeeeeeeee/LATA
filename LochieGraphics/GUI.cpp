@@ -123,7 +123,7 @@ void GUI::LightMenu()
 		lightSelectedIndex = glm::clamp(lightSelectedIndex, 0, scene->lights.size() ? ((int)(scene->lights.size() - 1)) : 0);
 	}
 	if (lightSelectedIndex < scene->lights.size() /*&& scene->lights[lightSelectedIndex] != nullptr*/) {
-		scene->lights[lightSelectedIndex].GUI();
+		scene->lights[lightSelectedIndex]->GUI();
 	}
 
 	ImGui::End();

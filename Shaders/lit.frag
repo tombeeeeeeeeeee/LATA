@@ -1,5 +1,5 @@
 #version 460 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
 
 struct Material {
     sampler2D diffuse1;
@@ -10,9 +10,7 @@ struct Material {
 
 struct DirectionalLight {
     vec3 direction;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
 };
 
 struct PointLight {
@@ -20,9 +18,7 @@ struct PointLight {
     float constant;
     float linear;
     float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
 };
 
 struct Spotlight {
@@ -30,9 +26,7 @@ struct Spotlight {
     float constant;
     float linear;
     float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 colour;
     vec3 direction;
     float cutOff;
     float outerCutOff;

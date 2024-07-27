@@ -39,6 +39,7 @@ uniform Material material;
 
 in vec2 texCoords;
 in vec3 fragPos;
+in vec3 fragmentColour;
 
 layout (location = 0) out vec4 screenColour;
 layout (location = 1) out vec4 bloomColour;
@@ -98,9 +99,10 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection, vec3 albedo, float roughne
 
 void main()
 {
-    albedo = texture(material.albedo1, texCoords).rgb;
+    albedo = fragmentColour * texture(material.albedo1, texCoords).rgb;
     metallic = texture(material.metallic1, texCoords).r;
     roughness = texture(material.roughness1, texCoords).r;
+    ao = 1.0f;
     //ao = texture(material.ao1, texCoords).r;
 
 //    float directionalLightShadow = ( 1 - ShadowCalculation(directionalLightSpaceFragPos));
@@ -129,7 +131,7 @@ void main()
     // Spot light
     result += max(CalcSpotlight(spotlight, tangentNormal), 0);
 
-    result += specularIBL();
+    result += specularIBL(inverseTBN * tangentNormal, viewDir, albedo, roughness, metallic, ao);
 
     float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
 	if(brightness > 1)
@@ -143,7 +145,7 @@ void main()
 //    if(texture(material.albedo1, TexCoords).a < alphaDiscard) {
 //        discard;
 //    }
-    screenColor = vec4(result, 1.0);
+    screenColour = vec4(result, 1.0);
 }
 
 
@@ -259,7 +261,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal)
 {
     vec3 lightDir = normalize(-light.direction);
-    TODO: add add ambient
+    //TODO: add add ambient
     // Ambient
     //vec3 ambient = light.ambient * albedo;
 
@@ -283,9 +285,7 @@ vec3 CalcPointLight(PointLight light, int i, vec3 normal)
 {
     vec3 radiance = Radiance(normalize(tangentPointLightsPos[i] - tangentFragPos), length(tangentPointLightsPos[i] - tangentFragPos), normal, light.constant, light.linear, light.quadratic, light.colour);
 
-    vec3 ambient = light.ambient * albedo;
-
-    return ambient;
+    return radiance;
 
 //    // Specular
 //    vec3 reflectDir = reflect(-lightDir, normal);
@@ -313,7 +313,6 @@ vec3 CalcSpotlight(Spotlight light, vec3 normal) {
 
     vec3 radiance = Radiance(normalize(tangentSpotlightPos - tangentFragPos), length(tangentSpotlightPos - tangentFragPos), normal, light.constant, light.linear, light.quadratic, light.colour);
 
-    vec3 ambient = light.ambient * albedo;
 
     return (radiance) * intensity;
 }
@@ -331,10 +330,10 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection, vec3 albedo, float roughne
     vec3 irradiance = fragmentColour * texture(irradianceMap, trueNormal).rgb;
 
     vec3 diffuse = irradiance * albedo;
-	vec3 additionalAmbient = (kD * ambientLightColour) * ao;
+	//vec3 additionalAmbient = (kD * ambientLightColour) * ao;
     vec3 prefilteredColor = textureLod(prefilterMap, reflected,  roughness * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(trueNormal, viewDirection), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
 
-    vec3 ambient = (kD * diffuse + specular) * ao;
+    return (kD * diffuse + specular) * ao;
 }

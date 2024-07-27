@@ -17,6 +17,10 @@ private:
 	glm::mat4 globalMatrix = glm::identity<glm::mat4>();
 
 public:
+	SceneObject* getSceneObject()const;
+	//TODO: Add pointless pointer to LGP3
+	SceneObject* so = nullptr;
+
 	Transform* getParent() const;
 	std::vector<Transform*> getChildren() const;
 	bool isChildOf(Transform* transform) const;
@@ -40,7 +44,14 @@ public:
 
 	void UpdateGlobalMatrixCascading();
 
-	Transform(glm::vec3 _position = { 0.f, 0.f, 0.f }, glm::quat _quaternion = glm::quat({0.f, 0.f, 0.0f}), float _scale = 1.f);
+	Transform() { UpdateGlobalMatrixCascading(); }
+
+	Transform(SceneObject* so,
+		glm::vec3 _position = { 0.f, 0.f, 0.f }, 
+		glm::quat _quaternion = glm::quat({0.f, 0.f, 0.0f}), 
+		float _scale = 1.f,
+		Transform* parent = nullptr
+	);
 
 	glm::mat4 getLocalMatrix() const;
 	glm::mat4 getGlobalMatrix() const;

@@ -5,7 +5,7 @@ struct Material {
     sampler2D emission1;
     float shininess;
 }; 
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
 
 in vec2 TexCoord;
 in vec3 fragPos;

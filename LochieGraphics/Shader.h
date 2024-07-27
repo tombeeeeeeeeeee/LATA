@@ -39,6 +39,7 @@ public:
 		VPmatrix = 0b00000001,
 		Lit      = 0b00000010,
 		Animated = 0b00000100,
+		Spec	 = 0b00001000,
 		All      = 0b11111111,
 	};
 	int getFlag() const;
@@ -57,6 +58,7 @@ public:
 	std::string fragmentPath;
 	// use/activate the shader
 	void Use();
+
 	// Uniform functions
 	//TODO: these can be called without any warning when the shader program is not being used, it should either use the shader or send message maybe
 	// Although these can be set as const, it does not feel right and I will not be
