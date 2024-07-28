@@ -61,7 +61,7 @@ void RenderSystem::Start(
 
 }
 
-void RenderSystem::SetIrradianceMap(unsigned int skybox)
+void RenderSystem::SetIrradianceMap(unsigned int textureID)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -79,7 +79,7 @@ void RenderSystem::SetIrradianceMap(unsigned int skybox)
 
     glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
 
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
@@ -102,10 +102,10 @@ void RenderSystem::SetIrradianceMap(unsigned int skybox)
 
     unsigned int currShader = (*shaders)[ShaderIndex::irradiance]->GLID;
     glUseProgram(currShader);
-    glUniform1i(glGetUniformLocation(currShader, "environmentMap"), 0);
+    glUniform1i(glGetUniformLocation(currShader, "environmentMap"), 1);
     glUniformMatrix4fv(glGetUniformLocation(currShader, "projection"), 1, GL_FALSE, &captureProjection[0][0]);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
 
     glViewport(0, 0, 32, 32);
@@ -123,7 +123,7 @@ void RenderSystem::SetIrradianceMap(unsigned int skybox)
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-void RenderSystem::SetPrefilteredMap(unsigned int skybox)
+void RenderSystem::SetPrefilteredMap(unsigned int textureID)
 {
     glViewport(0, 0, 32, 32);
     glGenTextures(1, &prefilterMap);
@@ -143,11 +143,11 @@ void RenderSystem::SetPrefilteredMap(unsigned int skybox)
     unsigned int currShader = (*shaders)[ShaderIndex::prefilter]->GLID;
     glUseProgram(currShader);
 
-    glUniform1i(glGetUniformLocation(currShader, "environmentMap"), 0);
+    glUniform1i(glGetUniformLocation(currShader, "environmentMap"), 1);
     glUniformMatrix4fv(glGetUniformLocation(currShader, "projection"), 1, GL_FALSE, &captureProjection[0][0]);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
     unsigned int maxMipLevels = 5;
@@ -275,7 +275,6 @@ void RenderSystem::Update(
     if (skyboxTexture == 0 && skyBox->texture != 0)
     {
         skyboxTexture = skyBox->texture;
-        IBLBufferSetup(skyboxTexture);
     }
 
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
@@ -486,8 +485,8 @@ void RenderSystem::DrawRenderers(
         Shader* curShader = i->second.material->getShader();
         curShader->setMat4("model", transforms[i->first].getGlobalMatrix());
         int samplerCount = i->second.material->texturePointers.size();
-        //if (curShader->getFlag(Shader::Flags::Spec))
-        //{
+        if (curShader->getFlag(Shader::Flags::Spec))
+        {
             glActiveTexture(GL_TEXTURE0 + 7);
             glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
 
@@ -496,7 +495,7 @@ void RenderSystem::DrawRenderers(
 
             glActiveTexture(GL_TEXTURE0 + 9);
             glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-        //}
+        }
 
         glUniform3fv(glGetUniformLocation(curShader->GLID, "materialColour"), 1, &i->second.material->colour[0]);
 
@@ -544,6 +543,9 @@ void RenderSystem::OutputBufferSetUp()
 
 void RenderSystem::IBLBufferSetup(unsigned int skybox)
 {
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+
     SetIrradianceMap(skybox);
 
     SetPrefilteredMap(skybox);
@@ -580,6 +582,8 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
     int scrWidth, scrHeight;
     glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
 }
 
 void RenderSystem::BloomSetup()

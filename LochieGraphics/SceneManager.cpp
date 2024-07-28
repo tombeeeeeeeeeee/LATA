@@ -108,7 +108,7 @@ SceneManager::SceneManager(Scene* _scene)
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
-
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	//TODO:
 	// MSAA
 	//glEnable(GL_MULTISAMPLE);

@@ -84,7 +84,7 @@ public:
 	void Draw() override;
 	void OnMouseDown() override;
 	void GUI() override;
-
+	void UpdateAllTransforms();
 	void OnWindowResize() override;
 
 	~TestScene() override;

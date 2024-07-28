@@ -113,19 +113,20 @@ glm::quat Transform::getRotation() const
 
 glm::vec3 Transform::getEulerRotation() const
 {
-	return glm::eulerAngles(quaternion);
+	glm::vec3 eulerAngles = glm::eulerAngles(quaternion);
+	return eulerAngles * 180.0f / glm::pi<float>();
 }
 
 glm::mat4 Transform::getLocalMatrix() const
 {
-	glm::mat4 matrix = glm::mat4(1.0f);
-	matrix = glm::translate(matrix, position);
-	matrix = glm::scale(matrix, scale);
-	matrix = matrix * glm::mat4_cast(quaternion);
+	glm::mat4 identity = glm::identity<glm::mat4>();
+	glm::mat4 translation = glm::translate(identity, position);
+	glm::mat4 scaling = glm::scale(identity, scale);
+	glm::mat4 rot = glm::mat4_cast(quaternion);
 	//matrix = glm::rotate(matrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 	//matrix = glm::rotate(matrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	//matrix = glm::rotate(matrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-	return matrix;
+	//matrix =  glm::rotate(matrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	return translation * rot * scaling;
 }
 
 void Transform::setRotation(glm::quat _quat)
@@ -178,17 +179,18 @@ void Transform::setPosition(glm::vec3 pos)
 
 void Transform::UpdateGlobalMatrixCascading()
 {
-	if (parent == nullptr)
-	{
-		globalMatrix = getLocalMatrix();
-	}
-	else
+	if (parent)
 	{
 		globalMatrix = parent->getGlobalMatrix() * getLocalMatrix();
 	}
-	for (Transform* child : children)
+	else
 	{
-		child->UpdateGlobalMatrixCascading();
+		globalMatrix = getLocalMatrix();
+	}
+
+	for(auto i = children.begin(); i != children.end(); i++)
+	{
+		(*i)->UpdateGlobalMatrixCascading();
 	}
 }
 

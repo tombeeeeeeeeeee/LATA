@@ -131,7 +131,7 @@ void main()
     // Spot light
     result += max(CalcSpotlight(spotlight, tangentNormal), 0);
 
-    result += specularIBL(inverseTBN * tangentNormal, viewDir, albedo, roughness, metallic, ao);
+    result += specularIBL(transpose(inverseTBN) * tangentNormal, viewDir, albedo, roughness, metallic, ao);
 
     float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
 	if(brightness > 1)

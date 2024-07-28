@@ -116,4 +116,5 @@ void main()
     tangentFragPos = TBN * fragPos;
 		
     gl_Position = vp * vec4(fragPos, 1.0);
+    fragmentColour = materialColour;
 }

@@ -48,7 +48,6 @@ void Texture::Load()
 		return;
 	}
 
-	// TODO: The amount of components can sometimes be read incorrectly, continue to look into and figure out.
 	GLenum format;
 	switch (components)
 	{
@@ -59,10 +58,10 @@ void Texture::Load()
 		format = GL_RG;
 		break;
 	case STBI_rgb:
-		format = GL_RGB;
+		format = type != Type::diffuse ? GL_RGB : GL_SRGB;
 		break;
 	case STBI_rgb_alpha:
-		format = GL_RGBA;
+		format = type != Type::diffuse ? GL_RGBA : GL_SRGB_ALPHA;
 		break;
 	default:
 		std::cout << "Texture failed to load, could not be read correctly, path: " << path << "\n";
@@ -94,7 +93,12 @@ GLuint Texture::CreateTexture(int width, int height, GLenum format, unsigned cha
 	glGenTextures(1, &ID);
 
 	glBindTexture(GL_TEXTURE_2D, ID);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, dataType, data);
+	if(format == GL_SRGB_ALPHA)
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, dataType, data);
+	else if(format == GL_SRGB)
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGB, dataType, data);
+	else
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, dataType, data);
 	
 	if (mipMaps) {
 		glGenerateMipmap(GL_TEXTURE_2D); //TODO: Mip maps can look bad transitioning
@@ -158,7 +162,7 @@ GLuint Texture::LoadCubeMap(std::string faces[6])
 			std::cout << "Cubemap face failed to load at path: " << faces[i] << "\n";
 			continue;
 		}
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		stbi_image_free(data);
 	}
 	return GLID;

@@ -16,9 +16,8 @@ public:
 	static Shader* LoadShader(std::string sharedName, int flags = 0);
 	static Shader* LoadShaderDefaultVert(std::string fragmentName, int flags = 0);
 	static Texture* LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
-
 	// TODO: See if this function can be cleaned up
-	static Texture* LoadTexture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_RGBA, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
+	static Texture* LoadTexture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_SRGB, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
 	// TODO: Should I be using hint file?
 	static Material* GetMaterial(unsigned long long GUID);
 	static Shader* GetShader(unsigned long long GUID);

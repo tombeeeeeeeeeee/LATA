@@ -190,6 +190,7 @@ void TestScene::Start()
 		&shaders,
 		&directionalLight
 	);
+	UpdateAllTransforms();
 }
 
 void TestScene::EarlyUpdate()
@@ -229,6 +230,11 @@ void TestScene::Update(float delta)
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
 		(*i)->Update(delta);
+	}
+
+	for (auto i = animators.begin(); i != animators.end(); i++)
+	{
+		(*i).second.UpdateAnimation(delta);
 	}
 
 	xbotAnimator.UpdateAnimation(delta);
@@ -276,16 +282,32 @@ void TestScene::GUI()
 		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, (unsigned int)(skyboxes.size() - 1))) {
 			skybox = skyboxes[skyboxIndex];
 			renderSystem->skyBox = skybox;
+			renderSystem->IBLBufferSetup(skybox->texture);
+			renderSystem->SetIrradianceMap(skybox->texture);
+			renderSystem->SetPrefilteredMap(skybox->texture);
 		}
 		ImGui::End();
 	}
+	if (!ImGui::Begin("Exposure", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::End();
+	}
+
 	if (!ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
 	}
 	else {
 		ImGui::SliderFloat("Animation trans", &xbotBlendedAnimator.lerpAmount, 0.f, 1.0f);
 		ImGui::Checkbox("Show shadow debug", &renderSystem->showShadowDebug);
+		ImGui::DragFloat("Exposure", &renderSystem->exposure, 0.01f, 0.0f, 5.0f);
 		ImGui::End();
+	}
+}
+
+void TestScene::UpdateAllTransforms()
+{
+	for (auto i = transforms.begin(); i != transforms.end(); i++)
+	{
+		(*i).second.UpdateGlobalMatrixCascading();
 	}
 }
 

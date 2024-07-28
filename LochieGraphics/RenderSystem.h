@@ -39,7 +39,7 @@ public:
     void SetIrradianceMap(unsigned int skybox);
     void SetPrefilteredMap(unsigned int skybox);
 
-    float exposure = 1.0f;
+    float exposure = 0.5f;
 
     void HDRBufferUpdate();
     void OutputBufferUpdate();
@@ -54,6 +54,8 @@ public:
     );
 
     void ScreenResize(int width, int height);
+
+    void IBLBufferSetup(unsigned int skybox);
 
     int SCREEN_WIDTH, SCREEN_HEIGHT;
 
@@ -151,7 +153,7 @@ private:
     unsigned int irradianceMap;
     unsigned int brdfLUTTexture;
     unsigned int prefilterMap;
-    void IBLBufferSetup(unsigned int skybox);
+    
 
     void BloomSetup();
     unsigned int mFBO;
