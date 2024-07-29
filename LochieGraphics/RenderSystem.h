@@ -166,13 +166,7 @@ private:
     unsigned int quadVAO = 0;
     unsigned int quadVBO = 0;
 
-    void RenderCube();
-
     Mesh cube;
-
-    unsigned int cubeVAO = 0;
-    unsigned int cubeVBO = 0;
-
 
     //Captures for CubeMap
     glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);

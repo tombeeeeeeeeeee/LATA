@@ -23,7 +23,7 @@ void RenderSystem::Start(
     shaders = _shaders;
     skyboxTexture = _skyboxTexture;
 
-    //cube.InitialiseCube(2.0f)
+    cube.InitialiseCube(2.0f);
 
     IBLBufferSetup(skyboxTexture);
     HDRBufferSetUp();
@@ -120,7 +120,7 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        RenderCube();
+        cube.Draw();
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     
@@ -174,7 +174,7 @@ void RenderSystem::SetPrefilteredMap(unsigned int textureID)
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            RenderCube();
+            cube.Draw();
         }
     }
 
@@ -732,15 +732,4 @@ void RenderSystem::RenderQuad()
     glBindVertexArray(0);
 
     glEnable(GL_CULL_FACE);
-}
-
-void RenderSystem::RenderCube()
-{
-    // initialize (if necessary)
-    if (cube.getVAO() == 0) {
-        cube.InitialiseCube();
-    }
-    // render Cube
-    cube.Draw();
-    return;
 }
