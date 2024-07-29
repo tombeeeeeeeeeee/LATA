@@ -3,9 +3,8 @@
 struct Material {
     sampler2D normal1;
     sampler2D albedo1;
-    sampler2D metallic1;
-    sampler2D roughness1;
-    sampler2D ao1;
+    sampler2D PBR;
+    sampler2D brushStrokes;
 }; 
 
 struct DirectionalLight {
@@ -99,11 +98,12 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection, vec3 albedo, float roughne
 
 void main()
 {
-    albedo = fragmentColour * texture(material.albedo1, texCoords).rgb;
-    metallic = texture(material.metallic1, texCoords).r;
-    roughness = texture(material.roughness1, texCoords).r;
-    ao = 1.0f;
-    //ao = texture(material.ao1, texCoords).r;
+    vec4 PBR = texture(material.PBR);
+    albedo = fragmentColour * texture(material.brushStrokes, texCoords).rgb * texture(material.albedo1, texCoords).rgb;
+    metallic = PBR.r;
+    roughness = PBR.g;
+    //ao = 1.0f;
+    ao = PBR.b;
 
 //    float directionalLightShadow = ( 1 - ShadowCalculation(directionalLightSpaceFragPos));
     //screenColor = vec4(directionalLightShadow * albedo, 1.0);
