@@ -1,5 +1,4 @@
 #pragma once
-#include "glad.h"
 #include "Light.h"
 #include "Transform.h"
 #include "ModelRenderer.h"
@@ -7,13 +6,13 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "Skybox.h"
-
 #include "FrameBuffer.h"
-#include "shaderEnum.h"
+#include "ShaderEnum.h"
+
+#include "Graphics.h"
 
 #include <iostream>
-#include "Graphics.h"
-#include "unordered_map"
+#include <unordered_map>
 
 struct bloomMip
 {

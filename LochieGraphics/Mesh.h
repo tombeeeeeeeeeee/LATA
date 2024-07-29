@@ -50,7 +50,7 @@ public:
 	// Goldberg Polyhedra
 	void InitialiseQuad(float size = 0.5f, float offset = 0.0f);
 	void InitialiseDoubleSidedQuad();
-	void InitialiseCube();
+	void InitialiseCube(float size = 1.0f);
 	void InitialiseCubeInsideOut();
 
 	void InitialiseFromFile(std::string filename);

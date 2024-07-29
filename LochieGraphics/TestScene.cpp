@@ -232,10 +232,10 @@ void TestScene::Update(float delta)
 		(*i)->Update(delta);
 	}
 
-	//for (auto i = animators.begin(); i != animators.end(); i++)
-	//{
-	//	(*i).second.UpdateAnimation(delta);
-	//}
+	for (auto i = animators.begin(); i != animators.end(); i++)
+	{
+		(*i).second.UpdateAnimation(delta);
+	}
 
 	xbotAnimator.UpdateAnimation(delta);
 	xbotOtherAnimator.UpdateAnimation(delta);
