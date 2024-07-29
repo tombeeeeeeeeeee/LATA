@@ -151,7 +151,7 @@ void Material::Refresh()
 }
 
 
-//TODO: Add Colour changer
+//TODO: Add Colour picker
 void Material::GUI()
 {
 	std::string tag = PointerToString(this);
@@ -165,6 +165,9 @@ void Material::GUI()
 			setShader(newShader);
 		}
 	}
+
+	ImGui::ColorEdit3(("Colour Picker##" + tag).c_str(), &colour[0]);
+	//ImGui::
 
 	for (auto i = textureGUIDs.begin(); i != textureGUIDs.end(); i++)
 	{

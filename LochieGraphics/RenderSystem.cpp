@@ -8,7 +8,7 @@ RenderSystem::RenderSystem(GLFWwindow* _window)
 }
 
 void RenderSystem::Start(
-    Skybox* _skybox,
+    unsigned int _skyboxTexture,
     std::vector<Shader*>* _shaders,
     Light* _shadowCaster
 )
@@ -21,8 +21,7 @@ void RenderSystem::Start(
         SCREEN_HEIGHT = scrHeight;
     }
     shaders = _shaders;
-    skyBox = _skybox;
-    skyboxTexture = skyBox->texture;
+    skyboxTexture = _skyboxTexture;
 
     IBLBufferSetup(skyboxTexture);
     HDRBufferSetUp();
@@ -359,14 +358,17 @@ void RenderSystem::Update(
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glDrawBuffers(2, attachments);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     DrawRenderers(renders, transforms);
 
-    skyBox->Draw();
+    glDepthFunc(GL_LEQUAL); // Change depth function
+    Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);
+    RenderQuad();
+    glDepthFunc(GL_LESS);
 
     // Draw animated stuff
     (*shaders)[ShaderIndex::super]->Use();

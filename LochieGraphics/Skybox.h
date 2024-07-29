@@ -9,7 +9,6 @@ class Skybox
 public:
 	Shader* shader;
 	unsigned long long shaderGUID;
-	Mesh box;
 	GLuint texture;
 	
 	Skybox(Shader* _shader, GLuint _texture);

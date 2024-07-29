@@ -31,7 +31,7 @@ public:
     RenderSystem(GLFWwindow* window);
 
     void Start(
-        Skybox* skybox,
+        unsigned int _skyboxTexture,
         std::vector<Shader*>* _shaders,
         Light* shadowCaster
     );
@@ -60,8 +60,7 @@ public:
     int SCREEN_WIDTH, SCREEN_HEIGHT;
 
     bool showShadowDebug = false;
-
-    Skybox* skyBox;
+    unsigned int skyboxTexture;
 
 private:
 
@@ -149,7 +148,7 @@ private:
 
     unsigned int captureFBO;
     unsigned int captureRBO;
-    unsigned int skyboxTexture;
+
     unsigned int irradianceMap;
     unsigned int brdfLUTTexture;
     unsigned int prefilterMap;

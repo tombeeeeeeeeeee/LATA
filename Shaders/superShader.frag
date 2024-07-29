@@ -110,7 +110,7 @@ void main()
     //return;
     
     vec3 tangentNormal = normalize(texture(material.normal1, texCoords).rgb * 2.0 - 1.0);
-
+    vec3 trueNormal = normalize(inverseTBN * tangentNormal);
     viewDir = normalize(tangentViewPos - tangentFragPos);
 
     F0 = vec3(0.04); 
@@ -131,7 +131,7 @@ void main()
     // Spot light
     result += max(CalcSpotlight(spotlight, tangentNormal), 0);
 
-    result += specularIBL(transpose(inverseTBN) * tangentNormal, viewDir, albedo, roughness, metallic, ao);
+    result += specularIBL(trueNormal, viewDir, albedo, roughness, metallic, ao);
 
     float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
 	if(brightness > 1)

@@ -200,7 +200,10 @@ void Transform::GUI()
 
 	glm::vec3 euler = getEulerRotation();
 
-	ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f);
+	if(ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f))
+	{
+		UpdateGlobalMatrixCascading();
+	}
 
 	if (ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &euler[0], 0.1f)) {
 		setEulerRotation(euler);
@@ -211,5 +214,8 @@ void Transform::GUI()
 	}
 	ImGui::EndDisabled();
 
-	ImGui::DragFloat3(("Scale##transform" + tag).c_str(), &scale[0], 0.1f);
+	if (ImGui::DragFloat3(("Scale##transform" + tag).c_str(), &scale[0], 0.1f))
+	{
+		UpdateGlobalMatrixCascading();
+	}
 }

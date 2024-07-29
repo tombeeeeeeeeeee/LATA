@@ -186,7 +186,7 @@ void TestScene::Start()
 	vampire->setAnimator(&vampireAnimator);
 	
 	renderSystem->Start(
-		skybox,
+		skybox->texture,
 		&shaders,
 		&directionalLight
 	);
@@ -232,10 +232,10 @@ void TestScene::Update(float delta)
 		(*i)->Update(delta);
 	}
 
-	for (auto i = animators.begin(); i != animators.end(); i++)
-	{
-		(*i).second.UpdateAnimation(delta);
-	}
+	//for (auto i = animators.begin(); i != animators.end(); i++)
+	//{
+	//	(*i).second.UpdateAnimation(delta);
+	//}
 
 	xbotAnimator.UpdateAnimation(delta);
 	xbotOtherAnimator.UpdateAnimation(delta);
@@ -281,14 +281,11 @@ void TestScene::GUI()
 	else {
 		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, (unsigned int)(skyboxes.size() - 1))) {
 			skybox = skyboxes[skyboxIndex];
-			renderSystem->skyBox = skybox;
+			renderSystem->skyboxTexture = skybox->texture;
 			renderSystem->IBLBufferSetup(skybox->texture);
-			renderSystem->SetIrradianceMap(skybox->texture);
-			renderSystem->SetPrefilteredMap(skybox->texture);
+			//renderSystem->SetIrradianceMap(skybox->texture);
+			//renderSystem->SetPrefilteredMap(skybox->texture);
 		}
-		ImGui::End();
-	}
-	if (!ImGui::Begin("Exposure", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
 	}
 
