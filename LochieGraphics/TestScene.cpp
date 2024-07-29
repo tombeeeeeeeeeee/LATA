@@ -112,8 +112,8 @@ void TestScene::Start()
 	backpackMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/backpack/diffuse.jpg", Texture::Type::albedo, GL_REPEAT, false),
 			ResourceManager::LoadTexture("models/backpack/normal.png", Texture::Type::normal, GL_REPEAT, false),
-			ResourceManager::LoadTexture("models/backpack/specular.jpg", Texture::Type::metallic, GL_REPEAT, false),
-			ResourceManager::LoadTexture("models/backpack/roughness.jpg", Texture::Type::roughness, GL_REPEAT, false),
+			ResourceManager::LoadTexture("models/backpack/specular.jpg", Texture::Type::PBR, GL_REPEAT, false),
+			ResourceManager::LoadTexture("models/backpack/roughness.jpg", Texture::Type::emission, GL_REPEAT, false),
 	});
 	backpack->setRenderer(new ModelRenderer(&backpackModel, backpackMaterial));
 	backpack->transform()->setPosition({ -4.5f, 1.7f, 0.f });
@@ -124,8 +124,8 @@ void TestScene::Start()
 	tiresMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_albedo.jpeg", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_normal.png", Texture::Type::normal, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_metallic.jpeg", Texture::Type::metallic, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_roughness.jpeg", Texture::Type::roughness, GL_REPEAT, true)
+			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_metallic.jpeg", Texture::Type::PBR, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_roughness.jpeg", Texture::Type::emission, GL_REPEAT, true)
 	});
 	tires->setRenderer(new ModelRenderer(&tiresModel, tiresMaterial));
 	tires->transform()->setPosition({-0.1f, 0.f, 1.2f});
@@ -135,9 +135,9 @@ void TestScene::Start()
 	testRedBoxMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Metallic.png", Texture::Type::metallic, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Metallic.png", Texture::Type::PBR, GL_REPEAT, true),
 			//ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_AO.png", Texture::Type::ao, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Roughness.png", Texture::Type::roughness, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Roughness.png", Texture::Type::emission, GL_REPEAT, true),
 	});
 	testRedBox->setRenderer(new ModelRenderer(&testRedBoxModel, testRedBoxMaterial));
 	testRedBox->transform()->setPosition({ 0.6f, 3.5f, -3.5f });
@@ -279,14 +279,7 @@ void TestScene::GUI()
 		ImGui::End();
 	}
 	else {
-		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, (unsigned int)(skyboxes.size() - 1))) {
-			skybox = skyboxes[skyboxIndex];
-			renderSystem->skyboxTexture = skybox->texture;
-			renderSystem->IBLBufferSetup(skybox->texture);
-			//renderSystem->SetIrradianceMap(skybox->texture);
-			//renderSystem->SetPrefilteredMap(skybox->texture);
-		}
-		ImGui::End();
+
 	}
 
 	if (!ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
@@ -296,6 +289,11 @@ void TestScene::GUI()
 		ImGui::SliderFloat("Animation trans", &xbotBlendedAnimator.lerpAmount, 0.f, 1.0f);
 		ImGui::Checkbox("Show shadow debug", &renderSystem->showShadowDebug);
 		ImGui::DragFloat("Exposure", &renderSystem->exposure, 0.01f, 0.0f, 5.0f);
+		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, (unsigned int)(skyboxes.size() - 1))) {
+			skybox = skyboxes[skyboxIndex];
+			renderSystem->skyboxTexture = skybox->texture;
+			renderSystem->IBLBufferSetup(skybox->texture);
+		}
 		ImGui::End();
 	}
 }

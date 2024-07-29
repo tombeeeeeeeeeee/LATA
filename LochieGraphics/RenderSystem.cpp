@@ -55,11 +55,6 @@ void RenderSystem::Start(
     shadowFrameBuffer = new FrameBuffer(shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight, nullptr, depthMap, false);
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
-    (*shaders)[ShaderIndex::super]->Use();
-    (*shaders)[ShaderIndex::super]->setInt("irradianceMap", 7);
-    (*shaders)[ShaderIndex::super]->setInt("prefilterMap", 8);
-    (*shaders)[ShaderIndex::super]->setInt("brdfLUT", 9);
-
 }
 
 void RenderSystem::SetIrradianceMap(unsigned int textureID)
@@ -501,6 +496,26 @@ void RenderSystem::DrawRenderers(
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
             mesh->Draw();
+        }
+    }
+}
+
+void RenderSystem::BindFlaggedVariables()
+{
+    for (auto i = shaders->begin(); i != shaders->end(); i++)
+    {
+        int flag = (*i)->getFlag();
+        (*i)->Use();
+
+        if (flag & Shader::Flags::Spec)
+        {
+            (*i)->setInt("irradianceMap", 7);
+            (*i)->setInt("prefilterMap", 8);
+            (*i)->setInt("brdfLUT", 9);
+        }
+        if (flag & Shader::Flags::Painted)
+        {
+            (*i)->setInt("brushStrokes", 10);
         }
     }
 }

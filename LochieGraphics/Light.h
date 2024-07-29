@@ -59,6 +59,7 @@ struct PointLight : public Light {
     glm::mat4 getShadowProjection() const override;
     glm::mat4 getShadowView() const override;
     void SetRange(float range);
+    void SetRange(float linear, float quadratic);
 };
 
 struct Spotlight : public PointLight {

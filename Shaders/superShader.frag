@@ -3,8 +3,9 @@
 struct Material {
     sampler2D normal1;
     sampler2D albedo1;
-    sampler2D PBR;
-    sampler2D brushStrokes;
+    sampler2D PBR1;
+    sampler2D emission1;
+    sampler2D brushStrokes1;
 }; 
 
 struct DirectionalLight {
@@ -98,8 +99,8 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection, vec3 albedo, float roughne
 
 void main()
 {
-    vec4 PBR = texture(material.PBR);
-    albedo = fragmentColour * texture(material.brushStrokes, texCoords).rgb * texture(material.albedo1, texCoords).rgb;
+    vec4 PBR = texture(material.PBR1, texCoords);
+    albedo = fragmentColour * texture(material.brushStrokes1, texCoords).rgb * texture(material.albedo1, texCoords).rgb;
     metallic = PBR.r;
     roughness = PBR.g;
     //ao = 1.0f;
@@ -140,6 +141,10 @@ void main()
 	}
 	else bloomColour = vec4(0.0, 0.0, 0.0, 1.0);
 
+    vec4 emissionColour = texture(material.emission1, texCoords);
+
+    bloomColour = vec4(emissionColour.rgb + bloomColour.rgb, 1.0);
+    bloomColour *= emissionColour.a + 1.0;
 
     // Alpha discarding 
 //    if(texture(material.albedo1, TexCoords).a < alphaDiscard) {

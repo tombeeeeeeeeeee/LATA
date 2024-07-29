@@ -39,7 +39,7 @@ public:
     void SetIrradianceMap(unsigned int skybox);
     void SetPrefilteredMap(unsigned int skybox);
 
-    float exposure = 0.5f;
+    float exposure = 1.0f;
 
     void HDRBufferUpdate();
     void OutputBufferUpdate();
@@ -123,9 +123,9 @@ private:
         std::unordered_map<unsigned long long, Transform>& transforms
         );
 
-    void DrawRenderers(
-        std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-        std::unordered_map<unsigned long long, Transform>& transforms,
+    void BindFlaggedVariables();
+
+    void ActivateFlaggedVariables(
         Shader* shader
         );
 
