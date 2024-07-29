@@ -167,6 +167,9 @@ private:
     unsigned int quadVBO = 0;
 
     void RenderCube();
+
+    Mesh cube;
+
     unsigned int cubeVAO = 0;
     unsigned int cubeVBO = 0;
 

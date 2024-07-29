@@ -5,8 +5,6 @@ constexpr int MAX_BONES_PER_VERTEX = 4;
 
 
 struct Vertex {
-
-	// TODO: Make these vec3s
 	glm::vec3 position;
 	glm::vec3 normal;
 	glm::vec2 texCoord;

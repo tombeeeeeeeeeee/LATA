@@ -279,7 +279,7 @@ void Mesh::InitialiseCube(float size)
 {
 	const unsigned int vertexCount = 36;
 	Vertex vertices[vertexCount] = {
-		// positions				// normals				// texture coords
+		// positions				                    // normals				// texture coords
 		// back
 		{ { size * -0.5f, size * -0.5f, size * -0.5f},	{ 0.0f,  0.0f, -1.0f},  {0.0f,  0.0f}, { 0, 1, 0 }, { 1, 0, 0 } },
 		{ { size *  0.5f, size *  0.5f, size * -0.5f},	{ 0.0f,  0.0f, -1.0f},  {1.0f,  1.0f}, { 0, 1, 0 }, { 1, 0, 0 } },
