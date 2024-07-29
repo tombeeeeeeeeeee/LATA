@@ -31,9 +31,11 @@ void RenderSystem::Start(
     shadowCaster = _shadowCaster;
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
+
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
@@ -54,7 +56,7 @@ void RenderSystem::Start(
     shadowFrameBuffer = new FrameBuffer(shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight, nullptr, depthMap, false);
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
-    glUseProgram((*shaders)[ShaderIndex::super]->GLID);
+    (*shaders)[ShaderIndex::super]->Use();
     (*shaders)[ShaderIndex::super]->setInt("irradianceMap", 7);
     (*shaders)[ShaderIndex::super]->setInt("prefilterMap", 8);
     (*shaders)[ShaderIndex::super]->setInt("brdfLUT", 9);
@@ -272,11 +274,6 @@ void RenderSystem::Update(
     Camera* camera
 )
 {
-    if (skyboxTexture == 0 && skyBox->texture != 0)
-    {
-        skyboxTexture = skyBox->texture;
-    }
-
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
     shadowFrameBuffer->Load();
 
@@ -294,8 +291,6 @@ void RenderSystem::Update(
 	shadowFrameBuffer->Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-    //glCullFace(GL_FRONT);
     //RENDER SCENE
 
     for(auto i = shadowCasters.begin(); i != shadowCasters.end(); i++)
@@ -364,7 +359,7 @@ void RenderSystem::Update(
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
     glDrawBuffers(2, attachments);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -400,7 +395,7 @@ void RenderSystem::Update(
     glDisable(GL_DEPTH_TEST); // Disable depth test for fullscreen quad
 
 
-    screenFrameBuffer->Bind();
+    //screenFrameBuffer->Bind();
 
     //FrameBuffer Rendering
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

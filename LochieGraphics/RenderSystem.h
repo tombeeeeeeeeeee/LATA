@@ -43,7 +43,7 @@ public:
 
     void HDRBufferUpdate();
     void OutputBufferUpdate();
-    void BloomUpdate();
+    void BloomUpdate(); 
 
     void Update(
         std::unordered_map<unsigned long long, ModelRenderer>& renders,
@@ -72,7 +72,7 @@ private:
     Texture* screenColourBuffer = nullptr;
 
     FrameBuffer* screenFrameBuffer = nullptr;
-    Texture* screenTexture = nullptr;
+    //Texture* screenTexture = nullptr;
 
     FrameBuffer* shadowFrameBuffer = nullptr;
     Texture* depthMap = nullptr;
