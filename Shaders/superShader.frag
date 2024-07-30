@@ -98,7 +98,7 @@ uniform vec4 brushAtlasLocation;
 
 const float MAX_REFLECTION_LOD = 4.0;
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
-vec3 specularIBL(vec3 trueNormal, vec3 viewDirection, vec3 albedo, float roughness, float metallic, float ao);
+vec3 specularIBL(vec3 trueNormal, vec3 viewDirection);
 
 void main()
 {
@@ -106,10 +106,11 @@ void main()
     albedo = fragmentColour * texture(material.albedo, texCoords).rgb;
 
     //TODO: Add atlasing
-    albedo *= texture(brushStrokes, texCoords).rgb;
+    //albedo *= texture(brushStrokes, texCoords).rgb;
     metallic = PBR.r;
     roughness = PBR.g;
     ao = PBR.b;
+    
 
     //float directionalLightShadow = ( 1 - ShadowCalculation(directionalLightSpaceFragPos));
     //screenColor = vec4(directionalLightShadow * albedo, 1.0);
@@ -137,27 +138,30 @@ void main()
     // Spot light
     result += max(CalcSpotlight(spotlight, tangentNormal), 0);
 
-    result += specularIBL(trueNormal, viewDir, albedo, roughness, metallic, ao);
+    result += specularIBL(trueNormal, viewDir);
+
 
     float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
+
 	if(brightness > 1)
 	{ 
 		bloomColour = vec4(result, min(brightness - 1.0, 1.0));
 	}
-	else bloomColour = vec4(0.0, 0.0, 0.0, 1.0);
+	else 
+    {
+        bloomColour = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+    bloomColour = vec4(0.0, 0.0, 0.0, 1.0);
 
     vec4 emissionColour = texture(material.emission, texCoords);
+
 
     bloomColour = vec4(emissionColour.rgb + bloomColour.rgb, 1.0);
     bloomColour *= emissionColour.a + 1.0;
 
-    // Alpha discarding 
-//    if(texture(material.albedo, TexCoords).a < alphaDiscard) {
-//        discard;
-//    }
     screenColour = vec4(result, 1.0);
-}
 
+}
 
 
 
@@ -331,7 +335,7 @@ float CalcAttenuation(float constant, float linear, float quadratic, float dista
     return 1.0 / (constant + linear * distanceToLight + quadratic * (distanceToLight * distanceToLight));
 }
 
-vec3 specularIBL(vec3 trueNormal, vec3 viewDirection, vec3 albedo, float roughness, float metallic, float ao)
+vec3 specularIBL(vec3 trueNormal, vec3 viewDirection)
 {
     vec3 reflected = reflect(-viewDirection, trueNormal); 
 	vec3 kS = fresnelSchlickRoughness(max(dot(trueNormal, viewDirection), 0.0), F0, roughness);
@@ -344,6 +348,5 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection, vec3 albedo, float roughne
     vec3 prefilteredColor = textureLod(prefilterMap, reflected,  roughness * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(trueNormal, viewDirection), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
-
-    return (kD * diffuse + specular) * ao;
+    return specular;
 }

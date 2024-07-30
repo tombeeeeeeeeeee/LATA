@@ -57,6 +57,8 @@ void RenderSystem::Start(
     paintStrokeTexture = nullptr;//ResourceManager::LoadTexture(paintStrokeTexturePath, Texture::Type::paint);
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
+
+    BindFlaggedVariables();
 }
 
 void RenderSystem::SetIrradianceMap(unsigned int textureID)
@@ -364,6 +366,7 @@ void RenderSystem::Update(
 
     glDepthFunc(GL_LEQUAL); // Change depth function
     Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);
+    
     RenderQuad();
     glDepthFunc(GL_LESS);
 
@@ -371,7 +374,7 @@ void RenderSystem::Update(
     (*shaders)[ShaderIndex::super]->Use();
     glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, camera->nearPlane, camera->farPlane);
     (*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
-
+    
     DrawAnimation(animators, transforms, renders, (*shaders)[ShaderIndex::super]);
 
     RenderBloom(bloomBuffer);

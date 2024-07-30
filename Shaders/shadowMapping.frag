@@ -3,9 +3,9 @@ layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 bloomColour;
 
 struct Material {
-    sampler2D diffuse1;
-    sampler2D specular1;
-    sampler2D normal1;
+    sampler2D diffuse;
+    sampler2D specular;
+    sampler2D normal;
     float shininess;
 }; 
 
@@ -75,7 +75,7 @@ vec4 specularColour;
 void main()
 {
 
-    vec3 color = texture(material.diffuse1, TexCoords).rgb;
+    vec3 color = texture(material.diffuse, TexCoords).rgb;
     vec3 normal = normalize(Normal);
     vec3 lightColor = vec3(0.3);
     // ambient

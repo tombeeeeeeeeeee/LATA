@@ -229,6 +229,7 @@ void ResourceManager::GUI()
 			ImGui::TableSetColumnIndex(6);
 			if (ImGui::Button(("Recompile##" + std::to_string(i->second.GLID)).c_str())) {
 				i->second.Load(); //TODO: When a shader reloads the materials need to also reload
+				//TODO: Move Shader bind to Respoucre manager from render system
 			}
 		}
 
