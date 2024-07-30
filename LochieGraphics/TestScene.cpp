@@ -188,7 +188,8 @@ void TestScene::Start()
 	renderSystem->Start(
 		skybox->texture,
 		&shaders,
-		&directionalLight
+		&directionalLight,
+		""
 	);
 	UpdateAllTransforms();
 }

@@ -33,7 +33,8 @@ public:
     void Start(
         unsigned int _skyboxTexture,
         std::vector<Shader*>* _shaders,
-        Light* shadowCaster
+        Light* shadowCaster,
+        std::string paintStrokeTexturePath
     );
 
     void SetIrradianceMap(unsigned int skybox);
@@ -126,7 +127,8 @@ private:
     void BindFlaggedVariables();
 
     void ActivateFlaggedVariables(
-        Shader* shader
+        Shader* shader,
+        Material* mat
         );
 
     void DrawMesh(Mesh& mesh);
@@ -149,10 +151,10 @@ private:
     unsigned int captureFBO;
     unsigned int captureRBO;
 
-    unsigned int irradianceMap;
-    unsigned int brdfLUTTexture;
-    unsigned int prefilterMap;
-    
+    unsigned int irradianceMap = 0;
+    unsigned int brdfLUTTexture = 0;
+    unsigned int prefilterMap = 0;
+    Texture* paintStrokeTexture = nullptr;
 
     void BloomSetup();
     unsigned int mFBO;

@@ -127,7 +127,7 @@ SceneManager::SceneManager(Scene* _scene)
 
 	scene->Start();
 
-	std::cout << "Start finished\n";
+	//std::cout << "Start finished\n";
 }
 
 SceneManager::~SceneManager()

@@ -56,10 +56,10 @@ void Texture::Load()
 		format = GL_RG;
 		break;
 	case STBI_rgb:
-		format = type != Type::diffuse ? GL_RGB : GL_SRGB;
+		format = type != Type::diffuse && type != Type::albedo ? GL_RGB : GL_SRGB;
 		break;
 	case STBI_rgb_alpha:
-		format = type != Type::diffuse ? GL_RGBA : GL_SRGB_ALPHA;
+		format = type != Type::diffuse && type != Type::albedo ? GL_RGBA : GL_SRGB_ALPHA;
 		break;
 	default:
 		std::cout << "Texture failed to load, could not be read correctly, path: " << path << "\n";

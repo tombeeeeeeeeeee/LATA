@@ -82,7 +82,7 @@ void Material::AddTextures(std::vector<Texture*> _textures)
 		// TODO: Only one of each texture is supported atm, fix?
 		// TODO: what happens when not found
 		//auto texture = textures.find("material." + Texture::TypeNames.find((*i)->type)->second + "1");
-		std::string textureName = "material." + Texture::TypeNames.find((*i)->type)->second + "1";
+		std::string textureName = "material." + Texture::TypeNames.find((*i)->type)->second;
 		auto texture = texturePointers.find(textureName);
 		if (texture != texturePointers.end()) {
 			texture->second = (*i);
@@ -151,7 +151,6 @@ void Material::Refresh()
 }
 
 
-//TODO: Add Colour picker
 void Material::GUI()
 {
 	std::string tag = PointerToString(this);

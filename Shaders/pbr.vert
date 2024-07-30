@@ -36,6 +36,8 @@ uniform Spotlight spotlight;
 
 out vec3 FragPos;
 out vec2 TexCoords;
+out vec3 fragmentColour;
+
 out vec3 TangentViewPos;
 out vec3 TangentFragPos;
 
@@ -47,6 +49,7 @@ out mat3 inverseTBN;
 uniform mat4 model;
 uniform mat4 vp; // View projection
 uniform vec3 viewPos;
+uniform vec3 materialColour;
 
 void main()
 {
@@ -75,6 +78,8 @@ void main()
 
     TangentFragPos  = TBN * FragPos;
     TexCoords = aTexCoords;
+
+    fragmentColour = materialColour;
 
     gl_Position = vp * vec4(FragPos, 1.0);
 }

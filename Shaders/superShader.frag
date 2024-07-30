@@ -1,11 +1,10 @@
 #version 460 core
 
 struct Material {
-    sampler2D normal1;
-    sampler2D albedo1;
-    sampler2D PBR1;
-    sampler2D emission1;
-    sampler2D brushStrokes1;
+    sampler2D albedo;
+    sampler2D normal;
+    sampler2D PBR;
+    sampler2D emission;
 }; 
 
 struct DirectionalLight {
@@ -93,24 +92,30 @@ uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;	
 uniform sampler2D brdfLUT;			
 
+//Brush Strokes Effect
+uniform sampler2D brushStrokes;
+uniform vec4 brushAtlasLocation;
+
 const float MAX_REFLECTION_LOD = 4.0;
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 vec3 specularIBL(vec3 trueNormal, vec3 viewDirection, vec3 albedo, float roughness, float metallic, float ao);
 
 void main()
 {
-    vec4 PBR = texture(material.PBR1, texCoords);
-    albedo = fragmentColour * texture(material.brushStrokes1, texCoords).rgb * texture(material.albedo1, texCoords).rgb;
+    vec4 PBR = texture(material.PBR, texCoords);
+    albedo = fragmentColour * texture(material.albedo, texCoords).rgb;
+
+    //TODO: Add atlasing
+    albedo *= texture(brushStrokes, texCoords).rgb;
     metallic = PBR.r;
     roughness = PBR.g;
-    //ao = 1.0f;
     ao = PBR.b;
 
-//    float directionalLightShadow = ( 1 - ShadowCalculation(directionalLightSpaceFragPos));
+    //float directionalLightShadow = ( 1 - ShadowCalculation(directionalLightSpaceFragPos));
     //screenColor = vec4(directionalLightShadow * albedo, 1.0);
     //return;
     
-    vec3 tangentNormal = normalize(texture(material.normal1, texCoords).rgb * 2.0 - 1.0);
+    vec3 tangentNormal = normalize(texture(material.normal, texCoords).rgb * 2.0 - 1.0);
     vec3 trueNormal = normalize(inverseTBN * tangentNormal);
     viewDir = normalize(tangentViewPos - tangentFragPos);
 
@@ -120,7 +125,7 @@ void main()
     vec3 result;
 
     // Directional light
-//    float directionalLightShadow = 1.f;
+    // float directionalLightShadow = 1.f;
     float directionalLightShadow = ( 1 - ShadowCalculation(directionalLightSpaceFragPos));
     result = max(CalcDirectionalLight(directionalLight, inverseTBN * tangentNormal), 0) * directionalLightShadow;
 
@@ -141,13 +146,13 @@ void main()
 	}
 	else bloomColour = vec4(0.0, 0.0, 0.0, 1.0);
 
-    vec4 emissionColour = texture(material.emission1, texCoords);
+    vec4 emissionColour = texture(material.emission, texCoords);
 
     bloomColour = vec4(emissionColour.rgb + bloomColour.rgb, 1.0);
     bloomColour *= emissionColour.a + 1.0;
 
     // Alpha discarding 
-//    if(texture(material.albedo1, TexCoords).a < alphaDiscard) {
+//    if(texture(material.albedo, TexCoords).a < alphaDiscard) {
 //        discard;
 //    }
     screenColour = vec4(result, 1.0);

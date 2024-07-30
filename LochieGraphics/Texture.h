@@ -24,6 +24,7 @@ public:
 		emission,
 		albedo,
 		PBR,
+		paint,
 		count // When adding types ensure to add the type name to the unordered map below
 	};
 	static const std::unordered_map<Type, std::string> TypeNames;

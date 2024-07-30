@@ -10,7 +10,8 @@ RenderSystem::RenderSystem(GLFWwindow* _window)
 void RenderSystem::Start(
     unsigned int _skyboxTexture,
     std::vector<Shader*>* _shaders,
-    Light* _shadowCaster
+    Light* _shadowCaster,
+    std::string paintStrokeTexturePath
 )
 {
     if (SCREEN_WIDTH == 0)
@@ -53,6 +54,7 @@ void RenderSystem::Start(
     float borderColor[] = { 1.0, 1.0, 1.0, 1.0 }; // TODO: Move to be apart of texture
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     shadowFrameBuffer = new FrameBuffer(shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight, nullptr, depthMap, false);
+    paintStrokeTexture = nullptr;//ResourceManager::LoadTexture(paintStrokeTexturePath, Texture::Type::paint);
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
 }
@@ -477,20 +479,9 @@ void RenderSystem::DrawRenderers(
         Shader* curShader = i->second.material->getShader();
         curShader->setMat4("model", transforms[i->first].getGlobalMatrix());
         int samplerCount = i->second.material->texturePointers.size();
-        if (curShader->getFlag(Shader::Flags::Spec))
-        {
-            glActiveTexture(GL_TEXTURE0 + 7);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+        ActivateFlaggedVariables(curShader, i->second.material);
 
-            glActiveTexture(GL_TEXTURE0 + 8);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-
-            glActiveTexture(GL_TEXTURE0 + 9);
-            glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-        }
-
-        glUniform3fv(glGetUniformLocation(curShader->GLID, "materialColour"), 1, &i->second.material->colour[0]);
-
+        glUniform3fv(glGetUniformLocation(curShader->GLID, "materialColour"), 1, &(i->second.material->colour[0]));
 
         Model* model = i->second.model;
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
@@ -517,6 +508,32 @@ void RenderSystem::BindFlaggedVariables()
         {
             (*i)->setInt("brushStrokes", 10);
         }
+    }
+}
+
+void RenderSystem::ActivateFlaggedVariables(
+    Shader* shader,
+    Material* mat
+)
+{
+    int flag = shader->getFlag();
+    shader->Use();
+
+    if (flag & Shader::Flags::Spec)
+    {
+        glActiveTexture(GL_TEXTURE0 + 7);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+
+        glActiveTexture(GL_TEXTURE0 + 8);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+
+        glActiveTexture(GL_TEXTURE0 + 9);
+        glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+    }
+    if (flag & Shader::Flags::Painted)
+    {
+        glActiveTexture(GL_TEXTURE0 + 10);
+        glBindTexture(GL_TEXTURE_2D, paintStrokeTexture->GLID);
     }
 }
 
