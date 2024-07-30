@@ -23,6 +23,8 @@ public:
 	glm::vec2* cursorPos = nullptr;
 	GUI gui;
 
+	Skybox* skybox = nullptr;
+
 	std::vector<SceneObject*> sceneObjects = {};
 
 	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};

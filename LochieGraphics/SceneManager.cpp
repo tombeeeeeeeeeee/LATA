@@ -137,7 +137,16 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShader("shaders/superShader.vert", "shaders/superShader.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
 	});
 
+	scene->renderSystem = new RenderSystem(window);
+
 	scene->Start();
+
+	scene->renderSystem->Start(
+		scene->skybox->texture,
+		&scene->shaders,
+		scene->lights[0]
+	);
+
 
 	for (auto i = scene->transforms.begin(); i != scene->transforms.end(); i++)
 	{

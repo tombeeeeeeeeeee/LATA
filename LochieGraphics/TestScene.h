@@ -20,7 +20,6 @@ private:
 
 	Shader* uiShader = nullptr;
 
-	Skybox* skybox = nullptr;
 	int skyboxIndex = 0;
 	std::vector<Skybox*> skyboxes;
 

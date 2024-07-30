@@ -19,18 +19,17 @@ TestScene::TestScene()
 		//xbot
 	};
 	lights = std::vector<Light*>{
+		&directionalLight,
 		&pointLights[0],
 		&pointLights[1],
 		&pointLights[2],
 		&pointLights[3],
 		&spotlight,
-		&directionalLight
 	};
 }
 
 void TestScene::Start()
 {
-	renderSystem = new RenderSystem(SceneManager::window);
 	// Shaders
 	Shader* lightCubeShader = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
 	Shader* animateShader = ResourceManager::LoadShader("shaders/animate.vert", "shaders/animate.frag", Shader::Flags::Animated);
@@ -170,12 +169,6 @@ void TestScene::Start()
 	vampireWalk = Animation("models/Skinning Test.fbx", &vampireModel);
 	vampireAnimator = Animator(&vampireWalk);
 	vampire->setAnimator(&vampireAnimator);
-	
-	renderSystem->Start(
-		skybox->texture,
-		&shaders,
-		&directionalLight
-	);
 }
 
 void TestScene::EarlyUpdate()
