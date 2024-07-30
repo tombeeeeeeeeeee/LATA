@@ -9,7 +9,9 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "ImGuiStyles.h"
+
 #include <iostream>
+#include <array>
 
 unsigned int SceneManager::windowWidth = 1920 / 2;
 unsigned int SceneManager::windowHeight = 1080 / 2;
@@ -141,10 +143,18 @@ SceneManager::SceneManager(Scene* _scene)
 
 	scene->Start();
 
+	std::array<std::string, 6> skyboxFaces = { "images/SkyBox Volume 2/Stars01/leftImage.png", "images/SkyBox Volume 2/Stars01/rightImage.png", "images/SkyBox Volume 2/Stars01/upImage.png", "images/SkyBox Volume 2/Stars01/downImage.png", "images/SkyBox Volume 2/Stars01/frontImage.png", "images/SkyBox Volume 2/Stars01/backImage.png" };
+	defaultSkybox = new Skybox(scene->shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data()));
+
+
+	if (scene->skybox == nullptr) {
+		scene->skybox = defaultSkybox;
+	}
+
 	scene->renderSystem->Start(
 		scene->skybox->texture,
 		&scene->shaders,
-		scene->lights[0]
+		scene->lights.front()
 	);
 
 
@@ -198,8 +208,10 @@ void SceneManager::Update()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-
+	
 	scene->Update(deltaTime);
+	scene->skybox->Update(&camera, (float)windowWidth / (float)windowHeight);
+
 	for (auto s = scene->shaders.begin(); s != scene->shaders.end(); s++)
 	{
 		if (((*s)->getFlag() & Shader::Flags::Lit)) {

@@ -44,6 +44,8 @@ private:
 	static unsigned int windowWidth;
 	static unsigned int windowHeight;
 
+	Skybox* defaultSkybox;
+
 	// Callbacks //TODO: change how these functions are called, look at other examples on how callbacks can be handled
 	static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 	static void MouseMoveCallback(GLFWwindow* window, double xposIn, double yposIn);

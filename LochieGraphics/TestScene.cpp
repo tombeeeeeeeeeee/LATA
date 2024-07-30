@@ -196,14 +196,8 @@ void TestScene::Update(float delta)
 	spotlight.position = camera->position;
 	spotlight.direction = camera->front;
 	
-	// TODO: Skybox class exists, could try to work out the vp there
 	// Different View Projection matrix for the skybox, as translations shouldn't affect it
-	// TODO: Would like to make this below function more clear, maybe serperate into like a remove translation function or something
-	glm::mat4 skyBoxView = glm::mat4(glm::mat3(camera->GetViewMatrix()));
 	// TODO: This math shouldn't be here, maybe move to camera class or get the projection from scenemanager
-	glm::mat4 skyboxProjection = glm::perspective(glm::radians(camera->fov), (float)*windowWidth / (float)*windowHeight, camera->nearPlane, camera->farPlane);
-	glm::mat4 skyBoxVP = skyboxProjection * skyBoxView;
-	skybox->Update(skyBoxVP);
 
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
