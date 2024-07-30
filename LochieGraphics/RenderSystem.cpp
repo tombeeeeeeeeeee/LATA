@@ -335,16 +335,6 @@ void RenderSystem::Update(
     // TODO: move viewport changing stuff into FrameBuffer
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    (*shaders)[ShaderIndex::shadowMapping]->Use();
-
-    // set light uniforms
-    (*shaders)[ShaderIndex::shadowMapping]->setVec3("viewPos", camera->position);
-    (*shaders)[ShaderIndex::shadowMapping]->setVec3("lightPos", shadowCaster->getPos());
-    (*shaders)[ShaderIndex::shadowMapping]->setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-    //TODO:
-    depthMap->Bind(17);
-    (*shaders)[ShaderIndex::shadowMapping]->setSampler("shadowMap", 17);
 
     (*shaders)[ShaderIndex::super]->Use();
 

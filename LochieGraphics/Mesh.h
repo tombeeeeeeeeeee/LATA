@@ -48,6 +48,7 @@ public:
 	// UV Sphere
 	// Quad Sphere
 	// Goldberg Polyhedra
+	// TODO: Change how the size counts for the quad, make it the same as how the cube does
 	void InitialiseQuad(float size = 0.5f, float offset = 0.0f);
 	void InitialiseDoubleSidedQuad();
 	void InitialiseCube(float size = 1.0f);
