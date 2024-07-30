@@ -1,12 +1,25 @@
 #pragma once
 #include "Scene.h"
 
+#include <unordered_map>
+
 class ArtScene : public Scene
 {
 private:
 
+	std::unordered_map<std::string, Texture::Type> acceptableImportTypeNames = {
+		{ "BaseColour", Texture::Type::albedo },
+		{ "Normal",     Texture::Type::normal },
+		{ "Roughness",  Texture::Type::roughness},
+		{ "Metallic",   Texture::Type::metallic},
+		{ "AO",         Texture::Type::ao},
+		{ "Albedo",     Texture::Type::albedo},
+	};
+	
+
 	Skybox* skybox = nullptr;
 
+	Material* material;
 	Model model;
 	SceneObject* sceneObject = new SceneObject(this);
 
@@ -24,6 +37,11 @@ private:
 		Spotlight({ 1.0f, 1.0f, 1.0f }, { 0.0f,  0.0f,  0.0f }, 0.5f, 0.09f, 0.032f, { 0.0f, 0.0f, 0.0f }, glm::cos(glm::radians(10.f)), glm::cos(glm::radians(15.f)));
 
 public:
+
+	static ArtScene* artScene;
+
+	static void DragDropCallback(GLFWwindow* window, int pathCount, const char* paths[]);
+	void ImportFromPaths(int pathCount, const char* paths[]);
 
 	ArtScene();
 	void Start() override;

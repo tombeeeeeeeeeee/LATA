@@ -2,11 +2,7 @@
 
 #include "Scene.h"
 
-#include "Camera.h"
-
 #include "FixedSizeQueue.h"
-
-#include "Graphics.h"
 
 // TODO: fullscreen window with border, exclusive fullscreen
 enum class WindowModes {
