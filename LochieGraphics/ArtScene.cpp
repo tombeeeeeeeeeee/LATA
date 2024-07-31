@@ -3,6 +3,8 @@
 #include "ResourceManager.h"
 #include "SceneManager.h"
 
+#include <filesystem>
+
 ArtScene* ArtScene::artScene = nullptr;
 
 void ArtScene::DragDropCallback(GLFWwindow* window, int pathCount, const char* paths[])
@@ -16,34 +18,67 @@ void ArtScene::ImportFromPaths(int pathCount, const char* paths[])
 	{
 		std::string path = paths[i];
 		std::string filename = path.substr(path.find_last_of("/\\") + 1);
-		if (filename._Starts_with("T_")) 
+		if (filename._Starts_with(texturePrefix)) 
 		{
-			// Figure out texture type
-			Texture::Type type = Texture::Type::count;
-
-			for (auto& t : acceptableImportTypeNames) {
-				if (filename.find("_" + t.first) != std::string::npos) {
-					type = t.second;
-					break;
-				}
+			ImportTexture(path, filename);
+			continue;
+		}
+		else if (filename._Starts_with(meshPrefix)) {
+			ImportMesh(path, filename);
+			continue;
+		}
+		else {
+			int lastSlash = path.find_last_of("/\\");
+			int lastPeriod = path.find_last_of(".");
+			if (lastPeriod == std::string::npos) {
+				lastPeriod = 0;
 			}
-			if (type == Texture::Type::count) {
-				std::cout << "Unknown texture type! Couldn't find what " << filename << " is supposed to be!\n";
+			if (lastSlash > lastPeriod) {
+				stringPaths.clear();
+				newPaths.clear();
+				for (const auto& entry : std::filesystem::directory_iterator(path)) {
+					stringPaths.push_back(entry.path().string());
+					newPaths.push_back(stringPaths.back().c_str());
+				}
+				ImportFromPaths(newPaths.size(), newPaths.data());
 				continue;
 			}
-
-
-			// Load texture
-			Texture* newTexture = ResourceManager::LoadTexture(path, type);
-
-			// Add texture to the material
-			material->AddTextures(std::vector<Texture*>{ newTexture });
-			std::cout << "Added texture!" << filename << "\n";
 		}
-
-
-
+		std::cout << "Unknown item dropped!: " << path << "\n";
 	}
+}
+
+void ArtScene::ImportTexture(std::string& path, std::string& filename)
+{
+	// Figure out texture type
+	Texture::Type type = Texture::Type::count;
+
+	for (auto& t : acceptableImportTypeNames) {
+		if (filename.find("_" + t.first) != std::string::npos) {
+			type = t.second;
+			break;
+		}
+	}
+	if (type == Texture::Type::count) {
+		std::cout << "Unknown texture type! Couldn't find what " << filename << " is supposed to be!\n";
+		return;
+	}
+
+
+	// Load texture
+	Texture* newTexture = ResourceManager::LoadTexture(path, type);
+
+	// Add texture to the material
+	material->AddTextures(std::vector<Texture*>{ newTexture });
+	std::cout << "Added texture!" << filename << "\n";
+
+}
+
+void ArtScene::ImportMesh(std::string& path, std::string& filename)
+{
+	model.meshes.clear();
+
+	model = Model(path);
 }
 
 ArtScene::ArtScene()

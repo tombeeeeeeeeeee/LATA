@@ -15,6 +15,10 @@ private:
 		{ "AO",         Texture::Type::ao},
 		{ "Albedo",     Texture::Type::albedo},
 	};
+
+
+	std::string texturePrefix = "T_";
+	std::string meshPrefix = "SM_";
 	
 
 	Skybox* skybox = nullptr;
@@ -36,12 +40,18 @@ private:
 	Spotlight spotlight =
 		Spotlight({ 1.0f, 1.0f, 1.0f }, { 0.0f,  0.0f,  0.0f }, 0.5f, 0.09f, 0.032f, { 0.0f, 0.0f, 0.0f }, glm::cos(glm::radians(10.f)), glm::cos(glm::radians(15.f)));
 
+	std::vector<std::string> stringPaths;
+	std::vector<const char *> newPaths;
+
+
 public:
 
 	static ArtScene* artScene;
 
 	static void DragDropCallback(GLFWwindow* window, int pathCount, const char* paths[]);
 	void ImportFromPaths(int pathCount, const char* paths[]);
+	void ImportTexture(std::string& path, std::string& filename);
+	void ImportMesh(std::string& path, std::string& filename);
 
 	ArtScene();
 	void Start() override;
