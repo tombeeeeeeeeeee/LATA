@@ -124,7 +124,7 @@ private:
         std::unordered_map<unsigned long long, Transform>& transforms
         );
 
-    void BindFlaggedVariables();
+
 
     void ActivateFlaggedVariables(
         Shader* shader,

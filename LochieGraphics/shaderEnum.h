@@ -15,5 +15,6 @@ enum ShaderIndex
 	irradiance, 
 	brdf,		
 	downSample,
-	upSample,	
+	upSample,
+	tom,
 };

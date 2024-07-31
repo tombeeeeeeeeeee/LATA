@@ -12,7 +12,7 @@
 #include <unordered_map>
 
 //TODO: Look into more assimp load flags
-int Mesh::aiLoadFlag = aiProcess_CalcTangentSpace /*| aiProcess_JoinIdenticalVertices | aiProcess_Triangulate*/;
+int Mesh::aiLoadFlag = aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate;
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) :
 	triCount(0),

@@ -27,6 +27,9 @@ public:
 	static unsigned long long guidCounter;
 	static unsigned long long GetNewGuid();
 
+	static void BindFlaggedVariables();
+	static void BindFlaggedVariables(Shader* shader);
+
 	static void UnloadAll();
 	~ResourceManager();
 	ResourceManager(const ResourceManager& other) = delete;

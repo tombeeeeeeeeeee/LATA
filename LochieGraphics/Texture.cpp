@@ -160,7 +160,11 @@ GLuint Texture::LoadCubeMap(std::string faces[6])
 			std::cout << "Cubemap face failed to load at path: " << faces[i] << "\n";
 			continue;
 		}
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		if(components == 3)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		else
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB_ALPHA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
 		stbi_image_free(data);
 	}
 	return GLID;

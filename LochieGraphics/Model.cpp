@@ -29,12 +29,14 @@ void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 	const aiScene* scene = importer.ReadFile(path.c_str(), Mesh::aiLoadFlag);
 
-	if (scene == nullptr) {
+	if (scene == nullptr) 
+	{
 		// TODO: assimp has error messages, get it and put it here
 		std::cout << "Error loading model at: " << path << "\n";
 		throw; // TODO: Do not throw here
 	}
-	else {
+	else 
+	{
 		std::cout << "Loaded model at: " << path << "\n";
 	}
 

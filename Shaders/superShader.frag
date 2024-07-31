@@ -90,7 +90,11 @@ in mat3 inverseTBN;
 // IBL
 uniform samplerCube irradianceMap;	
 uniform samplerCube prefilterMap;	
-uniform sampler2D brdfLUT;			
+uniform sampler2D brdfLUT;
+in vec3 fragNormal;
+in vec3 fragTan;
+in vec3 fragBi;
+mat3 TBN;
 
 //Brush Strokes Effect
 uniform sampler2D brushStrokes;
@@ -102,7 +106,7 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection);
 
 void main()
 {
-    vec4 PBR = texture(material.PBR, texCoords);
+    vec3 PBR = texture(material.PBR, texCoords).rgb;
     albedo = fragmentColour * texture(material.albedo, texCoords).rgb;
 
     //TODO: Add atlasing
@@ -111,18 +115,19 @@ void main()
     roughness = PBR.g;
     ao = PBR.b;
     
+    TBN = mat3(normalize(fragTan), normalize(fragBi), normalize(fragNormal));
 
     //float directionalLightShadow = ( 1 - ShadowCalculation(directionalLightSpaceFragPos));
     //screenColor = vec4(directionalLightShadow * albedo, 1.0);
     //return;
     
     vec3 tangentNormal = normalize(texture(material.normal, texCoords).rgb * 2.0 - 1.0);
-    vec3 trueNormal = normalize(inverseTBN * tangentNormal);
-    viewDir = normalize(tangentViewPos - tangentFragPos);
+    vec3 trueNormal = TBN * tangentNormal;
+    viewDir = normalize(viewPos - fragPos);
 
     F0 = vec3(0.04); 
     F0 = mix(F0, albedo, metallic);
-
+    
     vec3 result;
 
     // Directional light
@@ -151,16 +156,13 @@ void main()
     {
         bloomColour = vec4(0.0, 0.0, 0.0, 1.0);
     }
-    bloomColour = vec4(0.0, 0.0, 0.0, 1.0);
 
     vec4 emissionColour = texture(material.emission, texCoords);
-
 
     bloomColour = vec4(emissionColour.rgb + bloomColour.rgb, 1.0);
     bloomColour *= emissionColour.a + 1.0;
 
     screenColour = vec4(result, 1.0);
-
 }
 
 
@@ -337,6 +339,7 @@ float CalcAttenuation(float constant, float linear, float quadratic, float dista
 
 vec3 specularIBL(vec3 trueNormal, vec3 viewDirection)
 {
+    
     vec3 reflected = reflect(-viewDirection, trueNormal); 
 	vec3 kS = fresnelSchlickRoughness(max(dot(trueNormal, viewDirection), 0.0), F0, roughness);
 	vec3 kD = vec3(1.0) - kS;
@@ -348,5 +351,6 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection)
     vec3 prefilteredColor = textureLod(prefilterMap, reflected,  roughness * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(trueNormal, viewDirection), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
-    return specular;
+    vec3 ambient = (kD * diffuse + specular) * ao;
+    return ambient;
 }

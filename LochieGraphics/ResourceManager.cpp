@@ -229,7 +229,7 @@ void ResourceManager::GUI()
 			ImGui::TableSetColumnIndex(6);
 			if (ImGui::Button(("Recompile##" + std::to_string(i->second.GLID)).c_str())) {
 				i->second.Load(); //TODO: When a shader reloads the materials need to also reload
-				//TODO: Move Shader bind to Respoucre manager from render system
+				BindFlaggedVariables();
 			}
 		}
 
@@ -246,6 +246,43 @@ void ResourceManager::GUI()
 unsigned long long ResourceManager::GetNewGuid()
 {
 	return ++guidCounter;
+}
+
+void ResourceManager::BindFlaggedVariables()
+{
+	for (auto i = shaders.begin(); i != shaders.end(); i++)
+	{
+		int flag = (*i).second.getFlag();
+		(*i).second.Use();
+
+		if (flag & Shader::Flags::Spec)
+		{
+			(*i).second.setInt("irradianceMap", 7);
+			(*i).second.setInt("prefilterMap", 8);
+			(*i).second.setInt("brdfLUT", 9);
+		}
+		if (flag & Shader::Flags::Painted)
+		{
+			(*i).second.setInt("brushStrokes", 10);
+		}
+	}
+}
+
+void ResourceManager::BindFlaggedVariables(Shader* shader)
+{
+	int flag = shader->getFlag();
+	shader->Use();
+
+	if (flag & Shader::Flags::Spec)
+	{
+		shader->setInt("irradianceMap", 7);
+		shader->setInt("prefilterMap", 8);
+		shader->setInt("brdfLUT", 9);
+	}
+	if (flag & Shader::Flags::Painted)
+	{
+		shader->setInt("brushStrokes", 10);
+	}
 }
 
 void ResourceManager::UnloadAll()

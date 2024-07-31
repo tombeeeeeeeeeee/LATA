@@ -58,7 +58,7 @@ void RenderSystem::Start(
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
 
-    BindFlaggedVariables();
+    ResourceManager::BindFlaggedVariables();
 }
 
 void RenderSystem::SetIrradianceMap(unsigned int textureID)
@@ -482,6 +482,7 @@ void RenderSystem::DrawRenderers(
         Shader* curShader = i->second.material->getShader();
         curShader->setMat4("model", transforms[i->first].getGlobalMatrix());
         int samplerCount = i->second.material->texturePointers.size();
+
         ActivateFlaggedVariables(curShader, i->second.material);
 
         glUniform3fv(glGetUniformLocation(curShader->GLID, "materialColour"), 1, &(i->second.material->colour[0]));
@@ -490,26 +491,6 @@ void RenderSystem::DrawRenderers(
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
             mesh->Draw();
-        }
-    }
-}
-
-void RenderSystem::BindFlaggedVariables()
-{
-    for (auto i = shaders->begin(); i != shaders->end(); i++)
-    {
-        int flag = (*i)->getFlag();
-        (*i)->Use();
-
-        if (flag & Shader::Flags::Spec)
-        {
-            (*i)->setInt("irradianceMap", 7);
-            (*i)->setInt("prefilterMap", 8);
-            (*i)->setInt("brdfLUT", 9);
-        }
-        if (flag & Shader::Flags::Painted)
-        {
-            (*i)->setInt("brushStrokes", 10);
         }
     }
 }

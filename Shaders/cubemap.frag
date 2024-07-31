@@ -8,7 +8,7 @@ uniform samplerCube cubeMap;
 void main()
 {
 	FragColor = texture(cubeMap, TexCoord);
-	if(dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722)) > 0.5)
+	if(dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722)) > 1)
     {
         bloomColour = FragColor;
     }

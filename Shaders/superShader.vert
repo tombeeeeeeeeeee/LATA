@@ -62,6 +62,9 @@ out mat3 inverseTBN;
 uniform mat4 directionalLightSpaceMatrix;
 
 out vec3 normal;
+out vec3 fragNormal;
+out vec3 fragTan;
+out vec3 fragBi;
 out vec4 directionalLightSpaceFragPos;
 
 // Main
@@ -105,6 +108,11 @@ void main()
     // The transpose of an orthogonal matrix (each axis is a perpendicular unit vector) equals its inverse
     inverseTBN = mat3(T, B, N);
     mat3 TBN = transpose(inverseTBN);
+
+    fragNormal = normalize((model * vec4(aNormal, 0.0)).xyz);
+    fragTan = normalize((model * vec4(aTangent, 0.0)).xyz);
+    fragTan = normalize(fragTan - dot(fragTan, fragNormal) * fragNormal);
+    fragBi = cross(fragNormal, fragTan);
 
     tangentSpotlightPos = TBN * spotlight.position;
 
