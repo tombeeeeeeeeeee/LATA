@@ -160,6 +160,7 @@
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="CollisionFunctions.cpp" />
     <ClCompile Include="eNetTest.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="glad.c" />
@@ -177,7 +178,9 @@
     <ClCompile Include="ModelRenderer.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Part.cpp" />
+    <ClCompile Include="PhysicsSystem.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneObject.cpp" />
@@ -207,6 +210,8 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="AssimpMatrixToGLM.h" />
     <ClInclude Include="BlendedAnimator.h" />
+    <ClInclude Include="CollisionFunctions.h" />
+    <ClInclude Include="CollisionPacket.h" />
     <ClInclude Include="eNetTest.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Bone.h" />
@@ -217,6 +222,7 @@
     <ClInclude Include="glad.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GUI.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="ImGuiStyles.h" />
     <ClInclude Include="khrplatform.h" />
     <ClInclude Include="Light.h" />
@@ -231,6 +237,7 @@
     <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Part.h" />
+    <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Scene.h" />
@@ -287,8 +294,8 @@
     <None Include="..\Shaders\solidColour.frag" />
     <None Include="..\Shaders\superShader.frag" />
     <None Include="..\Shaders\superShader.vert" />
-    <None Include="..\Shaders\tom.frag" />
-    <None Include="..\Shaders\tom.vert" />
+    <None Include="..\Shaders\superDuper.frag" />
+    <None Include="..\Shaders\superDuper.vert" />
     <None Include="..\Shaders\ui.frag" />
     <None Include="..\Shaders\ui.vert" />
     <None Include="..\Shaders\upSample.frag" />

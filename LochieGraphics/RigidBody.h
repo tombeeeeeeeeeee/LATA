@@ -1,14 +1,12 @@
 #pragma once
 #include "Maths.h"
-
+#include "Collider.h"
 #include <vector>
 
 enum CollisionLayers 
 {
-
+	base
 };
-
-class Collider;
 
 class RigidBody
 {
@@ -19,35 +17,44 @@ public:
 		float _invMass,
 		float _invMomentOfInertia,
 		std::vector<Collider> _colliders = {},
-		int _collisionLayer = 0
+		int _collisionLayer = 0,
+		bool _isStatic = false
 	) :
 		invMass(_invMass),
 		invMomentOfInertia(_invMomentOfInertia),
 		colliders(_colliders),
-		collisionLayer(_collisionLayer)
+		collisionLayer(_collisionLayer),
+		isStatic(_isStatic)
 	{}
 
-	void setAccel(glm::vec3 accel);
-	glm::vec3 getAccel();
-	glm::vec3 AddAccel(glm::vec3 accel);
+	glm::vec2 AddImpulse(glm::vec2 impulse);
+	float AddRotationalImpulse(float impulse);
 
-	void setVel(glm::vec3 vel);
-	glm::vec3 getVel();
-	glm::vec3 AddVel(glm::vec3 vel);
+	void setForce(glm::vec2 force);
+	glm::vec2 getForce();
+	glm::vec2 addForce(glm::vec2 force);
+
+	void setAccel(glm::vec2 accel);
+	glm::vec2 getAccel();
+	glm::vec2 AddAccel(glm::vec2 accel);
+
+	void setVel(glm::vec2 vel);
+	glm::vec2 getVel();
+	glm::vec2 AddVel(glm::vec2 vel);
 
 	void setAngularVel(float angularVel);
 	float getAngularVel();
 	float addAngularVel(float angularVel);
 
-	void setDepen(glm::vec3 depen);
-	glm::vec3 getDepen();
-	glm::vec3 AddDepen(glm::vec3 depen);
+	void setDepen(glm::vec2 depen);
+	glm::vec2 getDepen();
+	glm::vec2 AddDepen(glm::vec2 depen);
 
 	void setCollisionLayer(int layer);
 	CollisionLayers getCollisionLayer();
 
-	void addCollider(Collider& collider);
-	std::vector<Collider>* getColliders();
+	void addCollider(Collider* collider);
+	std::vector<Collider*>* getColliders();
 
 	void setInvMass(float invMass);
 	void setMass(float mass);
@@ -59,19 +66,23 @@ public:
 	float getInvMomentOfInertia();
 	float getMomentOfInertia();
 
+	bool isStatic = false;
+
+	static glm::vec2 Transform2Din3DSpace(glm::mat4 global, glm::vec2 input);
+
 private:
-	glm::vec3 netAccel;
-	glm::vec3 netDepen;
+	glm::vec2 netForce = glm::zero<glm::vec2>();
+	glm::vec2 netDepen = glm::zero<glm::vec2>();
+			
+	glm::vec2 accel = glm::zero<glm::vec2>();
+	glm::vec2 vel = glm::zero<glm::vec2>();
 
-	glm::vec3 accel;
-	glm::vec3 vel;
-
-	float angularVel;
+	float angularVel = 0;
 	float invMomentOfInertia = 0;
 	float invMass = 0;
 
-	std::vector<Collider> colliders;
-	int collisionLayer;
+	std::vector<Collider*> colliders = {};
+	int collisionLayer = 0;
 
 	//TODO: ADD FUNCTION POINTERS FOR ON COLLISION AND ON TRIGGER
 };
