@@ -42,7 +42,7 @@ void TestScene::Start()
 	shadowDebug = ResourceManager::LoadShader("shaders/shadowDebug.vert", "shaders/shadowDebug.frag");
 	Shader* simpleTextured = ResourceManager::LoadShader("shaders/simpleTextured.vert", "shaders/simpleTextured.frag", Shader::Flags::VPmatrix);
 	//superShader = ResourceManager::LoadShader("shaders/tom.vert", "shaders/tom.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec);
-	superShader = ResourceManager::LoadShader("shaders/superShader.vert", "shaders/superShader.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec);
+	superShader = ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/superDuper.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec);
 	uiShader = ResourceManager::LoadShader("shaders/ui.vert", "shaders/ui.frag");
 	Shader* prefilter = ResourceManager::LoadShader("prefilter");
 	Shader* irradiance = ResourceManager::LoadShader("irradiance");
@@ -50,10 +50,10 @@ void TestScene::Start()
 	Shader* downSample = ResourceManager::LoadShaderDefaultVert("downSample");
 	Shader* upSample = ResourceManager::LoadShaderDefaultVert("upSample");
 
-	shaders = std::vector<Shader*>{ 
-		lightCubeShader, skyBoxShader, 
-		animateShader, pbrShader, 
-		screenShader, shadowMapDepth, 
+	shaders = std::vector<Shader*>{
+		lightCubeShader, skyBoxShader,
+		animateShader, pbrShader,
+		screenShader, shadowMapDepth,
 		shadowMapping, shadowDebug,
 		simpleTextured, superShader,
 		prefilter, irradiance,

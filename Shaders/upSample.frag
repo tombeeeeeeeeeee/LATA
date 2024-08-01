@@ -7,7 +7,7 @@
 // Remember to use a floating-point texture format (for HDR)!
 // Remember to use edge clamping for this texture!
 uniform sampler2D srcTexture;
-uniform float filterRadius = 0.005f;
+uniform float filterRadius = 0.0005f;
 uniform float aspectRatio;
 
 in vec2 texCoords;

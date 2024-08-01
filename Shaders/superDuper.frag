@@ -120,7 +120,7 @@ void main()
     //Light Output
     vec3 Lo = vec3(0.0);
 
-	vec3 F0 = vec3(0.04); 
+	F0 = vec3(0.04); 
     F0 = mix(F0, albedo, metallic);
 
     float directionalLightShadow = ( 1 - ShadowCalculation(directionalLightSpaceFragPos));
@@ -155,7 +155,6 @@ void main()
     bloomColour *= emissionColour.a + 1.0;
 
     screenColour = vec4(result, 1.0);
-    //screenColour = vec4(0., 1.0);
 }
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
@@ -281,23 +280,22 @@ vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal)
 
     // Diffuse
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = light.colour * diff * albedo;
+    vec3 diffuse = light.colour; //* diff * albedo;
 
      // cook-torrance brdf
     float NDF = DistributionGGX(normal, H, roughness);        
     float G   = GeometrySmith(normal, viewDir, lightDir, roughness);      
     vec3  F   = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);       
         
-    vec3 kS = F;
-    vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - metallic;
-        
     vec3 numerator    = NDF * G * F;
     float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(dot(normal, lightDir), 0.0) + 0.0001;
     vec3 specular     = numerator / denominator;  
-            
+
+    vec3 kD = vec3(1.0) - F;
+    kD *= 1.0 - metallic;
+
     // add to outgoing radiance Lo
-    float NdotL = max(dot(normal, lightDir), 0.0);                
+    float NdotL = max(dot(normal, lightDir), 0.0);         
     return (kD * albedo / PI + specular) * diffuse * NdotL;
 }
 
