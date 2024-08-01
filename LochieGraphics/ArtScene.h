@@ -58,7 +58,7 @@ public:
 	void Update(float delta) override;
 	void Draw() override;
 //	void OnMouseDown() override;
-//	void GUI() override;
+	void GUI() override;
 //	void UpdateAllTransforms();
 //	void OnWindowResize() override;
 //

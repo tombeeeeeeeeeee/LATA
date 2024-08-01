@@ -124,6 +124,17 @@ void ArtScene::Draw()
 
 
 
+void ArtScene::GUI()
+{
+	ImGui::ShowDemoWindow();
+	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		if (ImGui::CollapsingHeader("Current Material")) {
+			ImGui::Image((void*)material->texturePointers.begin()->second->GLID, {100, 100 } );
+		}
+	}
+	ImGui::End();
+}
+
 ArtScene::~ArtScene()
 {
 }
