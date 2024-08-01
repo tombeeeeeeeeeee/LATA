@@ -5,6 +5,9 @@
 #include "Graphics.h"
 
 #include "stb_image.h"
+#include "imgui.h"
+#include "imgui_stdlib.h"
+#include "Utilities.h"
 
 #include <iostream>
 
@@ -179,4 +182,73 @@ void Texture::UseCubeMap(GLuint GLID, Shader* shader)
 void Texture::DeleteTexture()
 {
 	glDeleteTextures(1, &GLID);
+}
+
+void Texture::EditorGUI(std::vector<Texture*>& textures) 
+{
+	if (ImGui::BeginTable("Resource Textures", 6)) {
+		ImGui::TableNextRow();
+
+		ImGui::TableSetColumnIndex(0);
+		ImGui::Text("Path");
+
+		ImGui::TableSetColumnIndex(1);
+		ImGui::Text("Type");
+
+		ImGui::TableSetColumnIndex(2);
+		ImGui::Text("Flip");
+
+		ImGui::TableSetColumnIndex(3);
+		ImGui::Text("GUID");
+
+		ImGui::TableSetColumnIndex(4);
+		ImGui::Text("glID");
+
+		ImGui::TableSetColumnIndex(5);
+		ImGui::Text("Reload");
+
+		for (auto i = textures.begin(); i != textures.end(); i++)
+		{
+			ImGui::TableNextRow();
+
+			ImGui::TableSetColumnIndex(0);
+			ImGui::PushItemWidth(270);
+			ImGui::InputText(("##" + PointerToString(&(*i)->path)).c_str(), &(*i)->path); // TODO:
+
+			ImGui::TableSetColumnIndex(1);
+
+			ImGui::PushItemWidth(90);
+			if (ImGui::BeginCombo(("##" + PointerToString(&(*i)->type)).c_str(), Texture::TypeNames.find((*i)->type)->second.c_str()))
+			{
+				for (int n = 0; n < (int)Texture::Type::count; n++)
+				{
+					const bool is_selected = ((int)(*i)->type == n);
+					if (ImGui::Selectable(Texture::TypeNames.find((Texture::Type)n)->second.c_str(), is_selected)) {
+						(*i)->type = (Texture::Type)n;
+					}
+
+					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+					if (is_selected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			ImGui::TableSetColumnIndex(2);
+			ImGui::Checkbox(("##" + PointerToString(&(*i)->flipped)).c_str(), &(*i)->flipped);
+
+			ImGui::TableSetColumnIndex(3);
+			ImGui::Text(std::to_string((*i)->GUID).c_str());
+
+			ImGui::TableSetColumnIndex(4);
+			ImGui::Text(std::to_string((*i)->GLID).c_str());
+
+			ImGui::TableSetColumnIndex(5);
+			if (ImGui::Button(("Reload##" + std::to_string((*i)->GLID)).c_str())) {
+				(*i)->Load();
+			}
+		}
+		ImGui::EndTable();
+	}
 }
