@@ -4,7 +4,7 @@
 #include <sstream>
 #include <fstream>
 
-std::string FileToString(std::string path)
+std::string Utilities::FileToString(std::string path)
 {
 	std::stringstream output;
 	std::ifstream file(path);
@@ -26,7 +26,7 @@ std::string FileToString(std::string path)
 	}
 }
 
-std::string PointerToString(void* pointer)
+std::string Utilities::PointerToString(void* pointer)
 {
 	return std::to_string(reinterpret_cast<std::uintptr_t>(pointer));
 }

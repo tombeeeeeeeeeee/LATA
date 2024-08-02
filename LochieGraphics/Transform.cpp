@@ -196,7 +196,7 @@ void Transform::UpdateGlobalMatrixCascading()
 
 void Transform::GUI()
 {
-	std::string tag = PointerToString(this);
+	std::string tag = Utilities::PointerToString(this);
 
 	glm::vec3 euler = getEulerRotation();
 

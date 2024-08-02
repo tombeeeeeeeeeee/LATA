@@ -49,7 +49,7 @@ Shader::Shader(std::string _vertexPath, std::string _fragmentPath, int _updateFl
 
 GLuint Shader::CompileShader(std::string path, int type)
 {
-	std::string temp = FileToString(path);
+	std::string temp = Utilities::FileToString(path);
 	const char* shaderCode = temp.c_str();
 
 	GLuint shader;

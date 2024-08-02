@@ -154,7 +154,8 @@ SceneManager::SceneManager(Scene* _scene)
 	scene->renderSystem->Start(
 		scene->skybox->texture,
 		&scene->shaders,
-		scene->lights.front()
+		scene->lights.front(),
+		""
 	);
 
 

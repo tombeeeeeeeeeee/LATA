@@ -10,9 +10,6 @@ private:
 	std::unordered_map<std::string, Texture::Type> acceptableImportTypeNames = {
 		{ "BaseColour", Texture::Type::albedo },
 		{ "Normal",     Texture::Type::normal },
-		{ "Roughness",  Texture::Type::roughness},
-		{ "Metallic",   Texture::Type::metallic},
-		{ "AO",         Texture::Type::ao},
 		{ "Albedo",     Texture::Type::albedo},
 	};
 

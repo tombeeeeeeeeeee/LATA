@@ -11,6 +11,8 @@
 
 #include <iostream>
 
+using Utilities::PointerToString;
+
 void Material::GetShaderUniforms()
 {
 	if (!shader) {

@@ -11,6 +11,8 @@
 
 #include <iostream>
 
+using Utilities::PointerToString;
+
 const std::unordered_map<Texture::Type, std::string> Texture::TypeNames = 
 {
 	{ Type::diffuse, "diffuse" },

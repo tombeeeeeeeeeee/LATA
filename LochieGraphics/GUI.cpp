@@ -10,6 +10,8 @@
 
 #include <iostream>
 
+using Utilities::PointerToString;
+
 //TODO: move some of these to their own classes
 void GUI::Update()
 {

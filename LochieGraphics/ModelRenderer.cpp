@@ -44,11 +44,11 @@ void ModelRenderer::Draw(Shader* override)
 void ModelRenderer::GUI()
 {
 	// TODO:
-	ImGui::Text(("Model: " + PointerToString(model)).c_str());
+	ImGui::Text(("Model: " + Utilities::PointerToString(model)).c_str());
 
-	std::string tag = PointerToString(this);
+	std::string tag = Utilities::PointerToString(this);
 	unsigned long long newMaterialGUID = materialGUID;
-	if (ImGui::InputScalar(("Material##" + PointerToString(&materialGUID)).c_str(), ImGuiDataType_U64, &newMaterialGUID)) {
+	if (ImGui::InputScalar(("Material##" + Utilities::PointerToString(&materialGUID)).c_str(), ImGuiDataType_U64, &newMaterialGUID)) {
 		Material* newMaterial = ResourceManager::GetMaterial(newMaterialGUID);
 		if (newMaterial) {
 			materialGUID = newMaterialGUID;

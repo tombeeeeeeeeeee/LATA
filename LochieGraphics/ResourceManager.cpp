@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+using Utilities::PointerToString;
+
 std::unordered_map<unsigned long long, Texture, ResourceManager::hashFNV1A> ResourceManager::textures;
 std::unordered_map<unsigned long long, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
 std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A> ResourceManager::materials;

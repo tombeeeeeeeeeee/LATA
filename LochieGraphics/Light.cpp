@@ -4,6 +4,8 @@
 
 #include "imgui.h"
 
+using Utilities::PointerToString;
+
 Light::Light(glm::vec3 _colour) :
 	colour(_colour)
 {
