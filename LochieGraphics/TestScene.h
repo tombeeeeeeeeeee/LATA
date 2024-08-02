@@ -18,14 +18,7 @@ class TestScene : public Scene
 private:
 	MessengerInterface messengerInterface;
 
-	Shader* screenShader    = nullptr;
-	Shader* shadowMapDepth  = nullptr;
-	Shader* shadowMapping   = nullptr;
-	Shader* shadowDebug     = nullptr;
-	Shader* superShader     = nullptr;
-	Shader* simpleTextured  = nullptr;
-	Shader* uiShader        = nullptr;
-	Shader* hdrBloom		= nullptr;
+	Shader* uiShader = nullptr;
 
 	Skybox* skybox = nullptr;
 	int skyboxIndex = 0;
@@ -85,7 +78,6 @@ public:
 	void Draw() override;
 	void OnMouseDown() override;
 	void GUI() override;
-	void UpdateAllTransforms();
 	void OnWindowResize() override;
 
 	~TestScene() override;

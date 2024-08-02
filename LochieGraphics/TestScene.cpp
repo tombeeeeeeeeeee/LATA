@@ -33,51 +33,36 @@ void TestScene::Start()
 	renderSystem = new RenderSystem(SceneManager::window);
 	// Shaders
 	Shader* lightCubeShader = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
-	Shader* skyBoxShader = ResourceManager::LoadShader("shaders/cubemap.vert", "shaders/cubemap.frag");
 	Shader* animateShader = ResourceManager::LoadShader("shaders/animate.vert", "shaders/animate.frag", Shader::Flags::Animated);
 	Shader* pbrShader = ResourceManager::LoadShader("shaders/pbr.vert", "shaders/pbr.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
-	screenShader = ResourceManager::LoadShaderDefaultVert("HDRBloom");
-	shadowMapDepth = ResourceManager::LoadShader("shaders/simpleDepthShader.vert", "shaders/simpleDepthShader.frag");
-	shadowMapping = ResourceManager::LoadShader("shaders/shadowMapping.vert", "shaders/shadowMapping.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix);
-	shadowDebug = ResourceManager::LoadShader("shaders/shadowDebug.vert", "shaders/shadowDebug.frag");
 	Shader* simpleTextured = ResourceManager::LoadShader("shaders/simpleTextured.vert", "shaders/simpleTextured.frag", Shader::Flags::VPmatrix);
-	//superShader = ResourceManager::LoadShader("shaders/tom.vert", "shaders/tom.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec);
-	superShader = ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/superDuper.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec);
 	uiShader = ResourceManager::LoadShader("shaders/ui.vert", "shaders/ui.frag");
-	Shader* prefilter = ResourceManager::LoadShader("prefilter");
-	Shader* irradiance = ResourceManager::LoadShader("irradiance");
-	Shader* brdf = ResourceManager::LoadShaderDefaultVert("brdf");
-	Shader* downSample = ResourceManager::LoadShaderDefaultVert("downSample");
-	Shader* upSample = ResourceManager::LoadShaderDefaultVert("upSample");
 
-	shaders = std::vector<Shader*>{
-		lightCubeShader, skyBoxShader,
-		animateShader, pbrShader,
-		screenShader, shadowMapDepth,
-		shadowMapping, shadowDebug,
-		simpleTextured, superShader,
-		prefilter, irradiance,
-		brdf, downSample, upSample,
-	};
+	shaders.insert(shaders.end(), { 
+		lightCubeShader, 
+		animateShader, 
+		pbrShader, 
+		simpleTextured, 
+	});
 
 	// TODO: This needs to be cleaned up
 	std::array<std::string, 6> skyboxFaces;
 	skyboxFaces = { "images/skybox/right.jpg", "images/skybox/left.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
-	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/otherskybox/right.png", "images/otherskybox/left.png", "images/otherskybox/top.png", "images/otherskybox/bottom.png", "images/otherskybox/front.png", "images/otherskybox/back.png" };
-	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/SkyBox Volume 2/DeepSpaceBlue/leftImage.png", "images/SkyBox Volume 2/DeepSpaceBlue/rightImage.png", "images/SkyBox Volume 2/DeepSpaceBlue/upImage.png", "images/SkyBox Volume 2/DeepSpaceBlue/downImage.png", "images/SkyBox Volume 2/DeepSpaceBlue/frontImage.png", "images/SkyBox Volume 2/DeepSpaceBlue/backImage.png" };
-	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/SkyBox Volume 2/DeepSpaceBlueWithPlanet/leftImage.png", "images/SkyBox Volume 2/DeepSpaceBlueWithPlanet/rightImage.png", "images/SkyBox Volume 2/DeepSpaceBlueWithPlanet/upImage.png", "images/SkyBox Volume 2/DeepSpaceBlueWithPlanet/downImage.png", "images/SkyBox Volume 2/DeepSpaceBlueWithPlanet/frontImage.png", "images/SkyBox Volume 2/DeepSpaceBlueWithPlanet/backImage.png" };
-	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/SkyBox Volume 2/DeepSpaceGreen/leftImage.png", "images/SkyBox Volume 2/DeepSpaceGreen/rightImage.png", "images/SkyBox Volume 2/DeepSpaceGreen/upImage.png", "images/SkyBox Volume 2/DeepSpaceGreen/downImage.png", "images/SkyBox Volume 2/DeepSpaceGreen/frontImage.png", "images/SkyBox Volume 2/DeepSpaceGreen/backImage.png" };
-	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/SkyBox Volume 2/DeepSpaceGreenWithPlanet/leftImage.png", "images/SkyBox Volume 2/DeepSpaceGreenWithPlanet/rightImage.png", "images/SkyBox Volume 2/DeepSpaceGreenWithPlanet/upImage.png", "images/SkyBox Volume 2/DeepSpaceGreenWithPlanet/downImage.png", "images/SkyBox Volume 2/DeepSpaceGreenWithPlanet/frontImage.png", "images/SkyBox Volume 2/DeepSpaceGreenWithPlanet/backImage.png" };
-	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/SkyBox Volume 2/DeepSpaceRed/leftImage.png", "images/SkyBox Volume 2/DeepSpaceRed/rightImage.png", "images/SkyBox Volume 2/DeepSpaceRed/upImage.png", "images/SkyBox Volume 2/DeepSpaceRed/downImage.png", "images/SkyBox Volume 2/DeepSpaceRed/frontImage.png", "images/SkyBox Volume 2/DeepSpaceRed/backImage.png" };
-	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/leftImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/rightImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/upImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/downImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/frontImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/backImage.png" };
-	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/SkyBox Volume 2/Stars01/leftImage.png", "images/SkyBox Volume 2/Stars01/rightImage.png", "images/SkyBox Volume 2/Stars01/upImage.png", "images/SkyBox Volume 2/Stars01/downImage.png", "images/SkyBox Volume 2/Stars01/frontImage.png", "images/SkyBox Volume 2/Stars01/backImage.png" };
 	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/otherskybox/px.png", "images/otherskybox/nx.png", "images/otherskybox/py.png", "images/otherskybox/ny.png", "images/otherskybox/pz.png", "images/otherskybox/nz.png" };
@@ -87,10 +72,10 @@ void TestScene::Start()
 	skybox = skyboxes[9];
 	skyboxIndex = 9;
 
-	Material* boxMaterial = ResourceManager::LoadMaterial("box", shadowMapping);
+	Material* boxMaterial = ResourceManager::LoadMaterial("box", shaders[super]);
 	boxMaterial->AddTextures(std::vector<Texture*> {
-		ResourceManager::LoadTexture("images/container2.png", Texture::Type::diffuse),
-			ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::specular),
+		ResourceManager::LoadTexture("images/container2.png", Texture::Type::albedo),
+			ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::roughness),
 	});
 	cubeModel.AddMesh(new Mesh(Mesh::presets::cube));
 	boxes->setRenderer(new ModelRenderer(&cubeModel, boxMaterial));
@@ -101,9 +86,9 @@ void TestScene::Start()
 	lightCube->setRenderer(new ModelRenderer(&cubeModel, lightCubeMaterial));
 	lightCube->transform()->setScale(0.2f);
 
-	Material* grassMaterial = ResourceManager::LoadMaterial("grass", superShader);
+	Material* grassMaterial = ResourceManager::LoadMaterial("grass", shaders[super]);
 	grassMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::LoadTexture("images/grass.png", Texture::Type::diffuse, GL_CLAMP_TO_EDGE, false),
+		ResourceManager::LoadTexture("images/grass.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE, false),
 	});
 	grassModel.AddMesh(new Mesh(Mesh::presets::doubleQuad));
 	grass->setRenderer(new ModelRenderer(&grassModel, grassMaterial));
@@ -111,7 +96,7 @@ void TestScene::Start()
 	grass->transform()->setEulerRotation({ 0.f, -43.2f, 0.f });
 
 	backpackModel = Model("models/TomTest/Cerberus_LP.FBX");
-	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", superShader);
+	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", shaders[super]);
 	backpackMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/TomTest/Cerberus_A.tga", Texture::Type::albedo, GL_REPEAT),
 			ResourceManager::LoadTexture("models/TomTest/Cerberus_N.tga", Texture::Type::normal, GL_REPEAT),
@@ -125,7 +110,7 @@ void TestScene::Start()
 
 
 	tiresModel = Model("models/old-tires-dirt-low-poly/model.dae", false);
-	Material* tiresMaterial = ResourceManager::LoadMaterial("tires", superShader);
+	Material* tiresMaterial = ResourceManager::LoadMaterial("tires", shaders[super]);
 	tiresMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_albedo.jpeg", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_normal.png", Texture::Type::normal, GL_REPEAT, true),
@@ -136,7 +121,8 @@ void TestScene::Start()
 	tires->transform()->setPosition({-0.1f, 0.f, 1.2f});
 
 	testRedBoxModel = Model("models/TomBox/cube.obj");
-	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", superShader);
+	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", shaders[super]);
+
 	testRedBoxMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/TomBox/brickDif.png", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/TomBox/brickNorm.png", Texture::Type::normal, GL_REPEAT, true),
@@ -149,7 +135,7 @@ void TestScene::Start()
 	testRedBox->transform()->setEulerRotation({ 4.3f, -17.2f, -69.5f});
 
 	soulSpearModel = Model(std::string("models/soulspear/soulspear.obj"), true);
-	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", superShader);
+	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", shaders[super]);
 	soulSpearMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::PBR, GL_REPEAT, true),
@@ -161,7 +147,7 @@ void TestScene::Start()
 	xbotModel.LoadModel(std::string("models/X Bot.fbx"));
 	xbot->transform()->setScale(0.01f);
 	xbot->transform()->setPosition({ 0.f, -0.5f, 1.5f });
-	Material* xbotMaterial = ResourceManager::LoadMaterial("puppet", superShader);
+	Material* xbotMaterial = ResourceManager::LoadMaterial("puppet", shaders[super]);
 	xbotMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::albedo)
 	});
@@ -177,7 +163,7 @@ void TestScene::Start()
 	vampireModel.LoadModel(std::string("models/Skinning Test.fbx"));
 	vampire->transform()->setScale(0.01f);
 	//vampire->transform()->setPosition({ 0.f, -0.5f, 1.f };
-	Material* vampireMaterial = ResourceManager::LoadMaterial("vampire", superShader);
+	Material* vampireMaterial = ResourceManager::LoadMaterial("vampire", shaders[super]);
 	vampireMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/Vampire_diffuse.png", Texture::Type::albedo),
 			ResourceManager::LoadTexture("models/Vampire_normal.png", Texture::Type::normal)
@@ -196,7 +182,6 @@ void TestScene::Start()
 		&directionalLight,
 		""
 	);
-	UpdateAllTransforms();
 }
 
 void TestScene::EarlyUpdate()
@@ -298,13 +283,6 @@ void TestScene::GUI()
 	}
 }
 
-void TestScene::UpdateAllTransforms()
-{
-	for (auto i = transforms.begin(); i != transforms.end(); i++)
-	{
-		(*i).second.UpdateGlobalMatrixCascading();
-	}
-}
 
 void TestScene::OnWindowResize()
 {

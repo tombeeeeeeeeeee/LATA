@@ -42,7 +42,6 @@ SceneManager::SceneManager(Scene* _scene)
 	//TODO:
 	//glfwWindowHint(GLFW_SAMPLES, 16); // for MSAA
 
-
 #if _DEBUG  
 	std::cout << "Running in debug mode!\n";
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
@@ -125,9 +124,27 @@ SceneManager::SceneManager(Scene* _scene)
 
 	scene->cursorPos = &cursorPos;
 
+	scene->shaders.insert(scene->shaders.end(), {
+		ResourceManager::LoadShader("shaders/cubemap.vert", "shaders/cubemap.frag"),
+		ResourceManager::LoadShader("shaders/simpleDepthShader.vert", "shaders/simpleDepthShader.frag"),
+		ResourceManager::LoadShader("shaders/shadowDebug.vert", "shaders/shadowDebug.frag"),
+		ResourceManager::LoadShaderDefaultVert("HDRBloom"),
+		ResourceManager::LoadShaderDefaultVert("brdf"),
+		ResourceManager::LoadShader("prefilter"),
+		ResourceManager::LoadShaderDefaultVert("downSample"),
+		ResourceManager::LoadShaderDefaultVert("upSample"),
+		ResourceManager::LoadShader("irradiance"),
+		ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/superDuper.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
+	});
+
 	scene->Start();
 
-	//std::cout << "Start finished\n";
+	for (auto i = scene->transforms.begin(); i != scene->transforms.end(); i++)
+	{
+		(*i).second.UpdateGlobalMatrixCascading();
+	}
+
+	std::cout << "Start finished\n";
 }
 
 SceneManager::~SceneManager()

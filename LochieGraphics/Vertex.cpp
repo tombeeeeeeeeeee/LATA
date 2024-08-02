@@ -3,7 +3,7 @@
 #include "Graphics.h"
 
 
-Vertex::Vertex(glm::vec4 pos, glm::vec4 nor, glm::vec2 tex, glm::vec3 tan, glm::vec3 bit) :
+Vertex::Vertex(glm::vec3 pos, glm::vec3 nor, glm::vec2 tex, glm::vec3 tan, glm::vec3 bit) :
 	position(pos),
 	normal(nor),
 	texCoord(tex),

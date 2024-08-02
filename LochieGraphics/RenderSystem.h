@@ -1,5 +1,4 @@
 #pragma once
-#include "glad.h"
 #include "Light.h"
 #include "Transform.h"
 #include "ModelRenderer.h"
@@ -7,13 +6,13 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "Skybox.h"
-
 #include "FrameBuffer.h"
-#include "shaderEnum.h"
+#include "ShaderEnum.h"
+
+#include "Graphics.h"
 
 #include <iostream>
-#include "Graphics.h"
-#include "unordered_map"
+#include <unordered_map>
 
 struct bloomMip
 {
@@ -169,10 +168,7 @@ private:
     unsigned int quadVAO = 0;
     unsigned int quadVBO = 0;
 
-    void RenderCube();
-    unsigned int cubeVAO = 0;
-    unsigned int cubeVBO = 0;
-
+    Mesh cube;
 
     //Captures for CubeMap
     glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
