@@ -2,11 +2,7 @@
 
 #include "Scene.h"
 
-#include "Camera.h"
-
 #include "FixedSizeQueue.h"
-
-#include "Graphics.h"
 
 // TODO: fullscreen window with border, exclusive fullscreen
 enum class WindowModes {
@@ -43,6 +39,8 @@ private:
 	static WindowModes windowMode;
 	static unsigned int windowWidth;
 	static unsigned int windowHeight;
+
+	Skybox* defaultSkybox;
 
 	// Callbacks //TODO: change how these functions are called, look at other examples on how callbacks can be handled
 	static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);

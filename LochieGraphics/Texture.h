@@ -70,6 +70,8 @@ public:
 
 	void DeleteTexture();
 
+	static void EditorGUI(std::vector<Texture*>& textures);
+
 private:
 
 	Texture() = default;

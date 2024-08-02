@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 
 #include "TestScene.h"
+#include "ArtScene.h"
 
 int main()
 {

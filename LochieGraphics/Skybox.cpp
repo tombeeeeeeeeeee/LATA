@@ -1,10 +1,22 @@
 #include "Skybox.h"
 
+#include "Camera.h"
+
 Skybox::Skybox(Shader* _shader, GLuint _texture) :
 	shader(_shader),
 	texture(_texture)
 {
 	shaderGUID = shader->GUID;
+}
+
+void Skybox::Update(Camera* camera, float ratio)
+{
+	glm::mat4 view = glm::mat4(glm::mat3(camera->GetViewMatrix()));
+	// TODO: This math shouldn't be here, maybe move to camera class or get the projection from scenemanager
+	glm::mat4 projection = glm::perspective(glm::radians(camera->fov), ratio, camera->nearPlane, camera->farPlane);
+	glm::mat4 skyBoxVP = projection * view;
+	Update(skyBoxVP);
+
 }
 
 void Skybox::Update(glm::mat4 translationLessVP)
