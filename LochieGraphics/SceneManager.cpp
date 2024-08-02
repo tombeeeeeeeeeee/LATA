@@ -263,6 +263,7 @@ void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int he
 	windowWidth = width;
 	windowHeight = height;
 
+	scene->renderSystem->ScreenResize(windowWidth, windowHeight);
 	scene->OnWindowResize();
 }
 

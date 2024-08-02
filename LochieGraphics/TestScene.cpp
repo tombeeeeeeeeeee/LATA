@@ -276,7 +276,6 @@ void TestScene::GUI()
 void TestScene::OnWindowResize()
 {
 	//glDeleteTextures(1, &textureColorbuffer);
-	renderSystem->ScreenResize(*windowWidth, *windowHeight);
 }
 
 TestScene::~TestScene()
