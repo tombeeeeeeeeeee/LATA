@@ -3,9 +3,20 @@
 #include "ResourceManager.h"
 #include "SceneManager.h"
 
+//#include "imgui_impl_opengl3.h"
+//#include "imgui_impl_opengl3_loader.h"
+
 #include <filesystem>
 
 ArtScene* ArtScene::artScene = nullptr;
+//Shader* ArtScene::singelChannelUIImage = nullptr;
+
+
+
+//void ArtScene::SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd)
+//{
+//	singelChannelUIImage->Use();
+//}
 
 void ArtScene::DragDropCallback(GLFWwindow* window, int pathCount, const char* paths[])
 {
@@ -27,22 +38,16 @@ void ArtScene::ImportFromPaths(int pathCount, const char* paths[])
 			ImportMesh(path, filename);
 			continue;
 		}
-		else {
-			int lastSlash = path.find_last_of("/\\");
-			int lastPeriod = path.find_last_of(".");
-			if (lastPeriod == std::string::npos) {
-				lastPeriod = 0;
-			}
-			if (lastSlash > lastPeriod) {
-				stringPaths.clear();
-				newPaths.clear();
-				for (const auto& entry : std::filesystem::directory_iterator(path)) {
-					stringPaths.push_back(entry.path().string());
-					newPaths.push_back(stringPaths.back().c_str());
-				}
-				ImportFromPaths(newPaths.size(), newPaths.data());
-				continue;
-			}
+		// Find last of will be -1 if none found (when cast to an int)
+		// Checking if the path is folder
+		// TODO: Maybe do this properly with some filesystem thing instead
+		auto lastPeriod = path.find_last_of(".");
+		if (lastPeriod == std::string::npos) {
+			lastPeriod = 0;
+		}
+		if (path.find_last_of("/\\") > lastPeriod) {
+			ImportFolder(path);
+			continue;
 		}
 		std::cout << "Unknown item dropped!: " << path << "\n";
 	}
@@ -68,9 +73,11 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 	// Load texture
 	Texture* newTexture = ResourceManager::LoadTexture(path, type);
 
+	texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
+
 	// Add texture to the material
 	material->AddTextures(std::vector<Texture*>{ newTexture });
-	std::cout << "Added texture!" << filename << "\n";
+	std::cout << "Added texture: " << filename << "\n";
 
 }
 
@@ -81,10 +88,23 @@ void ArtScene::ImportMesh(std::string& path, std::string& filename)
 	model = Model(path);
 }
 
+void ArtScene::ImportFolder(std::string& path)
+{
+	stringPaths.clear();
+	newPaths.clear();
+	for (const auto& entry : std::filesystem::directory_iterator(path)) {
+		stringPaths.push_back(entry.path().string());
+		newPaths.push_back(stringPaths.back().c_str());
+	}
+	ImportFromPaths(newPaths.size(), newPaths.data());
+}
+
 ArtScene::ArtScene()
 {
 	artScene = this;
 }
+
+
 
 void ArtScene::Start()
 {
@@ -103,8 +123,7 @@ void ArtScene::Start()
 		&pointLights[3],
 	});
 
-	glfwSetDropCallback(SceneManager::window, DragDropCallback);
-}
+	glfwSetDropCallback(SceneManager::window, DragDropCallback);}
 
 void ArtScene::Update(float delta)
 {
@@ -123,13 +142,37 @@ void ArtScene::Draw()
 }
 
 
-
 void ArtScene::GUI()
 {
-	ImGui::ShowDemoWindow();
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		if (ImGui::CollapsingHeader("Current Material")) {
-			ImGui::Image((void*)material->texturePointers.begin()->second->GLID, {100, 100 } );
+			ImGui::SliderFloat("Preview Scale", &texturePreviewScale, 0.01f, 1.0f, "% .3f", ImGuiSliderFlags_Logarithmic);
+			
+			ImGui::BeginChild("Textures", ImVec2(0, 0), ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+			for (auto& i : material->texturePointers)
+			{
+				ImGui::BeginGroup();
+				ImGui::Text(i.first.c_str());
+				if (i.second != nullptr) {
+					//switch (i.second->type)
+					//{
+					//case Texture::Type::ao:
+					//case Texture::Type::height:
+					//case Texture::Type::metallic:
+					//case Texture::Type::roughness:
+					//	ImGui::GetWindowDrawList()->AddCallback(SetSingleChannelUIShader, (void*)(0));
+					//	break;
+					//default:
+					//	break;
+					//}
+
+					ImGui::Image((void*)i.second->GLID, { texturePreviewScale * (float)i.second->width, texturePreviewScale * (float)i.second->height } );
+				}
+				ImGui::EndGroup();
+				ImGui::SameLine();
+			}
+			ImGui::NewLine();
+			ImGui::EndChild();
 		}
 	}
 	ImGui::End();
@@ -137,4 +180,5 @@ void ArtScene::GUI()
 
 ArtScene::~ArtScene()
 {
+
 }
