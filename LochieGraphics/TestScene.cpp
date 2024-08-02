@@ -64,9 +64,9 @@ void TestScene::Start()
 	skyboxFaces = { "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/leftImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/rightImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/upImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/downImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/frontImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/backImage.png" };
 	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/SkyBox Volume 2/Stars01/leftImage.png", "images/SkyBox Volume 2/Stars01/rightImage.png", "images/SkyBox Volume 2/Stars01/upImage.png", "images/SkyBox Volume 2/Stars01/downImage.png", "images/SkyBox Volume 2/Stars01/frontImage.png", "images/SkyBox Volume 2/Stars01/backImage.png" };
-	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/otherskybox/px.png", "images/otherskybox/nx.png", "images/otherskybox/py.png", "images/otherskybox/ny.png", "images/otherskybox/pz.png", "images/otherskybox/nz.png" };
-	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	//TODO: Should be using the resource manager
 	//skybox = new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces));
 	skybox = skyboxes[9];
@@ -75,7 +75,7 @@ void TestScene::Start()
 	Material* boxMaterial = ResourceManager::LoadMaterial("box", shaders[super]);
 	boxMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("images/container2.png", Texture::Type::albedo),
-			ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::roughness),
+			ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::specular),
 	});
 	cubeModel.AddMesh(new Mesh(Mesh::presets::cube));
 	boxes->setRenderer(new ModelRenderer(&cubeModel, boxMaterial));

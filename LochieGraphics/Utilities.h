@@ -6,7 +6,6 @@ std::string FileToString(std::string path);
 
 std::string PointerToString(void* pointer);
 
-int Wrap(int value, int arraySize)
-{
-	return (value % arraySize + arraySize) % arraySize;
+namespace Utilities {
+	int Wrap(int value, int arraySize);
 }

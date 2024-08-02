@@ -16,7 +16,7 @@ public:
 	RigidBody(
 		float _invMass,
 		float _invMomentOfInertia,
-		std::vector<Collider> _colliders = {},
+		std::vector<Collider*> _colliders = {},
 		int _collisionLayer = 0,
 		bool _isStatic = false
 	) :
