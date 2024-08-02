@@ -10,7 +10,8 @@ RenderSystem::RenderSystem(GLFWwindow* _window)
 void RenderSystem::Start(
     unsigned int _skyboxTexture,
     std::vector<Shader*>* _shaders,
-    Light* _shadowCaster
+    Light* _shadowCaster,
+    std::string paintStrokeTexturePath
 )
 {
     if (SCREEN_WIDTH == 0)
@@ -56,13 +57,11 @@ void RenderSystem::Start(
     float borderColor[] = { 1.0, 1.0, 1.0, 1.0 }; // TODO: Move to be apart of texture
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     shadowFrameBuffer = new FrameBuffer(shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight, nullptr, depthMap, false);
+    paintStrokeTexture = nullptr;//ResourceManager::LoadTexture(paintStrokeTexturePath, Texture::Type::paint);
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
-    (*shaders)[ShaderIndex::super]->Use();
-    (*shaders)[ShaderIndex::super]->setInt("irradianceMap", 7);
-    (*shaders)[ShaderIndex::super]->setInt("prefilterMap", 8);
-    (*shaders)[ShaderIndex::super]->setInt("brdfLUT", 9);
 
+    ResourceManager::BindFlaggedVariables();
 }
 
 void RenderSystem::SetIrradianceMap(unsigned int textureID)
@@ -360,6 +359,7 @@ void RenderSystem::Update(
 
     glDepthFunc(GL_LEQUAL); // Change depth function
     Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);
+    
     RenderQuad();
     glDepthFunc(GL_LESS);
 
@@ -367,7 +367,7 @@ void RenderSystem::Update(
     (*shaders)[ShaderIndex::super]->Use();
     glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, camera->nearPlane, camera->farPlane);
     (*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
-
+    
     DrawAnimation(animators, transforms, renders, (*shaders)[ShaderIndex::super]);
 
     RenderBloom(bloomBuffer);
@@ -475,26 +475,42 @@ void RenderSystem::DrawRenderers(
         Shader* curShader = i->second.material->getShader();
         curShader->setMat4("model", transforms[i->first].getGlobalMatrix());
         int samplerCount = i->second.material->texturePointers.size();
-        if (curShader->getFlag(Shader::Flags::Spec))
-        {
-            glActiveTexture(GL_TEXTURE0 + 7);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
 
-            glActiveTexture(GL_TEXTURE0 + 8);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+        ActivateFlaggedVariables(curShader, i->second.material);
 
-            glActiveTexture(GL_TEXTURE0 + 9);
-            glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-        }
-
-        glUniform3fv(glGetUniformLocation(curShader->GLID, "materialColour"), 1, &i->second.material->colour[0]);
-
+        glUniform3fv(glGetUniformLocation(curShader->GLID, "materialColour"), 1, &(i->second.material->colour[0]));
 
         Model* model = i->second.model;
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
             mesh->Draw();
         }
+    }
+}
+
+void RenderSystem::ActivateFlaggedVariables(
+    Shader* shader,
+    Material* mat
+)
+{
+    int flag = shader->getFlag();
+    shader->Use();
+
+    if (flag & Shader::Flags::Spec)
+    {
+        glActiveTexture(GL_TEXTURE0 + 7);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+
+        glActiveTexture(GL_TEXTURE0 + 8);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+
+        glActiveTexture(GL_TEXTURE0 + 9);
+        glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+    }
+    if (flag & Shader::Flags::Painted)
+    {
+        glActiveTexture(GL_TEXTURE0 + 10);
+        glBindTexture(GL_TEXTURE_2D, paintStrokeTexture->GLID);
     }
 }
 

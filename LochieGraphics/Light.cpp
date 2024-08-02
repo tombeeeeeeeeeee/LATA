@@ -73,11 +73,12 @@ glm::mat4 DirectionalLight::getShadowView() const
 PointLight::PointLight(glm::vec3 _colour, glm::vec3 _position, float _constant, float _linear, float _quadratic, int _index) :
 	Light(_colour),
 	position(_position),
-	constant(_constant),
+	constant(1.0f),
 	linear(_linear),
 	quadratic(_quadratic),
 	index(_index)
 {
+	SetRange(_linear, _quadratic);
 }
 
 PointLight::PointLight(glm::vec3 _colour, glm::vec3 _position, float _range, int _index) :
@@ -107,7 +108,7 @@ void PointLight::GUI()
 	ImGui::DragFloat("Projection FOV", &projectionFov, 0.1f);
 	ImGui::DragFloat3(("Position##" + tag).c_str(),   &position[0], 0.01f);
 	//Tom Changed this, feel free to set it back.
-	if(ImGui::DragFloat(("Range##" + tag).c_str(), &range, 0.0f))
+	if(ImGui::DragFloat(("Range##" + tag).c_str(), &range, 0.1f))
 		SetRange(range);
 	//ImGui::SliderFloat(("Constant##" + tag).c_str(),  &constant,    0.f, 1.f);
 	//ImGui::SliderFloat(("Linear##" + tag).c_str(),    &linear,      0.f, 1.f);
@@ -136,8 +137,9 @@ glm::mat4 PointLight::getShadowView() const
 	return glm::lookAt(getPos(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.0f, 0.f));
 }
 
-void PointLight::SetRange(float range)
+void PointLight::SetRange(float _range)
 {
+	range = _range;
 	constant = 1.0f;
 	if (range <= 7)
 	{
@@ -231,6 +233,88 @@ void PointLight::SetRange(float range)
 	}
 }
 
+void PointLight::SetRange(float _linear, float _quadratic)
+{
+
+	if (_quadratic >= 1.8f)
+	{
+		range = 7;
+	}
+
+	else if (quadratic >= 0.44f)
+	{
+		float ratio = _quadratic - (0.44f - 1.8f);
+		ratio /= -1.8f;
+		range = 7 + (13 - 7) * ratio;
+	}
+
+	else if (range <= 20)
+	{
+		float ratio = _quadratic - (0.2f - 0.44f);
+		ratio /= -0.44f;
+		range = 13 + (20 - 13) * ratio;
+	}
+
+	else if (range <= 32)
+	{
+		float ratio = _quadratic - (0.07f - 0.2f);
+		ratio /= -0.2f;
+		range = 20 + (32 - 20) * ratio;
+	}
+
+	else if (range <= 50)
+	{
+		float ratio = _quadratic - (0.032f - 0.07f);
+		ratio /= -0.07f;
+		range = 32 + (50 - 32) * ratio;
+	}
+
+	else if (range <= 65)
+	{
+		float ratio = _quadratic - (0.017f - 0.032f);
+		ratio /= -0.032f;
+		range = 50 + (65 - 50) * ratio;
+	}
+
+	else if (range <= 100)
+	{
+		float ratio = _quadratic - (0.0075f - 0.017f);
+		ratio /= -0.017f;
+		range = 65 + (100 - 65) * ratio;
+	}
+
+	else if (range <= 160)
+	{
+		float ratio = _quadratic - (0.0028f - 0.0075f);
+		ratio /= -0.0075f;
+		range = 100 + (160 - 100) * ratio;
+	}
+	else if (range <= 200)
+	{
+		float ratio = _quadratic - (0.0019f - 0.0028f);
+		ratio /= -0.0028f;
+		range = 160 + (200 - 160) * ratio;
+	}
+	else if (range <= 325)
+	{
+		float ratio = _quadratic - (0.0007f - 0.0019f);
+		ratio /= -0.0019f;
+		range = 200 + (325 - 200) * ratio;
+	}
+	else if (range <= 600)
+	{
+		float ratio = _quadratic - (0.0002f - 0.0007f);
+		ratio /= -0.0007f;
+		range = 325 + (600 - 325) * ratio;
+	}
+	else
+	{
+		float ratio = _quadratic - (0.000007f - 0.0002f);
+		ratio /= -0.0002f;
+		range = 600 + (3250 - 600) * ratio;
+	}
+}
+
 Spotlight::Spotlight(glm::vec3 _colour, glm::vec3 _position, float _constant, float _linear, float _quadratic, glm::vec3 _direction, float _cutOff, float _outerCutOff) : PointLight(_colour, _position, _constant, _linear, _quadratic, -1),
 	direction(_direction), cutOff(_cutOff), outerCutOff(_outerCutOff)
 {
@@ -256,7 +340,7 @@ void Spotlight::GUI()
 	ImGui::DragFloat3(("Position##" + tag).c_str(),       &position[0],   0.01f);
 	ImGui::DragFloat3(("Direction##" + tag).c_str(),      &direction[0], -1.f, 1.f);
 	//Tom Changed this, feel free to set it back.
-	if (ImGui::DragFloat(("Range##" + tag).c_str(), &range, 0.0f))
+	if (ImGui::DragFloat(("Range##" + tag).c_str(), &range, 0.1f))
 		SetRange(range);
 	//ImGui::SliderFloat(("Constant##" + tag).c_str(),  &constant,    0.f, 1.f);
 	//ImGui::SliderFloat(("Linear##" + tag).c_str(),    &linear,      0.f, 1.f);

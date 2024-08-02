@@ -16,9 +16,7 @@ const std::unordered_map<Texture::Type, std::string> Texture::TypeNames =
 	{ Type::height, "height" },
 	{ Type::emission, "emission" }, // TODO: Should cubemap be a type?
 	{ Type::albedo, "albedo" },
-	{ Type::metallic, "metallic" },
-	{ Type::roughness, "roughness" },
-	{ Type::ao, "ao" },
+	{ Type::PBR, "PBR" },
 };
 
 Texture::Texture(std::string _path, Type _type, int _wrappingMode, bool flip) :
@@ -58,10 +56,10 @@ void Texture::Load()
 		format = GL_RG;
 		break;
 	case STBI_rgb:
-		format = type != Type::diffuse ? GL_RGB : GL_SRGB;
+		format = type != Type::diffuse && type != Type::albedo ? GL_RGB : GL_SRGB;
 		break;
 	case STBI_rgb_alpha:
-		format = type != Type::diffuse ? GL_RGBA : GL_SRGB_ALPHA;
+		format = type != Type::diffuse && type != Type::albedo ? GL_RGBA : GL_SRGB_ALPHA;
 		break;
 	default:
 		std::cout << "Texture failed to load, could not be read correctly, path: " << path << "\n";
@@ -162,7 +160,11 @@ GLuint Texture::LoadCubeMap(std::string faces[6])
 			std::cout << "Cubemap face failed to load at path: " << faces[i] << "\n";
 			continue;
 		}
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		if(components == 3)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		else
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB_ALPHA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
 		stbi_image_free(data);
 	}
 	return GLID;

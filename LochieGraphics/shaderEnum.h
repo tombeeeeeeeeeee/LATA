@@ -8,7 +8,8 @@ enum ShaderIndex
 	brdf,		
 	prefilter,	
 	downSample,
-	upSample,	
-	irradiance,
-	super,
+  upSample,	
+  irradiance,
+  super,
+  tom,
 };

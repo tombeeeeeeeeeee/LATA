@@ -134,7 +134,7 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShaderDefaultVert("downSample"),
 		ResourceManager::LoadShaderDefaultVert("upSample"),
 		ResourceManager::LoadShader("irradiance"),
-		ResourceManager::LoadShader("shaders/superShader.vert", "shaders/superShader.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
+		ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/superDuper.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
 	});
 
 	scene->Start();

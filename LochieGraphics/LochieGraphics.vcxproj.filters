@@ -51,6 +51,9 @@
     <Filter Include="Source Files\Systems">
       <UniqueIdentifier>{f60ce024-c93b-46e0-9a13-7117129651af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Physics">
+      <UniqueIdentifier>{a920641d-cef6-4ff5-8480-d14c9ddc90e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -189,6 +192,15 @@
       <Filter>Source Files\Networking\eNet</Filter>
     </ClCompile>
     <ClCompile Include="RenderSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Source Files\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionFunctions.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
@@ -355,6 +367,21 @@
     <ClInclude Include="shaderEnum.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsSystem.h">
+      <Filter>Source Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Source Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionFunctions.h">
+      <Filter>Source Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionPacket.h">
+      <Filter>Source Files\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -475,6 +502,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\upSample.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\superDuper.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\superDuper.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

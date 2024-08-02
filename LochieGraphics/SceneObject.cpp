@@ -41,7 +41,7 @@ void SceneObject::GUI()
 		scene->renderers[GUID].GUI();
 	
 	//TODO Add animator parts;
-	//if ((parts & Parts::animator)
+	//if ((parts & Parts::animator))
 	//	scene->animators[GUID].GUI();
 }
 

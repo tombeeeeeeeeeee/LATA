@@ -108,7 +108,7 @@ GLint Shader::getUniformLocation(const std::string& name) const
 	GLint location = glGetUniformLocation(GLID, name.c_str());
 	if (location == -1) {
 		// TODO: Make a better error handling system instead of lagging and spamming the console
-		//std::cout << "Couldn't find: \"" << name << "\" in shader ID" << GLID << "\n";
+		// std::cout << "Couldn't find: \"" << name << "\" in shader ID" << GLID << "\n";
 	}
 	return location;
 }

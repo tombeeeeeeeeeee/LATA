@@ -35,6 +35,7 @@ private:
 
 
 	SceneObject* backpack   = new SceneObject(this);
+	SceneObject* gun		= new SceneObject(this);
 	SceneObject* soulSpear  = new SceneObject(this);
 	SceneObject* testRedBox = new SceneObject(this);
 	SceneObject* grass      = new SceneObject(this);

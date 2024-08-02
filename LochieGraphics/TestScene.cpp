@@ -64,11 +64,13 @@ void TestScene::Start()
 	skyboxFaces = { "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/leftImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/rightImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/upImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/downImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/frontImage.png", "images/SkyBox Volume 2/DeepsSpaceRedWithPlanet/backImage.png" };
 	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
 	skyboxFaces = { "images/SkyBox Volume 2/Stars01/leftImage.png", "images/SkyBox Volume 2/Stars01/rightImage.png", "images/SkyBox Volume 2/Stars01/upImage.png", "images/SkyBox Volume 2/Stars01/downImage.png", "images/SkyBox Volume 2/Stars01/frontImage.png", "images/SkyBox Volume 2/Stars01/backImage.png" };
-	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
+	skyboxFaces = { "images/otherskybox/px.png", "images/otherskybox/nx.png", "images/otherskybox/py.png", "images/otherskybox/ny.png", "images/otherskybox/pz.png", "images/otherskybox/nz.png" };
+	skyboxes.push_back(new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data())));
 	//TODO: Should be using the resource manager
 	//skybox = new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces));
-	skybox = skyboxes[5];
-	skyboxIndex = 5;
+	skybox = skyboxes[9];
+	skyboxIndex = 9;
 
 	Material* boxMaterial = ResourceManager::LoadMaterial("box", shaders[super]);
 	boxMaterial->AddTextures(std::vector<Texture*> {
@@ -93,37 +95,40 @@ void TestScene::Start()
 	grass->transform()->setPosition({ 1.9f, 0.f, 2.6f });
 	grass->transform()->setEulerRotation({ 0.f, -43.2f, 0.f });
 
-	backpackModel = Model("models/backpack/backpack.obj", false);
+	backpackModel = Model("models/TomTest/Cerberus_LP.FBX");
 	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", shaders[super]);
 	backpackMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::LoadTexture("models/backpack/diffuse.jpg", Texture::Type::albedo, GL_REPEAT, false),
-			ResourceManager::LoadTexture("models/backpack/normal.png", Texture::Type::normal, GL_REPEAT, false),
-			ResourceManager::LoadTexture("models/backpack/specular.jpg", Texture::Type::metallic, GL_REPEAT, false),
-			ResourceManager::LoadTexture("models/backpack/roughness.jpg", Texture::Type::roughness, GL_REPEAT, false),
+		ResourceManager::LoadTexture("models/TomTest/Cerberus_A.tga", Texture::Type::albedo, GL_REPEAT),
+			ResourceManager::LoadTexture("models/TomTest/Cerberus_N.tga", Texture::Type::normal, GL_REPEAT),
+			ResourceManager::LoadTexture("models/TomTest/Cerberus_PBR.tga", Texture::Type::PBR, GL_REPEAT),
+			//ResourceManager::LoadTexture("models/backpack/roughness.jpg", Texture::Type::emission, GL_REPEAT, false),
 	});
 	backpack->setRenderer(new ModelRenderer(&backpackModel, backpackMaterial));
 	backpack->transform()->setPosition({ -4.5f, 1.7f, 0.f });
-	backpack->transform()->setEulerRotation({0.f, 52.6f, 0.f});
-	
+	backpack->transform()->setScale(0.075f);
+	backpack->transform()->setEulerRotation({-90.f, 0.f, 0.f});
+
+
 	tiresModel = Model("models/old-tires-dirt-low-poly/model.dae", false);
 	Material* tiresMaterial = ResourceManager::LoadMaterial("tires", shaders[super]);
 	tiresMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_albedo.jpeg", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_normal.png", Texture::Type::normal, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_metallic.jpeg", Texture::Type::metallic, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_roughness.jpeg", Texture::Type::roughness, GL_REPEAT, true)
+			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_metallic.jpeg", Texture::Type::PBR, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_roughness.jpeg", Texture::Type::emission, GL_REPEAT, true)
 	});
 	tires->setRenderer(new ModelRenderer(&tiresModel, tiresMaterial));
 	tires->transform()->setPosition({-0.1f, 0.f, 1.2f});
 
-	testRedBoxModel = Model("models/normalBoxTest/Box_normal_example.obj");
+	testRedBoxModel = Model("models/TomBox/cube.obj");
 	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", shaders[super]);
+
 	testRedBoxMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_BaseColor.png", Texture::Type::albedo, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Normal.png", Texture::Type::normal, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Metallic.png", Texture::Type::metallic, GL_REPEAT, true),
+		ResourceManager::LoadTexture("models/TomBox/brickDif.png", Texture::Type::albedo, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/TomBox/brickNorm.png", Texture::Type::normal, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/TomBox/brickSpec.png", Texture::Type::PBR, GL_REPEAT, true),
 			//ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_AO.png", Texture::Type::ao, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Roughness.png", Texture::Type::roughness, GL_REPEAT, true),
+			//ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Roughness.png", Texture::Type::emission, GL_REPEAT, true),
 	});
 	testRedBox->setRenderer(new ModelRenderer(&testRedBoxModel, testRedBoxMaterial));
 	testRedBox->transform()->setPosition({ 0.6f, 3.5f, -3.5f });
@@ -132,8 +137,8 @@ void TestScene::Start()
 	soulSpearModel = Model(std::string("models/soulspear/soulspear.obj"), true);
 	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", shaders[super]);
 	soulSpearMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse, GL_REPEAT, true),
-			ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::specular, GL_REPEAT, true),
+		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::albedo, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::PBR, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
 	});
 	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, soulSpearMaterial));
@@ -144,7 +149,7 @@ void TestScene::Start()
 	xbot->transform()->setPosition({ 0.f, -0.5f, 1.5f });
 	Material* xbotMaterial = ResourceManager::LoadMaterial("puppet", shaders[super]);
 	xbotMaterial->AddTextures(std::vector<Texture*> {
-		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::diffuse)
+		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::albedo)
 	});
 	xbot->setRenderer(new ModelRenderer(&xbotModel, xbotMaterial));
 
@@ -153,7 +158,7 @@ void TestScene::Start()
 	xbotAnimator = Animator(&xbotChicken);
 	xbotOtherAnimator = Animator(&xbotIdle);
 	xbotBlendedAnimator = BlendedAnimator(&xbotChicken, &xbotIdle);
-	xbot->setAnimator(&xbotBlendedAnimator);
+	xbot->setAnimator(&xbotOtherAnimator);
 
 	vampireModel.LoadModel(std::string("models/Skinning Test.fbx"));
 	vampire->transform()->setScale(0.01f);
@@ -174,7 +179,8 @@ void TestScene::Start()
 	renderSystem->Start(
 		skybox->texture,
 		&shaders,
-		&directionalLight
+		&directionalLight,
+		""
 	);
 }
 
@@ -190,8 +196,8 @@ void TestScene::Update(float delta)
 	//}
 	//else
 	//{
-		xbotBlendedAnimator.lerpAmount -= delta;
-		if (xbotBlendedAnimator.lerpAmount < 0) { xbotBlendedAnimator.lerpAmount = 0; }
+		//xbotBlendedAnimator.lerpAmount -= delta;
+		//if (xbotBlendedAnimator.lerpAmount < 0) { xbotBlendedAnimator.lerpAmount = 0; }
 	//}
 
 
@@ -222,10 +228,10 @@ void TestScene::Update(float delta)
 		(*i).second.UpdateAnimation(delta);
 	}
 
-	xbotAnimator.UpdateAnimation(delta);
-	xbotOtherAnimator.UpdateAnimation(delta);
-	xbotBlendedAnimator.UpdateAnimation(delta);
-	vampireAnimator.UpdateAnimation(delta);
+	//xbotAnimator.UpdateAnimation(delta);
+	//xbotOtherAnimator.UpdateAnimation(delta);
+	//xbotBlendedAnimator.UpdateAnimation(delta);
+	//vampireAnimator.UpdateAnimation(delta);
 }
 
 void TestScene::Draw()
@@ -260,19 +266,6 @@ void TestScene::GUI()
 		ImGui::End();
 	}
 
-	if (!ImGui::Begin("Skybox", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::End();
-	}
-	else {
-		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, (unsigned int)(skyboxes.size() - 1))) {
-			skybox = skyboxes[skyboxIndex];
-			renderSystem->skyboxTexture = skybox->texture;
-			renderSystem->IBLBufferSetup(skybox->texture);
-			//renderSystem->SetIrradianceMap(skybox->texture);
-			//renderSystem->SetPrefilteredMap(skybox->texture);
-		}
-		ImGui::End();
-	}
 
 	if (!ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
@@ -281,6 +274,11 @@ void TestScene::GUI()
 		ImGui::SliderFloat("Animation trans", &xbotBlendedAnimator.lerpAmount, 0.f, 1.0f);
 		ImGui::Checkbox("Show shadow debug", &renderSystem->showShadowDebug);
 		ImGui::DragFloat("Exposure", &renderSystem->exposure, 0.01f, 0.0f, 5.0f);
+		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, (unsigned int)(skyboxes.size() - 1))) {
+			skybox = skyboxes[skyboxIndex];
+			renderSystem->skyboxTexture = skybox->texture;
+			renderSystem->IBLBufferSetup(skybox->texture);
+		}
 		ImGui::End();
 	}
 }

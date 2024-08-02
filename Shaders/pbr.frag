@@ -1,12 +1,12 @@
 #version 460 core
 layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 bloomColour;
 
 struct Material {
-    sampler2D normal1;
-    sampler2D albedo1;
-    sampler2D metallic1;
-    sampler2D roughness1;
-    sampler2D ao1;
+    sampler2D albedo;
+    sampler2D normal;
+    sampler2D PBR;
+    sampler2D emission;
 }; 
 
 struct DirectionalLight {
@@ -42,6 +42,7 @@ const float alphaDiscard = 0.5;
 
 in vec3 FragPos;
 in vec2 TexCoords;
+in vec3 fragmentColour;
 
 in vec3 TangentViewPos;
 in vec3 TangentFragPos;
@@ -77,14 +78,13 @@ float ao;
 
 void main()
 {
-    //FragColor = vec4(0, 1, 0.5, 1);
-    //return;
-    albedo = texture(material.albedo1, TexCoords).rgb;
-    metallic = texture(material.metallic1, TexCoords).r;
-    roughness = texture(material.roughness1, TexCoords).r;
-    ao = texture(material.ao1, TexCoords).r;
+    vec4 PBR = texture(material.PBR, TexCoords);
+    albedo = fragmentColour; // * texture(material.albedo, TexCoords).rgb;
+    metallic = PBR.r;
+    roughness = PBR.g;
+    ao = 1.0; //PBR.b;
 
-    vec3 normal = texture(material.normal1, TexCoords).rgb;
+    vec3 normal = texture(material.normal, TexCoords).rgb;
     // transform normal vector to range [-1,1]
     normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent space
 
@@ -113,6 +113,20 @@ void main()
 //        discard;
 //    }
     FragColor = vec4(result, 1.0);
+    
+    
+    float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
+	if(brightness > 1)
+	{ 
+		bloomColour = vec4(result, min(brightness - 1.0, 1.0));
+	}
+	else bloomColour = vec4(0.0, 0.0, 0.0, 1.0);
+
+    vec4 emissionColour = texture(material.emission, TexCoords);
+
+    bloomColour = vec4(emissionColour.rgb + bloomColour.rgb, 1.0);
+    bloomColour *= emissionColour.a + 1.0;
+
 } 
 
 
