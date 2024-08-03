@@ -3,10 +3,12 @@
 
 #include "TestScene.h"
 #include "ArtScene.h"
+#include "InputTest.h"
+
 
 int main()
 {
-	SceneManager sceneManager(new TestScene());
+	SceneManager sceneManager(new InputTest());
 	while (!sceneManager.ShouldClose())
 	{
 		sceneManager.Update();
