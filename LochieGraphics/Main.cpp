@@ -4,12 +4,14 @@
 #include "TestScene.h"
 #include "EmptyScene.h"
 #include "ArtScene.h"
+#include "InputTest.h"
+
 
 
 
 int main()
 {
-	SceneManager sceneManager(new EmptyScene());
+	SceneManager sceneManager(new InputTest());
 	while (!sceneManager.ShouldClose())
 	{
 		sceneManager.Update();
