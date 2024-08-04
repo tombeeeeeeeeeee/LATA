@@ -9,6 +9,7 @@
 #include "FrameBuffer.h"
 #include "ShaderEnum.h"
 
+#include "LineRenderer.h"
 #include "Graphics.h"
 
 #include <iostream>
@@ -26,6 +27,8 @@ const int bloomMipMapCount = 6;
 class RenderSystem
 {
 public:
+
+    LineRenderer lines;
 
     RenderSystem(GLFWwindow* window);
 

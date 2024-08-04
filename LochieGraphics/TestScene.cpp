@@ -182,6 +182,27 @@ void TestScene::EarlyUpdate()
 
 void TestScene::Update(float delta)
 {
+	LineRenderer& lines = renderSystem->lines;
+
+	lines.SetColour({ 0.0f, 1.0f, 0.0f });
+	lines.DrawLineSegment({ 0.0f, 0.0f, 0.0f }, { 10.0f, 0.0f, 10.0f });
+	lines.DrawLineSegment({ 10.0f, 10.0f, 10.0f }, { -10.0f, -10.0f, -10.0f });
+	lines.DrawLineSegment({ 10.0f, 10.0f, -10.0f }, { -10.0f, -10.0f, 10.0f });
+	lines.DrawLineSegment({ 10.0f, -10.0f, 10.0f }, { -10.0f, 10.0f, -10.0f });
+	lines.DrawLineSegment({ 10.0f, -10.0f, -10.0f }, { -10.0f, 10.0f, 10.0f });
+	lines.DrawLineSegment({ -10.0f, 10.0f, 10.0f }, { 10.0f, -10.0f, -10.0f });
+	lines.DrawLineSegment({ -10.0f, 10.0f, -10.0f }, { 10.0f, -10.0f, 10.0f });
+	lines.DrawLineSegment({ -10.0f, -10.0f, 10.0f }, { 10.0f, 10.0f, -10.0f });
+
+
+	lines.AddPointToLine({ 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f });
+	lines.AddPointToLine({ 1.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 0.0f });
+	lines.AddPointToLine({ 2.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
+	lines.AddPointToLine({ 3.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 1.0f });
+	lines.AddPointToLine({ 4.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f });
+	lines.AddPointToLine({ 5.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 1.0f });
+	lines.AddPointToLine({ 6.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f });
+	lines.FinishLineStrip();
 	//if (animateBlendDirectionRight) {
 	//	xbotBlendedAnimator.lerpAmount += delta;
 	//	if (xbotBlendedAnimator.lerpAmount > 1.f) { xbotBlendedAnimator.lerpAmount = 1.f; }

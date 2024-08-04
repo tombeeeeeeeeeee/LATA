@@ -61,6 +61,9 @@ void RenderSystem::Start(
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
 
+    (*shaders)[ShaderIndex::lines]->Use();
+    lines.Initialise();
+
     ResourceManager::BindFlaggedVariables();
 }
 
@@ -292,7 +295,7 @@ void RenderSystem::Update(
 	shadowFrameBuffer->Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //RENDER SCENE
+    //RENDER SCENE FOR SHADOWS
 
     for(auto i = shadowCasters.begin(); i != shadowCasters.end(); i++)
     {
@@ -356,6 +359,10 @@ void RenderSystem::Update(
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     DrawRenderers(renders, transforms);
+
+    (*shaders)[ShaderIndex::lines]->Use();
+    lines.Draw();
+
 
     glDepthFunc(GL_LEQUAL); // Change depth function
     Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);
@@ -478,6 +485,7 @@ void RenderSystem::DrawRenderers(
 
         ActivateFlaggedVariables(curShader, i->second.material);
 
+        // TODO: use shader function
         glUniform3fv(glGetUniformLocation(curShader->GLID, "materialColour"), 1, &(i->second.material->colour[0]));
 
         Model* model = i->second.model;

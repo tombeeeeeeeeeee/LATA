@@ -2,8 +2,11 @@
 #include "SceneManager.h"
 
 #include "TestScene.h"
+#include "EmptyScene.h"
 #include "ArtScene.h"
 #include "InputTest.h"
+
+
 
 
 int main()
