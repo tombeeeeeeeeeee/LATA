@@ -136,8 +136,11 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShaderDefaultVert("downSample"),
 		ResourceManager::LoadShaderDefaultVert("upSample"),
 		ResourceManager::LoadShader("irradiance"),
+		ResourceManager::LoadShader("lineRenderer", Shader::Flags::VPmatrix),
 		ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/superDuper.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
 	});
+
+
 
 	scene->renderSystem = new RenderSystem(window);
 
@@ -210,7 +213,10 @@ void SceneManager::Update()
 	ImGui::NewFrame();
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 	
+	scene->renderSystem->lines.Clear();
 	scene->Update(deltaTime);
+	scene->renderSystem->lines.Compile();
+
 	scene->skybox->Update(&camera, (float)windowWidth / (float)windowHeight);
 
 	for (auto s = scene->shaders.begin(); s != scene->shaders.end(); s++)
