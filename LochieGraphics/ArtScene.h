@@ -11,15 +11,17 @@ private:
 		{ "BaseColour", Texture::Type::albedo },
 		{ "Normal",     Texture::Type::normal },
 		{ "Albedo",     Texture::Type::albedo},
+		{ "PBR",        Texture::Type::PBR},
 	};
 
 
 	std::string texturePrefix = "T_";
 	std::string meshPrefix = "SM_";
 	
-	//GLuint defaultUIShader;
-	//static Shader* singelChannelUIImage;
-	//static void SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd);
+	GLint defaultUIShader;
+	static Shader* singleChannelUIImage;
+	static void SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd);
+	static void SetToDefaultUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd);
 
 	Skybox* skybox = nullptr;
 

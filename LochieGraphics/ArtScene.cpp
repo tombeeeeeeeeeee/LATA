@@ -3,20 +3,25 @@
 #include "ResourceManager.h"
 #include "SceneManager.h"
 
-//#include "imgui_impl_opengl3.h"
-//#include "imgui_impl_opengl3_loader.h"
-
 #include <filesystem>
 
 ArtScene* ArtScene::artScene = nullptr;
-//Shader* ArtScene::singelChannelUIImage = nullptr;
+Shader* ArtScene::singleChannelUIImage = nullptr;
 
 
 
-//void ArtScene::SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd)
-//{
-//	singelChannelUIImage->Use();
-//}
+void ArtScene::SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd)
+{
+	glGetIntegerv(GL_CURRENT_PROGRAM, &artScene->defaultUIShader);
+
+	singleChannelUIImage->Use();
+}
+
+void ArtScene::SetToDefaultUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd)
+{
+	glUseProgram(artScene->defaultUIShader);
+}
+
 
 void ArtScene::DragDropCallback(GLFWwindow* window, int pathCount, const char* paths[])
 {
@@ -123,7 +128,11 @@ void ArtScene::Start()
 		&pointLights[3],
 	});
 
-	glfwSetDropCallback(SceneManager::window, DragDropCallback);}
+	glfwSetDropCallback(SceneManager::window, DragDropCallback);
+		
+	singleChannelUIImage = ResourceManager::LoadShader("ui");
+
+}
 
 void ArtScene::Update(float delta)
 {
@@ -154,19 +163,17 @@ void ArtScene::GUI()
 				ImGui::BeginGroup();
 				ImGui::Text(i.first.c_str());
 				if (i.second != nullptr) {
-					//switch (i.second->type)
-					//{
-					//case Texture::Type::ao:
-					//case Texture::Type::height:
-					//case Texture::Type::metallic:
-					//case Texture::Type::roughness:
-					//	ImGui::GetWindowDrawList()->AddCallback(SetSingleChannelUIShader, (void*)(0));
-					//	break;
-					//default:
-					//	break;
-					//}
-
+					switch (i.second->type)
+					{
+					case Texture::Type::height:
+					case Texture::Type::PBR:
+						//ImGui::GetWindowDrawList()->AddCallback(SetSingleChannelUIShader, (void*)(0));
+						break;
+					default:
+						break;
+					}
 					ImGui::Image((void*)i.second->GLID, { texturePreviewScale * (float)i.second->width, texturePreviewScale * (float)i.second->height } );
+					//ImGui::GetWindowDrawList()->AddCallback(SetToDefaultUIShader, (void*)(0));
 				}
 				ImGui::EndGroup();
 				ImGui::SameLine();
