@@ -40,6 +40,9 @@ void SceneObject::GUI()
 	if ((parts & Parts::modelRenderer))
 		scene->renderers[GUID].GUI();
 	
+	if ((parts & Parts::rigidBody))
+		scene->rigidBodies[GUID].GUI();
+
 	//TODO Add animator parts;
 	//if ((parts & Parts::animator))
 	//	scene->animators[GUID].GUI();
@@ -94,6 +97,27 @@ Animator* SceneObject::animator()
 {
 	if (parts & Parts::animator)
 		return &(scene->animators[GUID]);
+	return nullptr;
+}
+
+void SceneObject::setRigidBody(RigidBody* rb)
+{
+	if (rb)
+	{
+		parts |= Parts::modelRenderer;
+		scene->rigidBodies[GUID] = *rb;
+	}
+	else
+	{
+		parts &= ~Parts::modelRenderer;
+		scene->rigidBodies.erase(GUID);
+	}
+}
+
+RigidBody* SceneObject::rigidbody()
+{
+	if (parts & Parts::rigidBody)
+		return &(scene->rigidBodies[GUID]);
 	return nullptr;
 }
 

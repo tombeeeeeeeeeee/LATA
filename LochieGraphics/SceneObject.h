@@ -4,6 +4,7 @@
 #include "ModelRenderer.h"
 #include "Animator.h"
 #include "Light.h"
+#include "Rigidbody.h"
 #include "Transform.h"
 #include "Scene.h"
 
@@ -65,8 +66,9 @@ public:
 	//void setLight(Light light);
 	//Light* light();
 
-	//void setRigidBody(RigidBody* rb);
-	//RigidBody* rigidbody();
+	void setRigidBody(RigidBody* rb);
+	RigidBody* rigidbody();
+
 #pragma endregion
 
 };
