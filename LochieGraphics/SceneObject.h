@@ -26,7 +26,8 @@ enum Parts
 	animator = 1 << 2,
 	rigidBody = 1 << 3,
 	light = 1 << 4,
-	count = 1 << 5,
+	collider = 1 << 5,
+	count = 1 << 6,
 };
 
 class Scene;
@@ -68,6 +69,9 @@ public:
 
 	void setRigidBody(RigidBody* rb);
 	RigidBody* rigidbody();
+
+	void setCollider(Collider* collider);
+	Collider* collider();
 
 #pragma endregion
 
