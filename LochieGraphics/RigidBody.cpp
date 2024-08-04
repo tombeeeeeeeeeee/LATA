@@ -1,4 +1,10 @@
 #include "RigidBody.h"
+#include "Utilities.h"
+
+#include "imgui.h"
+
+#include <string>
+#include <iostream>
 
 RigidBody::RigidBody()
 {
@@ -12,78 +18,6 @@ glm::vec2 RigidBody::AddImpulse(glm::vec2 impulse)
 float RigidBody::AddRotationalImpulse(float impulse)
 {
 	return angularVel += invMomentOfInertia * impulse;
-}
-
-void RigidBody::setForce(glm::vec2 force)
-{
-	netForce = force;
-}
-
-glm::vec2 RigidBody::getForce()
-{
-	return netForce;
-}
-
-glm::vec2 RigidBody::addForce(glm::vec2 force)
-{
-	return netForce += force;
-}
-
-void RigidBody::setAccel(glm::vec2 _accel)
-{
-	accel = _accel;
-}
-
-glm::vec2 RigidBody::getAccel()
-{
-	return accel;
-}
-
-glm::vec2 RigidBody::AddAccel(glm::vec2 _accel)
-{
-	return accel += _accel;
-}
-
-void RigidBody::setVel(glm::vec2 _vel)
-{
-	vel = _vel;
-}
-
-glm::vec2 RigidBody::getVel()
-{
-	return vel;
-}
-
-glm::vec2 RigidBody::AddVel(glm::vec2 _vel)
-{
-	vel += _vel;
-	return vel;
-}
-
-void RigidBody::setAngularVel(float _angularVel)
-{
-	angularVel = _angularVel;
-}
-
-float RigidBody::getAngularVel()
-{
-	return angularVel;
-}
-
-float RigidBody::addAngularVel(float _angularVel)
-{
-	angularVel += _angularVel;
-	return angularVel;
-}
-
-void RigidBody::setDepen(glm::vec2 depen)
-{
-	netDepen = depen;
-}
-
-glm::vec2 RigidBody::getDepen()
-{
-	return netDepen;
 }
 
 glm::vec2 RigidBody::AddDepen(glm::vec2 depen)
@@ -127,40 +61,21 @@ std::vector<Collider*>* RigidBody::getColliders()
 	return &colliders;
 }
 
-void RigidBody::setInvMass(float _invMass)
-{
-	invMass = glm::max(_invMass, 0.0f);
-}
-
 void RigidBody::setMass(float mass)
 {
 	float temp = glm::max(mass, 0.0f);
 	invMass = 1 / temp;
 }
 
-float RigidBody::getInvMass()
-{
-	return invMass;
-}
 
 float RigidBody::getMass()
 {
 	return 1/invMass;
 }
 
-void RigidBody::setInvMomentOfInertia(float _invMomentOfInertia)
-{
-	invMomentOfInertia = glm::max(_invMomentOfInertia, 0.0f);
-}
-
 void RigidBody::setMomentOfInertia(float momentOfInertia)
 {
 	invMomentOfInertia = 1/ glm::max(momentOfInertia, 0.0f);
-}
-
-float RigidBody::getInvMomentOfInertia()
-{
-	return invMomentOfInertia;
 }
 
 float RigidBody::getMomentOfInertia()
@@ -173,4 +88,29 @@ glm::vec2 RigidBody::Transform2Din3DSpace(glm::mat4 global, glm::vec2 input)
 	glm::vec4 temp = { input.x, 0.0f, input.y, 1.0f };
 	glm::vec3 result = global * temp;
 	return { result.x, result.z };
+}
+
+void RigidBody::GUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	float mass = getMass();
+	bool isKinematic = isnan(mass);
+
+	if (isKinematic) ImGui::BeginDisabled();
+	if (ImGui::DragFloat(("Mass##rigidBody" + tag).c_str(), &mass, 0.2f, 0.001f, 100000.0f))
+	{
+		setMass(mass);
+	}
+	if (isKinematic) ImGui::EndDisabled();
+
+	if (ImGui::Checkbox(("Kinematic##rigidBody" + tag).c_str(), &isKinematic))
+	{
+		if (!isKinematic)
+			invMass = 0.0f;
+		else
+			setMass(1.0f);
+	}
+
+	ImGui::Checkbox(("Static##rigidBody" + tag).c_str(), &isStatic);
+	ImGui::DragInt(("CollisionLayer##rigidBody" + tag).c_str(),&collisionLayer , 1, 0, 31);
 }

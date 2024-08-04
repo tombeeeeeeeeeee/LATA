@@ -30,6 +30,7 @@ public:
 	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};
 	std::unordered_map<unsigned long long, Transform> transforms = {};
 	std::unordered_map<unsigned long long, Animator> animators = {};
+	std::unordered_map<unsigned long long, RigidBody> rigidBodies = {};
 	std::vector<Light*> lights = {};
 
 	std::vector<Shader*> shaders = {};
