@@ -214,7 +214,7 @@ void Transform::GUI()
 		glm::quat quatY = glm::angleAxis(rotationEuler.y, glm::vec3(0, 1, 0));
 		glm::quat quatX = glm::angleAxis(rotationEuler.x, glm::vec3(1, 0, 0));
 
-		setRotation(glm::normalize(quatX * quatY * quatZ) * getRotation());
+		setRotation(glm::normalize(quatZ * quatY * quatX) * getRotation());
 	}
 	ImGui::BeginDisabled();
 	if (ImGui::DragFloat4(("Quaternion##transform" + tag).c_str(), &quaternion[0], 0.1f)) {
