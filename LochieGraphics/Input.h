@@ -15,7 +15,7 @@ public:
 		Controller
 	};
 
-	virtual class Inputter {
+	class Inputter {
 	public:
 		virtual glm::vec2 getMove() const = 0;
 		virtual glm::vec2 getLook() const = 0;

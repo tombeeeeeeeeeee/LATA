@@ -54,6 +54,9 @@
     <Filter Include="Source Files\Physics">
       <UniqueIdentifier>{a920641d-cef6-4ff5-8480-d14c9ddc90e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scene Management\Scenes">
+      <UniqueIdentifier>{2a383f46-890a-418c-86ef-63c34d703e53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -176,9 +179,6 @@
     <ClCompile Include="Bone.cpp">
       <Filter>Source Files\Rendering\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene.cpp">
-      <Filter>Source Files\Scene Management</Filter>
-    </ClCompile>
     <ClCompile Include="FrameBuffer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
@@ -203,14 +203,23 @@
     <ClCompile Include="PhysicsSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="ArtScene.cpp">
-      <Filter>Source Files\Scene Management</Filter>
-    </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="ArtScene.cpp">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClCompile>
     <ClCompile Include="InputTest.cpp">
-      <Filter>Source Files\Scene Management</Filter>
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="EmptyScene.cpp">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="LineRenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -355,9 +364,6 @@
     <ClInclude Include="BoneInfo.h">
       <Filter>Source Files\Rendering\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h">
-      <Filter>Source Files\Scene Management</Filter>
-    </ClInclude>
     <ClInclude Include="FrameBuffer.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
@@ -391,14 +397,23 @@
     <ClInclude Include="CollisionPacket.h">
       <Filter>Source Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="ArtScene.h">
-      <Filter>Source Files\Scene Management</Filter>
-    </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="ArtScene.h">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClInclude>
     <ClInclude Include="InputTest.h">
-      <Filter>Source Files\Scene Management</Filter>
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="EmptyScene.h">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="LineRenderer.h">
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -526,6 +541,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\superDuper.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\lineRenderer.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\lineRenderer.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

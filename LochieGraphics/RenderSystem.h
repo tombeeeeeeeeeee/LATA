@@ -133,7 +133,6 @@ private:
         Material* mat
         );
 
-    void DrawMesh(Mesh& mesh);
 
     //void BindLightUniform(unsigned int shaderProgram,
     //    std::unordered_map<unsigned int, Light>& lightComponents,

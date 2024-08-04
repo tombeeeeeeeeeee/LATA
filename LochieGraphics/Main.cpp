@@ -11,7 +11,7 @@
 
 int main()
 {
-	SceneManager sceneManager(new InputTest());
+	SceneManager sceneManager(new TestScene());
 	while (!sceneManager.ShouldClose())
 	{
 		sceneManager.Update();

@@ -43,7 +43,6 @@ void RenderSystem::Start(
 
     shadowDebugQuad.InitialiseQuad(0.5f, 0.5f);
     screenQuad.InitialiseQuad(1.f, 0.0f);
-    //cube.InitialiseCube(2.0f);
 
     // Create colour attachment texture for fullscreen framebuffer
     screenColourBuffer = ResourceManager::LoadTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
@@ -327,10 +326,6 @@ void RenderSystem::Update(
 
     DrawAnimation(animators, transforms, shadowCasters, (*shaders)[shadowMapDepth]);
     
-    //TODO: LEARN SKYBOX DRAW
-    //skyBox->Draw();
-    //glCullFace(GL_BACK);
-
     // Render scene with shadow map, to the screen framebuffer
     screenFrameBuffer->Bind();
 
@@ -363,7 +358,6 @@ void RenderSystem::Update(
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Draw();
 
-
     glDepthFunc(GL_LEQUAL); // Change depth function
     Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);
     
@@ -387,7 +381,7 @@ void RenderSystem::Update(
         depthMap->Bind(1);
 
         //TODO: Make Shadow Debug Quad
-        DrawMesh(shadowDebugQuad);
+        shadowDebugQuad.Draw();
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -403,10 +397,11 @@ void RenderSystem::Update(
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //HDR
-    glUseProgram((*shaders)[ShaderIndex::screen]->GLID);
 
-    glUniform1i(glGetUniformLocation((*shaders)[ShaderIndex::screen]->GLID, "scene"), 1);
-    glUniform1i(glGetUniformLocation((*shaders)[ShaderIndex::screen]->GLID, "bloomBlur"), 2);
+    (*shaders)[screen]->Use();
+
+    (*shaders)[screen]->setInt("scene", 1);
+    (*shaders)[screen]->setInt("bloomBlur", 2);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, colorBuffer);
@@ -414,7 +409,7 @@ void RenderSystem::Update(
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, bloomMips[0].texture);
 
-    glUniform1f(glGetUniformLocation((*shaders)[ShaderIndex::screen]->GLID, "exposure"), exposure);
+    (*shaders)[screen]->setFloat("exposure", exposure);
 
     RenderQuad();
 
@@ -486,7 +481,7 @@ void RenderSystem::DrawRenderers(
         ActivateFlaggedVariables(curShader, i->second.material);
 
         // TODO: use shader function
-        glUniform3fv(glGetUniformLocation(curShader->GLID, "materialColour"), 1, &(i->second.material->colour[0]));
+        curShader->setVec3("materialColour", i->second.material->colour);
 
         Model* model = i->second.model;
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
@@ -520,22 +515,6 @@ void RenderSystem::ActivateFlaggedVariables(
         glActiveTexture(GL_TEXTURE0 + 10);
         glBindTexture(GL_TEXTURE_2D, paintStrokeTexture->GLID);
     }
-}
-
-void RenderSystem::DrawMesh(Mesh& mesh)
-{
-    glBindVertexArray(mesh.getVAO());
-    if (mesh.getIBO() != 0) {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.getIBO());
-        glDrawElements(GL_TRIANGLES, 3 * mesh.getTriCount(), GL_UNSIGNED_INT, 0);
-    }
-    else {
-        glDrawArrays(GL_TRIANGLES, 0, 3 * mesh.getTriCount());
-    }
-
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void RenderSystem::HDRBufferSetUp()
@@ -582,16 +561,14 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
 
     glViewport(0, 0, 512, 512);
 
-    unsigned int currShader = (*shaders)[ShaderIndex::brdf]->GLID;
-    glUseProgram(currShader);
+    (*shaders)[brdf]->Use();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     RenderQuad();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-    glUseProgram((*shaders)[ShaderIndex::super]->GLID);
-
+    (*shaders)[ShaderIndex::super]->Use();
 
     int scrWidth, scrHeight;
     glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
@@ -647,7 +624,7 @@ void RenderSystem::RenderBloom(unsigned int srcTexture)
 
 void RenderSystem::RenderDownSamples(unsigned int srcTexture)
 {
-    glUseProgram((*shaders)[ShaderIndex::downSample]->GLID);
+    (*shaders)[downSample]->Use();
 
     // Bind srcTexture (HDR color buffer) as initial texture input
     glActiveTexture(GL_TEXTURE0);
@@ -655,9 +632,8 @@ void RenderSystem::RenderDownSamples(unsigned int srcTexture)
 
     glm::vec2 inverseRes = { 1.0f / (float)SCREEN_WIDTH, 1.0f / (float)SCREEN_HEIGHT };
 
-    glUniform1i(glGetUniformLocation((*shaders)[ShaderIndex::downSample]->GLID, "mipLevel"), 0);
-
-    glUniform2fv(glGetUniformLocation((*shaders)[ShaderIndex::downSample]->GLID, "srcResolution"), 1, &inverseRes[0]);
+    (*shaders)[downSample]->setInt("mipLevel", 0);
+    (*shaders)[downSample]->setVec2("srcResolution", inverseRes);
 
     glDisable(GL_BLEND);
 
@@ -674,22 +650,22 @@ void RenderSystem::RenderDownSamples(unsigned int srcTexture)
         RenderQuad();
 
         // Set current mip resolution as srcResolution for next iteration
-        glUniform2fv(glGetUniformLocation((*shaders)[ShaderIndex::downSample]->GLID, "srcResolution"), 1, &inverseRes[0]);
+        (*shaders)[downSample]->setVec2("srcResolution", inverseRes);
 
         // Set current mip as texture input for next iteration
         glBindTexture(GL_TEXTURE_2D, mip.texture);
 
         // Disable Karis average for consequent downsamples
-        if (i == 0) glUniform1i(glGetUniformLocation((*shaders)[ShaderIndex::downSample]->GLID, "mipLevel"), 1);
+        if (i == 0) {
+            (*shaders)[downSample]->setInt("mipLevel", 1);
+        }
     }
-
-    glUseProgram(0);
 }
 
 void RenderSystem::RenderUpSamples(float aspectRatio)
 {
-    glUseProgram((*shaders)[ShaderIndex::upSample]->GLID);
-    glUniform1f(glGetUniformLocation((*shaders)[ShaderIndex::upSample]->GLID, "aspectRatio"), aspectRatio);
+    (*shaders)[upSample]->Use();
+    (*shaders)[upSample]->setFloat("aspectRatio", aspectRatio);
 
     // Enable additive blending
     glEnable(GL_BLEND);
@@ -714,7 +690,6 @@ void RenderSystem::RenderUpSamples(float aspectRatio)
         RenderQuad();
     }
     glDisable(GL_BLEND);
-    glUseProgram(0);
 }
 
 void RenderSystem::RenderQuad()
