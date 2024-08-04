@@ -32,7 +32,9 @@ void PhysicsSystem::UpdateRigidBodies(
 
 void PhysicsSystem::CollisionCheckPhase(
 	std::unordered_map<unsigned long long, Transform>& transforms,
-	std::unordered_map<unsigned long long, RigidBody>& rigidBodies
+	std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
+	std::unordered_map<unsigned long long, Collider>& colliders
+
 )
 {
 	std::vector<CollisionPacket> collisions;
@@ -43,6 +45,14 @@ void PhysicsSystem::CollisionCheckPhase(
 			GetCollisions(
 				&i->second, &j->second,
 				&transforms[i->first], &transforms[j->first],
+				collisions);
+		}
+
+		for (auto k = colliders.begin(); k != colliders.end(); k++)
+		{
+			GetCollisions(
+				&i->second, &k->second,
+				&transforms[i->first], &transforms[k->first],
 				collisions);
 		}
 	}
@@ -142,6 +152,90 @@ void PhysicsSystem::GetCollisions(
 	}
 }
 
+void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transformA, Transform* transformB, std::vector<CollisionPacket> collisions)
+{
+	std::vector<Collider*> aCols = (*a->getColliders());
+	Collider* bCol = b;
+
+	for (Collider* colliderA : aCols)
+	{
+		if (colliderA->getType() == ColliderType::polygon && ((PolygonCollider*)colliderA)->verts.size() == 1)
+		{
+			if (bCol->getType() == ColliderType::polygon && ((PolygonCollider*)bCol)->verts.size() == 1)
+			{
+				CollisionPacket collision = CollisionFunctions::CircleOnCircleCollision(
+					(PolygonCollider*)colliderA, (PolygonCollider*)bCol,
+					a, &dumbyRigidBody, transformA, transformB
+				);
+				if (collision.depth >= 0) collisions.push_back(collision);
+			}
+			else if (bCol->getType() == ColliderType::plane)
+			{
+				CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
+					(PolygonCollider*)colliderA, (PlaneCollider*)bCol,
+					a, &dumbyRigidBody, transformA, transformB
+				);
+				if (collision.depth >= 0) collisions.push_back(collision);
+			}
+			else if (bCol->getType() == ColliderType::polygon)
+			{
+				CollisionPacket collision = CollisionFunctions::CircleOnPolyCollision(
+					(PolygonCollider*)colliderA, (PolygonCollider*)bCol,
+					a, &dumbyRigidBody, transformA, transformB
+				);
+				if (collision.depth >= 0) collisions.push_back(collision);
+			}
+		}
+		else if (colliderA->getType() == ColliderType::plane)
+		{
+			if (bCol->getType() == ColliderType::polygon && ((PolygonCollider*)bCol)->verts.size() == 1)
+			{
+				CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
+					(PolygonCollider*)bCol, (PlaneCollider*)colliderA,
+					&dumbyRigidBody, a, transformB, transformA
+				);
+				if (collision.depth >= 0) collisions.push_back(collision);
+			}
+			else if (bCol->getType() == ColliderType::polygon)
+			{
+				CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
+					(PolygonCollider*)bCol, (PlaneCollider*)colliderA,
+					&dumbyRigidBody, a, transformB, transformA
+				);
+				if (collision.depth >= 0) collisions.push_back(collision);
+			}
+		}
+		else if (colliderA->getType() == ColliderType::polygon)
+		{
+			if (bCol->getType() == ColliderType::polygon)
+			{
+				CollisionPacket collision = CollisionFunctions::PolyOnPolyCollision(
+					(PolygonCollider*)colliderA, (PolygonCollider*)bCol,
+					a, &dumbyRigidBody, transformA, transformB
+				);
+				if (collision.depth >= 0) collisions.push_back(collision);
+			}
+			else if (bCol->getType() == ColliderType::plane)
+			{
+				CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
+					(PolygonCollider*)colliderA, (PlaneCollider*)bCol,
+					a, &dumbyRigidBody, transformA, transformB
+				);
+				if (collision.depth >= 0) collisions.push_back(collision);
+			}
+			else if (bCol->getType() == ColliderType::polygon && ((PolygonCollider*)bCol)->verts.size() == 1)
+			{
+				CollisionPacket collision = CollisionFunctions::CircleOnPolyCollision(
+					(PolygonCollider*)bCol, (PolygonCollider*)colliderA,
+					&dumbyRigidBody, a, transformB, transformA
+				);
+				if (collision.depth >= 0) collisions.push_back(collision);
+			}
+		}
+		
+	}
+}
+
 void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 {
 	if (collision.depth < 0) return;
@@ -162,7 +256,7 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 
 	float totalInverseMass = (collision.rigidBodyA->invMass + collision.rigidBodyB->invMass);
 
-	float j = -(1 + 0.65f) * glm::dot(relativeVelocity, collision.normal) /
+	float j = -(1.0f + 0.65f) * glm::dot(relativeVelocity, collision.normal) /
 		(totalInverseMass + pow(glm::dot(radiusPerpA, collision.normal), 2) * collision.rigidBodyA->invMomentOfInertia
 			+ pow(glm::dot(radiusPerpB, collision.normal), 2) * collision.rigidBodyB->invMomentOfInertia);
 

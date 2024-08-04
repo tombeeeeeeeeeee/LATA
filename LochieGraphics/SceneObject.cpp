@@ -104,12 +104,12 @@ void SceneObject::setRigidBody(RigidBody* rb)
 {
 	if (rb)
 	{
-		parts |= Parts::modelRenderer;
+		parts |= Parts::rigidBody;
 		scene->rigidBodies[GUID] = *rb;
 	}
 	else
 	{
-		parts &= ~Parts::modelRenderer;
+		parts &= ~Parts::rigidBody;
 		scene->rigidBodies.erase(GUID);
 	}
 }
@@ -118,6 +118,27 @@ RigidBody* SceneObject::rigidbody()
 {
 	if (parts & Parts::rigidBody)
 		return &(scene->rigidBodies[GUID]);
+	return nullptr;
+}
+
+void SceneObject::setCollider(Collider* collider)
+{
+	if (collider)
+	{
+		parts |= Parts::collider;
+		scene->colliders[GUID] = *collider;
+	}
+	else
+	{
+		parts &= ~Parts::collider;
+		scene->colliders.erase(GUID);
+	}
+}
+
+Collider* SceneObject::collider()
+{
+	if (parts & Parts::collider)
+		return &(scene->colliders[GUID]);
 	return nullptr;
 }
 
