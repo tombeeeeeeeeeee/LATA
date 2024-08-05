@@ -11,7 +11,7 @@ private:
 		{ "BaseColour", Texture::Type::albedo },
 		{ "Normal",     Texture::Type::normal },
 		{ "Albedo",     Texture::Type::albedo},
-		{ "Roughness",   Texture::Type::roughness},
+		{ "Roughness",  Texture::Type::roughness},
 		{ "Metallic",   Texture::Type::metallic},
 		{ "AO",         Texture::Type::ao},
 		//{ "PBR",        Texture::Type::PBR},
@@ -21,13 +21,15 @@ private:
 	std::string texturePrefix = "T_";
 	std::string meshPrefix = "SM_";
 
-	Texture* base;
-	Texture* roughness;
-	Texture* normal;
-	Texture* metallic;
-	Texture* ao;
+	Texture* base = nullptr;
+	Texture* roughness = nullptr;
+	Texture* normal = nullptr;
+	Texture* metallic = nullptr;
+	Texture* ao = nullptr;
 
-	Texture* pbr;
+	Texture* pbr = nullptr;
+
+	bool defaultFlip = false;
 
 	std::unordered_map<std::string, Texture**> importTextures;
 

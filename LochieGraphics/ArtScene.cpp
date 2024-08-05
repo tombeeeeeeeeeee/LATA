@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 
 #include "stb_image.h"
+#include "stb_image_write.h"
 
 #include <filesystem>
 
@@ -18,7 +19,7 @@ void ArtScene::RefreshPBR()
 		pbr->DeleteTexture();
 	}
 
-	if (ao == nullptr || metallic == nullptr || roughness == nullptr) {
+	if (metallic == nullptr || roughness == nullptr) {
 		return;
 	}
 
@@ -29,9 +30,17 @@ void ArtScene::RefreshPBR()
 	int tempH;
 	int tempC;
 	unsigned char* metallicData = stbi_load(metallic->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
+	if (tempW != base->width || tempH != tempH) { return; }
 	unsigned char* roughnessData = stbi_load(roughness->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
-	unsigned char* ambientData = stbi_load(ao->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
-
+	if (tempW != base->width || tempH != tempH) { return; }
+	unsigned char* ambientData;
+	if (ao) {
+		ambientData = stbi_load(ao->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
+	}
+	else {
+		ambientData = {};
+	}
+	
 
 	for (int i = 0; i < base->width * base->height; i++)
 	{
@@ -40,13 +49,25 @@ void ArtScene::RefreshPBR()
 
 		data[i * 4 + 0] = metallicData[i];
 		data[i * 4 + 1] = roughnessData[i];
-		data[i * 4 + 2] = ambientData[i];
+		if (ao) {
+			data[i * 4 + 2] = ambientData[i];
+		}
+		else {
+			data[i * 4 + 2] = (unsigned char)255;
+		}
 		data[i * 4 + 3] = (unsigned char)255;
 
 	}
 
 
 	pbr = ResourceManager::LoadTexture(base->width, base->height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
+
+	material->AddTextures({ pbr });
+
+	// TODO: Get name from base image
+	int result = stbi_write_tga("./newPBR.tga", base->width, base->height, STBI_rgb_alpha, data.data());
+
+	std::cout << "Wrote PBR image, with result of " << result << '\n';
 }
 
 void ArtScene::SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd)
@@ -116,7 +137,7 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 
 	// Load texture
 
-	Texture* newTexture = ResourceManager::LoadTexture(path, type);
+	Texture* newTexture = ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip);
 
 	texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
 
