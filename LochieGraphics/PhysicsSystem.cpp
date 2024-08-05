@@ -23,10 +23,11 @@ void PhysicsSystem::UpdateRigidBodies(
 		glm::vec3 eulers = transforms[i->first].getEulerRotation();
 
 		transforms[i->first].setPosition(transforms[i->first].getPosition() + glm::vec3(pos.x, 0.0f, pos.y));
-		transforms[i->first].setEulerRotation({ eulers.x,
-			eulers.y + rb->angularVel * deltaTime,
-			eulers.z });
-			
+		transforms[i->first].setRotation(
+			transforms[i->first].getRotation() 
+			* 
+			glm::rotate(glm::identity<glm::quat>(), rb->angularVel * deltaTime, {0.0f,1.0f,0.0f})
+		);
 	}
 }
 

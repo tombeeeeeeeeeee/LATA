@@ -19,6 +19,8 @@ public:
 	public:
 		virtual glm::vec2 getMove() const = 0;
 		virtual glm::vec2 getLook() const = 0;
+		virtual float getLeftTrigger()  const = 0;
+		virtual float getRightTrigger() const = 0;
 		virtual Type getType() const = 0;
 	};
 
@@ -34,8 +36,13 @@ public:
 		const int keyLookDown = GLFW_KEY_DOWN;
 		const int keyLookRight = GLFW_KEY_DOWN;
 
+		const int keyLeftTrigger = GLFW_KEY_LEFT_CONTROL;
+		const int keyRightTrigger = GLFW_KEY_LEFT_SHIFT;
+
 		glm::vec2 getMove() const override;
 		glm::vec2 getLook() const override;
+		float getLeftTrigger() const override;
+		float getRightTrigger() const override;
 		Type getType() const override;
 	};
 
@@ -49,6 +56,8 @@ public:
 
 		glm::vec2 getMove() const override;
 		glm::vec2 getLook() const override;
+		float getLeftTrigger() const override;
+		float getRightTrigger() const override;
 		Type getType() const override;
 	};
 

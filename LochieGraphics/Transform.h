@@ -42,6 +42,10 @@ public:
 	glm::vec3 getGlobalPosition();
 	void setPosition(glm::vec3 pos);
 
+	glm::vec3 forward();
+	glm::vec3 right();
+	glm::vec3 up();
+
 	void UpdateGlobalMatrixCascading();
 
 	Transform() { UpdateGlobalMatrixCascading(); }

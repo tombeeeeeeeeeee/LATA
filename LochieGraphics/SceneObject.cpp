@@ -38,17 +38,11 @@ void SceneObject::GUI()
 	scene->transforms[GUID].GUI();
 
 	if ((parts & Parts::modelRenderer)) {
-		auto m = scene->renderers.find(GUID);
-		if (m != scene->renderers.end()) {
 			scene->renderers[GUID].GUI();
-		}
 	}
 	
 	if ((parts & Parts::rigidBody)) {
-		auto r = scene->rigidBodies.find(GUID);
-		if (r != scene->rigidBodies.end()) {
 			scene->rigidBodies[GUID].GUI();
-		}
 	}
 
 	//TODO Add animator parts;

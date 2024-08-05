@@ -131,7 +131,7 @@ CollisionPacket CollisionFunctions::CircleOnPolyCollision(PolygonCollider* circl
 		collision.contactPoint += circlePos;
 	}
 
-	tangent = glm::normalize(polyPoints[closestPointIndex] - polyPoints[Utilities::Wrap(closestPointIndex - 1, (int)polyPoints.size())]);
+	tangent = glm::normalize(polyPoints[closestPointIndex] - polyPoints[Utilities::WrapIndex(closestPointIndex - 1, (int)polyPoints.size())]);
 	curNormal = glm::vec2(-tangent.y, tangent.x);
 
 	pointDepth = circle->radius - glm::dot(posA + circle->verts[0], curNormal);

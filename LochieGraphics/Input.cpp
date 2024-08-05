@@ -114,6 +114,16 @@ glm::vec2 Input::Controller::getLook() const
 	return { currentState.axes[GLFW_GAMEPAD_AXIS_RIGHT_X], currentState.axes[GLFW_GAMEPAD_AXIS_RIGHT_Y] };
 }
 
+float Input::Controller::getLeftTrigger() const
+{
+	return currentState.axes[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER];
+}
+
+float Input::Controller::getRightTrigger() const
+{
+	return currentState.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER];
+}
+
 Input::Type Input::Controller::getType() const
 {
 	return Type::Controller;
@@ -131,6 +141,18 @@ glm::vec2 Input::Keyboard::getLook() const
 	int horizontal = glfwGetKey(SceneManager::window, keyLookRight) - glfwGetKey(SceneManager::window, keyLookLeft);
 	int vertical = glfwGetKey(SceneManager::window, keyLookUp) - glfwGetKey(SceneManager::window, keyLookDown);
 	return glm::vec2(horizontal, vertical);
+}
+
+float Input::Keyboard::getLeftTrigger() const
+{
+	float left = glfwGetKey(SceneManager::window, keyLeftTrigger);
+	return left;
+}
+
+float Input::Keyboard::getRightTrigger() const
+{
+	float right = glfwGetKey(SceneManager::window, keyRightTrigger);
+	return right;
 }
 
 Input::Type Input::Keyboard::getType() const

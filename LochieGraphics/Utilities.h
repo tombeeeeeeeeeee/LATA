@@ -7,5 +7,5 @@ namespace Utilities {
 
 	std::string PointerToString(void* pointer);
 
-	int Wrap(int value, int arraySize);
+	int WrapIndex(int value, int arraySize);
 }

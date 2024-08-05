@@ -1,110 +1,72 @@
 [[Shaders]]
-flags = 3
-fragment = 'shaders/litNormal.frag'
-guid = 101
-vertex = 'shaders/litNormal.vert'
-
-[[Shaders]]
-flags = 3
-fragment = 'shaders/lit.frag'
-guid = 102
-vertex = 'shaders/lit.vert'
-
-[[Shaders]]
-flags = 1
-fragment = 'shaders/lightCube.frag'
-guid = 103
-vertex = 'shaders/lightCube.vert'
-
-[[Shaders]]
 flags = 0
 fragment = 'shaders/cubemap.frag'
-guid = 104
+guid = 103
 vertex = 'shaders/cubemap.vert'
-
-[[Shaders]]
-flags = 4
-fragment = 'shaders/animate.frag'
-guid = 105
-vertex = 'shaders/animate.vert'
-
-[[Shaders]]
-flags = 3
-fragment = 'shaders/pbr.frag'
-guid = 106
-vertex = 'shaders/pbr.vert'
-
-[[Shaders]]
-flags = 0
-fragment = 'shaders/framebuffer.frag'
-guid = 107
-vertex = 'shaders/framebuffer.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/simpleDepthShader.frag'
-guid = 108
+guid = 104
 vertex = 'shaders/simpleDepthShader.vert'
-
-[[Shaders]]
-flags = 3
-fragment = 'shaders/shadowMapping.frag'
-guid = 109
-vertex = 'shaders/shadowMapping.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/shadowDebug.frag'
-guid = 110
+guid = 105
 vertex = 'shaders/shadowDebug.vert'
 
 [[Shaders]]
-flags = 1
-fragment = 'shaders/simpleTextured.frag'
-guid = 111
-vertex = 'shaders/simpleTextured.vert'
+flags = 0
+fragment = 'shaders/HDRBloom.frag'
+guid = 106
+vertex = 'shaders/default.vert'
 
 [[Shaders]]
-flags = 3
-fragment = 'shaders/superShader.frag'
+flags = 0
+fragment = 'shaders/brdf.frag'
+guid = 107
+vertex = 'shaders/default.vert'
+
+[[Shaders]]
+flags = 0
+fragment = 'shaders/prefilter.frag'
+guid = 108
+vertex = 'shaders/prefilter.vert'
+
+[[Shaders]]
+flags = 0
+fragment = 'shaders/downSample.frag'
+guid = 109
+vertex = 'shaders/default.vert'
+
+[[Shaders]]
+flags = 0
+fragment = 'shaders/upSample.frag'
+guid = 110
+vertex = 'shaders/default.vert'
+
+[[Shaders]]
+flags = 0
+fragment = 'shaders/irradiance.frag'
+guid = 111
+vertex = 'shaders/irradiance.vert'
+
+[[Shaders]]
+flags = 1
+fragment = 'shaders/lineRenderer.frag'
 guid = 112
-vertex = 'shaders/superShader.vert'
+vertex = 'shaders/lineRenderer.vert'
 
 [[Shaders]]
-flags = 1
-fragment = 'shaders/simpleTextured.frag'
-guid = 111
-vertex = 'shaders/simpleTextured.vert'
+flags = 11
+fragment = 'shaders/superDuper.frag'
+guid = 113
+vertex = 'shaders/superDuper.vert'
 
 [Camera]
 fov = 60.0
-position = [ -0.9166626930236816, 0.936103880405426, 3.9778590202331543 ]
-rotation = [ -87.0, -20.799999237060547 ]
+position = [ 0.0, 1.5, 0.0 ]
+rotation = [ -90.0, -89.0 ]
 
-[[SceneObjects]]
-hasRenderer = true
-name = 'Unnamed Scene Object'
-
-[[SceneObjects]]
-hasRenderer = true
-name = 'Unnamed Scene Object'
-
-[[SceneObjects]]
-hasRenderer = true
-name = 'Unnamed Scene Object'
-
-[[SceneObjects]]
-hasRenderer = true
-name = 'Unnamed Scene Object'
-
-[[SceneObjects]]
-hasRenderer = true
-name = 'Unnamed Scene Object'
-
-[[SceneObjects]]
-hasRenderer = true
-name = 'Unnamed Scene Object'
-
-[[SceneObjects]]
-hasRenderer = true
-name = 'Unnamed Scene Object'
+SceneObjects = []

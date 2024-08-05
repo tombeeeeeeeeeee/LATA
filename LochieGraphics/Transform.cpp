@@ -177,6 +177,21 @@ void Transform::setPosition(glm::vec3 pos)
 	position = pos;
 }
 
+glm::vec3 Transform::forward()
+{
+	return glm::vec3(glm::normalize(globalMatrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+}
+
+glm::vec3 Transform::right()
+{
+	return glm::vec3(glm::normalize(globalMatrix * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f)));
+}
+
+glm::vec3 Transform::up()
+{
+	return glm::vec3(glm::normalize(globalMatrix * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
+}
+
 void Transform::UpdateGlobalMatrixCascading()
 {
 	if (parent)

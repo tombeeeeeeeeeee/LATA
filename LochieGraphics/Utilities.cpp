@@ -31,7 +31,7 @@ std::string Utilities::PointerToString(void* pointer)
 	return std::to_string(reinterpret_cast<std::uintptr_t>(pointer));
 }
 
-int Utilities::Wrap(int value, int arraySize)
+int Utilities::WrapIndex(int value, int arraySize)
 {
 	return (value % arraySize + arraySize) % arraySize;
 }

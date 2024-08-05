@@ -94,10 +94,10 @@ void RigidBody::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	float mass = getMass();
-	bool isKinematic = isnan(mass);
+	bool isKinematic = invMass == 0;
 
 	if (isKinematic) ImGui::BeginDisabled();
-	if (ImGui::DragFloat(("Mass##rigidBody" + tag).c_str(), &mass, 0.2f, 0.001f, 100000.0f))
+	if (ImGui::DragFloat(("Mass##rigidBody" + tag).c_str(), &mass, 0.0, 0.001f, 100000.0f))
 	{
 		setMass(mass);
 	}
@@ -105,7 +105,7 @@ void RigidBody::GUI()
 
 	if (ImGui::Checkbox(("Kinematic##rigidBody" + tag).c_str(), &isKinematic))
 	{
-		if (!isKinematic)
+		if (isKinematic)
 			invMass = 0.0f;
 		else
 			setMass(1.0f);
