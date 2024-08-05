@@ -24,7 +24,7 @@ private:
 	float hRadius = 0.1f;
 	float rRadius = 0.1f;
 
-	glm::vec3 rotary = {0.0f, 0.0f, 0.0f};
+	glm::vec2 wheelDirection = {0.0f, 0.0f};
 	float rot = 0.0f;
 
 public:

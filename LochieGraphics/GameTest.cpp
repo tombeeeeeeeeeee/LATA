@@ -49,9 +49,25 @@ void GameTest::Update(float delta)
 
 	physicsSystem.UpdateRigidBodies(transforms, rigidbodies, delta);
 
-	
-
 	if (input.inputters.size() > 0) {
+
+		/*
+		* check if input is beyond the deadzone
+		* dot the input with the transform.right()
+		* desired wheel angle = clamp(asin(the dot product), -maxAngle, maxAngle);
+		* desired wheel direction = transform.forward() rotated about desired wheel angle
+		* wheel direction = lerp(wheelDirection, desiredWheeldirection, amountPerSec)
+		* 
+		* check if trigger is on
+		* add force in direction of wheel direction
+		* 
+		* if veloctiy exceeds friction coefficent
+		* spin (add rotational Impulse)
+		*/
+
+		glm::vec2 tireTurnDirection = input.inputters[0]->getMove();
+		float turnAmount = glm::dot(glm::vec2(tireTurnDirection.y, -tireTurnDirection.x), wheelDirection);
+		tireTurnDirection = tireTurnDirection + turnAngleMod * turnAmount * tile;
 		glm::vec2 move = { (input.inputters[0]->getRightTrigger() + 1.0f) / 2.0f, input.inputters[0]->getMove().x};
 		glm::vec3 force = move.x * 30.0f * h->transform()->forward();
 		hRb->netForce += glm::vec2(force.x, force.z);
@@ -69,8 +85,7 @@ void GameTest::Update(float delta)
 	// Draw human
 	glm::vec3 hPos = h->transform()->getPosition();
 	rot = h->transform()->getEulerRotation().y / 180 * PI;
-	rotary = h->transform()->getEulerRotation();
-
+	glm::vec3 rotary = h->transform()->getEulerRotation();
 	lines.SetColour({ 0.0f, 1.0f, 0.0f });
 	lines.AddPointToLine({ hPos.x - hRadius, hPos.y, hPos.z - hRadius });
 	lines.AddPointToLine({ hPos.x - hRadius, hPos.y, hPos.z + hRadius });
@@ -114,7 +129,7 @@ void GameTest::GUI()
 
 		ImGui::DragFloat(("Rotation"), &rot);
 
-		ImGui::DragFloat3(("Rotation as Vec"), &rotary[0]);
+		ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
 
 		ImGui::EndDisabled();
 	}
