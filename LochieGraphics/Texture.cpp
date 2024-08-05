@@ -33,11 +33,11 @@ Texture::Texture(std::string _path, Type _type, int _wrappingMode, bool flip) :
 	Load();
 }
 
-void Texture::Load()
+void Texture::Load(unsigned char* data)
 {
 	if (loaded) { DeleteTexture(); }
 	if (path == "") {
-		GLID = CreateTexture(width, height, format, nullptr, wrappingMode, dataType, mipMapped, minFilter, maxFilter);
+		GLID = CreateTexture(width, height, format, data, wrappingMode, dataType, mipMapped, minFilter, maxFilter);
 		loaded = true;
 		return;
 	}
@@ -45,7 +45,10 @@ void Texture::Load()
 	stbi_set_flip_vertically_on_load(flipped);
 
 	int components;
-	unsigned char* data = stbi_load(path.c_str(), &width, &height, &components, STBI_default);
+	// Using data from something else
+	if (data == nullptr) {
+		data = stbi_load(path.c_str(), &width, &height, &components, STBI_default);
+	}
 	if (!data) {
 		std::cout << "Texture failed to load, path: " << path << "\n";
 		return;
@@ -87,7 +90,7 @@ Texture::Texture(int _width, int _height, GLenum _format, unsigned char* data, G
 	minFilter(_minFilter),
 	maxFilter(_magFilter)
 {
-	Load();
+	Load(data);
 }
 
 GLuint Texture::CreateTexture(int width, int height, GLenum format, unsigned char* data, GLint wrappingMode, GLenum dataType, bool mipMaps, GLint minFilter, GLint magFilter)

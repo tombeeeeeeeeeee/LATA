@@ -11,12 +11,27 @@ private:
 		{ "BaseColour", Texture::Type::albedo },
 		{ "Normal",     Texture::Type::normal },
 		{ "Albedo",     Texture::Type::albedo},
-		{ "PBR",        Texture::Type::PBR},
+		{ "Roughness",   Texture::Type::roughness},
+		{ "Metallic",   Texture::Type::metallic},
+		{ "AO",         Texture::Type::ao},
+		//{ "PBR",        Texture::Type::PBR},
 	};
 
 
 	std::string texturePrefix = "T_";
 	std::string meshPrefix = "SM_";
+
+	Texture* base;
+	Texture* roughness;
+	Texture* normal;
+	Texture* metallic;
+	Texture* ao;
+
+	Texture* pbr;
+
+	std::unordered_map<std::string, Texture**> importTextures;
+
+	void RefreshPBR();
 	
 	GLint defaultUIShader;
 	static Shader* singleChannelUIImage;

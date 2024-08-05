@@ -3,12 +3,51 @@
 #include "ResourceManager.h"
 #include "SceneManager.h"
 
+#include "stb_image.h"
+
 #include <filesystem>
 
 ArtScene* ArtScene::artScene = nullptr;
 Shader* ArtScene::singleChannelUIImage = nullptr;
 
 
+
+void ArtScene::RefreshPBR()
+{
+	if (pbr != nullptr) {
+		pbr->DeleteTexture();
+	}
+
+	if (ao == nullptr || metallic == nullptr || roughness == nullptr) {
+		return;
+	}
+
+	// 4 channels
+	std::vector<unsigned char> data(base->width * base->height * 4);
+
+	int tempW;
+	int tempH;
+	int tempC;
+	unsigned char* metallicData = stbi_load(metallic->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
+	unsigned char* roughnessData = stbi_load(roughness->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
+	unsigned char* ambientData = stbi_load(ao->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
+
+
+	for (int i = 0; i < base->width * base->height; i++)
+	{
+		int col = i % base->width;
+		int row = i / base->height;
+
+		data[i * 4 + 0] = metallicData[i];
+		data[i * 4 + 1] = roughnessData[i];
+		data[i * 4 + 2] = ambientData[i];
+		data[i * 4 + 3] = (unsigned char)255;
+
+	}
+
+
+	pbr = ResourceManager::LoadTexture(base->width, base->height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
+}
 
 void ArtScene::SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd)
 {
@@ -34,7 +73,7 @@ void ArtScene::ImportFromPaths(int pathCount, const char* paths[])
 	{
 		std::string path = paths[i];
 		std::string filename = path.substr(path.find_last_of("/\\") + 1);
-		if (filename._Starts_with(texturePrefix)) 
+		if (filename._Starts_with(texturePrefix))
 		{
 			ImportTexture(path, filename);
 			continue;
@@ -54,7 +93,7 @@ void ArtScene::ImportFromPaths(int pathCount, const char* paths[])
 			ImportFolder(path);
 			continue;
 		}
-		std::cout << "Unknown item dropped!: " << path << "\n";
+		std::cout << "Unknown item dropped! Could not detect type based on prefix: " << path << "\n";
 	}
 }
 
@@ -76,14 +115,42 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 
 
 	// Load texture
+
 	Texture* newTexture = ResourceManager::LoadTexture(path, type);
 
 	texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
 
-	// Add texture to the material
-	material->AddTextures(std::vector<Texture*>{ newTexture });
-	std::cout << "Added texture: " << filename << "\n";
-
+	switch (type)
+	{
+	case Texture::Type::normal:
+		normal = newTexture;
+		material->AddTextures(std::vector<Texture*>{ newTexture });
+		break;
+	case Texture::Type::emission:
+		break;
+	case Texture::Type::albedo:
+		base = newTexture;
+		material->AddTextures(std::vector<Texture*>{ newTexture });
+		break;
+	case Texture::Type::roughness:
+		roughness = newTexture;
+		RefreshPBR();
+		break;
+	case Texture::Type::metallic:
+		metallic = newTexture;
+		RefreshPBR();
+		break;
+	case Texture::Type::PBR:
+		break;
+	case Texture::Type::ao:
+		ao = newTexture;
+		RefreshPBR();
+		break;
+	case Texture::Type::paint:
+		break;
+	default:
+		break;
+	}
 }
 
 void ArtScene::ImportMesh(std::string& path, std::string& filename)
@@ -126,12 +193,17 @@ void ArtScene::Start()
 		&pointLights[1],
 		&pointLights[2],
 		&pointLights[3],
-	});
+		});
 
 	glfwSetDropCallback(SceneManager::window, DragDropCallback);
-		
+
 	singleChannelUIImage = ResourceManager::LoadShader("ui");
 
+	importTextures["base"] = &base;
+	importTextures["roughness"] = &roughness;
+	importTextures["normal"] = &normal;
+	importTextures["metallic"] = &metallic;
+	importTextures["ao"] = &ao;
 }
 
 void ArtScene::Update(float delta)
@@ -156,28 +228,30 @@ void ArtScene::GUI()
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		if (ImGui::CollapsingHeader("Current Material")) {
 			ImGui::SliderFloat("Preview Scale", &texturePreviewScale, 0.01f, 1.0f, "% .3f", ImGuiSliderFlags_Logarithmic);
-			
+
 			ImGui::BeginChild("Textures", ImVec2(0, 0), ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
-			for (auto& i : material->texturePointers)
+			for (auto& i : importTextures)
 			{
 				ImGui::BeginGroup();
 				ImGui::Text(i.first.c_str());
-				if (i.second != nullptr) {
-					switch (i.second->type)
-					{
-					case Texture::Type::height:
-					case Texture::Type::PBR:
-						//ImGui::GetWindowDrawList()->AddCallback(SetSingleChannelUIShader, (void*)(0));
-						break;
-					default:
-						break;
-					}
-					ImGui::Image((void*)i.second->GLID, { texturePreviewScale * (float)i.second->width, texturePreviewScale * (float)i.second->height } );
+				if ((*i.second) != nullptr) {
+					//ImGui::GetWindowDrawList()->AddCallback(SetSingleChannelUIShader, (void*)(0));
+					ImGui::Image((void*)(*i.second)->GLID, { texturePreviewScale * (float)(*i.second)->width, texturePreviewScale * (float)(*i.second)->height });
 					//ImGui::GetWindowDrawList()->AddCallback(SetToDefaultUIShader, (void*)(0));
 				}
 				ImGui::EndGroup();
 				ImGui::SameLine();
 			}
+			ImGui::BeginGroup();
+
+			ImGui::Text("PBR");
+			if ((pbr) != nullptr) {
+				ImGui::Image((void*)pbr->GLID, { texturePreviewScale * (float)pbr->width, texturePreviewScale * (float)pbr->height });
+			}
+
+
+
+			ImGui::EndGroup();
 			ImGui::NewLine();
 			ImGui::EndChild();
 		}

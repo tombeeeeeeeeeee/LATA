@@ -23,6 +23,9 @@ public:
 		height,
 		emission,
 		albedo,
+		roughness,
+		metallic,
+		ao,
 		PBR,
 		paint,
 		count // When adding types ensure to add the type name to the unordered map below
@@ -49,7 +52,7 @@ public:
 
 	Texture(std::string _path, Type _type, int _wrappingMode, bool flip = false);
 
-	void Load();
+	void Load(unsigned char* data = nullptr);
 
 	Texture(int _width, int _height, GLenum _format, unsigned char* _data, GLint _wrappingMode, GLenum _dataType, bool _mipMaps, GLint _minFilter, GLint _magFilter);
 	static GLuint CreateTexture(int width, int height, GLenum format, unsigned char* data, GLint wrappingMode, GLenum dataType, bool mipMaps, GLint minFilter, GLint magFilter);
