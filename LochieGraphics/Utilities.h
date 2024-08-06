@@ -8,4 +8,9 @@ namespace Utilities {
 	std::string PointerToString(void* pointer);
 
 	int WrapIndex(int value, int arraySize);
+
+	template <typename T> T mapValueTo(T value, T originalMin, T originalMax, T newMin, T newMax)
+	{
+		return (((value - originalMin) / (originalMax - originalMin)) * (newMax - newMin)) + newMin;
+	}
 }

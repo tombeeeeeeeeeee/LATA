@@ -39,10 +39,10 @@ void Input::ShowAllControllerSlotStatuses()
 		int present = glfwJoystickPresent(i);
 		if (present == GLFW_TRUE) {
 			std::cout << "Joystick #" << i << " is connected\n";
+			std::cout << "\tJoystick name: " << glfwGetJoystickName(i) << "\n";
 			if (glfwJoystickIsGamepad(i)) {
 				std::cout << "\tRecognised as a gamepad\n";
-				std::cout << "\tJoystick name: " << glfwGetJoystickName(i) << "\n";
-				std::cout << "\tGamepad name:  " << glfwGetGamepadName(i) << "\n";
+				std::cout << "\tGamepad name: " << glfwGetGamepadName(i) << "\n";
 			}
 		}
 	}

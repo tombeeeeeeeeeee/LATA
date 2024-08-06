@@ -5,6 +5,8 @@
 
 #include "Input.h"
 
+#include "Image.h"
+
 class GameTest : public Scene
 {
 private:
@@ -26,6 +28,10 @@ private:
 
 	glm::vec2 wheelDirection = {0.0f, 0.0f};
 	float rot = 0.0f;
+
+	Image level;
+
+	float carMoveSpeed = 50.0f;
 
 public:
 
