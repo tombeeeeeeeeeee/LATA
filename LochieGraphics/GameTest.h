@@ -18,8 +18,6 @@ private:
 	SceneObject* h = new SceneObject(this);
 	SceneObject* r = new SceneObject(this);
 
-	std::unordered_map<unsigned long long, RigidBody> rigidbodies = {};
-
 	RigidBody* hRb;
 	RigidBody* rRb;
 
@@ -32,6 +30,10 @@ private:
 	Image level;
 
 	float carMoveSpeed = 50.0f;
+
+	float halfGridSpacing = 0.5f;
+
+	bool MapCellIs(unsigned char* cell, unsigned char r, unsigned char g, unsigned char b);
 
 public:
 

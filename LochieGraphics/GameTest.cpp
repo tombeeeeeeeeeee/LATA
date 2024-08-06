@@ -4,6 +4,11 @@
 
 #include "Image.h"
 
+bool GameTest::MapCellIs(unsigned char* cell, unsigned char r, unsigned char g, unsigned char b)
+{
+	return cell[0] == r && cell[1] == g && cell[2] == b;
+}
+
 GameTest::GameTest()
 {
 }
@@ -19,19 +24,16 @@ void GameTest::Start()
 	&pointLights[3],
 	});
 	
-	rigidbodies[h->GUID] = RigidBody();
-	hRb = &rigidbodies[h->GUID];
+	hRb = new RigidBody();
 	hRb->setMass(1.0f);
 	hRb->setMomentOfInertia(5.0f);
 
-	rigidbodies[r->GUID] = RigidBody();
-	rRb = &rigidbodies[r->GUID];
+	rRb = new RigidBody();
 	rRb->setMass(0.1f);
 	rRb->setMomentOfInertia(5.0f);
 
 	input.Initialise();
 
-	sceneObjects.insert(sceneObjects.end(), { h, r });
 	h->setRigidBody(hRb);
 	r->setRigidBody(rRb);
 
@@ -45,7 +47,18 @@ void GameTest::Start()
 	level.path = "level.png";
 	level.Load();
 
-
+	SceneObject* newSceneObject = new SceneObject(this);
+	PolygonCollider* newCollider = new PolygonCollider();
+	newSceneObject->setCollider(newCollider);
+	newCollider->verts = { 
+		{  -halfGridSpacing, halfGridSpacing},
+		{   halfGridSpacing, halfGridSpacing},
+		{  halfGridSpacing, -halfGridSpacing},
+		{ -halfGridSpacing, -halfGridSpacing},
+	};
+	newCollider->radius = halfGridSpacing;
+	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, { newCollider }, 0, true);
+	newSceneObject->setRigidBody(newRigidBody);
 }
 
 void GameTest::Update(float delta)
@@ -54,9 +67,9 @@ void GameTest::Update(float delta)
 
 	LineRenderer& lines = renderSystem->lines;
 
-	physicsSystem.UpdateRigidBodies(transforms, rigidbodies, delta);
+	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 
-	if (input.inputters.size() > 0) {
+	if (input.inputDevices.size() > 0) {
 
 		/*
 		* check if input is beyond the deadzone
@@ -73,14 +86,14 @@ void GameTest::Update(float delta)
 		* 
 		*/
 		
-		Input::Inputter* rC = input.inputters[0];
+		Input::InputDevice* rC = input.inputDevices[0];
 
 		glm::vec2 tireTurnDirection = rC->getMove();
 		//float turnAmount = glm::dot(glm::vec2(tireTurnDirection.y, -tireTurnDirection.x), wheelDirection);
 		//tireTurnDirection = tireTurnDirection /*+ turnAngleMod*/ * turnAmount /** tile*/;
 		//
 
-		//glm::vec2 move(Utilities::mapValueTo(rC->getRightTrigger(), -1.0f, 1.0f, 0.0f, 1.0f) - Utilities::mapValueTo(rC->getLeftTrigger(), -1.0f, 1.0f, 0.0f, 1.0f), 
+		//glm::vec2 move(rC->getRightTrigger() - rC->getLeftTrigger(), 
 		//	rC->getMove().x);
 		//glm::vec3 force = move.x * carMoveSpeed * r->transform()->forward();
 		////rRb->netForce += glm::vec2(force.x, force.z);
@@ -88,9 +101,9 @@ void GameTest::Update(float delta)
 		//float rotation = move.y;
 		//rRb->angularVel = rotation;
 
-		float forward = Utilities::mapValueTo(rC->getRightTrigger(), -1.0f, 1.0f, 0.0f, 1.0f) - Utilities::mapValueTo(rC->getLeftTrigger(), -1.0f, 1.0f, 0.0f, 1.0f);
+		float forward = rC->getRightTrigger() - rC->getLeftTrigger();
 		
-		// Make the RB have a forward that is a vec 2
+		// TODO: Make the RB have a forward that is a float
 		glm::vec3 temp = r->transform()->forward();
 		rRb->vel += glm::vec2(temp.x, temp.z) * forward;
 
@@ -119,35 +132,17 @@ void GameTest::Update(float delta)
 
 	for (int y = 0; y < level.height - 1; y++)
 	{
-		std::cout << '\n';
 		for (int x = 0; x < level.width - 1; x++)
 		{
 			auto at = level.getValueCompAt(x, y);
 			auto right = level.getValueCompAt(x + 1, y);
 			auto down = level.getValueCompAt(x, y + 1);
-			//auto left = level.getValueCompAt(x - 1, y);
-			auto up = level.getValueCompAt(x, y - 1);
-
-			bool wallHere = (at[0] == 0) && (at[1] == 0) && (at[2] == 0);
-			bool wallDown = (down[0] == 0) && (down[1] == 0) && (down[2] == 0);
-			bool wallRight = (right[0] == 0) && (right[1] == 0) && (right[2] == 0);
-			//bool wallUp = *up == 0;
-			//bool wallLeft = *left== 0;
-
-
+			
+			bool wallHere = MapCellIs(at, 0, 0, 0);
+			bool wallDown = MapCellIs(down, 0, 0, 0);
+			bool wallRight = MapCellIs(right, 0, 0, 0);
 
 			bool onNothing = false;
-			// Black
-			//} && (at[1] == 0) && (at[2] == 0)) {
-			if (*at == 0)
-			{
-				onNothing = true;
-				std::cout << '*';
-			}
-			else
-			{
-				std::cout << ' ';
-			}
 
 			int xPos = x;
 			int yPos = level.height - y;
@@ -156,33 +151,26 @@ void GameTest::Update(float delta)
 			{
 				if (!wallRight)
 				{
-					renderSystem->lines.DrawLineSegment({ xPos + 0.5, 0, yPos + 0.5 }, { xPos + 0.5, 0, yPos - 0.5 }, { 1, 0, 0 });
+					lines.DrawLineSegment({ xPos + halfGridSpacing, 0, yPos + halfGridSpacing }, { xPos + halfGridSpacing, 0, yPos - halfGridSpacing }, { 1, 0, 0 });
 				}
 				if (!wallDown)
 				{
-					renderSystem->lines.DrawLineSegment({ xPos - 0.5, 0, yPos - 0.5 }, { xPos + 0.5, 0, yPos - 0.5 }, { 0, 1, 0 });
+					lines.DrawLineSegment({ xPos - halfGridSpacing, 0, yPos - halfGridSpacing }, { xPos + halfGridSpacing, 0, yPos - halfGridSpacing }, { 0, 1, 0 });
 				}
 			}
 			else
 			{
 				if (wallRight)
 				{
-					renderSystem->lines.DrawLineSegment({ xPos + 0.5, 0, yPos + 0.5 }, { xPos + 0.5, 0, yPos - 0.5 }, { 0, 0, 1 });
+					lines.DrawLineSegment({ xPos + halfGridSpacing, 0, yPos + halfGridSpacing }, { xPos + halfGridSpacing, 0, yPos - halfGridSpacing }, { 0, 0, 1 });
 				}
 				if (wallDown)
 				{
-					renderSystem->lines.DrawLineSegment({ xPos - 0.5, 0, yPos - 0.5 }, { xPos + 0.5, 0, yPos - 0.5 }, { 1, 1, 0 });
+					lines.DrawLineSegment({ xPos - halfGridSpacing, 0, yPos - halfGridSpacing }, { xPos + halfGridSpacing, 0, yPos - halfGridSpacing }, { 1, 1, 0 });
 				}
 			}
 
-			renderSystem->lines.DrawLineSegment({ 0, 0, 0 }, { 10, 0, 10 }, {0.5, 0.5, 0.5});
-
-			//if (((right[0] == 0) && (right[1] == 0) && (right[2] == 0)) != onNothing) {
-			//	renderSystem->lines.DrawLineSegment({ x + 0.5, 0, y + 0.5 }, { x + 0.5, 0, y - 0.5 }, { 1, 1, 1 });
-			//}
-			//if (((down[0] == 0) && (down[1] == 0) && (down[2] == 0)) != onNothing) {
-			//	renderSystem->lines.DrawLineSegment({ x - 0.5, 0, y - 0.5 }, { x + 0.5, 0, y - 0.5 }, { 1, 1, 1 });
-			//}
+			lines.DrawLineSegment({ 0, 0, 0 }, { 10, 0, 10 }, {0.5, 0.5, 0.5});
 		}
 	}
 
@@ -201,22 +189,13 @@ void GameTest::Draw()
 
 void GameTest::GUI()
 {
-	if (ImGui::Begin("Input Debug")) {
-		if (ImGui::Button("Show all controller connections")) {
-			input.ShowAllControllerSlotStatuses();
-		}
+	input.GUI();
+
+	if (ImGui::Begin("Game Test Debug")) {
+
 		ImGui::BeginDisabled();
-		for (Input::Inputter* i : input.inputters)
-		{
-			glm::vec2 move = i->getMove();
-			glm::vec2 look = i->getLook();
-			ImGui::DragFloat2(("Move##" + Utilities::PointerToString(i)).c_str(), &(move.x));
-			//ImGui::SameLine();
-			ImGui::DragFloat2(("Look##" + Utilities::PointerToString(i)).c_str(), &(look.x));
-		}
 
 		ImGui::DragFloat(("Rotation"), &rot);
-
 		ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
 
 		ImGui::EndDisabled();
