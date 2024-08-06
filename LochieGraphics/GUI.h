@@ -31,14 +31,15 @@ private:
 	void CameraMenu();
 	
 	int sceneObjectSelectedIndex = 0;
-	bool showSceneObjectMenu = false;
+	//bool showSceneObjectMenu = false;
+	bool showHierarchyAndSceneObject = false;
 	void SceneObjectMenu();
 	
 	int lightSelectedIndex = 0;
 	bool showLightMenu = false;
 	void LightMenu();
 	
-	bool showHierarchyMenu = false;
+	//bool showHierarchyMenu = false;
 	void HierarchyMenu();
 	void TransformTree(SceneObject* sceneObject);
 	void TransformDragDrop(SceneObject* sceneObject);

@@ -30,9 +30,9 @@ void GUI::Update()
 			ImGui::MenuItem("Test Menu", NULL, &showTestMenu);
 			ImGui::MenuItem("Resource Menu", NULL, &showResourceMenu);
 			ImGui::MenuItem("Camera Menu", NULL, &showCameraMenu);
-			ImGui::MenuItem("SceneObject Menu", NULL, &showSceneObjectMenu);
+			ImGui::MenuItem("SceneObject Menu", NULL, &showHierarchyAndSceneObject);
 			ImGui::MenuItem("Light Menu", NULL, &showLightMenu);
-			ImGui::MenuItem("Hierarchy Menu", NULL, &showHierarchyMenu);
+			ImGui::MenuItem("Hierarchy Menu", NULL, &showHierarchyAndSceneObject);
 
 			ImGui::EndMenu();
 		}
@@ -41,12 +41,12 @@ void GUI::Update()
 
 	// TODO: GUI Shouldn't exist for a build version
 	//if (true) { return; }
-	if (showTestMenu)        { TestMenu();        }
-	if (showResourceMenu)    { ResourceMenu();    }
-	if (showCameraMenu)      { CameraMenu();      }
-	if (showSceneObjectMenu) { SceneObjectMenu(); }
-	if (showLightMenu)       { LightMenu();       }
-	if (showHierarchyMenu)   { HierarchyMenu();   }
+	if (showTestMenu)                  { TestMenu();        }
+	if (showResourceMenu)              { ResourceMenu();    }
+	if (showCameraMenu)                { CameraMenu();      }
+	if (showHierarchyAndSceneObject)   { SceneObjectMenu(); }
+	if (showLightMenu)                 { LightMenu();       }
+	if (showHierarchyAndSceneObject)   { HierarchyMenu();   }
 	scene->BaseGUI();
 	scene->GUI();
 }
@@ -99,7 +99,7 @@ void GUI::CameraMenu()
 
 void GUI::SceneObjectMenu()
 {
-	if (!ImGui::Begin("Scene Object Menu", &showSceneObjectMenu, defaultWindowFlags)) {
+	if (!ImGui::Begin("Scene Object Menu", &showHierarchyAndSceneObject, defaultWindowFlags)) {
 		ImGui::End();
 		return;
 	}
@@ -133,7 +133,7 @@ void GUI::LightMenu()
 
 void GUI::HierarchyMenu()
 {
-	if (!ImGui::Begin("Hierarchy Menu", &showHierarchyMenu, defaultWindowFlags)) {
+	if (!ImGui::Begin("Hierarchy Menu", &showHierarchyAndSceneObject, defaultWindowFlags)) {
 		ImGui::End();
 		return;
 	}
