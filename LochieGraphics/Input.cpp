@@ -2,6 +2,8 @@
 
 #include "SceneManager.h"
 
+#include "Utilities.h"
+
 #include "Graphics.h"
 
 #include <iostream>
@@ -50,7 +52,7 @@ void Input::ShowAllControllerSlotStatuses()
 
 void Input::Update()
 {
-	for (Inputter* i : inputters)
+	for (InputDevice* i : inputDevices)
 	{
 		if (i->getType() != Type::Controller) {
 			continue;
@@ -61,14 +63,42 @@ void Input::Update()
 	}
 }
 
+void Input::GUI()
+{
+	if (ImGui::Begin("Input Debug")) {
+		if (ImGui::Button("Show all controller connection information (console)")) {
+			ShowAllControllerSlotStatuses();
+		}
+		for (int i = 0; i < inputDevices.size(); i++)
+		{
+			if (ImGui::CollapsingHeader(("#" + std::to_string(i)).c_str())) {
+				glm::vec2 move = inputDevices[i]->getMove();
+				glm::vec2 look = inputDevices[i]->getLook();
+				float leftTrigger = inputDevices[i]->getLeftTrigger();
+				float rightTrigger = inputDevices[i]->getRightTrigger();
+
+				ImGui::BeginDisabled();
+
+				ImGui::DragFloat2(("Move##" + Utilities::PointerToString(inputDevices[i])).c_str(), &(move.x));
+				ImGui::DragFloat2(("Look##" + Utilities::PointerToString(inputDevices[i])).c_str(), &(look.x));
+				ImGui::DragFloat(("Left Trigger##" + Utilities::PointerToString(inputDevices[i])).c_str(), &leftTrigger);
+				ImGui::DragFloat(("Right Trigger##" + Utilities::PointerToString(inputDevices[i])).c_str(), &rightTrigger);
+				
+				ImGui::EndDisabled();
+			}
+		}
+	}
+	ImGui::End();
+}
+
 void Input::AddGamepad(int id)
 {
-	inputters.push_back(new Controller(id));
+	inputDevices.push_back(new Controller(id));
 }
 
 void Input::AddKeyboard()
 {
-	inputters.push_back(new Keyboard());
+	inputDevices.push_back(new Keyboard());
 }
 
 void Input::JoystickChange(int id, int event) {
@@ -83,14 +113,14 @@ void Input::JoystickChange(int id, int event) {
 	}
 	else if (event == GLFW_DISCONNECTED) {
 		std::cout << "Joystick: " << id << " disconnected\n";
-		for (auto i = inputters.begin(); i != inputters.end(); i++)
+		for (auto i = inputDevices.begin(); i != inputDevices.end(); i++)
 		{
 			if ((*i)->getType() != Type::Controller) {
 				continue;
 			}
 			Controller* c = (Controller*)(*i);
 			if (c->id == id) {
-				inputters.erase(i);
+				inputDevices.erase(i);
 				break;
 			}
 		}
@@ -116,12 +146,12 @@ glm::vec2 Input::Controller::getLook() const
 
 float Input::Controller::getLeftTrigger() const
 {
-	return currentState.axes[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER];
+	return Utilities::mapValueTo(currentState.axes[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER], -1.0f, 1.0f, 0.0f, 1.0f);
 }
 
 float Input::Controller::getRightTrigger() const
 {
-	return currentState.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER];
+	return Utilities::mapValueTo(currentState.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER], -1.0f, 1.0f, 0.0f, 1.0f);
 }
 
 Input::Type Input::Controller::getType() const

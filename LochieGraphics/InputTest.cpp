@@ -42,20 +42,4 @@ void InputTest::Draw()
 
 void InputTest::GUI()
 {
-	if (ImGui::Begin("Input Debug")) {
-		if (ImGui::Button("Show all controller connections")) {
-			input.ShowAllControllerSlotStatuses();
-		}
-		ImGui::BeginDisabled();
-		for (Input::Inputter* i : input.inputters)
-		{
-			glm::vec2 move = i->getMove();
-			glm::vec2 look = i->getLook();
-			ImGui::DragFloat2(("Move##" + Utilities::PointerToString(i)).c_str(), &(move.x));
-			//ImGui::SameLine();
-			ImGui::DragFloat2(("Look##" + Utilities::PointerToString(i)).c_str(), &(look.x));
-		}
-		ImGui::EndDisabled();
-	}
-	ImGui::End();
 }

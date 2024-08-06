@@ -15,7 +15,7 @@ public:
 		Controller
 	};
 
-	class Inputter {
+	class InputDevice {
 	public:
 		virtual glm::vec2 getMove() const = 0;
 		virtual glm::vec2 getLook() const = 0;
@@ -24,7 +24,7 @@ public:
 		virtual Type getType() const = 0;
 	};
 
-	class Keyboard : public Inputter {
+	class Keyboard : public InputDevice {
 	public:
 		const int keyMoveUp = GLFW_KEY_W;
 		const int keyMoveLeft = GLFW_KEY_A;
@@ -46,7 +46,7 @@ public:
 		Type getType() const override;
 	};
 
-	class Controller : public Inputter {
+	class Controller : public InputDevice {
 	public:
 		int id;
 		GLFWgamepadstate previousState;
@@ -61,7 +61,7 @@ public:
 		Type getType() const override;
 	};
 
-	std::vector<Inputter*> inputters;
+	std::vector<InputDevice*> inputDevices;
 
 
 	void Initialise();
@@ -75,5 +75,7 @@ public:
 	void ShowAllControllerSlotStatuses();
 
 	void Update();
+
+	void GUI();
 };
 
