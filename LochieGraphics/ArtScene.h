@@ -11,15 +11,34 @@ private:
 		{ "BaseColour", Texture::Type::albedo },
 		{ "Normal",     Texture::Type::normal },
 		{ "Albedo",     Texture::Type::albedo},
+		{ "Roughness",  Texture::Type::roughness},
+		{ "Metallic",   Texture::Type::metallic},
+		{ "AO",         Texture::Type::ao},
+		//{ "PBR",        Texture::Type::PBR},
 	};
 
 
 	std::string texturePrefix = "T_";
 	std::string meshPrefix = "SM_";
+
+	Texture* base = nullptr;
+	Texture* roughness = nullptr;
+	Texture* normal = nullptr;
+	Texture* metallic = nullptr;
+	Texture* ao = nullptr;
+
+	Texture* pbr = nullptr;
+
+	bool defaultFlip = false;
+
+	std::unordered_map<std::string, Texture**> importTextures;
+
+	void RefreshPBR();
 	
-	//GLuint defaultUIShader;
-	//static Shader* singelChannelUIImage;
-	//static void SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd);
+	GLint defaultUIShader;
+	static Shader* singleChannelUIImage;
+	static void SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd);
+	static void SetToDefaultUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd);
 
 	Skybox* skybox = nullptr;
 
