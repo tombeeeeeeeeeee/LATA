@@ -7,17 +7,6 @@
 
 TestScene::TestScene()
 {
-	sceneObjects = std::vector<SceneObject*>{
-		boxes,
-		grass,
-		lightCube,
-		backpack,
-		soulSpear,
-		testRedBox,
-		tires,
-		//vampire,
-		//xbot
-	};
 	lights = std::vector<Light*>{
 		&directionalLight,
 		&pointLights[0],
