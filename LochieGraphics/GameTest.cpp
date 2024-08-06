@@ -89,28 +89,18 @@ void GameTest::Update(float delta)
 		Input::InputDevice* rC = input.inputDevices[0];
 
 		glm::vec2 tireTurnDirection = rC->getMove();
-		//float turnAmount = glm::dot(glm::vec2(tireTurnDirection.y, -tireTurnDirection.x), wheelDirection);
-		//tireTurnDirection = tireTurnDirection /*+ turnAngleMod*/ * turnAmount /** tile*/;
-		//
-
-		//glm::vec2 move(rC->getRightTrigger() - rC->getLeftTrigger(), 
-		//	rC->getMove().x);
-		//glm::vec3 force = move.x * carMoveSpeed * r->transform()->forward();
-		////rRb->netForce += glm::vec2(force.x, force.z);
-		//rRb->netForce += force * tireTurnDirection;
-		//float rotation = move.y;
-		//rRb->angularVel = rotation;
-
-		float forward = rC->getRightTrigger() - rC->getLeftTrigger();
+		float turnAmount = glm::dot(glm::vec2(tireTurnDirection.y, -tireTurnDirection.x), wheelDirection);
+		tireTurnDirection = tireTurnDirection + turnAngleMod * turnAmount * tile;
 		
-		// TODO: Make the RB have a forward that is a float
-		glm::vec3 temp = r->transform()->forward();
-		rRb->vel += glm::vec2(temp.x, temp.z) * forward;
 
-
+		glm::vec2 move(rC->getRightTrigger() - rC->getLeftTrigger(), 
+			rC->getMove().x);
+		glm::vec3 force = move.x * carMoveSpeed * r->transform()->forward();
+		rRb->netForce += glm::vec2(force.x, force.z);
+		float rotation = move.y;
+		rRb->angularVel = rotation;
 	}
 	
-	ImGui::DragFloat("Car move speed", &carMoveSpeed);
 
 
 
@@ -192,6 +182,7 @@ void GameTest::GUI()
 	input.GUI();
 
 	if (ImGui::Begin("Game Test Debug")) {
+		ImGui::DragFloat("Car move speed", &carMoveSpeed);
 
 		ImGui::BeginDisabled();
 
