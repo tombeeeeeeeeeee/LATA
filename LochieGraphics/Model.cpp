@@ -1,8 +1,6 @@
 #include "Model.h"
 
 #include "Animation.h"
-#include "SceneObject.h"
-#include "SceneManager.h"
 
 #include <iostream>
 #include <assimp/Importer.hpp>
@@ -48,10 +46,7 @@ void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 		meshes[i].InitialiseFromAiMesh(path, scene, &boneInfoMap, mesh, flipTexturesOnLoad);
 	}
 
-	//ASK: What is this?
-	root = new SceneObject(SceneManager::scene);
-	//SceneManager::scene->sceneObjects.push_back(root);
-	Animation::ReadHierarchyData(root->transform(), scene->mRootNode);
+	Animation::ReadHierarchyData(&root, scene->mRootNode);
 	// TODO: Do I need to do this, check exactly what should be done
 	//aiReleaseImport(scene);
 }

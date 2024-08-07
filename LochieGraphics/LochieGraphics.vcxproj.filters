@@ -185,9 +185,6 @@
     <ClCompile Include="BlendedAnimator.cpp">
       <Filter>Source Files\Rendering\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Serialisation.h">
-      <Filter>Source Files\Third-Party</Filter>
-    </ClCompile>
     <ClCompile Include="eNetTest.cpp">
       <Filter>Source Files\Networking\eNet</Filter>
     </ClCompile>
@@ -225,6 +222,12 @@
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialisation.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelHierarchyInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -430,6 +433,7 @@
     <ClInclude Include="Image.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="ModelHierarchyInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">

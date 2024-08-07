@@ -51,7 +51,7 @@ public:
 
 	float getDuration() const;
 
-	const Transform* getRootNode() const;
+	const ModelHierarchyInfo* getRootNode() const;
 
 	const std::unordered_map<std::string, BoneInfo>& getBoneIDMap() const;
 
@@ -60,6 +60,6 @@ private:
 
 	// TODO: move this?
 public:
-	static void ReadHierarchyData(Transform* dest, const aiNode* src);
+	static void ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src);
 };
 

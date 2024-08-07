@@ -20,9 +20,9 @@ void BlendedAnimator::UpdateAnimation(float delta)
 
 }
 
-void BlendedAnimator::CalculateBoneTransform(const Transform* node, glm::mat4 parentTransform)
+void BlendedAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 parentTransform)
 {
-    std::string nodeName = node->getSceneObject()->name;
+    std::string nodeName = node->name;
     glm::mat4 globalTransformation;
     Bone* bone1 = currentAnimation->FindBone(nodeName);
     Bone* bone2 = otherCurrentAnimation->FindBone(nodeName);
@@ -64,7 +64,7 @@ void BlendedAnimator::CalculateBoneTransform(const Transform* node, glm::mat4 pa
         globalTransformation = parentTransform * m;
     }
     else {
-        globalTransformation = parentTransform * node->getLocalMatrix();
+        globalTransformation = parentTransform * node->transform.getLocalMatrix();
     }
 
     auto& boneInfoMap = currentAnimation->getBoneIDMap();
@@ -77,8 +77,8 @@ void BlendedAnimator::CalculateBoneTransform(const Transform* node, glm::mat4 pa
     }
 
     // Recursively call on children
-    for (int i = 0; i < node->getChildren().size(); i++) {
-        CalculateBoneTransform(node->getChildren()[i], globalTransformation);
+    for (int i = 0; i < node->children.size(); i++) {
+        CalculateBoneTransform(node->children[i], globalTransformation);
     }
 
 }
