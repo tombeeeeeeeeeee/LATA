@@ -38,6 +38,15 @@ Shader* ResourceManager::LoadShaderDefaultVert(std::string fragmentName, int fla
 	LoadResource(Shader, shaders, "shaders/default.vert", "shaders/" + fragmentName + ".frag", flags);
 }
 
+Shader* ResourceManager::LoadShader(toml::v3::table* toml)
+{
+	Shader newShader = Shader(toml);
+	if (shaders.find(newShader.GUID) != shaders.end()) {
+		shaders.erase(newShader.GUID);
+	}
+	return &shaders.emplace(newShader.GUID, newShader).first->second;
+}
+
 Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
 {
 	LoadResource(Texture, textures, path, type, wrappingMode, flipOnLoad);
@@ -196,19 +205,7 @@ void ResourceManager::BindFlaggedVariables()
 {
 	for (auto i = shaders.begin(); i != shaders.end(); i++)
 	{
-		int flag = (*i).second.getFlag();
-		(*i).second.Use();
-
-		if (flag & Shader::Flags::Spec)
-		{
-			(*i).second.setInt("irradianceMap", 7);
-			(*i).second.setInt("prefilterMap", 8);
-			(*i).second.setInt("brdfLUT", 9);
-		}
-		if (flag & Shader::Flags::Painted)
-		{
-			(*i).second.setInt("brushStrokes", 10);
-		}
+		BindFlaggedVariables(&(*i).second);
 	}
 }
 
@@ -229,6 +226,15 @@ void ResourceManager::BindFlaggedVariables(Shader* shader)
 	}
 }
 
+void ResourceManager::UnloadShaders()
+{
+	for (auto i = shaders.begin(); i != shaders.end(); i++)
+	{
+		i->second.DeleteProgram();
+	}
+	shaders.clear();
+}
+
 void ResourceManager::UnloadAll()
 {
 	for (auto i = textures.begin(); i != textures.end(); i++)
@@ -237,11 +243,15 @@ void ResourceManager::UnloadAll()
 	}
 	textures.clear();
 
-	for (auto i = shaders.begin(); i != shaders.end(); i++)
-	{
-		i->second.DeleteProgram();
-	}
-	shaders.clear();
+	UnloadShaders();
 
 	materials.clear();
+}
+
+void ResourceManager::RefreshAllMaterials()
+{
+	for (auto& i : materials)
+	{
+		i.second.Refresh();
+	}
 }

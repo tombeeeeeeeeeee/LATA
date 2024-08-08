@@ -33,8 +33,10 @@ private:
 	static GLuint CompileShader(std::string path, int type);
 	bool loaded = false;
 	int updateFlag;
+
 public:
 
+	// TODO: write these by bitshifting 1 instead
 	enum Flags {
 		None     = 0b00000000,
 		VPmatrix = 0b00000001,
@@ -82,4 +84,6 @@ public:
 	void DeleteProgram();
 
 	toml::table Serialise();
+	Shader(toml::v3::table* toml);
+
 };

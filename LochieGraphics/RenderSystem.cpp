@@ -57,6 +57,8 @@ void RenderSystem::Start(
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     shadowFrameBuffer = new FrameBuffer(shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight, nullptr, depthMap, false);
     paintStrokeTexture = nullptr;//ResourceManager::LoadTexture(paintStrokeTexturePath, Texture::Type::paint);
+
+    
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
 
@@ -145,11 +147,10 @@ void RenderSystem::SetPrefilteredMap(unsigned int textureID)
     // generate mipmaps for the cubemap so OpenGL automatically allocates the required memory.
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-    unsigned int currShader = (*shaders)[ShaderIndex::prefilter]->GLID;
-    glUseProgram(currShader);
+    (*shaders)[ShaderIndex::prefilter]->Use();
 
-    glUniform1i(glGetUniformLocation(currShader, "environmentMap"), 1);
-    glUniformMatrix4fv(glGetUniformLocation(currShader, "projection"), 1, GL_FALSE, &captureProjection[0][0]);
+    (*shaders)[ShaderIndex::prefilter]->setInt("environmentMap", 1);
+    (*shaders)[ShaderIndex::prefilter]->setMat4("projection", captureProjection);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -166,12 +167,12 @@ void RenderSystem::SetPrefilteredMap(unsigned int textureID)
         glViewport(0, 0, mipWidth, mipHeight);
 
         float roughness = (float)mip / (float)(maxMipLevels - 1);
-        glUniform1f(glGetUniformLocation(currShader, "roughness"), roughness);
+        (*shaders)[ShaderIndex::prefilter]->setFloat("roughness", roughness);
         for (unsigned int i = 0; i < 6; ++i)
         {
             //ColouredOutput("view in prefilter is: ", Colour::green);
             //ColouredOutput(glGetUniformLocation(currShader, "view") == -1, Colour::red, false);
-            glUniformMatrix4fv(glGetUniformLocation(currShader, "view"), 1, GL_FALSE, &captureViews[i][0][0]);
+            (*shaders)[ShaderIndex::prefilter]->setMat4("view", captureViews[i]);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

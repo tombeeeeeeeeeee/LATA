@@ -141,6 +141,7 @@ Texture* Material::getFirstTextureOfType(Texture::Type type) const
 
 void Material::Refresh()
 {
+	shader = ResourceManager::GetShader(shaderGUID);
 	for (auto i = textureGUIDs.begin(); i != textureGUIDs.end(); i++)
 	{
 		if (i->second) {

@@ -18,5 +18,7 @@ public:
 	void Update(Camera* camera, float ratio);
 	void Update(glm::mat4 translationLessVP);
 	void Draw();
+
+	void Refresh();
 };
 

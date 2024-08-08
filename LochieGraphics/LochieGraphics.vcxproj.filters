@@ -224,11 +224,14 @@
     <ClCompile Include="Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Serialisation.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ModelHierarchyInfo.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialisation.h">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialisation.cpp">
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -433,7 +436,9 @@
     <ClInclude Include="Image.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="ModelHierarchyInfo.h" />
+    <ClInclude Include="ModelHierarchyInfo.h">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">

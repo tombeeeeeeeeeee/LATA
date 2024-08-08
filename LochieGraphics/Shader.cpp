@@ -196,9 +196,20 @@ toml::table Shader::Serialise()
 {
 	return toml::table{
 		// TODO: Should not be converting a GUID (of type (unsigned long long) to type of (long long))
-		{ "guid", (long long)GUID },
+		{ "guid", std::to_string(GUID) },
 		{ "vertex", vertexPath },
 		{ "fragment", fragmentPath },
 		{ "flags", updateFlag }
 	};
+}
+
+Shader::Shader(toml::v3::table* toml)
+{
+	auto temp = (*toml)["guid"];
+	GUID = Serialisation::LoadAsUnsignedLongLong((*toml)["guid"]);
+	vertexPath = Serialisation::LoadAsString((*toml)["vertex"]);
+	fragmentPath = Serialisation::LoadAsString((*toml)["fragment"]);
+	updateFlag = Serialisation::LoadAsInt((*toml)["flags"]);
+	
+	Load();
 }

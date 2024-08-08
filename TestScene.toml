@@ -1,72 +1,95 @@
 [[Shaders]]
 flags = 0
 fragment = 'shaders/cubemap.frag'
-guid = 103
+guid = '113'
 vertex = 'shaders/cubemap.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/simpleDepthShader.frag'
-guid = 104
+guid = '114'
 vertex = 'shaders/simpleDepthShader.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/shadowDebug.frag'
-guid = 105
+guid = '115'
 vertex = 'shaders/shadowDebug.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/HDRBloom.frag'
-guid = 106
+guid = '116'
 vertex = 'shaders/default.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/brdf.frag'
-guid = 107
+guid = '117'
 vertex = 'shaders/default.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/prefilter.frag'
-guid = 108
+guid = '118'
 vertex = 'shaders/prefilter.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/downSample.frag'
-guid = 109
+guid = '119'
 vertex = 'shaders/default.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/upSample.frag'
-guid = 110
+guid = '120'
 vertex = 'shaders/default.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/irradiance.frag'
-guid = 111
+guid = '121'
 vertex = 'shaders/irradiance.vert'
 
 [[Shaders]]
 flags = 1
 fragment = 'shaders/lineRenderer.frag'
-guid = 112
+guid = '122'
 vertex = 'shaders/lineRenderer.vert'
 
 [[Shaders]]
 flags = 11
 fragment = 'shaders/superDuper.frag'
-guid = 113
+guid = '123'
 vertex = 'shaders/superDuper.vert'
 
-[Camera]
-fov = 60.0
-position = [ 0.0, 1.5, 0.0 ]
-rotation = [ -90.0, -89.0 ]
+[[Shaders]]
+flags = 1
+fragment = 'shaders/lightCube.frag'
+guid = '124'
+vertex = 'shaders/lightCube.vert'
 
-SceneObjects = []
+[[Shaders]]
+flags = 4
+fragment = 'shaders/animate.frag'
+guid = '125'
+vertex = 'shaders/animate.vert'
+
+[[Shaders]]
+flags = 3
+fragment = 'shaders/pbr.frag'
+guid = '126'
+vertex = 'shaders/pbr.vert'
+
+[[Shaders]]
+flags = 1
+fragment = 'shaders/simpleTextured.frag'
+guid = '127'
+vertex = 'shaders/simpleTextured.vert'
+
+[Camera]
+fov = 105.0
+position = [ -0.48965904116630554, 1.8869491815567017, 5.957887649536133 ]
+rotation = [ -548.2992553710938, -40.59996032714844 ]
+

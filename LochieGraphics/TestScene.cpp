@@ -80,6 +80,7 @@ void TestScene::Start()
 	});
 	grassModel.AddMesh(new Mesh(Mesh::presets::doubleQuad));
 	grass->setRenderer(new ModelRenderer(&grassModel, grassMaterial));
+
 	grass->transform()->setPosition({ 1.9f, 0.f, 2.6f });
 	grass->transform()->setEulerRotation({ 0.f, -43.2f, 0.f });
 

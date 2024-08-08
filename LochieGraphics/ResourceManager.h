@@ -15,6 +15,9 @@ public:
 	static Shader* LoadShader(std::string vertexPath, std::string fragmentPath, int flags = 0);
 	static Shader* LoadShader(std::string sharedName, int flags = 0);
 	static Shader* LoadShaderDefaultVert(std::string fragmentName, int flags = 0);
+
+	static Shader* LoadShader(toml::v3::table* toml);
+
 	static Texture* LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	// TODO: See if this function can be cleaned up
 	static Texture* LoadTexture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_SRGB, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
@@ -30,7 +33,11 @@ public:
 	static void BindFlaggedVariables();
 	static void BindFlaggedVariables(Shader* shader);
 
+	static void UnloadShaders();
 	static void UnloadAll();
+
+	static void RefreshAllMaterials();
+
 	~ResourceManager();
 	ResourceManager(const ResourceManager& other) = delete;
 	ResourceManager& operator=(const ResourceManager& other) = delete;

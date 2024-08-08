@@ -48,8 +48,22 @@ void SceneObject::GUI()
 	}
 
 	//TODO Add animator parts;
-	//if ((parts & Parts::animator))
+	//if ((parts & Parts::animator)) {
 	//	scene->animators[GUID].GUI();
+	//}
+
+	//const char popup[] = "SceneObject Add Part";
+
+	//if (ImGui::Button("Add Part")) {
+	//	ImGui::OpenPopup(popup);
+	//}
+	//if (ImGui::BeginPopup(popup)) {
+	//	if (ImGui::Button("Model Renderer##Add part")) {
+	//		setRenderer(new ModelRenderer());
+	//	}
+	//	
+	//	ImGui::EndPopup();
+	//}
 }
 
 void SceneObject::setTransform(Transform* transform)
