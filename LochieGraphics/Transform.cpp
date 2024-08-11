@@ -162,12 +162,12 @@ void Transform::setScale(glm::vec3 _scale)
 	scale = _scale;
 }
 
-glm::vec3 Transform::getPosition()
+glm::vec3 Transform::getPosition() const
 {
 	return position;
 }
 
-glm::vec3 Transform::getGlobalPosition()
+glm::vec3 Transform::getGlobalPosition() const
 {
 	return { globalMatrix[3][0], globalMatrix[3][1], globalMatrix[3][2] };
 }
@@ -177,17 +177,17 @@ void Transform::setPosition(glm::vec3 pos)
 	position = pos;
 }
 
-glm::vec3 Transform::forward()
+glm::vec3 Transform::forward() const
 {
 	return glm::vec3(glm::normalize(globalMatrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
 }
 
-glm::vec3 Transform::right()
+glm::vec3 Transform::right() const
 {
 	return glm::vec3(glm::normalize(globalMatrix * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f)));
 }
 
-glm::vec3 Transform::up()
+glm::vec3 Transform::up() const
 {
 	return glm::vec3(glm::normalize(globalMatrix * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
 }
@@ -220,6 +220,7 @@ void Transform::GUI()
 		UpdateGlobalMatrixCascading();
 	}
 
+	// TODO: Ask tom why this isnt what the setEulerRotation function does
 	if (ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &euler[0], 0.1f)) {
 		euler -= getEulerRotation();
 

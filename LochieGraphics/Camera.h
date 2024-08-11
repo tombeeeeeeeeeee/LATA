@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Transform.h"
+
 #include "Maths.h"
 #include "Graphics.h"
 
@@ -13,16 +15,8 @@ class Camera
 public:
     // TODO: Change to matrix transform? use transform class
     // camera Attributes
-    glm::vec3 position;
-    glm::vec3 front;
-    glm::vec3 up;
-    glm::vec3 right;
-    glm::vec3 worldUp;
+    Transform transform;
 
-    // euler Angles
-    //TODO: Roll
-    float yaw;
-    float pitch;
     // camera options
     // TODO: Move speed shouldn't be build into the camera
     float movementSpeed;

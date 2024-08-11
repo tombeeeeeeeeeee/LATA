@@ -230,7 +230,7 @@ void SceneManager::Update()
 			for (auto l = scene->lights.begin(); l != scene->lights.end(); l++)
 			{
 				(*l)->ApplyToShader(*s);
-				(*s)->setVec3("viewPos", camera.position);
+				(*s)->setVec3("viewPos", camera.transform.getPosition());
 			}
 		}
 		if ((*s)->getFlag() & Shader::Flags::VPmatrix) {
