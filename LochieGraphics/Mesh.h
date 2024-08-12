@@ -36,12 +36,12 @@ public:
 	Mesh();
 	~Mesh();
 
-	Mesh(const Mesh& other) = delete;
-	Mesh& operator=(const Mesh& other) = delete;
+	//Mesh(const Mesh& other) = delete;
+	//Mesh& operator=(const Mesh& other) = delete;
 
-	// Move constructor
-	Mesh(Mesh&& other) noexcept;
-	Mesh& operator = (Mesh&& other) = delete;
+	////// Move constructor
+	//Mesh(Mesh&& other) noexcept;
+	//Mesh& operator = (Mesh&& other) = delete;
 
 	// Pre set
 	//TODO: add more and customisable, specifically sphere

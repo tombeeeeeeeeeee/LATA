@@ -43,7 +43,7 @@ private:
 	Skybox* skybox = nullptr;
 
 	Material* material;
-	Model model;
+	Model* model;
 	SceneObject* sceneObject = new SceneObject(this);
 
 	float loadTargetPreviewSize = 128.0f;

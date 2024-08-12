@@ -10,21 +10,29 @@ class SceneObject;
 
 class Model
 {
+	friend class ResourceManager;
+private:
+	Model();
+	Model(std::string path, bool flipTexturesOnLoad = true);
+
+
 public:
 
 	std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
 	ModelHierarchyInfo root;
 
-	Model();
-	Model(std::string path, bool flipTexturesOnLoad = true);
+	unsigned long long GUID;
+
 
 	void LoadModel(std::string path, bool flipTexturesOnLoad = true);
-	void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
+	//void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
+	void AddMesh(Mesh mesh); // TODO: Maybe remove this function?
+
 	void Draw();
 	const std::vector<Mesh>& getMeshes() const;
 
 	//TODO: Model currently comepletly owns the meshes, this should not be the case, actually with recent changed yes but there should be a model manager
-	std::vector<Mesh> meshes;
+	std::vector<Mesh> meshes = {};
 };
 

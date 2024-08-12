@@ -51,10 +51,15 @@ void Model::LoadModel(std::string path, bool flipTexturesOnLoad)
 	//aiReleaseImport(scene);
 }
 
-void Model::AddMesh(Mesh* mesh)
+//void Model::AddMesh(Mesh* mesh)
+//{
+//	//meshes.emplace_back(std::move(*mesh));
+//}
+void Model::AddMesh(Mesh mesh)
 {
-	meshes.push_back(std::move(*mesh));
+	meshes.push_back(mesh);
 }
+
 
 void Model::Draw()
 {

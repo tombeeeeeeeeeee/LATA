@@ -3,6 +3,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Material.h"
+#include "Model.h"
 
 #include <string>
 
@@ -15,6 +16,8 @@ public:
 	static Shader* LoadShader(std::string vertexPath, std::string fragmentPath, int flags = 0);
 	static Shader* LoadShader(std::string sharedName, int flags = 0);
 	static Shader* LoadShaderDefaultVert(std::string fragmentName, int flags = 0);
+	static Model* LoadModel(std::string path);
+	static Model* LoadModel();
 	static Texture* LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	// TODO: See if this function can be cleaned up
 	static Texture* LoadTexture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_SRGB, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
@@ -22,6 +25,7 @@ public:
 	static Material* GetMaterial(unsigned long long GUID);
 	static Shader* GetShader(unsigned long long GUID);
 	static Texture* GetTexture(unsigned long long GUID);
+	static Model* GetModel(unsigned long long GUID);
 	static Material* LoadMaterial(std::string name, Shader* shader = nullptr);
 
 	static unsigned long long guidCounter;
@@ -49,4 +53,5 @@ private:
 	static std::unordered_map<unsigned long long, Texture, hashFNV1A> textures; // This stores/owns the textures
 	static std::unordered_map<unsigned long long, Shader, hashFNV1A> shaders;
 	static std::unordered_map<unsigned long long, Material, hashFNV1A> materials;
+	static std::unordered_map<unsigned long long, Model, hashFNV1A> models;
 };

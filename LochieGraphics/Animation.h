@@ -29,6 +29,7 @@ private:
 public:
 
 	Model* model = nullptr;
+	unsigned long long modelGUID;
 
 	Animation() {};
 
@@ -56,7 +57,7 @@ public:
 	const std::unordered_map<std::string, BoneInfo>& getBoneIDMap() const;
 
 private:
-	void ReadMissingBones(const aiAnimation* animation, Model& model);
+	void ReadMissingBones(const aiAnimation* animation, Model* model);
 
 	// TODO: move this?
 public:

@@ -11,6 +11,7 @@ class ModelRenderer : public Part
 {
 public:
 	Model* model;
+	unsigned long long modelGUID;
 	// TODO: Should hold multiple materials, one for each mesh from the model, 
 	// I think that there are material slots, so it should be for how ever many materials the model needs
 
@@ -25,5 +26,7 @@ public:
 
 	virtual void Draw(Shader* override) override;
 	virtual void GUI() override;
+
+	void Refresh();
 };
 

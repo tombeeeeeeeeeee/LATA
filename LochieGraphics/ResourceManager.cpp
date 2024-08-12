@@ -13,6 +13,7 @@ using Utilities::PointerToString;
 std::unordered_map<unsigned long long, Texture, ResourceManager::hashFNV1A> ResourceManager::textures;
 std::unordered_map<unsigned long long, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
 std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
+std::unordered_map<unsigned long long, Model, ResourceManager::hashFNV1A> ResourceManager::models;
 unsigned long long ResourceManager::guidCounter = 100;
 
 const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
@@ -36,6 +37,19 @@ Shader* ResourceManager::LoadShader(std::string sharedName, int flags)
 Shader* ResourceManager::LoadShaderDefaultVert(std::string fragmentName, int flags)
 {
 	LoadResource(Shader, shaders, "shaders/default.vert", "shaders/" + fragmentName + ".frag", flags);
+}
+
+Model* ResourceManager::LoadModel(std::string path)
+{
+	LoadResource(Model, models, path);
+}
+
+// TODO: Clean
+Model* ResourceManager::LoadModel()
+{
+	Model newResource;
+	newResource.GUID = GetNewGuid();
+	return &models.emplace(newResource.GUID, newResource).first->second;
 }
 
 Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
@@ -66,6 +80,7 @@ type* ResourceManager::Get##type(unsigned long long GUID)\
 GetResource(Shader, shaders)
 GetResource(Texture, textures)
 GetResource(Material, materials)
+GetResource(Model, models)
 
 unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
 {
@@ -183,6 +198,15 @@ void ResourceManager::GUI()
 			LoadShader("", "", Shader::Flags::None); //TODO: Use some template shader
 		}
 
+	}
+
+	if (ImGui::CollapsingHeader("Models")) {
+
+		for (auto& model : models)
+		{
+			ImGui::Text(std::to_string(model.second.GUID).c_str());
+			//model.second.
+		}
 	}
 }
 

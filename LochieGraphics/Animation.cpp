@@ -7,7 +7,8 @@
 #include <iostream>
 
 Animation::Animation(const std::string& animationPath, Model* _model) :
-	model(_model)
+	model(_model),
+	modelGUID(_model->GUID)
 {
 	Assimp::Importer importer;
 	// TODO: what flags should be set here
@@ -33,7 +34,7 @@ Animation::Animation(const std::string& animationPath, Model* _model) :
 	//SceneManager::scene->sceneObjects.push_back(rootNode->getSceneObject());
 	
 	//ReadHierarchyData(rootNode, scene->mRootNode);
-	ReadMissingBones(animation, *model);
+	ReadMissingBones(animation, model);
 }
 
 Bone* Animation::FindBone(const std::string& name)
@@ -77,9 +78,9 @@ const std::unordered_map<std::string, BoneInfo>& Animation::getBoneIDMap() const
 	return boneInfoMap;
 }
 
-void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
+void Animation::ReadMissingBones(const aiAnimation* animation, Model* model)
 {
-	std::unordered_map<std::string, BoneInfo>& newBoneInfoMap = model.boneInfoMap;
+	std::unordered_map<std::string, BoneInfo>& newBoneInfoMap = model->boneInfoMap;
 
 	for (unsigned int i = 0; i < animation->mNumChannels; i++)
 	{

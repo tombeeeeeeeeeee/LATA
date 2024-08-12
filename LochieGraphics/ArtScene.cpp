@@ -176,9 +176,12 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 
 void ArtScene::ImportMesh(std::string& path, std::string& filename)
 {
-	model.meshes.clear();
+	// TODO: delete old model
+	//model->meshes.clear();
 
-	model = Model(path);
+	model = ResourceManager::LoadModel(path);
+
+	sceneObject->renderer()->Refresh();
 }
 
 void ArtScene::ImportFolder(std::string& path)
@@ -189,7 +192,7 @@ void ArtScene::ImportFolder(std::string& path)
 		stringPaths.push_back(entry.path().string());
 		newPaths.push_back(stringPaths.back().c_str());
 	}
-	ImportFromPaths(newPaths.size(), newPaths.data());
+	ImportFromPaths((int)newPaths.size(), newPaths.data());
 }
 
 ArtScene::ArtScene()
@@ -201,10 +204,15 @@ ArtScene::ArtScene()
 
 void ArtScene::Start()
 {
-	model.AddMesh(new Mesh(Mesh::presets::cube));
+	//model = ResourceManager::LoadModel("models/Beauty Corner/SM_BeautyCorner.fbx");
+	model = ResourceManager::LoadModel();
+	//model->AddMesh(Mesh(Mesh::presets::cube));
 	material = ResourceManager::LoadMaterial("New Material", shaders[super]);
+	//material->AddTextures({
+	//	//ResourceManager::LoadTexture("models/Beauty Corner/T_MetalAssets_BaseColour.tga", Texture::Type::albedo, )
+	//	});
 
-	ModelRenderer* modelRenderer = new ModelRenderer(&model, material);
+	ModelRenderer* modelRenderer = new ModelRenderer(model, material);
 	sceneObject->setRenderer(modelRenderer);
 
 	lights.insert(lights.end(), {

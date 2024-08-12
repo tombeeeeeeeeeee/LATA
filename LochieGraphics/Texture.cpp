@@ -21,6 +21,8 @@ const std::unordered_map<Texture::Type, std::string> Texture::TypeNames =
 	{ Type::height, "height" },
 	{ Type::emission, "emission" }, // TODO: Should cubemap be a type?
 	{ Type::albedo, "albedo" },
+	{ Type::roughness, "roughness" },
+	{ Type::metallic, "metallic" },
 	{ Type::PBR, "PBR" },
 };
 

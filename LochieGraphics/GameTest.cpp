@@ -90,7 +90,7 @@ void GameTest::Update(float delta)
 
 		glm::vec2 tireTurnDirection = rC->getMove();
 		float turnAmount = glm::dot(glm::vec2(tireTurnDirection.y, -tireTurnDirection.x), wheelDirection);
-		tireTurnDirection = tireTurnDirection + turnAngleMod * turnAmount * tile;
+		//tireTurnDirection = tireTurnDirection + turnAngleMod * turnAmount * tile;
 		
 
 		glm::vec2 move(rC->getRightTrigger() - rC->getLeftTrigger(), 
