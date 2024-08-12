@@ -14,8 +14,8 @@ void PhysicsSystem::UpdateRigidBodies(
 
 		glm::vec2 pos = rb->netDepen;
 		rb->accel = rb->netForce * rb->invMass;
-		glm::vec2 vel =  rb->vel + rb->accel * deltaTime;
-		pos += vel * deltaTime;
+		rb->vel =  rb->vel + rb->accel * deltaTime;
+		pos += rb->vel * deltaTime;
 
 		rb->netDepen = { 0,0 };
 		rb->netForce = { 0,0 };

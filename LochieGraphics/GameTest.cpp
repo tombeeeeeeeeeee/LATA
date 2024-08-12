@@ -37,6 +37,11 @@ void GameTest::Start()
 	h->setRigidBody(hRb);
 	r->setRigidBody(rRb);
 
+	hRb = &rigidBodies[h->GUID];
+	rRb = &rigidBodies[r->GUID];
+
+	wheelDirection = {r->transform()->forward().x, r->transform()->forward().y};
+
 	camera->pitch = -89.0f;
 	camera->yaw = -90.0f;
 	camera->position = { 0.0f, 1.5f, 0.0f };
@@ -88,17 +93,46 @@ void GameTest::Update(float delta)
 		
 		Input::InputDevice* rC = input.inputDevices[0];
 
-		glm::vec2 tireTurnDirection = rC->getMove();
-		float turnAmount = glm::dot(glm::vec2(tireTurnDirection.y, -tireTurnDirection.x), wheelDirection);
-		tireTurnDirection = tireTurnDirection + turnAngleMod * turnAmount * tile;
-		
+		glm::vec3 right = r->transform()->right();
+		glm::vec3 forward = r->transform()->forward();
 
-		glm::vec2 move(rC->getRightTrigger() - rC->getLeftTrigger(), 
-			rC->getMove().x);
-		glm::vec3 force = move.x * carMoveSpeed * r->transform()->forward();
-		rRb->netForce += glm::vec2(force.x, force.z);
-		float rotation = move.y;
-		rRb->angularVel = rotation;
+		glm::vec2 moveInput = rC->getMove();
+		if (glm::length(moveInput) > deadZone)
+		{
+			moveInput = glm::normalize(moveInput);
+
+			float turnAmount = glm::dot(glm::vec2(right.x, right.z), moveInput);
+			turnAmount = glm::clamp(turnAmount, -1.0f, 1.0f);
+			float desiredAngle = glm::asin(turnAmount);
+			desiredAngle = glm::clamp(desiredAngle, -maxWheelAngle, maxWheelAngle);
+			
+			float c = cosf(desiredAngle);
+			float s = sinf(desiredAngle);
+			glm::vec2 desiredWheelDirection = {forward.x * c - forward.z * s, forward.z * c + forward.x * s };
+			wheelDirection += (desiredWheelDirection - wheelDirection) * wheelTurnSpeed * delta;
+			wheelDirection = glm::normalize(wheelDirection);
+		}
+		
+		glm::vec2 force;
+		if (glm::length(rC->getRightTrigger()) > 0.1f)
+		{
+			force = wheelDirection * carMoveSpeed * rC->getRightTrigger();
+		}
+		else
+		{
+			force = -rRb->vel * stoppingFrictionCoef;
+		}
+
+		force += -glm::abs(glm::dot(wheelDirection, rRb->vel)) * sidewaysFrictionCoef * rRb->vel;
+
+		if (glm::length(rRb->vel + rRb->invMass * (force + rRb->netForce)) > maxCarMoveSpeed)
+		{
+			force = glm::normalize(force) * (maxCarMoveSpeed - glm::length(rRb->vel)) / rRb->invMass;
+		}
+		rRb->netForce += force;
+		rRb->angularVel = -turningCircleScalar * glm::length(rRb->vel) * glm::dot({right.x, right.z}, wheelDirection);
+
+		//TODO add skidding.
 	}
 	
 
@@ -108,16 +142,39 @@ void GameTest::Update(float delta)
 	glm::vec3 rPos = r->transform()->getPosition();
 	rot = r->transform()->getEulerRotation().y / 180 * PI;
 	glm::vec3 rotary = r->transform()->getEulerRotation();
+	std::vector<glm::vec3> robot =
+	{
+		{ 0.0f - hRadius, rPos.y, 0.0f - hRadius },
+		{ 0.0f - hRadius, rPos.y, 0.0f + hRadius },
+		{ 0.0f + hRadius, rPos.y, 0.0f + hRadius },
+		{ 0.0f + hRadius, rPos.y, 0.0f - hRadius },
+		{0.03f ,0.0f, 0.05},
+		{0.03f ,0.0f, -0.05},
+
+		{-0.03f ,0.0f, 0.05},
+		{-0.03f ,0.0f, -0.05},
+	};
+
+	std::vector<glm::vec3> extraPoints;
+
 	lines.SetColour({ 0.0f, 1.0f, 0.0f });
-	lines.AddPointToLine({ rPos.x - hRadius, rPos.y, rPos.z - hRadius });
-	lines.AddPointToLine({ rPos.x - hRadius, rPos.y, rPos.z + hRadius });
-	lines.AddPointToLine({ rPos.x + hRadius, rPos.y, rPos.z + hRadius });
-	lines.AddPointToLine({ rPos.x + hRadius, rPos.y, rPos.z - hRadius });
+	for (int i = 0; i < robot.size(); i++)
+	{
+		glm::vec4 temp = (r->transform()->getGlobalMatrix() * glm::vec4(robot[i], 1.0f));
+		extraPoints.push_back({ temp.x, temp.y, temp.z });
+		if(i < 4)
+			lines.AddPointToLine({ temp.x, temp.y, temp.z });
+	}
 	lines.FinishLineLoop();
-	glm::vec3 otherPos = rPos + (hRadius * glm::vec3{ glm::sign(cosf(rotary.x)) * cosf(rot), 0.0f, -sinf(rot) });
-
-	lines.DrawLineSegment(rPos, otherPos);
-
+	glm::vec3 otherPos1 = extraPoints[4] + glm::vec3(wheelDirection.x, 0.0f, wheelDirection.y) * 0.04f;
+	glm::vec3 otherPos2 = extraPoints[5] + glm::vec3(wheelDirection.x, 0.0f, wheelDirection.y) * 0.04f;
+	glm::vec3 otherPos3 = extraPoints[6] - r->transform()->forward() * 0.04f;
+	glm::vec3 otherPos4 = extraPoints[7] - r->transform()->forward() * 0.04f;
+	lines.DrawLineSegment(extraPoints[4], otherPos1);
+	lines.DrawLineSegment(extraPoints[5], otherPos2);
+	lines.DrawLineSegment(extraPoints[6], otherPos3);
+	lines.DrawLineSegment(extraPoints[7], otherPos4);
+	
 
 
 	for (int y = 0; y < level.height - 1; y++)
@@ -159,8 +216,6 @@ void GameTest::Update(float delta)
 					lines.DrawLineSegment({ xPos - halfGridSpacing, 0, yPos - halfGridSpacing }, { xPos + halfGridSpacing, 0, yPos - halfGridSpacing }, { 1, 1, 0 });
 				}
 			}
-
-			lines.DrawLineSegment({ 0, 0, 0 }, { 10, 0, 10 }, {0.5, 0.5, 0.5});
 		}
 	}
 
@@ -181,8 +236,15 @@ void GameTest::GUI()
 {
 	input.GUI();
 
-	if (ImGui::Begin("Game Test Debug")) {
-		ImGui::DragFloat("Car move speed", &carMoveSpeed);
+	if (ImGui::Begin("Car Numbers")) {
+		ImGui::DragFloat("Car move peed", &carMoveSpeed);
+		ImGui::DragFloat("Max car move speed", &maxCarMoveSpeed);
+		ImGui::DragFloat("Turning circle scalar", &turningCircleScalar);
+		ImGui::DragFloat("Max wheel angle", &maxWheelAngle);
+		ImGui::DragFloat("Wheel Turn Speed", &wheelTurnSpeed);
+		ImGui::DragFloat("Sideways Wheel Drag", &sidewaysFrictionCoef);
+		ImGui::DragFloat("Stopping Wheel Drag", &stoppingFrictionCoef);
+
 
 		ImGui::BeginDisabled();
 
