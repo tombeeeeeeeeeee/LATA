@@ -8,6 +8,7 @@
 #include "Transform.h"
 #include "Scene.h"
 #include "Ecco.h"
+#include "Sync.h"
 
 #include "Maths.h"
 
@@ -29,7 +30,8 @@ enum Parts
 	light = 1 << 4,
 	collider = 1 << 5,
 	ecco = 1 << 6,
-	count = 1 << 7,
+	sync = 1 << 7,
+	count = 1 << 8,
 };
 
 class Scene;
@@ -78,6 +80,10 @@ public:
 	void setEcco(Ecco* ecco);
 	void setEcco();
 	Ecco* ecco();
+
+	void setSync(Sync* sync);
+	void setSync();
+	Sync* sync();
 
 #pragma endregion
 

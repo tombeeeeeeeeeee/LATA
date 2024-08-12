@@ -18,6 +18,7 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 	* spin (add rotational Impulse)
 	*
 	*/
+	glm::vec2 force = {0.0f, 0.0f};
 
 	glm::vec3 right = transform.right();
 	glm::vec3 forward = transform.forward();
@@ -26,7 +27,7 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 	if (glm::length(moveInput) > deadZone)
 	{
 		moveInput = glm::normalize(moveInput);
-
+		
 		float turnAmount = glm::dot(glm::vec2(right.x, right.z), moveInput);
 		turnAmount = glm::clamp(turnAmount, -1.0f, 1.0f);
 		float desiredAngle = glm::asin(turnAmount);
@@ -39,12 +40,15 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		wheelDirection = glm::normalize(wheelDirection);
 	}
 
-	glm::vec2 force;
-	if (glm::length(inputDevice.getRightTrigger()) > 0.1f)
+	if (glm::length(inputDevice.getRightTrigger()) > 0.01f)
 	{
-		force = wheelDirection * carMoveSpeed * inputDevice.getRightTrigger();
+		force += wheelDirection * carMoveSpeed * inputDevice.getRightTrigger();
 	}
-	else
+	if (glm::length(inputDevice.getLeftTrigger()) > 0.01f)
+	{
+		force -= wheelDirection * carMoveSpeed * inputDevice.getLeftTrigger();
+	}
+	if(glm::length(force) > 0.001f)
 	{
 		force = -rigidBody.vel * stoppingFrictionCoef;
 	}

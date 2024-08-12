@@ -50,6 +50,7 @@ void GameTest::Start()
 
 	hRb = &rigidBodies[h->GUID];
 	rRb = &rigidBodies[r->GUID];
+	h->setSync(new Sync());
 	r->setEcco(new Ecco());
 	ecco->wheelDirection = {r->transform()->forward().x, r->transform()->forward().y};
 
@@ -85,13 +86,24 @@ void GameTest::Update(float delta)
 
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 
-	if (input.inputDevices.size() > 0) {
+	if (input.inputDevices.size() > 0) 
+	{
 		ecco->Update(
 			*input.inputDevices[0],
 			*r->transform(),
 			*r->rigidbody(),
 			delta
 		);
+
+		if(input.inputDevices.size() > 1)
+		{
+			sync->Update(
+				*input.inputDevices[1],
+				*h->transform(),
+				*h->rigidbody(),
+				delta
+			);
+		}
 	}
 
 	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
@@ -196,7 +208,7 @@ void GameTest::GUI()
 	input.GUI();
 
 	ecco->GUI();
-
+	sync->GUI();
 	//ImGui::End();
 }
 

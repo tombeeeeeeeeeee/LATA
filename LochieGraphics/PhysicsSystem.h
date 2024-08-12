@@ -36,6 +36,27 @@ public:
 
 	void CollisisonResolution(CollisionPacket collision);
 
+	/// <summary>
+	/// Set the collision layer mask to true or false for two collision layers
+	/// </summary>
+	void SetCollisionLayerMask(int layerA, int layerB, bool state);
+
+	/// <summary>
+	/// Sets the entire bit mask for a layer in physics collisions
+	/// </summary>
+	void SetCollisionLayerMask(int layer, unsigned int bitMask);
+
+	unsigned int layerMasks[32] = {
+		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
+		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
+		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
+		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
+		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
+		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
+		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
+		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
+	};
+
 private: 
 	RigidBody dumbyRigidBody = RigidBody(0.0f,0.0f);
 };

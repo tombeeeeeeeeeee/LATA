@@ -52,6 +52,12 @@ void SceneObject::GUI()
 		if(scene->ecco)
 			scene->ecco->GUI();
 	}
+
+	if (parts & Parts::sync)
+	{
+		if (scene->sync)
+			scene->sync->GUI();
+	}
 	//TODO Add animator parts;
 	//if ((parts & Parts::animator))
 	//	scene->animators[GUID].GUI();
@@ -178,6 +184,36 @@ Ecco* SceneObject::ecco()
 {
 	if (parts & Parts::ecco)
 		return scene->ecco;
+	else return nullptr;
+}
+
+void SceneObject::setSync(Sync* sync)
+{
+	if (sync)
+	{
+		parts |= Parts::sync;
+		scene->sync = sync;
+		scene->sync->GUID = GUID;
+	}
+	else
+	{
+		parts &= ~Parts::sync;
+		if (scene->sync && scene->sync->GUID == GUID)
+			scene->sync->GUID = 0;
+	}
+}
+
+void SceneObject::setSync()
+{
+	parts |= Parts::sync;
+	if (scene->sync)
+		scene->sync->GUID = GUID;
+}
+
+Sync* SceneObject::sync()
+{
+	if (parts & Parts::sync)
+		return scene->sync;
 	else return nullptr;
 }
 

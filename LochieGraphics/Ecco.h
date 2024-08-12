@@ -23,7 +23,6 @@ public:
 
 	void GUI();
 
-
 	glm::vec2 wheelDirection = { 0.0f, 0.0f };
 
 private:

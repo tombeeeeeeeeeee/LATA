@@ -6,6 +6,7 @@
 #include "Transform.h"
 #include "ModelRenderer.h"
 #include "Ecco.h"
+#include "Sync.h"
 #include "shaderEnum.h"
 
 #include "Maths.h"
@@ -36,6 +37,7 @@ public:
 	std::vector<Light*> lights = {};
 
 	Ecco* ecco = nullptr;
+	Sync* sync = nullptr;
 
 	std::vector<Shader*> shaders = {};
 

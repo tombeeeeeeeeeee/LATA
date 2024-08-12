@@ -1,7 +1,9 @@
 #pragma once
 #include "Maths.h"
+#include "Collision.h"
 #include "Collider.h"
 #include <vector>
+#include <functional>
 
 enum CollisionLayers 
 {
@@ -61,6 +63,9 @@ public:
 	float getMomentOfInertia();
 
 	bool isStatic = false;
+
+	std::vector<std::function<void(Collision)>> onTrigger;
+	std::vector<std::function<void(Collision)>> onCollision;
 
 	static glm::vec2 Transform2Din3DSpace(glm::mat4 global, glm::vec2 input);
 
