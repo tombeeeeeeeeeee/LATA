@@ -38,29 +38,37 @@ void PhysicsSystem::CollisionCheckPhase(
 
 )
 {
-	std::vector<CollisionPacket> collisions;
-	for (auto i = rigidBodies.begin(); i != rigidBodies.end(); i++)
+	for (int i = 0; i < CollisionItterations; i++)
 	{
-		for (auto j = std::next(i); j != rigidBodies.end(); j++)
+		std::vector<CollisionPacket> collisions;
+		for (auto i = rigidBodies.begin(); i != rigidBodies.end(); i++)
 		{
-			GetCollisions(
-				&i->second, &j->second,
-				&transforms[i->first], &transforms[j->first],
-				collisions);
+			for (auto j = std::next(i); j != rigidBodies.end(); j++)
+			{
+				if (i->second.isStatic && j->second.isStatic) continue;
+				GetCollisions(
+					&i->second, &j->second,
+					&transforms[i->first], &transforms[j->first],
+					collisions);
+			}
+
+			if (!i->second.isStatic)
+			{
+				for (auto k = colliders.begin(); k != colliders.end(); k++)
+				{
+					
+					GetCollisions(
+						&i->second, &k->second,
+						&transforms[i->first], &transforms[k->first],
+						collisions);
+				}
+			}
 		}
 
-		for (auto k = colliders.begin(); k != colliders.end(); k++)
+		for (int i = 0; i < collisions.size(); i++)
 		{
-			GetCollisions(
-				&i->second, &k->second,
-				&transforms[i->first], &transforms[k->first],
-				collisions);
+			CollisisonResolution(collisions[i]);
 		}
-	}
-
-	for (int i = 0; i < collisions.size(); i++)
-	{
-		CollisisonResolution(collisions[i]);
 	}
 }
 
@@ -257,7 +265,7 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 
 	float totalInverseMass = (collision.rigidBodyA->invMass + collision.rigidBodyB->invMass);
 
-	float j = -(1.0f + 0.65f) * glm::dot(relativeVelocity, collision.normal) /
+	float j = -(1.0f + glm::max(collision.rigidBodyA->elasticicty, collision.rigidBodyB->elasticicty)) * glm::dot(relativeVelocity, collision.normal) /
 		(totalInverseMass + pow(glm::dot(radiusPerpA, collision.normal), 2) * collision.rigidBodyA->invMomentOfInertia
 			+ pow(glm::dot(radiusPerpB, collision.normal), 2) * collision.rigidBodyB->invMomentOfInertia);
 

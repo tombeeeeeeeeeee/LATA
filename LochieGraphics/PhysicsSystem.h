@@ -36,4 +36,5 @@ public:
 
 private: 
 	RigidBody dumbyRigidBody = RigidBody(0.0f,0.0f);
+	int CollisionItterations = 10;
 };
