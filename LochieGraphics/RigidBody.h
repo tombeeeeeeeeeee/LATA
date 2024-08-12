@@ -37,6 +37,8 @@ public:
 	float invMomentOfInertia = 0;
 	float invMass = 0;
 
+	float elasticicty = 0;
+
 	std::vector<Collider*> colliders = {};
 	int collisionLayer = 0;
 
