@@ -5,6 +5,7 @@
 #include "Light.h"
 #include "Transform.h"
 #include "ModelRenderer.h"
+#include "Ecco.h"
 #include "shaderEnum.h"
 
 #include "Maths.h"
@@ -33,6 +34,8 @@ public:
 	std::unordered_map<unsigned long long, RigidBody> rigidBodies = {};
 	std::unordered_map<unsigned long long, Collider> colliders = {};
 	std::vector<Light*> lights = {};
+
+	Ecco* ecco = nullptr;
 
 	std::vector<Shader*> shaders = {};
 

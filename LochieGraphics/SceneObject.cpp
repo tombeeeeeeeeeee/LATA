@@ -20,14 +20,14 @@ SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation
 	scene(_scene)
 {
 	GUID = ResourceManager::GetNewGuid();
-	scene->transforms[GUID] = Transform(this,_position, _rotation, _scale);
+	scene->transforms[GUID] = Transform(this, _position, _rotation, _scale);
 	scene->sceneObjects.push_back(this);
 }
 
 
 SceneObject::~SceneObject()
 {
-	
+
 }
 
 void SceneObject::Update(float delta)
@@ -39,14 +39,19 @@ void SceneObject::GUI()
 	ImGui::InputText("Name", &name);
 	scene->transforms[GUID].GUI();
 
-	if ((parts & Parts::modelRenderer)) {
-			scene->renderers[GUID].GUI();
-	}
-	
-	if ((parts & Parts::rigidBody)) {
-			scene->rigidBodies[GUID].GUI();
+	if (parts & Parts::modelRenderer) {
+		scene->renderers[GUID].GUI();
 	}
 
+	if (parts & Parts::rigidBody) {
+		scene->rigidBodies[GUID].GUI();
+	}
+
+	if (parts & Parts::ecco)
+	{
+		if(scene->ecco)
+			scene->ecco->GUI();
+	}
 	//TODO Add animator parts;
 	//if ((parts & Parts::animator))
 	//	scene->animators[GUID].GUI();
@@ -144,6 +149,36 @@ Collider* SceneObject::collider()
 	if (parts & Parts::collider)
 		return &(scene->colliders[GUID]);
 	return nullptr;
+}
+
+void SceneObject::setEcco(Ecco* ecco)
+{
+	if (ecco)
+	{
+		parts |= Parts::ecco;
+		scene->ecco = ecco;
+		scene->ecco->GUID = GUID;
+	}
+	else
+	{
+		parts &= ~Parts::ecco;
+		if (scene->ecco && scene->ecco->GUID == GUID)
+			scene->ecco->GUID = 0;
+	}
+}
+
+void SceneObject::setEcco()
+{
+	parts |= Parts::ecco;	
+	if(scene->ecco)
+		scene->ecco->GUID = GUID;
+}
+
+Ecco* SceneObject::ecco()
+{
+	if (parts & Parts::ecco)
+		return scene->ecco;
+	else return nullptr;
 }
 
 //toml::table SceneObject::Serialise()

@@ -7,6 +7,7 @@
 #include "Rigidbody.h"
 #include "Transform.h"
 #include "Scene.h"
+#include "Ecco.h"
 
 #include "Maths.h"
 
@@ -27,7 +28,8 @@ enum Parts
 	rigidBody = 1 << 3,
 	light = 1 << 4,
 	collider = 1 << 5,
-	count = 1 << 6,
+	ecco = 1 << 6,
+	count = 1 << 7,
 };
 
 class Scene;
@@ -72,6 +74,10 @@ public:
 
 	void setCollider(Collider* collider);
 	Collider* collider();
+
+	void setEcco(Ecco* ecco);
+	void setEcco();
+	Ecco* ecco();
 
 #pragma endregion
 

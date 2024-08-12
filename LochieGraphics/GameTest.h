@@ -24,15 +24,7 @@ private:
 	float hRadius = 0.1f;
 	float rRadius = 0.1f;
 
-	glm::vec2 wheelDirection = {0.0f, 0.0f};
-	float carMoveSpeed = .25f;
-	float maxCarMoveSpeed = 6.0f;
-	float deadZone = 0.6f;
-	float turningCircleScalar = 1.5f;
-	float maxWheelAngle = 0.9f;
-	float wheelTurnSpeed = 4.0f;
-	float sidewaysFrictionCoef = 0.05f;
-	float stoppingFrictionCoef = 0.05f;
+
 	float rot = 0.0f;
 
 	Image level;
