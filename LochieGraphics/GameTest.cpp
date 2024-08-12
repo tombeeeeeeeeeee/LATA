@@ -197,7 +197,7 @@ void GameTest::GUI()
 
 	ecco->GUI();
 
-	ImGui::End();
+	//ImGui::End();
 }
 
 GameTest::~GameTest()

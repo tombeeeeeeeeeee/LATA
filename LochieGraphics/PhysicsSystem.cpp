@@ -75,7 +75,7 @@ void PhysicsSystem::CollisionCheckPhase(
 void PhysicsSystem::GetCollisions(
 	RigidBody* a, RigidBody* b,
 	Transform* transformA, Transform* transformB,
-	std::vector<CollisionPacket> collisions)
+	std::vector<CollisionPacket>& collisions)
 {
 	std::vector<Collider*> aCols = (*a->getColliders());
 	std::vector<Collider*> bCols = (*b->getColliders());
@@ -176,7 +176,10 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderA, (PolygonCollider*)bCol,
 					a, &dumbyRigidBody, transformA, transformB
 				);
-				if (collision.depth >= 0) collisions.push_back(collision);
+				if (collision.depth >= 0) {
+					if(aCol->isTrigger && bCol->isTrigger) break;
+                    collisions.push_back(collision);
+					}
 			}
 			else if (bCol->getType() == ColliderType::plane)
 			{
@@ -184,7 +187,10 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderA, (PlaneCollider*)bCol,
 					a, &dumbyRigidBody, transformA, transformB
 				);
-				if (collision.depth >= 0) collisions.push_back(collision);
+				if (collision.depth >= 0) {
+					if(aCol->isTrigger && bCol->isTrigger) break;
+                    collisions.push_back(collision);
+					}
 			}
 			else if (bCol->getType() == ColliderType::polygon)
 			{
@@ -192,7 +198,10 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderA, (PolygonCollider*)bCol,
 					a, &dumbyRigidBody, transformA, transformB
 				);
-				if (collision.depth >= 0) collisions.push_back(collision);
+				if (collision.depth >= 0) {
+					if(aCol->isTrigger && bCol->isTrigger) break;
+                    collisions.push_back(collision);
+					}
 			}
 		}
 		else if (colliderA->getType() == ColliderType::plane)
@@ -203,7 +212,10 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)bCol, (PlaneCollider*)colliderA,
 					&dumbyRigidBody, a, transformB, transformA
 				);
-				if (collision.depth >= 0) collisions.push_back(collision);
+				if (collision.depth >= 0) {
+					if(aCol->isTrigger && bCol->isTrigger) break;
+                    collisions.push_back(collision);
+					}
 			}
 			else if (bCol->getType() == ColliderType::polygon)
 			{
@@ -211,7 +223,10 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)bCol, (PlaneCollider*)colliderA,
 					&dumbyRigidBody, a, transformB, transformA
 				);
-				if (collision.depth >= 0) collisions.push_back(collision);
+				if (collision.depth >= 0) {
+					if(aCol->isTrigger && bCol->isTrigger) break;
+                    collisions.push_back(collision);
+					}
 			}
 		}
 		else if (colliderA->getType() == ColliderType::polygon)
@@ -222,7 +237,10 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderA, (PolygonCollider*)bCol,
 					a, &dumbyRigidBody, transformA, transformB
 				);
-				if (collision.depth >= 0) collisions.push_back(collision);
+				if (collision.depth >= 0) {
+					if(aCol->isTrigger && bCol->isTrigger) break;
+					collisions.push_back(collision);
+				}
 			}
 			else if (bCol->getType() == ColliderType::plane)
 			{
@@ -230,7 +248,10 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderA, (PlaneCollider*)bCol,
 					a, &dumbyRigidBody, transformA, transformB
 				);
-				if (collision.depth >= 0) collisions.push_back(collision);
+				if (collision.depth >= 0) {
+					if(aCol->isTrigger && bCol->isTrigger) break;
+                    collisions.push_back(collision);
+					}
 			}
 			else if (bCol->getType() == ColliderType::polygon && ((PolygonCollider*)bCol)->verts.size() == 1)
 			{
@@ -238,7 +259,10 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)bCol, (PolygonCollider*)colliderA,
 					&dumbyRigidBody, a, transformB, transformA
 				);
-				if (collision.depth >= 0) collisions.push_back(collision);
+				if (collision.depth >= 0) {
+					if(aCol->isTrigger && bCol->isTrigger) break;
+                    collisions.push_back(collision);
+					}
 			}
 		}
 		

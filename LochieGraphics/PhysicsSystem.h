@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include "CollisionFunctions.h"
 
+const int CollisionItterations = 10;
+
 class PhysicsSystem
 {
 public:
@@ -23,7 +25,7 @@ public:
 	void GetCollisions(
 		RigidBody* a, RigidBody* b,
 		Transform* transformA, Transform* transformB,
-		std::vector<CollisionPacket> collisions
+		std::vector<CollisionPacket>& collisions
 	);
 
 	void GetCollisions(
@@ -36,5 +38,4 @@ public:
 
 private: 
 	RigidBody dumbyRigidBody = RigidBody(0.0f,0.0f);
-	int CollisionItterations = 10;
 };
