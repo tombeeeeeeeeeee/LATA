@@ -45,9 +45,6 @@ void ModelRenderer::Draw(Shader* override)
 
 void ModelRenderer::GUI()
 {
-	// TODO:
-	ImGui::Text(("Model: " + Utilities::PointerToString(model)).c_str());
-
 	std::string tag = Utilities::PointerToString(this);
 	// TODO: Make function for this
 	unsigned long long newMaterialGUID = materialGUID;

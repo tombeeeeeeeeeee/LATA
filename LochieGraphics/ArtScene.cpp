@@ -23,29 +23,31 @@ void ArtScene::RefreshPBR()
 		return;
 	}
 
+	int width = metallic->width;
+	int height = metallic->height;
 	// 4 channels
-	std::vector<unsigned char> data(base->width * base->height * 4);
+	std::vector<unsigned char> data(width * height * 4);
 
 	int tempW;
 	int tempH;
 	int tempC;
-	unsigned char* metallicData = stbi_load(metallic->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
-	if (tempW != base->width || tempH != tempH) { return; }
-	unsigned char* roughnessData = stbi_load(roughness->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
-	if (tempW != base->width || tempH != tempH) { return; }
+	unsigned char* metallicData = stbi_load(metallic->path.c_str(), &tempW, &tempH, &tempC, STBI_rgb);
+	if (tempW != width || tempH != tempH) { return; }
+	unsigned char* roughnessData = stbi_load(roughness->path.c_str(), &tempW, &tempH, &tempC, STBI_rgb);
+	if (tempW != width || tempH != tempH) { return; }
 	unsigned char* ambientData;
 	if (ao) {
-		ambientData = stbi_load(ao->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
+		ambientData = stbi_load(ao->path.c_str(), &tempW, &tempH, &tempC, STBI_rgb);
 	}
 	else {
 		ambientData = {};
 	}
 	
 
-	for (int i = 0; i < base->width * base->height; i++)
+	for (size_t i = 0; i < width * height; i++)
 	{
-		int col = i % base->width;
-		int row = i / base->height;
+		int col = i % width;
+		int row = i / height;
 
 		data[i * 4 + 0] = metallicData[i];
 		data[i * 4 + 1] = roughnessData[i];
@@ -56,16 +58,15 @@ void ArtScene::RefreshPBR()
 			data[i * 4 + 2] = (unsigned char)255;
 		}
 		data[i * 4 + 3] = (unsigned char)255;
-
 	}
 
 
-	pbr = ResourceManager::LoadTexture(base->width, base->height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
-
+	pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
+	pbr->type = Texture::Type::PBR;
 	material->AddTextures({ pbr });
 
 	// TODO: Get name from base image
-	int result = stbi_write_tga("./newPBR.tga", base->width, base->height, STBI_rgb_alpha, data.data());
+	int result = stbi_write_tga("./newPBR.tga", width, height, STBI_rgb_alpha, data.data());
 
 	std::cout << "Wrote PBR image, with result of " << result << '\n';
 }
