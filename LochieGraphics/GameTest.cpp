@@ -26,16 +26,33 @@ void GameTest::Start()
 	
 	hRb = new RigidBody();
 	hRb->setMass(1.0f);
+	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, hRadius)});
 	hRb->setMomentOfInertia(5.0f);
 
 	rRb = new RigidBody();
+	rRb->addCollider({new PolygonCollider(
+			{
+				{hRadius, hRadius}, 
+				{hRadius, -hRadius},
+				{-hRadius, -hRadius},
+				{-hRadius, hRadius},
+			}, 0.0f) }
+	);
 	rRb->setMass(0.1f);
 	rRb->setMomentOfInertia(5.0f);
+
+	h->transform()->setPosition({ 1.0f,0.0f,1.0f });
 
 	input.Initialise();
 
 	h->setRigidBody(hRb);
 	r->setRigidBody(rRb);
+
+	hRb = &rigidBodies[h->GUID];
+	rRb = &rigidBodies[r->GUID];
+	h->setSync(new Sync());
+	r->setEcco(new Ecco());
+	ecco->wheelDirection = {r->transform()->forward().x, r->transform()->forward().y};
 
 	camera->pitch = -89.0f;
 	camera->yaw = -90.0f;
@@ -69,55 +86,66 @@ void GameTest::Update(float delta)
 
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 
-	if (input.inputDevices.size() > 0) {
+	if (input.inputDevices.size() > 0) 
+	{
+		ecco->Update(
+			*input.inputDevices[0],
+			*r->transform(),
+			*r->rigidbody(),
+			delta
+		);
 
-		/*
-		* check if input is beyond the deadzone
-		* dot the input with the transform.right()
-		* desired wheel angle = clamp(asin(the dot product), -maxAngle, maxAngle);
-		* desired wheel direction = transform.forward() rotated about desired wheel angle
-		* wheel direction = lerp(wheelDirection, desiredWheeldirection, amountPerSec)
-		* 
-		* check if trigger is on
-		* add force in direction of wheel direction
-		* 
-		* if veloctiy exceeds friction coefficent
-		* spin (add rotational Impulse)
-		* 
-		*/
-		
-		Input::InputDevice* rC = input.inputDevices[0];
-
-		glm::vec2 tireTurnDirection = rC->getMove();
-		float turnAmount = glm::dot(glm::vec2(tireTurnDirection.y, -tireTurnDirection.x), wheelDirection);
-		//tireTurnDirection = tireTurnDirection + turnAngleMod * turnAmount * tile;
-		
-
-		glm::vec2 move(rC->getRightTrigger() - rC->getLeftTrigger(), 
-			rC->getMove().x);
-		glm::vec3 force = move.x * carMoveSpeed * r->transform()->forward();
-		rRb->netForce += glm::vec2(force.x, force.z);
-		float rotation = move.y;
-		rRb->angularVel = rotation;
+		if(input.inputDevices.size() > 1)
+		{
+			sync->Update(
+				*input.inputDevices[1],
+				*h->transform(),
+				*h->rigidbody(),
+				delta
+			);
+		}
 	}
-	
 
-
+	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 
 	// Draw robot
 	glm::vec3 rPos = r->transform()->getPosition();
-	rot = r->transform()->getEulerRotation().y / 180 * PI;
 	glm::vec3 rotary = r->transform()->getEulerRotation();
+	std::vector<glm::vec3> robot =
+	{
+		{ 0.0f - hRadius, rPos.y, 0.0f - hRadius },
+		{ 0.0f - hRadius, rPos.y, 0.0f + hRadius },
+		{ 0.0f + hRadius, rPos.y, 0.0f + hRadius },
+		{ 0.0f + hRadius, rPos.y, 0.0f - hRadius },
+		{0.03f ,0.0f, 0.05},
+		{0.03f ,0.0f, -0.05},
+
+		{-0.03f ,0.0f, 0.05},
+		{-0.03f ,0.0f, -0.05},
+	};
+
+	std::vector<glm::vec3> extraPoints;
+
 	lines.SetColour({ 0.0f, 1.0f, 0.0f });
-	lines.AddPointToLine({ rPos.x - hRadius, rPos.y, rPos.z - hRadius });
-	lines.AddPointToLine({ rPos.x - hRadius, rPos.y, rPos.z + hRadius });
-	lines.AddPointToLine({ rPos.x + hRadius, rPos.y, rPos.z + hRadius });
-	lines.AddPointToLine({ rPos.x + hRadius, rPos.y, rPos.z - hRadius });
+	for (int i = 0; i < robot.size(); i++)
+	{
+		glm::vec4 temp = (r->transform()->getGlobalMatrix() * glm::vec4(robot[i], 1.0f));
+		extraPoints.push_back({ temp.x, temp.y, temp.z });
+		if(i < 4)
+			lines.AddPointToLine({ temp.x, temp.y, temp.z });
+	}
 	lines.FinishLineLoop();
-	glm::vec3 otherPos = rPos + (hRadius * glm::vec3{ glm::sign(cosf(rotary.x)) * cosf(rot), 0.0f, -sinf(rot) });
-
-	lines.DrawLineSegment(rPos, otherPos);
-
+	glm::vec3 otherPos1 = extraPoints[4] + glm::vec3(ecco->wheelDirection.x, 0.0f, ecco->wheelDirection.y) * 0.04f;
+	glm::vec3 otherPos2 = extraPoints[5] + glm::vec3(ecco->wheelDirection.x, 0.0f, ecco->wheelDirection.y) * 0.04f;
+	glm::vec3 otherPos3 = extraPoints[6] - r->transform()->forward() * 0.04f;
+	glm::vec3 otherPos4 = extraPoints[7] - r->transform()->forward() * 0.04f;
+	lines.DrawLineSegment(extraPoints[4], otherPos1);
+	lines.DrawLineSegment(extraPoints[5], otherPos2);
+	lines.DrawLineSegment(extraPoints[6], otherPos3);
+	lines.DrawLineSegment(extraPoints[7], otherPos4);
+	
+	lines.DrawCircle(h->transform()->getGlobalPosition(), hRadius, 40);
+	
 
 
 	for (int y = 0; y < level.height - 1; y++)
@@ -159,8 +187,6 @@ void GameTest::Update(float delta)
 					lines.DrawLineSegment({ xPos - halfGridSpacing, 0, yPos - halfGridSpacing }, { xPos + halfGridSpacing, 0, yPos - halfGridSpacing }, { 1, 1, 0 });
 				}
 			}
-
-			lines.DrawLineSegment({ 0, 0, 0 }, { 10, 0, 10 }, {0.5, 0.5, 0.5});
 		}
 	}
 
@@ -181,17 +207,9 @@ void GameTest::GUI()
 {
 	input.GUI();
 
-	if (ImGui::Begin("Game Test Debug")) {
-		ImGui::DragFloat("Car move speed", &carMoveSpeed);
-
-		ImGui::BeginDisabled();
-
-		ImGui::DragFloat(("Rotation"), &rot);
-		ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
-
-		ImGui::EndDisabled();
-	}
-	ImGui::End();
+	ecco->GUI();
+	sync->GUI();
+	//ImGui::End();
 }
 
 GameTest::~GameTest()

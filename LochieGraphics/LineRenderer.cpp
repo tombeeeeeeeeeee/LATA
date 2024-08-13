@@ -39,6 +39,16 @@ void LineRenderer::DrawLineSegment(glm::vec3 start, glm::vec3 end, Colour colour
 	colours.push_back(colour);
 }
 
+void LineRenderer::DrawCircle(glm::vec3 centre, float size)
+{
+	DrawCircle(centre, size, currentColour);
+}
+
+void LineRenderer::DrawCircle(glm::vec3 centre, float size, Colour colour)
+{
+	DrawCircle(centre, size, GetCircleSegmentCount(size));
+}
+
 void LineRenderer::FinishLineStrip()
 {
 	if (lineActive)
@@ -131,4 +141,35 @@ void LineRenderer::Draw()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glDrawArrays(GL_LINES, 0, (GLsizei)positions.size());
+}
+
+int LineRenderer::GetCircleSegmentCount(float radius) const
+{
+	return glm::clamp((int)(sqrtf(radius * 10.0f/1080.0f) * 32 + 4), 5, 128);
+}
+
+void LineRenderer::DrawCircle(glm::vec3 centre, float size, int segmentCount)
+{
+	DrawCircle(centre, size, currentColour, segmentCount);
+}
+
+void LineRenderer::DrawCircle(glm::vec3 centre, float size, Colour colour, int segmentCount)
+{
+	float c = cos(2 * PI / segmentCount);
+	float s = sin(2 * PI / segmentCount);
+
+	glm::vec3 plotPoint(0, 0, size);
+
+	for (int i = 0; i < segmentCount - 1; i++)
+	{
+		positions.push_back(centre + plotPoint);
+		plotPoint = { plotPoint.x * c - plotPoint.z * s, 0.0f, plotPoint.z * c + plotPoint.x * s };
+		positions.push_back(centre + plotPoint);
+		colours.push_back(colour);
+		colours.push_back(colour);
+	}
+	positions.push_back(centre + plotPoint);
+	positions.push_back(centre + glm::vec3(0, 0, size));
+	colours.push_back(colour);
+	colours.push_back(colour);
 }

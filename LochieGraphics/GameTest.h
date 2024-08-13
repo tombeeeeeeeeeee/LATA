@@ -24,12 +24,10 @@ private:
 	float hRadius = 0.1f;
 	float rRadius = 0.1f;
 
-	glm::vec2 wheelDirection = {0.0f, 0.0f};
+
 	float rot = 0.0f;
 
 	Image level;
-
-	float carMoveSpeed = 50.0f;
 
 	float halfGridSpacing = 0.5f;
 

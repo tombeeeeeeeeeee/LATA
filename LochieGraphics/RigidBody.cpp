@@ -97,7 +97,7 @@ void RigidBody::GUI()
 	bool isKinematic = invMass == 0;
 
 	if (isKinematic) ImGui::BeginDisabled();
-	if (ImGui::DragFloat(("Mass##rigidBody" + tag).c_str(), &mass, 0.0, 0.001f, 100000.0f))
+	if (ImGui::DragFloat(("Mass##rigidBody" + tag).c_str(), &mass, 0.1f, 0.001f, 100000.0f))
 	{
 		setMass(mass);
 	}
@@ -110,7 +110,7 @@ void RigidBody::GUI()
 		else
 			setMass(1.0f);
 	}
-
 	ImGui::Checkbox(("Static##rigidBody" + tag).c_str(), &isStatic);
+	ImGui::DragFloat(("Elasticity##rigidBody" + tag).c_str(), &elasticicty, 0.01f, 0.0f, 1.0f);
 	ImGui::DragInt(("CollisionLayer##rigidBody" + tag).c_str(),&collisionLayer , 1, 0, 31);
 }

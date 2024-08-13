@@ -1,6 +1,6 @@
 #pragma once
-#include "RigidBody.h"
-#include "Collider.h"
+class RigidBody;
+struct Collider;
 
 struct CollisionPacket
 {
@@ -13,6 +13,9 @@ struct CollisionPacket
 
 	RigidBody* rigidBodyA = nullptr;
 	RigidBody* rigidBodyB = nullptr;
+
+	Collider* colliderA = nullptr;
+	Collider* colliderB = nullptr;
 
 	SceneObject* soA = 0;
 	SceneObject* soB = 0;

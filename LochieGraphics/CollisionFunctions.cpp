@@ -24,7 +24,8 @@ CollisionPacket CollisionFunctions::CircleOnCircleCollision(
     CollisionPacket collision = CollisionPacket();
     collision.rigidBodyA = rigidBodyA;
     collision.rigidBodyB = rigidBodyB;
-
+	collision.colliderA = circleA;
+	collision.colliderB = circleB;
     glm::vec2 posA = RigidBody::Transform2Din3DSpace(transformA->getGlobalMatrix(), {0,0});
     glm::vec2 posB = RigidBody::Transform2Din3DSpace(transformB->getGlobalMatrix(), {0,0});
 
@@ -51,6 +52,8 @@ CollisionPacket CollisionFunctions::CircleOnPolyCollision(PolygonCollider* circl
     CollisionPacket collision = CollisionPacket();
     collision.rigidBodyA = rigidBodyA;
     collision.rigidBodyB = rigidBodyB;
+	collision.colliderA = circle;
+	collision.colliderB = poly;
 	collision.soA = transformA->getSceneObject();
 	collision.soB = transformB->getSceneObject();
 
@@ -165,6 +168,8 @@ CollisionPacket CollisionFunctions::CircleOnPlaneCollision(PolygonCollider* circ
 	CollisionPacket collision = CollisionPacket();
 	collision.rigidBodyA = rigidBodyA;
 	collision.rigidBodyB = rigidBodyB;
+	collision.colliderA = circle;
+	collision.colliderB = plane;
 	collision.soA = transformA->getSceneObject();
 	collision.soB = transformB->getSceneObject();
 
@@ -187,6 +192,8 @@ CollisionPacket CollisionFunctions::PolyOnPolyCollision(PolygonCollider* polyA, 
 	CollisionPacket collision = CollisionPacket();
 	collision.rigidBodyA = rigidBodyA;
 	collision.rigidBodyB = rigidBodyB;
+	collision.colliderA = polyA;
+	collision.colliderB = polyB;
 	collision.soA = transformA->getSceneObject();
 	collision.soB = transformB->getSceneObject();
 
@@ -295,6 +302,8 @@ CollisionPacket CollisionFunctions::PolyOnPlaneCollision(PolygonCollider* poly, 
 	CollisionPacket collision = CollisionPacket();
 	collision.rigidBodyA = rigidBodyA;
 	collision.rigidBodyB = rigidBodyB;
+	collision.colliderA = poly;
+	collision.colliderB = plane;
 	collision.soA = transformA->getSceneObject();
 	collision.soB = transformB->getSceneObject();
 
