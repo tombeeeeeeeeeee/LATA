@@ -18,6 +18,8 @@ private:
 
 public:
 
+	std::string path = "";
+
 	std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
 	ModelHierarchyInfo root;
@@ -27,14 +29,18 @@ public:
 
 	void LoadModel(std::string path, bool flipTexturesOnLoad = true);
 	//void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
-	void AddMesh(Mesh mesh); // TODO: Maybe remove this function?
+	void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
 
 	void Draw();
-	const std::vector<Mesh>& getMeshes() const;
+	const std::vector<Mesh*>& getMeshes() const;
 
 	// TODO: Just store a vector of pairs, with both a mesh pointer and a GUID
 	//TODO: Model currently comepletly owns the meshes, this should not be the case, actually with recent changed yes but there should be a model manager
 	std::vector<Mesh*> meshes = {};
-	std::vector<unsigned long long >
+	std::vector<unsigned long long> meshGUIDs;
+
+	void GUI();
+
+	void Refresh();
 };
 

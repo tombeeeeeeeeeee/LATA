@@ -30,6 +30,7 @@ public:
 	static Shader* GetShader(unsigned long long GUID);
 	static Texture* GetTexture(unsigned long long GUID);
 	static Model* GetModel(unsigned long long GUID);
+	static Mesh* GetMesh(unsigned long long GUID);
 	static Material* LoadMaterial(std::string name, Shader* shader = nullptr);
 
 	static unsigned long long guidCounter;
@@ -58,4 +59,5 @@ private:
 	static std::unordered_map<unsigned long long, Shader, hashFNV1A> shaders;
 	static std::unordered_map<unsigned long long, Material, hashFNV1A> materials;
 	static std::unordered_map<unsigned long long, Model, hashFNV1A> models;
+	static std::unordered_map<unsigned long long, Mesh, hashFNV1A> meshes;
 };

@@ -14,13 +14,14 @@ std::unordered_map<unsigned long long, Texture, ResourceManager::hashFNV1A> Reso
 std::unordered_map<unsigned long long, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
 std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
 std::unordered_map<unsigned long long, Model, ResourceManager::hashFNV1A> ResourceManager::models;
+std::unordered_map<unsigned long long, Mesh, ResourceManager::hashFNV1A> ResourceManager::meshes;
 unsigned long long ResourceManager::guidCounter = 100;
 
 const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
 const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
 #define LoadResource(type, collection, ...)                            \
-type newResource(__VA_ARGS__ );                                        \
+type newResource = type(__VA_ARGS__ );                                        \
 newResource.GUID = GetNewGuid();                                       \
 return &collection.emplace(newResource.GUID, newResource).first->second\
 
@@ -47,9 +48,32 @@ Model* ResourceManager::LoadModel(std::string path)
 // TODO: Clean
 Model* ResourceManager::LoadModel()
 {
-	Model newResource;
-	newResource.GUID = GetNewGuid();
+	Model newResource = Model();
+	newResource.GUID = GetNewGuid(); 
 	return &models.emplace(newResource.GUID, newResource).first->second;
+	//Model newResource;
+	//newResource.GUID = GetNewGuid();
+	//return &models.emplace(newResource.GUID, newResource).first->second;
+}
+
+Mesh* ResourceManager::LoadMesh(std::vector<Vertex> vertices, std::vector<GLuint> indices)
+{
+	LoadResource(Mesh, meshes, vertices, indices);
+}
+
+Mesh* ResourceManager::LoadMesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices)
+{
+	LoadResource(Mesh, meshes, vertexCount, vertices, indexCount, indices);
+}
+
+Mesh* ResourceManager::LoadMesh(Mesh::presets preset)
+{
+	LoadResource(Mesh, meshes, preset);
+}
+
+Mesh* ResourceManager::LoadMesh()
+{
+	LoadResource(Mesh, meshes);
 }
 
 Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
@@ -81,6 +105,7 @@ GetResource(Shader, shaders)
 GetResource(Texture, textures)
 GetResource(Material, materials)
 GetResource(Model, models)
+GetResource(Mesh, meshes)
 
 unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
 {
@@ -110,7 +135,6 @@ void ResourceManager::GUI()
 {
 	if (ImGui::CollapsingHeader("Textures")) {
 
-		
 		std::vector<Texture*> tempTextures = {};
 		for (auto i = textures.begin(); i != textures.end(); i++)
 		{
@@ -204,8 +228,15 @@ void ResourceManager::GUI()
 
 		for (auto& model : models)
 		{
-			ImGui::Text(std::to_string(model.second.GUID).c_str());
+			// TODO: model gui
+			//ImGui::Text(std::to_string(model.second.GUID).c_str());
 			//model.second.
+			ImGui::Indent();
+
+			model.second.GUI();
+
+			ImGui::Unindent();
+
 		}
 	}
 }

@@ -66,7 +66,7 @@ void TestScene::Start()
 			ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::specular),
 	});
 	cubeModel = ResourceManager::LoadModel();
-	cubeModel->AddMesh(Mesh(Mesh::presets::cube));
+	cubeModel->AddMesh(ResourceManager::LoadMesh(Mesh::presets::cube));
 	boxes->setRenderer(new ModelRenderer(cubeModel, boxMaterial));
 	boxes->transform()->setScale(30.0f);
 	boxes->transform()->setPosition({ 0.f, -15.450f, 0.f });
@@ -80,7 +80,7 @@ void TestScene::Start()
 		ResourceManager::LoadTexture("images/grass.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE, false),
 	});
 	grassModel = ResourceManager::LoadModel();
-	grassModel->AddMesh(Mesh(Mesh::presets::doubleQuad));
+	grassModel->AddMesh(ResourceManager::LoadMesh(Mesh::presets::doubleQuad));
 	grass->setRenderer(new ModelRenderer(grassModel, grassMaterial));
 	grass->transform()->setPosition({ 1.9f, 0.f, 2.6f });
 	grass->transform()->setEulerRotation({ 0.f, -43.2f, 0.f });

@@ -254,7 +254,7 @@ void Texture::EditorGUI(std::vector<Texture*>& textures)
 			ImGui::Text(std::to_string((*i)->GLID).c_str());
 
 			ImGui::TableSetColumnIndex(5);
-			if (ImGui::Button(("Reload##" + std::to_string((*i)->GLID)).c_str())) {
+			if (ImGui::Button(("R##" + std::to_string((*i)->GLID)).c_str())) {
 				(*i)->Load();
 			}
 		}

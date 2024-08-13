@@ -24,7 +24,8 @@ void RenderSystem::Start(
     shaders = _shaders;
     skyboxTexture = _skyboxTexture;
 
-    cube.InitialiseCube(2.0f);
+    cube = ResourceManager::LoadMesh();
+    cube->InitialiseCube(2.0f);
 
     IBLBufferSetup(skyboxTexture);
     HDRBufferSetUp();
@@ -41,8 +42,10 @@ void RenderSystem::Start(
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-    shadowDebugQuad.InitialiseQuad(0.5f, 0.5f);
-    screenQuad.InitialiseQuad(1.f, 0.0f);
+    shadowDebugQuad = ResourceManager::LoadMesh();
+    screenQuad = ResourceManager::LoadMesh();
+    shadowDebugQuad->InitialiseQuad(0.5f, 0.5f);
+    screenQuad->InitialiseQuad(1.f, 0.0f);
 
     // Create colour attachment texture for fullscreen framebuffer
     screenColourBuffer = ResourceManager::LoadTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
@@ -121,7 +124,7 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        cube.Draw();
+        cube->Draw();
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     
@@ -175,7 +178,7 @@ void RenderSystem::SetPrefilteredMap(unsigned int textureID)
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            cube.Draw();
+            cube->Draw();
         }
     }
 
@@ -320,7 +323,7 @@ void RenderSystem::Update(
         //DRAW USING SHADOW MAP FOR CURRENT TRANSFORM
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
-            mesh->Draw();
+            (*mesh)->Draw();
         }
     }
 
@@ -381,7 +384,7 @@ void RenderSystem::Update(
         depthMap->Bind(1);
 
         //TODO: Make Shadow Debug Quad
-        shadowDebugQuad.Draw();
+        shadowDebugQuad->Draw();
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -461,7 +464,7 @@ void RenderSystem::DrawAnimation(
         Model* model = animationRenderer.model;
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
-            mesh->Draw();
+            (*mesh)->Draw();
         }
     }
 }
@@ -486,7 +489,7 @@ void RenderSystem::DrawRenderers(
         Model* model = i->second.model;
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
-            mesh->Draw();
+            (*mesh)->Draw();
         }
     }
 }
