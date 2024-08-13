@@ -337,7 +337,7 @@ void RenderSystem::Update(
 
     // set light uniforms
     // TODO: Shouldn't need to set light uniforms here, use the shader flags and make one for shadowed
-    (*shaders)[ShaderIndex::super]->setVec3("viewPos", camera->position);
+    (*shaders)[ShaderIndex::super]->setVec3("viewPos", camera->transform.getPosition());
     (*shaders)[ShaderIndex::super]->setVec3("lightPos", shadowCaster->getPos());
     (*shaders)[ShaderIndex::super]->setMat4("directionalLightSpaceMatrix", lightSpaceMatrix);
 

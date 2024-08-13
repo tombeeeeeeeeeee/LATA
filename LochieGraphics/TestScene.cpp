@@ -210,8 +210,8 @@ void TestScene::Update(float delta)
 
 	pointLights[0].position.x = 1.5f * sinf((float)glfwGetTime() * 2.f);
 	lightCube->transform()->setPosition(pointLights[0].position);
-	spotlight.position = camera->position;
-	spotlight.direction = camera->front;
+	spotlight.position = camera->transform.getPosition();
+	spotlight.direction = camera->transform.forward();
 	
 	// Different View Projection matrix for the skybox, as translations shouldn't affect it
 	// TODO: This math shouldn't be here, maybe move to camera class or get the projection from scenemanager

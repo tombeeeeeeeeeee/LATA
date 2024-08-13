@@ -38,13 +38,13 @@ public:
 	void setScale(float scale);
 	void setScale(glm::vec3 scale);
 
-	glm::vec3 getPosition();
-	glm::vec3 getGlobalPosition();
+	glm::vec3 getPosition() const;
+	glm::vec3 getGlobalPosition() const;
 	void setPosition(glm::vec3 pos);
 
-	glm::vec3 forward();
-	glm::vec3 right();
-	glm::vec3 up();
+	glm::vec3 forward() const;
+	glm::vec3 right() const;
+	glm::vec3 up() const;
 
 	void UpdateGlobalMatrixCascading();
 
