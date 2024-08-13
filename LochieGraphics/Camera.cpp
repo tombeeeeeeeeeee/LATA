@@ -10,21 +10,17 @@ Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch, flo
     sensitivity(_sensitivity),
     fov(_fov)
 {
-    // TODO: yaw pitch
-    UpdateVectors();
 }
 
 
 Camera::Camera(glm::vec3 _position) : Camera()
 {
     transform.setPosition(_position);
-    UpdateVectors();
 }
 
 
 Camera::Camera() : Camera({ 0.f, 0.f, 0.f }, { 0.f, 1.f, 0.f }, -90.f, 0.0f, 2.5f, 0.1f, 60.f)
 {
-    UpdateVectors();
 }
 
 
@@ -69,15 +65,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
-
-    glm::vec3 euler = transform.getEulerRotation();
-    euler.y + xoffset;
-    euler.z + yoffset;
-
-    // TODO: this should be a transform function
-    euler -= transform.getEulerRotation();
-
-    euler = { 0.0f, -xoffset, yoffset };
+    glm::vec3 euler = { 0.0f, -xoffset, yoffset };
 
     glm::vec3 rotationEuler = glm::vec3(glm::radians(euler.x), glm::radians(euler.y), glm::radians(euler.z));
 
@@ -85,25 +73,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
     glm::quat quatY = glm::angleAxis(rotationEuler.y, glm::vec3(0, 1, 0));
     glm::quat quatX = glm::angleAxis(rotationEuler.x, glm::vec3(1, 0, 0));
 
-    transform.setRotation(glm::normalize(quatZ * quatY * quatX) * transform.getRotation());
-
-
-    //transform.setEulerRotation({old.x, old.y + xoffset, old.z + yoffset});
-
-    // Ensure that when the pitch is out of bounds that the screen does not flip
-    if (constrainPitch)
-    {
-        // TODO: Fix
-        //if (pitch > 89.0f) {
-        //    pitch = 89.0f;
-        //}
-        //if (pitch < -89.0f) {
-        //    pitch = -89.0f;
-        //}
-    }
-
-    // Update Front, Right and Up Vectors using the updated Euler angles
-    UpdateVectors();
+    transform.setRotation(glm::normalize(quatX * quatY * quatZ) * transform.getRotation());
 }
 
 
@@ -116,18 +86,6 @@ void Camera::ProcessMouseScroll(float yoffset)
     else if (fov > 170.0f) {
         fov = 170.0f;
     }
-}
-
-void Camera::UpdateVectors()
-{
-    //// calculate the new Front vector
-    //front = glm::normalize(
-    //    glm::vec3(  cos(glm::radians(yaw)) * cos(glm::radians(pitch)),
-    //                sin(glm::radians(pitch)),
-    //                sin(glm::radians(yaw)) * cos(glm::radians(pitch))));
-    //// also re-calculate the Right and Up vector
-    //right = glm::normalize(glm::cross(front, worldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-    //up = glm::normalize(glm::cross(right, front));
 }
 
 void Camera::GUI()

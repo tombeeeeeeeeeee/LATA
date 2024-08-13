@@ -56,10 +56,5 @@ public:
 
     toml::table Serialise();
 
-    // TODO: Should probably be private
-//private:
-    // calculates the front vector from the Camera's (updated) Euler Angles
-    void UpdateVectors();
-
 };
 

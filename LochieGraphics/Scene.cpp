@@ -62,11 +62,7 @@ void Scene::Load()
 	auto camPos = cam["position"].as_array();
 	//camera->position = { camPos->at(0).value_or<float>(0.0f), camPos->at(1).value_or<float>(0.f), camPos->at(2).value<float>().value()};
 	auto camRot = cam["rotation"].as_array();
-	//camera->yaw = camRot->at(0).value_or<float>(0.f);
-	//camera->pitch = camRot->at(1).value_or<float>(0.f);
-	
-	camera->UpdateVectors();
-	
+		
 
 
 	//// TODO: Remove everything in the scene first
