@@ -1,8 +1,6 @@
 #include "Animation.h"
 
-#include "SceneObject.h"
 #include "AssimpMatrixToGLM.h"
-#include "SceneManager.h"
 
 #include <assimp/Importer.hpp>
 
@@ -69,9 +67,9 @@ float Animation::getDuration() const
 	return duration;
 }
 
-const Transform* Animation::getRootNode() const
+const ModelHierarchyInfo* Animation::getRootNode() const
 {
-	return model->root->transform();
+	return &model->root;
 }
 
 const std::unordered_map<std::string, BoneInfo>& Animation::getBoneIDMap() const
@@ -96,15 +94,15 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 	boneInfoMap = newBoneInfoMap;
 }
 
-void Animation::ReadHierarchyData(Transform* dest, const aiNode* src)
+void Animation::ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src)
 {
 	if (!src) {
 		std::cout << "Error, Failed to read animation hierarchy\n";
 		return;
 	}
 
-	dest->getSceneObject()->name = src->mName.data;
-	if (dest->getSceneObject()->name == "RootNode") {
+	dest->name = src->mName.data;
+	if (dest->name == "RootNode") {
 		std::cout << "t";
 	}
 
@@ -113,23 +111,19 @@ void Animation::ReadHierarchyData(Transform* dest, const aiNode* src)
 	aiVector3D scale;
 
 	src->mTransformation.Decompose(scale, rot, pos);
-	dest->getPosition() = AssimpVecToGLM(pos);
-	dest->setRotation(AssimpQuatToGLM(rot));
-	dest->setScale(scale.x);
-	
+	dest->transform.getPosition() = AssimpVecToGLM(pos);
+	dest->transform.setRotation(AssimpQuatToGLM(rot));
+	dest->transform.setScale(AssimpVecToGLM(scale));
 	
 	//dest.transform.chi children.reserve(src->mNumChildren);
 
-
 	for (unsigned int i = 0; i < src->mNumChildren; i++)
 	{
-		Transform* newData = (new SceneObject(SceneManager::scene))->transform();
+		ModelHierarchyInfo* newData = new ModelHierarchyInfo();
 		ReadHierarchyData(newData, src->mChildren[i]);
 		
-		//dest->AddChild(newData);
-		newData->setParent(dest);
-
-		//SceneManager::scene->sceneObjects.push_back(newData->getSceneObject());
-
+		dest->children.push_back(newData);
+		
+		newData->transform.setParent(&dest->transform);
 	}
 }

@@ -10,6 +10,6 @@ public:
     BlendedAnimator(Animation* one, Animation* two);
 
     void UpdateAnimation(float delta) override;
-    void CalculateBoneTransform(const Transform* node, glm::mat4 parentTransform) override;
+    void CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 parentTransform) override;
 };
 

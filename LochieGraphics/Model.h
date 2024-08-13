@@ -2,6 +2,7 @@
 #include "Mesh.h"
 #include "BoneInfo.h"
 #include "Shader.h"
+#include "ModelHierarchyInfo.h"
 
 #include <unordered_map>
 
@@ -13,7 +14,7 @@ public:
 
 	std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
-	SceneObject* root;
+	ModelHierarchyInfo root;
 
 	Model();
 	Model(std::string path, bool flipTexturesOnLoad = true);
