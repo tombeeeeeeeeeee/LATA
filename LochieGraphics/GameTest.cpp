@@ -54,28 +54,47 @@ void GameTest::Start()
 	r->setEcco(new Ecco());
 	ecco->wheelDirection = {r->transform()->forward().x, r->transform()->forward().y};
 
-	camera->pitch = -89.0f;
-	camera->yaw = -90.0f;
-	camera->position = { 0.0f, 1.5f, 0.0f };
-	camera->farPlane = 1000.0f;
-	camera->nearPlane = 0.1f;
-	camera->UpdateVectors();
-
 	level.path = "level.png";
 	level.Load();
 
 	SceneObject* newSceneObject = new SceneObject(this);
-	PolygonCollider* newCollider = new PolygonCollider();
-	newSceneObject->setCollider(newCollider);
-	newCollider->verts = { 
-		{  -halfGridSpacing, halfGridSpacing},
-		{   halfGridSpacing, halfGridSpacing},
-		{  halfGridSpacing, -halfGridSpacing},
-		{ -halfGridSpacing, -halfGridSpacing},
-	};
-	newCollider->radius = halfGridSpacing;
-	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, { newCollider }, 0, true);
+	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, 0, true);
 	newSceneObject->setRigidBody(newRigidBody);
+
+	for (int y = 0; y < level.height; y++)
+	{
+		for (int x = 0; x < level.width; x++)
+		{
+			auto at = level.getValueCompAt(x, y);
+			auto right = level.getValueCompAt(x + 1, y);
+			auto down = level.getValueCompAt(x, y + 1);
+
+			bool wallHere = MapCellIs(at, 0, 0, 0);
+
+			int xPos = x;
+			int yPos = level.height - y;
+
+			if (wallHere)
+			{
+				newSceneObject->rigidbody()->addCollider(new PolygonCollider({ 
+					{x + 0.525f, yPos + 0.525f},  {x + 0.525f, yPos + -0.525f}, {x + -0.525f, yPos + -0.525f},  {x + -0.525f, yPos + 0.525f}, }, 0.0f));
+			}
+			else
+			{
+				h->transform()->setPosition(glm::vec3(xPos + 0.2f, 0.0f, yPos + 0.2f));
+				r->transform()->setPosition(glm::vec3(xPos + 0.4f, 0.0f, yPos + 0.4f));
+			}
+		}
+	}
+
+	//newSceneObject->setCollider(newCollider);
+	//newCollider->verts = { 
+	//	{  -halfGridSpacing, halfGridSpacing},
+	//	{   halfGridSpacing, halfGridSpacing},
+	//	{  halfGridSpacing, -halfGridSpacing},
+	//	{ -halfGridSpacing, -halfGridSpacing},
+	//};
+	//newCollider->radius = halfGridSpacing;
 }
 
 void GameTest::Update(float delta)
@@ -84,6 +103,7 @@ void GameTest::Update(float delta)
 
 	LineRenderer& lines = renderSystem->lines;
 
+	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 
 	if (input.inputDevices.size() > 0) 
@@ -106,7 +126,6 @@ void GameTest::Update(float delta)
 		}
 	}
 
-	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 
 	// Draw robot
 	glm::vec3 rPos = r->transform()->getPosition();

@@ -32,6 +32,6 @@ private:
 	float turningCircleScalar = 1.5f;
 	float maxWheelAngle = 0.9f;
 	float wheelTurnSpeed = 4.0f;
-	float sidewaysFrictionCoef = 0.075f;
-	float stoppingFrictionCoef = 0.2f;
+	float sidewaysFrictionCoef = 0.3f;
+	float stoppingFrictionCoef = 0.3f;
 };
