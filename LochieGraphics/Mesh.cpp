@@ -222,22 +222,22 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 	delete[] vertices;
 }
 
-unsigned int Mesh::getTriCount()
+unsigned int Mesh::getTriCount() const
 {
 	return triCount;
 }
 
-GLuint Mesh::getVAO()
+GLuint Mesh::getVAO() const
 {
 	return VAO;
 }
 
-GLuint Mesh::getVBO()
+GLuint Mesh::getVBO() const
 {
 	return VBO;
 }
 
-GLuint Mesh::getIBO()
+GLuint Mesh::getIBO() const
 {
 	return IBO;
 }

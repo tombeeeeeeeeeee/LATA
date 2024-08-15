@@ -301,10 +301,11 @@ void RenderSystem::Update(
 
     for(auto i = shadowCasters.begin(); i != shadowCasters.end(); i++)
     {
+        // TODO: This is only using the first material found on the model, each mesh could potentially have a different material?
         ModelRenderer currentRenderer = i->second;
-        Texture* alphaMap = currentRenderer.material->getFirstTextureOfType(Texture::Type::diffuse);
+        Texture* alphaMap = currentRenderer.materials[0]->getFirstTextureOfType(Texture::Type::diffuse);
         if (!alphaMap) {
-            alphaMap = currentRenderer.material->getFirstTextureOfType(Texture::Type::albedo);
+            alphaMap = currentRenderer.materials[0]->getFirstTextureOfType(Texture::Type::albedo);
         }
         if (alphaMap) {
             // TODO: Really should be using a Texture bind function here.
@@ -453,8 +454,9 @@ void RenderSystem::DrawAnimation(
         ModelRenderer animationRenderer = renderers[iter->first];
         if (!shader)
         {
-            animationRenderer.material->Use();
-            animationRenderer.material->getShader()->setMat4("model", transforms[iter->first].getGlobalMatrix());
+            // TODO: This is only using the first material found on the model, each mesh could potentially have a different material?
+            animationRenderer.materials[0]->Use();
+            animationRenderer.materials[0]->getShader()->setMat4("model", transforms[iter->first].getGlobalMatrix());
         }
         else 
         {
@@ -476,20 +478,39 @@ void RenderSystem::DrawRenderers(
 {
     for (auto i = renderers.begin(); i != renderers.end(); i++)
     {
-        i->second.material->Use();
-        Shader* curShader = i->second.material->getShader();
-        curShader->setMat4("model", transforms[i->first].getGlobalMatrix());
-        int samplerCount = i->second.material->texturePointers.size();
+        //// TODO: This is only using the first material found on the model, each mesh could potentially have a different material?
+        //i->second.materials[0]->Use();
+        //Shader* curShader = i->second.materials[0]->getShader();
+        //curShader->setMat4("model", transforms[i->first].getGlobalMatrix());
 
-        ActivateFlaggedVariables(curShader, i->second.material);
+        //// TODO: Is this supposed to be used for something?
+        //// ASK:
+        //int samplerCount = i->second.materials[0]->texturePointers.size();
 
-        // TODO: use shader function
-        curShader->setVec3("materialColour", i->second.material->colour);
+        //ActivateFlaggedVariables(curShader, i->second.materials[0]);
+
+        //// TODO: use shader function
+        //curShader->setVec3("materialColour", i->second.materials[0]->colour);
 
         Model* model = i->second.model;
+        //for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
+        //{
+        //    (*mesh)->Draw();
+        //}
+
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
+            int materialID = (*mesh)->materialID;
+            if (materialID >= model->materialIDs || i->second.materials[materialID] == nullptr) {
+                materialID = 0;
+            }
+            i->second.materials[materialID]->Use();
+            Shader* shader = i->second.materials[materialID]->getShader();
+            shader->setMat4("model", transforms[i->first].getGlobalMatrix());
+            ActivateFlaggedVariables(shader, i->second.materials[materialID]);
+            shader->setVec3("materialColour", i->second.materials[materialID]->colour);
             (*mesh)->Draw();
+
         }
     }
 }

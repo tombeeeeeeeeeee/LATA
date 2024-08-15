@@ -29,7 +29,7 @@ private:
 public:
 
 	Model* model = nullptr;
-	unsigned long long modelGUID;
+	unsigned long long modelGUID = 0;
 
 	Animation() {};
 

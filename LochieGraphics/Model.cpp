@@ -61,6 +61,7 @@ void Model::LoadModel(std::string _path, bool flipTexturesOnLoad)
 		max.x = std::max(meshes[i]->max.x, max.x);
 		max.y = std::max(meshes[i]->max.y, max.y);
 	}
+	materialIDs = scene->mNumMaterials;
 
 	Animation::ReadHierarchyData(&root, scene->mRootNode);
 	// TODO: Do I need to do this, check exactly what should be done
@@ -107,6 +108,8 @@ void Model::GUI()
 
 		ImGui::DragFloat2(("Min##" + tag).c_str(), &min.x);
 		ImGui::DragFloat2(("Max##" + tag).c_str(), &max.x);
+
+		ImGui::DragInt("Material IDs", &materialIDs);
 		
 		ImGui::EndDisabled();
 

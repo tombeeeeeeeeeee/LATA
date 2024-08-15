@@ -41,6 +41,8 @@ public:
 	std::vector<Mesh*> meshes = {};
 	std::vector<unsigned long long> meshGUIDs;
 
+	int materialIDs = 1;
+
 	void GUI();
 
 	void Refresh();

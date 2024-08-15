@@ -12,49 +12,51 @@
 
 ModelRenderer::ModelRenderer()
 {
-	material = nullptr;
 }
 
 ModelRenderer::ModelRenderer(Model* _model, unsigned long long _materialGUID) :
 	model(_model),
-	modelGUID(_model->GUID),
-	materialGUID(_materialGUID)
+	modelGUID(_model->GUID)
 {
-	material = ResourceManager::GetMaterial(materialGUID);
+	materialGUIDs.push_back(_materialGUID);
+	materials.push_back(ResourceManager::GetMaterial(_materialGUID));
+
+	materialGUIDs.resize(_model->materialIDs);
+	materials.resize(_model->materialIDs);
 }
 
 ModelRenderer::ModelRenderer(Model* _model, Material* _material) :
 	model(_model),
-	modelGUID(_model->GUID),
-	material(_material)
+	modelGUID(_model->GUID)
 {
-	materialGUID = material->GUID;
-}
+	materialGUIDs.push_back(_material->GUID);
+	materials.push_back(_material);
 
-void ModelRenderer::Draw(Shader* override)
-{
-	//if (!override/* || material->getShader() == override*/) {
-	//	material->Use();
-	//	material->getShader()->setMat4("model", sceneObject->transform().getGlobalMatrix());
-	//}
-	//else {
-	//	override->setMat4("model", sceneObject->transform().getGlobalMatrix());
-	//}
-	//model->Draw();
+	materialGUIDs.resize(_model->materialIDs);
+	materials.resize(_model->materialIDs);
 }
 
 void ModelRenderer::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
+	ImGui::BeginDisabled();
+	ImGui::DragInt(("Materials##" + tag).c_str(), &model->materialIDs);
+	ImGui::EndDisabled();
+	ImGui::Indent();
 	// TODO: Make function for this
-	unsigned long long newMaterialGUID = materialGUID;
-	if (ImGui::InputScalar(("Material##" + Utilities::PointerToString(&materialGUID)).c_str(), ImGuiDataType_U64, &newMaterialGUID)) {
-		Material* newMaterial = ResourceManager::GetMaterial(newMaterialGUID);
-		if (newMaterial) {
-			materialGUID = newMaterialGUID;
-			material = newMaterial;
+	for (size_t i = 0; i < materialGUIDs.size(); i++)
+	{
+		unsigned long long newMaterialGUID = materialGUIDs[i];
+		if (ImGui::InputScalar((std::to_string(i) + "##" + Utilities::PointerToString(&materialGUIDs[i])).c_str(), ImGuiDataType_U64, &newMaterialGUID)) {
+			Material* newMaterial = ResourceManager::GetMaterial(newMaterialGUID);
+			if (newMaterial) {
+				materialGUIDs[i] = newMaterialGUID;
+				materials[i] = newMaterial;
+			}
 		}
 	}
+	ImGui::Unindent();
+	// TODO: Ui for adding another material?
 
 	unsigned long long newModelGUID = modelGUID;
 	if (ImGui::InputScalar(("Model##" + Utilities::PointerToString(&modelGUID)).c_str(), ImGuiDataType_U64, &newModelGUID)) {
@@ -70,6 +72,11 @@ void ModelRenderer::GUI()
 void ModelRenderer::Refresh()
 {
 	model = ResourceManager::GetModel(modelGUID);
-	material = ResourceManager::GetMaterial(materialGUID);
+	materialGUIDs.resize(model->materialIDs);
+	materials.resize(model->materialIDs);
+	for (size_t i = 0; i < materialGUIDs.size(); i++)
+	{
+		materials[i] = ResourceManager::GetMaterial(materialGUIDs[i]);
+	}
 }
 

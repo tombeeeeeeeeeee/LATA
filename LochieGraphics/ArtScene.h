@@ -17,28 +17,25 @@ private:
 		//{ "PBR",        Texture::Type::PBR},
 	};
 
-
+	// Read these from a file or something
 	std::string texturePrefix = "T_";
 	std::string meshPrefix = "SM_";
 
-	Texture* base = nullptr;
 	Texture* roughness = nullptr;
-	Texture* normal = nullptr;
 	Texture* metallic = nullptr;
 	Texture* ao = nullptr;
 
+	unsigned char missingRoughnessValue = 0;
+	unsigned char missingMetallicValue = UCHAR_MAX;
+	unsigned char missingAoValue = UCHAR_MAX;
+
 	Texture* pbr = nullptr;
 
-	bool defaultFlip = false;
+	bool defaultFlip = true;
 
 	std::unordered_map<std::string, Texture**> importTextures;
 
 	void RefreshPBR();
-	
-	GLint defaultUIShader;
-	static Shader* singleChannelUIImage;
-	static void SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd);
-	static void SetToDefaultUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd);
 
 	Skybox* skybox = nullptr;
 
