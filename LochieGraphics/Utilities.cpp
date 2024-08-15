@@ -36,3 +36,18 @@ int Utilities::WrapIndex(int value, int arraySize)
 	return (value % arraySize + arraySize) % arraySize;
 }
 
+float Utilities::Lerp(float a, float b, float t)
+{
+	return a * (1 - t) + b * t;
+}
+
+int Utilities::Lerp(int a, int b, float t)
+{
+	return a * (1 - t) + b * t;
+}
+
+glm::vec3 Utilities::Lerp(glm::vec3 a, glm::vec3 b, float t)
+{
+	return a * (1 - t) + b * t;
+}
+

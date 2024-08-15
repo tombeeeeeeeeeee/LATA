@@ -39,6 +39,7 @@ public:
 	Ecco* ecco = nullptr;
 	Sync* sync = nullptr;
 
+
 	std::vector<Shader*> shaders = {};
 
 	std::vector<int> inputKeyWatch{};

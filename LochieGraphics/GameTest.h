@@ -3,6 +3,8 @@
 
 #include "PhysicsSystem.h"
 
+#include "GamePlayCameraSystem.h"
+
 #include "Input.h"
 
 #include "Image.h"
@@ -14,6 +16,7 @@ private:
 	Input input;
 
 	PhysicsSystem physicsSystem;
+	GameplayCameraSystem gameCamSystem;
 
 	SceneObject* h = new SceneObject(this);
 	SceneObject* r = new SceneObject(this);

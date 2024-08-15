@@ -5,18 +5,18 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 {
 
 	/*
-	* check if input is beyond the deadzone
-	* dot the input with the transform.right()
-	* desired wheel angle = clamp(asin(the dot product), -maxAngle, maxAngle);
-	* desired wheel direction = transform.forward() rotated about desired wheel angle
-	* wheel direction = lerp(wheelDirection, desiredWheeldirection, amountPerSec)
-	*
-	* check if trigger is on
-	* add force in direction of wheel direction
-	*
-	* if veloctiy exceeds friction coefficent
-	* spin (add rotational Impulse)
-	*
+		check if input is beyond the deadzone
+		dot the input with the transform.right()
+		desired wheel angle = clamp(asin(the dot product), -maxAngle, maxAngle);
+		desired wheel direction = transform.forward() rotated about desired wheel angle
+		wheel direction = lerp(wheelDirection, desiredWheeldirection, amountPerSec)
+		
+		check if trigger is on
+		add force in direction of wheel direction
+		
+		if veloctiy exceeds friction coefficent
+		spin (add rotational Impulse)
+		
 	*/
 
 	//Variables for vectior maths
@@ -63,8 +63,11 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 	}
 
 	//Sideways drag coefficent
-	float sidewaysForceCoef = glm::dot({ wheelDirection.y, -wheelDirection.x }, rigidBody.vel);
-	force += -glm::abs(0.1f * sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * rigidBody.vel;
+	if (glm::length(rigidBody.vel) > 0.00001f)
+	{
+		float sidewaysForceCoef = glm::dot({ wheelDirection.y, -wheelDirection.x }, rigidBody.vel);
+		force += -glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * glm::normalize(rigidBody.vel);
+	}
 
 	//Stop Speed exceeding speed limit (Could change to be drag)
 	if (glm::length(rigidBody.vel + rigidBody.invMass * (force + rigidBody.netForce)) > maxCarMoveSpeed)

@@ -86,15 +86,6 @@ void GameTest::Start()
 			}
 		}
 	}
-
-	//newSceneObject->setCollider(newCollider);
-	//newCollider->verts = { 
-	//	{  -halfGridSpacing, halfGridSpacing},
-	//	{   halfGridSpacing, halfGridSpacing},
-	//	{  halfGridSpacing, -halfGridSpacing},
-	//	{ -halfGridSpacing, -halfGridSpacing},
-	//};
-	//newCollider->radius = halfGridSpacing;
 }
 
 void GameTest::Update(float delta)
@@ -108,24 +99,32 @@ void GameTest::Update(float delta)
 
 	if (input.inputDevices.size() > 0) 
 	{
+		sync->Update(
+			*input.inputDevices[0],
+			*h->transform(),
+			*h->rigidbody(),
+			delta
+		);
 		ecco->Update(
 			*input.inputDevices[0],
 			*r->transform(),
 			*r->rigidbody(),
 			delta
 		);
-
-		if(input.inputDevices.size() > 1)
-		{
-			sync->Update(
-				*input.inputDevices[1],
-				*h->transform(),
-				*h->rigidbody(),
-				delta
-			);
-		}
+		//if(input.inputDevices.size() > 1)
+		//{
+		//	ecco->Update(
+		//		*input.inputDevices[1],
+		//		*r->transform(),
+		//		*r->rigidbody(),
+		//		delta
+		//	);
+		//}
 	}
-
+	
+	gameCamSystem.Update(
+		*camera, *r->transform(), *h->transform(), 0.0f
+	);
 
 	// Draw robot
 	glm::vec3 rPos = r->transform()->getPosition();
@@ -228,6 +227,12 @@ void GameTest::GUI()
 
 	ecco->GUI();
 	sync->GUI();
+
+	//ImGui::DragFloat("Sync's Move Speed", &moveSpeed);
+	if (ImGui::Button("Bind Camera Pos"))
+	{
+		gameCamSystem.Initialise(*camera);
+	}
 	//ImGui::End();
 }
 
