@@ -24,10 +24,10 @@ public:
 	};
 
 
+	glm::vec3 max, min;
 private:
 	unsigned int triCount;
 	GLuint VAO, VBO, IBO;
-	glm::vec3 max, min;
 
 
 	friend class ResourceManager;
@@ -39,6 +39,9 @@ private:
 public:
 	
 	static int aiLoadFlag;
+
+	// Not a GUID
+	int materialID;
 
 	unsigned long long GUID;
 

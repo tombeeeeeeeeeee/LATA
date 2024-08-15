@@ -28,16 +28,17 @@ void ArtScene::RefreshPBR()
 	// 4 channels
 	std::vector<unsigned char> data(width * height * 4);
 
-	int tempW;
-	int tempH;
-	int tempC;
-	unsigned char* metallicData = stbi_load(metallic->path.c_str(), &tempW, &tempH, &tempC, STBI_rgb);
-	if (tempW != width || tempH != tempH) { return; }
-	unsigned char* roughnessData = stbi_load(roughness->path.c_str(), &tempW, &tempH, &tempC, STBI_rgb);
-	if (tempW != width || tempH != tempH) { return; }
+
+	int mW, mH, mC;
+	unsigned char* metallicData = stbi_load(metallic->path.c_str(), &mW, &mH, &mC, STBI_grey);
+	if (mW != width || mH != height) { return; }
+	int rW, rH, rC;
+	unsigned char* roughnessData = stbi_load(roughness->path.c_str(), &rW, &rH, &rC, STBI_grey);
+	if (rW != width || rH != height) { return; }
+	int aW, aH, aC;
 	unsigned char* ambientData;
 	if (ao) {
-		ambientData = stbi_load(ao->path.c_str(), &tempW, &tempH, &tempC, STBI_rgb);
+		ambientData = stbi_load(ao->path.c_str(), &aW, &aH, &aC, STBI_grey);
 	}
 	else {
 		ambientData = {};
@@ -51,13 +52,13 @@ void ArtScene::RefreshPBR()
 
 		data[i * 4 + 0] = metallicData[i];
 		data[i * 4 + 1] = roughnessData[i];
-		if (ao) {
-			data[i * 4 + 2] = ambientData[i];
-		}
-		else {
-			data[i * 4 + 2] = (unsigned char)255;
-		}
-		data[i * 4 + 3] = (unsigned char)255;
+		//if (ao) {
+		//	data[i * 4 + 2] = ambientData[i];
+		//}
+		//else {
+		//	data[i * 4 + 2] = UCHAR_MAX;
+		//}
+		data[i * 4 + 3] = UCHAR_MAX;
 	}
 
 
@@ -67,6 +68,9 @@ void ArtScene::RefreshPBR()
 
 	// TODO: Get name from base image
 	int result = stbi_write_tga("./newPBR.tga", width, height, STBI_rgb_alpha, data.data());
+
+	int tW, tH, tC;
+	unsigned char* test = stbi_load("./newPBR.tga", &tW, &tH, &tC, STBI_rgb_alpha);
 
 	std::cout << "Wrote PBR image, with result of " << result << '\n';
 }
@@ -83,6 +87,13 @@ void ArtScene::SetToDefaultUIShader(const ImDrawList* parent_list, const ImDrawC
 	glUseProgram(artScene->defaultUIShader);
 }
 
+
+void ArtScene::ResetCamera()
+{
+	float distance = (model->max.y - model->min.y) / tanf(resetCamObjectViewSpace);
+	camera->transform.setPosition({ distance + model->max.x, (model->min.y + model->max.y) / 2, (model->min.z + model->max.z) / 2});
+	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
+}
 
 void ArtScene::DragDropCallback(GLFWwindow* window, int pathCount, const char* paths[])
 {
@@ -182,7 +193,10 @@ void ArtScene::ImportMesh(std::string& path, std::string& filename)
 
 	model = ResourceManager::LoadModel(path);
 
+	sceneObject->renderer()->modelGUID = model->GUID;
 	sceneObject->renderer()->Refresh();
+
+	ResetCamera();
 }
 
 void ArtScene::ImportFolder(std::string& path)
@@ -284,6 +298,9 @@ void ArtScene::GUI()
 			ImGui::EndGroup();
 			ImGui::NewLine();
 			ImGui::EndChild();
+		}
+		if (ImGui::SliderFloat("Target Object View Space", &resetCamObjectViewSpace, 0.15, PI/2, "", ImGuiSliderFlags_Logarithmic)) {
+			ResetCamera();
 		}
 	}
 	ImGui::End();

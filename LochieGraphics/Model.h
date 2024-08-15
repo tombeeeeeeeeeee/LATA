@@ -17,6 +17,8 @@ private:
 
 
 public:
+	glm::vec3 min;
+	glm::vec3 max;
 
 	std::string path = "";
 

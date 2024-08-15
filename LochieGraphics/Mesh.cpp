@@ -203,6 +203,8 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 		}
 	}
 
+	materialID = mesh->mMaterialIndex;
+
 	// TODO: Move somewhere else
 	//Texture stuff
 	//aiMaterial* ai_material = scene->mMaterials[mesh->mMaterialIndex];

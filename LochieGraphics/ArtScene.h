@@ -65,6 +65,9 @@ private:
 	std::vector<std::string> stringPaths;
 	std::vector<const char *> newPaths;
 
+	// Radians
+	float resetCamObjectViewSpace = PI / 8;
+	void ResetCamera();
 
 public:
 
