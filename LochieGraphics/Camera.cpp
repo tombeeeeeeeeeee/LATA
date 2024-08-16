@@ -129,10 +129,14 @@ void Camera::GUI()
 toml::table Camera::Serialise()
 {
     // TODO: Fix
-    //return toml::table{ 
-    //    { "position", toml::array{ position.x, position.y, position.z } },
-    //    { "rotation", toml::array{ yaw, pitch } },
-    //    { "fov", fov }
-    //};
-    return toml::table{};
+    // TODO: Transform
+    return toml::table{ 
+        { "movementSpeed", movementSpeed },
+        { "fov", fov },
+        { "sensitivity", sensitivity },
+        { "near", nearPlane },
+        { "far", farPlane },
+        { "state", (int)state},
+        { "orthoScale", orthoScale},
+    };
 }

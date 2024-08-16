@@ -36,6 +36,14 @@ void GUI::Update()
 
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("SceneObject")) {
+			if (ImGui::MenuItem("Create New")) {
+				// NOTE: This is okay, it's the scene's responsibility to delete the sceneobjects
+				// TODO: This looks bad, make a scene function instead
+				new SceneObject(scene);
+			}
+			ImGui::EndMenu();
+		}
 		ImGui::EndMainMenuBar();
 	}
 

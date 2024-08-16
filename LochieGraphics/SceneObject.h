@@ -57,6 +57,9 @@ public:
 	void Update(float delta);
 	void GUI();
 
+	toml::table Serialise();
+
+
 #pragma region Part Get and Set
 
 	void setTransform(Transform* transform);

@@ -24,5 +24,16 @@ int Serialisation::LoadAsInt(toml::v3::node_view<toml::v3::node> toml)
     return toml.as_integer()->value_or<int>(0);
 }
 
+toml::array Serialisation::SaveAsVec3(glm::vec3 vec)
+{
+    return toml::array(vec.x, vec.y, vec.z);
+}
+
+std::string Serialisation::SaveAsUnsignedLongLong(unsigned long long n)
+{
+    return std::to_string(n);
+}
+
+
 
 

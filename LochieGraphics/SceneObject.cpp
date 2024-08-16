@@ -78,6 +78,15 @@ void SceneObject::GUI()
 	//}
 }
 
+toml::table SceneObject::Serialise()
+{
+	return toml::table{
+		{"name", name},
+		{"guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{"parts", parts}
+	};
+}
+
 void SceneObject::setTransform(Transform* transform)
 {
 	scene->transforms[GUID] = (*transform);

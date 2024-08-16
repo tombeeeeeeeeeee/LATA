@@ -13,6 +13,9 @@ public:
 	static std::string LoadAsString(toml::v3::node_view<toml::v3::node> toml);
 	static int LoadAsInt(toml::v3::node_view<toml::v3::node> toml);
 
+	static toml::array SaveAsVec3(glm::vec3 vec);
+	static std::string SaveAsUnsignedLongLong(unsigned long long n);
 };
+
 
 

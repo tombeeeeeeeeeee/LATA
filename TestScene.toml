@@ -1,95 +1,169 @@
+WindowName = "Lochie's Scene"
+
 [[Shaders]]
 flags = 0
 fragment = 'shaders/cubemap.frag'
-guid = '113'
+guid = '101'
 vertex = 'shaders/cubemap.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/simpleDepthShader.frag'
-guid = '114'
+guid = '102'
 vertex = 'shaders/simpleDepthShader.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/shadowDebug.frag'
-guid = '115'
+guid = '103'
 vertex = 'shaders/shadowDebug.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/HDRBloom.frag'
-guid = '116'
+guid = '104'
 vertex = 'shaders/default.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/brdf.frag'
-guid = '117'
+guid = '105'
 vertex = 'shaders/default.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/prefilter.frag'
-guid = '118'
+guid = '106'
 vertex = 'shaders/prefilter.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/downSample.frag'
-guid = '119'
+guid = '107'
 vertex = 'shaders/default.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/upSample.frag'
-guid = '120'
+guid = '108'
 vertex = 'shaders/default.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/irradiance.frag'
-guid = '121'
+guid = '109'
 vertex = 'shaders/irradiance.vert'
 
 [[Shaders]]
 flags = 1
 fragment = 'shaders/lineRenderer.frag'
-guid = '122'
+guid = '110'
 vertex = 'shaders/lineRenderer.vert'
 
 [[Shaders]]
 flags = 11
 fragment = 'shaders/superDuper.frag'
-guid = '123'
+guid = '111'
 vertex = 'shaders/superDuper.vert'
 
-[[Shaders]]
-flags = 1
-fragment = 'shaders/lightCube.frag'
-guid = '124'
-vertex = 'shaders/lightCube.vert'
-
-[[Shaders]]
-flags = 4
-fragment = 'shaders/animate.frag'
-guid = '125'
-vertex = 'shaders/animate.vert'
-
-[[Shaders]]
-flags = 3
-fragment = 'shaders/pbr.frag'
-guid = '126'
-vertex = 'shaders/pbr.vert'
-
-[[Shaders]]
-flags = 1
-fragment = 'shaders/simpleTextured.frag'
-guid = '127'
-vertex = 'shaders/simpleTextured.vert'
-
 [Camera]
-fov = 105.0
-position = [ -0.48965904116630554, 1.8869491815567017, 5.957887649536133 ]
-rotation = [ -548.2992553710938, -40.59996032714844 ]
+far = 300.0
+fov = 60.0
+movementSpeed = 2.5
+near = 0.10000000149011612
+orthoScale = 1.0
+sensitivity = 0.10000000149011612
+state = 1
+
+[[SceneObjects]]
+guid = '117'
+name = 'Unnamed Scene Object'
+parts = 0
+
+[[SceneObjects]]
+guid = '118'
+name = 'Unnamed Scene Object'
+parts = 0
+
+[[Lights]]
+colour = [ 1.0, 1.0, 1.0 ]
+direction = [ -0.5329999923706055, -0.5329999923706055, -0.5329999923706055 ]
+distance = 10.0
+near = 1.0
+shadowHeight = 4096
+shadowWidth = 4096
+type = 0
+
+[[Lights]]
+colour = [ 1.0, 1.0, 1.0 ]
+constant = 1.0
+cutOff = 0.9848077297210693
+direction = [ 0.0, 0.0, 0.0 ]
+index = -1
+linear = 0.09000000357627869
+near = 1.0
+outerCutOff = 0.9659258127212524
+position = [ 0.0, 0.0, 0.0 ]
+projectionFov = 150.0
+quadratic = 0.03200000151991844
+range = 8.672727584838867
+shadowHeight = 4096
+shadowWidth = 4096
+type = 1
+
+[[Lights]]
+colour = [ 1.0, 1.0, 1.0 ]
+constant = 1.0
+index = 0
+linear = 0.09000000357627869
+near = 1.0
+position = [ 0.0, 5.199999809265137, 2.0 ]
+projectionFov = 150.0
+quadratic = 0.03200000151991844
+range = 8.672727584838867
+shadowHeight = 4096
+shadowWidth = 4096
+type = 2
+
+[[Lights]]
+colour = [ 0.800000011920929, 0.800000011920929, 0.800000011920929 ]
+constant = 1.0
+index = 1
+linear = 0.09000000357627869
+near = 1.0
+position = [ 2.299999952316284, -3.299999952316284, -4.0 ]
+projectionFov = 150.0
+quadratic = 0.03200000151991844
+range = 8.672727584838867
+shadowHeight = 4096
+shadowWidth = 4096
+type = 2
+
+[[Lights]]
+colour = [ 0.800000011920929, 0.800000011920929, 0.800000011920929 ]
+constant = 1.0
+index = 2
+linear = 0.09000000357627869
+near = 1.0
+position = [ -4.0, 2.0, -12.0 ]
+projectionFov = 150.0
+quadratic = 0.03200000151991844
+range = 8.672727584838867
+shadowHeight = 4096
+shadowWidth = 4096
+type = 2
+
+[[Lights]]
+colour = [ 0.800000011920929, 0.800000011920929, 0.800000011920929 ]
+constant = 1.0
+index = 3
+linear = 0.09000000357627869
+near = 1.0
+position = [ 0.0, 0.0, -3.0 ]
+projectionFov = 150.0
+quadratic = 0.03200000151991844
+range = 8.672727584838867
+shadowHeight = 4096
+shadowWidth = 4096
+type = 2
 
