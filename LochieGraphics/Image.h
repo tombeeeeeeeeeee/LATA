@@ -9,20 +9,20 @@ public:
 
 	std::string path;
 
-	int width;
-	int height;
-	int components;
+	int width = 0;
+	int height = 0;
+	int components = 0;
 	bool flipped = false;
 
 	bool loaded = false;
 
-	Image(std::string _path, bool _flipped = false);
-	Image(bool _flipped = false);
+	Image(std::string _path, bool _flipped = false, int _components = 0);
+	Image(bool _flipped = false, int _components = 0);
 
 	void Load();
+	void Load(std::string path);
 
-	unsigned char* getValueCompAt(int col, int row, int component = 0);
-
+	unsigned char* getValueCompAt(int col, int row, int component = 0) const;
 
 	~Image();
 };

@@ -17,6 +17,8 @@ private:
 
 
 public:
+	glm::vec3 min;
+	glm::vec3 max;
 
 	std::string path = "";
 
@@ -38,6 +40,8 @@ public:
 	//TODO: Model currently comepletly owns the meshes, this should not be the case, actually with recent changed yes but there should be a model manager
 	std::vector<Mesh*> meshes = {};
 	std::vector<unsigned long long> meshGUIDs;
+
+	int materialIDs = 1;
 
 	void GUI();
 

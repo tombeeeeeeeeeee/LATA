@@ -1,5 +1,7 @@
 #include "ResourceManager.h"
 
+#include "SceneManager.h"
+
 #include "Utilities.h"
 
 #include "stb_image.h"
@@ -161,6 +163,11 @@ void ResourceManager::GUI()
 			i->second.GUI();
 			ImGui::NewLine();
 		}
+
+		if (ImGui::Button("Create new Material")) {
+			LoadMaterial("", SceneManager::scene->shaders[ShaderIndex::super]);
+		}
+
 	}
 
 	// TODO: GUI for shader flags, there is a built in imgui thing
@@ -220,7 +227,7 @@ void ResourceManager::GUI()
 			ImGui::Text(std::to_string(i->second.GLID).c_str());
 
 			ImGui::TableSetColumnIndex(6);
-			if (ImGui::Button(("Recompile##" + std::to_string(i->second.GLID)).c_str())) {
+			if (ImGui::Button(("R##" + std::to_string(i->second.GLID)).c_str())) {
 				i->second.Load(); //TODO: When a shader reloads the materials need to also reload
 				BindFlaggedVariables();
 			}

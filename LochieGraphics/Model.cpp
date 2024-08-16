@@ -56,7 +56,12 @@ void Model::LoadModel(std::string _path, bool flipTexturesOnLoad)
 		meshes[i] = ResourceManager::LoadMesh();
 		meshGUIDs[i] = meshes[i]->GUID;
 		meshes[i]->InitialiseFromAiMesh(path, scene, &boneInfoMap, mesh, flipTexturesOnLoad);
+		min.x = std::min(meshes[i]->min.x, min.x);
+		min.y = std::min(meshes[i]->min.y, min.y);
+		max.x = std::max(meshes[i]->max.x, max.x);
+		max.y = std::max(meshes[i]->max.y, max.y);
 	}
+	materialIDs = scene->mNumMaterials;
 
 	Animation::ReadHierarchyData(&root, scene->mRootNode);
 	// TODO: Do I need to do this, check exactly what should be done
@@ -100,6 +105,11 @@ void Model::GUI()
 		ImGui::InputText(("Path##" + tag).c_str(), &path);
 		int meshCount = meshes.size();
 		ImGui::DragInt(("Mesh Count##" + tag).c_str(), &meshCount);
+
+		ImGui::DragFloat2(("Min##" + tag).c_str(), &min.x);
+		ImGui::DragFloat2(("Max##" + tag).c_str(), &max.x);
+
+		ImGui::DragInt("Material IDs", &materialIDs);
 		
 		ImGui::EndDisabled();
 

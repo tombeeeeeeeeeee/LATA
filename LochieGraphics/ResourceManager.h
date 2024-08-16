@@ -32,6 +32,7 @@ public:
 	static Texture* GetTexture(unsigned long long GUID);
 	static Model* GetModel(unsigned long long GUID);
 	static Mesh* GetMesh(unsigned long long GUID);
+	// TODO: Remove this nullptr default for the shader reference, a material can't really exist without a shader
 	static Material* LoadMaterial(std::string name, Shader* shader = nullptr);
 
 	static unsigned long long guidCounter;

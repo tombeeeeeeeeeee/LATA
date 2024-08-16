@@ -24,10 +24,10 @@ public:
 	};
 
 
+	glm::vec3 max, min;
 private:
 	unsigned int triCount;
 	GLuint VAO, VBO, IBO;
-	glm::vec3 max, min;
 
 
 	friend class ResourceManager;
@@ -39,6 +39,9 @@ private:
 public:
 	
 	static int aiLoadFlag;
+
+	// Not a GUID
+	int materialID = 0;
 
 	unsigned long long GUID;
 
@@ -68,15 +71,16 @@ public:
 	void InitialiseIndexFromFile(std::string filename, int i);
 	void InitialiseFromAiMesh(std::string path, const aiScene* scene, std::unordered_map<std::string, BoneInfo>* boneInfo, aiMesh* mesh, bool flipTexturesOnLoad = true);
 
-	unsigned int getTriCount();
-	GLuint getVAO();
-	GLuint getVBO();
-	GLuint getIBO();
+	unsigned int getTriCount() const;
+	GLuint getVAO() const;
+	GLuint getVBO() const;
+	GLuint getIBO() const;
 
 private:
 	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);
 
 	void GenAndBind();
+	// Should be static?
 	void Unbind();
 	//TODO: Both the aiTextureType and the Texture::Type shouldn't be passed, make a dictionary or something and only pass one in
 	//static std::vector<Texture*> LoadMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type, bool flipOnLoad = true);

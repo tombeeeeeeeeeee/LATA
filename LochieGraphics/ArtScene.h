@@ -1,6 +1,8 @@
 #pragma once
 #include "Scene.h"
 
+#include "Image.h"
+
 #include <unordered_map>
 
 class ArtScene : public Scene
@@ -17,28 +19,34 @@ private:
 		//{ "PBR",        Texture::Type::PBR},
 	};
 
-
+	// Read these from a file or something
 	std::string texturePrefix = "T_";
 	std::string meshPrefix = "SM_";
 
-	Texture* base = nullptr;
-	Texture* roughness = nullptr;
-	Texture* normal = nullptr;
-	Texture* metallic = nullptr;
-	Texture* ao = nullptr;
+	// Images store the image data
+	Image roughnessImage;
+	Image metallicImage;
+	Image aoImage;
+	std::unordered_map<std::string, Image*> importImages;
+
+	// Textures for a viewable version, these only exist to see the image in the GUI
+	Texture* roughnessPreview = nullptr;
+	Texture* metallicPreview = nullptr;
+	Texture* aoPreview = nullptr;
+	std::unordered_map<std::string, Texture**> importTextures;
+
+	unsigned char missingRoughnessValue = 0;
+	unsigned char missingMetallicValue = UCHAR_MAX;
+	unsigned char missingAoValue = UCHAR_MAX;
 
 	Texture* pbr = nullptr;
 
-	bool defaultFlip = false;
+	bool defaultFlip = true;
 
-	std::unordered_map<std::string, Texture**> importTextures;
 
 	void RefreshPBR();
-	
-	GLint defaultUIShader;
-	static Shader* singleChannelUIImage;
-	static void SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd);
-	static void SetToDefaultUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd);
+
+	void RefreshPBRComponents();
 
 	Skybox* skybox = nullptr;
 
@@ -65,6 +73,10 @@ private:
 	std::vector<std::string> stringPaths;
 	std::vector<const char *> newPaths;
 
+	// TODO: Should there be a camera function for this or something similar?
+	// Radians
+	float resetCamObjectViewSpace = PI / 8;
+	void ResetCamera();
 
 public:
 
