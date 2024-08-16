@@ -175,13 +175,13 @@ glm::vec2 Input::Keyboard::getLook() const
 
 float Input::Keyboard::getLeftTrigger() const
 {
-	float left = glfwGetKey(SceneManager::window, keyLeftTrigger);
+	float left = (float)glfwGetKey(SceneManager::window, keyLeftTrigger);
 	return left;
 }
 
 float Input::Keyboard::getRightTrigger() const
 {
-	float right = glfwGetKey(SceneManager::window, keyRightTrigger);
+	float right = (float)glfwGetKey(SceneManager::window, keyRightTrigger);
 	return right;
 }
 

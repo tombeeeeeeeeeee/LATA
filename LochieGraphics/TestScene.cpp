@@ -256,6 +256,7 @@ void TestScene::OnMouseDown()
 
 void TestScene::GUI()
 {
+
 	if (!ImGui::Begin("Network Thing", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
 	}
@@ -269,6 +270,7 @@ void TestScene::GUI()
 		ImGui::End();
 	}
 	else {
+		ImGui::DragFloat("Ortho Camera Zoom", &camera->orthoScale, 0.1f, 0, 100.0f);
 		ImGui::SliderFloat("Animation trans", &xbotBlendedAnimator.lerpAmount, 0.f, 1.0f);
 		ImGui::Checkbox("Show shadow debug", &renderSystem->showShadowDebug);
 		ImGui::DragFloat("Exposure", &renderSystem->exposure, 0.01f, 0.0f, 5.0f);
@@ -279,6 +281,7 @@ void TestScene::GUI()
 		}
 		ImGui::End();
 	}
+	
 }
 
 

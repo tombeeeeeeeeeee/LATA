@@ -26,6 +26,15 @@ public:
     float nearPlane;
     float farPlane;
 
+    enum CameraState {
+        editorMode = 1 << 0,
+        targetingPosition = 1 << 1,
+        targetingPlayers = 1 << 2,
+    };
+
+    CameraState state = editorMode;
+    float orthoScale = 1.0f;
+
     enum Direction {
         FORWARD,
         BACKWARD,
@@ -51,6 +60,11 @@ public:
 
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset);
+
+    float getOrthoHeight() { return 9.0f * orthoScale; };
+    float getOrthoWidth() { return 16.0f * orthoScale; };
+
+    bool InEditorMode() { return state & editorMode; };
 
     void GUI();
 

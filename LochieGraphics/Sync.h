@@ -23,6 +23,7 @@ public:
 	void GUI();
 
 private:
+	float moveSpeed = 1.0f;
 	float lookDeadZone = 0.03f;
-	float moveDeadZone = 0.04f;
+	float moveDeadZone = 0.10f;
 };
