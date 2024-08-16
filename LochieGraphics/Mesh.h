@@ -14,34 +14,44 @@
 
 class Mesh
 {
-private:
-	unsigned int triCount;
-	GLuint VAO, VBO, IBO;
-	glm::vec3 max, min;
-
 public:
+
 	enum class presets {
 		cube,
 		quad,
 		doubleQuad,
 		cubeOppositeWind
 	};
-	static int aiLoadFlag;
 
-	void Draw();
 
+private:
+	unsigned int triCount;
+	GLuint VAO, VBO, IBO;
+	glm::vec3 max, min;
+
+
+	friend class ResourceManager;
 	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices);
 	Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);
 	Mesh(presets preset);
 	Mesh();
+
+public:
+	
+	static int aiLoadFlag;
+
+	unsigned long long GUID;
+
+	void Draw();
+
 	~Mesh();
 
-	Mesh(const Mesh& other) = delete;
-	Mesh& operator=(const Mesh& other) = delete;
+	//Mesh(const Mesh& other) = delete;
+	//Mesh& operator=(const Mesh& other) = delete;
 
-	// Move constructor
-	Mesh(Mesh&& other) noexcept;
-	Mesh& operator = (Mesh&& other) = delete;
+	////// Move constructor
+	//Mesh(Mesh&& other) noexcept;
+	//Mesh& operator = (Mesh&& other) = delete;
 
 	// Pre set
 	//TODO: add more and customisable, specifically sphere

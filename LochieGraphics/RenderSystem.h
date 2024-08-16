@@ -67,9 +67,9 @@ public:
 
 private:
 
-    Mesh shadowDebugQuad;
-    Mesh screenQuad;
-    Mesh buttonQuad;
+    Mesh* shadowDebugQuad;
+    Mesh* screenQuad;
+    Mesh* buttonQuad;
 
     Texture* screenColourBuffer = nullptr;
 
@@ -170,7 +170,7 @@ private:
     unsigned int quadVAO = 0;
     unsigned int quadVBO = 0;
 
-    Mesh cube;
+    Mesh* cube;
 
     //Captures for CubeMap
     glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);

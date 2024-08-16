@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Maths.h"
 #include <string>
 
 namespace Utilities {
@@ -8,6 +8,10 @@ namespace Utilities {
 	std::string PointerToString(void* pointer);
 
 	int WrapIndex(int value, int arraySize);
+
+	float Lerp(float a, float b, float t);
+	int Lerp(int a, int b, float t);
+	glm::vec3 Lerp(glm::vec3 a, glm::vec3 b, float t);
 
 	template <typename T> T mapValueTo(T value, T originalMin, T originalMax, T newMin, T newMax)
 	{

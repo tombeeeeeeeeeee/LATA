@@ -21,6 +21,8 @@ struct PolygonCollider : public Collider
 	std::vector<glm::vec2> verts;
 	float radius;
 	virtual const ColliderType getType() { return ColliderType::polygon; };
+	PolygonCollider(std::vector<glm::vec2> _verts, float _radius) : verts(_verts), radius(_radius) {};
+	PolygonCollider() {};
 };
 
 struct PlaneCollider : public Collider

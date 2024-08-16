@@ -224,13 +224,19 @@
     <ClCompile Include="Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ModelHierarchyInfo.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Serialisation.h">
-      <Filter>Source Files\Systems</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Serialisation.cpp">
+    <ClCompile Include="ModelHierarchyInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ecco.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sync.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePlayCameraSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
@@ -436,8 +442,12 @@
     <ClInclude Include="Image.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="ModelHierarchyInfo.h">
-      <Filter>Source Files\Rendering</Filter>
+    <ClInclude Include="ModelHierarchyInfo.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="Ecco.h" />
+    <ClInclude Include="Sync.h" />
+    <ClInclude Include="GamePlayCameraSystem.h">
+      <Filter>Source Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

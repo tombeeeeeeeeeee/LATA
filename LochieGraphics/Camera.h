@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Transform.h"
+
 #include "Maths.h"
 #include "Graphics.h"
 
@@ -13,16 +15,8 @@ class Camera
 public:
     // TODO: Change to matrix transform? use transform class
     // camera Attributes
-    glm::vec3 position;
-    glm::vec3 front;
-    glm::vec3 up;
-    glm::vec3 right;
-    glm::vec3 worldUp;
+    Transform transform;
 
-    // euler Angles
-    //TODO: Roll
-    float yaw;
-    float pitch;
     // camera options
     // TODO: Move speed shouldn't be build into the camera
     float movementSpeed;
@@ -31,6 +25,15 @@ public:
 
     float nearPlane;
     float farPlane;
+
+    enum CameraState {
+        editorMode = 1 << 0,
+        targetingPosition = 1 << 1,
+        targetingPlayers = 1 << 2,
+    };
+
+    CameraState state = editorMode;
+    float orthoScale = 1.0f;
 
     enum Direction {
         FORWARD,
@@ -58,14 +61,14 @@ public:
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset);
 
+    float getOrthoHeight() { return 9.0f * orthoScale; };
+    float getOrthoWidth() { return 16.0f * orthoScale; };
+
+    bool InEditorMode() { return state & editorMode; };
+
     void GUI();
 
     toml::table Serialise();
-
-    // TODO: Should probably be private
-//private:
-    // calculates the front vector from the Camera's (updated) Euler Angles
-    void UpdateVectors();
 
 };
 
