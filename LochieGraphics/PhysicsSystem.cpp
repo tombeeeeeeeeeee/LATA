@@ -263,14 +263,14 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 
 	if (collision.depth < 0) return;
 	if (collision.colliderA->isTrigger && collision.colliderB->isTrigger) return;
-	else if (collision.colliderB->isTrigger)
+	else if (collision.colliderA->isTrigger)
 	{
 		for (int i = 0; i < collision.rigidBodyA->onTrigger.size(); i++) 
 		{
 			collision.rigidBodyA->onTrigger[i](collisionFromAsPerspective);
 		}
 	}
-	else if (collision.colliderA->isTrigger)
+	else if (collision.colliderB->isTrigger)
 	{
 		for (int i = 0; i < collision.rigidBodyB->onTrigger.size(); i++)
 		{

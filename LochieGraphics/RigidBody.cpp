@@ -12,12 +12,14 @@ RigidBody::RigidBody()
 
 glm::vec2 RigidBody::AddImpulse(glm::vec2 impulse)
 {
-	return vel += impulse * invMass;
+	vel += impulse * invMass;
+	return vel;
 }
 
 float RigidBody::AddRotationalImpulse(float impulse)
 {
-	return angularVel += invMomentOfInertia * impulse;
+	angularVel += invMomentOfInertia * impulse;
+	return angularVel;
 }
 
 glm::vec2 RigidBody::AddDepen(glm::vec2 depen)

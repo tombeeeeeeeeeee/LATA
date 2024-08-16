@@ -58,6 +58,7 @@ void SceneObject::GUI()
 		if (scene->sync)
 			scene->sync->GUI();
 	}
+
 	//TODO Add animator parts;
 	//if ((parts & Parts::animator))
 	//	scene->animators[GUID].GUI();
