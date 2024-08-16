@@ -498,19 +498,27 @@ void RenderSystem::DrawRenderers(
         //    (*mesh)->Draw();
         //}
 
+        Shader* prevShader = nullptr;
+        int prevMaterialID = -1;
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
             int materialID = (*mesh)->materialID;
+            // Ensure that the materialID is valid
             if (materialID >= model->materialIDs || i->second.materials[materialID] == nullptr) {
                 materialID = 0;
             }
-            i->second.materials[materialID]->Use();
+            // Only bind textures if using a different material
+            if (materialID != prevMaterialID) {
+                i->second.materials[materialID]->Use();
+            }
+            // Only need to set shader variables if using a different shader
             Shader* shader = i->second.materials[materialID]->getShader();
-            shader->setMat4("model", transforms[i->first].getGlobalMatrix());
-            ActivateFlaggedVariables(shader, i->second.materials[materialID]);
-            shader->setVec3("materialColour", i->second.materials[materialID]->colour);
+            if (prevShader != shader) {
+                shader->setMat4("model", transforms[i->first].getGlobalMatrix());
+                ActivateFlaggedVariables(shader, i->second.materials[materialID]);
+                shader->setVec3("materialColour", i->second.materials[materialID]->colour);
+            }
             (*mesh)->Draw();
-
         }
     }
 }

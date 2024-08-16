@@ -41,7 +41,7 @@ public:
 	static int aiLoadFlag;
 
 	// Not a GUID
-	int materialID;
+	int materialID = 0;
 
 	unsigned long long GUID;
 
@@ -80,6 +80,7 @@ private:
 	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);
 
 	void GenAndBind();
+	// Should be static?
 	void Unbind();
 	//TODO: Both the aiTextureType and the Texture::Type shouldn't be passed, make a dictionary or something and only pass one in
 	//static std::vector<Texture*> LoadMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type, bool flipOnLoad = true);

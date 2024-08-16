@@ -20,43 +20,18 @@ void ArtScene::RefreshPBR()
 	int width = 0;
 	int height = 0;
 
-	int mW, mH, mC;
-	unsigned char* metallicData;
-	if (metallic) {
-		metallicData = stbi_load(metallic->path.c_str(), &mW, &mH, &mC, STBI_grey);
-		width = mW;
-		height = mH;
-	}
-	else {
-		metallicData = {};
-	}
-
-	int rW, rH, rC;
-	unsigned char* roughnessData;
-	if (roughness) {
-		roughnessData = stbi_load(roughness->path.c_str(), &rW, &rH, &rC, STBI_grey);
-		width = rW;
-		height = rH;
-	}
-	else {
-		roughnessData = {};
-	}
-
-	int aW, aH, aC;
-	unsigned char* ambientData;
-	if (ao) {
-		ambientData = stbi_load(ao->path.c_str(), &aW, &aH, &aC, STBI_grey);
-		width = aW;
-		height = aH;
-	}
-	else {
-		ambientData = {};
+	for (auto& i : importImages)
+	{
+		if (!i.second->loaded) { continue; }
+		width = i.second->width;
+		height = i.second->height;
+		break;
 	}
 
 	if (width == 0 || height == 0) {
 		return;
 	}
-	size_t size = (size_t)width * (size_t)height;
+	unsigned int size = (unsigned int)width * (unsigned int)height;
 	unsigned char pbrC = 4;
 	
 	std::vector<unsigned char> data(size * pbrC);
@@ -77,32 +52,28 @@ void ArtScene::RefreshPBR()
 
 	for (size_t i = 0; i < size; i++)
 	{
-		int col = i % width;
-		int row = i / height;
-
-		if (metallic) {
-			data[i * pbrC + 0] = metallicData[i];
+		if (metallicImage.loaded) {
+			data[i * pbrC + 0] = metallicImage.data[i];
 		}
 		else {
 			data[i * pbrC + 0] = missingMetallicValue;
 		}
 
-		if (roughness) {
-			data[i * pbrC + 1] = roughnessData[i];
+		if (roughnessImage.loaded) {
+			data[i * pbrC + 1] = roughnessImage.data[i];
 		}
 		else {
 			data[i * pbrC + 1] = missingRoughnessValue;
 		}
 
-		if (ao) {
-			data[i * pbrC + 2] = ambientData[i];
+		if (aoImage.loaded) {
+			data[i * pbrC + 2] = aoImage.data[i];
 		}
 		else {
 			data[i * pbrC + 2] = missingAoValue;
 		}
 		data[i * pbrC + 3] = UCHAR_MAX;
 	}
-
 
 	pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
 	pbr->type = Texture::Type::PBR;
@@ -115,6 +86,27 @@ void ArtScene::RefreshPBR()
 	unsigned char* test = stbi_load("./newPBR.tga", &tW, &tH, &tC, STBI_rgb_alpha);
 
 	std::cout << "Wrote PBR image, with result of " << result << '\n';
+
+	texturePreviewScale = 128.0f / width;
+}
+
+// TODO: These should only get generated at the end of an import, for example now if all three of the textures get dropped in this will get called thrice, instead of once at the end
+void ArtScene::RefreshPBRComponents()
+{
+	// Refresh the PBR preview textures
+
+	for (auto& i : importImages)
+	{
+		if (i.second->loaded) {
+			(*importTextures.at(i.first))->setWidthHeight(i.second->width, i.second->height);
+			(*importTextures.at(i.first))->Load(i.second->data);
+		}
+		else {
+
+			// TODO: Get a preview texture from the currently loaded PBR texture?
+		}
+	}
+	RefreshPBR();
 }
 
 void ArtScene::ResetCamera()
@@ -160,9 +152,6 @@ void ArtScene::ImportFromPaths(int pathCount, const char* paths[])
 }
 
 //TODO
-// When a pbr component texture gets imported, reload the pbr texture
-// And load a non flipped version of the texture for the preview slot
-// If a pbr texture gets imported, then the other textures can be recreated from it
 
 // Switch the editing material
 
@@ -183,35 +172,33 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 	}
 
 	// Load texture
-	Texture* newTexture = ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip);
 
-	texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
+	Texture* newTexture;
 
 	switch (type)
 	{
-	case Texture::Type::normal:
-		material->AddTextures(std::vector<Texture*>{ newTexture });
+	case Texture::Type::albedo: case Texture::Type::normal:
+		newTexture = ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip);
+		material->AddTextures(std::vector<Texture*>{ ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip) });
+		texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
 		break;
-	case Texture::Type::albedo:
-		material->AddTextures(std::vector<Texture*>{ newTexture });
-		break;
+
 	case Texture::Type::roughness:
-		roughness = newTexture;
-		RefreshPBR();
+		roughnessImage.Load(path);
+		RefreshPBRComponents();
 		break;
 	case Texture::Type::metallic:
-		metallic = newTexture;
-		RefreshPBR();
-		break;
-	case Texture::Type::PBR:
+		metallicImage.Load(path);
+		RefreshPBRComponents();
 		break;
 	case Texture::Type::ao:
-		ao = newTexture;
-		RefreshPBR();
+		aoImage.Load(path);
+		RefreshPBRComponents();
 		break;
-	case Texture::Type::paint:
-	case Texture::Type::emission:
-	default:
+
+	case Texture::Type::PBR:
+		break;
+	case Texture::Type::paint: case Texture::Type::emission: default:
 		break;
 	}
 }
@@ -264,9 +251,25 @@ void ArtScene::Start()
 
 	glfwSetDropCallback(SceneManager::window, DragDropCallback);
 
-	importTextures["roughness"] = &roughness;
-	importTextures["metallic"] = &metallic;
-	importTextures["ao"] = &ao;
+	// TODO: These should not be one channel, and instead create the image so that it is white ( not red)
+	metallicPreview = ResourceManager::LoadTexture(1024, 1024);
+	metallicPreview->format = GL_RED;
+	roughnessPreview = ResourceManager::LoadTexture(1024, 1024);
+	roughnessPreview->format = GL_RED;
+	aoPreview = ResourceManager::LoadTexture(1024, 1024);
+	aoPreview->format = GL_RED;
+
+	metallicImage.components = 1;
+	roughnessImage.components = 1;
+	aoImage.components = 1;
+
+	importTextures["metallic"] = &metallicPreview;
+	importTextures["roughness"] = &roughnessPreview;
+	importTextures["ao"] = &aoPreview;
+
+	importImages["metallic"] = &metallicImage;
+	importImages["roughness"] = &roughnessImage;
+	importImages["ao"] = &aoImage;
 }
 
 void ArtScene::Update(float delta)

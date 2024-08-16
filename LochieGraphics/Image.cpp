@@ -4,16 +4,18 @@
 
 #include <iostream>
 
-Image::Image(std::string _path, bool _flipped) :
+Image::Image(std::string _path, bool _flipped, int _components) :
 	path(path),
-	flipped(_flipped)
+	flipped(_flipped),
+	components(_components)
 {
 	Load();
 }
 
-Image::Image(bool _flipped) :
+Image::Image(bool _flipped, int _components) :
 	path(""),
-	flipped(_flipped)
+	flipped(_flipped),
+	components(_components)
 {
 }
 
@@ -21,14 +23,22 @@ void Image::Load()
 {
 	if (path != "") {
 		stbi_set_flip_vertically_on_load(flipped);
-		data = stbi_load(path.c_str(), &width, &height, &components, STBI_default);
+		int actualComponentsInFile;
+		data = stbi_load(path.c_str(), &width, &height, &actualComponentsInFile, components);
+		loaded = true;
 	}
 	else {
 		std::cout << "Cannot load image, no path given\n";
 	}
 }
 
-unsigned char* Image::getValueCompAt(int col, int row, int component)
+void Image::Load(std::string _path)
+{
+	path = _path;
+	Load();
+}
+
+unsigned char* Image::getValueCompAt(int col, int row, int component) const
 {
 	int i = (col + width * row) * components + component;
 	return data + i;
@@ -36,5 +46,6 @@ unsigned char* Image::getValueCompAt(int col, int row, int component)
 
 Image::~Image()
 {
+
 	// TODO:
 }
