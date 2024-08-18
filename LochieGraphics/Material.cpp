@@ -141,6 +141,7 @@ Texture* Material::getFirstTextureOfType(Texture::Type type) const
 
 void Material::Refresh()
 {
+	shader = ResourceManager::GetShader(shaderGUID);
 	for (auto i = textureGUIDs.begin(); i != textureGUIDs.end(); i++)
 	{
 		if (i->second) {
@@ -185,4 +186,31 @@ void Material::GUI()
 	{
 		ImGui::DragFloat((i->first + "##" + tag).c_str(), &i->second);
 	}
+}
+
+toml::table Material::Serialise()
+{
+	toml::array savedTextures;
+	for (auto& i : textureGUIDs)
+	{
+		savedTextures.push_back(toml::table{
+			{i.first, Serialisation::SaveAsUnsignedLongLong(i.second)}
+			});
+	}
+	toml::array savedFloats;
+	for (auto& i : floats)
+	{
+		savedFloats.push_back(toml::table{
+			{i.first, i.second}
+			});
+	}
+
+	return toml::table{
+		{ "name", name },
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{ "shader", Serialisation::SaveAsUnsignedLongLong(shaderGUID) },
+		{ "colour", Serialisation::SaveAsVec3(colour)},
+		{ "textures", savedTextures},
+		{ "floats", savedFloats}
+	};
 }

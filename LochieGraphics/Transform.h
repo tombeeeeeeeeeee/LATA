@@ -17,7 +17,7 @@ private:
 	glm::mat4 globalMatrix = glm::identity<glm::mat4>();
 
 public:
-	SceneObject* getSceneObject()const;
+	SceneObject* getSceneObject() const;
 	//TODO: Add pointless pointer to LGP3
 	SceneObject* so = nullptr;
 

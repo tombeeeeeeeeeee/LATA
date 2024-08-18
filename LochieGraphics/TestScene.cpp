@@ -26,11 +26,11 @@ void TestScene::Start()
 	Shader* simpleTextured = ResourceManager::LoadShader("shaders/simpleTextured.vert", "shaders/simpleTextured.frag", Shader::Flags::VPmatrix);
 	uiShader = ResourceManager::LoadShader("shaders/ui.vert", "shaders/ui.frag");
 
-	shaders.insert(shaders.end(), { 
-		lightCubeShader, 
-		animateShader, 
-		pbrShader, 
-		simpleTextured, 
+	shaders.insert(shaders.end(), {
+		lightCubeShader,
+		animateShader,
+		pbrShader,
+		simpleTextured,
 	});
 
 	// TODO: This needs to be cleaned up
@@ -65,25 +65,27 @@ void TestScene::Start()
 		ResourceManager::LoadTexture("images/container2.png", Texture::Type::albedo),
 			ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::specular),
 	});
-	cubeModel.AddMesh(new Mesh(Mesh::presets::cube));
-	boxes->setRenderer(new ModelRenderer(&cubeModel, boxMaterial));
+	cubeModel = ResourceManager::LoadModel();
+	cubeModel->AddMesh(ResourceManager::LoadMesh(Mesh::presets::cube));
+	boxes->setRenderer(new ModelRenderer(cubeModel, boxMaterial));
 	boxes->transform()->setScale(30.0f);
 	boxes->transform()->setPosition({ 0.f, -15.450f, 0.f });
 
 	Material* lightCubeMaterial = ResourceManager::LoadMaterial("lightCube", lightCubeShader);
-	lightCube->setRenderer(new ModelRenderer(&cubeModel, lightCubeMaterial));
+	lightCube->setRenderer(new ModelRenderer(cubeModel, lightCubeMaterial));
 	lightCube->transform()->setScale(0.2f);
 
 	Material* grassMaterial = ResourceManager::LoadMaterial("grass", shaders[super]);
 	grassMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("images/grass.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE, false),
 	});
-	grassModel.AddMesh(new Mesh(Mesh::presets::doubleQuad));
-	grass->setRenderer(new ModelRenderer(&grassModel, grassMaterial));
+	grassModel = ResourceManager::LoadModel();
+	grassModel->AddMesh(ResourceManager::LoadMesh(Mesh::presets::doubleQuad));
+	grass->setRenderer(new ModelRenderer(grassModel, grassMaterial));
 	grass->transform()->setPosition({ 1.9f, 0.f, 2.6f });
 	grass->transform()->setEulerRotation({ 0.f, -43.2f, 0.f });
 
-	backpackModel = Model("models/TomTest/Cerberus_LP.FBX");
+	backpackModel = ResourceManager::LoadModel("models/TomTest/Cerberus_LP.FBX");
 	Material* backpackMaterial = ResourceManager::LoadMaterial("backpack", shaders[super]);
 	backpackMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/TomTest/Cerberus_A.tga", Texture::Type::albedo, GL_REPEAT),
@@ -91,13 +93,13 @@ void TestScene::Start()
 			ResourceManager::LoadTexture("models/TomTest/Cerberus_PBR.tga", Texture::Type::PBR, GL_REPEAT),
 			//ResourceManager::LoadTexture("models/backpack/roughness.jpg", Texture::Type::emission, GL_REPEAT, false),
 	});
-	backpack->setRenderer(new ModelRenderer(&backpackModel, backpackMaterial));
+	backpack->setRenderer(new ModelRenderer(backpackModel, backpackMaterial));
 	backpack->transform()->setPosition({ -4.5f, 1.7f, 0.f });
 	backpack->transform()->setScale(0.075f);
 	backpack->transform()->setEulerRotation({-90.f, 0.f, 0.f});
 
 
-	tiresModel = Model("models/old-tires-dirt-low-poly/model.dae", false);
+	tiresModel = ResourceManager::LoadModel("models/old-tires-dirt-low-poly/model.dae"/*, false*/);
 	Material* tiresMaterial = ResourceManager::LoadMaterial("tires", shaders[super]);
 	tiresMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_albedo.jpeg", Texture::Type::albedo, GL_REPEAT, true),
@@ -105,10 +107,10 @@ void TestScene::Start()
 			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_metallic.jpeg", Texture::Type::PBR, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/old-tires-dirt-low-poly/DefaultMaterial_roughness.jpeg", Texture::Type::emission, GL_REPEAT, true)
 	});
-	tires->setRenderer(new ModelRenderer(&tiresModel, tiresMaterial));
+	tires->setRenderer(new ModelRenderer(tiresModel, tiresMaterial));
 	tires->transform()->setPosition({-0.1f, 0.f, 1.2f});
 
-	testRedBoxModel = Model("models/TomBox/cube.obj");
+	testRedBoxModel = ResourceManager::LoadModel("models/TomBox/cube.obj");
 	Material* testRedBoxMaterial = ResourceManager::LoadMaterial("testRedBox", shaders[super]);
 
 	testRedBoxMaterial->AddTextures(std::vector<Texture*>{
@@ -118,37 +120,37 @@ void TestScene::Start()
 			//ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_AO.png", Texture::Type::ao, GL_REPEAT, true),
 			//ResourceManager::LoadTexture("models/normalBoxTest/box_example_None_Roughness.png", Texture::Type::emission, GL_REPEAT, true),
 	});
-	testRedBox->setRenderer(new ModelRenderer(&testRedBoxModel, testRedBoxMaterial));
+	testRedBox->setRenderer(new ModelRenderer(testRedBoxModel, testRedBoxMaterial));
 	testRedBox->transform()->setPosition({ 0.6f, 3.5f, -3.5f });
 	testRedBox->transform()->setEulerRotation({ 4.3f, -17.2f, -69.5f});
 
-	soulSpearModel = Model(std::string("models/soulspear/soulspear.obj"), true);
+	soulSpearModel = ResourceManager::LoadModel(std::string("models/soulspear/soulspear.obj")/*, true*/);
 	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", shaders[super]);
 	soulSpearMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::PBR, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
 	});
-	soulSpear->setRenderer(new ModelRenderer(&soulSpearModel, soulSpearMaterial));
+	soulSpear->setRenderer(new ModelRenderer(soulSpearModel, soulSpearMaterial));
 	soulSpear->transform()->setPosition({ 5.f, 1.f, 1.f });
 
-	xbotModel.LoadModel(std::string("models/X Bot.fbx"));
+	xbotModel = ResourceManager::LoadModel(std::string("models/X Bot.fbx"));
 	xbot->transform()->setScale(0.01f);
 	xbot->transform()->setPosition({ 0.f, -0.5f, 1.5f });
 	Material* xbotMaterial = ResourceManager::LoadMaterial("puppet", shaders[super]);
 	xbotMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::albedo)
 	});
-	xbot->setRenderer(new ModelRenderer(&xbotModel, xbotMaterial));
+	xbot->setRenderer(new ModelRenderer(xbotModel, xbotMaterial));
 
-	xbotChicken = Animation("models/Chicken Dance.fbx", &xbotModel);
-	xbotIdle = Animation("models/Ymca Dance.fbx", &xbotModel);
+	xbotChicken = Animation("models/Chicken Dance.fbx", xbotModel);
+	xbotIdle = Animation("models/Ymca Dance.fbx", xbotModel);
 	xbotAnimator = Animator(&xbotChicken);
 	xbotOtherAnimator = Animator(&xbotIdle);
 	xbotBlendedAnimator = BlendedAnimator(&xbotChicken, &xbotIdle);
 	xbot->setAnimator(&xbotOtherAnimator);
 
-	vampireModel.LoadModel(std::string("models/Skinning Test.fbx"));
+	vampireModel = ResourceManager::LoadModel(std::string("models/Skinning Test.fbx"));
 	vampire->transform()->setScale(0.01f);
 	//vampire->transform()->setPosition({ 0.f, -0.5f, 1.f };
 	Material* vampireMaterial = ResourceManager::LoadMaterial("vampire", shaders[super]);
@@ -156,11 +158,11 @@ void TestScene::Start()
 		ResourceManager::LoadTexture("models/Vampire_diffuse.png", Texture::Type::albedo),
 			ResourceManager::LoadTexture("models/Vampire_normal.png", Texture::Type::normal)
 	});
-	vampire->setRenderer(new ModelRenderer(&vampireModel, vampireMaterial));
+	vampire->setRenderer(new ModelRenderer(vampireModel, vampireMaterial));
 	vampire->transform()->setPosition({ 1.6f, -0.5f, -2.f });
 
 
-	vampireWalk = Animation("models/Skinning Test.fbx", &vampireModel);
+	vampireWalk = Animation("models/Skinning Test.fbx", vampireModel);
 	vampireAnimator = Animator(&vampireWalk);
 	vampire->setAnimator(&vampireAnimator);
 }
@@ -210,7 +212,7 @@ void TestScene::Update(float delta)
 	lightCube->transform()->setPosition(pointLights[0].position);
 	spotlight.position = camera->transform.getPosition();
 	spotlight.direction = camera->transform.forward();
-	
+
 	// Different View Projection matrix for the skybox, as translations shouldn't affect it
 	// TODO: This math shouldn't be here, maybe move to camera class or get the projection from scenemanager
 
@@ -279,7 +281,7 @@ void TestScene::GUI()
 		}
 		ImGui::End();
 	}
-	
+
 }
 
 

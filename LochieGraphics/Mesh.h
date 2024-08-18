@@ -14,34 +14,47 @@
 
 class Mesh
 {
-private:
-	unsigned int triCount;
-	GLuint VAO, VBO, IBO;
-	glm::vec3 max, min;
-
 public:
+
 	enum class presets {
 		cube,
 		quad,
 		doubleQuad,
 		cubeOppositeWind
 	};
-	static int aiLoadFlag;
 
-	void Draw();
 
+	glm::vec3 max, min;
+private:
+	unsigned int triCount;
+	GLuint VAO, VBO, IBO;
+
+
+	friend class ResourceManager;
 	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices);
 	Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);
 	Mesh(presets preset);
 	Mesh();
+
+public:
+	
+	static int aiLoadFlag;
+
+	// Not a GUID
+	int materialID = 0;
+
+	unsigned long long GUID;
+
+	void Draw();
+
 	~Mesh();
 
-	Mesh(const Mesh& other) = delete;
-	Mesh& operator=(const Mesh& other) = delete;
+	//Mesh(const Mesh& other) = delete;
+	//Mesh& operator=(const Mesh& other) = delete;
 
-	// Move constructor
-	Mesh(Mesh&& other) noexcept;
-	Mesh& operator = (Mesh&& other) = delete;
+	////// Move constructor
+	//Mesh(Mesh&& other) noexcept;
+	//Mesh& operator = (Mesh&& other) = delete;
 
 	// Pre set
 	//TODO: add more and customisable, specifically sphere
@@ -58,15 +71,16 @@ public:
 	void InitialiseIndexFromFile(std::string filename, int i);
 	void InitialiseFromAiMesh(std::string path, const aiScene* scene, std::unordered_map<std::string, BoneInfo>* boneInfo, aiMesh* mesh, bool flipTexturesOnLoad = true);
 
-	unsigned int getTriCount();
-	GLuint getVAO();
-	GLuint getVBO();
-	GLuint getIBO();
+	unsigned int getTriCount() const;
+	GLuint getVAO() const;
+	GLuint getVBO() const;
+	GLuint getIBO() const;
 
 private:
 	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);
 
 	void GenAndBind();
+	// Should be static?
 	void Unbind();
 	//TODO: Both the aiTextureType and the Texture::Type shouldn't be passed, make a dictionary or something and only pass one in
 	//static std::vector<Texture*> LoadMaterialTextures(std::string path, aiMaterial* mat, aiTextureType aiType, Texture::Type type, bool flipOnLoad = true);

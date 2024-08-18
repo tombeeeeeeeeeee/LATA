@@ -67,29 +67,30 @@ Mesh::Mesh() :
 
 Mesh::~Mesh()
 {
-	//std::cout << "A mesh was destroyed\n";
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &IBO);
+	// TODO: Clean up 
+	////std::cout << "A mesh was destroyed\n";
+	//glDeleteVertexArrays(1, &VAO);
+	//glDeleteBuffers(1, &VBO);
+	//glDeleteBuffers(1, &IBO);
 }
 
-Mesh::Mesh(Mesh&& other) noexcept
-{
-	//std::cout << "A mesh was moved via constructor!\n";
-	triCount = other.triCount;
-	VAO = other.VAO;
-	VBO = other.VBO;
-	IBO = other.IBO;
-	max = other.max;
-	min = other.min;
-
-	other.triCount = 0;
-	other.VAO = 0;
-	other.VBO = 0;
-	other.IBO = 0;
-	other.max = glm::zero<glm::vec3>();
-	other.min = glm::zero<glm::vec3>();
-}
+//Mesh::Mesh(Mesh&& other) noexcept
+//{
+//	//std::cout << "A mesh was moved via constructor!\n";
+//	triCount = other.triCount;
+//	VAO = other.VAO;
+//	VBO = other.VBO;
+//	IBO = other.IBO;
+//	max = other.max;
+//	min = other.min;
+//
+//	other.triCount = 0;
+//	other.VAO = 0;
+//	other.VBO = 0;
+//	other.IBO = 0;
+//	other.max = glm::zero<glm::vec3>();
+//	other.min = glm::zero<glm::vec3>();
+//}
 
 void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices)
 {
@@ -202,6 +203,8 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 		}
 	}
 
+	materialID = mesh->mMaterialIndex;
+
 	// TODO: Move somewhere else
 	//Texture stuff
 	//aiMaterial* ai_material = scene->mMaterials[mesh->mMaterialIndex];
@@ -219,22 +222,22 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 	delete[] vertices;
 }
 
-unsigned int Mesh::getTriCount()
+unsigned int Mesh::getTriCount() const
 {
 	return triCount;
 }
 
-GLuint Mesh::getVAO()
+GLuint Mesh::getVAO() const
 {
 	return VAO;
 }
 
-GLuint Mesh::getVBO()
+GLuint Mesh::getVBO() const
 {
 	return VBO;
 }
 
-GLuint Mesh::getIBO()
+GLuint Mesh::getIBO() const
 {
 	return IBO;
 }

@@ -3,6 +3,8 @@
 #include "Texture.h"
 #include "Maths.h"
 
+#include "Serialisation.h"
+
 #include <vector>
 #include <unordered_map>
 
@@ -36,5 +38,7 @@ public:
 	void Refresh();
 
 	void GUI();
+
+	toml::table Serialise();
 };
 

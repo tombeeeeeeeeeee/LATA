@@ -2,6 +2,8 @@
 
 #include "Camera.h"
 
+#include "ResourceManager.h"
+
 Skybox::Skybox(Shader* _shader, GLuint _texture) :
 	shader(_shader),
 	texture(_texture)
@@ -31,4 +33,9 @@ void Skybox::Draw()
 	Texture::UseCubeMap(texture, shader);
 	
 	glDepthFunc(GL_LESS); // Change depth function back //TODO: Can the depth function just stay lequal
+}
+
+void Skybox::Refresh()
+{
+	shader = ResourceManager::GetShader(shaderGUID);
 }

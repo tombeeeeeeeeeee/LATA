@@ -2,7 +2,7 @@
 
 #include "SceneObject.h"
 #include "Camera.h"
-#include "Light.h"
+#include "Lights.h"
 #include "Transform.h"
 #include "ModelRenderer.h"
 #include "Ecco.h"

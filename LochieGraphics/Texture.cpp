@@ -21,7 +21,11 @@ const std::unordered_map<Texture::Type, std::string> Texture::TypeNames =
 	{ Type::height, "height" },
 	{ Type::emission, "emission" }, // TODO: Should cubemap be a type?
 	{ Type::albedo, "albedo" },
+	{ Type::roughness, "roughness" },
+	{ Type::metallic, "metallic" },
+	{ Type::ao, "ao" },
 	{ Type::PBR, "PBR" },
+	{ Type::paint, "Paint"},
 };
 
 Texture::Texture(std::string _path, Type _type, int _wrappingMode, bool flip) :
@@ -252,7 +256,7 @@ void Texture::EditorGUI(std::vector<Texture*>& textures)
 			ImGui::Text(std::to_string((*i)->GLID).c_str());
 
 			ImGui::TableSetColumnIndex(5);
-			if (ImGui::Button(("Reload##" + std::to_string((*i)->GLID)).c_str())) {
+			if (ImGui::Button(("R##" + std::to_string((*i)->GLID)).c_str())) {
 				(*i)->Load();
 			}
 		}

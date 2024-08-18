@@ -24,7 +24,8 @@ void RenderSystem::Start(
     shaders = _shaders;
     skyboxTexture = _skyboxTexture;
 
-    cube.InitialiseCube(2.0f);
+    cube = ResourceManager::LoadMesh();
+    cube->InitialiseCube(2.0f);
 
     IBLBufferSetup(skyboxTexture);
     HDRBufferSetUp();
@@ -41,8 +42,10 @@ void RenderSystem::Start(
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-    shadowDebugQuad.InitialiseQuad(0.5f, 0.5f);
-    screenQuad.InitialiseQuad(1.f, 0.0f);
+    shadowDebugQuad = ResourceManager::LoadMesh();
+    screenQuad = ResourceManager::LoadMesh();
+    shadowDebugQuad->InitialiseQuad(0.5f, 0.5f);
+    screenQuad->InitialiseQuad(1.f, 0.0f);
 
     // Create colour attachment texture for fullscreen framebuffer
     screenColourBuffer = ResourceManager::LoadTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
@@ -57,6 +60,8 @@ void RenderSystem::Start(
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     shadowFrameBuffer = new FrameBuffer(shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight, nullptr, depthMap, false);
     paintStrokeTexture = nullptr;//ResourceManager::LoadTexture(paintStrokeTexturePath, Texture::Type::paint);
+
+    
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
 
@@ -121,7 +126,7 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        cube.Draw();
+        cube->Draw();
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     
@@ -145,11 +150,10 @@ void RenderSystem::SetPrefilteredMap(unsigned int textureID)
     // generate mipmaps for the cubemap so OpenGL automatically allocates the required memory.
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-    unsigned int currShader = (*shaders)[ShaderIndex::prefilter]->GLID;
-    glUseProgram(currShader);
+    (*shaders)[ShaderIndex::prefilter]->Use();
 
-    glUniform1i(glGetUniformLocation(currShader, "environmentMap"), 1);
-    glUniformMatrix4fv(glGetUniformLocation(currShader, "projection"), 1, GL_FALSE, &captureProjection[0][0]);
+    (*shaders)[ShaderIndex::prefilter]->setInt("environmentMap", 1);
+    (*shaders)[ShaderIndex::prefilter]->setMat4("projection", captureProjection);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -166,16 +170,16 @@ void RenderSystem::SetPrefilteredMap(unsigned int textureID)
         glViewport(0, 0, mipWidth, mipHeight);
 
         float roughness = (float)mip / (float)(maxMipLevels - 1);
-        glUniform1f(glGetUniformLocation(currShader, "roughness"), roughness);
+        (*shaders)[ShaderIndex::prefilter]->setFloat("roughness", roughness);
         for (unsigned int i = 0; i < 6; ++i)
         {
             //ColouredOutput("view in prefilter is: ", Colour::green);
             //ColouredOutput(glGetUniformLocation(currShader, "view") == -1, Colour::red, false);
-            glUniformMatrix4fv(glGetUniformLocation(currShader, "view"), 1, GL_FALSE, &captureViews[i][0][0]);
+            (*shaders)[ShaderIndex::prefilter]->setMat4("view", captureViews[i]);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            cube.Draw();
+            cube->Draw();
         }
     }
 
@@ -298,10 +302,11 @@ void RenderSystem::Update(
 
     for(auto i = shadowCasters.begin(); i != shadowCasters.end(); i++)
     {
+        // TODO: This is only using the first material found on the model, each mesh could potentially have a different material?
         ModelRenderer currentRenderer = i->second;
-        Texture* alphaMap = currentRenderer.material->getFirstTextureOfType(Texture::Type::diffuse);
+        Texture* alphaMap = currentRenderer.materials[0]->getFirstTextureOfType(Texture::Type::diffuse);
         if (!alphaMap) {
-            alphaMap = currentRenderer.material->getFirstTextureOfType(Texture::Type::albedo);
+            alphaMap = currentRenderer.materials[0]->getFirstTextureOfType(Texture::Type::albedo);
         }
         if (alphaMap) {
             // TODO: Really should be using a Texture bind function here.
@@ -320,7 +325,7 @@ void RenderSystem::Update(
         //DRAW USING SHADOW MAP FOR CURRENT TRANSFORM
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
-            mesh->Draw();
+            (*mesh)->Draw();
         }
     }
 
@@ -381,7 +386,7 @@ void RenderSystem::Update(
         depthMap->Bind(1);
 
         //TODO: Make Shadow Debug Quad
-        shadowDebugQuad.Draw();
+        shadowDebugQuad->Draw();
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -450,8 +455,9 @@ void RenderSystem::DrawAnimation(
         ModelRenderer animationRenderer = renderers[iter->first];
         if (!shader)
         {
-            animationRenderer.material->Use();
-            animationRenderer.material->getShader()->setMat4("model", transforms[iter->first].getGlobalMatrix());
+            // TODO: This is only using the first material found on the model, each mesh could potentially have a different material?
+            animationRenderer.materials[0]->Use();
+            animationRenderer.materials[0]->getShader()->setMat4("model", transforms[iter->first].getGlobalMatrix());
         }
         else 
         {
@@ -461,7 +467,7 @@ void RenderSystem::DrawAnimation(
         Model* model = animationRenderer.model;
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
-            mesh->Draw();
+            (*mesh)->Draw();
         }
     }
 }
@@ -473,20 +479,47 @@ void RenderSystem::DrawRenderers(
 {
     for (auto i = renderers.begin(); i != renderers.end(); i++)
     {
-        i->second.material->Use();
-        Shader* curShader = i->second.material->getShader();
-        curShader->setMat4("model", transforms[i->first].getGlobalMatrix());
-        int samplerCount = i->second.material->texturePointers.size();
+        //// TODO: This is only using the first material found on the model, each mesh could potentially have a different material?
+        //i->second.materials[0]->Use();
+        //Shader* curShader = i->second.materials[0]->getShader();
+        //curShader->setMat4("model", transforms[i->first].getGlobalMatrix());
 
-        ActivateFlaggedVariables(curShader, i->second.material);
+        //// TODO: Is this supposed to be used for something?
+        //// ASK:
+        //int samplerCount = i->second.materials[0]->texturePointers.size();
 
-        // TODO: use shader function
-        curShader->setVec3("materialColour", i->second.material->colour);
+        //ActivateFlaggedVariables(curShader, i->second.materials[0]);
+
+        //// TODO: use shader function
+        //curShader->setVec3("materialColour", i->second.materials[0]->colour);
 
         Model* model = i->second.model;
+        //for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
+        //{
+        //    (*mesh)->Draw();
+        //}
+
+        Shader* prevShader = nullptr;
+        int prevMaterialID = -1;
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
-            mesh->Draw();
+            int materialID = (*mesh)->materialID;
+            // Ensure that the materialID is valid
+            if (materialID >= model->materialIDs || i->second.materials[materialID] == nullptr) {
+                materialID = 0;
+            }
+            // Only bind textures if using a different material
+            if (materialID != prevMaterialID) {
+                i->second.materials[materialID]->Use();
+            }
+            // Only need to set shader variables if using a different shader
+            Shader* shader = i->second.materials[materialID]->getShader();
+            if (prevShader != shader) {
+                shader->setMat4("model", transforms[i->first].getGlobalMatrix());
+                ActivateFlaggedVariables(shader, i->second.materials[materialID]);
+                shader->setVec3("materialColour", i->second.materials[materialID]->colour);
+            }
+            (*mesh)->Draw();
         }
     }
 }

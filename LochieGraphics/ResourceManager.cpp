@@ -1,5 +1,7 @@
 #include "ResourceManager.h"
 
+#include "SceneManager.h"
+
 #include "Utilities.h"
 
 #include "stb_image.h"
@@ -13,13 +15,15 @@ using Utilities::PointerToString;
 std::unordered_map<unsigned long long, Texture, ResourceManager::hashFNV1A> ResourceManager::textures;
 std::unordered_map<unsigned long long, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
 std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
+std::unordered_map<unsigned long long, Model, ResourceManager::hashFNV1A> ResourceManager::models;
+std::unordered_map<unsigned long long, Mesh, ResourceManager::hashFNV1A> ResourceManager::meshes;
 unsigned long long ResourceManager::guidCounter = 100;
 
 const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
 const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
 #define LoadResource(type, collection, ...)                            \
-type newResource(__VA_ARGS__ );                                        \
+type newResource = type(__VA_ARGS__ );                                        \
 newResource.GUID = GetNewGuid();                                       \
 return &collection.emplace(newResource.GUID, newResource).first->second\
 
@@ -36,6 +40,52 @@ Shader* ResourceManager::LoadShader(std::string sharedName, int flags)
 Shader* ResourceManager::LoadShaderDefaultVert(std::string fragmentName, int flags)
 {
 	LoadResource(Shader, shaders, "shaders/default.vert", "shaders/" + fragmentName + ".frag", flags);
+}
+
+
+Shader* ResourceManager::LoadShader(toml::v3::table* toml)
+{
+	Shader newShader = Shader(toml);
+	if (shaders.find(newShader.GUID) != shaders.end()) {
+		shaders.erase(newShader.GUID);
+	}
+	return &shaders.emplace(newShader.GUID, newShader).first->second;
+}
+
+Model* ResourceManager::LoadModel(std::string path)
+{
+	LoadResource(Model, models, path);
+}
+
+// TODO: Clean
+Model* ResourceManager::LoadModel()
+{
+	Model newResource = Model();
+	newResource.GUID = GetNewGuid();
+	return &models.emplace(newResource.GUID, newResource).first->second;
+	//Model newResource;
+	//newResource.GUID = GetNewGuid();
+	//return &models.emplace(newResource.GUID, newResource).first->second;
+}
+
+Mesh* ResourceManager::LoadMesh(std::vector<Vertex> vertices, std::vector<GLuint> indices)
+{
+	LoadResource(Mesh, meshes, vertices, indices);
+}
+
+Mesh* ResourceManager::LoadMesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices)
+{
+	LoadResource(Mesh, meshes, vertexCount, vertices, indexCount, indices);
+}
+
+Mesh* ResourceManager::LoadMesh(Mesh::presets preset)
+{
+	LoadResource(Mesh, meshes, preset);
+}
+
+Mesh* ResourceManager::LoadMesh()
+{
+	LoadResource(Mesh, meshes);
 }
 
 Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
@@ -66,6 +116,8 @@ type* ResourceManager::Get##type(unsigned long long GUID)\
 GetResource(Shader, shaders)
 GetResource(Texture, textures)
 GetResource(Material, materials)
+GetResource(Model, models)
+GetResource(Mesh, meshes)
 
 unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
 {
@@ -95,7 +147,6 @@ void ResourceManager::GUI()
 {
 	if (ImGui::CollapsingHeader("Textures")) {
 
-		
 		std::vector<Texture*> tempTextures = {};
 		for (auto i = textures.begin(); i != textures.end(); i++)
 		{
@@ -112,8 +163,13 @@ void ResourceManager::GUI()
 			i->second.GUI();
 			ImGui::NewLine();
 		}
+
+		if (ImGui::Button("Create new Material")) {
+			LoadMaterial("", SceneManager::scene->shaders[ShaderIndex::super]);
+		}
+
 	}
-	
+
 	// TODO: GUI for shader flags, there is a built in imgui thing
 	if (ImGui::CollapsingHeader("Shaders")) {
 		if (ImGui::BeginTable("Shader list", 7)) {
@@ -171,7 +227,7 @@ void ResourceManager::GUI()
 			ImGui::Text(std::to_string(i->second.GLID).c_str());
 
 			ImGui::TableSetColumnIndex(6);
-			if (ImGui::Button(("Recompile##" + std::to_string(i->second.GLID)).c_str())) {
+			if (ImGui::Button(("R##" + std::to_string(i->second.GLID)).c_str())) {
 				i->second.Load(); //TODO: When a shader reloads the materials need to also reload
 				BindFlaggedVariables();
 			}
@@ -183,6 +239,22 @@ void ResourceManager::GUI()
 			LoadShader("", "", Shader::Flags::None); //TODO: Use some template shader
 		}
 
+	}
+
+	if (ImGui::CollapsingHeader("Models")) {
+
+		for (auto& model : models)
+		{
+			// TODO: model gui
+			//ImGui::Text(std::to_string(model.second.GUID).c_str());
+			//model.second.
+			ImGui::Indent();
+
+			model.second.GUI();
+
+			ImGui::Unindent();
+
+		}
 	}
 }
 
@@ -196,19 +268,7 @@ void ResourceManager::BindFlaggedVariables()
 {
 	for (auto i = shaders.begin(); i != shaders.end(); i++)
 	{
-		int flag = (*i).second.getFlag();
-		(*i).second.Use();
-
-		if (flag & Shader::Flags::Spec)
-		{
-			(*i).second.setInt("irradianceMap", 7);
-			(*i).second.setInt("prefilterMap", 8);
-			(*i).second.setInt("brdfLUT", 9);
-		}
-		if (flag & Shader::Flags::Painted)
-		{
-			(*i).second.setInt("brushStrokes", 10);
-		}
+		BindFlaggedVariables(&(*i).second);
 	}
 }
 
@@ -229,6 +289,15 @@ void ResourceManager::BindFlaggedVariables(Shader* shader)
 	}
 }
 
+void ResourceManager::UnloadShaders()
+{
+	for (auto i = shaders.begin(); i != shaders.end(); i++)
+	{
+		i->second.DeleteProgram();
+	}
+	shaders.clear();
+}
+
 void ResourceManager::UnloadAll()
 {
 	for (auto i = textures.begin(); i != textures.end(); i++)
@@ -237,11 +306,15 @@ void ResourceManager::UnloadAll()
 	}
 	textures.clear();
 
-	for (auto i = shaders.begin(); i != shaders.end(); i++)
-	{
-		i->second.DeleteProgram();
-	}
-	shaders.clear();
+	UnloadShaders();
 
 	materials.clear();
+}
+
+void ResourceManager::RefreshAllMaterials()
+{
+	for (auto& i : materials)
+	{
+		i.second.Refresh();
+	}
 }

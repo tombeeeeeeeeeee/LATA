@@ -9,9 +9,6 @@
 #include <filesystem>
 
 ArtScene* ArtScene::artScene = nullptr;
-Shader* ArtScene::singleChannelUIImage = nullptr;
-
-
 
 void ArtScene::RefreshPBR()
 {
@@ -19,69 +16,106 @@ void ArtScene::RefreshPBR()
 		pbr->DeleteTexture();
 	}
 
-	if (metallic == nullptr || roughness == nullptr) {
+	
+	int width = 0;
+	int height = 0;
+
+	for (auto& i : importImages)
+	{
+		if (!i.second->loaded) { continue; }
+		width = i.second->width;
+		height = i.second->height;
+		break;
+	}
+
+	if (width == 0 || height == 0) {
 		return;
 	}
-
-	// 4 channels
-	std::vector<unsigned char> data(base->width * base->height * 4);
-
-	int tempW;
-	int tempH;
-	int tempC;
-	unsigned char* metallicData = stbi_load(metallic->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
-	if (tempW != base->width || tempH != tempH) { return; }
-	unsigned char* roughnessData = stbi_load(roughness->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
-	if (tempW != base->width || tempH != tempH) { return; }
-	unsigned char* ambientData;
-	if (ao) {
-		ambientData = stbi_load(ao->path.c_str(), &tempW, &tempH, &tempC, STBI_default);
-	}
-	else {
-		ambientData = {};
-	}
+	unsigned int size = (unsigned int)width * (unsigned int)height;
+	unsigned char pbrC = 4;
 	
+	std::vector<unsigned char> data(size * pbrC);
 
-	for (int i = 0; i < base->width * base->height; i++)
+	//if (metallic) {
+	//	for (size_t i = 0; i < size; i++)
+	//	{
+	//		data[i * pbrC + 0] = metallicData[i];
+
+	//	}
+	//}
+	//else {
+	//	for (size_t i = 0; i < size; i++)
+	//	{
+	//		data[i * pbrC + 0] = missingMetallicValue;
+	//	}
+	//}
+
+	for (size_t i = 0; i < size; i++)
 	{
-		int col = i % base->width;
-		int row = i / base->height;
-
-		data[i * 4 + 0] = metallicData[i];
-		data[i * 4 + 1] = roughnessData[i];
-		if (ao) {
-			data[i * 4 + 2] = ambientData[i];
+		if (metallicImage.loaded) {
+			data[i * pbrC + 0] = metallicImage.data[i];
 		}
 		else {
-			data[i * 4 + 2] = (unsigned char)255;
+			data[i * pbrC + 0] = missingMetallicValue;
 		}
-		data[i * 4 + 3] = (unsigned char)255;
 
+		if (roughnessImage.loaded) {
+			data[i * pbrC + 1] = roughnessImage.data[i];
+		}
+		else {
+			data[i * pbrC + 1] = missingRoughnessValue;
+		}
+
+		if (aoImage.loaded) {
+			data[i * pbrC + 2] = aoImage.data[i];
+		}
+		else {
+			data[i * pbrC + 2] = missingAoValue;
+		}
+		data[i * pbrC + 3] = UCHAR_MAX;
 	}
 
-
-	pbr = ResourceManager::LoadTexture(base->width, base->height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
-
+	pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
+	pbr->type = Texture::Type::PBR;
 	material->AddTextures({ pbr });
 
 	// TODO: Get name from base image
-	int result = stbi_write_tga("./newPBR.tga", base->width, base->height, STBI_rgb_alpha, data.data());
+	int result = stbi_write_tga("./newPBR.tga", width, height, STBI_rgb_alpha, data.data());
+
+	int tW, tH, tC;
+	unsigned char* test = stbi_load("./newPBR.tga", &tW, &tH, &tC, STBI_rgb_alpha);
 
 	std::cout << "Wrote PBR image, with result of " << result << '\n';
+
+	texturePreviewScale = 128.0f / width;
 }
 
-void ArtScene::SetSingleChannelUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd)
+// TODO: These should only get generated at the end of an import, for example now if all three of the textures get dropped in this will get called thrice, instead of once at the end
+void ArtScene::RefreshPBRComponents()
 {
-	glGetIntegerv(GL_CURRENT_PROGRAM, &artScene->defaultUIShader);
+	// Refresh the PBR preview textures
 
-	singleChannelUIImage->Use();
+	for (auto& i : importImages)
+	{
+		if (i.second->loaded) {
+			(*importTextures.at(i.first))->setWidthHeight(i.second->width, i.second->height);
+			(*importTextures.at(i.first))->Load(i.second->data);
+		}
+		else {
+
+			// TODO: Get a preview texture from the currently loaded PBR texture?
+		}
+	}
+	RefreshPBR();
 }
 
-void ArtScene::SetToDefaultUIShader(const ImDrawList* parent_list, const ImDrawCmd* cmd)
+void ArtScene::ResetCamera()
 {
-	glUseProgram(artScene->defaultUIShader);
+	float distance = (model->max.y - model->min.y) / tanf(resetCamObjectViewSpace);
+	camera->transform.setPosition({ distance + model->max.x, (model->min.y + model->max.y) / 2, (model->min.z + model->max.z) / 2});
+	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
+	camera->movementSpeed = glm::length(model->max - model->min);
 }
-
 
 void ArtScene::DragDropCallback(GLFWwindow* window, int pathCount, const char* paths[])
 {
@@ -103,7 +137,6 @@ void ArtScene::ImportFromPaths(int pathCount, const char* paths[])
 			ImportMesh(path, filename);
 			continue;
 		}
-		// Find last of will be -1 if none found (when cast to an int)
 		// Checking if the path is folder
 		// TODO: Maybe do this properly with some filesystem thing instead
 		auto lastPeriod = path.find_last_of(".");
@@ -117,6 +150,10 @@ void ArtScene::ImportFromPaths(int pathCount, const char* paths[])
 		std::cout << "Unknown item dropped! Could not detect type based on prefix: " << path << "\n";
 	}
 }
+
+//TODO
+
+// Switch the editing material
 
 void ArtScene::ImportTexture(std::string& path, std::string& filename)
 {
@@ -134,51 +171,49 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 		return;
 	}
 
-
 	// Load texture
 
-	Texture* newTexture = ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip);
-
-	texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
+	Texture* newTexture;
 
 	switch (type)
 	{
-	case Texture::Type::normal:
-		normal = newTexture;
-		material->AddTextures(std::vector<Texture*>{ newTexture });
+	case Texture::Type::albedo: case Texture::Type::normal:
+		newTexture = ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip);
+		material->AddTextures(std::vector<Texture*>{ ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip) });
+		texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
 		break;
-	case Texture::Type::emission:
-		break;
-	case Texture::Type::albedo:
-		base = newTexture;
-		material->AddTextures(std::vector<Texture*>{ newTexture });
-		break;
+
 	case Texture::Type::roughness:
-		roughness = newTexture;
-		RefreshPBR();
+		roughnessImage.Load(path);
+		RefreshPBRComponents();
 		break;
 	case Texture::Type::metallic:
-		metallic = newTexture;
-		RefreshPBR();
-		break;
-	case Texture::Type::PBR:
+		metallicImage.Load(path);
+		RefreshPBRComponents();
 		break;
 	case Texture::Type::ao:
-		ao = newTexture;
-		RefreshPBR();
+		aoImage.Load(path);
+		RefreshPBRComponents();
 		break;
-	case Texture::Type::paint:
+
+	case Texture::Type::PBR:
 		break;
-	default:
+	case Texture::Type::paint: case Texture::Type::emission: default:
 		break;
 	}
 }
 
 void ArtScene::ImportMesh(std::string& path, std::string& filename)
 {
-	model.meshes.clear();
+	// TODO: delete old model
+	//model->meshes.clear();
 
-	model = Model(path);
+	model = ResourceManager::LoadModel(path);
+
+	sceneObject->renderer()->modelGUID = model->GUID;
+	sceneObject->renderer()->Refresh();
+
+	ResetCamera();
 }
 
 void ArtScene::ImportFolder(std::string& path)
@@ -189,7 +224,7 @@ void ArtScene::ImportFolder(std::string& path)
 		stringPaths.push_back(entry.path().string());
 		newPaths.push_back(stringPaths.back().c_str());
 	}
-	ImportFromPaths(newPaths.size(), newPaths.data());
+	ImportFromPaths((int)newPaths.size(), newPaths.data());
 }
 
 ArtScene::ArtScene()
@@ -197,14 +232,12 @@ ArtScene::ArtScene()
 	artScene = this;
 }
 
-
-
 void ArtScene::Start()
 {
-	model.AddMesh(new Mesh(Mesh::presets::cube));
+	model = ResourceManager::LoadModel();
 	material = ResourceManager::LoadMaterial("New Material", shaders[super]);
 
-	ModelRenderer* modelRenderer = new ModelRenderer(&model, material);
+	ModelRenderer* modelRenderer = new ModelRenderer(model, material);
 	sceneObject->setRenderer(modelRenderer);
 
 	lights.insert(lights.end(), {
@@ -218,18 +251,29 @@ void ArtScene::Start()
 
 	glfwSetDropCallback(SceneManager::window, DragDropCallback);
 
-	singleChannelUIImage = ResourceManager::LoadShader("ui");
+	// TODO: These should not be one channel, and instead create the image so that it is white ( not red)
+	metallicPreview = ResourceManager::LoadTexture(1024, 1024);
+	metallicPreview->format = GL_RED;
+	roughnessPreview = ResourceManager::LoadTexture(1024, 1024);
+	roughnessPreview->format = GL_RED;
+	aoPreview = ResourceManager::LoadTexture(1024, 1024);
+	aoPreview->format = GL_RED;
 
-	importTextures["base"] = &base;
-	importTextures["roughness"] = &roughness;
-	importTextures["normal"] = &normal;
-	importTextures["metallic"] = &metallic;
-	importTextures["ao"] = &ao;
+	metallicImage.components = 1;
+	roughnessImage.components = 1;
+	aoImage.components = 1;
+
+	importTextures["metallic"] = &metallicPreview;
+	importTextures["roughness"] = &roughnessPreview;
+	importTextures["ao"] = &aoPreview;
+
+	importImages["metallic"] = &metallicImage;
+	importImages["roughness"] = &roughnessImage;
+	importImages["ao"] = &aoImage;
 }
 
 void ArtScene::Update(float delta)
 {
-
 }
 
 void ArtScene::Draw()
@@ -256,9 +300,7 @@ void ArtScene::GUI()
 				ImGui::BeginGroup();
 				ImGui::Text(i.first.c_str());
 				if ((*i.second) != nullptr) {
-					//ImGui::GetWindowDrawList()->AddCallback(SetSingleChannelUIShader, (void*)(0));
 					ImGui::Image((void*)(*i.second)->GLID, { texturePreviewScale * (float)(*i.second)->width, texturePreviewScale * (float)(*i.second)->height });
-					//ImGui::GetWindowDrawList()->AddCallback(SetToDefaultUIShader, (void*)(0));
 				}
 				ImGui::EndGroup();
 				ImGui::SameLine();
@@ -270,11 +312,13 @@ void ArtScene::GUI()
 				ImGui::Image((void*)pbr->GLID, { texturePreviewScale * (float)pbr->width, texturePreviewScale * (float)pbr->height });
 			}
 
-
-
 			ImGui::EndGroup();
 			ImGui::NewLine();
 			ImGui::EndChild();
+		}
+
+		if (ImGui::SliderFloat("Target Object View Space", &resetCamObjectViewSpace, 0.15f, PI/2.0f, "", ImGuiSliderFlags_Logarithmic)) {
+			ResetCamera();
 		}
 	}
 	ImGui::End();

@@ -371,11 +371,10 @@ void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int ac
 		ToggleFullscreen();
 	}
 
-	if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS) {
-		lockedCamera = !lockedCamera;
-		RefreshInputMode();
-	}
-
+	//if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS) {
+	//	lockedCamera = !lockedCamera;
+	//	RefreshInputMode();
+	//}
 
 	if (key == GLFW_KEY_GRAVE_ACCENT && action == GLFW_PRESS) {
 		scene->Save();
