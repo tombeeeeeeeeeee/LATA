@@ -32,7 +32,7 @@ public:
         targetingPlayers = 1 << 2,
     };
 
-    CameraState state = editorMode;
+    CameraState state = targetingPlayers;
     float orthoScale = 1.0f;
 
     enum Direction {

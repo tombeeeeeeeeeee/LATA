@@ -1,4 +1,5 @@
 #include "GamePlayCameraSystem.h"
+#include "imgui.h"
 
 void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Transform& syncTransform, float zoomScale)
 {
@@ -13,11 +14,26 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 	case Camera::targetingPosition: 
 
 		camera.orthoScale = Utilities::Lerp(zoomScale, camera.orthoScale, cameraZoomSpeed);
-		glm::vec3 pos = Utilities::Lerp(initialCameraPos + target, camera.transform.getPosition(), cameraMoveSpeed);
+		glm::vec3 pos = Utilities::Lerp(cameraPositionDelta + target, camera.transform.getPosition(), cameraMoveSpeed);
 		camera.transform.setPosition(pos);
+
 		break;
 
 	default:
 		break;
 	}
+}
+
+void GameplayCameraSystem::ChangeCameraState(Camera& camera, Camera::CameraState state)
+{
+	if (!(state & Camera::editorMode))
+	{
+		camera.transform.setRotation(cameraRotationWhileTargeting);
+	}
+	camera.state = state;
+}
+
+void GameplayCameraSystem::GUI()
+{
+	ImGui::DragFloat3("Ortho Camera Position", &cameraPositionDelta[0], 0.2f);
 }

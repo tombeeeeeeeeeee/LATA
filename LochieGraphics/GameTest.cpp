@@ -228,12 +228,19 @@ void GameTest::GUI()
 	ecco->GUI();
 	sync->GUI();
 
-	//ImGui::DragFloat("Sync's Move Speed", &moveSpeed);
-	if (ImGui::Button("Bind Camera Pos"))
+	gameCamSystem.GUI();
+
+	if (ImGui::Button("Ortho Camera Angle Bake"))
 	{
-		gameCamSystem.Initialise(*camera);
+		gameCamSystem.cameraRotationWhileTargeting = camera->transform.getRotation();
 	}
-	//ImGui::End();
+	if (ImGui::Button("Change Camera State"))
+	{
+		if (camera->state & Camera::editorMode)
+			gameCamSystem.ChangeCameraState(*camera, Camera::targetingPlayers);
+		else
+			gameCamSystem.ChangeCameraState(*camera, Camera::editorMode);
+	}
 }
 
 GameTest::~GameTest()
