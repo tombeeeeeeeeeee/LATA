@@ -152,9 +152,16 @@ void main()
     vec4 emissionColour = texture(material.emission, texCoords);
 
     bloomColour = vec4(emissionColour.rgb + bloomColour.rgb, 1.0);
-    bloomColour *= emissionColour.a + 1.0;
+    bloomColour *= emissionColour.a + 2.0;
 
-    screenColour = vec4(result, 1.0);
+    if(emissionColour.r + emissionColour.g + emissionColour.b <= 0.0001)
+    {
+        screenColour = vec4(result, 1.0);
+    }
+    else
+    {
+        screenColour = vec4(emissionColour.rgb, 1.0);
+    }
 }
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)

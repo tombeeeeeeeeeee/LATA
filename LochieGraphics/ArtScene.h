@@ -15,6 +15,7 @@ private:
 		{ "Albedo",     Texture::Type::albedo},
 		{ "Roughness",  Texture::Type::roughness},
 		{ "Metallic",   Texture::Type::metallic},
+		{ "Emissive",   Texture::Type::emission},
 		{ "AO",         Texture::Type::ao},
 		//{ "PBR",        Texture::Type::PBR},
 	};
@@ -47,8 +48,6 @@ private:
 	void RefreshPBR();
 
 	void RefreshPBRComponents();
-
-	Skybox* skybox = nullptr;
 
 	Material* material;
 	Model* model;

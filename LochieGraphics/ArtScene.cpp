@@ -177,7 +177,7 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 
 	switch (type)
 	{
-	case Texture::Type::albedo: case Texture::Type::normal:
+	case Texture::Type::albedo: case Texture::Type::normal: case Texture::Type::emission:
 		newTexture = ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip);
 		material->AddTextures(std::vector<Texture*>{ ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip) });
 		texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
@@ -198,7 +198,7 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 
 	case Texture::Type::PBR:
 		break;
-	case Texture::Type::paint: case Texture::Type::emission: default:
+	case Texture::Type::paint: default:
 		break;
 	}
 }
@@ -234,6 +234,18 @@ ArtScene::ArtScene()
 
 void ArtScene::Start()
 {
+	std::string skyboxPaths[6] = {
+		"images/black.png",
+		"images/black.png",
+		"images/black.png",
+		"images/black.png",
+		"images/black.png",
+		"images/black.png",
+	};
+
+	auto temp = Texture::LoadCubeMap(&skyboxPaths[0]);
+	skybox = new Skybox(shaders[skyBoxShader], temp);
+
 	model = ResourceManager::LoadModel();
 	material = ResourceManager::LoadMaterial("New Material", shaders[super]);
 

@@ -119,11 +119,15 @@ void Camera::GUI()
     ImGui::DragFloat("Near plane##Camera", &nearPlane, 0.01f, 0.01f, FLT_MAX);
     ImGui::DragFloat("Far plane##Camera", &farPlane, 0.01f, 0.01f, FLT_MAX);
 
+    ImGui::DragFloat("Orthographic Scale##Camera", &orthoScale, 0.01f, 0.01f, FLT_MAX);
+    
+
     int curState = state & editorMode ? 0 : 1;
     if (ImGui::DragInt("Camera State", &curState, 1, 0, 1))
     {
         state = curState ? targetingPlayers : editorMode;
     }
+
 }
 
 toml::table Camera::Serialise()
