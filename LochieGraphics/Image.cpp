@@ -25,6 +25,8 @@ void Image::Load()
 		stbi_set_flip_vertically_on_load(flipped);
 		int actualComponentsInFile;
 		data = stbi_load(path.c_str(), &width, &height, &actualComponentsInFile, components);
+		if (components == 0)
+			components = actualComponentsInFile;
 		loaded = true;
 	}
 	else {

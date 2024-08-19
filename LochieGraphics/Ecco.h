@@ -3,6 +3,7 @@
 #include "Transform.h"
 #include "Rigidbody.h"
 #include "Input.h"
+#include "Utilities.h"
 
 #include "math.h"
 

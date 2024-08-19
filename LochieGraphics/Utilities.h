@@ -11,6 +11,7 @@ namespace Utilities {
 
 	float Lerp(float a, float b, float t);
 	int Lerp(int a, int b, float t);
+	glm::vec2 Lerp(glm::vec2 a, glm::vec2 b, float t);
 	glm::vec3 Lerp(glm::vec3 a, glm::vec3 b, float t);
 
 	template <typename T> T mapValueTo(T value, T originalMin, T originalMax, T newMin, T newMax)
