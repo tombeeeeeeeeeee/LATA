@@ -155,11 +155,15 @@ glm::vec3 Transform::getScale()
 void Transform::setScale(float _scale)
 {
 	scale = { _scale, _scale, _scale };
+	UpdateGlobalMatrixCascading();
+
 }
 
 void Transform::setScale(glm::vec3 _scale)
 {
 	scale = _scale;
+	UpdateGlobalMatrixCascading();
+
 }
 
 glm::vec3 Transform::getPosition() const
@@ -175,6 +179,9 @@ glm::vec3 Transform::getGlobalPosition() const
 void Transform::setPosition(glm::vec3 pos)
 {
 	position = pos;
+	UpdateGlobalMatrixCascading();
+
+
 }
 
 glm::vec3 Transform::forward() const

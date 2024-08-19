@@ -141,14 +141,14 @@ void TestScene::Start()
 	xbotMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::albedo)
 	});
-	xbot->setRenderer(new ModelRenderer(xbotModel, xbotMaterial));
+	//xbot->setRenderer(new ModelRenderer(xbotModel, xbotMaterial));
 
 	xbotChicken = Animation("models/Chicken Dance.fbx", xbotModel);
 	xbotIdle = Animation("models/Ymca Dance.fbx", xbotModel);
 	xbotAnimator = Animator(&xbotChicken);
 	xbotOtherAnimator = Animator(&xbotIdle);
 	xbotBlendedAnimator = BlendedAnimator(&xbotChicken, &xbotIdle);
-	xbot->setAnimator(&xbotOtherAnimator);
+	//xbot->setAnimator(&xbotBlendedAnimator);
 
 	vampireModel = ResourceManager::LoadModel(std::string("models/Skinning Test.fbx"));
 	vampire->transform()->setScale(0.01f);

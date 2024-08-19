@@ -9,7 +9,7 @@
 
 int main()
 {
-	SceneManager sceneManager(new EmptyScene());
+	SceneManager sceneManager(new TestScene());
 	while (!sceneManager.ShouldClose())
 	{
 		sceneManager.Update();
