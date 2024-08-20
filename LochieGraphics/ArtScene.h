@@ -9,6 +9,10 @@ class ArtScene : public Scene
 {
 private:
 
+	std::string filter = "";
+
+	std::vector <std::pair<std::string, const Material*>> filteredMaterials;
+
 	std::unordered_map<std::string, Texture::Type> acceptableImportTypeNames = {
 		{ "BaseColour", Texture::Type::albedo },
 		{ "Normal",     Texture::Type::normal },
@@ -54,7 +58,7 @@ private:
 	SceneObject* sceneObject = new SceneObject(this);
 
 	float loadTargetPreviewSize = 128.0f;
-	float texturePreviewScale = 1.0f;
+	float texturePreviewScale = 0.01f;
 
 
 	PointLight pointLights[4] = {

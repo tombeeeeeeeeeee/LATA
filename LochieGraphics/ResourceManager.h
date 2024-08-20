@@ -11,6 +11,13 @@
 
 //TODO: Maybe get shader without needing both the fragment and vertex shader, it could just find them both if they have the same name and just differing extension or custom file format that stores the name of the others
 class ResourceManager {
+private:
+	struct hashFNV1A {
+		static const unsigned long long offset;
+		static const unsigned long long prime;
+		unsigned long long operator()(unsigned long long key) const;
+		unsigned long long operator()(std::string key) const;
+	};
 public:
 	// TODO: Make resources be gathered from a GUID
 	static Shader* LoadShader(std::string vertexPath, std::string fragmentPath, int flags = 0);
@@ -35,6 +42,8 @@ public:
 	// TODO: Remove this nullptr default for the shader reference, a material can't really exist without a shader
 	static Material* LoadMaterial(std::string name, Shader* shader = nullptr);
 
+	static const std::unordered_map<unsigned long long, Material, hashFNV1A>& getMaterials();
+
 	static unsigned long long guidCounter;
 	static unsigned long long GetNewGuid();
 
@@ -51,13 +60,7 @@ public:
 	ResourceManager& operator=(const ResourceManager& other) = delete;
 
 	static void GUI();
-private:
-	struct hashFNV1A {
-		static const unsigned long long offset;
-		static const unsigned long long prime;
-		unsigned long long operator()(unsigned long long key) const;
-		unsigned long long operator()(std::string key) const;
-	};
+
 
 	// TODO: Maybe make a template function, all the 'Get' functions are very similar and could prob be written better
 

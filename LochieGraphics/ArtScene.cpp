@@ -3,6 +3,8 @@
 #include "ResourceManager.h"
 #include "SceneManager.h"
 
+#include "imgui_stdlib.h"
+
 #include "stb_image.h"
 #include "stb_image_write.h"
 
@@ -314,6 +316,28 @@ void ArtScene::Draw()
 void ArtScene::GUI()
 {
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+
+
+		if (ImGui::InputText("Filter##ArtStuff", &filter)) {
+			filteredMaterials.clear();
+			auto& materials = ResourceManager::getMaterials();
+			for (auto& i : materials)
+			{
+				std::string name = i.second.name + " " + std::to_string(i.second.GUID);
+				if ((name).find(filter) != std::string::npos) {
+					filteredMaterials.push_back(std::pair<std::string, const Material*>{ name, &i.second});
+				}
+			}
+		}
+		
+		for (auto& i : filteredMaterials)
+		{
+			ImGui::Text(i.first.c_str());
+		}
+
+
+
+
 		if (ImGui::CollapsingHeader("Current Material")) {
 			ImGui::SliderFloat("Preview Scale", &texturePreviewScale, 0.01f, 1.0f, "% .3f", ImGuiSliderFlags_Logarithmic);
 

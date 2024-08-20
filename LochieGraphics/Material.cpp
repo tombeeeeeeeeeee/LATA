@@ -159,6 +159,7 @@ void Material::GUI()
 	std::string tag = PointerToString(this);
 	ImGui::Text(name.c_str());
 	ImGui::Text(("GUID: " + std::to_string(GUID)).c_str());
+	ImGui::InputText(("##" + tag).c_str(), &name);
 	unsigned long long newShadersGUID = shaderGUID;
 	if (ImGui::InputScalar(("Shader##" + PointerToString(&shaderGUID)).c_str(), ImGuiDataType_U64, &newShadersGUID)) {
 		Shader* newShader = ResourceManager::GetShader(newShadersGUID);
