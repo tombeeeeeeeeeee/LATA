@@ -33,18 +33,15 @@ private:
 	Model* tiresModel;
 
 
-	SceneObject* backpack   = new SceneObject(this);
-	SceneObject* gun		= new SceneObject(this);
-	SceneObject* soulSpear  = new SceneObject(this);
-	SceneObject* testRedBox = new SceneObject(this);
-	SceneObject* grass      = new SceneObject(this);
-	SceneObject* boxes      = new SceneObject(this);
-	SceneObject* lightCube  = new SceneObject(this);
-	SceneObject* puppet     = new SceneObject(this);
-	SceneObject* xbot       = new SceneObject(this);
-	SceneObject* vampire    = new SceneObject(this);
-	SceneObject* bottle     = new SceneObject(this);
-	SceneObject* tires      = new SceneObject(this);
+	SceneObject* backpack   = new SceneObject(this, "backpack   ");
+	SceneObject* soulSpear  = new SceneObject(this, "soulSpear  ");
+	SceneObject* testRedBox = new SceneObject(this, "testRedBox ");
+	SceneObject* grass      = new SceneObject(this, "grass      ");
+	SceneObject* boxes      = new SceneObject(this, "boxes      ");
+	SceneObject* lightCube  = new SceneObject(this, "lightCube  ");
+	SceneObject* xbot       = new SceneObject(this, "xbot       ");
+	SceneObject* vampire    = new SceneObject(this, "vampire    ");
+	SceneObject* tires      = new SceneObject(this, "tires      ");
 
 	Animation xbotChicken;
 	Animation xbotIdle;

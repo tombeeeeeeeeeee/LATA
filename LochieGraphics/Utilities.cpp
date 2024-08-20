@@ -46,6 +46,11 @@ int Utilities::Lerp(int a, int b, float t)
 	return a * (1 - t) + b * t;
 }
 
+glm::vec2 Utilities::Lerp(glm::vec2 a, glm::vec2 b, float t)
+{
+	return a * (1 - t) + b * t;
+}
+
 glm::vec3 Utilities::Lerp(glm::vec3 a, glm::vec3 b, float t)
 {
 	return a * (1 - t) + b * t;

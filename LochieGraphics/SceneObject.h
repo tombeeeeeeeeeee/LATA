@@ -46,7 +46,7 @@ public:
 	Scene* scene;
 
 	//TODO: Ask lochy how to get a GUID
-	SceneObject(Scene* _scene);
+	SceneObject(Scene* _scene, std::string name = "Unnamed Scene Object");
 	SceneObject(Scene* scene, glm::vec3 _position, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.0f);
 
 	~SceneObject();

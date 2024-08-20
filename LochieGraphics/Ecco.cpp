@@ -83,16 +83,19 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 
 
 	//Reversing wheel correction
-	if (glm::dot(wheelDirection, { forward.x, forward.z }) >= maxWheelAngle)
+	if (glm::dot(wheelDirection, { right.x, right.z }) >= maxWheelAngle)
 	{
-		float turnAmount = glm::dot(glm::vec2(right.x, right.z), wheelDirection);
+		float turnAmount = glm::dot(glm::vec2(forward.x, forward.z), wheelDirection);
 		turnAmount = glm::clamp(turnAmount, -1.0f, 1.0f);
-		float desiredAngle = glm::asin(turnAmount);
-		desiredAngle = glm::clamp(desiredAngle, -maxWheelAngle, maxWheelAngle);
-
-		float c = cosf(desiredAngle);
-		float s = sinf(desiredAngle);
-		wheelDirection = { forward.x * c - forward.z * s, forward.z * c + forward.x * s };
+		float currAngle = glm::acos(turnAmount);
+		float maxAngle = glm::asin(maxWheelAngle);
+		float deltaAngle = maxAngle - currAngle;
+	
+	
+		float c = cosf(deltaAngle);
+		float s = sinf(deltaAngle);
+		glm::vec2 desiredWheelDirection = { wheelDirection.x * c - wheelDirection.y * s, wheelDirection.y * c + wheelDirection.x * s };
+		wheelDirection = Utilities::Lerp(wheelDirection, desiredWheelDirection, 0.5f);
 	}
 }
 

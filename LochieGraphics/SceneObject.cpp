@@ -8,8 +8,9 @@
 #include "imgui.h"
 #include "imgui_stdlib.h"
 
-SceneObject::SceneObject(Scene* _scene) :
-	scene(_scene)
+SceneObject::SceneObject(Scene* _scene, std::string _name) :
+	scene(_scene),
+	name(_name)
 {
 	GUID = ResourceManager::GetNewGuid();
 	scene->transforms[GUID] = Transform(this);

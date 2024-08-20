@@ -467,7 +467,7 @@ void RenderSystem::DrawAnimation(
         Model* model = animationRenderer.model;
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
-            (*mesh)->Draw();
+            //(*mesh)->Draw();
         }
     }
 }
