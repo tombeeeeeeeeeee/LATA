@@ -20,13 +20,23 @@ void ArtScene::RefreshPBR()
 	int width = 0;
 	int height = 0;
 
+	bool foundImage = false;
+
 	for (auto& i : importImages)
 	{
 		if (!i.second->loaded) { continue; }
+		if (foundImage) {
+			if (width != i.second->width || height != i.second->height) {
+				std::cout << "Mismatched PBR texture sizes " << i.second->path << " does not match with the other last given texture\n"
+					<< "this can be ignored if in process of inputting textures\n";
+				return;
+			}
+		}
 		width = i.second->width;
 		height = i.second->height;
-		break;
+		foundImage = true;
 	}
+
 
 	if (width == 0 || height == 0) {
 		return;
@@ -35,6 +45,7 @@ void ArtScene::RefreshPBR()
 	unsigned char pbrC = 4;
 	
 	std::vector<unsigned char> data(size * pbrC);
+
 
 	//if (metallic) {
 	//	for (size_t i = 0; i < size; i++)

@@ -224,9 +224,6 @@
     <ClCompile Include="Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Serialisation.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ModelHierarchyInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -238,6 +235,18 @@
     </ClCompile>
     <ClCompile Include="GamePlayCameraSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialisation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Spotlight.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -448,6 +457,13 @@
     <ClInclude Include="Sync.h" />
     <ClInclude Include="GamePlayCameraSystem.h">
       <Filter>Source Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h" />
+    <ClInclude Include="Lights.h" />
+    <ClInclude Include="PointLight.h" />
+    <ClInclude Include="Spotlight.h" />
+    <ClInclude Include="Serialisation.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

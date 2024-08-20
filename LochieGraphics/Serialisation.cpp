@@ -1,4 +1,7 @@
+#define TOML_IMPLEMENTATION
 #include "Serialisation.h"
+
+
 
 
 glm::vec3 Serialisation::LoadAsVec3(toml::v3::array* toml)
@@ -33,6 +36,11 @@ std::string Serialisation::SaveAsUnsignedLongLong(unsigned long long n)
 {
     return std::to_string(n);
 }
+
+
+
+
+
 
 
 

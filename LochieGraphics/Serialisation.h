@@ -1,10 +1,13 @@
 #pragma once
 
-#include "toml.hpp"
 
 #include "Maths.h"
 
 #include <string>
+
+#define TOML_HEADER_ONLY 0
+#include "toml.hpp"
+
 
 class Serialisation {
 public:
@@ -16,6 +19,10 @@ public:
 	static toml::array SaveAsVec3(glm::vec3 vec);
 	static std::string SaveAsUnsignedLongLong(unsigned long long n);
 };
+
+
+
+
 
 
 
