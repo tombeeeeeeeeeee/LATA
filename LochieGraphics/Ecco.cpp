@@ -19,7 +19,7 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		
 	*/
 
-	//Variables for vectior maths
+	//Variables for vector maths
 	glm::vec2 force = {0.0f, 0.0f};
 	glm::vec3 right = transform.right();
 	glm::vec3 forward = transform.forward();
@@ -29,17 +29,31 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 	if (glm::length(moveInput) > deadZone)
 	{
 		moveInput = glm::normalize(moveInput);
-		
-		//Determine angle for wheel change
-		float turnAmount = glm::dot(glm::vec2(right.x, right.z), moveInput);
-		turnAmount = glm::clamp(turnAmount, -1.0f, 1.0f);
-		float desiredAngle = glm::asin(turnAmount);
-		desiredAngle = glm::clamp(desiredAngle, -maxWheelAngle, maxWheelAngle);
+		glm::vec2 desiredWheelDirection;
+		if (!controlState)
+		{
+			//Determine angle for wheel change
+			float turnAmount = glm::dot(glm::vec2(forward.x, forward.z), moveInput);
+			turnAmount = glm::clamp(turnAmount, 0.0f, 1.0f);
+			float sign = glm::dot({ right.x, right.z }, moveInput) < 0.0f ? -1.0f : 1.0f;
+			float desiredAngle = (glm::acos(turnAmount)) * sign + PI / 4;
 
-		//rotate forward by that angle
-		float c = cosf(desiredAngle);
-		float s = sinf(desiredAngle);
-		glm::vec2 desiredWheelDirection = { forward.x * c - forward.z * s, forward.z * c + forward.x * s };
+			desiredAngle = glm::clamp(desiredAngle, -maxWheelAngle, maxWheelAngle);
+			//rotate forward by that angle
+			float c = cosf(desiredAngle);
+			float s = sinf(desiredAngle);
+			desiredWheelDirection = { forward.x * c - forward.z * s, forward.z * c + forward.x * s };
+
+		}
+		else
+		{
+			float turnAmount = glm::dot(glm::vec2(right.x, right.z), moveInput);
+			turnAmount = glm::clamp(turnAmount, -1.0f, 1.0f);
+			float angle = -turnAmount * wheelTurnSpeed;
+			float c = cosf(angle);
+			float s = sinf(angle);
+			desiredWheelDirection = { wheelDirection.x * c - wheelDirection.y * s, wheelDirection.y * c + wheelDirection.x * s };
+		}
 		wheelDirection += (desiredWheelDirection - wheelDirection) * wheelTurnSpeed * delta;
 		wheelDirection = glm::normalize(wheelDirection);
 	}
@@ -53,7 +67,7 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 	//Reversaccelrator
 	if (glm::length(inputDevice.getLeftTrigger()) > 0.01f)
 	{
-		force -= glm::vec2(forward.x, forward.z) * carMoveSpeed * inputDevice.getLeftTrigger();
+		force -= glm::vec2(forward.x, forward.z) * carReverseMoveSpeed * inputDevice.getLeftTrigger();
 	}
 
 	//Nothingerator
@@ -83,32 +97,28 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 
 
 	//Reversing wheel correction
-	if (glm::dot(wheelDirection, { right.x, right.z }) >= maxWheelAngle)
-	{
-		float turnAmount = glm::dot(glm::vec2(forward.x, forward.z), wheelDirection);
-		turnAmount = glm::clamp(turnAmount, -1.0f, 1.0f);
-		float currAngle = glm::acos(turnAmount);
-		float maxAngle = glm::asin(maxWheelAngle);
-		float deltaAngle = maxAngle - currAngle;
-	
-	
-		float c = cosf(deltaAngle);
-		float s = sinf(deltaAngle);
-		glm::vec2 desiredWheelDirection = { wheelDirection.x * c - wheelDirection.y * s, wheelDirection.y * c + wheelDirection.x * s };
-		wheelDirection = Utilities::Lerp(wheelDirection, desiredWheelDirection, 0.5f);
-	}
+	//if (glm::)
+	//{
+	//	float turnSign = glm::sign(glm::dot({ right.x, right.z }, wheelDirection));
+	//	float maxAngle = glm::asin(maxWheelAngle);
+	//	
+	//	float c = cosf(turnSign * maxAngle);
+	//	float s = sinf( maxAngle);
+	//	wheelDirection = { forward.x * c - forward.y * s, forward.y * c + forward.x * s };
+	//}
 }
 
 void Ecco::GUI()
 {
 	ImGui::DragFloat("Car move speed", &carMoveSpeed);
+	ImGui::DragFloat("Car reverse move speed", &carReverseMoveSpeed);
 	ImGui::DragFloat("Max car move speed", &maxCarMoveSpeed);
 	ImGui::DragFloat("Turning circle scalar", &turningCircleScalar);
 	ImGui::DragFloat("Max wheel angle", &maxWheelAngle);
 	ImGui::DragFloat("Wheel Turn Speed", &wheelTurnSpeed);
 	ImGui::DragFloat("Sideways Wheel Drag", &sidewaysFrictionCoef, 0.01f, 0.0f);
 	ImGui::DragFloat("Stopping Wheel Drag", &stoppingFrictionCoef, 0.01f, 0.0f);
-
+	ImGui::Checkbox("Dirivng Mode Isn't Global", &controlState);
 
 	ImGui::BeginDisabled();
 	ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);

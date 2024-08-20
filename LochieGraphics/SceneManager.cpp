@@ -142,14 +142,11 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShaderDefaultVert("upSample"),
 		ResourceManager::LoadShader("irradiance"),
 		ResourceManager::LoadShader("lineRenderer", Shader::Flags::VPmatrix),
+		//ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/unLit.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
 		ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/superDuper.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
 	});
 
-
-
 	scene->renderSystem = new RenderSystem(window);
-
-	scene->Start();
 
 	std::array<std::string, 6> skyboxFaces = { "images/SkyBox Volume 2/Stars01/leftImage.png", "images/SkyBox Volume 2/Stars01/rightImage.png", "images/SkyBox Volume 2/Stars01/upImage.png", "images/SkyBox Volume 2/Stars01/downImage.png", "images/SkyBox Volume 2/Stars01/frontImage.png", "images/SkyBox Volume 2/Stars01/backImage.png" };
 	defaultSkybox = new Skybox(scene->shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data()));
@@ -159,12 +156,15 @@ SceneManager::SceneManager(Scene* _scene)
 		scene->skybox = defaultSkybox;
 	}
 
+	scene->Start();
+
 	scene->renderSystem->Start(
 		scene->skybox->texture,
 		&scene->shaders,
 		scene->lights.front(),
 		""
 	);
+
 
 
 	for (auto i = scene->transforms.begin(); i != scene->transforms.end(); i++)

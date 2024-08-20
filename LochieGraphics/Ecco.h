@@ -28,6 +28,7 @@ public:
 
 private:
 	float carMoveSpeed = 0.25f;
+	float carReverseMoveSpeed = 0.125f;
 	float maxCarMoveSpeed = 6.0f;
 	float deadZone = 0.6f;
 	float turningCircleScalar = 6.0f;
@@ -35,4 +36,5 @@ private:
 	float wheelTurnSpeed = 4.0f;
 	float sidewaysFrictionCoef = 0.3f;
 	float stoppingFrictionCoef = 0.3f;
+	bool controlState = false;
 };
