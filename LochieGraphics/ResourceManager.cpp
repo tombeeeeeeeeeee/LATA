@@ -23,6 +23,9 @@ const unsigned long long ResourceManager::hashFNV1A::offset = 146959810393466560
 const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
 
+std::string ResourceManager::materialFilter = "";
+
+
 unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
 {
 	unsigned long long hash = offset;
@@ -124,9 +127,59 @@ Material* ResourceManager::LoadMaterial(std::string name, Shader* shader)
 	LoadResource(Material, materials, name, shader);
 }
 
-const std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A>& ResourceManager::getMaterials()
+std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A>& ResourceManager::getMaterials()
 {
 	return materials;
+}
+
+Material* ResourceManager::MaterialSelector(Material* material, Shader* newMaterialShader, bool showCreateButton)
+{
+	std::string displayName = material->getDisplayName();
+	// TODO: Cache
+	std::vector <std::pair<std::string, Material*>> filteredMaterials;
+
+	// TODO: Text based input instead of button prompt, the pop up should appear while typing
+	if (ImGui::Button(displayName.c_str())) {
+		ImGui::OpenPopup("Material Select");
+	}
+	//if (ImGui::InputText(displayName.c_str(), materialFilter, ImGuiInputTextFlags_CallbackAlways)) {
+
+	//}
+
+	if (!ImGui::BeginPopup("Material Select")) {
+		return material;
+	}
+	// In pop-up
+	ImGui::InputText("Search", &materialFilter);
+
+	for (auto& i : materials)
+	{
+		std::string name = material->getDisplayName();
+		if (Utilities::ToLower(name).find(Utilities::ToLower(materialFilter)) != std::string::npos) {
+			filteredMaterials.push_back(std::pair<std::string, Material*>{ name, & i.second});
+		}
+	}
+
+
+	if (showCreateButton) {
+		if (ImGui::MenuItem(("CREATE NEW MATERIAL##" + displayName).c_str(), "M", false)) {
+			material = ResourceManager::LoadMaterial("New Material", newMaterialShader);
+		}
+	}
+
+	for (auto& i : filteredMaterials)
+	{
+		bool selected = false;
+		if (i.second == material) {
+			selected = true;
+		}
+		if (ImGui::MenuItem(i.second->getDisplayName().c_str(), "", selected)) {
+			material = i.second;
+		}
+	}
+
+	ImGui::EndPopup();
+	return material;
 }
 
 #define GetResource(type, collection)                    \

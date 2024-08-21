@@ -11,17 +11,18 @@ private:
 
 	std::string filter = "";
 
-	std::vector <std::pair<std::string, const Material*>> filteredMaterials;
 
 	std::unordered_map<std::string, Texture::Type> acceptableImportTypeNames = {
 		{ "BaseColour", Texture::Type::albedo },
-		{ "Normal",     Texture::Type::normal },
+		{ "BaseColor",  Texture::Type::albedo },
+		{ "Diffuse",    Texture::Type::albedo },
 		{ "Albedo",     Texture::Type::albedo},
+		{ "Normal",     Texture::Type::normal },
 		{ "Roughness",  Texture::Type::roughness},
 		{ "Metallic",   Texture::Type::metallic},
 		{ "Emissive",   Texture::Type::emission},
 		{ "AO",         Texture::Type::ao},
-		//{ "PBR",        Texture::Type::PBR},
+		{ "PBR",        Texture::Type::PBR},
 	};
 
 	// Read these from a file or something

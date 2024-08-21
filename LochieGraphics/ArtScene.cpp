@@ -14,6 +14,7 @@
 
 ArtScene* ArtScene::artScene = nullptr;
 
+
 void ArtScene::RefreshPBR()
 {
 	if (pbr != nullptr) {
@@ -314,56 +315,11 @@ void ArtScene::Draw()
 	);
 }
 
-
 void ArtScene::GUI()
 {
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 
-
-		if (ImGui::InputText("Filter##ArtStuff", &filter, ImGuiInputTextFlags_AutoSelectAll)) {
-			filteredMaterials.clear();
-			auto& materials = ResourceManager::getMaterials();
-			for (auto& i : materials)
-			{
-				std::string name = i.second.name + " " + std::to_string(i.second.GUID);
-				if (Utilities::ToLower(name).find(Utilities::ToLower(filter)) != std::string::npos) {
-					filteredMaterials.push_back(std::pair<std::string, const Material*>{ name, &i.second});
-				}
-			}
-		}
-
-		// Call the more complete ShowExampleMenuFile which we use in various places of this demo
-		//if (ImGui::Button((material->name + " " + std::to_string(material->GUID) + std::to_string(material->GUID)).c_str()))
-		//	ImGui::OpenPopup("Material Select");
-		//if (ImGui::BeginPopup("Material Select", ImGuiWindowFlags_MenuBar))
-		//{
-		//	if (ImGui::BeginMenuBar())
-		//	{
-		//		if (ImGui::BeginMenu("File"))
-		//		{
-		//			ShowExampleMenuFile();
-		//			ImGui::EndMenu();
-		//		}
-		//		if (ImGui::BeginMenu("Edit"))
-		//		{
-		//			ImGui::MenuItem("Dummy");
-		//			ImGui::EndMenu();
-		//		}
-		//		ImGui::EndMenuBar();
-		//	}
-		//	ImGui::Text("Hello from popup!");
-		//	ImGui::Button("This is a dummy button..");
-		//	ImGui::EndPopup();
-		//}
-
-		
-		for (auto& i : filteredMaterials)
-		{
-			ImGui::Text(i.first.c_str());
-		}
-
-
-
+		material = ResourceManager::MaterialSelector(material, shaders[super], true);
 
 		if (ImGui::CollapsingHeader("Current Material")) {
 			ImGui::SliderFloat("Preview Scale", &texturePreviewScale, 0.01f, 1.0f, "% .3f", ImGuiSliderFlags_Logarithmic);
