@@ -8,6 +8,8 @@
 #include "Input.h"
 
 #include "Image.h"
+#include <array>
+
 
 class GameTest : public Scene
 {
@@ -61,6 +63,19 @@ public:
 	//	void OnWindowResize() override;
 	//
 	~GameTest() override;
+
+private: 
+
+	bool firstFrame = true;
+
+	std::array<std::string, 6> irradianceFaces = {
+	"images/otherskybox/nx.png",
+	"images/otherskybox/nx.png",
+	"images/otherskybox/nx.png",
+	"images/otherskybox/nx.png",
+	"images/otherskybox/nx.png",
+	"images/otherskybox/nx.png"
+	};
 
 };
 

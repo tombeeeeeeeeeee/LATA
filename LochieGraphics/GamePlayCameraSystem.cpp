@@ -26,11 +26,7 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 
 void GameplayCameraSystem::ChangeCameraState(Camera& camera, Camera::CameraState state)
 {
-	if (!(state & Camera::editorMode))
-	{
-		camera.transform.setRotation(cameraRotationWhileTargeting);
-	}
-	camera.state = state;
+
 }
 
 void GameplayCameraSystem::GUI()

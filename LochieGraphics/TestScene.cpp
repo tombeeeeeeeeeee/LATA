@@ -127,7 +127,7 @@ void TestScene::Start()
 	soulSpearModel = ResourceManager::LoadModel(std::string("models/soulspear/soulspear.obj")/*, true*/);
 	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", shaders[super]);
 	soulSpearMaterial->AddTextures(std::vector<Texture*>{
-		ResourceManager::LoadTexture("models/soulspear/soulspear_diffuse.tga", Texture::Type::albedo, GL_REPEAT, true),
+		ResourceManager::LoadTexture("images/otherskybox/top.png", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::PBR, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
 	});

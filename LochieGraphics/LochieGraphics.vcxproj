@@ -197,7 +197,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="Serialisation.cpp" />
-    <ClCompile Include="Serialisation.h" />
+    <ClInclude Include="Serialisation.h" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Skybox.cpp" />
@@ -333,6 +333,7 @@
     <None Include="..\Shaders\ui.frag" />
     <None Include="..\Shaders\ui.vert" />
     <None Include="..\Shaders\upSample.frag" />
+    <None Include="Shaders\unLit.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

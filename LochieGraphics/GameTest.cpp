@@ -1,7 +1,7 @@
 #include "GameTest.h"
 #include "Utilities.h"
 #include "ResourceManager.h"
-
+#include <array>
 #include "Image.h"
 
 bool GameTest::MapCellIs(unsigned char* cell, unsigned char r, unsigned char g, unsigned char b)
@@ -24,6 +24,8 @@ void GameTest::Start()
 	&pointLights[3],
 	});
 	
+	renderSystem->SetShaders(&shaders);
+
 	hRb = new RigidBody();
 	hRb->setMass(1.0f);
 	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, hRadius)});
@@ -32,10 +34,10 @@ void GameTest::Start()
 	rRb = new RigidBody();
 	rRb->addCollider({new PolygonCollider(
 			{
-				{hRadius, hRadius}, 
-				{hRadius, -hRadius},
-				{-hRadius, -hRadius},
-				{-hRadius, hRadius},
+				{40.0f, 40.0f}, 
+				{40.0f, -40.0f},
+				{-40.0f, -40.0f},
+				{-40.0f, 40.0f},
 			}, 0.0f) }
 	);
 	rRb->setMass(0.1f);
@@ -56,6 +58,25 @@ void GameTest::Start()
 
 	level.path = "level.png";
 	level.Load();
+
+	camera->state = Camera::targetingPlayers;
+	gameCamSystem.cameraPositionDelta = { -15,10,15 };
+
+	Material* robotMaterial = ResourceManager::LoadMaterial("robot", shaders[super]);
+	robotMaterial->AddTextures(std::vector<Texture*>{
+		ResourceManager::LoadTexture("images/otherskybox/top.png", Texture::Type::albedo, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::PBR, GL_REPEAT, true),
+			ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
+	});
+
+	r->setRenderer(new ModelRenderer(
+		ResourceManager::LoadModel("models/P2_Blockout.fbx"),
+		robotMaterial
+	));
+
+	r->transform()->setScale(0.004f);
+	camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f ));
+
 
 	SceneObject* newSceneObject = new SceneObject(this);
 	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, 0, true);
@@ -92,6 +113,13 @@ void GameTest::Update(float delta)
 {
 	input.Update();
 
+	if (firstFrame)
+	{
+		firstFrame = false;
+		Skybox irradiance = Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(irradianceFaces.data()));
+		renderSystem->SetIrradianceMap(irradiance.texture);
+	}
+
 	LineRenderer& lines = renderSystem->lines;
 
 	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
@@ -99,27 +127,22 @@ void GameTest::Update(float delta)
 
 	if (input.inputDevices.size() > 0) 
 	{
-		sync->Update(
-			*input.inputDevices[0],
-			*h->transform(),
-			*h->rigidbody(),
-			delta
-		);
 		ecco->Update(
 			*input.inputDevices[0],
 			*r->transform(),
 			*r->rigidbody(),
 			delta
 		);
-		//if(input.inputDevices.size() > 1)
-		//{
-		//	ecco->Update(
-		//		*input.inputDevices[1],
-		//		*r->transform(),
-		//		*r->rigidbody(),
-		//		delta
-		//	);
-		//}
+
+		if(input.inputDevices.size() > 1)
+		{
+			sync->Update(
+				*input.inputDevices[1],
+				*r->transform(),
+				*r->rigidbody(),
+				delta
+			);
+		}
 	}
 	
 	gameCamSystem.Update(
@@ -131,15 +154,15 @@ void GameTest::Update(float delta)
 	glm::vec3 rotary = r->transform()->getEulerRotation();
 	std::vector<glm::vec3> robot =
 	{
-		{ 0.0f - hRadius, rPos.y, 0.0f - hRadius },
-		{ 0.0f - hRadius, rPos.y, 0.0f + hRadius },
-		{ 0.0f + hRadius, rPos.y, 0.0f + hRadius },
-		{ 0.0f + hRadius, rPos.y, 0.0f - hRadius },
-		{0.03f ,0.0f, 0.05},
-		{0.03f ,0.0f, -0.05},
+		{ 0.0f - 40.0f, rPos.y, 0.0f - 40.0f },
+		{ 0.0f - 40.0f, rPos.y, 0.0f + 40.0f },
+		{ 0.0f + 40.0f, rPos.y, 0.0f + 40.0f },
+		{ 0.0f + 40.0f, rPos.y, 0.0f - 40.0f },
+		{20.f ,0.0f, 20.0f},
+		{20.f ,0.0f, -20.0f},
 
-		{-0.03f ,0.0f, 0.05},
-		{-0.03f ,0.0f, -0.05},
+		{-20.f ,0.0f, 20.0f},
+		{-20.f ,0.0f, -20.0f},
 	};
 
 	std::vector<glm::vec3> extraPoints;
@@ -233,13 +256,6 @@ void GameTest::GUI()
 	if (ImGui::Button("Ortho Camera Angle Bake"))
 	{
 		gameCamSystem.cameraRotationWhileTargeting = camera->transform.getRotation();
-	}
-	if (ImGui::Button("Change Camera State"))
-	{
-		if (camera->state & Camera::editorMode)
-			gameCamSystem.ChangeCameraState(*camera, Camera::targetingPlayers);
-		else
-			gameCamSystem.ChangeCameraState(*camera, Camera::editorMode);
 	}
 }
 
