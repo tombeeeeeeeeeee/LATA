@@ -22,6 +22,27 @@ unsigned long long ResourceManager::guidCounter = 100;
 const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
 const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
+
+unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
+{
+	unsigned long long hash = offset;
+	hash ^= key;
+	hash *= prime;
+	return hash;
+}
+
+unsigned long long ResourceManager::hashFNV1A::operator()(std::string key) const
+{
+	unsigned long long hash = offset;
+	for (auto i = 0; i < key.size(); i++)
+	{
+		hash ^= key[i];
+		hash *= prime;
+	}
+	return hash;
+}
+
+
 #define LoadResource(type, collection, ...)                            \
 type newResource = type(__VA_ARGS__ );                                        \
 newResource.GUID = GetNewGuid();                                       \
@@ -103,6 +124,11 @@ Material* ResourceManager::LoadMaterial(std::string name, Shader* shader)
 	LoadResource(Material, materials, name, shader);
 }
 
+const std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A>& ResourceManager::getMaterials()
+{
+	return materials;
+}
+
 #define GetResource(type, collection)                    \
 type* ResourceManager::Get##type(unsigned long long GUID)\
 {                                                        \
@@ -118,25 +144,6 @@ GetResource(Texture, textures)
 GetResource(Material, materials)
 GetResource(Model, models)
 GetResource(Mesh, meshes)
-
-unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
-{
-	unsigned long long hash = offset;
-	hash ^= key;
-	hash *= prime;
-	return hash;
-}
-
-unsigned long long ResourceManager::hashFNV1A::operator()(std::string key) const
-{
-	unsigned long long hash = offset;
-	for (auto i = 0; i < key.size(); i++)
-	{
-		hash ^= key[i];
-		hash *= prime;
-	}
-	return hash;
-}
 
 ResourceManager::~ResourceManager()
 {

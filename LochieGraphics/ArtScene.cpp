@@ -3,6 +3,8 @@
 #include "ResourceManager.h"
 #include "SceneManager.h"
 
+#include "imgui_stdlib.h"
+
 #include "stb_image.h"
 #include "stb_image_write.h"
 
@@ -20,13 +22,23 @@ void ArtScene::RefreshPBR()
 	int width = 0;
 	int height = 0;
 
+	bool foundImage = false;
+
 	for (auto& i : importImages)
 	{
 		if (!i.second->loaded) { continue; }
+		if (foundImage) {
+			if (width != i.second->width || height != i.second->height) {
+				std::cout << "Mismatched PBR texture sizes " << i.second->path << " does not match with the other last given texture\n"
+					<< "this can be ignored if in process of inputting textures\n";
+				return;
+			}
+		}
 		width = i.second->width;
 		height = i.second->height;
-		break;
+		foundImage = true;
 	}
+
 
 	if (width == 0 || height == 0) {
 		return;
@@ -35,6 +47,7 @@ void ArtScene::RefreshPBR()
 	unsigned char pbrC = 4;
 	
 	std::vector<unsigned char> data(size * pbrC);
+
 
 	//if (metallic) {
 	//	for (size_t i = 0; i < size; i++)
@@ -303,6 +316,28 @@ void ArtScene::Draw()
 void ArtScene::GUI()
 {
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+
+
+		if (ImGui::InputText("Filter##ArtStuff", &filter)) {
+			filteredMaterials.clear();
+			auto& materials = ResourceManager::getMaterials();
+			for (auto& i : materials)
+			{
+				std::string name = i.second.name + " " + std::to_string(i.second.GUID);
+				if ((name).find(filter) != std::string::npos) {
+					filteredMaterials.push_back(std::pair<std::string, const Material*>{ name, &i.second});
+				}
+			}
+		}
+		
+		for (auto& i : filteredMaterials)
+		{
+			ImGui::Text(i.first.c_str());
+		}
+
+
+
+
 		if (ImGui::CollapsingHeader("Current Material")) {
 			ImGui::SliderFloat("Preview Scale", &texturePreviewScale, 0.01f, 1.0f, "% .3f", ImGuiSliderFlags_Logarithmic);
 
