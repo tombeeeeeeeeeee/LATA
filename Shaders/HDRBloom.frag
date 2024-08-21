@@ -31,8 +31,7 @@ void main()
         }
     }
     ambientOcclusion = ambientBlurResult / (4.0 * 4.0);
-    
-    hdrColor *= ambientOcclusion;
+    hdrColor *= ambientOcclusion * ambientOcclusion;
 
     vec3 bloomColor = texture(bloomBlur, texCoords).rgb;
     result = mix(hdrColor, bloomColor, bloomStrength); // linear interpolation
