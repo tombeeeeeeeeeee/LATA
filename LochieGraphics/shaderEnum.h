@@ -11,5 +11,6 @@ enum ShaderIndex
 	upSample,	
 	irradiance,
 	lines,
+	ssao,
 	super,
 };

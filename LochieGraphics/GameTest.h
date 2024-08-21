@@ -68,6 +68,10 @@ private:
 
 	bool firstFrame = true;
 
+	bool targettingP1 = false;
+	bool singlePlayerMode = false;
+	float singlePlayerZoom = 0.5f;
+
 	std::array<std::string, 6> irradianceFaces = {
 	"images/otherskybox/nx.png",
 	"images/otherskybox/nx.png",

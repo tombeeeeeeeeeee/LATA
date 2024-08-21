@@ -63,7 +63,7 @@ void TestScene::Start()
 	Material* boxMaterial = ResourceManager::LoadMaterial("box", shaders[super]);
 	boxMaterial->AddTextures(std::vector<Texture*> {
 		ResourceManager::LoadTexture("images/container2.png", Texture::Type::albedo),
-			ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::specular),
+			ResourceManager::LoadTexture("images/container2_specular.png", Texture::Type::PBR),
 	});
 	cubeModel = ResourceManager::LoadModel();
 	cubeModel->AddMesh(ResourceManager::LoadMesh(Mesh::presets::cube));
@@ -279,6 +279,11 @@ void TestScene::GUI()
 			renderSystem->skyboxTexture = skybox->texture;
 			renderSystem->IBLBufferSetup(skybox->texture);
 		}
+
+		ImGui::DragInt("SSAO kernelSize", &renderSystem->kernelSize);
+		ImGui::DragFloat("SSAO Radius", &renderSystem->ssaoRadius);
+		ImGui::DragFloat("SSAO Bias", &renderSystem->ssaoBias);
+
 		ImGui::End();
 	}
 

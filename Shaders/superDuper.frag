@@ -31,7 +31,6 @@ struct Spotlight {
     float outerCutOff;
 };
 
-
 const float alphaDiscard = 0.5;
 
 uniform Material material;
@@ -39,9 +38,12 @@ uniform Material material;
 in vec2 texCoords;
 in vec3 fragmentPos;
 in vec3 fragmentColour;
+in vec3 fragmentPosInView;
 
 layout (location = 0) out vec4 screenColour;
 layout (location = 1) out vec4 bloomColour;
+layout (location = 2) out vec4 positionColour;
+layout (location = 3) out vec4 normalColour;
 
 // Lighting
 #define PI 3.1415926535
@@ -116,8 +118,8 @@ void main()
     vec3 tangentNormal = texture(material.normal, texCoords).rgb;
 
     //Catch for when NormalMap isnt set
-    if(length(tangentNormal) == 0.0)
-        tangentNormal = vec3(1.0,0.5,0.5);
+    if(tangentNormal.r + tangentNormal.g + tangentNormal.b == 0.0)
+        tangentNormal = vec3(0.5,0.5,1.0);
 
     tangentNormal = normalize(tangentNormal * 2.0 - 1.0);
 
@@ -160,6 +162,9 @@ void main()
 
     bloomColour = vec4(emissionColour.rgb + bloomColour.rgb, 1.0);
     bloomColour *= emissionColour.a + 1.0;
+
+    positionColour = vec4(fragmentPosInView, 1.0);
+    normalColour = vec4(trueNormal, 1.0);
 
     screenColour = vec4(result, 1.0);
 }

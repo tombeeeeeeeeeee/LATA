@@ -162,6 +162,8 @@ void main()
     bloomColour = vec4(emissionColour.rgb + bloomColour.rgb, 1.0);
     bloomColour *= emissionColour.a + 1.0;
 
+    positionColour = vec4(fragmentPos)
+
     screenColour = vec4(result, 1.0);
 }
 

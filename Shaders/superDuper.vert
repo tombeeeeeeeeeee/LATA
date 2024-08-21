@@ -34,6 +34,7 @@ struct Spotlight {
 // General
 uniform mat4 vp;
 uniform mat4 model;
+uniform mat4 view;
 uniform vec3 materialColour;
 
 out vec3 fragmentColour;
@@ -53,6 +54,7 @@ out vec3 spotlightPos;
 out vec3 pointLightsPos[MAX_POINT_LIGHTS];
 
 out vec3 fragmentViewPos;
+out vec3 fragmentPosInView;
 out vec3 fragmentPos;
 out vec4 directionalLightSpaceFragPos;
 
@@ -98,5 +100,6 @@ void main()
     }    
 
     gl_Position = vp * vec4(fragmentPos, 1.0);
+    fragmentPosInView = (view * model * vec4(aPos, 1.0)).xyz;
     fragmentColour = materialColour;
 }

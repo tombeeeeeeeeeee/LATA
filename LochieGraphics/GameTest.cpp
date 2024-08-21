@@ -125,29 +125,65 @@ void GameTest::Update(float delta)
 	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 
-	if (input.inputDevices.size() > 0) 
+	if (singlePlayerMode)
 	{
-		ecco->Update(
-			*input.inputDevices[0],
-			*r->transform(),
-			*r->rigidbody(),
-			delta
-		);
-
-		if(input.inputDevices.size() > 1)
+		if (input.inputDevices.size() > 0)
 		{
-			sync->Update(
-				*input.inputDevices[1],
+			if (targettingP1)
+			{
+				sync->Update(
+					*input.inputDevices[0],
+					*h->transform(),
+					*h->rigidbody(),
+					delta
+				);
+			}
+			else
+			{
+				ecco->Update(
+					*input.inputDevices[0],
+					*r->transform(),
+					*r->rigidbody(),
+					delta
+				);
+			}
+		}
+	}
+	else
+	{
+		if (input.inputDevices.size() > 0)
+		{
+			ecco->Update(
+				*input.inputDevices[0],
 				*r->transform(),
 				*r->rigidbody(),
 				delta
 			);
+
+			if (input.inputDevices.size() > 1)
+			{
+				sync->Update(
+					*input.inputDevices[1],
+					*h->transform(),
+					*h->rigidbody(),
+					delta
+				);
+			}
 		}
 	}
-	
+
+	if (singlePlayerMode)
+	{
+		if (targettingP1)
+			gameCamSystem.target = h->transform()->getGlobalPosition();
+		else
+			gameCamSystem.target = r->transform()->getGlobalPosition();
+	}
+
 	gameCamSystem.Update(
-		*camera, *r->transform(), *h->transform(), 0.0f
+		*camera, *r->transform(), *h->transform(), singlePlayerZoom
 	);
+
 
 	// Draw robot
 	glm::vec3 rPos = r->transform()->getPosition();
@@ -252,6 +288,49 @@ void GameTest::GUI()
 	sync->GUI();
 
 	gameCamSystem.GUI();
+
+
+
+	if (ImGui::Checkbox("Single Player Editor Mode", &singlePlayerMode))
+	{
+		if (singlePlayerMode)
+		{
+			camera->state = Camera::targetingPosition;
+			if (targettingP1)
+				gameCamSystem.target = r->transform()->getGlobalPosition();
+			else
+				gameCamSystem.target = h->transform()->getGlobalPosition();
+		}
+		else
+		{
+			camera->state = Camera::targetingPlayers;
+		}
+	}
+
+	ImGui::DragFloat("SinglePlayerZoom", &singlePlayerZoom, 0.03f, 0.01f);
+
+
+	if (camera->state != Camera::targetingPosition)
+	{
+		ImGui::BeginDisabled();
+	}
+	if (ImGui::Button("Swap Player targeting"))
+	{
+		if (targettingP1)
+		{
+			gameCamSystem.target = r->transform()->getGlobalPosition();
+		}
+		else
+		{
+			gameCamSystem.target = h->transform()->getGlobalPosition();
+		}
+		targettingP1 = !targettingP1;
+	}
+
+	if (camera->state != Camera::targetingPosition)
+	{
+		ImGui::EndDisabled();
+	}
 
 	if (ImGui::Button("Ortho Camera Angle Bake"))
 	{
