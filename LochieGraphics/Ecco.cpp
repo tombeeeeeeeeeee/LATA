@@ -38,7 +38,7 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 			float sign = glm::dot({ right.x, right.z }, moveInput) < 0.0f ? -1.0f : 1.0f;
 			float desiredAngle = (glm::acos(turnAmount)) * sign + PI / 4;
 
-			desiredAngle = glm::clamp(desiredAngle, -maxWheelAngle, maxWheelAngle);
+			desiredAngle = glm::clamp(desiredAngle, -maxWheelAngle * PI / 180.0f, maxWheelAngle * PI / 180.0f);
 			//rotate forward by that angle
 			float c = cosf(desiredAngle);
 			float s = sinf(desiredAngle);
@@ -47,9 +47,10 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		}
 		else
 		{
-			float turnAmount = glm::dot(glm::vec2(right.x, right.z), moveInput);
+			float turnAmount = glm::dot({1,0}, moveInput);
 			turnAmount = glm::clamp(turnAmount, -1.0f, 1.0f);
-			float angle = -turnAmount * wheelTurnSpeed;
+
+			float angle = turnAmount * maxWheelAngle * PI / 180.0f;
 			float c = cosf(angle);
 			float s = sinf(angle);
 			desiredWheelDirection = { wheelDirection.x * c - wheelDirection.y * s, wheelDirection.y * c + wheelDirection.x * s };
@@ -97,15 +98,15 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 
 
 	//Reversing wheel correction
-	//if (glm::)
-	//{
-	//	float turnSign = glm::sign(glm::dot({ right.x, right.z }, wheelDirection));
-	//	float maxAngle = glm::asin(maxWheelAngle);
-	//	
-	//	float c = cosf(turnSign * maxAngle);
-	//	float s = sinf( maxAngle);
-	//	wheelDirection = { forward.x * c - forward.y * s, forward.y * c + forward.x * s };
-	//}
+	if (glm::dot({forward.x, forward.z}, wheelDirection) <= glm::cos(maxWheelAngle * PI / 180.0f))
+	{
+		float turnSign = glm::sign(glm::dot({ right.x, right.z }, wheelDirection));
+		float maxAngle = maxWheelAngle * PI / 180.0f;
+		
+		float c = cosf(turnSign * maxAngle);
+		float s = sinf(turnSign * maxAngle);
+		wheelDirection = { forward.x * c - forward.z * s, forward.z * c + forward.x * s };
+	}
 }
 
 void Ecco::GUI()
@@ -118,7 +119,7 @@ void Ecco::GUI()
 	ImGui::DragFloat("Wheel Turn Speed", &wheelTurnSpeed);
 	ImGui::DragFloat("Sideways Wheel Drag", &sidewaysFrictionCoef, 0.01f, 0.0f);
 	ImGui::DragFloat("Stopping Wheel Drag", &stoppingFrictionCoef, 0.01f, 0.0f);
-	ImGui::Checkbox("Dirivng Mode Isn't Global", &controlState);
+	ImGui::Checkbox("Local Steering", &controlState);
 
 	ImGui::BeginDisabled();
 	ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
