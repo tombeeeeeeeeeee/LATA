@@ -51,3 +51,13 @@ glm::vec3 Utilities::Lerp(glm::vec3 a, glm::vec3 b, float t)
 	return a * (1 - t) + b * t;
 }
 
+std::string Utilities::ToLower(std::string& str)
+{
+	std::string newString;
+	for (char c : str)
+	{
+		newString += std::tolower(c);
+	}
+	return newString;
+}
+

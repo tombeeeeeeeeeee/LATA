@@ -17,4 +17,6 @@ namespace Utilities {
 	{
 		return (((value - originalMin) / (originalMax - originalMin)) * (newMax - newMin)) + newMin;
 	}
+
+	std::string ToLower(std::string& str);
 }
