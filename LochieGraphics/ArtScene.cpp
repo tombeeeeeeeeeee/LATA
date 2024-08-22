@@ -51,21 +51,6 @@ void ArtScene::RefreshPBR()
 	
 	std::vector<unsigned char> data(size * pbrC);
 
-
-	//if (metallic) {
-	//	for (size_t i = 0; i < size; i++)
-	//	{
-	//		data[i * pbrC + 0] = metallicData[i];
-
-	//	}
-	//}
-	//else {
-	//	for (size_t i = 0; i < size; i++)
-	//	{
-	//		data[i * pbrC + 0] = missingMetallicValue;
-	//	}
-	//}
-
 	for (size_t i = 0; i < size; i++)
 	{
 		if (metallicImage.loaded) {
@@ -196,6 +181,7 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 	case Texture::Type::albedo: case Texture::Type::normal: case Texture::Type::emission:
 		newTexture = ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip);
 		material->AddTextures(std::vector<Texture*>{ ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip) });
+		// Refresh texture preview size
 		texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
 		break;
 
@@ -211,8 +197,8 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 		aoImage.Load(path);
 		RefreshPBRComponents();
 		break;
-
-	case Texture::Type::PBR:
+	// TODO:
+	case Texture::Type::PBR: //
 		break;
 	case Texture::Type::paint: default:
 		break;
@@ -298,6 +284,9 @@ void ArtScene::Start()
 	importImages["metallic"] = &metallicImage;
 	importImages["roughness"] = &roughnessImage;
 	importImages["ao"] = &aoImage;
+
+	camera->nearPlane = 1.0f;
+	camera->farPlane = 3000.0f;
 }
 
 void ArtScene::Update(float delta)
@@ -319,7 +308,8 @@ void ArtScene::GUI()
 {
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 
-		material = ResourceManager::MaterialSelector(material, shaders[super], true);
+		ResourceManager::MaterialSelector("Editing Material", &material, shaders[super], true);
+		ResourceManager::ModelSelector("Editing Model", &model);
 
 		if (ImGui::CollapsingHeader("Current Material")) {
 			ImGui::SliderFloat("Preview Scale", &texturePreviewScale, 0.01f, 1.0f, "% .3f", ImGuiSliderFlags_Logarithmic);

@@ -44,8 +44,9 @@ public:
 
 	static std::unordered_map<unsigned long long, Material, hashFNV1A>& getMaterials();
 
-	static Material* MaterialSelector(Material* material, Shader* newMaterialShader = nullptr, bool showCreateButton = false);
-	static std::string materialFilter;
+	static bool MaterialSelector(std::string label, Material** material, Shader* newMaterialShader = nullptr, bool showCreateButton = false);
+	static bool ModelSelector(std::string label, Model** model);
+	static std::string filter;
 
 	static unsigned long long guidCounter;
 	static unsigned long long GetNewGuid();

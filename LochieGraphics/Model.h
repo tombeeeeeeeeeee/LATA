@@ -46,5 +46,7 @@ public:
 	void GUI();
 
 	void Refresh();
+
+	std::string getDisplayName();
 };
 
