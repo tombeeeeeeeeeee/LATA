@@ -7,36 +7,11 @@ layout (location = 4) in vec3 aBiTangent; // TODO: Actually use
 layout (location = 5) in ivec4 aBoneIDs;
 layout (location = 6) in vec4 aBoneWeights;
 
-struct DirectionalLight {
-    vec3 direction;
-    vec3 colour;
-};
-
-struct PointLight {
-    vec3 position;
-    float constant;
-    float linear;
-    float quadratic;
-    vec3 colour;
-};
-
-struct Spotlight {
-    vec3 position;
-    float constant;
-    float linear;
-    float quadratic;
-    vec3 colour;
-    vec3 direction;
-    float cutOff;
-    float outerCutOff;
-};
-
 // General
 uniform mat4 vp;
 uniform mat4 model;
 uniform mat4 view;
 uniform vec3 materialColour;
-
 
 out vec3 fragmentColour;
 out vec2 texCoords;
@@ -47,20 +22,10 @@ const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 boneMatrices[MAX_BONES];
 
-// Lighting, normal mapping
-#define MAX_POINT_LIGHTS 4
-uniform PointLight pointLights[MAX_POINT_LIGHTS];
-uniform Spotlight spotlight;
-uniform vec3 viewPos;
-out vec3 spotlightPos;
-out vec3 pointLightsPos[MAX_POINT_LIGHTS];
-
 out vec3 fragmentViewPos;
+out vec3 fragmentPosInView;
 out vec3 fragmentPos;
 out vec4 directionalLightSpaceFragPos;
-
-// Shadows
-uniform mat4 directionalLightSpaceMatrix;
 
 out vec3 fragmentNormal;
 out vec3 fragmentTangent;
@@ -103,5 +68,6 @@ void main()
     gl_Position = vp * vec4(fragmentPos, 1.0);
     screenPosition = (gl_Position.xyz / gl_Position.w).xy;
     screenPosition = screenPosition * 0.5 + 0.5;
+    fragmentPosInView = (view * fragmentPos).xyz;
     fragmentColour = materialColour;
 }

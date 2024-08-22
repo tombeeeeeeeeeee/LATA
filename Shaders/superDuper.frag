@@ -38,12 +38,9 @@ uniform Material material;
 in vec2 texCoords;
 in vec3 fragmentPos;
 in vec3 fragmentColour;
-in vec3 fragmentPosInView;
 
 layout (location = 0) out vec4 screenColour;
 layout (location = 1) out vec4 bloomColour;
-layout (location = 2) out vec4 positionColour;
-layout (location = 3) out vec4 normalColour;
 
 // Lighting
 #define PI 3.1415926535
@@ -75,6 +72,10 @@ float ao;
 uniform vec3 viewPos;
 uniform sampler2D shadowMap;
 uniform vec3 lightPos;
+
+//SSAO
+uniform sampler2D ssao;
+in vec2 screenPosition;
 
 in vec4 directionalLightSpaceFragPos;
 
@@ -162,9 +163,6 @@ void main()
 
     bloomColour = vec4(emissionColour.rgb + bloomColour.rgb, 1.0);
     bloomColour *= emissionColour.a + 1.0;
-
-    positionColour = vec4(fragmentPosInView, 1.0);
-    normalColour = vec4(trueNormal, 1.0);
 
     screenColour = vec4(result, 1.0);
 }
@@ -341,6 +339,6 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection)
     vec3 prefilteredColor = textureLod(prefilterMap, reflected,  roughness * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(trueNormal, viewDirection), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
-    vec3 ambient = (kD * diffuse + specular) * ao;
+    vec3 ambient = (kD * diffuse + specular) * ao * texture(ssao, screenPosition).r;
     return ambient;
 }

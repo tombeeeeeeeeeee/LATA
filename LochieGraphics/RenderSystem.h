@@ -130,7 +130,8 @@ private:
 
     void DrawRenderers(
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-        std::unordered_map<unsigned long long, Transform>& transforms
+        std::unordered_map<unsigned long long, Transform>& transforms,
+        Shader* shader = nullptr
         );
 
 
@@ -174,9 +175,13 @@ private:
 
     unsigned int positionBuffer = 0;
     unsigned int normalBuffer = 0;
+    unsigned int forwardFBO = 0;
+    void ForwardSetup();
 
     unsigned int ssaoFBO;
     unsigned int ssaoColorBuffer;
+    unsigned int ssaoBlurFBO;
+    unsigned int ssaoBuffer;
     std::vector<glm::vec3> ssaoKernel;
     std::vector<glm::vec3> ssaoNoise;
     unsigned int noiseTexture;
