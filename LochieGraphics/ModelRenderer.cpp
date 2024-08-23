@@ -45,14 +45,15 @@ void ModelRenderer::GUI()
 	ImGui::Indent();
 	for (size_t i = 0; i < materialGUIDs.size(); i++)
 	{
-		// TODO: A better way to reference the general defualt shaders
+		// TODO: A better way to reference the general default shaders
 		if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], sceneObject->scene->shaders[super], true)) {
-			Refresh();
+			materialGUIDs[i] = materials[i]->GUID;
 		}
 	}
 	ImGui::Unindent();
 
 	if (ResourceManager::ModelSelector("Model", &model)) {
+		modelGUID = model->GUID;
 		Refresh();
 	}
 }

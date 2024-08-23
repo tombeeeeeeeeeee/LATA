@@ -94,6 +94,7 @@ void Shader::Load()
 		std::cout << "Created shader ID: " << GLID << " with vertex: " << vertexPath << " and fragment: " << fragmentPath << "\n";
 	}
 
+	// TODO: Could keep track of individual vertex and fragment shaders for fast loading
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 

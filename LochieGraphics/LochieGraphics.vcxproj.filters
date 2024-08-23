@@ -236,17 +236,17 @@
     <ClCompile Include="GamePlayCameraSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="DirectionalLight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PointLight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Serialisation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Spotlight.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Source Files\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Source Files\Parts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -451,19 +451,29 @@
     <ClInclude Include="Image.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="ModelHierarchyInfo.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Ecco.h" />
     <ClInclude Include="Sync.h" />
     <ClInclude Include="GamePlayCameraSystem.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="DirectionalLight.h" />
-    <ClInclude Include="Lights.h" />
-    <ClInclude Include="PointLight.h" />
-    <ClInclude Include="Spotlight.h" />
     <ClInclude Include="Serialisation.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Spotlight.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelHierarchyInfo.h">
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

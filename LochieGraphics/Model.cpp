@@ -127,5 +127,6 @@ void Model::Refresh()
 
 std::string Model::getDisplayName()
 {
-	return root.name + " " + std::to_string(GUID);
+	// TODO: the filename from path should be a utilities function
+	return path.substr(path.find_last_of("/\\") + 1) + " " + std::to_string(GUID);
 }

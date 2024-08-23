@@ -145,17 +145,17 @@ static int TextSelected(ImGuiInputTextCallbackData* data) {
 		displayName = selector->getDisplayName();                                               \
 	}                                                                                           \
 	else {                                                                                      \
-		displayName = "No type selected 0";                                                     \
+		displayName = "None";                                                     \
 	}                                                                                           \
 	std::vector <std::pair<std::string, type *>> filteredType;                                  \
                                                                                                 \
 	bool textSelected = false;                                                                  \
 	/*TODO: Text based input instead of button prompt, the pop up should appear while typing*/  \
-	ImGui::InputText((label + "## type Selector").c_str(), &displayName,                        \
+	ImGui::InputText((label + "##" + tag).c_str(), &displayName,                        \
 		ImGuiInputTextFlags_CallbackAlways |                                                    \
 		ImGuiInputTextFlags_AutoSelectAll,                                                      \
 		TextSelected, &textSelected);                                                           \
-	std::string popupName = (label + "## type Select").c_str();								    \
+	std::string popupName = (label + "##" + tag).c_str();								    \
 	if (textSelected) {																			\
 		ImGui::OpenPopup(popupName.c_str(), ImGuiPopupFlags_NoReopen);							\
 	}																							\
@@ -164,7 +164,8 @@ static int TextSelected(ImGuiInputTextCallbackData* data) {
 		return false;    																		\
 	}																							\
 	/* Popup has began*/																		\
-	ImGui::InputText(("Search## type" + label).c_str(), &filter);							    \
+	ImGui::SetKeyboardFocusHere();                                                              \
+	ImGui::InputText(("Search##" + tag).c_str(), &filter);							    \
 																								\
 for (auto& i : collection)																		\
 {																								\
@@ -176,8 +177,8 @@ for (auto& i : collection)																		\
 																								\
 																								\
 if (showCreateButton) {																			\
-	if (ImGui::MenuItem(("CREATE NEW type ##" + label + displayName).c_str(), "", false)) {	    \
-		selector = ResourceManager::Load##type("New type", __VA_ARGS__);                        \
+	if (ImGui::MenuItem(("CREATE NEW " + std::string(#type) + "##" + label).c_str(), "", false)) {	    \
+		selector = ResourceManager::Load##type("New " + std::string(#type), __VA_ARGS__);                        \
         returnBool = true;                                                                      \
 	}																							\
 }																								\
@@ -201,12 +202,14 @@ return returnBool;
 
 
 bool ResourceManager::MaterialSelector(std::string label, Material** material, Shader* newMaterialShader, bool showCreateButton) {
+	std::string tag = Utilities::PointerToString(material);
 	GuidSelector(Material, materials, (*material), newMaterialShader)
 }
 
 bool ResourceManager::ModelSelector(std::string label, Model** model)
 {
 	bool showCreateButton = false;
+	std::string tag = Utilities::PointerToString(model);
 	GuidSelector(Model, models, (*model))
 }
 

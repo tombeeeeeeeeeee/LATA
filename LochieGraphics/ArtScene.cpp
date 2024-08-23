@@ -309,7 +309,6 @@ void ArtScene::GUI()
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 
 		ResourceManager::MaterialSelector("Editing Material", &material, shaders[super], true);
-		ResourceManager::ModelSelector("Editing Model", &model);
 
 		if (ImGui::CollapsingHeader("Current Material")) {
 			ImGui::SliderFloat("Preview Scale", &texturePreviewScale, 0.01f, 1.0f, "% .3f", ImGuiSliderFlags_Logarithmic);

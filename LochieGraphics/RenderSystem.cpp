@@ -592,6 +592,8 @@ void RenderSystem::DrawRenderers(
             else
                 shader = _shader;
             if (prevShader != shader) {
+                shader->Use();
+                prevShader = shader;
                 shader->setMat4("view", viewMatrix);
                 shader->setMat4("model", transforms[i->first].getGlobalMatrix());
                 ActivateFlaggedVariables(shader, i->second.materials[materialID]);

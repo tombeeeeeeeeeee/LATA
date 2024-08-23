@@ -55,7 +55,6 @@ private:
 	void RefreshPBRComponents();
 
 	Material* material;
-	Material* material2;
 	Model* model;
 	SceneObject* sceneObject = new SceneObject(this);
 
