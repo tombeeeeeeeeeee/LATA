@@ -15,7 +15,7 @@ using Utilities::PointerToString;
 //TODO: move some of these to their own classes
 void GUI::Update()
 {
-	//ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("Save")) {

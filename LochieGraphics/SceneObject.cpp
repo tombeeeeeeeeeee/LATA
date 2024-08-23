@@ -104,6 +104,7 @@ void SceneObject::setRenderer(ModelRenderer* renderer)
 	{
 		parts |= Parts::modelRenderer;
 		scene->renderers[GUID] = *renderer;
+		scene->renderers[GUID].sceneObject = this;
 	}
 	else
 	{

@@ -43,28 +43,17 @@ void ModelRenderer::GUI()
 	ImGui::DragInt(("Materials##" + tag).c_str(), &model->materialIDs);
 	ImGui::EndDisabled();
 	ImGui::Indent();
-	// TODO: Make function for this
 	for (size_t i = 0; i < materialGUIDs.size(); i++)
 	{
-		unsigned long long newMaterialGUID = materialGUIDs[i];
-		if (ImGui::InputScalar((std::to_string(i) + "##" + Utilities::PointerToString(&materialGUIDs[i])).c_str(), ImGuiDataType_U64, &newMaterialGUID)) {
-			Material* newMaterial = ResourceManager::GetMaterial(newMaterialGUID);
-			if (newMaterial) {
-				materialGUIDs[i] = newMaterialGUID;
-				materials[i] = newMaterial;
-			}
+		// TODO: A better way to reference the general defualt shaders
+		if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], sceneObject->scene->shaders[super], true)) {
+			Refresh();
 		}
 	}
 	ImGui::Unindent();
-	// TODO: Ui for adding another material?
 
-	unsigned long long newModelGUID = modelGUID;
-	if (ImGui::InputScalar(("Model##" + Utilities::PointerToString(&modelGUID)).c_str(), ImGuiDataType_U64, &newModelGUID)) {
-		Model* newModel = ResourceManager::GetModel(newModelGUID);
-		if (newModel) {
-			modelGUID = newModelGUID;
-			model = newModel;
-		}
+	if (ResourceManager::ModelSelector("Model", &model)) {
+		Refresh();
 	}
 }
 

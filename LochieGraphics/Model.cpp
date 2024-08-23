@@ -124,3 +124,8 @@ void Model::Refresh()
 		meshes[i] = ResourceManager::GetMesh(meshGUIDs[i]);
 	}
 }
+
+std::string Model::getDisplayName()
+{
+	return root.name + " " + std::to_string(GUID);
+}

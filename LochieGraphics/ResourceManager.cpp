@@ -23,6 +23,9 @@ const unsigned long long ResourceManager::hashFNV1A::offset = 146959810393466560
 const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
 
 
+std::string ResourceManager::filter = "";
+
+
 unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
 {
 	unsigned long long hash = offset;
@@ -124,9 +127,87 @@ Material* ResourceManager::LoadMaterial(std::string name, Shader* shader)
 	LoadResource(Material, materials, name, shader);
 }
 
-const std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A>& ResourceManager::getMaterials()
+std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A>& ResourceManager::getMaterials()
 {
 	return materials;
+}
+
+static int TextSelected(ImGuiInputTextCallbackData* data) {
+	*((bool*)data->UserData) = true;
+	return 0;
+}
+
+
+#define GuidSelector(type, collection, selector, ...)                                           \
+	bool returnBool = false;                                                                    \
+	std::string displayName;                                                                    \
+	if (selector != nullptr) {                                                                  \
+		displayName = selector->getDisplayName();                                               \
+	}                                                                                           \
+	else {                                                                                      \
+		displayName = "No type selected 0";                                                     \
+	}                                                                                           \
+	std::vector <std::pair<std::string, type *>> filteredType;                                  \
+                                                                                                \
+	bool textSelected = false;                                                                  \
+	/*TODO: Text based input instead of button prompt, the pop up should appear while typing*/  \
+	ImGui::InputText((label + "## type Selector").c_str(), &displayName,                        \
+		ImGuiInputTextFlags_CallbackAlways |                                                    \
+		ImGuiInputTextFlags_AutoSelectAll,                                                      \
+		TextSelected, &textSelected);                                                           \
+	std::string popupName = (label + "## type Select").c_str();								    \
+	if (textSelected) {																			\
+		ImGui::OpenPopup(popupName.c_str(), ImGuiPopupFlags_NoReopen);							\
+	}																							\
+																								\
+	if (!ImGui::BeginPopup(popupName.c_str())) {												\
+		return false;    																		\
+	}																							\
+	/* Popup has began*/																		\
+	ImGui::InputText(("Search## type" + label).c_str(), &filter);							    \
+																								\
+for (auto& i : collection)																		\
+{																								\
+	std::string name = i.second.getDisplayName();												\
+	if (Utilities::ToLower(name).find(Utilities::ToLower(filter)) != std::string::npos) {	    \
+		filteredType.push_back(std::pair<std::string, type*>{ name, & i.second});	        	\
+	}																							\
+}																								\
+																								\
+																								\
+if (showCreateButton) {																			\
+	if (ImGui::MenuItem(("CREATE NEW type ##" + label + displayName).c_str(), "", false)) {	    \
+		selector = ResourceManager::Load##type("New type", __VA_ARGS__);                        \
+        returnBool = true;                                                                      \
+	}																							\
+}																								\
+																								\
+for (auto& i : filteredType)																	\
+{																								\
+	bool selected = false;																		\
+	if (i.second == selector) {																	\
+		selected = true;																		\
+	}																							\
+	if (ImGui::MenuItem((i.second->getDisplayName() + "##" + label).c_str(), "", selected)) {	\
+		if (selector != i.second) {                                                             \
+			selector = i.second;																\
+			returnBool = true;                                                                  \
+		}                                                                                       \
+	}																							\
+}																								\
+																								\
+ImGui::EndPopup();																				\
+return returnBool;
+
+
+bool ResourceManager::MaterialSelector(std::string label, Material** material, Shader* newMaterialShader, bool showCreateButton) {
+	GuidSelector(Material, materials, (*material), newMaterialShader)
+}
+
+bool ResourceManager::ModelSelector(std::string label, Model** model)
+{
+	bool showCreateButton = false;
+	GuidSelector(Model, models, (*model))
 }
 
 #define GetResource(type, collection)                    \

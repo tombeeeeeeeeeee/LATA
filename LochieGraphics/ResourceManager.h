@@ -42,7 +42,11 @@ public:
 	// TODO: Remove this nullptr default for the shader reference, a material can't really exist without a shader
 	static Material* LoadMaterial(std::string name, Shader* shader = nullptr);
 
-	static const std::unordered_map<unsigned long long, Material, hashFNV1A>& getMaterials();
+	static std::unordered_map<unsigned long long, Material, hashFNV1A>& getMaterials();
+
+	static bool MaterialSelector(std::string label, Material** material, Shader* newMaterialShader = nullptr, bool showCreateButton = false);
+	static bool ModelSelector(std::string label, Model** model);
+	static std::string filter;
 
 	static unsigned long long guidCounter;
 	static unsigned long long GetNewGuid();

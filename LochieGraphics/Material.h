@@ -39,6 +39,8 @@ public:
 
 	void GUI();
 
-	toml::table Serialise();
+	std::string getDisplayName() const;
+
+	toml::table Serialise() const;
 };
 

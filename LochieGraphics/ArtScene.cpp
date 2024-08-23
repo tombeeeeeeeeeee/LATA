@@ -3,6 +3,8 @@
 #include "ResourceManager.h"
 #include "SceneManager.h"
 
+#include "Utilities.h"
+
 #include "imgui_stdlib.h"
 
 #include "stb_image.h"
@@ -11,6 +13,7 @@
 #include <filesystem>
 
 ArtScene* ArtScene::artScene = nullptr;
+
 
 void ArtScene::RefreshPBR()
 {
@@ -47,21 +50,6 @@ void ArtScene::RefreshPBR()
 	unsigned char pbrC = 4;
 	
 	std::vector<unsigned char> data(size * pbrC);
-
-
-	//if (metallic) {
-	//	for (size_t i = 0; i < size; i++)
-	//	{
-	//		data[i * pbrC + 0] = metallicData[i];
-
-	//	}
-	//}
-	//else {
-	//	for (size_t i = 0; i < size; i++)
-	//	{
-	//		data[i * pbrC + 0] = missingMetallicValue;
-	//	}
-	//}
 
 	for (size_t i = 0; i < size; i++)
 	{
@@ -193,6 +181,7 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 	case Texture::Type::albedo: case Texture::Type::normal: case Texture::Type::emission:
 		newTexture = ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip);
 		material->AddTextures(std::vector<Texture*>{ ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip) });
+		// Refresh texture preview size
 		texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
 		break;
 
@@ -208,8 +197,8 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 		aoImage.Load(path);
 		RefreshPBRComponents();
 		break;
-
-	case Texture::Type::PBR:
+	// TODO:
+	case Texture::Type::PBR: //
 		break;
 	case Texture::Type::paint: default:
 		break;
@@ -295,6 +284,9 @@ void ArtScene::Start()
 	importImages["metallic"] = &metallicImage;
 	importImages["roughness"] = &roughnessImage;
 	importImages["ao"] = &aoImage;
+
+	camera->nearPlane = 1.0f;
+	camera->farPlane = 3000.0f;
 }
 
 void ArtScene::Update(float delta)
@@ -312,31 +304,12 @@ void ArtScene::Draw()
 	);
 }
 
-
 void ArtScene::GUI()
 {
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 
-
-		if (ImGui::InputText("Filter##ArtStuff", &filter)) {
-			filteredMaterials.clear();
-			auto& materials = ResourceManager::getMaterials();
-			for (auto& i : materials)
-			{
-				std::string name = i.second.name + " " + std::to_string(i.second.GUID);
-				if ((name).find(filter) != std::string::npos) {
-					filteredMaterials.push_back(std::pair<std::string, const Material*>{ name, &i.second});
-				}
-			}
-		}
-		
-		for (auto& i : filteredMaterials)
-		{
-			ImGui::Text(i.first.c_str());
-		}
-
-
-
+		ResourceManager::MaterialSelector("Editing Material", &material, shaders[super], true);
+		ResourceManager::ModelSelector("Editing Model", &model);
 
 		if (ImGui::CollapsingHeader("Current Material")) {
 			ImGui::SliderFloat("Preview Scale", &texturePreviewScale, 0.01f, 1.0f, "% .3f", ImGuiSliderFlags_Logarithmic);

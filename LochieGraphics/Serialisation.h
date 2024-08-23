@@ -5,7 +5,7 @@
 
 #include <string>
 
-#define TOML_HEADER_ONLY 0
+#define TOML_HEADER_ONLY 1
 #include "toml.hpp"
 
 
