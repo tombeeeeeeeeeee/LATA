@@ -48,7 +48,8 @@ public:
 
     void HDRBufferUpdate();
     void OutputBufferUpdate();
-    void BloomUpdate(); 
+    void BloomUpdate();
+    void SSAOUpdate();
 
     void Update(
         std::unordered_map<unsigned long long, ModelRenderer>& renders,
@@ -66,6 +67,10 @@ public:
 
     bool showShadowDebug = false;
     unsigned int skyboxTexture;
+    glm::mat4 projection;
+    int kernelSize = 64;
+    float ssaoRadius = 0.5f;
+    float ssaoBias = 0.025f;
 
 private:
 
@@ -93,7 +98,7 @@ private:
     /// </summary>
     unsigned int modelLocation;
 
-    glm::mat4 projectionMatrix, viewMatrix;
+    glm::mat4 viewMatrix;
 
     /// <summary>
     /// Pointer to current window
@@ -125,7 +130,8 @@ private:
 
     void DrawRenderers(
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-        std::unordered_map<unsigned long long, Transform>& transforms
+        std::unordered_map<unsigned long long, Transform>& transforms,
+        Shader* shader = nullptr
         );
 
 
@@ -134,7 +140,6 @@ private:
         Shader* shader,
         Material* mat
         );
-
 
     //void BindLightUniform(unsigned int shaderProgram,
     //    std::unordered_map<unsigned int, Light>& lightComponents,
@@ -167,6 +172,22 @@ private:
 
     void RenderDownSamples(unsigned int srcTexture);
     void RenderUpSamples(float aspectRatio);
+
+    unsigned int positionBuffer = 0;
+    unsigned int normalBuffer = 0;
+    unsigned int forwardFBO = 0;
+    void ForwardSetup();
+
+    unsigned int ssaoFBO;
+    unsigned int ssaoColorBuffer;
+    unsigned int ssaoBlurFBO;
+    unsigned int ssaoBuffer;
+    std::vector<glm::vec3> ssaoKernel;
+    std::vector<glm::vec3> ssaoNoise;
+    unsigned int noiseTexture;
+    void SSAOSetup();
+
+    void RenderSSAO();
 
     void RenderQuad();
     unsigned int quadVAO = 0;

@@ -31,7 +31,6 @@ struct Spotlight {
     float outerCutOff;
 };
 
-
 const float alphaDiscard = 0.5;
 
 uniform Material material;
@@ -73,6 +72,10 @@ float ao;
 uniform vec3 viewPos;
 uniform sampler2D shadowMap;
 uniform vec3 lightPos;
+
+//SSAO
+uniform sampler2D ssao;
+in vec2 screenPosition;
 
 in vec4 directionalLightSpaceFragPos;
 
@@ -116,8 +119,8 @@ void main()
     vec3 tangentNormal = texture(material.normal, texCoords).rgb;
 
     //Catch for when NormalMap isnt set
-    if(length(tangentNormal) == 0.0)
-        tangentNormal = vec3(1.0,0.5,0.5);
+    if(tangentNormal.r + tangentNormal.g + tangentNormal.b == 0.0)
+        tangentNormal = vec3(0.5,0.5,1.0);
 
     tangentNormal = normalize(tangentNormal * 2.0 - 1.0);
 
@@ -343,6 +346,6 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection)
     vec3 prefilteredColor = textureLod(prefilterMap, reflected,  roughness * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(trueNormal, viewDirection), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
-    vec3 ambient = (kD * diffuse + specular) * ao;
+    vec3 ambient = (kD * diffuse + specular) * ao * texture(ssao, screenPosition).r;
     return ambient;
 }

@@ -142,7 +142,9 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShaderDefaultVert("upSample"),
 		ResourceManager::LoadShader("irradiance"),
 		ResourceManager::LoadShader("lineRenderer", Shader::Flags::VPmatrix),
-		//ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/unLit.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
+		ResourceManager::LoadShaderDefaultVert("ssao"),
+		ResourceManager::LoadShaderDefaultVert("ssaoBlur"),
+		ResourceManager::LoadShader("forward"),
 		ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/superDuper.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
 	});
 
@@ -212,6 +214,8 @@ void SceneManager::Update()
 
 	//// TODO: Actual draw/update loop
 	scene->EarlyUpdate();
+
+	scene->renderSystem->projection = projection;
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
