@@ -422,16 +422,6 @@ void RenderSystem::Update(
     RenderBloom(bloomBuffer);
 
 
-    if (showShadowDebug) {
-        // Debug render the light depth map
-        (*shaders)[ShaderIndex::shadowDebug]->Use();
-        (*shaders)[ShaderIndex::shadowDebug]->setFloat("near_plane", shadowCaster->shadowNearPlane);
-        (*shaders)[ShaderIndex::shadowDebug]->setFloat("far_plane", shadowCaster->shadowFarPlane);
-        depthMap->Bind(1);
-
-        //TODO: Make Shadow Debug Quad
-        shadowDebugQuad->Draw();
-    }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -464,6 +454,18 @@ void RenderSystem::Update(
     (*shaders)[screen]->setFloat("exposure", exposure);
 
     RenderQuad();
+
+    if (showShadowDebug) {
+        // Debug render the light depth map
+        (*shaders)[ShaderIndex::shadowDebug]->Use();
+        (*shaders)[ShaderIndex::shadowDebug]->setFloat("near_plane", shadowCaster->shadowNearPlane);
+        (*shaders)[ShaderIndex::shadowDebug]->setFloat("far_plane", shadowCaster->shadowFarPlane);
+        depthMap->Bind(1);
+
+        //TODO: Make Shadow Debug Quad
+        shadowDebugQuad->Draw();
+    }
+
 
     screenFrameBuffer->Unbind();
     // Re enable the depth test
