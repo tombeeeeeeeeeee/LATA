@@ -35,6 +35,7 @@ void RenderSystem::Start(
     BloomSetup();
     SSAOSetup();
     ForwardSetup();
+
     shadowCaster = _shadowCaster;
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -195,24 +196,26 @@ void RenderSystem::SetPrefilteredMap(unsigned int textureID)
 void RenderSystem::ForwardUpdate()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, forwardFBO);
+
     glBindTexture(GL_TEXTURE_2D, positionBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, positionBuffer, 0);
     // normal colour buffer
 
     glBindTexture(GL_TEXTURE_2D, normalBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normalBuffer, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glBindFramebuffer(GL_FRAMEBUFFER, forwardFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, positionBuffer, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, normalBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, positionBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normalBuffer, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
 }
 
 void RenderSystem::HDRBufferUpdate()
@@ -310,6 +313,7 @@ void RenderSystem::Update(
 {
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
     shadowFrameBuffer->Load();
+    unsigned int forwardAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -363,21 +367,27 @@ void RenderSystem::Update(
     // Render scene with shadow map, to the screen framebuffer
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    /* TODO TONIGHT
-    * bind forward buffer
-    * render everything to the forwardShader
-    * render SSAO
-    * render SSAO blur
-    * Read from new SSAO
-    * 
-    */
 
+    glBindFramebuffer(GL_FRAMEBUFFER, forwardFBO);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    glDrawBuffers(2, forwardAttachments);
+   
     DrawRenderers(renders, transforms, (*shaders)[forward]);
 
+    RenderSSAO();
+    glDisable(GL_DEPTH_TEST);
     screenFrameBuffer->Bind();
 
     // TODO: move viewport changing stuff into FrameBuffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glEnable(GL_DEPTH_TEST);
+
 
     (*shaders)[ShaderIndex::super]->Use();
 
@@ -416,8 +426,6 @@ void RenderSystem::Update(
     (*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
     
     DrawAnimation(animators, transforms, renders, (*shaders)[ShaderIndex::super]);
-
-    RenderSSAO();
 
     RenderBloom(bloomBuffer);
 
@@ -482,11 +490,11 @@ void RenderSystem::SSAOUpdate()
         std::cout << "SSAO Framebuffer not complete!" << std::endl;
 
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
-    glBindTexture(GL_TEXTURE_2D, ssaoBuffer);
+    glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RED, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoBluredBuffer, 0);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "SSAO Framebuffer not complete!" << std::endl;
 
@@ -577,20 +585,24 @@ void RenderSystem::DrawRenderers(
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
             int materialID = (*mesh)->materialID;
+
             // Ensure that the materialID is valid
             if (materialID >= model->materialIDs || i->second.materials[materialID] == nullptr) {
                 materialID = 0;
             }
             // Only bind textures if using a different material
             if (materialID != prevMaterialID) {
-                i->second.materials[materialID]->Use();
+                i->second.materials[materialID]->Use(_shader ? _shader : nullptr);
             }
             // Only need to set shader variables if using a different shader
+           
             Shader* shader;
             if (_shader == nullptr)
                 shader = i->second.materials[materialID]->getShader();
             else
                 shader = _shader;
+
+
             if (prevShader != shader) {
                 shader->setMat4("view", viewMatrix);
                 shader->setMat4("model", transforms[i->first].getGlobalMatrix());
@@ -620,6 +632,9 @@ void RenderSystem::ActivateFlaggedVariables(
 
         glActiveTexture(GL_TEXTURE0 + 9);
         glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+
+        glActiveTexture(GL_TEXTURE0 + 11);
+        glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
     }
     if (flag & Shader::Flags::Painted)
     {
@@ -808,6 +823,7 @@ void RenderSystem::ForwardSetup()
     glGenTextures(1, &positionBuffer);
     glGenTextures(1, &normalBuffer);
     glGenFramebuffers(1, &forwardFBO);
+    ForwardUpdate();
 }
 
 void RenderSystem::RenderQuad()
@@ -846,7 +862,7 @@ void RenderSystem::SSAOSetup()
     glGenTextures(1, &ssaoColorBuffer);
     glGenFramebuffers(1, &ssaoFBO);
 
-    glGenTextures(1, &ssaoBuffer);
+    glGenTextures(1, &ssaoBluredBuffer);
     glGenFramebuffers(1, &ssaoBlurFBO);
 
     Shader* ssaoShader = (*shaders)[ssao];
@@ -891,6 +907,7 @@ void RenderSystem::RenderSSAO()
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    //SSAO Pre Blur
     Shader* ssaoShader = (*shaders)[ssao];
     ssaoShader->Use();
 
@@ -903,7 +920,6 @@ void RenderSystem::RenderSSAO()
     ssaoShader->setFloat("radius", ssaoRadius);
     ssaoShader->setFloat("bias", ssaoBias);
 
-
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, normalBuffer);
     glActiveTexture(GL_TEXTURE1);
@@ -912,5 +928,15 @@ void RenderSystem::RenderSSAO()
     glBindTexture(GL_TEXTURE_2D, noiseTexture);
 
     RenderQuad();
+    glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+
+    Shader* blur = (*shaders)[ssaoBlur];
+    blur->Use();
+    blur->setInt("SSAO", 1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+
+    RenderQuad();
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

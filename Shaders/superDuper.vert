@@ -82,12 +82,14 @@ void main()
             totalPosition += boneMatrices[aBoneIDs[i]] * aBoneWeights[i];
             vec3 localNormal = mat3(boneMatrices[aBoneIDs[i]]) * aNormal;
         }
-        fragmentPos = vec3(model * (totalPosition * vec4(aPos, 1.0)));
+        pos = model * (totalPosition * vec4(aPos, 1.0));
     }
     else 
     {
-        fragmentPos = vec3(model * vec4(aPos, 1.0));
+        pos = model * vec4(aPos, 1.0);
     }
+
+    fragmentPos = pos.xyz;
 
     directionalLightSpaceFragPos = directionalLightSpaceMatrix * vec4(fragmentPos, 1.0); // frag is also timesed by model
 
@@ -100,7 +102,7 @@ void main()
         pointLightsPos[i] = pointLights[i].position;
     }    
 
-    gl_Position = vp * vec4(fragmentPos, 1.0);
+    gl_Position = vp * pos;
     screenPosition = (gl_Position.xyz / gl_Position.w).xy;
     screenPosition = screenPosition * 0.5 + 0.5;
     fragmentColour = materialColour;

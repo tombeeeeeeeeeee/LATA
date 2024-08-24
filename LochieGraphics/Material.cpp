@@ -96,11 +96,15 @@ void Material::AddTextures(std::vector<Texture*> _textures)
 	}
 }
 
-void Material::Use()
+void Material::Use(Shader* _shader)
 {
 	// Bind textures
-
-	shader->Use();
+	Shader* currshader;
+	if (_shader == nullptr)
+		currshader = shader;
+	else
+		currshader = _shader;
+	currshader->Use();
 	// Unbinds any extra assigned textures, this is so if a mesh only has one diffuse, the previously set specular from another mesh isn't used.
 	//for (unsigned int i = textures.size(); i < textures.size() + 5; i++)
 	// TODO: This might not be needed anymore
@@ -112,7 +116,7 @@ void Material::Use()
 	int count = 1;
 	for (auto i = texturePointers.begin(); i != texturePointers.end(); i++)
 	{
-		shader->setSampler(i->first, count);
+		currshader->setSampler(i->first, count);
 		if (i->second) {
 			i->second->Bind(count);
 		}
@@ -123,7 +127,7 @@ void Material::Use()
 	}
 	for (auto i = floats.begin(); i != floats.end(); i++)
 	{
-		shader->setFloat(i->first, i->second);
+		currshader->setFloat(i->first, i->second);
 	}
 }
 
