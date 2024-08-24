@@ -2,6 +2,9 @@
 
 #include "Utilities.h"
 
+#include "ResourceManager.h"
+#include "FrameBuffer.h"
+
 #include "imgui.h"
 
 using Utilities::PointerToString;
@@ -9,6 +12,15 @@ using Utilities::PointerToString;
 Light::Light(glm::vec3 _colour) :
 	colour(_colour)
 {
+}
+
+void Light::Initialise()
+{
+	// Create shadow depth texture for the light
+	depthMap = ResourceManager::LoadTexture(shadowTexWidth, shadowTexHeight, GL_DEPTH_COMPONENT, nullptr, GL_CLAMP_TO_BORDER, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
+	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 }; // TODO: Move to be apart of texture
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	shadowFrameBuffer = new FrameBuffer(shadowTexWidth, shadowTexHeight, nullptr, depthMap, false);
 }
 
 glm::mat4 Light::getShadowViewProjection() const
@@ -33,6 +45,11 @@ void Light::GUI()
 	ImGui::DragInt("Shadow Texture Height", &shadowHeight, 1, 0, INT_MAX);
 	// TODO: Set width height
 	ImGui::EndDisabled();
+
+	float previewScale = 0.1f;
+	if (depthMap) {
+		ImGui::Image((void*)depthMap->GLID, { previewScale * (float)shadowWidth, previewScale * (float)shadowHeight });
+	}
 }
 
 toml::table Light::Serialise() const

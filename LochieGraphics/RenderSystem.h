@@ -83,9 +83,6 @@ private:
     FrameBuffer* screenFrameBuffer = nullptr;
     //Texture* screenTexture = nullptr;
 
-    FrameBuffer* shadowFrameBuffer = nullptr;
-    Texture* depthMap = nullptr;
-
     Light* shadowCaster;
 
     /// <summary>

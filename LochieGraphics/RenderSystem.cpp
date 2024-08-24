@@ -35,7 +35,8 @@ void RenderSystem::Start(
     BloomSetup();
     SSAOSetup();
     ForwardSetup();
-    shadowCaster = _shadowCaster;
+
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
@@ -57,20 +58,17 @@ void RenderSystem::Start(
     // Make fullscreen framebuffer
     screenFrameBuffer = new FrameBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, screenColourBuffer, nullptr, true);
 
-    // TODO: Should be done for each light
-    // Create shadow depth texture for the light
-    depthMap = ResourceManager::LoadTexture(shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight, GL_DEPTH_COMPONENT, nullptr, GL_CLAMP_TO_BORDER, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
-    float borderColor[] = { 1.0, 1.0, 1.0, 1.0 }; // TODO: Move to be apart of texture
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-    shadowFrameBuffer = new FrameBuffer(shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight, nullptr, depthMap, false);
     paintStrokeTexture = nullptr;//ResourceManager::LoadTexture(paintStrokeTexturePath, Texture::Type::paint);
-
     
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
 
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Initialise();
+
+    shadowCaster = _shadowCaster;
+    shadowCaster->Initialise();
+
 
     ResourceManager::BindFlaggedVariables();
 }
@@ -309,7 +307,7 @@ void RenderSystem::Update(
 )
 {
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
-    shadowFrameBuffer->Load();
+    shadowCaster->shadowFrameBuffer->Load();
     unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -324,7 +322,7 @@ void RenderSystem::Update(
     (*shaders)[shadowMapDepth]->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
 	glViewport(0, 0, shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight);
-	shadowFrameBuffer->Bind();
+	shadowCaster->shadowFrameBuffer->Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //RENDER SCENE FOR SHADOWS
@@ -389,7 +387,7 @@ void RenderSystem::Update(
 
     (*shaders)[ShaderIndex::super]->setSampler("shadowMap", 17);
     //TODO:
-    depthMap->Bind(17);
+    shadowCaster->depthMap->Bind(17);
     // RENDER SCENE
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -460,7 +458,7 @@ void RenderSystem::Update(
         (*shaders)[ShaderIndex::shadowDebug]->Use();
         (*shaders)[ShaderIndex::shadowDebug]->setFloat("near_plane", shadowCaster->shadowNearPlane);
         (*shaders)[ShaderIndex::shadowDebug]->setFloat("far_plane", shadowCaster->shadowFarPlane);
-        depthMap->Bind(1);
+        shadowCaster->depthMap->Bind(1);
 
         //TODO: Make Shadow Debug Quad
         shadowDebugQuad->Draw();
@@ -468,6 +466,8 @@ void RenderSystem::Update(
 
 
     screenFrameBuffer->Unbind();
+
+
     // Re enable the depth test
     glEnable(GL_DEPTH_TEST);
 }

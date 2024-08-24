@@ -4,6 +4,9 @@
 
 #include "Maths.h"
 
+class FrameBuffer;
+class Texture;
+
 struct Light
 {
     enum class Type {
@@ -21,10 +24,13 @@ struct Light
     unsigned int shadowTexWidth = (unsigned int)pow(2, 12);
     unsigned int shadowTexHeight = (unsigned int)pow(2, 12);
 
-    // TODO: GUID reference
-    unsigned int shadowFramebuffer = 0;
+    bool castShadows = false;
+    FrameBuffer* shadowFrameBuffer = nullptr;
+    Texture* depthMap = nullptr;
 
     Light(glm::vec3 _colour);
+    // For shadow stuff
+    void Initialise();
     virtual void ApplyToShader(Shader* shader) = 0;
     virtual glm::vec3 getPos() const = 0;
     virtual glm::mat4 getShadowProjection() const = 0;
