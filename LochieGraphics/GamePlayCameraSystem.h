@@ -26,7 +26,7 @@ public:
 		float zoomScale
 	);
 
-	void ChangeCameraState(Camera& camera, Camera::CameraState state);
+	void ChangeCameraState(Camera& camera, Camera::State state);
 
 	void GUI();
 };

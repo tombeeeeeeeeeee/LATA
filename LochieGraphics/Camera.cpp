@@ -37,26 +37,17 @@ glm::mat4 Camera::GetViewMatrix() const
 void Camera::ProcessKeyboard(Direction direction, float deltaTime)
 {
     float velocity = movementSpeed * deltaTime;
-    switch (direction)
-    {
-    case Camera::FORWARD:
-        transform.setPosition(transform.getPosition() + transform.forward() * velocity);
-        break;
-    case Camera::BACKWARD:
-        transform.setPosition(transform.getPosition() - transform.forward() * velocity);
-        break;
-    case Camera::LEFT:
-        transform.setPosition(transform.getPosition() - transform.right() * velocity);
-        break;
-    case Camera::RIGHT:
-        transform.setPosition(transform.getPosition() + transform.right() * velocity);
-        break;
-    case Camera::UP:
-        transform.setPosition(transform.getPosition() + glm::vec3(0.0f, 1.0f, 0.0f) * velocity);
-        break;
-    case Camera::DOWN:
-        transform.setPosition(transform.getPosition() - glm::vec3(0.0f, 1.0f, 0.0f) * velocity);
-        break;
+
+    if (state == editorMode) {
+        switch (direction)
+        {
+        case Camera::FORWARD:  transform.setPosition(transform.getPosition() + transform.forward() * velocity);         break;
+        case Camera::BACKWARD: transform.setPosition(transform.getPosition() - transform.forward() * velocity);         break;
+        case Camera::LEFT:     transform.setPosition(transform.getPosition() - transform.right() * velocity);           break;
+        case Camera::RIGHT:    transform.setPosition(transform.getPosition() + transform.right() * velocity);           break;
+        case Camera::UP:       transform.setPosition(transform.getPosition() + glm::vec3(0.0f, 1.0f, 0.0f) * velocity); break;
+        case Camera::DOWN:     transform.setPosition(transform.getPosition() - glm::vec3(0.0f, 1.0f, 0.0f) * velocity); break;
+        }
     }
 }
 
@@ -65,15 +56,14 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
-    glm::vec3 euler = { 0.0f, -xoffset, yoffset };
-
-    glm::vec3 rotationEuler = glm::vec3(glm::radians(euler.x), glm::radians(euler.y), glm::radians(euler.z));
-
-    glm::quat quatZ = glm::angleAxis(rotationEuler.z, transform.right());
-    glm::quat quatY = glm::angleAxis(rotationEuler.y, glm::vec3(0, 1, 0));
-    glm::quat quatX = glm::angleAxis(rotationEuler.x, glm::vec3(1, 0, 0));
-
-    transform.setRotation(glm::normalize(quatX * quatY * quatZ) * transform.getRotation());
+    if (state == editorMode && editorRotate) {
+        Rotate(xoffset, yoffset);
+    }
+    else if (state == artEditorMode && artKeyDown && artState == orbit) {
+        transform.setPosition(transform.getPosition() + transform.forward() * artFocusDistance);
+        Rotate(xoffset, yoffset);
+        transform.setPosition(transform.getPosition() - transform.forward() * artFocusDistance);
+    }
 }
 
 
@@ -88,29 +78,13 @@ void Camera::ProcessMouseScroll(float yoffset)
     }
 }
 
+bool Camera::InEditorMode() const {
+    return state == editorMode || state == artEditorMode;
+}
+
 void Camera::GUI()
 {
     transform.GUI();
-    //ImGui::DragFloat3("Position##Camera", &position[0], 0.1f);
-
-    //ImGui::BeginDisabled();
-    //ImGui::DragFloat3("Front##Camera", &front[0]);
-    //ImGui::DragFloat3("Up##Camera", &up[0]);
-    //ImGui::DragFloat3("Right##Camera", &right[0]);
-    //ImGui::EndDisabled();
-
-    // TODO: Should probably also disable this but looks interesting.
-   // if (ImGui::DragFloat3("World up##Camera", &worldUp[0], 0.1f)) {
-    //    UpdateVectors();
-    //}
-
-    //if (ImGui::DragFloat("Yaw##Camera", &yaw, 0.1f)) {
-    //    UpdateVectors();
-    //}
-
-    //if (ImGui::DragFloat("Pitch##Camera", &pitch, 0.1f)) {
-    //    UpdateVectors();
-    //}
 
     ImGui::DragFloat("Movement Speed##Camera", &movementSpeed, 0.1f);
     ImGui::DragFloat("Sensitivity##Camera", &sensitivity, 0.1f);
@@ -120,14 +94,21 @@ void Camera::GUI()
     ImGui::DragFloat("Far plane##Camera", &farPlane, 0.01f, 0.01f, FLT_MAX);
 
     ImGui::DragFloat("Orthographic Scale##Camera", &orthoScale, 0.01f, 0.01f, FLT_MAX);
-    
 
-    int curState = state & editorMode ? 0 : 1;
-    if (ImGui::DragInt("Camera State", &curState, 1, 0, 1))
-    {
-        state = curState ? targetingPlayers : editorMode;
-    }
+    ImGui::Combo("Combo", (int*)&state, "Editor\0Targeting Position\0Targeting Players\0Art\0");
+}
 
+void Camera::Rotate(float x, float y)
+{
+    glm::vec3 euler = { 0.0f, -x, y };
+
+    glm::vec3 rotationEuler = glm::vec3(glm::radians(euler.x), glm::radians(euler.y), glm::radians(euler.z));
+
+    glm::quat quatZ = glm::angleAxis(rotationEuler.z, transform.right());
+    glm::quat quatY = glm::angleAxis(rotationEuler.y, glm::vec3(0, 1, 0));
+    glm::quat quatX = glm::angleAxis(rotationEuler.x, glm::vec3(1, 0, 0));
+
+    transform.setRotation(glm::normalize(quatX * quatY * quatZ) * transform.getRotation());
 }
 
 toml::table Camera::Serialise()

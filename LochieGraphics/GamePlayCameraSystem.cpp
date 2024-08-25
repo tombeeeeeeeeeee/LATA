@@ -24,7 +24,7 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 	}
 }
 
-void GameplayCameraSystem::ChangeCameraState(Camera& camera, Camera::CameraState state)
+void GameplayCameraSystem::ChangeCameraState(Camera& camera, Camera::State state)
 {
 
 }

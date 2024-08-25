@@ -26,14 +26,31 @@ public:
     float nearPlane;
     float farPlane;
 
-    enum CameraState {
-        editorMode = 1 << 0,
-        targetingPosition = 1 << 1,
-        targetingPlayers = 1 << 2,
+    // ASK: Why are these bitshifted? they don't seem like we would have multiple on at the same time?
+    // TODO: Can we seperate the orthogonal mode from these so we view with still having specific controls?
+    enum State {
+        editorMode,
+        targetingPosition,
+        targetingPlayers,
+        artEditorMode,
     };
 
-    CameraState state = editorMode;
+    State state = editorMode;
     float orthoScale = 1.0f;
+
+    bool editorRotate = false;
+
+    bool artKeyDown = false;
+
+    // TODO: Move art stuff into seperate camera system
+    enum ArtState {
+        none, // No movement
+        orbit, // Orbit
+        dolly, // Forward/backward
+        boomTruck, // Left/Right/Up/Down locally
+    };
+    ArtState artState;
+    float artFocusDistance = 1;
 
     enum Direction {
         FORWARD,
@@ -58,13 +75,16 @@ public:
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch);
 
+
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset);
 
     float getOrthoHeight() { return 9.0f * orthoScale; };
     float getOrthoWidth() { return 16.0f * orthoScale; };
 
-    bool InEditorMode() { return state & editorMode; };
+    bool InEditorMode() const;
+
+    void Rotate(float x, float y);
 
     void GUI();
 

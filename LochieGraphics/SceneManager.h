@@ -20,7 +20,6 @@ private:
 	static float lastY;
 	static bool firstMouse;
 	static bool lockedCamera;
-	static bool oppositeCameraMode;
 
 	static glm::vec2 cursorPos;
 
@@ -52,6 +51,7 @@ private:
 	static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
 	static void RefreshInputMode();
+
 
 	static void ProcessInput(GLFWwindow* window);
 	static void ToggleFullscreen(); // TODO: fullscreen for correct monitor and remember size and pos

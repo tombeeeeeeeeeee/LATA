@@ -33,7 +33,6 @@ float SceneManager::lastX = 600;
 float SceneManager::lastY = 400;
 bool SceneManager::firstMouse = true;
 bool SceneManager::lockedCamera = true; // TODO: better names for these variables that change input mode
-bool SceneManager::oppositeCameraMode = false;
 
 SceneManager::SceneManager(Scene* _scene)
 {
@@ -152,7 +151,6 @@ SceneManager::SceneManager(Scene* _scene)
 
 	std::array<std::string, 6> skyboxFaces = { "images/SkyBox Volume 2/Stars01/leftImage.png", "images/SkyBox Volume 2/Stars01/rightImage.png", "images/SkyBox Volume 2/Stars01/upImage.png", "images/SkyBox Volume 2/Stars01/downImage.png", "images/SkyBox Volume 2/Stars01/frontImage.png", "images/SkyBox Volume 2/Stars01/backImage.png" };
 	defaultSkybox = new Skybox(scene->shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data()));
-
 
 	if (scene->skybox == nullptr) {
 		scene->skybox = defaultSkybox;
@@ -288,17 +286,20 @@ void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int he
 
 void SceneManager::MouseMoveCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	// If not in camera move mode
-	if ((lockedCamera && !oppositeCameraMode) || (!lockedCamera && oppositeCameraMode)) { 
+	if (lockedCamera) { 
 		cursorPos = { xposIn / windowWidth, yposIn / windowHeight };
-		return;
 	}
-	glfwSetCursorPos(window, 0, 0);
-	if (firstMouse)
-	{
-		firstMouse = false;
-		return;
+	else {
+		glfwSetCursorPos(window, 0, 0);
+
+		if (firstMouse)
+		{
+			firstMouse = false;
+			xposIn = 0.0;
+			yposIn = 0.0;
+		}
 	}
+
 
 	float xpos = static_cast<float>(xposIn);
 	float ypos = static_cast<float>(yposIn);
@@ -375,11 +376,6 @@ void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int ac
 		ToggleFullscreen();
 	}
 
-	//if (key == GLFW_KEY_LEFT_ALT && action == GLFW_PRESS) {
-	//	lockedCamera = !lockedCamera;
-	//	RefreshInputMode();
-	//}
-
 	if (key == GLFW_KEY_GRAVE_ACCENT && action == GLFW_PRESS) {
 		scene->Save();
 	}
@@ -395,14 +391,6 @@ void SceneManager::MouseButtonCallback(GLFWwindow* window, int button, int actio
 	if (ImGui::GetIO().WantCaptureMouse) { return; }
 
 	//std::cout << "mouse callbacked!\n";
-	if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_RIGHT) {
-		oppositeCameraMode = true;
-		RefreshInputMode();
-	}
-	else if (action == GLFW_RELEASE && button == GLFW_MOUSE_BUTTON_RIGHT) {
-		oppositeCameraMode = false;
-		RefreshInputMode();
-	}
 
 	if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
 		scene->OnMouseDown();
@@ -413,29 +401,42 @@ void SceneManager::ProcessInput(GLFWwindow* window)
 {
 	if (ImGui::GetIO().WantCaptureKeyboard) { return; }
 
-	// Camera movement
+	// TODO: Remove this, maybe make a modal pop up window
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
+
+	// TODO: Some of this should probably be handled within the camera
+	if      (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))   { camera.artState = Camera::ArtState::orbit; }
+	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))  { camera.artState = Camera::ArtState::dolly; }
+	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE)) { camera.artState = Camera::ArtState::boomTruck; }
+	else { camera.artState = Camera::ArtState::none; }
+
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) != camera.editorRotate) {
+		camera.editorRotate = !camera.editorRotate;
+		if (camera.state == Camera::State::editorMode) {
+			lockedCamera = !camera.editorRotate;
+			RefreshInputMode();
+		}
+	}
+
+	// Camera movement
 	float cameraSpeed = 2.0f * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::FORWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)          { camera.ProcessKeyboard(Camera::FORWARD,  deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)          { camera.ProcessKeyboard(Camera::BACKWARD, deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)          { camera.ProcessKeyboard(Camera::LEFT,     deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)          { camera.ProcessKeyboard(Camera::RIGHT,    deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)      { camera.ProcessKeyboard(Camera::UP,       deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::DOWN,     deltaTime); }
+
+	if ((glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) != camera.artKeyDown) {
+		camera.artKeyDown = !camera.artKeyDown;
+		if (camera.state == Camera::State::artEditorMode) {
+			lockedCamera = !camera.artKeyDown;
+			RefreshInputMode();
+		}
 	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::BACKWARD, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::LEFT, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::RIGHT, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::UP, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-		camera.ProcessKeyboard(Camera::DOWN, deltaTime);
-	}
+	
 
 	for (auto i = scene->inputKeyWatch.begin(); i != scene->inputKeyWatch.end(); i++)
 	{
@@ -464,7 +465,7 @@ void SceneManager::ToggleFullscreen()
 
 void SceneManager::RefreshInputMode()
 {
-	if ((lockedCamera && !oppositeCameraMode) || (!lockedCamera && oppositeCameraMode)) {
+	if (lockedCamera) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		glfwSetCursorPos(window, windowWidth / 2.f, windowHeight / 2.f);
 		firstMouse = true;

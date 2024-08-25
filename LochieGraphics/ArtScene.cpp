@@ -116,6 +116,7 @@ void ArtScene::ResetCamera()
 	camera->transform.setPosition({ distance + model->max.x, (model->min.y + model->max.y) / 2, (model->min.z + model->max.z) / 2});
 	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
 	camera->movementSpeed = glm::length(model->max - model->min);
+	camera->artFocusDistance = distance + ((model->max.y - model->min.y) / 2);
 }
 
 void ArtScene::DragDropCallback(GLFWwindow* window, int pathCount, const char* paths[])
@@ -287,6 +288,8 @@ void ArtScene::Start()
 
 	camera->nearPlane = 1.0f;
 	camera->farPlane = 3000.0f;
+	camera->state = Camera::State::artEditorMode;
+	camera->artState = Camera::ArtState::none;
 }
 
 void ArtScene::Update(float delta)
