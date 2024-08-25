@@ -40,7 +40,7 @@ uniform vec3 materialColour;
 
 out vec3 fragmentColour;
 out vec2 texCoords;
-out vec2 screenPosition;
+out vec4 ndc;
 
 // Animation
 const int MAX_BONES = 100;
@@ -84,6 +84,7 @@ void main()
         }
         pos = model * (totalPosition * vec4(aPos, 1.0));
     }
+
     else 
     {
         pos = model * vec4(aPos, 1.0);
@@ -96,14 +97,13 @@ void main()
     fragmentNormal = normalize((model * vec4(aNormal, 0.0)).xyz);
     fragmentTangent = normalize((model * vec4(aTangent, 0.0)).xyz);
     fragmentTangent = normalize(fragmentTangent - dot(fragmentTangent, fragmentNormal) * fragmentNormal);
-    fragmentBitangent = cross(fragmentNormal, fragmentTangent);
+    fragmentBitangent = cross(fragmentNormal,  fragmentTangent);
 
     for(int i = 0; i < MAX_POINT_LIGHTS; i++) {
         pointLightsPos[i] = pointLights[i].position;
     }    
 
     gl_Position = vp * pos;
-    screenPosition = (gl_Position.xyz / gl_Position.w).xy;
-    screenPosition = screenPosition * 0.5 + 0.5;
+    ndc = gl_Position;
     fragmentColour = materialColour;
 }

@@ -121,8 +121,8 @@ SceneManager::SceneManager(Scene* _scene)
 	// Draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	camera.nearPlane = 0.1f;
-	camera.farPlane = 300.0f;
+	camera.nearPlane = 0.5f;
+	camera.farPlane = 100.0f;
 	scene->camera = &camera;
 
 	scene->windowWidth = &windowWidth;

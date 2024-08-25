@@ -75,7 +75,8 @@ uniform vec3 lightPos;
 
 //SSAO
 uniform sampler2D ssao;
-in vec2 screenPosition;
+in vec4 ndc;
+vec2 screenPosition;
 
 in vec4 directionalLightSpaceFragPos;
 
@@ -88,7 +89,6 @@ in vec3 fragmentNormal;
 in vec3 fragmentTangent;
 in vec3 fragmentBitangent;
 mat3 TBN;
-
 
 
 // IBL
@@ -115,6 +115,9 @@ void main()
     roughness = PBR.g;
     ao = PBR.b;
     
+    screenPosition = ndc.xy/ndc.w;
+    screenPosition = screenPosition * 0.5 + 0.5;
+
     TBN = mat3(normalize(fragmentTangent), normalize(fragmentBitangent), normalize(fragmentNormal));
     vec3 tangentNormal = texture(material.normal, texCoords).rgb;
 
