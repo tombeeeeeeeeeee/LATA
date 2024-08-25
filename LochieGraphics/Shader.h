@@ -83,6 +83,8 @@ public:
 
 	void DeleteProgram();
 
+	std::string getDisplayName();
+
 	toml::table Serialise();
 	Shader(toml::v3::table* toml);
 

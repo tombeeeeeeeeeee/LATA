@@ -145,17 +145,17 @@ static int TextSelected(ImGuiInputTextCallbackData* data) {
 		displayName = selector->getDisplayName();                                               \
 	}                                                                                           \
 	else {                                                                                      \
-		displayName = "None";                                                     \
+		displayName = "None";                                                                   \
 	}                                                                                           \
 	std::vector <std::pair<std::string, type *>> filteredType;                                  \
                                                                                                 \
 	bool textSelected = false;                                                                  \
 	/*TODO: Text based input instead of button prompt, the pop up should appear while typing*/  \
-	ImGui::InputText((label + "##" + tag).c_str(), &displayName,                        \
+	ImGui::InputText((label + "##" + tag).c_str(), &displayName,                                \
 		ImGuiInputTextFlags_CallbackAlways |                                                    \
 		ImGuiInputTextFlags_AutoSelectAll,                                                      \
 		TextSelected, &textSelected);                                                           \
-	std::string popupName = (label + "##" + tag).c_str();								    \
+	std::string popupName = (label + "##" + tag).c_str();							            \
 	if (textSelected) {																			\
 		ImGui::OpenPopup(popupName.c_str(), ImGuiPopupFlags_NoReopen);							\
 	}																							\
@@ -165,7 +165,7 @@ static int TextSelected(ImGuiInputTextCallbackData* data) {
 	}																							\
 	/* Popup has began*/																		\
 	ImGui::SetKeyboardFocusHere();                                                              \
-	ImGui::InputText(("Search##" + tag).c_str(), &filter);							    \
+	ImGui::InputText(("Search##" + tag).c_str(), &filter);					                    \
 																								\
 for (auto& i : collection)																		\
 {																								\
@@ -177,11 +177,15 @@ for (auto& i : collection)																		\
 																								\
 																								\
 if (showCreateButton) {																			\
-	if (ImGui::MenuItem(("CREATE NEW " + std::string(#type) + "##" + label).c_str(), "", false)) {	    \
-		selector = ResourceManager::Load##type("New " + std::string(#type), __VA_ARGS__);                        \
+	if (ImGui::MenuItem(("CREATE NEW " + std::string(#type) + "##" + label).c_str(), "", false)) { \
+		selector = ResourceManager::Load##type("New " + std::string(#type), __VA_ARGS__);       \
         returnBool = true;                                                                      \
 	}																							\
 }																								\
+if (ImGui::MenuItem(("None 0##" + label).c_str(), "", false)) {                                 \
+	selector = nullptr;                                                                         \
+	returnBool = true;                                                                          \
+}                                                                                               \
 																								\
 for (auto& i : filteredType)																	\
 {																								\
@@ -200,6 +204,20 @@ for (auto& i : filteredType)																	\
 ImGui::EndPopup();																				\
 return returnBool;
 
+
+bool ResourceManager::TextureSelector(std::string label, Texture** texture)
+{
+	bool showCreateButton = false;
+	std::string tag = Utilities::PointerToString(texture);
+	GuidSelector(Texture, textures, (*texture), Texture::Type::count)
+}
+
+bool ResourceManager::ShaderSelector(std::string label, Shader** shader)
+{
+	bool showCreateButton = false;
+	std::string tag = Utilities::PointerToString(shader);
+	GuidSelector(Shader, shaders, (*shader))
+}
 
 bool ResourceManager::MaterialSelector(std::string label, Material** material, Shader* newMaterialShader, bool showCreateButton) {
 	std::string tag = Utilities::PointerToString(material);

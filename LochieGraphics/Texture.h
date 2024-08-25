@@ -75,6 +75,8 @@ public:
 
 	static void EditorGUI(std::vector<Texture*>& textures);
 
+	std::string getDisplayName();
+
 private:
 
 	Texture() = default;

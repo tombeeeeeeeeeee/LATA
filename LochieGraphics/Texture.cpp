@@ -263,3 +263,9 @@ void Texture::EditorGUI(std::vector<Texture*>& textures)
 		ImGui::EndTable();
 	}
 }
+
+std::string Texture::getDisplayName()
+{
+	// TODO just the filename
+	return path + " " + std::to_string(GUID);
+}

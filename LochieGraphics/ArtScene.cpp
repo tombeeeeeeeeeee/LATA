@@ -347,6 +347,13 @@ void ArtScene::GUI()
 		if (ImGui::SliderFloat("Target Object View Space", &resetCamObjectViewSpace, 0.15f, PI/2.0f, "", ImGuiSliderFlags_Logarithmic)) {
 			ResetCamera();
 		}
+
+		if (ImGui::CollapsingHeader("SSAO")) {
+			ImGui::DragInt("Kernal Size", &renderSystem->kernelSize);
+			ImGui::DragFloat("Radius", &renderSystem->ssaoRadius);
+			ImGui::DragFloat("Bias", &renderSystem->ssaoBias);
+		}
+		
 	}
 	ImGui::End();
 }

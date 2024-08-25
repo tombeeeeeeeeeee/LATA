@@ -193,6 +193,12 @@ void Shader::DeleteProgram()
 	glDeleteProgram(GLID);
 }
 
+std::string Shader::getDisplayName()
+{
+	// TODO: Better name
+	return fragmentPath + " " + std::to_string(GUID);
+}
+
 toml::table Shader::Serialise()
 {
 	return toml::table{
