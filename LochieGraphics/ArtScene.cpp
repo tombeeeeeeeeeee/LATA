@@ -115,7 +115,7 @@ void ArtScene::ResetCamera()
 	float distance = (model->max.y - model->min.y) / tanf(resetCamObjectViewSpace);
 	camera->transform.setPosition({ distance + model->max.x, (model->min.y + model->max.y) / 2, (model->min.z + model->max.z) / 2});
 	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
-	camera->movementSpeed = glm::length(model->max - model->min);
+	camera->movementSpeed = glm::length(model->max - model->min) / 3;
 	camera->artFocusDistance = distance + ((model->max.y - model->min.y) / 2);
 }
 
@@ -290,6 +290,9 @@ void ArtScene::Start()
 	camera->farPlane = 3000.0f;
 	camera->state = Camera::State::artEditorMode;
 	camera->artState = Camera::ArtState::none;
+
+	gui.sceneObjectSelected = sceneObject;
+	gui.showSceneObject = true;
 }
 
 void ArtScene::Update(float delta)
@@ -311,7 +314,9 @@ void ArtScene::GUI()
 {
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 
-		ResourceManager::MaterialSelector("Editing Material", &material, shaders[super], true);
+		if (ResourceManager::MaterialSelector("Editing Material", &material, shaders[super], true)) {
+			// TODO: Refresh the preview materials
+		}
 
 		if (ImGui::CollapsingHeader("Current Material")) {
 			ImGui::SliderFloat("Preview Scale", &texturePreviewScale, 0.01f, 1.0f, "% .3f", ImGuiSliderFlags_Logarithmic);

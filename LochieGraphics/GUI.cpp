@@ -15,6 +15,9 @@ using Utilities::PointerToString;
 //TODO: move some of these to their own classes
 void GUI::Update()
 {
+	// TODO: GUI Shouldn't exist for a build version
+	//if (true) { return; }
+
 	ImGui::ShowDemoWindow();
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
@@ -30,16 +33,20 @@ void GUI::Update()
 			ImGui::MenuItem("Test Menu", NULL, &showTestMenu);
 			ImGui::MenuItem("Resource Menu", NULL, &showResourceMenu);
 			ImGui::MenuItem("Camera Menu", NULL, &showCameraMenu);
-			ImGui::MenuItem("SceneObject Menu", NULL, &showHierarchyAndSceneObject);
+			if (ImGui::MenuItem("SceneObject Menu", NULL, &showSceneObject)) {
+				showHierarchy = showSceneObject;
+			}
 			ImGui::MenuItem("Light Menu", NULL, &showLightMenu);
-			ImGui::MenuItem("Hierarchy Menu", NULL, &showHierarchyAndSceneObject);
+			if (ImGui::MenuItem("Hierarchy Menu", NULL, &showHierarchy)) {
+				showSceneObject = showHierarchy;
+			}
 
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("SceneObject")) {
 			if (ImGui::MenuItem("Create New")) {
 				// NOTE: This is okay, it's the scene's responsibility to delete the sceneobjects
-				// TODO: This looks bad, make a scene function instead
+				// TODO: This looks bad, make a scene function instead so it can look bad somewhere else
 				new SceneObject(scene);
 			}
 			ImGui::EndMenu();
@@ -47,14 +54,12 @@ void GUI::Update()
 		ImGui::EndMainMenuBar();
 	}
 
-	// TODO: GUI Shouldn't exist for a build version
-	//if (true) { return; }
-	if (showTestMenu)                  { TestMenu();        }
-	if (showResourceMenu)              { ResourceMenu();    }
-	if (showCameraMenu)                { CameraMenu();      }
-	if (showHierarchyAndSceneObject)   { SceneObjectMenu(); }
-	if (showLightMenu)                 { LightMenu();       }
-	if (showHierarchyAndSceneObject)   { HierarchyMenu();   }
+	if (showTestMenu)     { TestMenu();        }
+	if (showResourceMenu) { ResourceMenu();    }
+	if (showCameraMenu)   { CameraMenu();      }
+	if (showSceneObject)  { SceneObjectMenu(); }
+	if (showLightMenu)    { LightMenu();       }
+	if (showHierarchy)    { HierarchyMenu();   }
 	scene->BaseGUI();
 	scene->GUI();
 }
@@ -107,7 +112,7 @@ void GUI::CameraMenu()
 
 void GUI::SceneObjectMenu()
 {
-	if (!ImGui::Begin("Scene Object Menu", &showHierarchyAndSceneObject, defaultWindowFlags)) {
+	if (!ImGui::Begin("Scene Object Menu", &showSceneObject, defaultWindowFlags)) {
 		ImGui::End();
 		return;
 	}
@@ -141,7 +146,7 @@ void GUI::LightMenu()
 
 void GUI::HierarchyMenu()
 {
-	if (!ImGui::Begin("Hierarchy Menu", &showHierarchyAndSceneObject, defaultWindowFlags)) {
+	if (!ImGui::Begin("Hierarchy Menu", &showHierarchy, defaultWindowFlags)) {
 		ImGui::End();
 		return;
 	}

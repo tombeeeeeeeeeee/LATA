@@ -59,22 +59,39 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
     if (state == editorMode && editorRotate) {
         Rotate(xoffset, yoffset);
     }
-    else if (state == artEditorMode && artKeyDown && artState == orbit) {
-        transform.setPosition(transform.getPosition() + transform.forward() * artFocusDistance);
-        Rotate(xoffset, yoffset);
-        transform.setPosition(transform.getPosition() - transform.forward() * artFocusDistance);
+    else if (state == artEditorMode && artKeyDown) {
+        if (artState == orbit) {
+            transform.setPosition(transform.getPosition() + transform.forward() * artFocusDistance);
+            Rotate(xoffset, yoffset);
+            transform.setPosition(transform.getPosition() - transform.forward() * artFocusDistance);
+        }
+        else if (artState == dolly) {
+            float moveAmount = movementSpeed * (xoffset + yoffset);
+            artFocusDistance -= moveAmount;
+            transform.setPosition(transform.getPosition() + transform.forward() * movementSpeed * (xoffset + yoffset));
+        }
+        else if (artState == boomTruck) {
+            transform.setPosition(transform.getPosition() + (transform.up() * yoffset) + (transform.right() * xoffset));
+        }
     }
 }
 
 
 void Camera::ProcessMouseScroll(float yoffset)
 {
-    fov -= static_cast<float>(yoffset);
-    if (fov < 10.0f) {
-        fov = 10.0f;
+    if (state == editorMode) {
+        fov -= static_cast<float>(yoffset);
+        if (fov < 10.0f) {
+            fov = 10.0f;
+        }
+        else if (fov > 170.0f) {
+            fov = 170.0f;
+        }
     }
-    else if (fov > 170.0f) {
-        fov = 170.0f;
+    else if (state == artEditorMode) {
+        float moveAmount = movementSpeed * yoffset;
+        artFocusDistance -= moveAmount;
+        transform.setPosition(transform.getPosition() + transform.forward() * movementSpeed * yoffset);
     }
 }
 

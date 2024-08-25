@@ -56,7 +56,7 @@ private:
 
 	Material* material;
 	Model* model;
-	SceneObject* sceneObject = new SceneObject(this);
+	SceneObject* sceneObject = new SceneObject(this, "Editing Scene Object");
 
 	float loadTargetPreviewSize = 128.0f;
 	float texturePreviewScale = 0.01f;

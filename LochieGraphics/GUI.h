@@ -17,26 +17,26 @@ public:
 
 	void Update();
 
+	bool showResourceMenu = false;
+	bool showTestMenu = false;
+	bool showCameraMenu = false;
+	bool showHierarchy = false;
+	bool showSceneObject = false;
+	bool showLightMenu = false;
 private:
 
 	ImGuiWindowFlags defaultWindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize;
 
-	bool showResourceMenu = false;
 	void ResourceMenu();
 
-	bool showTestMenu = false;
 	void TestMenu();
 	
-	bool showCameraMenu = false;
 	void CameraMenu();
 	
-	int sceneObjectSelectedIndex = 0;
 	//bool showSceneObjectMenu = false;
-	bool showHierarchyAndSceneObject = false;
 	void SceneObjectMenu();
 	
 	int lightSelectedIndex = 0;
-	bool showLightMenu = false;
 	void LightMenu();
 	
 	//bool showHierarchyMenu = false;
