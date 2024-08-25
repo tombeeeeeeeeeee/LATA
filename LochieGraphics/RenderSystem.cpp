@@ -376,7 +376,7 @@ void RenderSystem::Update(
     glDepthFunc(GL_LESS);
 
     glDrawBuffers(2, forwardAttachments);
-   
+    DrawAnimation(animators, transforms, renders, (*shaders)[forward]);
     DrawRenderers(renders, transforms, (*shaders)[forward]);
 
     RenderSSAO();
@@ -523,6 +523,7 @@ void RenderSystem::DrawAnimation(
     Shader* shader
 )
 {
+    shader->Use();
     for (auto iter = animators.begin(); iter != animators.end(); iter++)
     {
         std::vector<glm::mat4> animations = iter->second.getFinalBoneMatrices();
@@ -544,11 +545,11 @@ void RenderSystem::DrawAnimation(
         	shader->setMat4("model", transforms[iter->first].getGlobalMatrix());
         }
 
-        Model* model = animationRenderer.model;
-        for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
-        {
-            //(*mesh)->Draw();
-        }
+        //Model* model = animationRenderer.model;
+        //for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
+        //{
+        //    (*mesh)->Draw();
+        //}
     }
 }
 
