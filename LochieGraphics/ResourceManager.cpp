@@ -373,6 +373,7 @@ void ResourceManager::BindFlaggedVariables(Shader* shader)
 		shader->setInt("irradianceMap", 7);
 		shader->setInt("prefilterMap", 8);
 		shader->setInt("brdfLUT", 9);
+		shader->setInt("ssao", 11);
 	}
 	if (flag & Shader::Flags::Painted)
 	{

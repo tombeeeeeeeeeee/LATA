@@ -12,6 +12,7 @@ uniform Material material;
 in vec2 texCoords;
 in vec3 fragmentPos;
 in vec3 fragmentColour;
+in vec3 fragmentPosInView;
 
 layout (location = 0) out vec4 positionColour;
 layout (location = 1) out vec4 normalColour;

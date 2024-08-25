@@ -47,27 +47,23 @@ void main()
             totalPosition += boneMatrices[aBoneIDs[i]] * aBoneWeights[i];
             vec3 localNormal = mat3(boneMatrices[aBoneIDs[i]]) * aNormal;
         }
-        fragmentPos = vec3(model * (totalPosition * vec4(aPos, 1.0)));
+        pos = model * (totalPosition * vec4(aPos, 1.0));
     }
     else 
     {
-        fragmentPos = vec3(model * vec4(aPos, 1.0));
+        pos = model * vec4(aPos, 1.0);
     }
-
-    directionalLightSpaceFragPos = directionalLightSpaceMatrix * vec4(fragmentPos, 1.0); // frag is also timesed by model
 
     fragmentNormal = normalize((model * vec4(aNormal, 0.0)).xyz);
     fragmentTangent = normalize((model * vec4(aTangent, 0.0)).xyz);
     fragmentTangent = normalize(fragmentTangent - dot(fragmentTangent, fragmentNormal) * fragmentNormal);
     fragmentBitangent = cross(fragmentNormal, fragmentTangent);
 
-    for(int i = 0; i < MAX_POINT_LIGHTS; i++) {
-        pointLightsPos[i] = pointLights[i].position;
-    }    
+    fragmentPos = pos.xyz;
 
-    gl_Position = vp * vec4(fragmentPos, 1.0);
+    gl_Position = vp * vec4(pos);
     screenPosition = (gl_Position.xyz / gl_Position.w).xy;
     screenPosition = screenPosition * 0.5 + 0.5;
-    fragmentPosInView = (view * fragmentPos).xyz;
+    fragmentPosInView = (view * pos).xyz;
     fragmentColour = materialColour;
 }

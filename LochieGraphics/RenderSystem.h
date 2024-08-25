@@ -46,6 +46,7 @@ public:
 
     float exposure = 1.0f;
 
+    void ForwardUpdate();
     void HDRBufferUpdate();
     void OutputBufferUpdate();
     void BloomUpdate();
@@ -178,7 +179,7 @@ private:
     unsigned int ssaoFBO;
     unsigned int ssaoColorBuffer;
     unsigned int ssaoBlurFBO;
-    unsigned int ssaoBuffer;
+    unsigned int ssaoBluredBuffer;
     std::vector<glm::vec3> ssaoKernel;
     std::vector<glm::vec3> ssaoNoise;
     unsigned int noiseTexture;

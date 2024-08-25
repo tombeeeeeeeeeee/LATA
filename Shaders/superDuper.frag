@@ -162,16 +162,8 @@ void main()
     vec4 emissionColour = texture(material.emission, texCoords);
 
     bloomColour = vec4(emissionColour.rgb + bloomColour.rgb, 1.0);
-    bloomColour *= emissionColour.a + 2.0;
-
-    if(emissionColour.r + emissionColour.g + emissionColour.b <= 0.0001)
-    {
-        screenColour = vec4(result, 1.0);
-    }
-    else
-    {
-        screenColour = vec4(emissionColour.rgb, 1.0);
-    }
+    bloomColour *= emissionColour.a + 1.0;
+    screenColour = vec4(result, 1.0);
 }
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
@@ -340,12 +332,15 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection)
 	vec3 kD = vec3(1.0) - kS;
 	kD *= 1.0 - metallic;
     vec3 irradiance = fragmentColour * texture(irradianceMap, trueNormal).rgb;
+    float SSAO = texture(ssao, screenPosition).r;
 
     vec3 diffuse = irradiance * albedo;
 	//vec3 additionalAmbient = (kD * ambientLightColour) * ao;
     vec3 prefilteredColor = textureLod(prefilterMap, reflected,  roughness * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(trueNormal, viewDirection), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
-    vec3 ambient = (kD * diffuse + specular) * ao * texture(ssao, screenPosition).r;
+    vec3 ambient = (kD * diffuse + specular) * 1.0;
+    ambient *= SSAO * SSAO;
+
     return ambient;
 }

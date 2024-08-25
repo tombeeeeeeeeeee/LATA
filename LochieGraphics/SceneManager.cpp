@@ -144,7 +144,7 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShader("lineRenderer", Shader::Flags::VPmatrix),
 		ResourceManager::LoadShaderDefaultVert("ssao"),
 		ResourceManager::LoadShaderDefaultVert("ssaoBlur"),
-		ResourceManager::LoadShader("forward"),
+		ResourceManager::LoadShader("forward", Shader::Flags::VPmatrix),
 		ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/superDuper.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
 	});
 
