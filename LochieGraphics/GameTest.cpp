@@ -79,7 +79,7 @@ void GameTest::Start()
 
 
 	SceneObject* newSceneObject = new SceneObject(this);
-	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, 0, true);
+	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, true);
 	newSceneObject->setRigidBody(newRigidBody);
 
 	for (int y = 0; y < level.height; y++)

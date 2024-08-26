@@ -46,6 +46,8 @@ public:
 	/// </summary>
 	void SetCollisionLayerMask(int layer, unsigned int bitMask);
 
+	bool GetCollisionLayerBool(int layerA, int layerB);
+
 	unsigned int layerMasks[32] = {
 		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
 		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
