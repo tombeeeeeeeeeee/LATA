@@ -77,8 +77,7 @@ void PhysicsSystem::GetCollisions(
 	Transform* transformA, Transform* transformB,
 	std::vector<CollisionPacket>& collisions)
 {
-	if (!(layerMasks[a->collisionLayer] & (1 << b->collisionLayer)))
-		return;
+
 
 	std::vector<Collider*> aCols = (*a->getColliders());
 	std::vector<Collider*> bCols = (*b->getColliders());
@@ -87,6 +86,9 @@ void PhysicsSystem::GetCollisions(
 	{
 		for (Collider* colliderB : bCols)
 		{
+			if (!GetCollisionLayerBool(colliderA->collisionLayer, colliderB->collisionLayer))
+				continue;
+
 			if (colliderA->getType() == ColliderType::polygon && ((PolygonCollider*)colliderA)->verts.size() == 1)
 			{
 				if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
@@ -167,34 +169,37 @@ void PhysicsSystem::GetCollisions(
 void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transformA, Transform* transformB, std::vector<CollisionPacket> collisions)
 {
 	std::vector<Collider*> aCols = (*a->getColliders());
-	Collider* bCol = b;
+	Collider* colliderB = b;
 
 	for (Collider* colliderA : aCols)
 	{
+		if (!GetCollisionLayerBool(colliderA->collisionLayer, colliderB->collisionLayer))
+			continue;
+
 		if (colliderA->getType() == ColliderType::polygon && ((PolygonCollider*)colliderA)->verts.size() == 1)
 		{
-			if (bCol->getType() == ColliderType::polygon && ((PolygonCollider*)bCol)->verts.size() == 1)
+			if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnCircleCollision(
-					(PolygonCollider*)colliderA, (PolygonCollider*)bCol,
+					(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
 					a, &dumbyRigidBody, transformA, transformB
 				);
 				if (collision.depth >= 0)
                     collisions.push_back(collision);
 			}
-			else if (bCol->getType() == ColliderType::plane)
+			else if (colliderB->getType() == ColliderType::plane)
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
-					(PolygonCollider*)colliderA, (PlaneCollider*)bCol,
+					(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
 					a, &dumbyRigidBody, transformA, transformB
 				);
 				if (collision.depth >= 0)
                     collisions.push_back(collision);
 			}
-			else if (bCol->getType() == ColliderType::polygon)
+			else if (colliderB->getType() == ColliderType::polygon)
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnPolyCollision(
-					(PolygonCollider*)colliderA, (PolygonCollider*)bCol,
+					(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
 					a, &dumbyRigidBody, transformA, transformB
 				);
 				if (collision.depth >= 0)
@@ -203,19 +208,19 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 		}
 		else if (colliderA->getType() == ColliderType::plane)
 		{
-			if (bCol->getType() == ColliderType::polygon && ((PolygonCollider*)bCol)->verts.size() == 1)
+			if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
-					(PolygonCollider*)bCol, (PlaneCollider*)colliderA,
+					(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
 					&dumbyRigidBody, a, transformB, transformA
 				);
 				if (collision.depth >= 0)
                     collisions.push_back(collision);
 			}
-			else if (bCol->getType() == ColliderType::polygon)
+			else if (colliderB->getType() == ColliderType::polygon)
 			{
 				CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
-					(PolygonCollider*)bCol, (PlaneCollider*)colliderA,
+					(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
 					&dumbyRigidBody, a, transformB, transformA
 				);
 				if (collision.depth >= 0)
@@ -224,28 +229,28 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 		}
 		else if (colliderA->getType() == ColliderType::polygon)
 		{
-			if (bCol->getType() == ColliderType::polygon)
+			if (colliderB->getType() == ColliderType::polygon)
 			{
 				CollisionPacket collision = CollisionFunctions::PolyOnPolyCollision(
-					(PolygonCollider*)colliderA, (PolygonCollider*)bCol,
+					(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
 					a, &dumbyRigidBody, transformA, transformB
 				);
 				if (collision.depth >= 0)
 					collisions.push_back(collision);
 			}
-			else if (bCol->getType() == ColliderType::plane)
+			else if (colliderB->getType() == ColliderType::plane)
 			{
 				CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
-					(PolygonCollider*)colliderA, (PlaneCollider*)bCol,
+					(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
 					a, &dumbyRigidBody, transformA, transformB
 				);
 				if (collision.depth >= 0)
                     collisions.push_back(collision);
 			}
-			else if (bCol->getType() == ColliderType::polygon && ((PolygonCollider*)bCol)->verts.size() == 1)
+			else if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnPolyCollision(
-					(PolygonCollider*)bCol, (PolygonCollider*)colliderA,
+					(PolygonCollider*)colliderB, (PolygonCollider*)colliderA,
 					&dumbyRigidBody, a, transformB, transformA
 				);
 				if (collision.depth >= 0)
@@ -258,8 +263,8 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 
 void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 {
-	Collision collisionFromBsPerspective = { collision.rigidBodyA, collision.soA, collision.normal, collision.rigidBodyA->collisionLayer & collision.rigidBodyB->collisionLayer};
-	Collision collisionFromAsPerspective = { collision.rigidBodyB, collision.soB, -collision.normal, collision.rigidBodyB->collisionLayer & collision.rigidBodyB->collisionLayer };;
+	Collision collisionFromBsPerspective = { collision.rigidBodyA, collision.soA, collision.normal, collision.colliderA->collisionLayer | collision.colliderB->collisionLayer};
+	Collision collisionFromAsPerspective = { collision.rigidBodyB, collision.soB, -collision.normal, collision.colliderA->collisionLayer | collision.colliderB->collisionLayer};
 
 	if (collision.depth < 0) return;
 	if (collision.colliderA->isTrigger && collision.colliderB->isTrigger) return;
@@ -350,4 +355,9 @@ void PhysicsSystem::SetCollisionLayerMask(int layer, unsigned int bitMask)
 		int on = (bitMask & (1 << i)) == (1 << i) ? 1 : 0;
 		layerMasks[i] |= (on << layer);
 	}
+}
+
+bool PhysicsSystem::GetCollisionLayerBool(int layerA, int layerB)
+{
+	return layerMasks[layerA] & (1 << layerB);
 }

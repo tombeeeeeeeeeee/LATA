@@ -43,16 +43,6 @@ glm::vec2 RigidBody::AddDepen(glm::vec2 depen)
 	return netDepen;
 }
 
-void RigidBody::setCollisionLayer(int layer)
-{
-	collisionLayer = layer;
-}
-
-CollisionLayers RigidBody::getCollisionLayer()
-{
-	return (CollisionLayers)collisionLayer;
-}
-
 void RigidBody::addCollider(Collider* collider)
 {
 	colliders.push_back(collider);
@@ -114,5 +104,5 @@ void RigidBody::GUI()
 	}
 	ImGui::Checkbox(("Static##rigidBody" + tag).c_str(), &isStatic);
 	ImGui::DragFloat(("Elasticity##rigidBody" + tag).c_str(), &elasticicty, 0.01f, 0.0f, 1.0f);
-	ImGui::DragInt(("CollisionLayer##rigidBody" + tag).c_str(),&collisionLayer , 1, 0, 31);
+	//TODO: add collider gui
 }

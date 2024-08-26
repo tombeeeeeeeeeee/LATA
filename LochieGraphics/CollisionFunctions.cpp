@@ -33,7 +33,7 @@ CollisionPacket CollisionFunctions::CircleOnCircleCollision(
     float overlap = circleA->radius + circleB->radius - centreDistance;
 
     collision.depth = overlap;
-    collision.normal = (centreDistance != 0) ? ((posA + circleA->verts[0]) - (posB + circleB->verts[0])) / centreDistance : glm::vec2(1, 0);
+    collision.normal = (centreDistance != 0) ? (posA + circleA->verts[0]) - (posB + circleB->verts[0]) / centreDistance : glm::vec2(1, 0);
 
     collision.contactPoint = circleB->verts[0] + posB + collision.normal * circleB->radius;
 

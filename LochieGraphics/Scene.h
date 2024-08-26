@@ -7,6 +7,7 @@
 #include "ModelRenderer.h"
 #include "Ecco.h"
 #include "Sync.h"
+#include "Health.h"
 #include "shaderEnum.h"
 
 #include "Maths.h"
@@ -34,6 +35,8 @@ public:
 	std::unordered_map<unsigned long long, Animator> animators = {};
 	std::unordered_map<unsigned long long, RigidBody> rigidBodies = {};
 	std::unordered_map<unsigned long long, Collider> colliders = {};
+	std::unordered_map<unsigned long long, Health> healths = {};
+	//std::unordered_map<unsigned long long, Enemies> enemies = {};
 	std::vector<Light*> lights = {};
 
 	Ecco* ecco = nullptr;
