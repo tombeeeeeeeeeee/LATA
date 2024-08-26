@@ -115,7 +115,7 @@ void ArtScene::ResetCamera()
 	float distance = (model->max.y - model->min.y) / tanf(resetCamObjectViewSpace);
 	camera->transform.setPosition({ distance + model->max.x, (model->min.y + model->max.y) / 2, (model->min.z + model->max.z) / 2});
 	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
-	camera->movementSpeed = glm::length(model->max - model->min) / 3;
+	camera->editorSpeed.move = glm::length(model->max - model->min) / 3;
 	camera->artFocusDistance = distance + ((model->max.y - model->min.y) / 2);
 }
 
@@ -277,6 +277,11 @@ void ArtScene::Start()
 	metallicImage.components = 1;
 	roughnessImage.components = 1;
 	aoImage.components = 1;
+
+	// TODO: Ensure the correct flip-ness
+	metallicImage.flipped = true;
+	roughnessImage.flipped = true;
+	aoImage.flipped = true;
 
 	importTextures["metallic"] = &metallicPreview;
 	importTextures["roughness"] = &roughnessPreview;

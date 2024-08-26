@@ -6,10 +6,10 @@
 
 Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch, float _movementSpeed, float _sensitivity, float _fov) :
     transform(nullptr, _position),
-    movementSpeed(_movementSpeed),
-    sensitivity(_sensitivity),
     fov(_fov)
 {
+    editorSpeed.move = _movementSpeed;
+    editorSpeed.rotate = _sensitivity;
 }
 
 
@@ -19,7 +19,7 @@ Camera::Camera(glm::vec3 _position) : Camera()
 }
 
 
-Camera::Camera() : Camera({ 0.f, 0.f, 0.f }, { 0.f, 1.f, 0.f }, -90.f, 0.0f, 2.5f, 0.1f, 60.f)
+Camera::Camera() : Camera({ 0.f, 0.f, 0.f }, { 0.f, 1.f, 0.f }, -0.1f, 0.0f, 2.5f, 0.01f, 60.0f)
 {
 }
 
@@ -36,9 +36,9 @@ glm::mat4 Camera::GetViewMatrix() const
 
 void Camera::ProcessKeyboard(Direction direction, float deltaTime)
 {
-    float velocity = movementSpeed * deltaTime;
 
     if (state == editorMode) {
+        float velocity = editorSpeed.move * deltaTime;
         switch (direction)
         {
         case Camera::FORWARD:  transform.setPosition(transform.getPosition() + transform.forward() * velocity);         break;
@@ -53,25 +53,23 @@ void Camera::ProcessKeyboard(Direction direction, float deltaTime)
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch)
 {
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
 
     if (state == editorMode && editorRotate) {
-        Rotate(xoffset, yoffset);
+        Rotate(xoffset * editorSpeed.rotate, yoffset * editorSpeed.rotate);
     }
     else if (state == artEditorMode && artKeyDown) {
         if (artState == orbit) {
             transform.setPosition(transform.getPosition() + transform.forward() * artFocusDistance);
-            Rotate(xoffset, yoffset);
+            Rotate(xoffset * artEditorSpeed.orbit, yoffset * artEditorSpeed.orbit);
             transform.setPosition(transform.getPosition() - transform.forward() * artFocusDistance);
         }
         else if (artState == dolly) {
-            float moveAmount = movementSpeed * (xoffset + yoffset);
+            float moveAmount = artEditorSpeed.moveDolly * (xoffset + yoffset);
             artFocusDistance -= moveAmount;
-            transform.setPosition(transform.getPosition() + transform.forward() * movementSpeed * (xoffset + yoffset));
+            transform.setPosition(transform.getPosition() + transform.forward() * moveAmount);
         }
         else if (artState == boomTruck) {
-            transform.setPosition(transform.getPosition() + (transform.up() * yoffset) + (transform.right() * xoffset));
+            transform.setPosition(transform.getPosition() - (transform.up() * yoffset * artEditorSpeed.boomTruck) - (transform.right() * xoffset * artEditorSpeed.boomTruck));
         }
     }
 }
@@ -89,9 +87,9 @@ void Camera::ProcessMouseScroll(float yoffset)
         }
     }
     else if (state == artEditorMode) {
-        float moveAmount = movementSpeed * yoffset;
+        float moveAmount = artEditorSpeed.scrollDolly * yoffset;
         artFocusDistance -= moveAmount;
-        transform.setPosition(transform.getPosition() + transform.forward() * movementSpeed * yoffset);
+        transform.setPosition(transform.getPosition() + transform.forward() * moveAmount);
     }
 }
 
@@ -99,16 +97,34 @@ void Camera::GUI()
 {
     transform.GUI();
 
-    ImGui::DragFloat("Movement Speed##Camera", &movementSpeed, 0.1f);
-    ImGui::DragFloat("Sensitivity##Camera", &sensitivity, 0.1f);
     ImGui::DragFloat("FOV##Camera", &fov, 0.1f);
 
     ImGui::DragFloat("Near plane##Camera", &nearPlane, 0.01f, 0.01f, FLT_MAX);
     ImGui::DragFloat("Far plane##Camera", &farPlane, 0.01f, 0.01f, FLT_MAX);
 
-    ImGui::DragFloat("Orthographic Scale##Camera", &orthoScale, 0.01f, 0.01f, FLT_MAX);
-
     ImGui::Combo("Combo", (int*)&state, "Editor\0Targeting Position\0Targeting Players\0Art\0");
+    if (state == editorMode) {
+        ImGui::Checkbox("Orthographic Mode", &editorOrth);
+    }
+    if (InOrthoMode()) {
+        ImGui::DragFloat("Orthographic Scale##Camera", &orthoScale, 0.01f, 0.01f, FLT_MAX);
+    }
+
+    if (ImGui::CollapsingHeader("Editor Move Speeds##Camera")) {
+        if (state == editorMode) {
+            ImGui::DragFloat("Movement##Camera", &editorSpeed.move, 0.1f, 0.0f, FLT_MAX);
+            ImGui::DragFloat("Rotate##Camera", &editorSpeed.rotate, 0.01f, 0.0f, FLT_MAX);
+        }
+        else if (state == artEditorMode) {
+            float orbit = artEditorSpeed.orbit * 10000.0f;
+            if (ImGui::DragFloat("Orbit##Camera", &orbit, 0.05f, 0.0f, FLT_MAX, "%.f")) {
+                artEditorSpeed.orbit = orbit / 10000.0f;
+            }
+            ImGui::DragFloat("Move##Camera", &artEditorSpeed.boomTruck, 0.01f, 0.0f, FLT_MAX);
+            ImGui::DragFloat("Mouse Dolly##Camera", &artEditorSpeed.moveDolly, 0.01f, 0.0f, FLT_MAX);
+            ImGui::DragFloat("Scroll Dolly##Camera", &artEditorSpeed.scrollDolly, 0.1f, 0.0f, FLT_MAX);
+        }
+    }
 }
 
 bool Camera::InOrthoMode() const
@@ -120,7 +136,7 @@ void Camera::Rotate(float x, float y)
 {
     glm::vec3 euler = { 0.0f, -x, y };
 
-    glm::vec3 rotationEuler = glm::vec3(glm::radians(euler.x), glm::radians(euler.y), glm::radians(euler.z));
+    glm::vec3 rotationEuler = glm::vec3(euler.x, euler.y, euler.z);
 
     glm::quat quatZ = glm::angleAxis(rotationEuler.z, transform.right());
     glm::quat quatY = glm::angleAxis(rotationEuler.y, glm::vec3(0, 1, 0));
@@ -133,10 +149,11 @@ toml::table Camera::Serialise()
 {
     // TODO: Fix
     // TODO: Transform
+    // Move speeds
     return toml::table{ 
-        { "movementSpeed", movementSpeed },
+        //{ "movementSpeed", movementSpeed },
+        //{ "sensitivity", sensitivity },
         { "fov", fov },
-        { "sensitivity", sensitivity },
         { "near", nearPlane },
         { "far", farPlane },
         { "state", (int)state},
