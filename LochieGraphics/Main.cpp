@@ -9,7 +9,7 @@
 
 int main()
 {
-	SceneManager sceneManager(new ArtScene());
+	SceneManager sceneManager(new GameTest());
 	while (!sceneManager.ShouldClose())
 	{
 		sceneManager.Update();

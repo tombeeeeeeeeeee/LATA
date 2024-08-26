@@ -59,6 +59,17 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		wheelDirection = glm::normalize(wheelDirection);
 	}
 
+	//Wheel Correction
+	if (glm::dot({ forward.x, forward.z }, wheelDirection) <= glm::cos(maxWheelAngle * PI / 180.0f))
+	{
+		float turnSign = glm::sign(glm::dot({ right.x, right.z }, wheelDirection));
+		float maxAngle = maxWheelAngle * PI / 180.0f;
+
+		float c = cosf(turnSign * maxAngle);
+		float s = sinf(turnSign * maxAngle);
+		wheelDirection = { forward.x * c - forward.z * s, forward.z * c + forward.x * s };
+	}
+
 	//Accelerator
 	if (glm::length(inputDevice.getRightTrigger()) > 0.01f)
 	{
@@ -72,9 +83,9 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 	}
 
 	//Nothingerator
-	if(glm::length(force) < 0.001f)
+	if(glm::length(force) < 0.001f && glm::length(rigidBody.vel) > 0)
 	{
-		force += -rigidBody.vel * stoppingFrictionCoef;
+		force += -rigidBody.vel * glm::length(rigidBody.vel) * stoppingFrictionCoef;
 	}
 
 	//Sideways drag coefficent
@@ -92,21 +103,10 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 
 	//Update rigidBody
 	rigidBody.netForce += force;
-	rigidBody.angularVel = -turningCircleScalar * glm::length(rigidBody.vel) * glm::dot({ right.x, right.z }, wheelDirection) * glm::sign(glm::dot(rigidBody.vel, {forward.x, forward.z}));
+	rigidBody.angularVel += -turningCircleScalar * glm::length(rigidBody.vel) * glm::dot({ right.x, right.z }, wheelDirection) * glm::sign(glm::dot(rigidBody.vel, {forward.x, forward.z}));
+	rigidBody.angularVel *= 0.85f;
 
 	//TODO add skidding.
-
-
-	//Reversing wheel correction
-	if (glm::dot({forward.x, forward.z}, wheelDirection) <= glm::cos(maxWheelAngle * PI / 180.0f))
-	{
-		float turnSign = glm::sign(glm::dot({ right.x, right.z }, wheelDirection));
-		float maxAngle = maxWheelAngle * PI / 180.0f;
-		
-		float c = cosf(turnSign * maxAngle);
-		float s = sinf(turnSign * maxAngle);
-		wheelDirection = { forward.x * c - forward.z * s, forward.z * c + forward.x * s };
-	}
 }
 
 void Ecco::GUI()
