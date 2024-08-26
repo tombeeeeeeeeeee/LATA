@@ -100,7 +100,22 @@ void ArtScene::RefreshPBRComponents()
 	{
 		if (i.second->loaded) {
 			(*importTextures.at(i.first))->setWidthHeight(i.second->width, i.second->height);
-			(*importTextures.at(i.first))->Load(i.second->data);
+			
+			//(*importTextures.at(i.first))->path = i.second->path;
+
+			
+			std::vector<unsigned char> data(4 * (*importTextures.at(i.first))->width * (*importTextures.at(i.first))->height);
+			for (auto j = 0; j < i.second->width * i.second->height; j++)
+			{
+				data[j * 4 + 0] = i.second->data[j];
+				data[j * 4 + 1] = i.second->data[j];
+				data[j * 4 + 2] = i.second->data[j];
+				data[j * 4 + 3] = i.second->data[j];
+			}
+
+			(*importTextures.at(i.first))->Load(data.data());
+
+			//(*importTextures.at(i.first))->Load();
 		}
 		else {
 
@@ -268,20 +283,8 @@ void ArtScene::Start()
 
 	// TODO: These should not be one channel, and instead create the image so that it is white ( not red)
 	metallicPreview = ResourceManager::LoadTexture(1024, 1024);
-	metallicPreview->format = GL_RED;
 	roughnessPreview = ResourceManager::LoadTexture(1024, 1024);
-	roughnessPreview->format = GL_RED;
 	aoPreview = ResourceManager::LoadTexture(1024, 1024);
-	aoPreview->format = GL_RED;
-
-	metallicImage.components = 1;
-	roughnessImage.components = 1;
-	aoImage.components = 1;
-
-	// TODO: Ensure the correct flip-ness
-	metallicImage.flipped = true;
-	roughnessImage.flipped = true;
-	aoImage.flipped = true;
 
 	importTextures["metallic"] = &metallicPreview;
 	importTextures["roughness"] = &roughnessPreview;
@@ -290,6 +293,18 @@ void ArtScene::Start()
 	importImages["metallic"] = &metallicImage;
 	importImages["roughness"] = &roughnessImage;
 	importImages["ao"] = &aoImage;
+
+	for (auto& i: importTextures)
+	{
+		(*i.second)->format = GL_SRGB_ALPHA;
+	}
+
+	for (auto& i : importImages)
+	{
+		i.second->components = 1;
+		// TODO: Ensure the correct flip-ness
+		i.second->flipped = false;
+	}
 
 	camera->nearPlane = 1.0f;
 	camera->farPlane = 3000.0f;
