@@ -243,6 +243,27 @@ Sync* SceneObject::sync()
 	else return nullptr;
 }
 
+void SceneObject::setHealth(Health* health)
+{
+	if (health)
+	{
+		parts |= Parts::health;
+		scene->healths[GUID] = *health;
+	}
+	else
+	{
+		parts &= ~Parts::health;
+		scene->healths.erase(GUID);
+	}
+}
+
+Health* SceneObject::health()
+{
+	if (parts & Parts::health)
+		return &(scene->healths[GUID]);
+	return nullptr;
+}
+
 //toml::table SceneObject::Serialise()
 //{
 //	return toml::table{
