@@ -204,7 +204,7 @@ void SceneManager::Update()
 	ProcessInput(window);
 	float orthoWidth = camera.getOrthoWidth();
 	float orthoHeight = camera.getOrthoHeight();
-	glm::mat4 projection = !camera.InEditorMode() ? 
+	glm::mat4 projection = !camera.InOrthoMode() ?
 		glm::ortho(-orthoWidth/2.0f, orthoWidth / 2.0f, -orthoHeight / 2.0f, orthoHeight / 2.0f, camera.nearPlane, camera.farPlane) :
 		glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, camera.nearPlane, camera.farPlane);
 	glm::mat4 view = camera.GetViewMatrix();

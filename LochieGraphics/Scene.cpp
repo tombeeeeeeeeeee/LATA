@@ -29,6 +29,7 @@ Scene::~Scene()
 void Scene::Save()
 {
 	// TODO: Name is user selected, perhaps have a file opening dialog, see https://github.com/mlabbe/nativefiledialog
+	// Or could just use an imgui pop up for the name alone and don't give the user a choice on the location / some limited explorer
 	std::ofstream file("TestScene.toml");
 
 	auto savedShaders = toml::array();
@@ -49,11 +50,18 @@ void Scene::Save()
 		savedLights.push_back((*i)->Serialise());
 	}
 
+	auto savedRenderers = toml::array();
+	for (auto i = renderers.begin(); i != renderers.end(); i++)
+	{
+		savedRenderers.push_back(i->second.Serialise(i->first));
+	}
+
 	file << toml::table{ { "WindowName", windowName} } << "\n\n";
 	file << toml::table{ { "Shaders", savedShaders} } << "\n\n";
 	file << toml::table{ { "Camera", camera->Serialise() } } << "\n\n";
 	file << toml::table{ { "SceneObjects", savedSceneObjects} } << "\n\n";
 	file << toml::table{ { "Lights", savedLights} } << "\n\n";
+
 
 
 

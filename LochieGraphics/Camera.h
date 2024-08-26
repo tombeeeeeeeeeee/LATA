@@ -40,6 +40,8 @@ public:
 
     bool editorRotate = false;
 
+    bool editorOrth = false;
+
     bool artKeyDown = false;
 
     // TODO: Move art stuff into seperate camera system
@@ -82,7 +84,7 @@ public:
     float getOrthoHeight() { return 9.0f * orthoScale; };
     float getOrthoWidth() { return 16.0f * orthoScale; };
 
-    bool InEditorMode() const;
+    bool InOrthoMode() const;
 
     void Rotate(float x, float y);
 

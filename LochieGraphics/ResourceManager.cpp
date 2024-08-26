@@ -182,9 +182,11 @@ if (showCreateButton) {																			\
         returnBool = true;                                                                      \
 	}																							\
 }																								\
-if (ImGui::MenuItem(("None 0##" + label).c_str(), "", false)) {                                 \
-	selector = nullptr;                                                                         \
-	returnBool = true;                                                                          \
+if (showNull) {                                                                                 \
+	if (ImGui::MenuItem(("None 0##" + label).c_str(), "", false)) {                             \
+		selector = nullptr;                                                                     \
+		returnBool = true;                                                                      \
+	}                                                                                           \
 }                                                                                               \
 																								\
 for (auto& i : filteredType)																	\
@@ -205,26 +207,26 @@ ImGui::EndPopup();																				\
 return returnBool;
 
 
-bool ResourceManager::TextureSelector(std::string label, Texture** texture)
+bool ResourceManager::TextureSelector(std::string label, Texture** texture, bool showNull)
 {
 	bool showCreateButton = false;
 	std::string tag = Utilities::PointerToString(texture);
 	GuidSelector(Texture, textures, (*texture), Texture::Type::count)
 }
 
-bool ResourceManager::ShaderSelector(std::string label, Shader** shader)
+bool ResourceManager::ShaderSelector(std::string label, Shader** shader, bool showNull)
 {
 	bool showCreateButton = false;
 	std::string tag = Utilities::PointerToString(shader);
 	GuidSelector(Shader, shaders, (*shader))
 }
 
-bool ResourceManager::MaterialSelector(std::string label, Material** material, Shader* newMaterialShader, bool showCreateButton) {
+bool ResourceManager::MaterialSelector(std::string label, Material** material, Shader* newMaterialShader, bool showCreateButton, bool showNull) {
 	std::string tag = Utilities::PointerToString(material);
 	GuidSelector(Material, materials, (*material), newMaterialShader)
 }
 
-bool ResourceManager::ModelSelector(std::string label, Model** model)
+bool ResourceManager::ModelSelector(std::string label, Model** model, bool showNull)
 {
 	bool showCreateButton = false;
 	std::string tag = Utilities::PointerToString(model);

@@ -314,7 +314,7 @@ void ArtScene::GUI()
 {
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 
-		if (ResourceManager::MaterialSelector("Editing Material", &material, shaders[super], true)) {
+		if (ResourceManager::MaterialSelector("Editing Material", &material, shaders[super], true, false)) {
 			// TODO: Refresh the preview materials
 		}
 

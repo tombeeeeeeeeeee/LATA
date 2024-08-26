@@ -153,6 +153,9 @@ void GUI::HierarchyMenu()
 
 	ImGui::Unindent();
 	ImGui::TreeNodeEx(("Root##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
+	if (ImGui::IsItemClicked()) {
+		sceneObjectSelected = nullptr;
+	}
 	ImGui::Indent();
 
 	if (ImGui::BeginDragDropTarget()) {

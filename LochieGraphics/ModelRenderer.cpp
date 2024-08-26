@@ -53,9 +53,22 @@ void ModelRenderer::GUI()
 	ImGui::Unindent();
 
 	if (ResourceManager::ModelSelector("Model", &model)) {
-		modelGUID = model->GUID;
+		if (model) {
+			modelGUID = model->GUID;
+		}
+		else {
+			modelGUID = 0;
+		}
 		Refresh();
 	}
+}
+
+toml::table ModelRenderer::Serialise(unsigned long long GUID)
+{
+	return toml::v3::table{
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{ "modelGuid", Serialisation::SaveAsUnsignedLongLong(modelGUID)},
+	};
 }
 
 // TODO: Make sure to call this

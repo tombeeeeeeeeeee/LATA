@@ -95,10 +95,6 @@ void Camera::ProcessMouseScroll(float yoffset)
     }
 }
 
-bool Camera::InEditorMode() const {
-    return state == editorMode || state == artEditorMode;
-}
-
 void Camera::GUI()
 {
     transform.GUI();
@@ -113,6 +109,11 @@ void Camera::GUI()
     ImGui::DragFloat("Orthographic Scale##Camera", &orthoScale, 0.01f, 0.01f, FLT_MAX);
 
     ImGui::Combo("Combo", (int*)&state, "Editor\0Targeting Position\0Targeting Players\0Art\0");
+}
+
+bool Camera::InOrthoMode() const
+{
+    return state == State::targetingPlayers || state == State::targetingPosition || (state == State::editorMode && editorOrth);
 }
 
 void Camera::Rotate(float x, float y)
