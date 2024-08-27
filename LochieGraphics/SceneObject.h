@@ -18,6 +18,8 @@
 
 class Shader;
 
+struct Enemy;
+
 // TODO: Make version of the SceneObject that draws the same model in multiple spots, using instancing
 // TODO: Look into how instancing should be handled
 
@@ -33,8 +35,7 @@ enum Parts
 	ecco = 1 << 6,
 	sync = 1 << 7,
 	health = 1 << 8,
-	enemy = 1 << 9, 
-	count = 1 << 10,
+	enemy = 1 << 9,
 };
 
 class Scene;
@@ -93,6 +94,9 @@ public:
 
 	void setHealth(Health* health);
 	Health* health();
+
+	void setEnemy(Enemy* enemy);
+	Enemy* enemy();
 
 #pragma endregion
 

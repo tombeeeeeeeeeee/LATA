@@ -264,6 +264,27 @@ Health* SceneObject::health()
 	return nullptr;
 }
 
+void SceneObject::setEnemy(Enemy* enemy)
+{
+	if (enemy)
+	{
+		parts |= Parts::enemy;
+		scene->enemies[GUID] = *enemy;
+	}
+	else
+	{
+		parts &= ~Parts::enemy;
+		scene->enemies.erase(GUID);
+	}
+}
+
+Enemy* SceneObject::enemy()
+{
+	if (parts & Parts::enemy)
+		return &(scene->enemies[GUID]);
+	return nullptr;
+}
+
 //toml::table SceneObject::Serialise()
 //{
 //	return toml::table{
