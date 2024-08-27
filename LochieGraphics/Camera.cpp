@@ -102,7 +102,7 @@ void Camera::GUI()
     ImGui::DragFloat("Near plane##Camera", &nearPlane, 0.01f, 0.01f, FLT_MAX);
     ImGui::DragFloat("Far plane##Camera", &farPlane, 0.01f, 0.01f, FLT_MAX);
 
-    ImGui::Combo("Combo", (int*)&state, "Editor\0Targeting Position\0Targeting Players\0Art\0");
+    ImGui::Combo("Mode", (int*)&state, "Editor\0Targeting Position\0Targeting Players\0Art\0");
     if (state == editorMode) {
         ImGui::Checkbox("Orthographic Mode", &editorOrth);
     }

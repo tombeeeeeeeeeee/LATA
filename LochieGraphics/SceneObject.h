@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-class Collider;
+struct Collider;
 class Scene;
 class Shader;
 class Transform;

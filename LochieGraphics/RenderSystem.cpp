@@ -595,6 +595,7 @@ void RenderSystem::DrawRenderers(
 
         Shader* prevShader = nullptr;
         int prevMaterialID = -1;
+        if (model == nullptr) { continue; }
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
             int materialID = (*mesh)->materialID;

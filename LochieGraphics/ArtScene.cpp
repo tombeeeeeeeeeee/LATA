@@ -368,6 +368,7 @@ void ArtScene::GUI()
 			ResetCamera();
 		}
 
+		// TODO: This should be somewhere else
 		if (ImGui::CollapsingHeader("SSAO")) {
 			ImGui::DragInt("Kernal Size", &renderSystem->kernelSize);
 			ImGui::DragFloat("Radius", &renderSystem->ssaoRadius);
