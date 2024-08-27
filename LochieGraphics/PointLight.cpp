@@ -1,8 +1,10 @@
 #include "PointLight.h"
 
+#include "Shader.h"
+
 #include "Utilities.h"
 
-#include "imgui.h"
+#include "EditorGUI.h"
 
 PointLight::PointLight(glm::vec3 _colour, glm::vec3 _position, float _constant, float _linear, float _quadratic, int _index) :
 	Light(_colour),

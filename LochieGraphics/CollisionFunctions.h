@@ -1,7 +1,11 @@
 #pragma once
-#include "RigidBody.h"
-#include "Transform.h"
 #include "CollisionPacket.h"
+
+class RigidBody;
+class Transform;
+struct PolygonCollider;
+struct DirectionalCollider;
+struct PlaneCollider;
 
 namespace CollisionFunctions
 {

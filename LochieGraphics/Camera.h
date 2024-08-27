@@ -3,7 +3,6 @@
 #include "Transform.h"
 
 #include "Maths.h"
-#include "Graphics.h"
 
 #include "Serialisation.h"
 
@@ -13,21 +12,29 @@
 class Camera
 {
 public:
-    // TODO: Change to matrix transform? use transform class
-    // camera Attributes
     Transform transform;
 
     // camera options
     // TODO: Move speed shouldn't be build into the camera
-    float movementSpeed;
-    float sensitivity;
+    struct EditorSpeed {
+        float move;
+        float rotate;
+    };
+
+    struct ArtEditorSpeed {
+        float orbit = 0.01f;
+        float boomTruck = 0.05f;
+        float moveDolly = 0.1f;
+        float scrollDolly = 0.1f;
+    };
+    EditorSpeed editorSpeed;
+    ArtEditorSpeed artEditorSpeed;
+
     float fov;
 
     float nearPlane;
     float farPlane;
 
-    // ASK: Why are these bitshifted? they don't seem like we would have multiple on at the same time?
-    // TODO: Can we seperate the orthogonal mode from these so we view with still having specific controls?
     enum State {
         editorMode,
         targetingPosition,
@@ -37,8 +44,11 @@ public:
 
     State state = editorMode;
     float orthoScale = 1.0f;
+    bool editorOrth = false;
 
     bool editorRotate = false;
+
+
 
     bool artKeyDown = false;
 
@@ -82,7 +92,7 @@ public:
     float getOrthoHeight() { return 9.0f * orthoScale; };
     float getOrthoWidth() { return 16.0f * orthoScale; };
 
-    bool InEditorMode() const;
+    bool InOrthoMode() const;
 
     void Rotate(float x, float y);
 

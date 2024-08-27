@@ -3,7 +3,6 @@
 
 #include "Input.h"
 
-
 class InputTest : public Scene
 {
 public:

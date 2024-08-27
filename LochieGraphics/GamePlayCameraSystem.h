@@ -1,8 +1,10 @@
 #pragma once
 
-#include "Transform.h"
 #include "Camera.h"
+
 #include "Utilities.h"
+
+class Transform;
 
 class GameplayCameraSystem
 {

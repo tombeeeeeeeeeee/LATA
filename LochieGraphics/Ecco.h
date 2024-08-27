@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Transform.h"
-#include "Rigidbody.h"
-#include "Input.h"
 #include "Utilities.h"
 
-#include "math.h"
+#include "Input.h"
+
+class Transform;
+class RigidBody;
+
 
 class Ecco
 {

@@ -1,7 +1,8 @@
 #pragma once
 #include "PointLight.h"
 
-struct Spotlight : public PointLight {
+class Spotlight : public PointLight {
+public:
     glm::vec3 direction;
     float cutOff;
     float outerCutOff;

@@ -1,6 +1,6 @@
 #include "BlendedAnimator.h"
 
-#include "SceneObject.h"
+#include "ModelHierarchyInfo.h"
 
 BlendedAnimator::BlendedAnimator(Animation* one, Animation* two) : Animator(one),
     otherCurrentAnimation(two)
@@ -80,5 +80,4 @@ void BlendedAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm
     for (int i = 0; i < node->children.size(); i++) {
         CalculateBoneTransform(node->children[i], globalTransformation);
     }
-
 }

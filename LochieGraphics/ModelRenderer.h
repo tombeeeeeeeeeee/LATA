@@ -1,7 +1,7 @@
 #pragma once
 #include "Part.h"
 
-#include "Maths.h"
+#include "Serialisation.h"
 
 #include <vector>
 
@@ -27,6 +27,8 @@ public:
 	ModelRenderer(Model* _model, Material* _material);
 
 	virtual void GUI() override;
+
+	toml::table Serialise(unsigned long long GUID);
 
 	void Refresh();
 };

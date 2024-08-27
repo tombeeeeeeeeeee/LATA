@@ -4,8 +4,7 @@
 #include "Shader.h"
 #include "Material.h"
 #include "Model.h"
-
-#include <string>
+#include "Mesh.h"
 
 // TODO: Consider breaking this code up into seperate manager classes with a parent class manager for shared functionality
 
@@ -44,8 +43,10 @@ public:
 
 	static std::unordered_map<unsigned long long, Material, hashFNV1A>& getMaterials();
 
-	static bool MaterialSelector(std::string label, Material** material, Shader* newMaterialShader = nullptr, bool showCreateButton = false);
-	static bool ModelSelector(std::string label, Model** model);
+	static bool TextureSelector(std::string label, Texture** texture, bool showNull = true);
+	static bool ShaderSelector(std::string label, Shader** shader, bool showNull = false);
+	static bool MaterialSelector(std::string label, Material** material, Shader* newMaterialShader = nullptr, bool showCreateButton = false, bool showNull = true);
+	static bool ModelSelector(std::string label, Model** model, bool showNull = true);
 	static std::string filter;
 
 	static unsigned long long guidCounter;

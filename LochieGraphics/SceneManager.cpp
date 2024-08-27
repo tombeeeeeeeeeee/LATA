@@ -1,13 +1,5 @@
 #include "SceneManager.h"
 
-
-// TODO: Maybe move these stb implementation defines to a more specific file
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
 #include "ResourceManager.h"
 
 #include "imgui.h"
@@ -204,7 +196,7 @@ void SceneManager::Update()
 	ProcessInput(window);
 	float orthoWidth = camera.getOrthoWidth();
 	float orthoHeight = camera.getOrthoHeight();
-	glm::mat4 projection = !camera.InEditorMode() ? 
+	glm::mat4 projection = camera.InOrthoMode() ?
 		glm::ortho(-orthoWidth/2.0f, orthoWidth / 2.0f, -orthoHeight / 2.0f, orthoHeight / 2.0f, camera.nearPlane, camera.farPlane) :
 		glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, camera.nearPlane, camera.farPlane);
 	glm::mat4 view = camera.GetViewMatrix();

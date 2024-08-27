@@ -1,5 +1,7 @@
 #include "Texture.h"
 
+// TODO: This is only included for the cubemap
+// Cubemap stuff should be seperated
 #include "Shader.h"
 
 #include "Graphics.h"
@@ -262,4 +264,10 @@ void Texture::EditorGUI(std::vector<Texture*>& textures)
 		}
 		ImGui::EndTable();
 	}
+}
+
+std::string Texture::getDisplayName()
+{
+	// TODO just the filename
+	return path + " " + std::to_string(GUID);
 }

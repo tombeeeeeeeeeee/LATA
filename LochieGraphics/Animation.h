@@ -1,12 +1,14 @@
 #pragma once
 
 #include "Bone.h"
-#include "Model.h"
-#include "Transform.h"
+#include "BoneInfo.h"
 
 #include "assimp/scene.h"
 
-#include <string>
+#include "unordered_map"
+
+class Model;
+class ModelHierarchyInfo;
 
 class Animation
 {

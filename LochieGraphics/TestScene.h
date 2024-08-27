@@ -2,10 +2,6 @@
 #include "Scene.h"
 
 #include "ResourceManager.h"
-#include "Texture.h"
-#include "Shader.h"
-#include "Model.h"
-#include "SceneObject.h"
 #include "Light.h"
 #include "Skybox.h"
 #include "MessengerInterface.h"

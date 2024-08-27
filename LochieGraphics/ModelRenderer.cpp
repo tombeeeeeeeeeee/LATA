@@ -1,14 +1,12 @@
 #include "ModelRenderer.h"
 
-#include "Model.h"
-#include "Shader.h"
-#include "Material.h"
 #include "SceneObject.h"
+#include "Scene.h"
 #include "ResourceManager.h"
 
 #include "Utilities.h"
 
-#include "imgui.h"	
+#include "EditorGUI.h"
 
 ModelRenderer::ModelRenderer()
 {
@@ -47,21 +45,45 @@ void ModelRenderer::GUI()
 	{
 		// TODO: A better way to reference the general default shaders
 		if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], sceneObject->scene->shaders[super], true)) {
-			materialGUIDs[i] = materials[i]->GUID;
+			if (materials[i] != nullptr) {
+				materialGUIDs[i] = materials[i]->GUID;
+			}
+			else {
+				materialGUIDs[i] = 0;
+			}
 		}
 	}
 	ImGui::Unindent();
 
 	if (ResourceManager::ModelSelector("Model", &model)) {
-		modelGUID = model->GUID;
+		if (model) {
+			modelGUID = model->GUID;
+		}
+		else {
+			modelGUID = 0;
+		}
 		Refresh();
 	}
+}
+
+toml::table ModelRenderer::Serialise(unsigned long long GUID)
+{
+	return toml::v3::table{
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{ "modelGuid", Serialisation::SaveAsUnsignedLongLong(modelGUID)},
+	};
 }
 
 // TODO: Make sure to call this
 void ModelRenderer::Refresh()
 {
 	model = ResourceManager::GetModel(modelGUID);
+	if (model == nullptr) {
+		materialGUIDs.resize(1);
+	}
+	else {
+
+	}
 	materialGUIDs.resize(model->materialIDs);
 	materials.resize(model->materialIDs);
 	for (size_t i = 0; i < materialGUIDs.size(); i++)

@@ -8,15 +8,19 @@
 #include "Ecco.h"
 #include "Sync.h"
 #include "Health.h"
-#include "Enemy.h"
-#include "shaderEnum.h"
+#include "RigidBody.h"
+#inlcude "Enemy.h"
+#include "Animator.h"
+
+#include "Skybox.h"
+#include "ShaderEnum.h"
+
+#include "RenderSystem.h"
 
 #include "Maths.h"
 #include "GUI.h"
 
 #include <string>
-#include "RenderSystem.h"
-
 
 class Scene
 {
@@ -29,6 +33,7 @@ public:
 
 	Skybox* skybox = nullptr;
 
+	// TODO: Pretty sure these no longer need to be stored on the heap
 	std::vector<SceneObject*> sceneObjects = {};
 
 	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};

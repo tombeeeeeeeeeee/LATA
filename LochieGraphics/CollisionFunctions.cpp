@@ -1,4 +1,8 @@
 #include "CollisionFunctions.h"
+
+#include "RigidBody.h"
+#include "Transform.h"
+
 #include "Utilities.h"
 /*
     CollisionPacket collision = CollisionPacket();

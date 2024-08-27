@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Texture.h"
-
 #include "Graphics.h"
+
+class Texture;
 
 class FrameBuffer
 {

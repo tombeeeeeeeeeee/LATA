@@ -2,7 +2,6 @@
 
 #include "SceneObject.h"
 #include "Scene.h"
-#include "ModelRenderer.h"
 #include "SceneManager.h"
 #include "Utilities.h"
 
@@ -18,7 +17,7 @@ void GUI::Update()
 	// TODO: GUI Shouldn't exist for a build version
 	//if (true) { return; }
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("Save")) {
@@ -153,6 +152,9 @@ void GUI::HierarchyMenu()
 
 	ImGui::Unindent();
 	ImGui::TreeNodeEx(("Root##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
+	if (ImGui::IsItemClicked()) {
+		sceneObjectSelected = nullptr;
+	}
 	ImGui::Indent();
 
 	if (ImGui::BeginDragDropTarget()) {

@@ -1,9 +1,7 @@
 #pragma once
 #include "Vertex.h"
-#include "Texture.h"
-#include "Shader.h"
-#include "Material.h"
-#include "BoneInfo.h"
+
+#include "Graphics.h"
 
 #include "Maths.h"
 
@@ -11,6 +9,10 @@
 #include "assimp/cimport.h"
 #include "assimp/postprocess.h"
 
+#include <vector>
+#include <unordered_map>
+
+struct BoneInfo;
 
 class Mesh
 {
@@ -40,7 +42,7 @@ public:
 	
 	static int aiLoadFlag;
 
-	// Not a GUID
+	// Not a GUID, this is the material index for the belonging model
 	int materialID = 0;
 
 	unsigned long long GUID;

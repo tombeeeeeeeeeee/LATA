@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 
+#include "Texture.h"
 #include "Image.h"
 
 #include <unordered_map>
@@ -44,8 +45,6 @@ private:
 	unsigned char missingRoughnessValue = 0;
 	unsigned char missingMetallicValue = UCHAR_MAX;
 	unsigned char missingAoValue = UCHAR_MAX;
-
-	Texture* pbr = nullptr;
 
 	bool defaultFlip = true;
 

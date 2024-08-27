@@ -1,13 +1,10 @@
 #include "Material.h"
 
-#include "Shader.h"
 #include "ResourceManager.h"
 
 #include "Utilities.h"
 
-#include "Graphics.h"
-#include "imgui.h"
-#include "imgui_stdlib.h"
+#include "EditorGUI.h"
 
 #include <iostream>
 
@@ -163,27 +160,25 @@ void Material::GUI()
 	std::string tag = PointerToString(this);
 	ImGui::Text(("GUID: " + std::to_string(GUID)).c_str());
 	ImGui::InputText(("Name##" + tag).c_str(), &name);
-	unsigned long long newShadersGUID = shaderGUID;
-	if (ImGui::InputScalar(("Shader##" + PointerToString(&shaderGUID)).c_str(), ImGuiDataType_U64, &newShadersGUID)) {
-		Shader* newShader = ResourceManager::GetShader(newShadersGUID);
-		if (newShader) {
-			shaderGUID = newShadersGUID;
-			setShader(newShader);
-		}
-	}
 
+	if (ResourceManager::ShaderSelector("Shader", &shader)) {
+		shaderGUID = shader->GUID;
+		setShader(shader);
+	}
+	
 	ImGui::ColorEdit3(("Colour Picker##" + tag).c_str(), &colour[0]);
 	//ImGui::
 
-	for (auto i = textureGUIDs.begin(); i != textureGUIDs.end(); i++)
+	for (auto i = texturePointers.begin(); i != texturePointers.end(); i++)
 	{
-		unsigned long long newTextureGUID = i->second;
-		if (ImGui::InputScalar((i->first + "##" + PointerToString(&i->second)).c_str(), ImGuiDataType_U64, &newTextureGUID)) {
-			// If texture found, or zero; zero is for no texture
-			if (ResourceManager::GetTexture(newTextureGUID) || newTextureGUID == 0) {
-				i->second = newTextureGUID;
-				Refresh(); // TODO: Don't need to refresh everything
+		if (ResourceManager::TextureSelector((i->first + "##" + PointerToString(&i->second)).c_str(), &i->second)) {
+			if (i->second) {
+				textureGUIDs[i->first] = i->second->GUID;
 			}
+			else {
+				textureGUIDs[i->first] = 0;
+			}
+			Refresh();
 		}
 	}
 	for (auto i = floats.begin(); i != floats.end(); i++)

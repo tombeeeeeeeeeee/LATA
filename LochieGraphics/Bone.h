@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Maths.h"
-#include "assimp/scene.h"
 
+#include "assimp/scene.h"
 
 #include <vector>
 #include <string>

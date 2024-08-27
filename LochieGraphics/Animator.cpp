@@ -1,6 +1,6 @@
 #include "Animator.h"
 
-#include "SceneObject.h"
+#include "ModelHierarchyInfo.h"
 
 Animator::Animator(Animation* animation) :
     currentAnimation(animation)

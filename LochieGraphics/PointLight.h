@@ -1,7 +1,8 @@
 #pragma once
 #include "Light.h"
 
-struct PointLight : public Light {
+class PointLight : public Light {
+public:
     glm::vec3 position;
     float constant;
     float linear;

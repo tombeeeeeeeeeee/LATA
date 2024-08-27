@@ -1,9 +1,10 @@
 #pragma once
-#include "Transform.h"
-#include "RigidBody.h"
 #include "Input.h"
 
-#include "maths.h"
+#include "Maths.h"
+
+class Transform;
+class RigidBody;
 
 class Sync
 {

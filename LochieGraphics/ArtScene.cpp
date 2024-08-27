@@ -2,10 +2,11 @@
 
 #include "ResourceManager.h"
 #include "SceneManager.h"
+#include "Skybox.h"
 
 #include "Utilities.h"
 
-#include "imgui_stdlib.h"
+#include "EditorGUI.h"
 
 #include "stb_image.h"
 #include "stb_image_write.h"
@@ -17,11 +18,8 @@ ArtScene* ArtScene::artScene = nullptr;
 
 void ArtScene::RefreshPBR()
 {
-	if (pbr != nullptr) {
-		pbr->DeleteTexture();
-	}
+	// TODO: Clean up old PBRs
 
-	
 	int width = 0;
 	int height = 0;
 
@@ -76,15 +74,16 @@ void ArtScene::RefreshPBR()
 		data[i * pbrC + 3] = UCHAR_MAX;
 	}
 
-	pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
-	pbr->type = Texture::Type::PBR;
-	material->AddTextures({ pbr });
+	//pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
 
 	// TODO: Get name from base image
 	int result = stbi_write_tga("./newPBR.tga", width, height, STBI_rgb_alpha, data.data());
+	Texture* pbr = ResourceManager::LoadTexture("newPBR.tga", Texture::Type::PBR);
+	material->AddTextures({ pbr });
 
-	int tW, tH, tC;
-	unsigned char* test = stbi_load("./newPBR.tga", &tW, &tH, &tC, STBI_rgb_alpha);
+	//int tW, tH, tC;
+	
+	//unsigned char* test = stbi_load("./newPBR.tga", &tW, &tH, &tC, STBI_rgb_alpha);
 
 	std::cout << "Wrote PBR image, with result of " << result << '\n';
 
@@ -100,7 +99,22 @@ void ArtScene::RefreshPBRComponents()
 	{
 		if (i.second->loaded) {
 			(*importTextures.at(i.first))->setWidthHeight(i.second->width, i.second->height);
-			(*importTextures.at(i.first))->Load(i.second->data);
+			
+			//(*importTextures.at(i.first))->path = i.second->path;
+
+			
+			std::vector<unsigned char> data(4 * (*importTextures.at(i.first))->width * (*importTextures.at(i.first))->height);
+			for (auto j = 0; j < i.second->width * i.second->height; j++)
+			{
+				data[j * 4 + 0] = i.second->data[j];
+				data[j * 4 + 1] = i.second->data[j];
+				data[j * 4 + 2] = i.second->data[j];
+				data[j * 4 + 3] = i.second->data[j];
+			}
+
+			(*importTextures.at(i.first))->Load(data.data());
+
+			//(*importTextures.at(i.first))->Load();
 		}
 		else {
 
@@ -115,7 +129,7 @@ void ArtScene::ResetCamera()
 	float distance = (model->max.y - model->min.y) / tanf(resetCamObjectViewSpace);
 	camera->transform.setPosition({ distance + model->max.x, (model->min.y + model->max.y) / 2, (model->min.z + model->max.z) / 2});
 	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
-	camera->movementSpeed = glm::length(model->max - model->min) / 3;
+	camera->editorSpeed.move = glm::length(model->max - model->min) / 3;
 	camera->artFocusDistance = distance + ((model->max.y - model->min.y) / 2);
 }
 
@@ -268,15 +282,8 @@ void ArtScene::Start()
 
 	// TODO: These should not be one channel, and instead create the image so that it is white ( not red)
 	metallicPreview = ResourceManager::LoadTexture(1024, 1024);
-	metallicPreview->format = GL_RED;
 	roughnessPreview = ResourceManager::LoadTexture(1024, 1024);
-	roughnessPreview->format = GL_RED;
 	aoPreview = ResourceManager::LoadTexture(1024, 1024);
-	aoPreview->format = GL_RED;
-
-	metallicImage.components = 1;
-	roughnessImage.components = 1;
-	aoImage.components = 1;
 
 	importTextures["metallic"] = &metallicPreview;
 	importTextures["roughness"] = &roughnessPreview;
@@ -285,6 +292,18 @@ void ArtScene::Start()
 	importImages["metallic"] = &metallicImage;
 	importImages["roughness"] = &roughnessImage;
 	importImages["ao"] = &aoImage;
+
+	for (auto& i: importTextures)
+	{
+		(*i.second)->format = GL_SRGB_ALPHA;
+	}
+
+	for (auto& i : importImages)
+	{
+		i.second->components = 1;
+		// TODO: Ensure the correct flip-ness
+		i.second->flipped = false;
+	}
 
 	camera->nearPlane = 1.0f;
 	camera->farPlane = 3000.0f;
@@ -314,7 +333,7 @@ void ArtScene::GUI()
 {
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 
-		if (ResourceManager::MaterialSelector("Editing Material", &material, shaders[super], true)) {
+		if (ResourceManager::MaterialSelector("Editing Material", &material, shaders[super], true, false)) {
 			// TODO: Refresh the preview materials
 		}
 
@@ -335,7 +354,8 @@ void ArtScene::GUI()
 			ImGui::BeginGroup();
 
 			ImGui::Text("PBR");
-			if ((pbr) != nullptr) {
+			Texture* pbr = (material->getFirstTextureOfType(Texture::Type::PBR));
+			if (pbr != nullptr) {
 				ImGui::Image((void*)pbr->GLID, { texturePreviewScale * (float)pbr->width, texturePreviewScale * (float)pbr->height });
 			}
 
@@ -347,6 +367,13 @@ void ArtScene::GUI()
 		if (ImGui::SliderFloat("Target Object View Space", &resetCamObjectViewSpace, 0.15f, PI/2.0f, "", ImGuiSliderFlags_Logarithmic)) {
 			ResetCamera();
 		}
+
+		if (ImGui::CollapsingHeader("SSAO")) {
+			ImGui::DragInt("Kernal Size", &renderSystem->kernelSize);
+			ImGui::DragFloat("Radius", &renderSystem->ssaoRadius);
+			ImGui::DragFloat("Bias", &renderSystem->ssaoBias);
+		}
+		
 	}
 	ImGui::End();
 }

@@ -1,5 +1,7 @@
 #include "FrameBuffer.h"
 
+#include "Texture.h"
+
 #include <iostream>
 
 FrameBuffer::FrameBuffer(unsigned int _width, unsigned int _height, Texture* _colourTexture, Texture* _depthTexture, bool _useRBO) :

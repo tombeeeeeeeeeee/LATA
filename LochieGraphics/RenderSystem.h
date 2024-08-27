@@ -1,19 +1,22 @@
 #pragma once
-#include "Light.h"
-#include "Transform.h"
-#include "ModelRenderer.h"
-#include "Animator.h"
-#include "Camera.h"
-#include "Mesh.h"
-#include "Skybox.h"
-#include "FrameBuffer.h"
-#include "ShaderEnum.h"
 
+#include "ShaderEnum.h"
 #include "LineRenderer.h"
 #include "Graphics.h"
 
 #include <iostream>
 #include <unordered_map>
+
+class Animator;
+class FrameBuffer;
+class Camera;
+class Light;
+class Mesh;
+class Material;
+class ModelRenderer;
+class Shader;
+class Transform;
+class Texture;
 
 struct bloomMip
 {
@@ -102,11 +105,6 @@ private:
     /// Pointer to current window
     /// </summary>
     GLFWwindow* window;
-
-    /// <summary>
-    /// entity id for camera.
-    /// </summary>
-    unsigned int cameraID;
 
     /// <summary>
     /// List of entities in order of the shader they use.
