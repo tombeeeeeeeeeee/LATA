@@ -47,7 +47,12 @@ void ModelRenderer::GUI()
 	{
 		// TODO: A better way to reference the general default shaders
 		if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], sceneObject->scene->shaders[super], true)) {
-			materialGUIDs[i] = materials[i]->GUID;
+			if (materials[i] != nullptr) {
+				materialGUIDs[i] = materials[i]->GUID;
+			}
+			else {
+				materialGUIDs[i] = 0;
+			}
 		}
 	}
 	ImGui::Unindent();
@@ -75,6 +80,12 @@ toml::table ModelRenderer::Serialise(unsigned long long GUID)
 void ModelRenderer::Refresh()
 {
 	model = ResourceManager::GetModel(modelGUID);
+	if (model == nullptr) {
+		materialGUIDs.resize(1);
+	}
+	else {
+
+	}
 	materialGUIDs.resize(model->materialIDs);
 	materials.resize(model->materialIDs);
 	for (size_t i = 0; i < materialGUIDs.size(); i++)

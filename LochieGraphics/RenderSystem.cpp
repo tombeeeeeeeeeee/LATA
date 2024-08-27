@@ -334,6 +334,8 @@ void RenderSystem::Update(
     {
         // TODO: This is only using the first material found on the model, each mesh could potentially have a different material?
         ModelRenderer currentRenderer = i->second;
+        if (currentRenderer.model == nullptr) { continue; }
+        if (currentRenderer.materials[0] == nullptr) { continue; }
         Texture* alphaMap = currentRenderer.materials[0]->getFirstTextureOfType(Texture::Type::diffuse);
         if (!alphaMap) {
             alphaMap = currentRenderer.materials[0]->getFirstTextureOfType(Texture::Type::albedo);

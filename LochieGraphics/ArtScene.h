@@ -45,8 +45,6 @@ private:
 	unsigned char missingMetallicValue = UCHAR_MAX;
 	unsigned char missingAoValue = UCHAR_MAX;
 
-	Texture* pbr = nullptr;
-
 	bool defaultFlip = true;
 
 

@@ -23,9 +23,9 @@ public:
 
     struct ArtEditorSpeed {
         float orbit = 0.01f;
-        float moveDolly = 1.0f;
-        float scrollDolly = 1.0f;
-        float boomTruck = 1.0f;
+        float boomTruck = 0.05f;
+        float moveDolly = 0.1f;
+        float scrollDolly = 0.1f;
     };
     EditorSpeed editorSpeed;
     ArtEditorSpeed artEditorSpeed;

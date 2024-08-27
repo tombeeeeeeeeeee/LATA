@@ -17,11 +17,8 @@ ArtScene* ArtScene::artScene = nullptr;
 
 void ArtScene::RefreshPBR()
 {
-	if (pbr != nullptr) {
-		pbr->DeleteTexture();
-	}
+	// TODO: Clean up old PBRs
 
-	
 	int width = 0;
 	int height = 0;
 
@@ -76,15 +73,16 @@ void ArtScene::RefreshPBR()
 		data[i * pbrC + 3] = UCHAR_MAX;
 	}
 
-	pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
-	pbr->type = Texture::Type::PBR;
-	material->AddTextures({ pbr });
+	//pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
 
 	// TODO: Get name from base image
 	int result = stbi_write_tga("./newPBR.tga", width, height, STBI_rgb_alpha, data.data());
+	Texture* pbr = ResourceManager::LoadTexture("newPBR.tga", Texture::Type::PBR);
+	material->AddTextures({ pbr });
 
-	int tW, tH, tC;
-	unsigned char* test = stbi_load("./newPBR.tga", &tW, &tH, &tC, STBI_rgb_alpha);
+	//int tW, tH, tC;
+	
+	//unsigned char* test = stbi_load("./newPBR.tga", &tW, &tH, &tC, STBI_rgb_alpha);
 
 	std::cout << "Wrote PBR image, with result of " << result << '\n';
 
@@ -355,7 +353,8 @@ void ArtScene::GUI()
 			ImGui::BeginGroup();
 
 			ImGui::Text("PBR");
-			if ((pbr) != nullptr) {
+			Texture* pbr = (material->getFirstTextureOfType(Texture::Type::PBR));
+			if (pbr != nullptr) {
 				ImGui::Image((void*)pbr->GLID, { texturePreviewScale * (float)pbr->width, texturePreviewScale * (float)pbr->height });
 			}
 

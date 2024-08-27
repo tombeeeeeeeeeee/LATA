@@ -65,18 +65,20 @@ void SceneObject::GUI()
 	//	scene->animators[GUID].GUI();
 	//}
 
-	//const char popup[] = "SceneObject Add Part";
+	const char popup[] = "SceneObject Add Part";
 
-	//if (ImGui::Button("Add Part")) {
-	//	ImGui::OpenPopup(popup);
-	//}
-	//if (ImGui::BeginPopup(popup)) {
-	//	if (ImGui::Button("Model Renderer##Add part")) {
-	//		setRenderer(new ModelRenderer());
-	//	}
-	//	
-	//	ImGui::EndPopup();
-	//}
+	if (ImGui::Button("Add Part")) {
+		ImGui::OpenPopup(popup);
+	}
+	if (ImGui::BeginPopup(popup)) {
+		if (renderer() == nullptr) {
+			if (ImGui::MenuItem("Model Renderer##Add part")) {
+				setRenderer(new ModelRenderer());
+			}
+		}
+		
+		ImGui::EndPopup();
+	}
 }
 
 toml::table SceneObject::Serialise()
