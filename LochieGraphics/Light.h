@@ -24,6 +24,7 @@ struct Light
     unsigned int shadowTexWidth = (unsigned int)pow(2, 12);
     unsigned int shadowTexHeight = (unsigned int)pow(2, 12);
 
+    // TODO: Ensure these get un loaded
     bool castShadows = false;
     FrameBuffer* shadowFrameBuffer = nullptr;
     Texture* depthMap = nullptr;

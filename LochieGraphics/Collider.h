@@ -2,6 +2,15 @@
 #include "Maths.h"
 #include <vector>
 
+enum class CollisionLayers
+{
+	base = 1 << 0,
+	wall = 1 << 1,
+	enemy = 1 << 2,
+	player = 1 << 3,
+	reflectiveSurface = 1 << 4,
+};
+
 enum class ColliderType
 {
 	empty,
@@ -14,6 +23,10 @@ struct Collider
 {
 	virtual const ColliderType getType() { return ColliderType::empty; };
 	bool isTrigger = false;
+	int collisionLayer = 0;
+
+	void setCollisionLayer(int layer);
+	CollisionLayers getCollisionLayer();
 };
 
 struct PolygonCollider : public Collider

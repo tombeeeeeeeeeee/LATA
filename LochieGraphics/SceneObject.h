@@ -9,6 +9,7 @@
 #include "Scene.h"
 #include "Ecco.h"
 #include "Sync.h"
+#include "Health.h"
 
 #include "Maths.h"
 
@@ -31,7 +32,9 @@ enum Parts
 	collider = 1 << 5,
 	ecco = 1 << 6,
 	sync = 1 << 7,
-	count = 1 << 8,
+	health = 1 << 8,
+	enemy = 1 << 9, 
+	count = 1 << 10,
 };
 
 class Scene;
@@ -87,6 +90,9 @@ public:
 	void setSync(Sync* sync);
 	void setSync();
 	Sync* sync();
+
+	void setHealth(Health* health);
+	Health* health();
 
 #pragma endregion
 

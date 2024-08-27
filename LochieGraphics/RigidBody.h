@@ -5,10 +5,6 @@
 #include <vector>
 #include <functional>
 
-enum CollisionLayers 
-{
-	base
-};
 
 class RigidBody
 {
@@ -19,13 +15,11 @@ public:
 		float _invMass,
 		float _invMomentOfInertia,
 		std::vector<Collider*> _colliders = {},
-		int _collisionLayer = 0,
 		bool _isStatic = false
 	) :
 		invMass(_invMass),
 		invMomentOfInertia(_invMomentOfInertia),
 		colliders(_colliders),
-		collisionLayer(_collisionLayer),
 		isStatic(_isStatic)
 	{}
 
@@ -42,16 +36,11 @@ public:
 	float elasticicty = 0;
 
 	std::vector<Collider*> colliders = {};
-	int collisionLayer = 0;
-
 
 	glm::vec2 AddImpulse(glm::vec2 impulse);
 	float AddRotationalImpulse(float impulse);
 
 	glm::vec2 AddDepen(glm::vec2 depen);
-
-	void setCollisionLayer(int layer);
-	CollisionLayers getCollisionLayer();
 
 	void addCollider(Collider* collider);
 	std::vector<Collider*>* getColliders();
