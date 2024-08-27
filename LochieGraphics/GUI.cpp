@@ -169,9 +169,9 @@ void GUI::HierarchyMenu()
 	}
 	for (auto i = scene->sceneObjects.begin(); i != scene->sceneObjects.end(); i++)
 	{
-		if ((*i)->transform()->getParent()) { continue; }
+		if ((*i).second.transform()->getParent()) { continue; }
 
-		TransformTree((*i));
+		TransformTree(&(*i).second);
 	}
 
 	ImGui::End();

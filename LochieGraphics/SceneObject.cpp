@@ -14,7 +14,7 @@ SceneObject::SceneObject(Scene* _scene, std::string _name) :
 {
 	GUID = ResourceManager::GetNewGuid();
 	scene->transforms[GUID] = Transform(this);
-	scene->sceneObjects.push_back(this);
+	scene->sceneObjects[GUID] = *this;
 }
 
 SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation, float _scale) :
@@ -22,7 +22,7 @@ SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation
 {
 	GUID = ResourceManager::GetNewGuid();
 	scene->transforms[GUID] = Transform(this, _position, _rotation, _scale);
-	scene->sceneObjects.push_back(this);
+	scene->sceneObjects[GUID] = *this;
 }
 
 

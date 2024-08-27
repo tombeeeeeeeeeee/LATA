@@ -9,7 +9,7 @@
 #include "Sync.h"
 #include "Health.h"
 #include "RigidBody.h"
-#inlcude "Enemy.h"
+#include "Enemy.h"
 #include "Animator.h"
 
 #include "Skybox.h"
@@ -34,8 +34,9 @@ public:
 	Skybox* skybox = nullptr;
 
 	// TODO: Pretty sure these no longer need to be stored on the heap
-	std::vector<SceneObject*> sceneObjects = {};
+	//std::vector<SceneObject*> sceneObjects = {};
 
+	std::unordered_map<unsigned long long, SceneObject> sceneObjects = {};
 	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};
 	std::unordered_map<unsigned long long, Transform> transforms = {};
 	std::unordered_map<unsigned long long, Animator> animators = {};
