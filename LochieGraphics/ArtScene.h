@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 
+#include "Texture.h"
 #include "Image.h"
 
 #include <unordered_map>

@@ -1,5 +1,9 @@
 #include "Ecco.h"
-#include "imgui.h"
+
+#include "Transform.h"
+#include "RigidBody.h"
+
+#include "EditorGUI.h"
 
 void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBody& rigidBody, float delta)
 {

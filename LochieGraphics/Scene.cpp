@@ -2,7 +2,7 @@
 
 #include "ResourceManager.h"
 
-#include "imgui.h"
+#include "EditorGUI.h"
 
 #include <fstream>
 #include <iostream>

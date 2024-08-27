@@ -1,7 +1,7 @@
 #include "TestScene.h"
 
 #include "stb_image.h"
-#include "SceneManager.h"
+
 #include <iostream>
 #include <array>
 

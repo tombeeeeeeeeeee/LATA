@@ -1,13 +1,10 @@
 #include "Material.h"
 
-#include "Shader.h"
 #include "ResourceManager.h"
 
 #include "Utilities.h"
 
-#include "Graphics.h"
-#include "imgui.h"
-#include "imgui_stdlib.h"
+#include "EditorGUI.h"
 
 #include <iostream>
 

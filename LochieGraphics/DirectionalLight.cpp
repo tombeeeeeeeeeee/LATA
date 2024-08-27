@@ -1,8 +1,10 @@
 #include "DirectionalLight.h"
 
+#include "Shader.h"
+
 #include "Utilities.h"
 
-#include "imgui.h"
+#include "EditorGUI.h"
 
 DirectionalLight::DirectionalLight(glm::vec3 _colour, glm::vec3 _direction) :
 	Light(_colour),

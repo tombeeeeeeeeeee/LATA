@@ -4,9 +4,7 @@
 
 #include "Utilities.h"
 
-#include "stb_image.h"
-#include "imgui.h"
-#include "imgui_stdlib.h"
+#include "EditorGUI.h"
 
 #include <iostream>
 

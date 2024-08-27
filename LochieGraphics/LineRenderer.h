@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Maths.h"
-#include <vector>
 #include "Graphics.h"
+
+#include <vector>
 #include <string>
 
 class LineRenderer

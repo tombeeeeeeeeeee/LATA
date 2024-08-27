@@ -1,6 +1,10 @@
 #pragma once
+
+#include "Maths.h"
+
 class RigidBody;
 struct Collider;
+class SceneObject;
 
 struct CollisionPacket
 {

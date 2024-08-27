@@ -6,9 +6,6 @@
 
 #include "Serialisation.h"
 
-#include <string>
-
-
 // TODO: Some shaders can be quite similar, see if there is or make a solution to not having to have to have a lot of shaders.
 // Shader system
 // Need some sort of #include system, theres a lot of functions that would be better off to be in a single file and copied over

@@ -1,5 +1,9 @@
 #include "Sync.h"
-#include "imgui.h"
+
+#include "Transform.h"
+#include "RigidBody.h"
+
+#include "EditorGUI.h"
 
 void Sync::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBody& rigidBody, float delta)
 {

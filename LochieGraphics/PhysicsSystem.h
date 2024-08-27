@@ -1,8 +1,9 @@
 #pragma once
 #include "RigidBody.h"
-#include "Transform.h"
 #include <unordered_map>
 #include "CollisionFunctions.h"
+
+class Transform;
 
 const int CollisionItterations = 10;
 

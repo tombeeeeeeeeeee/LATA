@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Texture.h"
+
 #include "Maths.h"
 
 #include "Serialisation.h"

@@ -4,8 +4,7 @@
 #include "Shader.h"
 #include "Material.h"
 #include "Model.h"
-
-#include <string>
+#include "Mesh.h"
 
 // TODO: Consider breaking this code up into seperate manager classes with a parent class manager for shared functionality
 

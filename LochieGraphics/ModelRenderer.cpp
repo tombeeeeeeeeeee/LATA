@@ -1,14 +1,12 @@
 #include "ModelRenderer.h"
 
-#include "Model.h"
-#include "Shader.h"
-#include "Material.h"
 #include "SceneObject.h"
+#include "Scene.h"
 #include "ResourceManager.h"
 
 #include "Utilities.h"
 
-#include "imgui.h"	
+#include "EditorGUI.h"
 
 ModelRenderer::ModelRenderer()
 {

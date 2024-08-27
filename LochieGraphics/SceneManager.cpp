@@ -1,13 +1,5 @@
 #include "SceneManager.h"
 
-
-// TODO: Maybe move these stb implementation defines to a more specific file
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
 #include "ResourceManager.h"
 
 #include "imgui.h"

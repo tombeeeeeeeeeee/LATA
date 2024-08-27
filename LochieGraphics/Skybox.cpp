@@ -1,5 +1,6 @@
 #include "Skybox.h"
 
+#include "Shader.h"
 #include "Camera.h"
 
 #include "ResourceManager.h"

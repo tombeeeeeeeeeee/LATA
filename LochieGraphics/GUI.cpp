@@ -2,7 +2,6 @@
 
 #include "SceneObject.h"
 #include "Scene.h"
-#include "ModelRenderer.h"
 #include "SceneManager.h"
 #include "Utilities.h"
 

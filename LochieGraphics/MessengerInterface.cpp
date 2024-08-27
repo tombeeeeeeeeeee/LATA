@@ -3,7 +3,7 @@
 #include "MessengerServer.h"
 #include "MessengerClient.h"
 
-#include "imgui.h"
+#include "EditorGUI.h"
 
 
 void MessengerInterface::Start()

@@ -3,9 +3,8 @@
 #include "SceneObject.h"
 #include "Utilities.h"
 
-#include "imgui.h"
+#include "EditorGUI.h"
 
-#include <string>
 #include <iostream>
 
 SceneObject* Transform::getSceneObject() const

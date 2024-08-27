@@ -1,5 +1,7 @@
 #include "Texture.h"
 
+// TODO: This is only included for the cubemap
+// Cubemap stuff should be seperated
 #include "Shader.h"
 
 #include "Graphics.h"

@@ -1,7 +1,8 @@
 #pragma once
 #include "Light.h"
 
-struct DirectionalLight : public Light {
+class DirectionalLight : public Light {
+public:
     glm::vec3 direction;
 
     float fakePosDistance = 10.f;

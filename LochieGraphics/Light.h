@@ -1,14 +1,16 @@
 #pragma once
 
-#include "Shader.h"
-
 #include "Maths.h"
+
+#include "Serialisation.h"
 
 class FrameBuffer;
 class Texture;
+class Shader;
 
-struct Light
+class Light
 {
+public:
     enum class Type {
         directional,
         spot,

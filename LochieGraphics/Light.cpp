@@ -5,7 +5,7 @@
 #include "ResourceManager.h"
 #include "FrameBuffer.h"
 
-#include "imgui.h"
+#include "EditorGUI.h"
 
 using Utilities::PointerToString;
 

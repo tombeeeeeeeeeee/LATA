@@ -1,7 +1,5 @@
 #include "EmptyScene.h"
 
-#include "ResourceManager.h"
-
 EmptyScene::EmptyScene()
 {
 }

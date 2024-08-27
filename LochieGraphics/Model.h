@@ -1,13 +1,11 @@
 #pragma once
-#include "Mesh.h"
 #include "BoneInfo.h"
-#include "Shader.h"
 #include "ModelHierarchyInfo.h"
 
 #include <unordered_map>
 
 class SceneObject;
-
+class Mesh;
 class Model
 {
 	friend class ResourceManager;

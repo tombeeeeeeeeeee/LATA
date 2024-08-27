@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imgui.h"
+#include "EditorGUI.h"
 
 #include <string>
 

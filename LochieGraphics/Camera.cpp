@@ -2,7 +2,7 @@
 
 #include "Maths.h"
 
-#include "imgui.h"
+#include "EditorGUI.h"
 
 Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch, float _movementSpeed, float _sensitivity, float _fov) :
     transform(nullptr, _position),

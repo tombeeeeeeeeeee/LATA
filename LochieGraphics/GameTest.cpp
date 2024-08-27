@@ -1,8 +1,12 @@
 #include "GameTest.h"
-#include "Utilities.h"
+
+#include "Skybox.h"
 #include "ResourceManager.h"
-#include <array>
+
 #include "Image.h"
+#include "Utilities.h"
+
+#include <array>
 
 bool GameTest::MapCellIs(unsigned char* cell, unsigned char r, unsigned char g, unsigned char b)
 {

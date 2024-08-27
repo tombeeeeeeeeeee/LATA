@@ -1,8 +1,6 @@
 #pragma once
 #include "Part.h"
 
-#include "Maths.h"
-
 #include "Serialisation.h"
 
 #include <vector>

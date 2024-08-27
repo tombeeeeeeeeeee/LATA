@@ -1,7 +1,7 @@
 #include "Model.h"
 
 #include "Animation.h"
-
+#include "Mesh.h"
 #include "ResourceManager.h"
 
 #include "Utilities.h"
@@ -10,9 +10,7 @@
 #include <assimp/Importer.hpp>
 #include "assimp/postprocess.h"
 
-#include "imgui.h"
-#include "imgui_stdlib.h"
-
+#include "EditorGUI.h"
 
 Model::Model()
 {

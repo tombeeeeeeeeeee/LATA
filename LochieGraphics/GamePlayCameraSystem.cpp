@@ -1,5 +1,6 @@
 #include "GamePlayCameraSystem.h"
-#include "imgui.h"
+
+#include "EditorGUI.h"
 
 void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Transform& syncTransform, float zoomScale)
 {

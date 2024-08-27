@@ -1,5 +1,6 @@
 #include "Input.h"
 
+// TODO: Remove this include, it is only currently here because of the window reference
 #include "SceneManager.h"
 
 #include "Utilities.h"

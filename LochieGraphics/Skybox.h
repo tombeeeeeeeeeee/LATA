@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Model.h"
-#include "Shader.h"
+#include "Graphics.h"
+#include "Maths.h"
 
+class Shader;
 class Camera;
 
 // TODO: There are other ways to do a skybox, see: https://webglfundamentals.org/webgl/lessons/webgl-skybox.html for an example

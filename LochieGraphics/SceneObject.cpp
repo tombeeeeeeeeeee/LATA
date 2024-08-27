@@ -1,12 +1,12 @@
 #include "SceneObject.h"
 
 #include "ResourceManager.h"
+#include "Animator.h"
+#include "Collider.h"
 
-#include "Shader.h"
-#include "Model.h"
+#include "EditorGUI.h"
 
-#include "imgui.h"
-#include "imgui_stdlib.h"
+#include "Scene.h"
 
 SceneObject::SceneObject(Scene* _scene, std::string _name) :
 	scene(_scene),

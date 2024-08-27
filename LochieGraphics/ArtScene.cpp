@@ -2,10 +2,11 @@
 
 #include "ResourceManager.h"
 #include "SceneManager.h"
+#include "Skybox.h"
 
 #include "Utilities.h"
 
-#include "imgui_stdlib.h"
+#include "EditorGUI.h"
 
 #include "stb_image.h"
 #include "stb_image_write.h"

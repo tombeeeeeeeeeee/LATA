@@ -1,15 +1,11 @@
 #include "Mesh.h"
 
+#include "BoneInfo.h"
 #include "ResourceManager.h"
-#include "Model.h"
 
 #include "AssimpMatrixToGLM.h"
 
-#include "Graphics.h"
-
-#include <vector>
 #include <iostream>
-#include <unordered_map>
 
 //TODO: Look into more assimp load flags
 int Mesh::aiLoadFlag = aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate;
