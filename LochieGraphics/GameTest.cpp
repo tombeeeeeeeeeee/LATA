@@ -111,6 +111,9 @@ void GameTest::Start()
 			}
 		}
 	}
+	enemySystem.Start();
+	enemySystem.InitialiseMelee(sceneObjects, 10);
+	enemySystem.InitialiseRanged(sceneObjects, 10);
 }
 
 void GameTest::Update(float delta)

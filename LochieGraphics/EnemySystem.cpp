@@ -5,6 +5,25 @@
 #include "SceneObject.h"
 #include "Health.h"
 #include "SceneManager.h"
+#include "ResourceManager.h"
+
+EnemySystem::EnemySystem()
+{
+
+}
+
+void EnemySystem::Start()
+{
+    meleeEnemyRenderer = new ModelRenderer(
+        ResourceManager::LoadModel(meleeEnemyModel),
+        ResourceManager::LoadMaterial(meleeEnemyMaterial, SceneManager::scene->shaders[super])
+    );
+
+    rangedEnemyRenderer = new ModelRenderer(
+        ResourceManager::LoadModel(rangedEnemyModel),
+        ResourceManager::LoadMaterial(rangedEnemyMaterial, SceneManager::scene->shaders[super])
+    );
+}
 
 unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long, SceneObject>& sceneObjects, glm::vec3 pos)
 {
@@ -13,7 +32,7 @@ unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long
     //If there is no enemies left in the pool make a new enemy
     if (meleeEnemyPoolCount <= 0)
     {
-        GUID = InitialiseMelee(1)[0];
+        GUID = InitialiseMelee(sceneObjects, 1)[0];
     }
     else
     {
@@ -38,7 +57,7 @@ unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long lon
 
     if (rangedEnemyPoolCount <= 0)
     {
-        GUID = InitialiseRanged(1)[0];
+        GUID = InitialiseRanged(sceneObjects, 1)[0];
     }
     else
     {
@@ -116,14 +135,16 @@ std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<
 
     for (int i = 0; i < count; i++)
     {
-        SceneObject enemy = SceneObject(scene, "MeleeEnemy" + i );
-        enemy.setHealth(new Health());
-        enemy.health()->setMaxHealth(meleeEnemyHealth);
-        enemy.setRigidBody(new RigidBody());
-        enemy.rigidbody()->invMass = 1.0f;
-        //TODO: Add meshRender
-        scene->sceneObjects[enemy.GUID] = enemy;
-        enemiesSpawned.push_back(enemy.GUID);
+        SceneObject* enemy = new SceneObject(scene, "MeleeEnemy" + std::to_string(meleeEnemyPoolCount));
+        enemy->setHealth(new Health());
+        enemy->health()->setMaxHealth(meleeEnemyHealth);
+        enemy->setRigidBody(new RigidBody());
+        enemy->rigidbody()->invMass = 1.0f;
+        enemy->setRenderer(
+            meleeEnemyRenderer
+        );
+        enemiesSpawned.push_back(enemy->GUID);
+        meleeEnemyPoolCount++;
     }
     meleeInactivePool.insert(meleeInactivePool.end(), enemiesSpawned.begin(), enemiesSpawned.end());
 
@@ -138,14 +159,16 @@ std::vector<unsigned long long> EnemySystem::InitialiseRanged(std::unordered_map
 
     for (int i = 0; i < count; i++)
     {
-        SceneObject enemy = SceneObject(scene, "MeleeEnemy" + i);
-        enemy.setHealth(new Health());
-        enemy.health()->setMaxHealth(rangedEnemyHealth);
-        enemy.setRigidBody(new RigidBody());
-        enemy.rigidbody()->invMass = 1.0f;
-        //TODO: Add meshRender
-        scene->sceneObjects[enemy.GUID] = enemy;
-        enemiesSpawned.push_back(enemy.GUID);
+        SceneObject* enemy = new SceneObject(scene, "RangedEnemy" + std::to_string(rangedEnemyPoolCount));
+        enemy->setHealth(new Health());
+        enemy->health()->setMaxHealth(rangedEnemyHealth);
+        enemy->setRigidBody(new RigidBody());
+        enemy->rigidbody()->invMass = 1.0f;
+        enemy->setRenderer(
+            rangedEnemyRenderer
+        );
+        enemiesSpawned.push_back(enemy->GUID);
+        rangedEnemyPoolCount++;
     }
     rangedInactivePool.insert(rangedInactivePool.end(), enemiesSpawned.begin(), enemiesSpawned.end());
 

@@ -2,7 +2,7 @@
 #include "Scene.h"
 
 #include "PhysicsSystem.h"
-
+#include "EnemySystem.h"
 #include "GamePlayCameraSystem.h"
 
 #include "Input.h"
@@ -19,12 +19,13 @@ private:
 
 	PhysicsSystem physicsSystem;
 	GameplayCameraSystem gameCamSystem;
+	EnemySystem enemySystem;
 
 	SceneObject* h = new SceneObject(this);
 	SceneObject* r = new SceneObject(this);
 
-	RigidBody* hRb;
-	RigidBody* rRb;
+	RigidBody* hRb = nullptr;
+	RigidBody* rRb = nullptr;
 
 	float hRadius = 0.1f;
 	float rRadius = 0.1f;

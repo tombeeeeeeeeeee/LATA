@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-class Collider;
+struct Collider;
 class Scene;
 class Shader;
 class Transform;
@@ -43,7 +43,7 @@ public:
 	std::string name = "Unnamed Scene Object";
 	unsigned long long GUID = 0;
 	unsigned int parts = 0;
-	Scene* scene;
+	Scene* scene = nullptr;
 	SceneObject() {};
 	SceneObject(Scene* _scene, std::string name = "Unnamed Scene Object");
 	SceneObject(Scene* scene, glm::vec3 _position, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.0f);

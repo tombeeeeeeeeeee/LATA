@@ -9,6 +9,7 @@ struct Enemy;
 class Transform;
 class RigidBody;
 class SceneObject;
+class ModelRenderer;
 
 //Might need these later.
 //class Ecco;
@@ -26,19 +27,25 @@ private:
 	std::vector<unsigned long long> rangedActivePool;
 
 public:
-	int meleeEnemyHealth = 0.0f;
-	int meleeEnemyMoveSpeed = 0.0f;
-	int meleeEnemyDamage = 0.0f;
-	Collider meleeEnemyCollider;
-	std::string meleeEnemyModel;
-	std::string meleeEnemyMaterial;
 
-	int rangedEnemyHealth = 0.0f;
-	int rangedEnemyMoveSpeed = 0.0f;
-	int rangedEnemyDamage = 0.0f;
+	EnemySystem();
+	void Start();
+
+	int meleeEnemyHealth = 0;
+	int meleeEnemyMoveSpeed = 0;
+	int meleeEnemyDamage = 0;
+	Collider meleeEnemyCollider;
+	ModelRenderer* meleeEnemyRenderer;
+	std::string meleeEnemyModel = "models/Sphere.fbx";
+	std::string meleeEnemyMaterial = "images/otherskyboxes/nx.png";
+
+	int rangedEnemyHealth = 0;
+	int rangedEnemyMoveSpeed = 0;
+	int rangedEnemyDamage = 0;
 	Collider rangedEnemyCollider;
-	std::string rangedEnemyModel;
-	std::string rangedEnemyMaterial;
+	ModelRenderer* rangedEnemyRenderer;
+	std::string rangedEnemyModel = "models/Sphere.fbx";
+	std::string rangedEnemyMaterial = "images/otherskyboxes/nx.png";
 
 	glm::vec3 offscreenSpawnPosition = {-100.0f,-300.0f,-100.0f};
 

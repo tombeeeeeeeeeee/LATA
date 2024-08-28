@@ -96,7 +96,7 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 	if (glm::length(rigidBody.vel) > 0.00001f)
 	{
 		float sidewaysForceCoef = glm::dot({ wheelDirection.y, -wheelDirection.x }, rigidBody.vel);
-		force += -glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * glm::normalize(rigidBody.vel);
+		force += -glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * glm::normalize(force);
 	}
 
 	//Stop Speed exceeding speed limit (Could change to be drag)
@@ -107,8 +107,17 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 
 	//Update rigidBody
 	rigidBody.netForce += force;
-	rigidBody.angularVel += -turningCircleScalar * glm::length(rigidBody.vel) * glm::dot({ right.x, right.z }, wheelDirection) * glm::sign(glm::dot(rigidBody.vel, {forward.x, forward.z}));
-	rigidBody.angularVel *= 0.85f;
+	if (glm::length(rigidBody.vel) > 0.09f)
+	{
+		rigidBody.angularVel =
+			-turningCircleScalar * glm::length(rigidBody.vel) * delta * glm::sign(glm::dot(rigidBody.vel, { forward.x, forward.z })) * glm::dot({ right.x, right.z }, wheelDirection) * glm::sign(glm::dot(wheelDirection, { forward.x, forward.z }));
+
+	}
+	else
+	{
+		rigidBody.angularVel = 0.0f;
+	}
+		//-turningCircleScalar * glm::length(rigidBody.vel) * glm::dot({ right.x, right.z }, wheelDirection)) * glm::dot(rigidBody.vel, {forward.x, forward.z});
 
 	//TODO add skidding.
 }
