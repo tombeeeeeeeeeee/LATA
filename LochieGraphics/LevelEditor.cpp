@@ -35,21 +35,16 @@ void LevelEditor::Update(float delta)
 	LineRenderer& lines = renderSystem->lines;
 	lines.DrawLineSegment({ 0, 0, 0 }, { 1, 1, 1 }, { 1.0f, 0.5f, 0.2f });
 	lines.DrawLineSegment(testPos1, testPos2, {1.0f, 1.0f, 1.0f});
-
-	for (int x = gridMinX - 1; x < gridMaxX + 1; x++)
-	{
-		for (int z = gridMinZ - 1; z < gridMaxZ + 1; z++)
-		{
-			lines.SetColour({ 1, 1, 1 });
-			lines.AddPointToLine({ gridSize * x - gridSize / 2.0f, 0.0f, gridSize * z - gridSize / 2.0f });
-			lines.AddPointToLine({ gridSize * x - gridSize / 2.0f, 0.0f, gridSize * z + gridSize / 2.0f });
-			lines.AddPointToLine({ gridSize * x + gridSize / 2.0f, 0.0f, gridSize * z + gridSize / 2.0f });
-			lines.AddPointToLine({ gridSize * x + gridSize / 2.0f, 0.0f, gridSize * z - gridSize / 2.0f });
-			lines.FinishLineLoop();
-		}
-	}
+	
+	lines.SetColour({ 1, 1, 1 });
+	lines.AddPointToLine({ gridSize * gridMinX - 1 - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - 1 - gridSize / 2.0f });
+	lines.AddPointToLine({ gridSize * gridMinX - 1 - gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + 1 + gridSize / 2.0f });
+	lines.AddPointToLine({ gridSize * gridMaxX + 1 + gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + 1 + gridSize / 2.0f });
+	lines.AddPointToLine({ gridSize * gridMaxX + 1 + gridSize / 2.0f, 0.0f, gridSize * gridMinZ - 1 - gridSize / 2.0f});
+	lines.FinishLineLoop();
 
 	// TODO: Skip if imgui wants mouse input
+	if (ImGui::GetIO().WantCaptureMouse) { return; }
 	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
 		std::cout << cursorPos->x << ", " << cursorPos->y << '\n';
 
@@ -58,9 +53,32 @@ void LevelEditor::Update(float delta)
 
 		glm::vec2 adjustedCursor = *cursorPos - glm::vec2{ 0.5f, 0.5f };
 		glm::vec3 temp = (camPoint + glm::vec3(adjustedCursor.x * camera->getOrthoWidth(), 0.0f, adjustedCursor.y * camera->getOrthoHeight())) / gridSize;
-		lines.DrawCircle(glm::vec3{ roundf(temp.z) , 0.0f, roundf(temp.x)} * gridSize, gridSize / 2, {0, 0, 1}, 12);
 		
+		glm::vec2 targetCell = { roundf(temp.z), roundf(temp.x) };
+		
+		lines.DrawCircle(glm::vec3{ targetCell.x , 0.0f, targetCell.y } * gridSize, gridSize / 2, {0, 0, 1}, 12);
+		
+		auto tiles = groundTileParent->transform()->getChildren();
+		bool alreadyPlaced = false;
+		for (auto i : tiles)
+		{
+			glm::vec3 pos = i->getGlobalPosition();
+			glm::vec2 tileCell = glm::vec2{pos.z, pos.x} / gridSize;
+			if (roundf(tileCell.x) == targetCell.x && roundf(tileCell.y) == targetCell.y) {
+				alreadyPlaced = true;
+			}
+		}
+		if (!alreadyPlaced) {
+			auto newTile = new SceneObject(this, "tile " + std::to_string(tiles.size()));
+			newTile->transform()->setPosition({ targetCell.y, 0.0f, targetCell.x });
+			newTile->transform()->setParent(groundTileParent->transform());
+			// other setup here
+			gridMinX = fminf(targetCell.x, gridMinX);
+			gridMinZ = fminf(targetCell.y, gridMinZ);
+			gridMaxX = fmaxf(targetCell.x, gridMaxX);
+			gridMaxZ = fmaxf(targetCell.y, gridMaxZ);
 
+		}
 	}
 }
 
