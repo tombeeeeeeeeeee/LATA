@@ -36,7 +36,6 @@ glm::mat4 Camera::GetViewMatrix() const
 
 void Camera::ProcessKeyboard(Direction direction, float deltaTime)
 {
-
     if (state == editorMode) {
         float velocity = editorSpeed.move * deltaTime;
         switch (direction)
@@ -47,6 +46,16 @@ void Camera::ProcessKeyboard(Direction direction, float deltaTime)
         case Camera::RIGHT:    transform.setPosition(transform.getPosition() + transform.right() * velocity);           break;
         case Camera::UP:       transform.setPosition(transform.getPosition() + glm::vec3(0.0f, 1.0f, 0.0f) * velocity); break;
         case Camera::DOWN:     transform.setPosition(transform.getPosition() - glm::vec3(0.0f, 1.0f, 0.0f) * velocity); break;
+        }
+    }
+    else if (state == tilePlacing) {
+        float velocity = editorSpeed.move * deltaTime;
+        switch (direction)
+        {
+        case Camera::FORWARD:  transform.setPosition(transform.getPosition() + transform.up() * velocity);    break;
+        case Camera::BACKWARD: transform.setPosition(transform.getPosition() - transform.up() * velocity);    break;
+        case Camera::LEFT:     transform.setPosition(transform.getPosition() - transform.right() * velocity); break;
+        case Camera::RIGHT:    transform.setPosition(transform.getPosition() + transform.right() * velocity); break;
         }
     }
 }
@@ -91,6 +100,12 @@ void Camera::ProcessMouseScroll(float yoffset)
         artFocusDistance -= moveAmount;
         transform.setPosition(transform.getPosition() + transform.forward() * moveAmount);
     }
+    else if (InOrthoMode()) {
+        orthoScale -= yoffset * orthScrollSpeed;
+        if (orthoScale < 0.1f) {
+            orthoScale = 0.1f;
+        }
+    }
 }
 
 void Camera::GUI()
@@ -108,6 +123,7 @@ void Camera::GUI()
     }
     if (InOrthoMode()) {
         ImGui::DragFloat("Orthographic Scale##Camera", &orthoScale, 0.01f, 0.01f, FLT_MAX);
+        ImGui::DragFloat("Orthographic Zoom Speed##Camera", &orthScrollSpeed, 0.1f, 0.0f, FLT_MAX);
     }
 
     if (ImGui::CollapsingHeader("Editor Move Speeds##Camera")) {
@@ -129,7 +145,10 @@ void Camera::GUI()
 
 bool Camera::InOrthoMode() const
 {
-    return state == State::targetingPlayers || state == State::targetingPosition || (state == State::editorMode && editorOrth);
+    return state == State::targetingPlayers || 
+        state == State::targetingPosition || 
+        (state == State::editorMode && editorOrth) ||
+        state == State::tilePlacing;
 }
 
 void Camera::Rotate(float x, float y)

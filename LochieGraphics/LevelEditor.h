@@ -4,6 +4,27 @@ class LevelEditor : public Scene
 {
 private:
 
+	enum class BrushState {
+		none,
+		brush
+	};
+	BrushState state;
+
+	SceneObject* groundTileParent = new SceneObject(this, "Ground Tiles");
+
+	Model* ground;
+
+	glm::vec3 testPos1;
+	glm::vec3 testPos2;
+
+	float gridSize = 1.0f;
+
+	int gridMinX = 1;
+	int gridMaxX = 1;
+	int gridMinZ = 1;
+	int gridMaxZ = 1;
+
+
 public:
 
 	PointLight pointLights[4] = {
@@ -17,16 +38,6 @@ public:
 
 	Spotlight spotlight =
 		Spotlight({ 1.0f, 1.0f, 1.0f }, { 0.0f,  0.0f,  0.0f }, 0.5f, 0.09f, 0.032f, { 0.0f, 0.0f, 0.0f }, glm::cos(glm::radians(10.f)), glm::cos(glm::radians(15.f)));
-
-	enum class BrushState {
-		none,
-		brush
-	};
-	BrushState state;
-
-	SceneObject* groundTileParent = new SceneObject(this, "Ground Tiles");
-
-	Model* ground;
 
 	LevelEditor();
 	void Start() override;
