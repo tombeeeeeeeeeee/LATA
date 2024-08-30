@@ -606,6 +606,7 @@ void RenderSystem::DrawRenderers(
             }
             // Only bind textures if using a different material
             if (materialID != prevMaterialID) {
+                if (i->second.materials[materialID] == nullptr) { continue; }
                 i->second.materials[materialID]->Use(_shader ? _shader : nullptr);
             }
             // Only need to set shader variables if using a different shader

@@ -73,11 +73,10 @@ void LevelEditor::Update(float delta)
 			newTile->transform()->setPosition({ targetCell.y, 0.0f, targetCell.x });
 			newTile->transform()->setParent(groundTileParent->transform());
 			// other setup here
-			gridMinX = fminf(targetCell.x, gridMinX);
-			gridMinZ = fminf(targetCell.y, gridMinZ);
-			gridMaxX = fmaxf(targetCell.x, gridMaxX);
-			gridMaxZ = fmaxf(targetCell.y, gridMaxZ);
-
+			gridMinX = (int)fminf(targetCell.x, (float)gridMinX);
+			gridMinZ = (int)fminf(targetCell.y, (float)gridMinZ);
+			gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
+			gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
 		}
 	}
 }

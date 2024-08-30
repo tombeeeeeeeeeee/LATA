@@ -10,6 +10,7 @@
 
 ModelRenderer::ModelRenderer()
 {
+	Refresh();
 }
 
 ModelRenderer::ModelRenderer(Model* _model, unsigned long long _materialGUID) :
@@ -19,8 +20,7 @@ ModelRenderer::ModelRenderer(Model* _model, unsigned long long _materialGUID) :
 	materialGUIDs.push_back(_materialGUID);
 	materials.push_back(ResourceManager::GetMaterial(_materialGUID));
 
-	materialGUIDs.resize(_model->materialIDs);
-	materials.resize(_model->materialIDs);
+	Refresh();
 }
 
 ModelRenderer::ModelRenderer(Model* _model, Material* _material) :
@@ -30,15 +30,15 @@ ModelRenderer::ModelRenderer(Model* _model, Material* _material) :
 	materialGUIDs.push_back(_material->GUID);
 	materials.push_back(_material);
 
-	materialGUIDs.resize(_model->materialIDs);
-	materials.resize(_model->materialIDs);
+	Refresh();
 }
 
 void ModelRenderer::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	ImGui::BeginDisabled();
-	ImGui::DragInt(("Materials##" + tag).c_str(), &model->materialIDs);
+	int mats = materialGUIDs.size();
+	ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
 	ImGui::EndDisabled();
 	ImGui::Indent();
 	for (size_t i = 0; i < materialGUIDs.size(); i++)
@@ -80,12 +80,12 @@ void ModelRenderer::Refresh()
 	model = ResourceManager::GetModel(modelGUID);
 	if (model == nullptr) {
 		materialGUIDs.resize(1);
+		materials.resize(1);
 	}
 	else {
-
+		materialGUIDs.resize(model->materialIDs);
+		materials.resize(model->materialIDs);
 	}
-	materialGUIDs.resize(model->materialIDs);
-	materials.resize(model->materialIDs);
 	for (size_t i = 0; i < materialGUIDs.size(); i++)
 	{
 		materials[i] = ResourceManager::GetMaterial(materialGUIDs[i]);

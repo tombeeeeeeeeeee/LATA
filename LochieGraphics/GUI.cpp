@@ -174,6 +174,13 @@ void GUI::HierarchyMenu()
 		TransformTree((*i));
 	}
 
+	ImGui::Unindent();
+	ImGui::TreeNodeEx(("NEW SCENEOBJECT##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
+	if (ImGui::IsItemClicked()) {
+		sceneObjectSelected = new SceneObject(scene);
+	}
+	ImGui::Indent();
+
 	ImGui::End();
 }
 
