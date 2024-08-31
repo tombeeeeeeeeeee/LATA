@@ -221,17 +221,8 @@
     <ClCompile Include="GameTest.cpp">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelHierarchyInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GamePlayCameraSystem.cpp">
       <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Serialisation.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Spotlight.cpp">
       <Filter>Source Files\Parts</Filter>
@@ -252,13 +243,19 @@
       <Filter>Source Files\Parts</Filter>
     </ClCompile>
     <ClCompile Include="Collider.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="EnemySystem.cpp">
-      <Filter>Source Files\Systems</Filter>
+    <ClCompile Include="Image.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files\Parts</Filter>
+    <ClCompile Include="Serialisation.cpp">
+      <Filter>Source Files\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelHierarchyInfo.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEditor.cpp">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -460,14 +457,8 @@
     <ClInclude Include="stb_image_write.h">
       <Filter>Source Files\Third-Party\stb</Filter>
     </ClInclude>
-    <ClInclude Include="Image.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="GamePlayCameraSystem.h">
       <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Serialisation.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Spotlight.h">
       <Filter>Source Files\Parts</Filter>
@@ -496,11 +487,17 @@
     <ClInclude Include="Health.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="EnemySystem.h">
-      <Filter>Source Files\Systems</Filter>
+    <ClInclude Include="Image.h">
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Source Files\Parts</Filter>
+    <ClInclude Include="Serialisation.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelEditor.h">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorGUI.h">
+      <Filter>Source Files\Third-Party</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

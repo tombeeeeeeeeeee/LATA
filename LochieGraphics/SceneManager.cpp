@@ -279,7 +279,7 @@ void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int he
 void SceneManager::MouseMoveCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
 	if (lockedCamera) { 
-		cursorPos = { xposIn / windowWidth, yposIn / windowHeight };
+		cursorPos = { xposIn / windowWidth, 1 - yposIn / windowHeight };
 	}
 	else {
 		glfwSetCursorPos(window, 0, 0);

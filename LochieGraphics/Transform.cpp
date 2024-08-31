@@ -112,8 +112,7 @@ glm::quat Transform::getRotation() const
 
 glm::vec3 Transform::getEulerRotation() const
 {
-	glm::vec3 eulerAngles = glm::eulerAngles(quaternion);
-	return eulerAngles * 180.0f / glm::pi<float>();
+	return euler;
 }
 
 glm::mat4 Transform::getLocalMatrix() const
@@ -131,6 +130,7 @@ glm::mat4 Transform::getLocalMatrix() const
 void Transform::setRotation(glm::quat _quat)
 {
 	quaternion = _quat;
+	euler = glm::degrees(glm::eulerAngles(quaternion));
 	UpdateGlobalMatrixCascading();
 }
 
@@ -142,6 +142,7 @@ glm::mat4 Transform::getGlobalMatrix() const
 
 void Transform::setEulerRotation(glm::vec3 _euler)
 {
+	euler = _euler;
 	quaternion = glm::quat(glm::radians(_euler));
 	UpdateGlobalMatrixCascading();
 }

@@ -29,6 +29,7 @@ public:
     };
     EditorSpeed editorSpeed;
     ArtEditorSpeed artEditorSpeed;
+    float orthScrollSpeed = 2;
 
     float fov;
 
@@ -40,6 +41,7 @@ public:
         targetingPosition,
         targetingPlayers,
         artEditorMode,
+        tilePlacing
     };
 
     State state = editorMode;

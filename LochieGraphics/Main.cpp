@@ -6,6 +6,7 @@
 #include "ArtScene.h"
 #include "InputTest.h"
 #include "GameTest.h"
+#include "LevelEditor.h"
 
 int main()
 {

@@ -51,6 +51,7 @@ public:
 	void DrawCircle(glm::vec3 centre, float size);
 	void DrawCircle(glm::vec3 centre, float size, int segmentCount);
 	void DrawCircle(glm::vec3 centre, float size, Colour colour);
+	void DrawCircle(glm::vec3 centre, float size, Colour colour, int segmentCount);
 
 	void FinishLineStrip();
 	void FinishLineLoop();
@@ -67,5 +68,4 @@ public:
 private:
 	int GetCircleSegmentCount(float radius) const;
 
-	void DrawCircle(glm::vec3 centre, float size, Colour colour, int segmentCount);
 };

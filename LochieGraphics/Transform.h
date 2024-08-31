@@ -12,6 +12,7 @@ private:
 	Transform* parent = nullptr;
 	std::vector<Transform*> children = {};
 	glm::quat quaternion = glm::identity<glm::quat>();
+	glm::vec3 euler = glm::zero<glm::vec3>();
 	glm::vec3 position = glm::zero<glm::vec3>();
 	glm::vec3 scale = {1,1,1};
 	glm::mat4 globalMatrix = glm::identity<glm::mat4>();
