@@ -24,10 +24,14 @@ void LevelEditor::Start()
 	gui.showSceneObject = true;
 	gui.showCameraMenu = true;
 
-	ground = ResourceManager::LoadModel();
-	Mesh* groundMesh = ResourceManager::LoadMesh(Mesh::presets::quad);
-	ground->AddMesh(groundMesh);
-	camera->transform.setPosition({ 5, 5, 5 });
+	camera->transform.setPosition({ 0, 50, 0 });
+	camera->orthoScale = 300;
+	
+	camera->editorSpeed.move = 300;
+	camera->farPlane = 100000;
+	camera->nearPlane = 10;
+
+	ground = ResourceManager::LoadModel("models/SM_WallAndFloor_RevisedScale.fbx");
 }
 
 void LevelEditor::Update(float delta)
@@ -37,24 +41,22 @@ void LevelEditor::Update(float delta)
 	lines.DrawLineSegment(testPos1, testPos2, {1.0f, 1.0f, 1.0f});
 	
 	lines.SetColour({ 1, 1, 1 });
-	lines.AddPointToLine({ gridSize * gridMinX - 1 - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - 1 - gridSize / 2.0f });
-	lines.AddPointToLine({ gridSize * gridMinX - 1 - gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + 1 + gridSize / 2.0f });
-	lines.AddPointToLine({ gridSize * gridMaxX + 1 + gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + 1 + gridSize / 2.0f });
-	lines.AddPointToLine({ gridSize * gridMaxX + 1 + gridSize / 2.0f, 0.0f, gridSize * gridMinZ - 1 - gridSize / 2.0f});
+	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
+	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + gridSize + gridSize / 2.0f });
+	lines.AddPointToLine({ gridSize * gridMaxX + gridSize + gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + gridSize + gridSize / 2.0f });
+	lines.AddPointToLine({ gridSize * gridMaxX + gridSize + gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f});
 	lines.FinishLineLoop();
 
 	// TODO: Skip if imgui wants mouse input
 	if (ImGui::GetIO().WantCaptureMouse) { return; }
 	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-		std::cout << cursorPos->x << ", " << cursorPos->y << '\n';
 
 		glm::vec3 camPoint = camera->transform.getGlobalPosition();
 		camPoint = glm::vec3(camPoint.z, camPoint.y, camPoint.x);
 
 		glm::vec2 adjustedCursor = *cursorPos - glm::vec2{ 0.5f, 0.5f };
 		glm::vec3 temp = (camPoint + glm::vec3(adjustedCursor.x * camera->getOrthoWidth(), 0.0f, adjustedCursor.y * camera->getOrthoHeight())) / gridSize;
-		
-		glm::vec2 targetCell = { roundf(temp.z), roundf(temp.x) };
+		glm::vec2 targetCell = glm::vec2{ roundf(temp.z), roundf(temp.x) };
 		
 		lines.DrawCircle(glm::vec3{ targetCell.x , 0.0f, targetCell.y } * gridSize, gridSize / 2, {0, 0, 1}, 12);
 		
@@ -63,14 +65,16 @@ void LevelEditor::Update(float delta)
 		for (auto i : tiles)
 		{
 			glm::vec3 pos = i->getGlobalPosition();
-			glm::vec2 tileCell = glm::vec2{pos.z, pos.x} / gridSize;
-			if (roundf(tileCell.x) == targetCell.x && roundf(tileCell.y) == targetCell.y) {
+			glm::vec2 tileCell = glm::vec2{pos.x, pos.z} / gridSize;
+			tileCell = { roundf(tileCell.x), roundf(tileCell.y) };
+			if (tileCell.x == targetCell.x && tileCell.y == targetCell.y) {
 				alreadyPlaced = true;
 			}
 		}
 		if (!alreadyPlaced) {
 			auto newTile = new SceneObject(this, "tile " + std::to_string(tiles.size()));
-			newTile->transform()->setPosition({ targetCell.y, 0.0f, targetCell.x });
+			newTile->setRenderer(new ModelRenderer(ground, (unsigned long long)0));
+			newTile->transform()->setPosition({ targetCell.x * gridSize, 0.0f, targetCell.y * gridSize });
 			newTile->transform()->setParent(groundTileParent->transform());
 			// other setup here
 			gridMinX = (int)fminf(targetCell.x, (float)gridMinX);
@@ -97,14 +101,22 @@ void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
 		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0\0")) {
-			if (state == BrushState::brush) {
+			switch (state)
+			{
+			case LevelEditor::BrushState::none:
+				camera->state = Camera::State::editorMode;
+				break;
+			case LevelEditor::BrushState::brush:
 				camera->state = Camera::State::tilePlacing;
 				camera->transform.setEulerRotation({ 0.0f, 0.0f, -90.0f });
+				break;
+			default:
+				break;
 			}
 		}
 		
-		ImGui::End();
 	}
+	ImGui::End();
 }
 
 LevelEditor::~LevelEditor()
