@@ -84,25 +84,29 @@ glm::vec2 RigidBody::Transform2Din3DSpace(glm::mat4 global, glm::vec2 input)
 
 void RigidBody::GUI()
 {
-	std::string tag = Utilities::PointerToString(this);
-	float mass = getMass();
-	bool isKinematic = invMass == 0;
-
-	if (isKinematic) ImGui::BeginDisabled();
-	if (ImGui::DragFloat(("Mass##rigidBody" + tag).c_str(), &mass, 0.1f, 0.001f, 100000.0f))
+	//ImGui::Text("");
+	if (ImGui::CollapsingHeader("Rigid Body"))
 	{
-		setMass(mass);
-	}
-	if (isKinematic) ImGui::EndDisabled();
+		std::string tag = Utilities::PointerToString(this);
+		float mass = getMass();
+		bool isKinematic = invMass == 0;
 
-	if (ImGui::Checkbox(("Kinematic##rigidBody" + tag).c_str(), &isKinematic))
-	{
-		if (isKinematic)
-			invMass = 0.0f;
-		else
-			setMass(1.0f);
+		if (isKinematic) ImGui::BeginDisabled();
+		if (ImGui::DragFloat(("Mass##rigidBody" + tag).c_str(), &mass, 0.1f, 0.001f, 100000.0f))
+		{
+			setMass(mass);
+		}
+		if (isKinematic) ImGui::EndDisabled();
+
+		if (ImGui::Checkbox(("Kinematic##rigidBody" + tag).c_str(), &isKinematic))
+		{
+			if (isKinematic)
+				invMass = 0.0f;
+			else
+				setMass(1.0f);
+		}
+		ImGui::Checkbox(("Static##rigidBody" + tag).c_str(), &isStatic);
+		ImGui::DragFloat(("Elasticity##rigidBody" + tag).c_str(), &elasticicty, 0.01f, 0.0f, 1.0f);
+		//TODO: add collider gui
 	}
-	ImGui::Checkbox(("Static##rigidBody" + tag).c_str(), &isStatic);
-	ImGui::DragFloat(("Elasticity##rigidBody" + tag).c_str(), &elasticicty, 0.01f, 0.0f, 1.0f);
-	//TODO: add collider gui
 }

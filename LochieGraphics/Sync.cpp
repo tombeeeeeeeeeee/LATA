@@ -24,7 +24,12 @@ void Sync::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 
 void Sync::GUI()
 {
-	ImGui::DragFloat("Sync's Move Speed", &moveSpeed);
-	ImGui::DragFloat("Sync's Look DeadZone", &lookDeadZone);
-	ImGui::DragFloat("Sync's Move DeadZone", &moveDeadZone);
+	//ImGui::Text("");
+	if (ImGui::CollapsingHeader("Sync Component"))
+	{
+		ImGui::DragFloat("Sync's Move Speed", &moveSpeed);
+		ImGui::DragFloat("Sync's Look DeadZone", &lookDeadZone);
+		ImGui::DragFloat("Sync's Move DeadZone", &moveDeadZone);
+
+	}
 }

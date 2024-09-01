@@ -218,35 +218,38 @@ void Transform::UpdateGlobalMatrixCascading()
 
 void Transform::GUI()
 {
-	std::string tag = Utilities::PointerToString(this);
-
-	glm::vec3 euler = getEulerRotation();
-
-	if(ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f))
+	if (ImGui::CollapsingHeader("Transform"))
 	{
-		UpdateGlobalMatrixCascading();
-	}
+		std::string tag = Utilities::PointerToString(this);
 
-	// TODO: Make this setEulerRotation function does
-	if (ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &euler[0], 0.1f)) {
-		euler -= getEulerRotation();
+		glm::vec3 euler = getEulerRotation();
 
-		glm::vec3 rotationEuler = glm::vec3(glm::radians(euler.x), glm::radians(euler.y), glm::radians(euler.z));
+		if(ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f))
+		{
+			UpdateGlobalMatrixCascading();
+		}
 
-		glm::quat quatZ = glm::angleAxis(rotationEuler.z, glm::vec3(0, 0, 1));
-		glm::quat quatY = glm::angleAxis(rotationEuler.y, glm::vec3(0, 1, 0));
-		glm::quat quatX = glm::angleAxis(rotationEuler.x, glm::vec3(1, 0, 0));
+		// TODO: Make this setEulerRotation function does
+		if (ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &euler[0], 0.1f)) {
+			euler -= getEulerRotation();
 
-		setRotation(glm::normalize(quatX * quatY * quatZ) * getRotation());
-	}
-	ImGui::BeginDisabled();
-	if (ImGui::DragFloat4(("Quaternion##transform" + tag).c_str(), &quaternion[0], 0.1f)) {
-		setRotation(quaternion);
-	}
-	ImGui::EndDisabled();
+			glm::vec3 rotationEuler = glm::vec3(glm::radians(euler.x), glm::radians(euler.y), glm::radians(euler.z));
 
-	if (ImGui::DragFloat3(("Scale##transform" + tag).c_str(), &scale[0], 0.1f))
-	{
-		UpdateGlobalMatrixCascading();
+			glm::quat quatZ = glm::angleAxis(rotationEuler.z, glm::vec3(0, 0, 1));
+			glm::quat quatY = glm::angleAxis(rotationEuler.y, glm::vec3(0, 1, 0));
+			glm::quat quatX = glm::angleAxis(rotationEuler.x, glm::vec3(1, 0, 0));
+
+			setRotation(glm::normalize(quatX * quatY * quatZ) * getRotation());
+		}
+		ImGui::BeginDisabled();
+		if (ImGui::DragFloat4(("Quaternion##transform" + tag).c_str(), &quaternion[0], 0.1f)) {
+			setRotation(quaternion);
+		}
+		ImGui::EndDisabled();
+
+		if (ImGui::DragFloat3(("Scale##transform" + tag).c_str(), &scale[0], 0.1f))
+		{
+			UpdateGlobalMatrixCascading();
+		}
 	}
 }

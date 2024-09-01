@@ -124,17 +124,21 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 
 void Ecco::GUI()
 {
-	ImGui::DragFloat("Car move speed", &carMoveSpeed);
-	ImGui::DragFloat("Car reverse move speed", &carReverseMoveSpeed);
-	ImGui::DragFloat("Max car move speed", &maxCarMoveSpeed);
-	ImGui::DragFloat("Turning circle scalar", &turningCircleScalar);
-	ImGui::DragFloat("Max wheel angle", &maxWheelAngle);
-	ImGui::DragFloat("Wheel Turn Speed", &wheelTurnSpeed);
-	ImGui::DragFloat("Sideways Wheel Drag", &sidewaysFrictionCoef, 0.01f, 0.0f);
-	ImGui::DragFloat("Stopping Wheel Drag", &stoppingFrictionCoef, 0.01f, 0.0f);
-	ImGui::Checkbox("Local Steering", &controlState);
+	//ImGui::Text("");
+	if(ImGui::CollapsingHeader("Ecco Component"))
+	{
+		ImGui::DragFloat("Car move speed", &carMoveSpeed);
+		ImGui::DragFloat("Car reverse move speed", &carReverseMoveSpeed);
+		ImGui::DragFloat("Max car move speed", &maxCarMoveSpeed);
+		ImGui::DragFloat("Turning circle scalar", &turningCircleScalar);
+		ImGui::DragFloat("Max wheel angle", &maxWheelAngle);
+		ImGui::DragFloat("Wheel Turn Speed", &wheelTurnSpeed);
+		ImGui::DragFloat("Sideways Wheel Drag", &sidewaysFrictionCoef, 0.01f, 0.0f);
+		ImGui::DragFloat("Stopping Wheel Drag", &stoppingFrictionCoef, 0.01f, 0.0f);
+		ImGui::Checkbox("Local Steering", &controlState);
 
-	ImGui::BeginDisabled();
-	ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
-	ImGui::EndDisabled();
+		ImGui::BeginDisabled();
+		ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
+		ImGui::EndDisabled();
+	}
 }

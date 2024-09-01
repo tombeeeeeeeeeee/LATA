@@ -35,34 +35,38 @@ ModelRenderer::ModelRenderer(Model* _model, Material* _material) :
 
 void ModelRenderer::GUI()
 {
+	//ImGui::Text("");
 	std::string tag = Utilities::PointerToString(this);
-	ImGui::BeginDisabled();
-	int mats = materialGUIDs.size();
-	ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
-	ImGui::EndDisabled();
-	ImGui::Indent();
-	for (size_t i = 0; i < materialGUIDs.size(); i++)
+	if (ImGui::CollapsingHeader("Model Renderer"))
 	{
-		// TODO: A better way to reference the general default shaders
-		if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], sceneObject->scene->shaders[super], true)) {
-			if (materials[i] != nullptr) {
-				materialGUIDs[i] = materials[i]->GUID;
+		ImGui::BeginDisabled();
+		int mats = materialGUIDs.size();
+		ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
+		ImGui::EndDisabled();
+		ImGui::Indent();
+		for (size_t i = 0; i < materialGUIDs.size(); i++)
+		{
+			// TODO: A better way to reference the general default shaders
+			if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], sceneObject->scene->shaders[super], true)) {
+				if (materials[i] != nullptr) {
+					materialGUIDs[i] = materials[i]->GUID;
+				}
+				else {
+					materialGUIDs[i] = 0;
+				}
+			}
+		}
+		ImGui::Unindent();
+
+		if (ResourceManager::ModelSelector("Model", &model)) {
+			if (model) {
+				modelGUID = model->GUID;
 			}
 			else {
-				materialGUIDs[i] = 0;
+				modelGUID = 0;
 			}
+			Refresh();
 		}
-	}
-	ImGui::Unindent();
-
-	if (ResourceManager::ModelSelector("Model", &model)) {
-		if (model) {
-			modelGUID = model->GUID;
-		}
-		else {
-			modelGUID = 0;
-		}
-		Refresh();
 	}
 }
 
