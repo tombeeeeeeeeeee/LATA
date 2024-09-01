@@ -148,6 +148,12 @@ SceneManager::SceneManager(Scene* _scene)
 		scene->skybox = defaultSkybox;
 	}
 
+	ResourceManager::defaultTexture = ResourceManager::LoadTexture("images/T_DefaultTexture.png", Texture::Type::albedo);
+	ResourceManager::defaultMaterial = ResourceManager::LoadMaterial("Default Material", scene->shaders[super]);
+	ResourceManager::defaultMaterial->AddTextures({
+		ResourceManager::defaultTexture
+		});
+
 	scene->Start();
 
 	scene->renderSystem->Start(

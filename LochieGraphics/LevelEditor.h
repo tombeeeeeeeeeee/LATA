@@ -17,12 +17,12 @@ private:
 	glm::vec3 testPos1;
 	glm::vec3 testPos2;
 
-	float gridSize = 1.0f;
+	float gridSize = 300.0f;
 
-	int gridMinX = 1;
-	int gridMaxX = 1;
-	int gridMinZ = 1;
-	int gridMaxZ = 1;
+	int gridMinX = INT_MAX;
+	int gridMaxX = INT_MIN;
+	int gridMinZ = INT_MAX;
+	int gridMaxZ = INT_MIN;
 
 
 public:

@@ -74,4 +74,10 @@ public:
 	static std::unordered_map<unsigned long long, Material, hashFNV1A> materials;
 	static std::unordered_map<unsigned long long, Model, hashFNV1A> models;
 	static std::unordered_map<unsigned long long, Mesh, hashFNV1A> meshes;
+
+	static Texture* defaultTexture;
+	static Shader* defaultShader;
+	static Material* defaultMaterial;
+	static Model* defaultModel;
+	static Mesh* defaultMesh;
 };

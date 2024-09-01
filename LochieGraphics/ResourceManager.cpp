@@ -15,6 +15,13 @@ std::unordered_map<unsigned long long, Shader, ResourceManager::hashFNV1A> Resou
 std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
 std::unordered_map<unsigned long long, Model, ResourceManager::hashFNV1A> ResourceManager::models;
 std::unordered_map<unsigned long long, Mesh, ResourceManager::hashFNV1A> ResourceManager::meshes;
+
+Texture* ResourceManager::defaultTexture = nullptr;
+Shader* ResourceManager::defaultShader = nullptr;
+Material* ResourceManager::defaultMaterial = nullptr;
+Model* ResourceManager::defaultModel = nullptr;
+Mesh* ResourceManager::defaultMesh = nullptr;
+
 unsigned long long ResourceManager::guidCounter = 100;
 
 const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
@@ -236,7 +243,7 @@ type* ResourceManager::Get##type(unsigned long long GUID)\
 {                                                        \
 	auto search = collection.find(GUID);                 \
 	if (search == collection.end()){                     \
-		return nullptr;                                  \
+		return default##type;                            \
 	}                                                    \
 	return &search->second;                              \
 }
