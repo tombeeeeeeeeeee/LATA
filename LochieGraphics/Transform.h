@@ -2,6 +2,8 @@
 
 #include "Maths.h"
 
+#include "Serialisation.h"
+
 #include <vector>
 
 class SceneObject;
@@ -62,5 +64,7 @@ public:
 	glm::mat4 getGlobalMatrix() const;
 
 	void GUI();
+
+	toml::table Serialise() const;
 };
 

@@ -100,7 +100,7 @@ public:
 
     void GUI();
 
-    toml::table Serialise();
+    toml::table Serialise() const;
 
 };
 

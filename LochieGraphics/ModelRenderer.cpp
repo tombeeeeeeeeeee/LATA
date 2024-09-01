@@ -66,7 +66,7 @@ void ModelRenderer::GUI()
 	}
 }
 
-toml::table ModelRenderer::Serialise(unsigned long long GUID)
+toml::table ModelRenderer::Serialise(unsigned long long GUID) const
 {
 	return toml::v3::table{
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},

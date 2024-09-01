@@ -28,7 +28,7 @@ public:
 
 	virtual void GUI() override;
 
-	toml::table Serialise(unsigned long long GUID);
+	toml::table Serialise(unsigned long long GUID) const;
 
 	void Refresh();
 };

@@ -75,6 +75,6 @@ public:
 	Scene(const Scene& other) = delete;
 	Scene& operator=(const Scene& other) = delete;
 
-	void Save();
+	void Save() const;
 	void Load();
 };

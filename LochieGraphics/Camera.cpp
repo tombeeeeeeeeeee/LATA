@@ -164,7 +164,7 @@ void Camera::Rotate(float x, float y)
     transform.setRotation(glm::normalize(quatX * quatY * quatZ) * transform.getRotation());
 }
 
-toml::table Camera::Serialise()
+toml::table Camera::Serialise() const
 {
     // TODO: Fix
     // TODO: Transform

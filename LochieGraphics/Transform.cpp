@@ -247,3 +247,8 @@ void Transform::GUI()
 		UpdateGlobalMatrixCascading();
 	}
 }
+
+toml::table Transform::Serialise() const
+{
+	return toml::table();
+}

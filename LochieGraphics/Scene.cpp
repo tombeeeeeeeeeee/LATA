@@ -26,7 +26,14 @@ Scene::~Scene()
 	//}
 }
 
-void Scene::Save()
+#define SavePart(container)                                        \
+	auto saved##container = toml::array();                         \
+	for (auto i = container.begin(); i != container.end(); i++)    \
+	{                                                              \
+		saved##container.push_back(i->second.Serialise(i->first)); \
+	}
+
+void Scene::Save() const
 {
 	// TODO: Name is user selected, perhaps have a file opening dialog, see https://github.com/mlabbe/nativefiledialog
 	// Or could just use an imgui pop up for the name alone and don't give the user a choice on the location / some limited explorer
@@ -50,29 +57,26 @@ void Scene::Save()
 		savedLights.push_back((*i)->Serialise());
 	}
 
-	auto savedRenderers = toml::array();
-	for (auto i = renderers.begin(); i != renderers.end(); i++)
-	{
-		savedRenderers.push_back(i->second.Serialise(i->first));
+	SavePart(renderers);
+
+	//SavePart(transforms);
+
+
+
+	auto savedTransforms = toml::array();
+	for (auto i = transforms.begin(); i != transforms.end(); i++) {
+		savedTransforms.push_back(i->second.Serialise());
 	}
-
-	file << toml::table{ { "WindowName", windowName} } << "\n\n";
-	file << toml::table{ { "Shaders", savedShaders} } << "\n\n";
-	file << toml::table{ { "Camera", camera->Serialise() } } << "\n\n";
-	file << toml::table{ { "SceneObjects", savedSceneObjects} } << "\n\n";
-	file << toml::table{ { "Lights", savedLights} } << "\n\n";
-
-
-
-
-	//TODO: add partBitMask to sceneObjects.
-	//TODO: Make serialise function in SceneManager? Or is it Scene?
-	//for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
-	//{
-	//	savedSceneObjects.push_back((*i)->Serialise());
-	//}
-
-	//file << toml::table{ { "SceneObjects", savedSceneObjects } };
+	
+	file << toml::table{
+		{ "WindowName", windowName},
+		{ "Shaders", savedShaders},
+		{ "Camera", camera->Serialise() },
+		{ "SceneObjects", savedSceneObjects },
+		{ "Lights", savedLights},
+		{ "Renderers", savedrenderers},
+		{ "Transforms", savedTransforms},
+	};
 
 	file.close();
 }
