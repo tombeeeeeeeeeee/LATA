@@ -129,8 +129,15 @@ glm::mat4 Transform::getLocalMatrix() const
 
 void Transform::setRotation(glm::quat _quat)
 {
+	glm::vec3 newEuler = glm::degrees(glm::eulerAngles(_quat));
+	glm::quat oldEulerAsQuat = glm::quat(glm::radians(euler));
+	glm::vec3 oldEuler = glm::degrees(glm::eulerAngles(oldEulerAsQuat));
+	glm::vec3 difEuler = newEuler - oldEuler;
+
 	quaternion = _quat;
-	euler = glm::degrees(glm::eulerAngles(quaternion));
+
+	euler += difEuler;
+	
 	UpdateGlobalMatrixCascading();
 }
 
@@ -220,7 +227,6 @@ void Transform::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 
-	glm::vec3 euler = getEulerRotation();
 
 	if(ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f))
 	{
