@@ -33,3 +33,9 @@ void Sync::GUI()
 
 	}
 }
+
+void Sync::smallShotOnCollision(Collision collision)
+{
+
+}
+

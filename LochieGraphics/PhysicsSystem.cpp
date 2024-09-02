@@ -26,8 +26,8 @@ void PhysicsSystem::UpdateRigidBodies(
 
 		transforms[i->first].setPosition(transforms[i->first].getPosition() + glm::vec3(pos.x, 0.0f, pos.y));
 		transforms[i->first].setRotation(
-			transforms[i->first].getRotation() 
-			* 
+			transforms[i->first].getRotation()
+			*
 			glm::rotate(glm::identity<glm::quat>(), rb->angularVel * deltaTime, {0.0f,1.0f,0.0f})
 		);
 	}
@@ -305,15 +305,16 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 	collision.rigidBodyA->AddDepen(collision.normal * collision.depth * collision.rigidBodyA->invMass / totalMass);
 	collision.rigidBodyB->AddDepen(-collision.normal * collision.depth * collision.rigidBodyB->invMass / totalMass);
 
-	glm::vec2 relativeVelocity =
-		(collision.rigidBodyA->vel + collision.rigidBodyA->angularVel * radiusPerpA)
-		- (collision.rigidBodyB->vel + collision.rigidBodyB->angularVel * radiusPerpB);
+	glm::vec2 relativeVelocity = 
+		collision.rigidBodyA->vel - collision.rigidBodyB->vel;
+		//(collision.rigidBodyA->vel + collision.rigidBodyA->angularVel * radiusPerpA)
+		//- (collision.rigidBodyB->vel + collision.rigidBodyB->angularVel * radiusPerpB);
 
 	float totalInverseMass = (collision.rigidBodyA->invMass + collision.rigidBodyB->invMass);
 
 	float j = -(1.0f + glm::max(collision.rigidBodyA->elasticicty, collision.rigidBodyB->elasticicty)) * glm::dot(relativeVelocity, collision.normal) /
-		(totalInverseMass + (float)pow(glm::dot(radiusPerpA, collision.normal), 2) * collision.rigidBodyA->invMomentOfInertia
-			+ (float)pow(glm::dot(radiusPerpB, collision.normal), 2) * collision.rigidBodyB->invMomentOfInertia);
+		(totalInverseMass);// +(float)pow(glm::dot(radiusPerpA, collision.normal), 2) * collision.rigidBodyA->invMomentOfInertia
+			//+ (float)pow(glm::dot(radiusPerpB, collision.normal), 2) * collision.rigidBodyB->invMomentOfInertia);
 
 	if (j <= 0.0f) return;
 
@@ -322,11 +323,11 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 	collision.rigidBodyA->AddImpulse(linearRestitution);
 	collision.rigidBodyB->AddImpulse(-linearRestitution);
 
-	if (abs(glm::dot(radiusPerpA, collision.normal)) > 0.000001f)
-		collision.rigidBodyA->AddRotationalImpulse(glm::dot(radiusPerpA, linearRestitution));
-
-	if (abs(glm::dot(radiusPerpB, collision.normal)) > 0.000001f)
-		collision.rigidBodyB->AddRotationalImpulse(glm::dot(radiusPerpB, -linearRestitution));
+	//if (abs(glm::dot(radiusPerpA, collision.normal)) > 0.000001f)
+	//	collision.rigidBodyA->AddRotationalImpulse(glm::dot(radiusPerpA, linearRestitution));
+	//
+	//if (abs(glm::dot(radiusPerpB, collision.normal)) > 0.000001f)
+	//	collision.rigidBodyB->AddRotationalImpulse(glm::dot(radiusPerpB, -linearRestitution));
 
 }
 

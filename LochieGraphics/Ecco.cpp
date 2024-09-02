@@ -53,8 +53,8 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		{
 			float turnAmount = glm::dot({1,0}, moveInput);
 			turnAmount = glm::clamp(turnAmount, -1.0f, 1.0f);
-
-			float angle = turnAmount * maxWheelAngle * PI / 180.0f;
+			float maxWheelAngleAfterSpeed = maxWheelAngle - speedWheelTurnInfluence/100.0f * (glm::length(rigidBody.vel)) / (maxCarMoveSpeed)*maxWheelAngle;
+			float angle = turnAmount * maxWheelAngleAfterSpeed * PI / 180.0f;
 			float c = cosf(angle);
 			float s = sinf(angle);
 			desiredWheelDirection = { wheelDirection.x * c - wheelDirection.y * s, wheelDirection.y * c + wheelDirection.x * s };
@@ -62,6 +62,8 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		wheelDirection += (desiredWheelDirection - wheelDirection) * wheelTurnSpeed * delta;
 		wheelDirection = glm::normalize(wheelDirection);
 	}
+
+	//angleOrWhatever *= pow(0.9, deltaTime * abs(forwardSpeed));
 
 	//Wheel Correction
 	if (glm::dot({ forward.x, forward.z }, wheelDirection) <= glm::cos(maxWheelAngle * PI / 180.0f))
@@ -92,32 +94,29 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		force += -rigidBody.vel * glm::length(rigidBody.vel) * stoppingFrictionCoef;
 	}
 
-	//Sideways drag coefficent
-	if (glm::length(rigidBody.vel) > 0.00001f)
-	{
-		float sidewaysForceCoef = glm::dot({ wheelDirection.y, -wheelDirection.x }, rigidBody.vel);
-		force += -glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * glm::normalize(rigidBody.vel);
-	}
-
 	//Stop Speed exceeding speed limit (Could change to be drag)
 	if (glm::length(rigidBody.vel + rigidBody.invMass * (force + rigidBody.netForce)) > maxCarMoveSpeed)
 	{
 		force = glm::normalize(force) * (maxCarMoveSpeed - glm::length(rigidBody.vel)) / rigidBody.invMass;
 	}
 
+	//Sideways drag coefficent
+	if (glm::length(rigidBody.vel) > 0.00001f)
+	{
+		float sidewaysForceCoef = glm::dot({ wheelDirection.y, -wheelDirection.x }, glm::normalize(rigidBody.vel));
+		force += -glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * rigidBody.vel;
+	}
+
+	float wheelInDirectionOfForward = glm::dot(wheelDirection, { forward.x , forward.z });
+	wheelInDirectionOfForward = glm::clamp(wheelInDirectionOfForward, -1.0f, 1.0f);
+
+	rigidBody.angularVel = -turningCircleScalar //scalar that represents wheel distance apart
+		* acos(wheelInDirectionOfForward) //angle wheel makes with forward vector
+		* glm::length(rigidBody.vel) //units per second
+		* glm::sign(glm::dot({ right.x, right.z }, wheelDirection)); //reflects based off of left or right
+
 	//Update rigidBody
 	rigidBody.netForce += force;
-	if (glm::length(rigidBody.vel) > 0.09f)
-	{
-		rigidBody.angularVel =
-			-turningCircleScalar * glm::sign(glm::dot(rigidBody.vel, { forward.x, forward.z })) * glm::dot({ right.x, right.z }, wheelDirection) * glm::sign(glm::dot(wheelDirection, { forward.x, forward.z }));
-
-	}
-	else
-	{
-		rigidBody.angularVel = 0.0f;
-	}
-		//-turningCircleScalar * glm::length(rigidBody.vel) * glm::dot({ right.x, right.z }, wheelDirection)) * glm::dot(rigidBody.vel, {forward.x, forward.z});
 
 	//TODO add skidding.
 }
@@ -132,6 +131,7 @@ void Ecco::GUI()
 		ImGui::DragFloat("Max car move speed", &maxCarMoveSpeed);
 		ImGui::DragFloat("Turning circle scalar", &turningCircleScalar);
 		ImGui::DragFloat("Max wheel angle", &maxWheelAngle);
+		ImGui::DragFloat("Speed wheel turn influence", &speedWheelTurnInfluence, 1.0f, 0.0f, 100.0f);
 		ImGui::DragFloat("Wheel Turn Speed", &wheelTurnSpeed);
 		ImGui::DragFloat("Sideways Wheel Drag", &sidewaysFrictionCoef, 0.01f, 0.0f);
 		ImGui::DragFloat("Stopping Wheel Drag", &stoppingFrictionCoef, 0.01f, 0.0f);
