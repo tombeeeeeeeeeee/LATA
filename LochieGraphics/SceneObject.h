@@ -46,7 +46,8 @@ public:
 	Scene* scene = nullptr;
 	SceneObject() {};
 	SceneObject(Scene* _scene, std::string name = "Unnamed Scene Object");
-	SceneObject(Scene* scene, glm::vec3 _position, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.0f);
+	SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.0f);
+	SceneObject(Scene* _scene, toml::table* table);
 
 	~SceneObject();
 
@@ -56,7 +57,7 @@ public:
 	void Update(float delta);
 	void GUI();
 
-	toml::table Serialise();
+	toml::table Serialise() const;
 
 
 #pragma region Part Get and Set

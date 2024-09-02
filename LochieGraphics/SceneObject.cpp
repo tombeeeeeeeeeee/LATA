@@ -26,6 +26,7 @@ SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation
 }
 
 
+
 SceneObject::~SceneObject()
 {
 
@@ -125,7 +126,7 @@ void SceneObject::GUI()
 	}
 }
 
-toml::table SceneObject::Serialise()
+toml::table SceneObject::Serialise() const
 {
 	return toml::table{
 		{"name", name},
@@ -133,6 +134,17 @@ toml::table SceneObject::Serialise()
 		{"parts", parts}
 	};
 }
+
+SceneObject::SceneObject(Scene* _scene, toml::table* table) :
+	scene(_scene)
+{
+	name = Serialisation::LoadAsString((*table)["name"]);
+	GUID = Serialisation::LoadAsUnsignedLongLong((*table)["guid"]);
+	parts = Serialisation::LoadAsInt((*table)["parts"]);
+	scene->transforms[GUID] = Transform(this);
+	scene->sceneObjects[GUID] = *this;
+}
+
 
 void SceneObject::setTransform(Transform* transform)
 {
@@ -330,11 +342,3 @@ Enemy* SceneObject::enemy()
 		return &(scene->enemies[GUID]);
 	return nullptr;
 }
-
-//toml::table SceneObject::Serialise()
-//{
-//	return toml::table{
-//		{ "name", name },
-//		{ "hasRenderer", parts & Parts::modelRenderer}
-//	};
-//}

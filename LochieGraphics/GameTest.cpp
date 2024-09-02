@@ -59,8 +59,8 @@ void GameTest::Start()
 
 	hRb = &rigidBodies[h->GUID];
 	rRb = &rigidBodies[r->GUID];
-	h->setSync(new Sync());
-	r->setEcco(new Ecco());
+	h->setSync(sync);
+	r->setEcco(ecco);
 	ecco->wheelDirection = {r->transform()->forward().x, r->transform()->forward().y};
 
 	level.path = "level.png";

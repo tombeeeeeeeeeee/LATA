@@ -250,9 +250,22 @@ void Transform::GUI()
 
 toml::table Transform::Serialise(unsigned long long GUID) const
 {
-	// TODO: Actually save transform info
-	// TODO: Save children
+	// TODO: Save children/parent
 	return toml::table({
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{ "quaternion", Serialisation::SaveAsQuaternion(quaternion)},
+		{ "euler", Serialisation::SaveAsVec3(euler)},
+		{ "position", Serialisation::SaveAsVec3(position)},
+		{ "scale", Serialisation::SaveAsVec3(scale)},
 		});
+}
+
+Transform::Transform(toml::table table)
+{
+	quaternion = Serialisation::LoadAsQuaternion(table["quaternion"]);
+	euler = Serialisation::LoadAsVec3(table["euler"]);
+	position = Serialisation::LoadAsVec3(table["position"]);
+	scale = Serialisation::LoadAsVec3(table["scale"]);
+
+	UpdateGlobalMatrixCascading();
 }

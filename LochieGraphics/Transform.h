@@ -66,5 +66,6 @@ public:
 	void GUI();
 
 	toml::table Serialise(unsigned long long GUID) const;
+	Transform(toml::table table);
 };
 

@@ -15,6 +15,8 @@ void Scene::BaseGUI()
 Scene::Scene()
 {
 	gui.scene = this;
+	ecco = new Ecco();
+	sync = new Sync();
 }
 
 Scene::~Scene()
@@ -115,20 +117,26 @@ void Scene::Load()
 	skybox->Refresh();
 	ResourceManager::BindFlaggedVariables();
 
-	//ResourceManager::
+	sceneObjects.clear();
 
-	//for (auto i = loadingShaders->begin(); i != loadingShaders->end(); i++)
-	//{
-	//	ResourceManager::LoadShader((*i).as_table());
-	//}
+	auto loadingSceneObjects = data["SceneObjects"].as_array();
+	for (int i = 0; i < loadingSceneObjects->size(); i++)
+	{
+		auto loadingSceneObject = loadingSceneObjects->at(i).as_table();
+		new SceneObject(this, loadingSceneObject);
+	}
 
+	auto loadingTransforms = data["Transforms"].as_array();
+	for (int i = 0; i < loadingTransforms->size(); i++)
+	{
+		auto loadingTransform = loadingTransforms->at(i).as_table();
 
-	//// TODO: Remove everything in the scene first
-	//for (int i = 0; i < sceneObjects.size(); i++)
-	//{
-	//	delete sceneObjects[i];
-	//}
-	//sceneObjects.clear();
+		transforms[Serialisation::LoadAsUnsignedLongLong((*loadingTransform)["guid"])] = Transform(*loadingTransform);
+	}
+
+	// TODO: Consider moving this
+	gui.sceneObjectSelected = nullptr;
+
 
 	if (!file.is_open()) {
 		std::cout << "Error, save file to load not found\n";
