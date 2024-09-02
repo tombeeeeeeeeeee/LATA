@@ -10,6 +10,7 @@
 class Model;
 class ModelHierarchyInfo;
 
+// TODO: Needs a GUID
 class Animation
 {
 private:

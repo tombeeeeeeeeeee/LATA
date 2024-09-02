@@ -9,3 +9,12 @@ CollisionLayers Collider::getCollisionLayer()
 {
 	return (CollisionLayers)collisionLayer;
 }
+
+toml::table Collider::Serialise(unsigned long long GUID) const
+{
+	return toml::table{
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{ "isTrigger", isTrigger },
+		{ "collisionLayer", collisionLayer }
+	};
+}

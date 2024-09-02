@@ -58,15 +58,13 @@ void Scene::Save() const
 	}
 
 	SavePart(renderers);
+	SavePart(transforms);
+	SavePart(animators);
+	SavePart(rigidBodies);
+	SavePart(colliders);
+	SavePart(healths);
 
-	//SavePart(transforms);
-
-
-
-	auto savedTransforms = toml::array();
-	for (auto i = transforms.begin(); i != transforms.end(); i++) {
-		savedTransforms.push_back(i->second.Serialise());
-	}
+	// TODO: Save Ecco & Sync
 	
 	file << toml::table{
 		{ "WindowName", windowName},
@@ -75,8 +73,14 @@ void Scene::Save() const
 		{ "SceneObjects", savedSceneObjects },
 		{ "Lights", savedLights},
 		{ "Renderers", savedrenderers},
-		{ "Transforms", savedTransforms},
+		{ "Transforms", savedtransforms},
+		{ "Animators", savedanimators},
+		{ "RigidBodies", savedrigidBodies},
+		{ "Colliders", savedcolliders},
+		{ "Healths", savedhealths},
 	};
+
+	// TODO: Save RenderSystem stuff
 
 	file.close();
 }

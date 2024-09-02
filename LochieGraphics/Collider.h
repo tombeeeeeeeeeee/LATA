@@ -1,6 +1,8 @@
 #pragma once
 #include "Maths.h"
 
+#include "Serialisation.h"
+
 #include <vector>
 
 enum class CollisionLayers
@@ -28,6 +30,9 @@ struct Collider
 
 	void setCollisionLayer(int layer);
 	CollisionLayers getCollisionLayer();
+
+	// TODO: Implement in children
+	virtual toml::table Serialise(unsigned long long GUID) const;
 };
 
 struct PolygonCollider : public Collider

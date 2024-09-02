@@ -68,3 +68,13 @@ int Health::getMaxHealth()
 {
 	return maxHealth;
 }
+
+toml::table Health::Serialise(unsigned long long GUID) const
+{
+	// TODO: Ensure the function pointers are all good
+	return toml::table {
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
+		{ "currHealth", currHealth },
+		{ "maxHealth", maxHealth }
+	};
+}

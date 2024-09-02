@@ -2,6 +2,8 @@
 
 #include "Animation.h"
 
+#include "Serialisation.h"
+
 class Animator
 {
 protected:
@@ -46,5 +48,7 @@ public:
 	/// </summary>
 	/// <returns>const reference vector of the bone transforms</returns>
 	const std::vector<glm::mat4>& getFinalBoneMatrices();
+
+	toml::table Serialise(unsigned long long GUID) const;
 };
 

@@ -106,3 +106,12 @@ void RigidBody::GUI()
 	ImGui::DragFloat(("Elasticity##rigidBody" + tag).c_str(), &elasticicty, 0.01f, 0.0f, 1.0f);
 	//TODO: add collider gui
 }
+
+toml::table RigidBody::Serialise(unsigned long long GUID) const
+{
+	// ASK: Confirm with Tom what should be saved here
+	// TODO: Save more ofc
+	return toml::table{
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
+	};
+}

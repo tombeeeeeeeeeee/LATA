@@ -64,3 +64,11 @@ const std::vector<glm::mat4>& Animator::getFinalBoneMatrices()
 {
     return finalBoneMatrices;
 }
+
+toml::table Animator::Serialise(unsigned long long GUID) const
+{
+    // TODO: Save the current animation
+    return toml::table{
+        { "guid", Serialisation::SaveAsUnsignedLongLong(GUID) }
+    };
+}

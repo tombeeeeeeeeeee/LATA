@@ -6,6 +6,7 @@
 #include <vector>
 #include <functional>
 
+#include "Serialisation.h"
 
 class RigidBody
 {
@@ -60,6 +61,8 @@ public:
 	static glm::vec2 Transform2Din3DSpace(glm::mat4 global, glm::vec2 input);
 
 	void GUI();
+
+	toml::table Serialise(unsigned long long GUID) const;
 
 private:
 	//TODO: ADD FUNCTION POINTERS FOR ON COLLISION AND ON TRIGGER

@@ -1,4 +1,7 @@
 #pragma once
+
+#include "Serialisation.h"
+
 #include <functional>
 #include <vector>
 
@@ -12,6 +15,8 @@ public:
 
 	void setMaxHealth(int max);
 	int getMaxHealth();
+
+	toml::table Serialise(unsigned long long GUID) const;
 
 private:
 	int maxHealth = 0;

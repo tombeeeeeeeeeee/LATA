@@ -248,7 +248,11 @@ void Transform::GUI()
 	}
 }
 
-toml::table Transform::Serialise() const
+toml::table Transform::Serialise(unsigned long long GUID) const
 {
-	return toml::table();
+	// TODO: Actually save transform info
+	// TODO: Save children
+	return toml::table({
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		});
 }
