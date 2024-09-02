@@ -3,87 +3,108 @@ WindowName = "Lochie's Scene"
 [[Shaders]]
 flags = 0
 fragment = 'shaders/cubemap.frag'
-guid = '101'
+guid = '103'
 vertex = 'shaders/cubemap.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/simpleDepthShader.frag'
-guid = '102'
+guid = '104'
 vertex = 'shaders/simpleDepthShader.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/shadowDebug.frag'
-guid = '103'
+guid = '105'
 vertex = 'shaders/shadowDebug.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/HDRBloom.frag'
-guid = '104'
+guid = '106'
 vertex = 'shaders/default.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/brdf.frag'
-guid = '105'
-vertex = 'shaders/default.vert'
-
-[[Shaders]]
-flags = 0
-fragment = 'shaders/prefilter.frag'
-guid = '106'
-vertex = 'shaders/prefilter.vert'
-
-[[Shaders]]
-flags = 0
-fragment = 'shaders/downSample.frag'
 guid = '107'
 vertex = 'shaders/default.vert'
 
 [[Shaders]]
 flags = 0
-fragment = 'shaders/upSample.frag'
+fragment = 'shaders/prefilter.frag'
 guid = '108'
+vertex = 'shaders/prefilter.vert'
+
+[[Shaders]]
+flags = 0
+fragment = 'shaders/downSample.frag'
+guid = '109'
+vertex = 'shaders/default.vert'
+
+[[Shaders]]
+flags = 0
+fragment = 'shaders/upSample.frag'
+guid = '110'
 vertex = 'shaders/default.vert'
 
 [[Shaders]]
 flags = 0
 fragment = 'shaders/irradiance.frag'
-guid = '109'
+guid = '111'
 vertex = 'shaders/irradiance.vert'
 
 [[Shaders]]
 flags = 1
 fragment = 'shaders/lineRenderer.frag'
-guid = '110'
+guid = '112'
 vertex = 'shaders/lineRenderer.vert'
+
+[[Shaders]]
+flags = 0
+fragment = 'shaders/ssao.frag'
+guid = '113'
+vertex = 'shaders/default.vert'
+
+[[Shaders]]
+flags = 0
+fragment = 'shaders/ssaoBlur.frag'
+guid = '114'
+vertex = 'shaders/default.vert'
+
+[[Shaders]]
+flags = 1
+fragment = 'shaders/forward.frag'
+guid = '115'
+vertex = 'shaders/forward.vert'
 
 [[Shaders]]
 flags = 11
 fragment = 'shaders/superDuper.frag'
-guid = '111'
+guid = '116'
 vertex = 'shaders/superDuper.vert'
 
 [Camera]
-far = 300.0
+far = 100.0
 fov = 60.0
-movementSpeed = 2.5
-near = 0.10000000149011612
-orthoScale = 1.0
-sensitivity = 0.10000000149011612
-state = 1
+near = 0.5
+orthoScale = nan
+state = 2
 
 [[SceneObjects]]
-guid = '117'
+guid = '101'
+name = 'Sync'
+parts = 136
+
+[[SceneObjects]]
+guid = '126'
 name = 'Unnamed Scene Object'
 parts = 0
 
 [[SceneObjects]]
-guid = '118'
-name = 'Unnamed Scene Object'
-parts = 0
+guid = '102'
+name = 'Ecco'
+parts = 74
 
 [[Lights]]
 colour = [ 1.0, 1.0, 1.0 ]

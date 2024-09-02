@@ -28,6 +28,9 @@ void GameTest::Start()
 	&pointLights[3],
 	});
 	
+	r = &sceneObjects[r->GUID];
+	h = &sceneObjects[h->GUID];
+
 	renderSystem->SetShaders(&shaders);
 
 	hRb = new RigidBody();
@@ -81,6 +84,9 @@ void GameTest::Start()
 	r->transform()->setScale(0.004f);
 	camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f ));
 
+	r->name = "Ecco";
+	h->name = "Sync";
+
 
 	SceneObject* newSceneObject = new SceneObject(this);
 	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, true);
@@ -111,11 +117,18 @@ void GameTest::Start()
 			}
 		}
 	}
+	enemySystem.Start();
+	enemySystem.InitialiseMelee(sceneObjects, 10);
+	enemySystem.InitialiseRanged(sceneObjects, 10);
 }
 
 void GameTest::Update(float delta)
 {
 	input.Update();
+	if(ecco->GUID != 0)
+	r = &sceneObjects[ecco->GUID];
+	if (sync->GUID != 0)
+	h = &sceneObjects[sync->GUID];
 
 	if (firstFrame)
 	{

@@ -14,7 +14,7 @@ SceneObject::SceneObject(Scene* _scene, std::string _name) :
 {
 	GUID = ResourceManager::GetNewGuid();
 	scene->transforms[GUID] = Transform(this);
-	scene->sceneObjects.push_back(this);
+	scene->sceneObjects[GUID] = *this;
 }
 
 SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation, float _scale) :
@@ -22,7 +22,7 @@ SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation
 {
 	GUID = ResourceManager::GetNewGuid();
 	scene->transforms[GUID] = Transform(this, _position, _rotation, _scale);
-	scene->sceneObjects.push_back(this);
+	scene->sceneObjects[GUID] = *this;
 }
 
 
@@ -65,18 +65,62 @@ void SceneObject::GUI()
 	//	scene->animators[GUID].GUI();
 	//}
 
-	const char popup[] = "SceneObject Add Part";
+	const char addPopup[] = "SceneObject Add Part";
+	const char removePopup[] = "SceneObject Remove Part";
 
 	if (ImGui::Button("Add Part")) {
-		ImGui::OpenPopup(popup);
+		ImGui::OpenPopup(addPopup);
 	}
-	if (ImGui::BeginPopup(popup)) {
+	ImGui::SameLine();
+	if (ImGui::Button("Remove Part")) {
+		ImGui::OpenPopup(removePopup);
+	}
+
+	if (ImGui::BeginPopup(addPopup)) {
 		if (renderer() == nullptr) {
 			if (ImGui::MenuItem("Model Renderer##Add part")) {
 				setRenderer(new ModelRenderer());
 			}
 		}
-		
+		if (rigidbody() == nullptr) {
+			if (ImGui::MenuItem("Rigid Body##Add part")) {
+				setRigidBody(new RigidBody());
+			}
+		}
+		if (ecco() == nullptr && scene->ecco->GUID == 0) {
+			if (ImGui::MenuItem("Ecco##Add part")) {
+				setEcco();
+			}
+		}
+		if (sync() == nullptr && scene->sync->GUID == 0) {
+			if (ImGui::MenuItem("Sync##Add part")) {
+				setSync();
+			}
+		}
+		ImGui::EndPopup();
+	}
+
+	if (ImGui::BeginPopup(removePopup)) {
+		if (parts & Parts::modelRenderer) {
+			if (ImGui::MenuItem("Model Renderer##Remove part")) {
+				setRenderer(nullptr);
+			}
+		}
+		if (parts & Parts::rigidBody) {
+			if (ImGui::MenuItem("Rigid Body##Remove part")) {
+				setRigidBody(nullptr);
+			}
+		}
+		if (parts & Parts::ecco) {
+			if (ImGui::MenuItem("Ecco##Remove part")) {
+				setEcco(nullptr);
+			}
+		}
+		if (parts & Parts::sync) {
+			if (ImGui::MenuItem("Sync##Remove part")) {
+				setSync(nullptr);
+			}
+		}
 		ImGui::EndPopup();
 	}
 }
@@ -263,6 +307,27 @@ Health* SceneObject::health()
 {
 	if (parts & Parts::health)
 		return &(scene->healths[GUID]);
+	return nullptr;
+}
+
+void SceneObject::setEnemy(Enemy* enemy)
+{
+	if (enemy)
+	{
+		parts |= Parts::enemy;
+		scene->enemies[GUID] = *enemy;
+	}
+	else
+	{
+		parts &= ~Parts::enemy;
+		scene->enemies.erase(GUID);
+	}
+}
+
+Enemy* SceneObject::enemy()
+{
+	if (parts & Parts::enemy)
+		return &(scene->enemies[GUID]);
 	return nullptr;
 }
 

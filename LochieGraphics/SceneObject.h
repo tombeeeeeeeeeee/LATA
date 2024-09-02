@@ -16,7 +16,7 @@ class Sync;
 class Health;
 class Animator;
 class RigidBody;
-
+struct Enemy;
 // TODO: Look into how instancing should be handled
 
 //TODO: Add GetPart Functions
@@ -32,7 +32,6 @@ enum Parts
 	sync =          1 << 7,
 	health =        1 << 8,
 	enemy =         1 << 9, 
-	count =         1 << 10,
 };
 
 class Scene;
@@ -44,15 +43,15 @@ public:
 	std::string name = "Unnamed Scene Object";
 	unsigned long long GUID = 0;
 	unsigned int parts = 0;
-	Scene* scene;
-
+	Scene* scene = nullptr;
+	SceneObject() {};
 	SceneObject(Scene* _scene, std::string name = "Unnamed Scene Object");
 	SceneObject(Scene* scene, glm::vec3 _position, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.0f);
 
 	~SceneObject();
 
-	SceneObject(const SceneObject& other) = delete;
-	SceneObject& operator=(const SceneObject& other) = delete;
+	//SceneObject(const SceneObject& other) = delete;
+	//SceneObject& operator=(const SceneObject& other) = delete;
 
 	void Update(float delta);
 	void GUI();
@@ -90,6 +89,9 @@ public:
 
 	void setHealth(Health* health);
 	Health* health();
+
+	void setEnemy(Enemy* enemy);
+	Enemy* enemy();
 
 #pragma endregion
 

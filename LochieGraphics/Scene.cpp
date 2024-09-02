@@ -48,7 +48,7 @@ void Scene::Save() const
 	auto savedSceneObjects = toml::array();
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
-		savedSceneObjects.push_back((*i)->Serialise());
+		savedSceneObjects.push_back((*i).second.Serialise());
 	}
 
 	auto savedLights = toml::array();

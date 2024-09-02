@@ -17,7 +17,6 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 		camera.orthoScale = Utilities::Lerp(zoomScale, camera.orthoScale, cameraZoomSpeed);
 		glm::vec3 pos = Utilities::Lerp(cameraPositionDelta + target, camera.transform.getPosition(), cameraMoveSpeed);
 		camera.transform.setPosition(pos);
-
 		break;
 
 	default:

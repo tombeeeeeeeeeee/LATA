@@ -9,9 +9,11 @@
 #include "Sync.h"
 #include "Health.h"
 #include "RigidBody.h"
-#include "ShaderEnum.h"
-#include "Skybox.h"
+#include "Enemy.h"
 #include "Animator.h"
+
+#include "Skybox.h"
+#include "ShaderEnum.h"
 
 #include "RenderSystem.h"
 
@@ -32,15 +34,16 @@ public:
 	Skybox* skybox = nullptr;
 
 	// TODO: Pretty sure these no longer need to be stored on the heap
-	std::vector<SceneObject*> sceneObjects = {};
+	//std::vector<SceneObject*> sceneObjects = {};
 
+	std::unordered_map<unsigned long long, SceneObject> sceneObjects = {};
 	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};
 	std::unordered_map<unsigned long long, Transform> transforms = {};
 	std::unordered_map<unsigned long long, Animator> animators = {};
 	std::unordered_map<unsigned long long, RigidBody> rigidBodies = {};
 	std::unordered_map<unsigned long long, Collider> colliders = {};
 	std::unordered_map<unsigned long long, Health> healths = {};
-	//std::unordered_map<unsigned long long, Enemies> enemies = {};
+	std::unordered_map<unsigned long long, Enemy> enemies = {};
 	std::vector<Light*> lights = {};
 
 	Ecco* ecco = nullptr;
