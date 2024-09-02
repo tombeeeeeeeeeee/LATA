@@ -14,14 +14,31 @@ EnemySystem::EnemySystem()
 
 void EnemySystem::Start()
 {
+    //	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", shaders[super]);
+    //  soulSpearMaterial->AddTextures(std::vector<Texture*>{
+    //      ResourceManager::LoadTexture("images/otherskybox/top.png", Texture::Type::albedo, GL_REPEAT, true),
+    //          ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::PBR, GL_REPEAT, true),
+    //          ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
+    //  });
+
+    Material* meleeEnemyMaterial = ResourceManager::LoadMaterial("meleeEnemy", SceneManager::scene->shaders[super]);
+    meleeEnemyMaterial->AddTextures(std::vector<Texture*>{
+        ResourceManager::LoadTexture(meleeEnemyMaterialPath, Texture::Type::albedo, GL_REPEAT, true)
+    });
+
     meleeEnemyRenderer = new ModelRenderer(
         ResourceManager::LoadModel(meleeEnemyModel),
-        ResourceManager::LoadMaterial(meleeEnemyMaterial, SceneManager::scene->shaders[super])
+        meleeEnemyMaterial
     );
+
+    Material* rangedEnemyMaterial = ResourceManager::LoadMaterial("rangedEnemy", SceneManager::scene->shaders[super]);
+    rangedEnemyMaterial->AddTextures(std::vector<Texture*>{
+        ResourceManager::LoadTexture(rangedEnemyMaterialPath, Texture::Type::albedo, GL_REPEAT, true)
+    });
 
     rangedEnemyRenderer = new ModelRenderer(
         ResourceManager::LoadModel(rangedEnemyModel),
-        ResourceManager::LoadMaterial(rangedEnemyMaterial, SceneManager::scene->shaders[super])
+        rangedEnemyMaterial
     );
 }
 
@@ -136,6 +153,7 @@ std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<
     for (int i = 0; i < count; i++)
     {
         SceneObject* enemy = new SceneObject(scene, "MeleeEnemy" + std::to_string(meleeEnemyPoolCount));
+        enemy->transform()->setPosition(offscreenSpawnPosition);
         enemy->setHealth(new Health());
         enemy->health()->setMaxHealth(meleeEnemyHealth);
         enemy->setRigidBody(new RigidBody());
@@ -160,6 +178,7 @@ std::vector<unsigned long long> EnemySystem::InitialiseRanged(std::unordered_map
     for (int i = 0; i < count; i++)
     {
         SceneObject* enemy = new SceneObject(scene, "RangedEnemy" + std::to_string(rangedEnemyPoolCount));
+        enemy->transform()->setPosition(offscreenSpawnPosition);
         enemy->setHealth(new Health());
         enemy->health()->setMaxHealth(rangedEnemyHealth);
         enemy->setRigidBody(new RigidBody());

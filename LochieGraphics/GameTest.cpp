@@ -117,14 +117,18 @@ void GameTest::Start()
 			}
 		}
 	}
-	//enemySystem.Start();
-	//enemySystem.InitialiseMelee(sceneObjects, 10);
-	//enemySystem.InitialiseRanged(sceneObjects, 10);
+	enemySystem.Start();
+	enemySystem.InitialiseMelee(sceneObjects, 10);
+	enemySystem.InitialiseRanged(sceneObjects, 10);
 }
 
 void GameTest::Update(float delta)
 {
 	input.Update();
+	if(ecco->GUID != 0)
+	r = &sceneObjects[ecco->GUID];
+	if (sync->GUID != 0)
+	h = &sceneObjects[sync->GUID];
 
 	if (firstFrame)
 	{
