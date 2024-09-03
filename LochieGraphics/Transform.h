@@ -11,6 +11,7 @@ class SceneObject;
 class Transform
 {
 private:
+	// TODO: NEEDS TO STORE GUIDs, pointers aren't safe for the resize
 	Transform* parent = nullptr;
 	std::vector<Transform*> children = {};
 	glm::quat quaternion = glm::identity<glm::quat>();

@@ -112,8 +112,11 @@ void LevelEditor::Update(float delta)
 		
 		auto tiles = groundTileParent->transform()->getChildren();
 		bool alreadyPlaced = CellAt(targetCell.x, targetCell.y) != nullptr ? true : false;
+		SceneObject* tempS = nullptr;
 		if (!alreadyPlaced) {
 			auto newTile = new SceneObject(this, "tile " + std::to_string(tiles.size()));
+			std::cout << newTile << '\n';
+			tempS = newTile;
 			newTile->setRenderer(new ModelRenderer(ground, (unsigned long long)0));
 			newTile->transform()->setPosition({ targetCell.x * gridSize, 0.0f, targetCell.y * gridSize });
 			newTile->transform()->setParent(groundTileParent->transform());
@@ -126,6 +129,8 @@ void LevelEditor::Update(float delta)
 			gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
 			gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
 		}
+		std::cout << tempS << '\n';
+
 	}
 }
 
