@@ -218,7 +218,7 @@ void TestScene::Update(float delta)
 
 	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
-		(*i).second.Update(delta);
+		(*i).second->Update(delta);
 	}
 
 	for (auto i = animators.begin(); i != animators.end(); i++)

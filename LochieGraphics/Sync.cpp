@@ -22,6 +22,11 @@ void Sync::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		rigidBody.vel = moveSpeed * move;
 	else
 		rigidBody.vel = { 0.0f, 0.0f };
+
+	if (inputDevice.getRightTrigger())
+	{
+
+	}
 }
 
 void Sync::GUI()
@@ -32,33 +37,36 @@ void Sync::GUI()
 		ImGui::DragFloat("Move Speed", &moveSpeed);
 		ImGui::DragFloat("Look DeadZone", &lookDeadZone);
 		ImGui::DragFloat("Move DeadZone", &moveDeadZone);
-		ImGui::DragFloat("Small Damage", &smallDamage);
-		ImGui::DragFloat("Medium Damage", &mediumDamage);
-		ImGui::DragFloat("Big Damage", &bigDamage);
+		ImGui::DragFloat("Misfire Damage", &misfireDamage);
+		ImGui::DragFloat("Sniper Damage", &sniperDamage);
+		ImGui::DragFloat("Overclock Damage", &overclockDamage);
+		ImGui::DragFloat("Sniper Charge Time", &sniperChargeTime);
+		ImGui::DragFloat("Overlock Charge Time", &overclockChargeTime);
+
 	}
 }
 
-void Sync::smallShotOnCollision(Collision collision)
+void Sync::misfireShotOnCollision(Collision collision)
 {
 	if (collision.collisionMask & (unsigned int)CollisionLayers::enemy)
 	{
-		collision.sceneObject->health()->subtractHealth(smallDamage);
+		collision.sceneObject->health()->subtractHealth(misfireDamage);
 	}
 }
 
-void Sync::meidumShotOnCollision(Collision collision)
+void Sync::sniperShotOnCollision(Collision collision)
 {
 	if (collision.collisionMask & (unsigned int)CollisionLayers::enemy)
 	{
-		collision.sceneObject->health()->subtractHealth(mediumDamage);
+		collision.sceneObject->health()->subtractHealth(sniperDamage);
 	}
 }
 
-void Sync::bigShotOnCollision(Collision collision)
+void Sync::overclockShotOnCollision(Collision collision)
 {
 	if (collision.collisionMask & (unsigned int)CollisionLayers::enemy)
 	{
-		collision.sceneObject->health()->subtractHealth(bigDamage);
+		collision.sceneObject->health()->subtractHealth(overclockDamage);
 	}
 }
 

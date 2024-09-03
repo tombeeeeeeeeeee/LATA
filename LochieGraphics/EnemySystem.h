@@ -47,12 +47,12 @@ public:
 	std::string rangedEnemyModel = "models/Sphere.fbx";
 	std::string rangedEnemyMaterialPath = "images/otherskyboxes/nx.png";
 
-	glm::vec3 offscreenSpawnPosition = {-100.0f,-300.0f,-100.0f};
+	glm::vec3 offscreenSpawnPosition = {-1000.0f,-3000.0f,-1000.0f};
 
-	unsigned long long SpawnMelee(std::unordered_map<unsigned long long, SceneObject>& sceneObjects, glm::vec3 pos);
-	unsigned long long SpawnRanged(std::unordered_map<unsigned long long, SceneObject>& sceneObjects, glm::vec3 pos);
-	bool DespawnMelee(std::unordered_map<unsigned long long, SceneObject>* sceneObjects, unsigned long long GUID);
-	bool DespawnRanged(std::unordered_map<unsigned long long, SceneObject>* sceneObjects, unsigned long long GUID);
+	unsigned long long SpawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos);
+	unsigned long long SpawnRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos);
+	bool DespawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, unsigned long long GUID);
+	bool DespawnRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, unsigned long long GUID);
 
 	//TODO: ADD AI PATHFINDING, and general AI STUFF IN HERE
 	void Update(
@@ -62,7 +62,7 @@ public:
 		float delta
 	);
 
-	std::vector<unsigned long long> InitialiseMelee(std::unordered_map<unsigned long long, SceneObject>& sceneObjects, int count);
-	std::vector<unsigned long long> InitialiseRanged(std::unordered_map<unsigned long long, SceneObject>& sceneObjects, int count);
+	std::vector<unsigned long long> InitialiseMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count);
+	std::vector<unsigned long long> InitialiseRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count);
 };
 
