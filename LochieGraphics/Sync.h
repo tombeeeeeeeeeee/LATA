@@ -24,6 +24,11 @@ public:
 
 	void GUI();
 
+	void ShootMisfire();
+	void ShootSniper();
+	void ShootOverClocked();
+	void ShootOverClockedSplit(glm::vec3 dir, int num);
+
 	void misfireShotOnCollision(Collision collision);
 	void sniperShotOnCollision(Collision collision);
 	void overclockShotOnCollision(Collision collision);
@@ -39,12 +44,17 @@ private:
 	float moveDeadZone = 0.10f;
 
 	float misfireDamage = 0.0f;
+	float misfireChargeCost = 0.0f;
 	float sniperDamage = 0.0f;
+	float sniperChargeCost = 0.0f;
 	float overclockDamage = 0.0f;
+	float overclockChargeCost = 0.0f;
 
 	float sniperChargeTime = 0.0f;
 	float overclockChargeTime = 0.0f;
 
-	float timeAtStartShooting = 0.0f;
+	float chargedDuration = 0.0f;
 	bool chargingShot = false;
+	float currCharge = 0.0f;
+	float maxCharge = 10.0f;
 };
