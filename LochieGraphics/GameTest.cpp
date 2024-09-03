@@ -28,8 +28,8 @@ void GameTest::Start()
 	&pointLights[3],
 	});
 	
-	r = &sceneObjects[r->GUID];
-	h = &sceneObjects[h->GUID];
+	r = sceneObjects[r->GUID];
+	h = sceneObjects[h->GUID];
 
 	renderSystem->SetShaders(&shaders);
 
@@ -126,9 +126,9 @@ void GameTest::Update(float delta)
 {
 	input.Update();
 	if(ecco->GUID != 0)
-	r = &sceneObjects[ecco->GUID];
+	r = sceneObjects[ecco->GUID];
 	if (sync->GUID != 0)
-	h = &sceneObjects[sync->GUID];
+	h = sceneObjects[sync->GUID];
 
 	if (firstFrame)
 	{

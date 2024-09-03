@@ -14,13 +14,6 @@ EnemySystem::EnemySystem()
 
 void EnemySystem::Start()
 {
-    //	Material* soulSpearMaterial = ResourceManager::LoadMaterial("soulSpear", shaders[super]);
-    //  soulSpearMaterial->AddTextures(std::vector<Texture*>{
-    //      ResourceManager::LoadTexture("images/otherskybox/top.png", Texture::Type::albedo, GL_REPEAT, true),
-    //          ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::PBR, GL_REPEAT, true),
-    //          ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
-    //  });
-
     Material* meleeEnemyMaterial = ResourceManager::LoadMaterial("meleeEnemy", SceneManager::scene->shaders[super]);
     meleeEnemyMaterial->AddTextures(std::vector<Texture*>{
         ResourceManager::LoadTexture(meleeEnemyMaterialPath, Texture::Type::albedo, GL_REPEAT, true)
@@ -42,7 +35,7 @@ void EnemySystem::Start()
     );
 }
 
-unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long, SceneObject>& sceneObjects, glm::vec3 pos)
+unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos)
 {
     unsigned long long GUID = 0;
 
@@ -57,7 +50,7 @@ unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long
         meleeInactivePool.pop_back();
     }
 
-    SceneObject* enemy = &sceneObjects[GUID];
+    SceneObject* enemy = sceneObjects[GUID];
     meleeActivePool.push_back(GUID);
 
     enemy->transform()->setPosition(pos);
@@ -68,7 +61,7 @@ unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long
     return GUID;
 }
 
-unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long long, SceneObject>& sceneObjects, glm::vec3 pos)
+unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos)
 {
     unsigned long long GUID = 0;
 
@@ -82,7 +75,7 @@ unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long lon
         rangedInactivePool.pop_back();
     }
 
-    SceneObject* enemy = &sceneObjects[GUID];
+    SceneObject* enemy = sceneObjects[GUID];
     rangedActivePool.push_back(GUID);
 
     enemy->transform()->setPosition(pos);
@@ -93,7 +86,7 @@ unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long lon
     return GUID;
 }
 
-bool EnemySystem::DespawnMelee(std::unordered_map<unsigned long long, SceneObject>* sceneObjects, unsigned long long GUID)
+bool EnemySystem::DespawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, unsigned long long GUID)
 {
     bool hasBeenDespawned = false;
 
@@ -104,7 +97,7 @@ bool EnemySystem::DespawnMelee(std::unordered_map<unsigned long long, SceneObjec
             hasBeenDespawned = true;
             meleeActivePool.erase(i);
             meleeInactivePool.push_back(GUID);
-            SceneObject* enemy = &(*sceneObjects)[GUID];
+            SceneObject* enemy = sceneObjects[GUID];
             enemy->transform()->setPosition(offscreenSpawnPosition);
             enemy->rigidbody()->colliders = {};
             enemy->rigidbody()->isStatic = true;
@@ -114,7 +107,7 @@ bool EnemySystem::DespawnMelee(std::unordered_map<unsigned long long, SceneObjec
     return hasBeenDespawned;
 }
 
-bool EnemySystem::DespawnRanged(std::unordered_map<unsigned long long, SceneObject>* sceneObjects, unsigned long long GUID)
+bool EnemySystem::DespawnRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, unsigned long long GUID)
 {
     bool hasBeenDespawned = false;
 
@@ -125,7 +118,7 @@ bool EnemySystem::DespawnRanged(std::unordered_map<unsigned long long, SceneObje
             hasBeenDespawned = true;
             rangedActivePool.erase(i);
             rangedInactivePool.push_back(GUID);
-            SceneObject* enemy = &(*sceneObjects)[GUID];
+            SceneObject* enemy = sceneObjects[GUID];
             enemy->transform()->setPosition(offscreenSpawnPosition);
             enemy->rigidbody()->colliders = {};
             enemy->rigidbody()->isStatic = true;
@@ -144,7 +137,7 @@ void EnemySystem::Update(
 {
 }
 
-std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<unsigned long long, SceneObject>& sceneObjects, int count)
+std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count)
 {
     std::vector<unsigned long long> enemiesSpawned;
     enemiesSpawned.reserve(count);
@@ -169,7 +162,7 @@ std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<
     return enemiesSpawned;
 }
 
-std::vector<unsigned long long> EnemySystem::InitialiseRanged(std::unordered_map<unsigned long long, SceneObject>& sceneObjects, int count)
+std::vector<unsigned long long> EnemySystem::InitialiseRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count)
 {
     std::vector<unsigned long long> enemiesSpawned;
     enemiesSpawned.reserve(count);

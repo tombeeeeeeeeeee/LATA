@@ -42,7 +42,8 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 			float sign = glm::dot({ right.x, right.z }, moveInput) < 0.0f ? -1.0f : 1.0f;
 			float desiredAngle = (glm::acos(turnAmount)) * sign + PI / 4;
 
-			desiredAngle = glm::clamp(desiredAngle, -maxWheelAngle * PI / 180.0f, maxWheelAngle * PI / 180.0f);
+			float maxWheelAngleAfterSpeed = maxWheelAngle - speedWheelTurnInfluence/100.0f * (glm::length(rigidBody.vel)) / (maxCarMoveSpeed)*maxWheelAngle;
+			desiredAngle = glm::clamp(desiredAngle, -maxWheelAngleAfterSpeed * PI / 180.0f, maxWheelAngleAfterSpeed * PI / 180.0f);
 			//rotate forward by that angle
 			float c = cosf(desiredAngle);
 			float s = sinf(desiredAngle);
@@ -66,9 +67,9 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 	//angleOrWhatever *= pow(0.9, deltaTime * abs(forwardSpeed));
 
 	//Wheel Correction
+	float turnSign = glm::sign(glm::dot({ right.x, right.z }, wheelDirection));
 	if (glm::dot({ forward.x, forward.z }, wheelDirection) <= glm::cos(maxWheelAngle * PI / 180.0f))
 	{
-		float turnSign = glm::sign(glm::dot({ right.x, right.z }, wheelDirection));
 		float maxAngle = maxWheelAngle * PI / 180.0f;
 
 		float c = cosf(turnSign * maxAngle);
@@ -100,15 +101,16 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		force = glm::normalize(force) * (maxCarMoveSpeed - glm::length(rigidBody.vel)) / rigidBody.invMass;
 	}
 
+	float wheelInDirectionOfForward = glm::dot(wheelDirection, { forward.x , forward.z });
+	wheelInDirectionOfForward = glm::clamp(wheelInDirectionOfForward, -1.0f, 1.0f);
+
 	//Sideways drag coefficent
 	if (glm::length(rigidBody.vel) > 0.00001f)
 	{
 		float sidewaysForceCoef = glm::dot({ wheelDirection.y, -wheelDirection.x }, glm::normalize(rigidBody.vel));
 		force += -glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * rigidBody.vel;
+		force += wheelDirection * glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * glm::length(rigidBody.vel) * (portionOfSidewaysSpeedKept / 100.0f);
 	}
-
-	float wheelInDirectionOfForward = glm::dot(wheelDirection, { forward.x , forward.z });
-	wheelInDirectionOfForward = glm::clamp(wheelInDirectionOfForward, -1.0f, 1.0f);
 
 	rigidBody.angularVel = -turningCircleScalar //scalar that represents wheel distance apart
 		* acos(wheelInDirectionOfForward) //angle wheel makes with forward vector
@@ -134,6 +136,7 @@ void Ecco::GUI()
 		ImGui::DragFloat("Speed wheel turn influence", &speedWheelTurnInfluence, 1.0f, 0.0f, 100.0f);
 		ImGui::DragFloat("Wheel Turn Speed", &wheelTurnSpeed);
 		ImGui::DragFloat("Sideways Wheel Drag", &sidewaysFrictionCoef, 0.01f, 0.0f);
+		ImGui::DragFloat("Portion of Sideways Speed Kept", &portionOfSidewaysSpeedKept, 1.0f, 0.0f, 100.0f);
 		ImGui::DragFloat("Stopping Wheel Drag", &stoppingFrictionCoef, 0.01f, 0.0f);
 		ImGui::Checkbox("Local Steering", &controlState);
 

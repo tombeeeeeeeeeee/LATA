@@ -14,7 +14,7 @@ SceneObject::SceneObject(Scene* _scene, std::string _name) :
 {
 	GUID = ResourceManager::GetNewGuid();
 	scene->transforms[GUID] = Transform(this);
-	scene->sceneObjects[GUID] = *this;
+	scene->sceneObjects[GUID] = this;
 }
 
 SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation, float _scale) :
@@ -22,7 +22,7 @@ SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation
 {
 	GUID = ResourceManager::GetNewGuid();
 	scene->transforms[GUID] = Transform(this, _position, _rotation, _scale);
-	scene->sceneObjects[GUID] = *this;
+	scene->sceneObjects[GUID] = this;
 }
 
 
@@ -142,7 +142,7 @@ SceneObject::SceneObject(Scene* _scene, toml::table* table) :
 	GUID = Serialisation::LoadAsUnsignedLongLong((*table)["guid"]);
 	parts = Serialisation::LoadAsInt((*table)["parts"]);
 	scene->transforms[GUID] = Transform(this);
-	scene->sceneObjects[GUID] = *this;
+	scene->sceneObjects[GUID] = this;
 }
 
 

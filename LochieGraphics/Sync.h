@@ -24,21 +24,27 @@ public:
 
 	void GUI();
 
-	void smallShotOnCollision(Collision collision);
-	void meidumShotOnCollision(Collision collision);
-	void bigShotOnCollision(Collision collision);
+	void misfireShotOnCollision(Collision collision);
+	void sniperShotOnCollision(Collision collision);
+	void overclockShotOnCollision(Collision collision);
 
 private:
 
-	std::vector<unsigned long long> smallShots;
-	std::vector<unsigned long long> mediumShots;
-	std::vector<unsigned long long> bigShots;
+	std::vector<unsigned long long> misfireShots;
+	std::vector<unsigned long long> sniperShots;
+	std::vector<unsigned long long> overclockShots;
 
 	float moveSpeed = 1.0f;
 	float lookDeadZone = 0.03f;
 	float moveDeadZone = 0.10f;
 
-	float smallDamage = 0.0f;
-	float mediumDamage = 0.0f;
-	float bigDamage = 0.0f;
+	float misfireDamage = 0.0f;
+	float sniperDamage = 0.0f;
+	float overclockDamage = 0.0f;
+
+	float sniperChargeTime = 0.0f;
+	float overclockChargeTime = 0.0f;
+
+	float timeAtStartShooting = 0.0f;
+	bool chargingShot = false;
 };
