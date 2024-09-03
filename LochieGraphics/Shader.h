@@ -85,4 +85,6 @@ public:
 	toml::table Serialise();
 	Shader(toml::v3::table* toml);
 
+	void OpenModal() {};
+
 };

@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <array>
+#include <time.h>
 
 unsigned int SceneManager::windowWidth = 1920 / 2;
 unsigned int SceneManager::windowHeight = 1080 / 2;
@@ -87,7 +88,7 @@ SceneManager::SceneManager(Scene* _scene)
 	ImGui::CreateContext();
 
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
 	// ImGui style
@@ -112,6 +113,9 @@ SceneManager::SceneManager(Scene* _scene)
 
 	// Draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	// TODO: Check what time goes to, think it is only seconds
+	srand(time(0));
 
 	camera.nearPlane = 0.5f;
 	camera.farPlane = 100.0f;

@@ -71,7 +71,7 @@ public:
 
 	void InitialiseFromFile(std::string filename);
 	void InitialiseIndexFromFile(std::string filename, int i);
-	void InitialiseFromAiMesh(std::string path, const aiScene* scene, std::unordered_map<std::string, BoneInfo>* boneInfo, aiMesh* mesh, bool flipTexturesOnLoad = true);
+	void InitialiseFromAiMesh(std::string path, const aiScene* scene, std::unordered_map<std::string, BoneInfo>* boneInfo, aiMesh* mesh);
 
 	unsigned int getTriCount() const;
 	GLuint getVAO() const;

@@ -16,13 +16,13 @@ Model::Model()
 {
 }
 
-Model::Model(std::string _path, bool flipTexturesOnLoad) :
+Model::Model(std::string _path) :
 	path(_path)
 {
-	LoadModel(path, flipTexturesOnLoad);
+	LoadModel(path);
 }
 // TODO: Models can no longer flip textures on load as they are always loaded seperatly now
-void Model::LoadModel(std::string _path, bool flipTexturesOnLoad)
+void Model::LoadModel(std::string _path)
 {
 	path = _path;
 	Assimp::Importer importer;
@@ -53,7 +53,7 @@ void Model::LoadModel(std::string _path, bool flipTexturesOnLoad)
 		aiMesh* mesh = scene->mMeshes[i];
 		meshes[i] = ResourceManager::LoadMesh();
 		meshGUIDs[i] = meshes[i]->GUID;
-		meshes[i]->InitialiseFromAiMesh(path, scene, &boneInfoMap, mesh, flipTexturesOnLoad);
+		meshes[i]->InitialiseFromAiMesh(path, scene, &boneInfoMap, mesh);
 		min.x = std::min(meshes[i]->min.x, min.x);
 		min.y = std::min(meshes[i]->min.y, min.y);
 		max.x = std::max(meshes[i]->max.x, max.x);

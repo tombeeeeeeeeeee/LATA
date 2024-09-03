@@ -61,6 +61,12 @@ void GUI::Update()
 	if (showHierarchy)    { HierarchyMenu();   }
 	scene->BaseGUI();
 	scene->GUI();
+
+	// Update Potential Modals
+	for (auto& i : ResourceManager::materials)
+	{
+		i.second.ModalGUI();
+	}
 }
 
 void GUI::ResourceMenu()

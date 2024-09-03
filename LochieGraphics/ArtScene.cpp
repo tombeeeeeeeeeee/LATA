@@ -377,6 +377,14 @@ void ArtScene::GUI()
 		
 	}
 	ImGui::End();
+
+	if (!gui.showSceneObject) {
+		return;
+	}
+	if (ImGui::Begin("Scene Object Menu")) {
+		ImGui::Button("SAVE AS ASSET");
+	}
+	ImGui::End();
 }
 
 ArtScene::~ArtScene()

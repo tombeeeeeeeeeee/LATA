@@ -185,6 +185,40 @@ void Material::GUI()
 	{
 		ImGui::DragFloat((i->first + "##" + tag).c_str(), &i->second);
 	}
+
+	if (ImGui::Button(("Open modal##" + tag).c_str())) {
+		OpenModal();
+	}
+}
+
+void Material::OpenModal()
+{
+	modalJustOpened = true;
+}
+
+void Material::ModalGUI()
+{
+	if (modalJustOpened) {
+		ImGui::OpenPopup(("Material Modal##" + PointerToString(this)).c_str());
+	}
+	if (!ImGui::BeginPopupModal(("Material Modal##" + PointerToString(this)).c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		return;
+	}
+	std::string tag = PointerToString(this);
+	ImGui::Text(("GUID: " + std::to_string(GUID)).c_str());
+	if (modalJustOpened) {
+		ImGui::SetKeyboardFocusHere();
+		modalJustOpened = false;
+	}
+	if (ImGui::InputText(("Name##" + tag).c_str(), &name, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue)) {
+		ImGui::CloseCurrentPopup();
+	}
+
+	if (ImGui::Button(("Done##" + tag).c_str())) {
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::EndPopup();
 }
 
 std::string Material::getDisplayName() const

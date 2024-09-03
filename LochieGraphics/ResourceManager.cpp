@@ -142,6 +142,7 @@ static int TextSelected(ImGuiInputTextCallbackData* data) {
 	return 0;
 }
 
+#define OPENMODAL
 
 #define GuidSelector(type, collection, selector, ...)                                           \
 	bool returnBool = false;                                                                    \
@@ -184,6 +185,7 @@ for (auto& i : collection)																		\
 if (showCreateButton) {																			\
 	if (ImGui::MenuItem(("CREATE NEW " + std::string(#type) + "##" + label).c_str(), "", false)) { \
 		selector = ResourceManager::Load##type("New " + std::string(#type), __VA_ARGS__);       \
+		selector->OpenModal();                                                                  \
         returnBool = true;                                                                      \
 	}																							\
 }																								\
@@ -377,7 +379,8 @@ void ResourceManager::GUI()
 
 unsigned long long ResourceManager::GetNewGuid()
 {
-	return ++guidCounter;
+	// TODO: Generate this properly
+	return (long long)rand() + (unsigned long long)INT_MAX;
 }
 
 void ResourceManager::BindFlaggedVariables()

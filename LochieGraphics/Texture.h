@@ -77,6 +77,8 @@ public:
 
 	std::string getDisplayName();
 
+	void OpenModal() {};
+
 private:
 
 	Texture() = default;

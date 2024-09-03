@@ -122,7 +122,7 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	Unbind();
 }
 
-void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::unordered_map<std::string, BoneInfo>* boneInfos, aiMesh* mesh, bool flipTexturesOnLoad)
+void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::unordered_map<std::string, BoneInfo>* boneInfos, aiMesh* mesh)
 {
 	max = AssimpVecToGLM(mesh->mAABB.mMax);
 	min = AssimpVecToGLM(mesh->mAABB.mMin);

@@ -40,6 +40,11 @@ public:
 
 	void GUI();
 
+	void OpenModal();
+	bool modalJustOpened = false;
+
+	void ModalGUI();
+
 	std::string getDisplayName() const;
 
 	toml::table Serialise() const;
