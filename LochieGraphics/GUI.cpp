@@ -181,7 +181,7 @@ void GUI::HierarchyMenu()
 	}
 
 	ImGui::Unindent();
-	ImGui::TreeNodeEx(("NEW SCENEOBJECT##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
+	ImGui::TreeNodeEx(("+ NEW SCENEOBJECT##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
 	if (ImGui::IsItemClicked()) {
 		sceneObjectSelected = new SceneObject(scene);
 	}

@@ -11,6 +11,7 @@ private:
 	BrushState state;
 
 	SceneObject* groundTileParent = new SceneObject(this, "Ground Tiles");
+	SceneObject* wallTileParent = new SceneObject(this, "Wall Tiles");
 
 	Model* ground;
 
@@ -24,6 +25,9 @@ private:
 	int gridMinZ = INT_MAX;
 	int gridMaxZ = INT_MIN;
 
+	void RefreshWalls();
+
+	SceneObject* CellAt(float x, float z);
 
 public:
 
@@ -47,6 +51,5 @@ public:
 	//	void OnWindowResize() override;
 	//
 	~LevelEditor() override;
-
 };
 
