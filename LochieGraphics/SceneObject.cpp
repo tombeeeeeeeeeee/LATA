@@ -15,6 +15,7 @@ SceneObject::SceneObject(Scene* _scene, std::string _name) :
 	GUID = ResourceManager::GetNewGuid();
 	scene->transforms[GUID] = Transform(this);
 	scene->sceneObjects[GUID] = this;
+	// TODO: Put a safetly check for if a guid that gets made is already on a sceneobject
 }
 
 SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation, float _scale) :
@@ -264,7 +265,7 @@ void SceneObject::setEcco()
 		scene->ecco->GUID = GUID;
 }
 
-Ecco* SceneObject::ecco()
+Ecco* SceneObject::ecco() const
 {
 	if (parts & Parts::ecco)
 		return scene->ecco;
@@ -294,7 +295,7 @@ void SceneObject::setSync()
 		scene->sync->GUID = GUID;
 }
 
-Sync* SceneObject::sync()
+Sync* SceneObject::sync() const
 {
 	if (parts & Parts::sync)
 		return scene->sync;
@@ -341,4 +342,18 @@ Enemy* SceneObject::enemy()
 	if (parts & Parts::enemy)
 		return &(scene->enemies[GUID]);
 	return nullptr;
+}
+
+void SceneObject::ClearParts()
+{
+	if (parts & Parts::modelRenderer) { scene->renderers.erase(GUID); }
+	if (parts & Parts::animator) { scene->animators.erase(GUID); }
+	if (parts & Parts::rigidBody) { scene->rigidBodies.erase(GUID); }
+	if (parts & Parts::collider) { scene->colliders.erase(GUID); }
+	if (parts & Parts::ecco) { scene->ecco->GUID = 0; }
+	if (parts & Parts::sync) { scene->sync->GUID = 0; }
+	if (parts & Parts::health) { scene->healths.erase(GUID); }
+	if (parts & Parts::enemy) { scene->enemies.erase(GUID); }
+	
+	parts = Parts::transform;
 }

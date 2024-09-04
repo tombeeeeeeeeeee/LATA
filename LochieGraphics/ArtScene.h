@@ -53,8 +53,8 @@ private:
 
 	void RefreshPBRComponents();
 
-	Material* material;
-	Model* model;
+	Material* material = nullptr;
+	Model* model = nullptr;
 	SceneObject* sceneObject = new SceneObject(this, "Editing Scene Object");
 
 	float loadTargetPreviewSize = 128.0f;

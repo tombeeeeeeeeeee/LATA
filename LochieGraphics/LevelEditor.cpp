@@ -24,6 +24,7 @@ void LevelEditor::RefreshWalls()
 		glm::vec2 tileCell = glm::vec2{ pos.x, pos.z } / gridSize;
 		tileCell = { roundf(tileCell.x), roundf(tileCell.y) };
 		if (!CellAt(tileCell.x - 1, tileCell.y)) {
+
 			// place left wall
 		}
 		if (!CellAt(tileCell.x, tileCell.y - 1)) {
@@ -97,29 +98,23 @@ void LevelEditor::Update(float delta)
 	lines.AddPointToLine({ gridSize * gridMaxX + gridSize + gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f});
 	lines.FinishLineLoop();
 
+	glm::vec3 camPoint = camera->transform.getGlobalPosition();
+	camPoint = glm::vec3(camPoint.z, camPoint.y, camPoint.x);
+
+	glm::vec2 adjustedCursor = *cursorPos - glm::vec2{ 0.5f, 0.5f };
+	glm::vec3 temp = (camPoint + glm::vec3(adjustedCursor.x * camera->getOrthoWidth(), 0.0f, adjustedCursor.y * camera->getOrthoHeight())) / gridSize;
+	glm::vec2 targetCell = glm::vec2{ roundf(temp.z), roundf(temp.x) };
+	SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
+
 	// TODO: Skip if imgui wants mouse input
 	if (ImGui::GetIO().WantCaptureMouse) { return; }
 	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-
-		glm::vec3 camPoint = camera->transform.getGlobalPosition();
-		camPoint = glm::vec3(camPoint.z, camPoint.y, camPoint.x);
-
-		glm::vec2 adjustedCursor = *cursorPos - glm::vec2{ 0.5f, 0.5f };
-		glm::vec3 temp = (camPoint + glm::vec3(adjustedCursor.x * camera->getOrthoWidth(), 0.0f, adjustedCursor.y * camera->getOrthoHeight())) / gridSize;
-		glm::vec2 targetCell = glm::vec2{ roundf(temp.z), roundf(temp.x) };
-		
-		lines.DrawCircle(glm::vec3{ targetCell.x , 0.0f, targetCell.y } * gridSize, gridSize / 2, {0, 0, 1}, 12);
-		
-		auto tiles = groundTileParent->transform()->getChildren();
-		bool alreadyPlaced = CellAt(targetCell.x, targetCell.y) != nullptr ? true : false;
-		SceneObject* tempS = nullptr;
 		if (!alreadyPlaced) {
-			auto newTile = new SceneObject(this, "tile " + std::to_string(tiles.size()));
-			std::cout << newTile << '\n';
-			tempS = newTile;
+			SceneObject* newTile = new SceneObject(this, "tile " + std::to_string(groundTileParent->transform()->getChildren().size()));
 			newTile->setRenderer(new ModelRenderer(ground, (unsigned long long)0));
 			newTile->transform()->setPosition({ targetCell.x * gridSize, 0.0f, targetCell.y * gridSize });
 			newTile->transform()->setParent(groundTileParent->transform());
+			
 			if (!newTile->transform()->getParent()) {
 				std::cout << "\n";
 			}
@@ -129,8 +124,15 @@ void LevelEditor::Update(float delta)
 			gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
 			gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
 		}
-		std::cout << tempS << '\n';
+	}
+	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+		if (alreadyPlaced) {
+			unsigned long long GUID = alreadyPlaced->GUID;
+			sceneObjects[GUID]->ClearParts();
+			transforms.erase(GUID);
+			delete sceneObjects[GUID];
 
+		}
 	}
 }
 

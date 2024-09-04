@@ -101,7 +101,7 @@ void Model::GUI()
 		
 		ImGui::InputScalar(("GUID##" + tag).c_str(), ImGuiDataType_U64, &GUID);
 		ImGui::InputText(("Path##" + tag).c_str(), &path);
-		int meshCount = meshes.size();
+		int meshCount = (int)meshes.size();
 		ImGui::DragInt(("Mesh Count##" + tag).c_str(), &meshCount);
 
 		ImGui::DragFloat2(("Min##" + tag).c_str(), &min.x);

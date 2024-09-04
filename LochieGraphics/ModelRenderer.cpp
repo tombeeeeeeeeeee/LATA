@@ -40,7 +40,7 @@ void ModelRenderer::GUI()
 	if (ImGui::CollapsingHeader("Model Renderer"))
 	{
 		ImGui::BeginDisabled();
-		int mats = materialGUIDs.size();
+		int mats = (int)materialGUIDs.size();
 		ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
 		ImGui::EndDisabled();
 		ImGui::Indent();

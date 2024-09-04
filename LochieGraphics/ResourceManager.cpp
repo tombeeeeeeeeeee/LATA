@@ -380,7 +380,7 @@ void ResourceManager::GUI()
 unsigned long long ResourceManager::GetNewGuid()
 {
 	// TODO: Generate this properly
-	return (long long)rand() + (unsigned long long)INT_MAX;
+	return guidCounter++;	
 }
 
 void ResourceManager::BindFlaggedVariables()

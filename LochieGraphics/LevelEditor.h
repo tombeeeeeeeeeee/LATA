@@ -29,6 +29,9 @@ private:
 
 	SceneObject* CellAt(float x, float z);
 
+	// Worldspace placing issue
+	SceneObject* PlaceWallAt(float x, float z, float direction);
+
 public:
 
 	PointLight pointLights[4] = {

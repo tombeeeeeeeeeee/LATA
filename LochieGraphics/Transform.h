@@ -11,7 +11,6 @@ class SceneObject;
 class Transform
 {
 private:
-	// TODO: NEEDS TO STORE GUIDs, pointers aren't safe for the resize
 	Transform* parent = nullptr;
 	std::vector<Transform*> children = {};
 	glm::quat quaternion = glm::identity<glm::quat>();
@@ -68,5 +67,7 @@ public:
 
 	toml::table Serialise(unsigned long long GUID) const;
 	Transform(toml::table table);
+
+	// Transform destructor should make childrens parent this objects parent, and potentally remove this object parents children reference to this
 };
 

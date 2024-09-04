@@ -346,7 +346,7 @@ void ArtScene::GUI()
 				ImGui::BeginGroup();
 				ImGui::Text(i.first.c_str());
 				if ((*i.second) != nullptr) {
-					ImGui::Image((void*)(*i.second)->GLID, { texturePreviewScale * (float)(*i.second)->width, texturePreviewScale * (float)(*i.second)->height });
+					ImGui::Image((ImTextureID)(unsigned long long)(*i.second)->GLID, { texturePreviewScale * (float)(*i.second)->width, texturePreviewScale * (float)(*i.second)->height });
 				}
 				ImGui::EndGroup();
 				ImGui::SameLine();
@@ -356,7 +356,7 @@ void ArtScene::GUI()
 			ImGui::Text("PBR");
 			Texture* pbr = (material->getFirstTextureOfType(Texture::Type::PBR));
 			if (pbr != nullptr) {
-				ImGui::Image((void*)pbr->GLID, { texturePreviewScale * (float)pbr->width, texturePreviewScale * (float)pbr->height });
+				ImGui::Image((ImTextureID)(unsigned long long)pbr->GLID, { texturePreviewScale * (float)pbr->width, texturePreviewScale * (float)pbr->height });
 			}
 
 			ImGui::EndGroup();

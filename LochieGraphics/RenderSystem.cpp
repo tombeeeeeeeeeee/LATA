@@ -784,7 +784,7 @@ void RenderSystem::RenderDownSamples(unsigned int srcTexture)
     for (int i = 0; i < (int)bloomMips.size(); i++)
     {
         const bloomMip& mip = bloomMips[i];
-        glViewport(0, 0, mip.size.x, mip.size.y);
+        glViewport(0, 0, (int)mip.size.x, (int)mip.size.y);
         inverseRes = 1.0f / mip.size;
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
             GL_TEXTURE_2D, mip.texture, 0);

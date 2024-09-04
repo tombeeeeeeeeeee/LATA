@@ -82,17 +82,20 @@ public:
 
 	void setEcco(Ecco* ecco);
 	void setEcco();
-	Ecco* ecco();
+	Ecco* ecco() const;
 
 	void setSync(Sync* sync);
 	void setSync();
-	Sync* sync();
+	Sync* sync() const;
 
 	void setHealth(Health* health);
 	Health* health();
 
 	void setEnemy(Enemy* enemy);
 	Enemy* enemy();
+
+	// Make this take a mask for stuff to delete
+	void ClearParts();
 
 #pragma endregion
 
