@@ -14,11 +14,13 @@ private:
 	SceneObject* wallTileParent = new SceneObject(this, "Wall Tiles");
 
 	Model* ground;
+	Model* wall;
 
 	glm::vec3 testPos1;
 	glm::vec3 testPos2;
 
 	float gridSize = 300.0f;
+	float wallThickness = 50.0f;
 
 	int gridMinX = INT_MAX;
 	int gridMaxX = INT_MIN;

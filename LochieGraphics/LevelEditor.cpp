@@ -11,10 +11,10 @@ void LevelEditor::RefreshWalls()
 	
 	while (walls.size())
 	{
-		walls[0]->setParent(nullptr);
-		unsigned long long GUID = walls[0]->getSceneObject()->GUID;
+		unsigned long long GUID = walls.front()->getSceneObject()->GUID;
+		delete sceneObjects[GUID];
 		sceneObjects.erase(GUID);
-		transforms.erase(GUID);
+		walls.erase(walls.begin());
 	}
 
 	auto tiles = groundTileParent->transform()->getChildren();
@@ -24,7 +24,7 @@ void LevelEditor::RefreshWalls()
 		glm::vec2 tileCell = glm::vec2{ pos.x, pos.z } / gridSize;
 		tileCell = { roundf(tileCell.x), roundf(tileCell.y) };
 		if (!CellAt(tileCell.x - 1, tileCell.y)) {
-
+			PlaceWallAt(pos.x - (gridSize / 2), pos.z, 0.0f);
 			// place left wall
 		}
 		if (!CellAt(tileCell.x, tileCell.y - 1)) {
@@ -52,6 +52,17 @@ SceneObject* LevelEditor::CellAt(float x, float z)
 		}
 	}
 	return nullptr;
+}
+
+SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
+{
+	SceneObject* newWall = new SceneObject(this, "newWall");
+	newWall->transform()->setPosition({ x, 0.0f, z });
+	newWall->transform()->setEulerRotation({0.0f, direction, 0.0f});
+	newWall->transform()->setParent(wallTileParent->transform());
+	newWall->setRenderer(new ModelRenderer(wall, (unsigned long long)0));
+	// TODO: Add collider
+	return newWall;
 }
 
 LevelEditor::LevelEditor()
@@ -82,6 +93,7 @@ void LevelEditor::Start()
 	camera->nearPlane = 10;
 
 	ground = ResourceManager::LoadModel("models/SM_FloorTile.fbx");
+	wall = ResourceManager::LoadModel("models/SM_Wall.fbx");
 }
 
 void LevelEditor::Update(float delta)
@@ -99,11 +111,11 @@ void LevelEditor::Update(float delta)
 	lines.FinishLineLoop();
 
 	glm::vec3 camPoint = camera->transform.getGlobalPosition();
-	camPoint = glm::vec3(camPoint.z, camPoint.y, camPoint.x);
+	camPoint = glm::vec3(camPoint.x, camPoint.y, camPoint.z);
 
 	glm::vec2 adjustedCursor = *cursorPos - glm::vec2{ 0.5f, 0.5f };
-	glm::vec3 temp = (camPoint + glm::vec3(adjustedCursor.x * camera->getOrthoWidth(), 0.0f, adjustedCursor.y * camera->getOrthoHeight())) / gridSize;
-	glm::vec2 targetCell = glm::vec2{ roundf(temp.z), roundf(temp.x) };
+	glm::vec3 temp = (camPoint + glm::vec3(adjustedCursor.x * camera->getOrthoWidth(), 0.0f, -adjustedCursor.y * camera->getOrthoHeight())) / gridSize;
+	glm::vec2 targetCell = glm::vec2{ roundf(temp.x), roundf(temp.z) };
 	SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
 
 	// TODO: Skip if imgui wants mouse input
@@ -125,14 +137,13 @@ void LevelEditor::Update(float delta)
 			gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
 		}
 	}
-	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-		if (alreadyPlaced) {
-			unsigned long long GUID = alreadyPlaced->GUID;
-			sceneObjects[GUID]->ClearParts();
-			transforms.erase(GUID);
-			delete sceneObjects[GUID];
-
-		}
+	// TODO: Refresh mins and maxes
+	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS && alreadyPlaced) {
+		unsigned long long GUID = alreadyPlaced->GUID;
+		// TODO: Might be better to have a mark for deletion type of thing and gets deleted afterwards
+		// Could get put into some collection somewhere
+		delete sceneObjects[GUID];
+		sceneObjects.erase(GUID);
 	}
 }
 
@@ -159,7 +170,7 @@ void LevelEditor::GUI()
 				break;
 			case LevelEditor::BrushState::brush:
 				camera->state = Camera::State::tilePlacing;
-				camera->transform.setEulerRotation({ 0.0f, 0.0f, -90.0f });
+				camera->transform.setEulerRotation({ -90.0f, 0.0f, -90.0f });
 				break;
 			default:
 				break;

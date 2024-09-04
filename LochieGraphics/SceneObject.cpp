@@ -30,7 +30,9 @@ SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation
 
 SceneObject::~SceneObject()
 {
-
+	// TODO: Make sure we want to this this here
+	ClearParts();
+	scene->transforms.erase(GUID);
 }
 
 void SceneObject::Update(float delta)

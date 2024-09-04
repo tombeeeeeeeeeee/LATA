@@ -68,6 +68,8 @@ public:
 	toml::table Serialise(unsigned long long GUID) const;
 	Transform(toml::table table);
 
-	// Transform destructor should make childrens parent this objects parent, and potentally remove this object parents children reference to this
+	~Transform();
+
+	// TODO: rule o three
 };
 

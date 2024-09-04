@@ -269,3 +269,20 @@ Transform::Transform(toml::table table)
 
 	UpdateGlobalMatrixCascading();
 }
+
+Transform::~Transform()
+{
+	if (parent) {
+		auto temp = std::find(parent->children.begin(), parent->children.end(), this);
+		if (temp != parent->children.end()) {
+			parent->children.erase(temp);
+		}
+		else {
+			std::cout << "Deleting Transform, parent was missing this in its children\n";
+		}
+	}
+	for (auto i : children)
+	{
+		i->parent = parent;
+	}
+}
