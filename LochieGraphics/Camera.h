@@ -29,7 +29,7 @@ public:
     };
     EditorSpeed editorSpeed;
     ArtEditorSpeed artEditorSpeed;
-    float orthScrollSpeed = 2;
+    float orthScrollSpeed = 200;
 
     float fov;
 

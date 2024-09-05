@@ -10,14 +10,14 @@
 
 //TODO: Maybe get shader without needing both the fragment and vertex shader, it could just find them both if they have the same name and just differing extension or custom file format that stores the name of the others
 class ResourceManager {
-private:
+public:
 	struct hashFNV1A {
 		static const unsigned long long offset;
 		static const unsigned long long prime;
 		unsigned long long operator()(unsigned long long key) const;
 		unsigned long long operator()(std::string key) const;
+		unsigned long long operator()(std::pair<int, int> key) const;
 	};
-public:
 	// TODO: Make resources be gathered from a GUID
 	static Shader* LoadShader(std::string vertexPath, std::string fragmentPath, int flags = 0);
 	static Shader* LoadShader(std::string sharedName, int flags = 0);
