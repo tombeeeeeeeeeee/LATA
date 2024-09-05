@@ -6,11 +6,14 @@
 #include "Model.h"
 #include "Mesh.h"
 
+#include <random>
+
 // TODO: Consider breaking this code up into seperate manager classes with a parent class manager for shared functionality
 
 //TODO: Maybe get shader without needing both the fragment and vertex shader, it could just find them both if they have the same name and just differing extension or custom file format that stores the name of the others
 class ResourceManager {
 public:
+	// TODO: Consider moving this to it's own seperate file
 	struct hashFNV1A {
 		static const unsigned long long offset;
 		static const unsigned long long prime;
@@ -50,6 +53,7 @@ public:
 	static std::string filter;
 
 	static unsigned long long guidCounter;
+	static std::random_device guidRandomiser;
 	static unsigned long long GetNewGuid();
 
 	static void BindFlaggedVariables();

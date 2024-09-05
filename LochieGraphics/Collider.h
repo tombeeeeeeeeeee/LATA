@@ -33,6 +33,7 @@ struct Collider
 
 	// TODO: Implement in children
 	virtual toml::table Serialise(unsigned long long GUID) const;
+	Collider* Load(toml::table table);
 };
 
 struct PolygonCollider : public Collider

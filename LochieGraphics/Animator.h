@@ -50,5 +50,6 @@ public:
 	const std::vector<glm::mat4>& getFinalBoneMatrices();
 
 	toml::table Serialise(unsigned long long GUID) const;
+	Animator(toml::table table);
 };
 

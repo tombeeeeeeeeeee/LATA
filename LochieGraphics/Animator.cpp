@@ -72,3 +72,8 @@ toml::table Animator::Serialise(unsigned long long GUID) const
         { "guid", Serialisation::SaveAsUnsignedLongLong(GUID) }
     };
 }
+
+Animator::Animator(toml::table table)
+{
+    // TODO: Write
+}

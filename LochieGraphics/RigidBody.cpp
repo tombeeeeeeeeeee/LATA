@@ -119,3 +119,8 @@ toml::table RigidBody::Serialise(unsigned long long GUID) const
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
 	};
 }
+
+RigidBody::RigidBody(toml::table table)
+{
+	// TODO: Load
+}

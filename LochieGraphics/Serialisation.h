@@ -15,7 +15,9 @@ public:
 	static glm::vec3 LoadAsVec3(toml::v3::array* toml);
 	static glm::vec3 LoadAsVec3(toml::node_view<toml::node> toml);
 	static unsigned long long LoadAsUnsignedLongLong(toml::v3::node_view<toml::v3::node> toml);
+	static unsigned long long LoadAsUnsignedLongLong(toml::node& toml);
 	static std::string LoadAsString(toml::v3::node_view<toml::v3::node> toml);
+	static std::string LoadAsString(toml::node& toml);
 	static int LoadAsInt(toml::v3::node_view<toml::v3::node> toml);
 	static float LoadAsFloat(toml::node& toml);
 	static glm::quat LoadAsQuaternion(toml::node_view<toml::node> toml);

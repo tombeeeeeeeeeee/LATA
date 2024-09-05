@@ -131,10 +131,22 @@ void SceneObject::GUI()
 
 toml::table SceneObject::Serialise() const
 {
+	auto parent = transform()->getParent();
+	unsigned long long parentGUID = 0;
+	if (parent) {
+		parentGUID = parent->getSceneObject()->GUID;
+	}
+	toml::array childrenGUIDs;
+	for (auto child : transform()->getChildren())
+	{
+		childrenGUIDs.push_back(Serialisation::SaveAsUnsignedLongLong(child->getSceneObject()->GUID));
+	}
 	return toml::table{
-		{"name", name},
-		{"guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
-		{"parts", parts}
+		{ "name", name},
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{ "parts", parts},
+		{ "parent", Serialisation::SaveAsUnsignedLongLong(parentGUID)},
+		{ "children", childrenGUIDs }
 	};
 }
 
@@ -154,7 +166,7 @@ void SceneObject::setTransform(Transform* transform)
 	scene->transforms[GUID] = (*transform);
 }
 
-Transform* SceneObject::transform()
+Transform* SceneObject::transform() const
 {
 	return &(scene->transforms[GUID]);
 }
@@ -164,8 +176,8 @@ void SceneObject::setRenderer(ModelRenderer* renderer)
 	if (renderer)
 	{
 		parts |= Parts::modelRenderer;
+		// TODO: Ensure that this isn't leaking memory and is alright
 		scene->renderers[GUID] = *renderer;
-		scene->renderers[GUID].sceneObject = this;
 	}
 	else
 	{

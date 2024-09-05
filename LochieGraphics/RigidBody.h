@@ -63,6 +63,7 @@ public:
 	void GUI();
 
 	toml::table Serialise(unsigned long long GUID) const;
+	RigidBody(toml::table table);
 
 private:
 	//TODO: ADD FUNCTION POINTERS FOR ON COLLISION AND ON TRIGGER

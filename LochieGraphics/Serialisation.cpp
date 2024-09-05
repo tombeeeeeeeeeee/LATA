@@ -22,7 +22,17 @@ unsigned long long Serialisation::LoadAsUnsignedLongLong(toml::v3::node_view<tom
     return std::strtoull(LoadAsString(toml).c_str(), 0, 10);
 }
 
+unsigned long long Serialisation::LoadAsUnsignedLongLong(toml::node& toml)
+{
+    return std::strtoull(LoadAsString(toml).c_str(), 0, 10);
+}
+
 std::string Serialisation::LoadAsString(toml::v3::node_view<toml::v3::node> toml)
+{
+    return toml.as_string()->value_or<std::string>("");
+}
+
+std::string Serialisation::LoadAsString(toml::node& toml)
 {
     return toml.as_string()->value_or<std::string>("");
 }

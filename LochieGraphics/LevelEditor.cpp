@@ -195,8 +195,124 @@ void LevelEditor::GUI()
 		}
 	}
 	ImGui::End();
+
+	SaveAsPrompt();
+	LoadPrompt();
+
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("File")) {
+			if (ImGui::MenuItem("Save As")) {
+				openSaveAs = true;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+}
+
+void LevelEditor::SaveAsPrompt()
+{
+	if (openSaveAs) {
+		ImGui::OpenPopup("Save as");
+	}
+	if (!ImGui::BeginPopupModal("Save as", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		return;
+	}
+
+	if (openSaveAs) {
+		ImGui::SetKeyboardFocusHere();
+		openSaveAs = false;
+	}
+	if (ImGui::InputText("Filename##Save", &windowName, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue)) {
+		ImGui::CloseCurrentPopup();
+		previouslySaved = true;
+		SaveLevel();
+	}
+	if (ImGui::Button("Save")) {
+		ImGui::CloseCurrentPopup();
+		previouslySaved = true;
+		SaveLevel();
+	}
+
+	ImGui::EndPopup();
+}
+
+void LevelEditor::LoadPrompt()
+{
+	if (openLoad) {
+		ImGui::OpenPopup("Load Level");
+	}
+	if (!ImGui::BeginPopupModal("Load Level", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		return;
+	}
+
+	if (openLoad) {
+		ImGui::SetKeyboardFocusHere();
+		openLoad = false;
+	}
+	if (ImGui::InputText("Filename##Load", &windowName, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue)) {
+		ImGui::CloseCurrentPopup();
+		previouslySaved = true;
+		LoadLevel();
+	}
+
+
+
+	ImGui::EndPopup();
+}
+
+void LevelEditor::SaveLevel()
+{
+	std::ofstream file("Levels/" + windowName + ".level");
+
+	file << SaveSceneObjectsAndParts();
+
+	file.close();
+}
+
+void LevelEditor::LoadLevel()
+{
+	std::ifstream file("Levels/" + windowName + ".level");
+
+	toml::table data = toml::parse(file);
+
+	DeleteAllSceneObjects();
+
+	LoadSceneObjectsAndParts(data);
+
+
+	// TODO:
+	
+	groundTileParent = FindSceneObjectOfName("Ground Tiles");
+	wallTileParent = FindSceneObjectOfName("Wall Tiles");
+
+	// Refresh the tiles collection
+	tiles.clear();
+	auto children = groundTileParent->transform()->getChildren();
+	for (size_t i = 0; i < children.size(); i++)
+	{
+		glm::vec3 adjustedPos = children[i]->getPosition() / gridSize;
+		tiles[{(int)adjustedPos.x, (int)adjustedPos.z}] = children[i]->getSceneObject();
+	}
+
+	file.close();
 }
 
 LevelEditor::~LevelEditor()
 {
+}
+
+void LevelEditor::Save()
+{
+	if (!previouslySaved) {
+		openSaveAs = true;
+	}
+	else {
+		SaveLevel();
+	}
+}
+
+void LevelEditor::Load()
+{
+	openLoad = true;
 }

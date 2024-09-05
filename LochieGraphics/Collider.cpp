@@ -18,3 +18,9 @@ toml::table Collider::Serialise(unsigned long long GUID) const
 		{ "collisionLayer", collisionLayer }
 	};
 }
+
+Collider* Collider::Load(toml::table table)
+{
+	// TODO: Write
+	return nullptr;
+}

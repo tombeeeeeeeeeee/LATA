@@ -47,6 +47,18 @@ private:
 	SceneObject* PlaceWallAt(float x, float z, float direction);
 	SceneObject* PlaceTileAt(float x, float z);
 
+	void SaveAsPrompt();
+	void LoadPrompt();
+	
+	// For save to open the save as prompt, or just save
+	bool previouslySaved = false;
+
+	bool openSaveAs = false;
+	bool openLoad = false;
+
+	void SaveLevel();
+	void LoadLevel();
+
 public:
 
 	PointLight pointLights[4] = {
@@ -69,5 +81,8 @@ public:
 	//	void OnWindowResize() override;
 	//
 	~LevelEditor() override;
+
+	void Save() override;
+	void Load() override;
 };
 

@@ -153,6 +153,7 @@ SceneManager::SceneManager(Scene* _scene)
 	ResourceManager::defaultMaterial->AddTextures({
 		ResourceManager::defaultTexture
 		});
+	ResourceManager::defaultShader = scene->shaders[super];
 
 	scene->Start();
 

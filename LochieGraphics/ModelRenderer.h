@@ -29,6 +29,7 @@ public:
 	virtual void GUI() override;
 
 	toml::table Serialise(unsigned long long GUID) const;
+	ModelRenderer(toml::table table);
 
 	void Refresh();
 };

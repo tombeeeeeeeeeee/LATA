@@ -62,7 +62,7 @@ public:
 #pragma region Part Get and Set
 
 	void setTransform(Transform* transform);
-	Transform* transform();
+	Transform* transform() const;
 
 	void setRenderer(ModelRenderer* renderer);
 	ModelRenderer* renderer();

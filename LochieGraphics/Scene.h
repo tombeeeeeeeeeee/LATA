@@ -39,8 +39,10 @@ public:
 	std::unordered_map<unsigned long long, SceneObject*> sceneObjects = {};
 	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};
 	std::unordered_map<unsigned long long, Transform> transforms = {};
+	// TODO: There is types of animators, don't think its safe to store them like this
 	std::unordered_map<unsigned long long, Animator> animators = {};
 	std::unordered_map<unsigned long long, RigidBody> rigidBodies = {};
+	// TODO: Same as above with animators, data would be lost?
 	std::unordered_map<unsigned long long, Collider> colliders = {};
 	std::unordered_map<unsigned long long, Health> healths = {};
 	std::unordered_map<unsigned long long, Enemy> enemies = {};
@@ -78,6 +80,15 @@ public:
 	Scene(const Scene& other) = delete;
 	Scene& operator=(const Scene& other) = delete;
 
-	virtual void Save() const;
+	virtual void Save();
 	virtual void Load();
+
+protected:
+
+	void DeleteAllSceneObjects();
+
+	SceneObject* FindSceneObjectOfName(std::string name);
+
+	toml::table SaveSceneObjectsAndParts();
+	void LoadSceneObjectsAndParts(toml::table& data);
 };
