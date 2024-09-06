@@ -317,6 +317,9 @@ void RenderSystem::Update(
     Camera* camera
 )
 {
+    // TODO: There are a few issues when the res is too low
+    if (SCREEN_WIDTH <= 64 || SCREEN_HEIGHT <= 64) { return; }
+
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
     shadowCaster->shadowFrameBuffer->Load();
     unsigned int forwardAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };

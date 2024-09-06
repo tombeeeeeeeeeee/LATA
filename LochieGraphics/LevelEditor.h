@@ -93,8 +93,6 @@ public:
 	void Update(float delta) override;
 	void Draw() override;
 	void GUI() override;
-	//	void OnWindowResize() override;
-	//
 	~LevelEditor() override;
 
 	void Save() override;
