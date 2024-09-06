@@ -31,8 +31,6 @@ void GameTest::Start()
 	r = sceneObjects[r->GUID];
 	h = sceneObjects[h->GUID];
 
-	renderSystem->SetShaders(&shaders);
-
 	hRb = new RigidBody();
 	hRb->setMass(1.0f);
 	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, hRadius)});

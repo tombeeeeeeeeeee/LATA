@@ -226,6 +226,9 @@ void Transform::UpdateGlobalMatrixCascading()
 void Transform::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
+	if (!ImGui::CollapsingHeader(("Transform##" + tag).c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+		return;
+	}
 
 
 	if(ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f))

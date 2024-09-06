@@ -95,13 +95,78 @@ void LevelEditor::Start()
 	camera->farPlane = 100000;
 	camera->nearPlane = 10;
 
+	// TODO: Don't load directly here, should be saved as an art asset
 	ground = ResourceManager::LoadModel("models/SM_FloorTile.fbx");
 	wall = ResourceManager::LoadModel("models/adjustedOriginLocWall.fbx");
+
+	syncSo = new SceneObject(this, "Sync");
+	eccoSo = new SceneObject(this, "Ecco");
+
+
+	RigidBody* hRb = new RigidBody();
+	hRb->setMass(1.0f);
+	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, syncRadius) });
+	hRb->setMomentOfInertia(5.0f);
+
+	RigidBody* rRb = new RigidBody();
+	rRb->addCollider({ new PolygonCollider(
+			{
+				{40.0f, 40.0f},
+				{40.0f, -40.0f},
+				{-40.0f, -40.0f},
+				{-40.0f, 40.0f},
+			}, 0.0f) }
+	);
+	rRb->setMass(0.1f);
+	rRb->setMomentOfInertia(5.0f);
+
+	syncSo->transform()->setPosition({ 1.0f,0.0f,1.0f });
+
+	input.Initialise();
+
+	syncSo->setRigidBody(hRb);
+	eccoSo->setRigidBody(rRb);
+
+	hRb = &rigidBodies[sync->GUID];
+	rRb = &rigidBodies[ecco->GUID];
+	syncSo->setSync(sync);
+	eccoSo->setEcco(ecco);
+	ecco->wheelDirection = { eccoSo->transform()->forward().x, eccoSo->transform()->forward().y };
+
+	gameCamSystem.cameraPositionDelta = { -150.0f, 100.0f, 150.0f };
+
+	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModel("models/EccoBlockout_RevisedScale.fbx"), (unsigned long long)0));
+	//camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f));
 }
 
 void LevelEditor::Update(float delta)
 {
 	LineRenderer& lines = renderSystem->lines;
+	input.Update();
+
+	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
+	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
+	if (input.inputDevices.size() > 0)
+	{
+		ecco->Update(
+			*input.inputDevices[0],
+			*eccoSo->transform(),
+			*eccoSo->rigidbody(),
+			delta
+		);
+
+		if (input.inputDevices.size() > 1)
+		{
+			sync->Update(
+				*input.inputDevices[1],
+				*syncSo->transform(),
+				*syncSo->rigidbody(),
+				delta
+			);
+		}
+	}
+
+	gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), 0.5f);
 
 	lines.DrawLineSegment({ 0, 0, 0 }, { 1, 1, 1 }, { 1.0f, 0.5f, 0.2f });
 	lines.DrawLineSegment(testPos1, testPos2, {1.0f, 1.0f, 1.0f});
@@ -208,6 +273,8 @@ void LevelEditor::GUI()
 		}
 		ImGui::EndMainMenuBar();
 	}
+
+	input.GUI();
 }
 
 void LevelEditor::SaveAsPrompt()
@@ -233,6 +300,9 @@ void LevelEditor::SaveAsPrompt()
 		previouslySaved = true;
 		SaveLevel();
 	}
+	if (ImGui::Button("Cancel##Load")) {
+		ImGui::CloseCurrentPopup();
+	}
 
 	ImGui::EndPopup();
 }
@@ -254,6 +324,9 @@ void LevelEditor::LoadPrompt()
 		ImGui::CloseCurrentPopup();
 		previouslySaved = true;
 		LoadLevel();
+	}
+	if (ImGui::Button("Cancel##Load")) {
+		ImGui::CloseCurrentPopup();
 	}
 
 
@@ -294,6 +367,8 @@ void LevelEditor::LoadLevel()
 		glm::vec3 adjustedPos = children[i]->getPosition() / gridSize;
 		tiles[{(int)adjustedPos.x, (int)adjustedPos.z}] = children[i]->getSceneObject();
 	}
+
+
 
 	file.close();
 }

@@ -42,8 +42,6 @@ public:
         std::string paintStrokeTexturePath
     );
 
-    void SetShaders(std::vector<Shader*>* _shaders) { shaders = _shaders; };
-
     void SetIrradianceMap(unsigned int skybox);
     void SetPrefilteredMap(unsigned int skybox);
 
