@@ -385,9 +385,143 @@ void ArtScene::GUI()
 		ImGui::Button("SAVE AS ASSET");
 	}
 	ImGui::End();
+
+	SaveModal();
+}
+
+void ArtScene::SaveModal()
+{
+	ModelRenderer* renderer = sceneObject->renderer();
+
+	if (openSave) {
+		ImGui::OpenPopup("Save Assets");
+		openSave = false;
+
+		materialsToSave.clear();
+		texturesToSave.clear();
+
+		for (size_t i = 0; i < renderer->materials.size(); i++)
+		{
+			materialsToSave.push_back({ renderer->materials[i], true });
+			for (auto& i : material->texturePointers)
+			{
+				if (std::find(texturesToSave.begin(), texturesToSave.end(), std::pair<std::pair<std::string, Texture*>, bool>{ {i.first, i.second}, true }) == texturesToSave.end()) {
+					if (i.second != nullptr) { texturesToSave.push_back({ {i.first, i.second}, true }); }
+				}
+			}
+		}
+	}
+	if (!ImGui::BeginPopupModal("Save Assets", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		return;
+	}
+
+	// Show everything that can be saved, with the name/filepath it'll have
+
+	ImGui::BeginTable("Saving List", 3);
+
+	ImGui::TableNextRow();
+
+	ImGui::TableSetColumnIndex(0);
+	ImGui::PushItemWidth(200.0f);
+	ImGui::Text("Name");
+	ImGui::TableSetColumnIndex(1);
+	ImGui::Text("Type");
+	ImGui::TableSetColumnIndex(2);
+	ImGui::Text("Save");
+
+	ImGui::TableNextRow();
+
+	ImGui::TableSetColumnIndex(0);
+	ImGui::InputText(("##name" + Utilities::PointerToString(&sceneObject->name)).c_str(), &sceneObject->name, ImGuiInputTextFlags_AutoSelectAll);
+	ImGui::TableSetColumnIndex(1);
+	ImGui::Text("Renderer");
+
+	ImGui::TableSetColumnIndex(2);
+	ImGui::Checkbox(("##saving" + Utilities::PointerToString(renderer)).c_str(), &saveRenderer);
+
+	ImGui::TableNextRow();
+
+	ImGui::TableSetColumnIndex(0);
+	ImGui::Text(model->path.c_str());
+	ImGui::TableSetColumnIndex(1);
+	ImGui::Text("Model");
+
+	ImGui::TableSetColumnIndex(2);
+	ImGui::Checkbox(("##saving" + Utilities::PointerToString(model)).c_str(), &saveModel);
+
+
+	ImGui::TableNextRow();
+
+	// For each Material
+	// TODO: Iterator loop
+	for (size_t i = 0; i < materialsToSave.size(); i++)
+	{
+		Material* material = materialsToSave[i].first;
+		ImGui::TableSetColumnIndex(0);
+
+		ImGui::InputText(("##name" + Utilities::PointerToString(&material->name)).c_str(), &material->name, ImGuiInputTextFlags_AutoSelectAll);
+
+		ImGui::TableSetColumnIndex(1);
+		ImGui::Text("Material");
+
+		ImGui::TableSetColumnIndex(2);
+		ImGui::Checkbox(("##saving" + Utilities::PointerToString(material)).c_str(), &materialsToSave[i].second);
+
+		ImGui::TableNextRow();
+	}
+
+	// For each Texture
+	for (auto i = texturesToSave.begin(); i != texturesToSave.end(); i++)
+	{
+		ImGui::TableSetColumnIndex(0);
+		if (i->first.second) {
+			ImGui::Text(i->first.second->path.c_str());
+		}
+
+		ImGui::TableSetColumnIndex(1);
+		ImGui::Text("Texture");
+
+		ImGui::TableSetColumnIndex(2);
+		bool checked = i->second;
+		if (ImGui::Checkbox(("##saving" + Utilities::PointerToString(&i->first.first)).c_str(), &checked)) {
+			i->second = checked;
+		}
+
+		ImGui::TableNextRow();
+	}
+
+	ImGui::EndTable();
+
+	if (ImGui::Button("Cancel##saving")) {
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::EndPopup();
 }
 
 ArtScene::~ArtScene()
 {
 
+}
+
+void ArtScene::Save()
+{
+	openSave = true;
+
+	// TODO:
+	// All materials that are on the sceneobject
+	// The textures for the materials
+	// The model
+	// Model Renderer / sceneobject itself
+
+	// Material should be saved seperatly, with GUID references to the textures
+	// Textures need to be saved as their own file as well, having the path to the texture itself
+	// Rest can just be apart of 'Art Asset' which is basically the sceneObject
+
+
+}
+
+void ArtScene::Load()
+{
+	// Load the whole art asset
 }

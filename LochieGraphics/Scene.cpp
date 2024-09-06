@@ -36,10 +36,10 @@ Scene::~Scene()
 	}
 
 #define LoadPart(container, savedName, type)                                                           \
-toml::array* loading##type##s = data[##savedName].as_array();                                                    \
-for (int i = 0; i < loading##type##s->size(); i++)                                                       \
+toml::array* loading##type##s = data[##savedName].as_array();                                          \
+for (int i = 0; i < loading##type##s->size(); i++)                                                     \
 {                                                                                                      \
-	toml::table* loading##type = loading##type##s->at(i).as_table();                                             \
+	toml::table* loading##type = loading##type##s->at(i).as_table();                                   \
 	container[Serialisation::LoadAsUnsignedLongLong((*loading##type)["guid"])] = type(*loading##type); \
 }
 
@@ -172,7 +172,7 @@ toml::table Scene::SaveSceneObjectsAndParts()
 void Scene::LoadSceneObjectsAndParts(toml::table& data)
 {
 	toml::array* loadingSceneObjects = data["SceneObjects"].as_array();
-	int loadingSceneObjectsSize = loadingSceneObjects->size();
+	int loadingSceneObjectsSize = (int)loadingSceneObjects->size();
 	for (int i = 0; i < loadingSceneObjectsSize; i++)
 	{
 		auto loadingSceneObject = loadingSceneObjects->at(i).as_table();

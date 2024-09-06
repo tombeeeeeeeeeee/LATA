@@ -128,3 +128,18 @@ std::string Model::getDisplayName()
 	// TODO: the filename from path should be a utilities function
 	return path.substr(path.find_last_of("/\\") + 1) + " " + std::to_string(GUID);
 }
+
+toml::table Model::Serialise()
+{
+	// The rest of model data can be reloaded with the path
+	return toml::table{
+		{ "path", path },
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+	};
+}
+
+Model::Model(toml::table table)
+{
+	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
+	LoadModel(Serialisation::LoadAsString(table["path"]));
+}

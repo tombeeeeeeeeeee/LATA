@@ -5,6 +5,7 @@
 #include "Image.h"
 
 #include <unordered_map>
+#include <unordered_set>
 
 class ArtScene : public Scene
 {
@@ -12,6 +13,7 @@ private:
 
 	std::string filter = "";
 
+	std::string artAssetExtension = "Art";
 
 	std::unordered_map<std::string, Texture::Type> acceptableImportTypeNames = {
 		{ "BaseColour", Texture::Type::albedo },
@@ -81,6 +83,27 @@ private:
 	float resetCamObjectViewSpace = PI / 8;
 	void ResetCamera();
 
+
+	void SaveModal();
+	bool openSave = false;
+
+	bool saveRenderer = true;
+	bool saveModel = true;
+	// TODO: Should have some sort of like save container that just has the item and extra info needed for saving
+	struct MaterialSave {
+		Material* material = nullptr;
+		bool save = false;
+	};
+	struct TextureSave {
+		Texture* texture = nullptr;
+		bool save = false;
+	};
+
+	// TODO: Replace these with vector of a struct for like save info
+	std::vector<std::pair<Material*, bool>> materialsToSave;
+	// TODO: Doesn't need to save the slot (string), the texture type on the pointer should be enough
+	std::vector<std::pair<std::pair<std::string, Texture*>, bool>> texturesToSave;
+
 public:
 
 	static ArtScene* artScene;
@@ -96,9 +119,10 @@ public:
 	void Start() override;
 	void Update(float delta) override;
 	void Draw() override;
-//	void OnMouseDown() override;
 	void GUI() override;
-//	void OnWindowResize() override;
 //
 	~ArtScene() override;
+
+	void Save() override;
+	void Load() override;
 };

@@ -223,7 +223,7 @@ void Material::ModalGUI()
 
 std::string Material::getDisplayName() const
 {
-	return name + " " + std::to_string(GUID);
+	return name;
 }
 
 toml::table Material::Serialise() const

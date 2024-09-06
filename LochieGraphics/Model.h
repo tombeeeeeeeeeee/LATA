@@ -2,6 +2,8 @@
 #include "BoneInfo.h"
 #include "ModelHierarchyInfo.h"
 
+#include "Serialisation.h"
+
 #include <unordered_map>
 
 class SceneObject;
@@ -12,6 +14,7 @@ class Model
 private:
 	Model();
 	Model(std::string path);
+	Model(toml::table table);
 
 
 public:
@@ -47,5 +50,7 @@ public:
 	void Refresh();
 
 	std::string getDisplayName();
+
+	toml::table Serialise();
 };
 
