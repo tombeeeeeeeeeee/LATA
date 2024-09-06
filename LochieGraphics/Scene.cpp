@@ -63,7 +63,7 @@ void Scene::Save() const
 	SavePart(transforms);
 	SavePart(animators);
 	SavePart(rigidBodies);
-	SavePart(colliders);
+	//SavePart(colliders);
 	SavePart(healths);
 
 	// TODO: Save Ecco & Sync
@@ -78,7 +78,7 @@ void Scene::Save() const
 		{ "Transforms", savedtransforms},
 		{ "Animators", savedanimators},
 		{ "RigidBodies", savedrigidBodies},
-		{ "Colliders", savedcolliders},
+		//{ "Colliders", savedcolliders},
 		{ "Healths", savedhealths},
 	};
 

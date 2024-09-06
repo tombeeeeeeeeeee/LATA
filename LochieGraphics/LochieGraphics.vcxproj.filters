@@ -257,6 +257,12 @@
     <ClCompile Include="LevelEditor.cpp">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemySystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
@@ -496,8 +502,13 @@
     <ClInclude Include="LevelEditor.h">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="EditorGUI.h">
-      <Filter>Source Files\Third-Party</Filter>
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemySystem.h" />
+    <ClInclude Include="BlastLine.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="Hit.h">
+      <Filter>Source Files\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

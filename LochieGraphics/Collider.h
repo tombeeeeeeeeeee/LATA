@@ -12,6 +12,8 @@ enum class CollisionLayers
 	enemy = 1 << 2,
 	player = 1 << 3,
 	reflectiveSurface = 1 << 4,
+	sync = 1 << 5,
+	ecco = 1 << 6,
 };
 
 enum class ColliderType

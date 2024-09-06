@@ -41,7 +41,7 @@ public:
 	std::unordered_map<unsigned long long, Transform> transforms = {};
 	std::unordered_map<unsigned long long, Animator> animators = {};
 	std::unordered_map<unsigned long long, RigidBody> rigidBodies = {};
-	std::unordered_map<unsigned long long, Collider> colliders = {};
+	std::unordered_map<unsigned long long, Collider*> colliders = {};
 	std::unordered_map<unsigned long long, Health> healths = {};
 	std::unordered_map<unsigned long long, Enemy> enemies = {};
 	std::vector<Light*> lights = {};

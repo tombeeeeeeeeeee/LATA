@@ -120,6 +120,8 @@ void GameTest::Start()
 	enemySystem.Start();
 	enemySystem.InitialiseMelee(sceneObjects, 10);
 	enemySystem.InitialiseRanged(sceneObjects, 10);
+
+	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 }
 
 void GameTest::Update(float delta)
@@ -152,6 +154,7 @@ void GameTest::Update(float delta)
 					*input.inputDevices[0],
 					*h->transform(),
 					*h->rigidbody(),
+					&renderSystem->lines,
 					delta
 				);
 			}
@@ -183,6 +186,7 @@ void GameTest::Update(float delta)
 					*input.inputDevices[1],
 					*h->transform(),
 					*h->rigidbody(),
+					&renderSystem->lines,
 					delta
 				);
 			}

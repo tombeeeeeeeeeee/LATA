@@ -1,5 +1,5 @@
 #include "PhysicsSystem.h"
-
+#include "Hit.h"
 #include "Transform.h"
 
 void PhysicsSystem::UpdateRigidBodies(
@@ -36,10 +36,15 @@ void PhysicsSystem::UpdateRigidBodies(
 void PhysicsSystem::CollisionCheckPhase(
 	std::unordered_map<unsigned long long, Transform>& transforms,
 	std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
-	std::unordered_map<unsigned long long, Collider>& colliders
+	std::unordered_map<unsigned long long, Collider*>& colliders
 
 )
 {
+	transformsInScene = transforms;
+	rigidiBodiesInScene = rigidBodies;
+	collidersInScene = colliders;
+
+
 	for (int i = 0; i < CollisionItterations; i++)
 	{
 		std::vector<CollisionPacket> collisions;
@@ -60,7 +65,7 @@ void PhysicsSystem::CollisionCheckPhase(
 				{
 					
 					GetCollisions(
-						&i->second, &k->second,
+						&i->second, k->second,
 						&transforms[i->first], &transforms[k->first],
 						collisions);
 				}
@@ -363,4 +368,96 @@ void PhysicsSystem::SetCollisionLayerMask(int layer, unsigned int bitMask)
 bool PhysicsSystem::GetCollisionLayerBool(int layerA, int layerB)
 {
 	return layerMasks[layerA] & (1 << layerB);
+}
+
+bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float length, int layerMask, bool ignoreTriggers)
+{
+	std::vector<CollisionPacket> collisions;
+
+
+	for (auto rigidBody = rigidiBodiesInScene.begin(); rigidBody != rigidiBodiesInScene.end(); rigidBody++)
+	{
+		for (auto collider = rigidBody->second.colliders.begin(); collider != rigidBody->second.colliders.end(); collider++)
+		{
+			CollisionPacket collision = RayCastAgainstCollider(
+				pos, direction,
+				transformsInScene[rigidBody->first], *collider
+			);
+			if (collision.depth >= 0.0f && collision.depth < length)
+			{
+				collisions.push_back(collision);
+			}
+		}
+	}
+
+	for (auto collider = collidersInScene.begin(); collider != collidersInScene.end(); collider++)
+	{
+		CollisionPacket collision = RayCastAgainstCollider(
+			pos, direction,
+			transformsInScene[collider->first], collider->second
+		);
+
+		if (collision.depth >= 0.0f && collision.depth < length)
+		{
+			collisions.push_back(collision);
+		}
+	}
+
+	//Post casting ray sorting to see what has been hit.
+	if (collisions.size() > 0)
+	{
+		hit.collider = nullptr;
+		hit.sceneObject = nullptr;
+		hit.normal = { 0.0f, 0.0f };
+		hit.distance = NAN;
+		hit.otherCollisions = {};
+		return false;
+	}
+
+	//bubble sort for smallest distance from ray
+	for(int i = 0; i < collisions.size(); i++)
+	{
+		for (int j = i + 1; j < collisions.size(); j++)
+		{
+			if (collisions[i].depth > collisions[j].depth)
+			{
+				CollisionPacket temp = collisions[i];
+				collisions[i] = collisions[j];
+				collisions[j] = temp;
+			}
+		}
+	}
+
+	hit.sceneObject = collisions[0].soA;
+	hit.collider = collisions[0].colliderA;
+	hit.normal = collisions[0].normal;
+	hit.distance = collisions[0].depth;
+	if (collisions.size() == 1)
+	{
+		hit.otherCollisions = {};
+	}
+	else
+	{
+		hit.otherCollisions.reserve(collisions.size() - 1);
+		for (int i = 1; i < collisions.size(); i++)
+		{
+			hit.otherCollisions.push_back(collisions[i].soA);
+		}
+	}
+
+	return hit.distance < length;
+}
+
+CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 direction, Transform& transform, Collider* collider)
+{
+	// COLLISION BODY A is the target COLLISION BODY B SHOULD BE NULL
+
+	return CollisionPacket();
+	/*
+		TODO:
+		MAKE RAYCAST AGAINST CIRCLE
+		MAKE RAYCAST AGAINST PLANE
+		MAKE RAYCAST AGAINST POLY
+
+	*/
 }
