@@ -26,6 +26,8 @@ public:
 	static toml::array SaveAsVec3(glm::vec3 vec);
 	static std::string SaveAsUnsignedLongLong(unsigned long long n);
 
+	static std::string SaveAsUnsignedInt(unsigned int n);
+
 	static toml::array SaveAsQuaternion(glm::quat quaternion);
 };
 

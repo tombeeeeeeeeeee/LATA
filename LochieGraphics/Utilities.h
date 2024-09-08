@@ -20,4 +20,6 @@ namespace Utilities {
 	}
 
 	std::string ToLower(std::string& str);
+
+	std::string FilenameFromPath(std::string& path, bool includeExtension = true);
 }

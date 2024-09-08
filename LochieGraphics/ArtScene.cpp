@@ -22,6 +22,7 @@ void ArtScene::RefreshPBR()
 
 	int width = 0;
 	int height = 0;
+	std::string name;
 
 	bool foundImage = false;
 
@@ -29,15 +30,16 @@ void ArtScene::RefreshPBR()
 	{
 		if (!i.second->loaded) { continue; }
 		if (foundImage) {
-			if (width != i.second->width || height != i.second->height) {
-				std::cout << "Mismatched PBR texture sizes " << i.second->path << " does not match with the other last given texture\n"
-					<< "this can be ignored if in process of inputting textures\n";
+			if (width != i.second->width || height != i.second->height || name != MaterialNameFromTexturePath(i.second->path)) {
+				std::cout << "Mismatched PBR texture images " << i.second->path << " does not match with the other last given texture (in terms of either size or name)\n"
+					<< "this can be ignored if in process of inputting a new batch of textures\n";
 				return;
 			}
 		}
 		width = i.second->width;
 		height = i.second->height;
 		foundImage = true;
+		name = MaterialNameFromTexturePath(i.second->path);
 	}
 
 
@@ -77,8 +79,9 @@ void ArtScene::RefreshPBR()
 	//pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
 
 	// TODO: Get name from base image
-	int result = stbi_write_tga("./newPBR.tga", width, height, STBI_rgb_alpha, data.data());
-	Texture* pbr = ResourceManager::LoadTexture("newPBR.tga", Texture::Type::PBR);
+	std::string filename = texturePrefix + name + "_PBR.tga"; // 
+	int result = stbi_write_tga(("./" + filename).c_str(), width, height, STBI_rgb_alpha, data.data());
+	Texture* pbr = ResourceManager::LoadTexture(filename, Texture::Type::PBR);
 	material->AddTextures({ pbr });
 
 	//int tW, tH, tC;
@@ -369,6 +372,7 @@ void ArtScene::GUI()
 		}
 
 		// TODO: This should be somewhere else
+		// TODO: The rendering system could have a GUI
 		if (ImGui::CollapsingHeader("SSAO")) {
 			ImGui::DragInt("Kernal Size", &renderSystem->kernelSize);
 			ImGui::DragFloat("Radius", &renderSystem->ssaoRadius);
@@ -403,10 +407,10 @@ void ArtScene::SaveModal()
 		for (size_t i = 0; i < renderer->materials.size(); i++)
 		{
 			materialsToSave.push_back({ renderer->materials[i], true });
-			for (auto& i : material->texturePointers)
+			for (auto& t : renderer->materials[i]->texturePointers)
 			{
-				if (std::find(texturesToSave.begin(), texturesToSave.end(), std::pair<std::pair<std::string, Texture*>, bool>{ {i.first, i.second}, true }) == texturesToSave.end()) {
-					if (i.second != nullptr) { texturesToSave.push_back({ {i.first, i.second}, true }); }
+				if (std::find(texturesToSave.begin(), texturesToSave.end(), std::pair<std::pair<std::string, Texture*>, bool>{ {t.first, t.second}, true }) == texturesToSave.end()) {
+					if (t.second != nullptr) { texturesToSave.push_back({ {t.first, t.second}, true }); }
 				}
 			}
 		}
@@ -495,13 +499,58 @@ void ArtScene::SaveModal()
 	if (ImGui::Button("Cancel##saving")) {
 		ImGui::CloseCurrentPopup();
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("Save##ArtAssets")) {
+		ImGui::CloseCurrentPopup();
+		SaveArtAsset();
+	}
 
 	ImGui::EndPopup();
+}
+
+std::string ArtScene::MaterialNameFromTexturePath(std::string& path)
+{
+	std::string filename = Utilities::FilenameFromPath(path);
+	unsigned long long start = filename.find_first_of('_') + 1;
+	unsigned long long end = filename.find_last_of('_');
+	return filename.substr(start, end - start);
 }
 
 ArtScene::~ArtScene()
 {
 
+}
+
+void ArtScene::SaveArtAsset()
+{
+	if (saveRenderer) {
+		std::ofstream file(rendererSaveLocation + sceneObject->name + rendererExtension);
+		// The renderer itself does not need to save its GUID
+		file << sceneObject->renderer()->Serialise(0);
+		file.close();
+	}
+
+	for (auto& i : materialsToSave)
+	{
+		if (!i.second) { continue; }
+		std::ofstream file(materialSaveLocation + i.first->name + materialExtension);
+		file << i.first->Serialise();
+		file.close();
+	}
+
+	for (auto& i : texturesToSave)
+	{
+		if (!i.second) { continue; }
+		std::ofstream file(textureSaveLocation + MaterialNameFromTexturePath(i.first.second->path) + '_' + Texture::TypeNames.at(i.first.second->type) + textureExtension);
+		file << i.first.second->Serialise();
+		file.close();
+	}
+
+	if (saveModel) {
+		std::ofstream file(modelSaveLocation + Utilities::FilenameFromPath(model->path, false) + modelExtension);
+		file << model->Serialise();
+		file.close();
+	}
 }
 
 void ArtScene::Save()

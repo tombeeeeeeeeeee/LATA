@@ -32,6 +32,16 @@ private:
 	std::string texturePrefix = "T_";
 	std::string meshPrefix = "SM_";
 
+	std::string rendererSaveLocation = "Assets/";
+	std::string materialSaveLocation = "Assets/";
+	std::string textureSaveLocation = "Assets/";
+	std::string modelSaveLocation = "Assets/";
+
+	std::string rendererExtension = ".renderer";
+	std::string materialExtension = ".material";
+	std::string textureExtension = ".texture";
+	std::string modelExtension = ".model";
+
 	// Images store the image data
 	Image roughnessImage;
 	Image metallicImage;
@@ -83,6 +93,7 @@ private:
 	float resetCamObjectViewSpace = PI / 8;
 	void ResetCamera();
 
+	static std::string MaterialNameFromTexturePath(std::string& path);
 
 	void SaveModal();
 	bool openSave = false;
@@ -90,19 +101,21 @@ private:
 	bool saveRenderer = true;
 	bool saveModel = true;
 	// TODO: Should have some sort of like save container that just has the item and extra info needed for saving
-	struct MaterialSave {
-		Material* material = nullptr;
-		bool save = false;
-	};
-	struct TextureSave {
-		Texture* texture = nullptr;
-		bool save = false;
-	};
+	//struct MaterialSave {
+	//	Material* material = nullptr;
+	//	bool save = false;
+	//};
+	//struct TextureSave {
+	//	Texture* texture = nullptr;
+	//	bool save = false;
+	//};
 
 	// TODO: Replace these with vector of a struct for like save info
 	std::vector<std::pair<Material*, bool>> materialsToSave;
 	// TODO: Doesn't need to save the slot (string), the texture type on the pointer should be enough
 	std::vector<std::pair<std::pair<std::string, Texture*>, bool>> texturesToSave;
+
+	void SaveArtAsset();
 
 public:
 

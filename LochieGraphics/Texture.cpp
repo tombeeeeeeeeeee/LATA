@@ -271,3 +271,17 @@ std::string Texture::getDisplayName()
 	// TODO just the filename
 	return path + " " + std::to_string(GUID);
 }
+
+toml::table Texture::Serialise()
+{
+	return toml::table{
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{ "path", path},
+		{ "type", (int)type},
+		{ "wrappingMode", Serialisation::SaveAsUnsignedInt(wrappingMode)},
+		{ "mipMapped", mipMapped },
+		{ "minFilter", minFilter},
+		{ "maxFilter", maxFilter},
+		{ "flipped", flipped}
+	};
+}

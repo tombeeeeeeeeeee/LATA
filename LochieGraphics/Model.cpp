@@ -125,8 +125,7 @@ void Model::Refresh()
 
 std::string Model::getDisplayName()
 {
-	// TODO: the filename from path should be a utilities function
-	return path.substr(path.find_last_of("/\\") + 1) + " " + std::to_string(GUID);
+	return Utilities::FilenameFromPath(path) + " " + std::to_string(GUID);
 }
 
 toml::table Model::Serialise()

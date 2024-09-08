@@ -67,6 +67,11 @@ std::string Serialisation::SaveAsUnsignedLongLong(unsigned long long n)
     return std::to_string(n);
 }
 
+std::string Serialisation::SaveAsUnsignedInt(unsigned int n)
+{
+    return std::to_string(n);
+}
+
 toml::array Serialisation::SaveAsQuaternion(glm::quat quaternion)
 {
     return toml::array(quaternion.w, quaternion.x, quaternion.y, quaternion.z);

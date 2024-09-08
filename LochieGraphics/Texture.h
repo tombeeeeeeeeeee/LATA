@@ -5,6 +5,8 @@
 #include "assimp/scene.h"
 #include "assimp/cimport.h"
 
+#include "Serialisation.h"
+
 #include <string>
 #include <unordered_map>
 
@@ -78,6 +80,8 @@ public:
 	std::string getDisplayName();
 
 	void OpenModal() {};
+
+	toml::table Serialise();
 
 private:
 
