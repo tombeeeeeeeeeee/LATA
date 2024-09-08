@@ -22,14 +22,21 @@ std::string ArtScene::EnsureCorrectFileLocation(std::string& path, std::string& 
 	// Return the path to the file in expected
 
 	std::string newPath = expected + Utilities::FilenameFromPath(path, true);
-	if (newPath == path) { return path; }
-
+	if (newPath == path) { return newPath; }
+	if (std::filesystem::equivalent(std::filesystem::path(newPath), std::filesystem::path(path)))
+	{
+		// Checks if dragging in from the expected location, if so no action is needed
+		return newPath;
+	}
 	std::cout << "Potentially Copied file for locality, from:\n" << path << "\n to\n" << newPath << '\n';
-	// TODO: Ensure the files are closed properly here, pretty sure its okay like this but confirm
+	// TODO: Consider using filesystem function to copy file
 	std::ifstream original(path, std::ios::binary);
 	std::ofstream copied(newPath, std::ios::binary);
 
 	copied << original.rdbuf();	
+
+	original.close();
+	copied.close();
 
 	return newPath;
 }

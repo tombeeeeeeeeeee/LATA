@@ -97,7 +97,7 @@ void LevelEditor::Start()
 
 	// TODO: Don't load directly here, should be saved as an art asset
 	ground = ResourceManager::LoadModel("models/SM_FloorTile.fbx");
-	wall = ResourceManager::LoadModel("models/adjustedOriginLocWall.fbx");
+	wall = ResourceManager::LoadModel("models/SM_adjustedOriginLocWall.fbx");
 
 	syncSo = new SceneObject(this, "Sync");
 	eccoSo = new SceneObject(this, "Ecco");
