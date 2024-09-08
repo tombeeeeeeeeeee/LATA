@@ -16,6 +16,24 @@
 ArtScene* ArtScene::artScene = nullptr;
 
 
+std::string ArtScene::EnsureCorrectFileLocation(std::string& path, std::string& expected)
+{
+	// Copy the file into the expected path
+	// Return the path to the file in expected
+
+	std::string newPath = expected + Utilities::FilenameFromPath(path, true);
+	if (newPath == path) { return path; }
+
+	std::cout << "Potentially Copied file for locality, from:\n" << path << "\n to\n" << newPath << '\n';
+	// TODO: Ensure the files are closed properly here, pretty sure its okay like this but confirm
+	std::ifstream original(path, std::ios::binary);
+	std::ofstream copied(newPath, std::ios::binary);
+
+	copied << original.rdbuf();	
+
+	return newPath;
+}
+
 void ArtScene::RefreshPBR()
 {
 	// TODO: Clean up old PBRs
@@ -79,7 +97,7 @@ void ArtScene::RefreshPBR()
 	//pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
 
 	// TODO: Get name from base image
-	std::string filename = texturePrefix + name + "_PBR.tga"; // 
+	std::string filename = importTextureLocation + texturePrefix + name + "_PBR.tga"; // 
 	int result = stbi_write_tga(("./" + filename).c_str(), width, height, STBI_rgb_alpha, data.data());
 	Texture* pbr = ResourceManager::LoadTexture(filename, Texture::Type::PBR);
 	material->AddTextures({ pbr });
@@ -170,10 +188,6 @@ void ArtScene::ImportFromPaths(int pathCount, const char* paths[])
 	}
 }
 
-//TODO
-
-// Switch the editing material
-
 void ArtScene::ImportTexture(std::string& path, std::string& filename)
 {
 	// Figure out texture type
@@ -191,14 +205,12 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 	}
 
 	// Load texture
-
 	Texture* newTexture;
-
 	switch (type)
 	{
 	case Texture::Type::albedo: case Texture::Type::normal: case Texture::Type::emission:
-		newTexture = ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip);
-		material->AddTextures(std::vector<Texture*>{ ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip) });
+		newTexture = ResourceManager::LoadTexture(EnsureCorrectFileLocation(path, importTextureLocation), type, GL_REPEAT, defaultFlip);
+		material->AddTextures(std::vector<Texture*>{ newTexture });
 		// Refresh texture preview size
 		texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
 		break;
@@ -228,7 +240,7 @@ void ArtScene::ImportMesh(std::string& path, std::string& filename)
 	// TODO: delete old model
 	//model->meshes.clear();
 
-	model = ResourceManager::LoadModel(path);
+	model = ResourceManager::LoadModel(EnsureCorrectFileLocation(path, importModelLocation));
 
 	sceneObject->renderer()->modelGUID = model->GUID;
 	sceneObject->renderer()->Refresh();
