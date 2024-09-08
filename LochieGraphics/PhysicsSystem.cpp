@@ -379,27 +379,46 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float 
 	{
 		for (auto collider = rigidBody->second.colliders.begin(); collider != rigidBody->second.colliders.end(); collider++)
 		{
-			CollisionPacket collision = RayCastAgainstCollider(
-				pos, direction,
-				transformsInScene[rigidBody->first], *collider
-			);
-			if (collision.depth >= 0.0f && collision.depth < length)
+			bool triggerPassing = true;
+			if ((*collider)->isTrigger && ignoreTriggers)
 			{
-				collisions.push_back(collision);
+				triggerPassing = false;
+			}
+
+			if (((*collider)->collisionLayer & layerMask) && triggerPassing)
+			{
+				CollisionPacket collision = RayCastAgainstCollider(
+					pos, direction,
+					transformsInScene[rigidBody->first], *collider
+				);
+
+				if (collision.depth >= 0.0f && collision.depth < length)
+				{
+					collisions.push_back(collision);
+				}
 			}
 		}
 	}
 
 	for (auto collider = collidersInScene.begin(); collider != collidersInScene.end(); collider++)
 	{
-		CollisionPacket collision = RayCastAgainstCollider(
-			pos, direction,
-			transformsInScene[collider->first], collider->second
-		);
-
-		if (collision.depth >= 0.0f && collision.depth < length)
+		bool triggerPassing = true;
+		if (collider->second->isTrigger && ignoreTriggers)
 		{
-			collisions.push_back(collision);
+			triggerPassing = false;
+		}
+
+		if ((collider->second->collisionLayer & layerMask) && triggerPassing)
+		{
+			CollisionPacket collision = RayCastAgainstCollider(
+				pos, direction,
+				transformsInScene[collider->first], collider->second
+			);
+
+			if (collision.depth >= 0.0f && collision.depth < length)
+			{
+				collisions.push_back(collision);
+			}
 		}
 	}
 
@@ -409,6 +428,7 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float 
 		hit.collider = nullptr;
 		hit.sceneObject = nullptr;
 		hit.normal = { 0.0f, 0.0f };
+		hit.position = {0.0f, 0.0f};
 		hit.distance = NAN;
 		hit.otherCollisions = {};
 		return false;
@@ -431,6 +451,7 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float 
 	hit.sceneObject = collisions[0].soA;
 	hit.collider = collisions[0].colliderA;
 	hit.normal = collisions[0].normal;
+	hit.position = collisions[0].contactPoint;
 	hit.distance = collisions[0].depth;
 	if (collisions.size() == 1)
 	{
@@ -452,12 +473,22 @@ CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 d
 {
 	// COLLISION BODY A is the target COLLISION BODY B SHOULD BE NULL
 
-	return CollisionPacket();
-	/*
-		TODO:
-		MAKE RAYCAST AGAINST CIRCLE
-		MAKE RAYCAST AGAINST PLANE
-		MAKE RAYCAST AGAINST POLY
+	CollisionPacket collision;
 
-	*/
+	if (collider->getType() == ColliderType::plane)
+	{
+		//MAKE RAYCAST AGAINST PLANE
+	}
+	else if(collider->getType() == ColliderType::polygon)
+	{
+		if(((PolygonCollider*)collider)->verts.size() == 1)
+		{
+			//MAKE RAYCAST AGAINST CIRCLE
+		}
+		else
+		{
+			//MAKE RAYCAST AGAINST POLY
+		}
+	}
+	return collision;
 }

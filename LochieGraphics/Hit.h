@@ -10,6 +10,7 @@ struct Hit
 {
 	glm::vec2 normal;
 	float distance;
+	glm::vec2 position;
 	Collider* collider;
 	SceneObject* sceneObject;
 	std::vector<SceneObject*> otherCollisions;
