@@ -10,6 +10,8 @@
 #include "shaderEnum.h"
 #include "EditorGUI.h"
 #include "SceneManager.h"
+#include "PhysicsSystem.h"
+#include "Hit.h"
 
 void Sync::Start(std::vector<Shader*>* shaders)
 {
@@ -153,6 +155,9 @@ void Sync::ShootMisfire(Transform& transform)
 void Sync::ShootSniper(glm::vec3 pos)
 {
 	currCharge -= sniperChargeCost;
+	Hit hit;
+	PhysicsSystem::RayCast({pos.x, pos.z}, fireDirection, hit, FLT_MAX, ~(int)CollisionLayers::sync);
+	blasts.push_back({});
 }
 
 void Sync::ShootOverClocked(glm::vec3 pos)

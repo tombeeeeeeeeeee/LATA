@@ -37,11 +37,10 @@ void PhysicsSystem::CollisionCheckPhase(
 	std::unordered_map<unsigned long long, Transform>& transforms,
 	std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
 	std::unordered_map<unsigned long long, Collider*>& colliders
-
 )
 {
 	transformsInScene = transforms;
-	rigidiBodiesInScene = rigidBodies;
+	rigidBodiesInScene = rigidBodies;
 	collidersInScene = colliders;
 
 
@@ -189,7 +188,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnCircleCollision(
 					(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
-					a, &dumbyRigidBody, transformA, transformB
+					a, &dummyRigidBody, transformA, transformB
 				);
 				if (collision.depth >= 0)
                     collisions.push_back(collision);
@@ -198,7 +197,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
 					(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
-					a, &dumbyRigidBody, transformA, transformB
+					a, &dummyRigidBody, transformA, transformB
 				);
 				if (collision.depth >= 0)
                     collisions.push_back(collision);
@@ -207,7 +206,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnPolyCollision(
 					(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
-					a, &dumbyRigidBody, transformA, transformB
+					a, &dummyRigidBody, transformA, transformB
 				);
 				if (collision.depth >= 0)
                     collisions.push_back(collision);
@@ -219,7 +218,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
 					(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
-					&dumbyRigidBody, a, transformB, transformA
+					&dummyRigidBody, a, transformB, transformA
 				);
 				if (collision.depth >= 0)
                     collisions.push_back(collision);
@@ -228,7 +227,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 			{
 				CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
 					(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
-					&dumbyRigidBody, a, transformB, transformA
+					&dummyRigidBody, a, transformB, transformA
 				);
 				if (collision.depth >= 0)
                     collisions.push_back(collision);
@@ -240,7 +239,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 			{
 				CollisionPacket collision = CollisionFunctions::PolyOnPolyCollision(
 					(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
-					a, &dumbyRigidBody, transformA, transformB
+					a, &dummyRigidBody, transformA, transformB
 				);
 				if (collision.depth >= 0)
 					collisions.push_back(collision);
@@ -249,7 +248,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 			{
 				CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
 					(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
-					a, &dumbyRigidBody, transformA, transformB
+					a, &dummyRigidBody, transformA, transformB
 				);
 				if (collision.depth >= 0)
                     collisions.push_back(collision);
@@ -258,7 +257,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnPolyCollision(
 					(PolygonCollider*)colliderB, (PolygonCollider*)colliderA,
-					&dumbyRigidBody, a, transformB, transformA
+					&dummyRigidBody, a, transformB, transformA
 				);
 				if (collision.depth >= 0)
                     collisions.push_back(collision);
@@ -270,8 +269,8 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 
 void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 {
-	Collision collisionFromBsPerspective = { collision.rigidBodyA, collision.soA, collision.normal, collision.colliderA->collisionLayer | collision.colliderB->collisionLayer};
-	Collision collisionFromAsPerspective = { collision.rigidBodyB, collision.soB, -collision.normal, collision.colliderA->collisionLayer | collision.colliderB->collisionLayer};
+	Collision collisionFromBsPerspective = { collision.rigidBodyA, collision.soA, collision.normal, collision.colliderA->collisionLayer | collision.colliderB->collisionLayer , collision.soB };
+	Collision collisionFromAsPerspective = { collision.rigidBodyB, collision.soB, -collision.normal, collision.colliderA->collisionLayer | collision.colliderB->collisionLayer , collision.soA };
 
 	if (collision.depth < 0) return;
 	if (collision.colliderA->isTrigger && collision.colliderB->isTrigger) return;
@@ -374,22 +373,26 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float 
 {
 	std::vector<CollisionPacket> collisions;
 
-
-	for (auto rigidBody = rigidiBodiesInScene.begin(); rigidBody != rigidiBodiesInScene.end(); rigidBody++)
+	if (glm::length(direction) == 0.0f)
 	{
-		for (auto collider = rigidBody->second.colliders.begin(); collider != rigidBody->second.colliders.end(); collider++)
+		return false;
+	}
+
+	for (auto& rigidBody : rigidBodiesInScene)
+	{
+		for(auto& collider : rigidBody.second.colliders)
 		{
 			bool triggerPassing = true;
-			if ((*collider)->isTrigger && ignoreTriggers)
+			if (collider->isTrigger && ignoreTriggers)
 			{
 				triggerPassing = false;
 			}
 
-			if (((*collider)->collisionLayer & layerMask) && triggerPassing)
+			if ((collider->collisionLayer & layerMask) && triggerPassing)
 			{
 				CollisionPacket collision = RayCastAgainstCollider(
 					pos, direction,
-					transformsInScene[rigidBody->first], *collider
+					transformsInScene[rigidBody.first], collider
 				);
 
 				if (collision.depth >= 0.0f && collision.depth < length)
@@ -472,22 +475,102 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float 
 CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 direction, Transform& transform, Collider* collider)
 {
 	// COLLISION BODY A is the target COLLISION BODY B SHOULD BE NULL
-
 	CollisionPacket collision;
+	collision.depth = -1.0f;
 
 	if (collider->getType() == ColliderType::plane)
 	{
-		//MAKE RAYCAST AGAINST PLANE
+		PlaneCollider* plane = (PlaneCollider*)collider;
+		float bDot = glm::dot(plane->normal, direction);
+		if(bDot > 0.0f)
+		{
+			float t = plane->displacement - glm::dot(pos, plane->normal);
+			t /= bDot;
+			if (t > 0.0f)
+			{
+				collision.contactPoint = pos + direction * t;
+				collision.colliderA = plane;
+				collision.normal = plane->normal;
+				collision.depth = glm::length(direction * t);
+				collision.soA = transform.getSceneObject();
+			}
+		}
 	}
 	else if(collider->getType() == ColliderType::polygon)
 	{
-		if(((PolygonCollider*)collider)->verts.size() == 1)
+		PolygonCollider* poly = ((PolygonCollider*)collider);
+		if(poly->verts.size() == 1)
 		{
 			//MAKE RAYCAST AGAINST CIRCLE
+			glm::vec2 centre = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), poly->verts[0]);
+			glm::vec2 f = pos - centre;
+			float a = direction.x * direction.x + direction.y * direction.y;
+			float b = f.x * direction.x + f.y * direction.y;
+			b *= 2.0f;
+			float c = f.x * f.x + f.y * f.y - poly->radius * poly->radius;
+			float t;
+			float discriminant = b * b - 4.0f * a * c;
+			if (discriminant == 0.0f)
+			{
+				t = -b / 2.0f * a;
+			}
+			else if (discriminant > 0.0f)
+			{
+				float t1 = -b + sqrt(discriminant);
+				t1 /= 2.0f * a;
+				float t2 = -b - sqrt(discriminant);
+				t2 /= 2.0f * a;
+
+				t = fminf(t1, t2);
+			}
+			else return collision;
+
+			if (t > 0.0f)
+			{
+				collision.contactPoint = pos + direction * t;
+				collision.colliderA = poly;
+				collision.normal = glm::normalize(collision.contactPoint - centre);
+				collision.depth = glm::length(direction * t);
+				collision.soA = transform.getSceneObject();
+			}
 		}
 		else
 		{
-			//MAKE RAYCAST AGAINST POLY
+			for (int i = 0; i < poly->verts.size(); i++)
+			{
+				glm::vec2 c = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), poly->verts[i]);
+				glm::vec2 d = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), poly->verts[(i + 1) % poly->verts.size()]) - c;
+				glm::vec2 normal = { -d.y, d.x };
+				//glm::vec2 normal = { d.y, -d.x };
+
+				float denominator = glm::dot(normal, direction);
+				if (denominator <= 0) continue;
+				float numerator = pos.y * direction.x - direction.y * pos.x - c.y * direction.x + direction.y * c.x;
+				float t2 = numerator / denominator;
+				if (t2 >= 0 && t2 <= 1)
+				{
+					float t1;
+					if (abs(direction.x) > abs(direction.y))
+					{
+						t1 = c.x + d.x * t2 - pos.x;
+						t1 /= direction.x;
+					}
+					else
+					{
+						t1 = c.y + d.y * t2 - pos.y;
+						t1 /= direction.y;
+					}
+
+					if (t1 > 0.0f)
+					{
+						collision.contactPoint = pos + direction * t1;
+						collision.colliderA = poly;
+						collision.normal = normal;
+						collision.depth = glm::length(direction * t1);
+						collision.soA = transform.getSceneObject();
+					}
+				}
+			}
 		}
 	}
 	return collision;
