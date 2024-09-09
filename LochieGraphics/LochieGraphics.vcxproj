@@ -291,7 +291,9 @@
     <ClCompile Include="..\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="..\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="..\Shaders\paintedNormals.frag" />
+    <None Include="..\Shaders\paintedNormals.frag">
+      <FileType>CppCode</FileType>
+    </None>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="ArtScene.cpp" />

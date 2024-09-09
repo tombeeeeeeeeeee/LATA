@@ -2,6 +2,10 @@
 #include "Hit.h"
 #include "Transform.h"
 
+std::unordered_map<unsigned long long, RigidBody>* PhysicsSystem::rigidBodiesInScene = nullptr;
+std::unordered_map<unsigned long long, Transform>* PhysicsSystem::transformsInScene = nullptr;
+std::unordered_map<unsigned long long, Collider*>* PhysicsSystem::collidersInScene = nullptr;
+
 void PhysicsSystem::UpdateRigidBodies(
 	std::unordered_map<unsigned long long, Transform>& transforms,
 	std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
@@ -39,9 +43,9 @@ void PhysicsSystem::CollisionCheckPhase(
 	std::unordered_map<unsigned long long, Collider*>& colliders
 )
 {
-	transformsInScene = transforms;
-	rigidBodiesInScene = rigidBodies;
-	collidersInScene = colliders;
+	transformsInScene = &transforms;
+	rigidBodiesInScene = &rigidBodies;
+	collidersInScene = &colliders;
 
 
 	for (int i = 0; i < CollisionItterations; i++)
@@ -369,16 +373,16 @@ bool PhysicsSystem::GetCollisionLayerBool(int layerA, int layerB)
 	return layerMasks[layerA] & (1 << layerB);
 }
 
-bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float length, int layerMask, bool ignoreTriggers)
+bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>& hits, float length, int layerMask, bool ignoreTriggers)
 {
 	std::vector<CollisionPacket> collisions;
-
+	hits.clear();
 	if (glm::length(direction) == 0.0f)
 	{
 		return false;
 	}
 
-	for (auto& rigidBody : rigidBodiesInScene)
+	for (auto& rigidBody : *rigidBodiesInScene)
 	{
 		for(auto& collider : rigidBody.second.colliders)
 		{
@@ -392,7 +396,7 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float 
 			{
 				CollisionPacket collision = RayCastAgainstCollider(
 					pos, direction,
-					transformsInScene[rigidBody.first], collider
+					(*transformsInScene)[rigidBody.first], collider
 				);
 
 				if (collision.depth >= 0.0f && collision.depth < length)
@@ -403,7 +407,7 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float 
 		}
 	}
 
-	for (auto collider = collidersInScene.begin(); collider != collidersInScene.end(); collider++)
+	for (auto collider = (*collidersInScene).begin(); collider != (*collidersInScene).end(); collider++)
 	{
 		bool triggerPassing = true;
 		if (collider->second->isTrigger && ignoreTriggers)
@@ -415,7 +419,7 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float 
 		{
 			CollisionPacket collision = RayCastAgainstCollider(
 				pos, direction,
-				transformsInScene[collider->first], collider->second
+				(*transformsInScene)[collider->first], collider->second
 			);
 
 			if (collision.depth >= 0.0f && collision.depth < length)
@@ -424,16 +428,10 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float 
 			}
 		}
 	}
-
+	Hit hit;
 	//Post casting ray sorting to see what has been hit.
-	if (collisions.size() > 0)
+	if (collisions.size() == 0)
 	{
-		hit.collider = nullptr;
-		hit.sceneObject = nullptr;
-		hit.normal = { 0.0f, 0.0f };
-		hit.position = {0.0f, 0.0f};
-		hit.distance = NAN;
-		hit.otherCollisions = {};
 		return false;
 	}
 
@@ -456,17 +454,19 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, Hit& hit, float 
 	hit.normal = collisions[0].normal;
 	hit.position = collisions[0].contactPoint;
 	hit.distance = collisions[0].depth;
-	if (collisions.size() == 1)
+	hits.push_back(hit);
+
+	hits.reserve(collisions.size() - 1);
+	for (int i = 1; i < collisions.size(); i++)
 	{
-		hit.otherCollisions = {};
-	}
-	else
-	{
-		hit.otherCollisions.reserve(collisions.size() - 1);
-		for (int i = 1; i < collisions.size(); i++)
-		{
-			hit.otherCollisions.push_back(collisions[i].soA);
-		}
+		hits.push_back(
+			{
+				collisions[i].normal,
+				collisions[i].depth,
+				collisions[i].contactPoint,
+				collisions[i].colliderA,
+				collisions[i].soA
+			});
 	}
 
 	return hit.distance < length;

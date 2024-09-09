@@ -3,7 +3,7 @@
 
 struct BlastLine
 {
-	float endTime;
+	float lifeSpan;
 	float timeElapsed;
 	glm::vec3 colour;
 	glm::vec3 startPosition;

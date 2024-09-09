@@ -40,13 +40,9 @@ void Sync::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 
 	if (glm::length(look) > lookDeadZone)
 	{
-		float turnAmount = glm::dot(transform.forward(), glm::normalize(glm::vec3(look.x, 0.0f, look.y)));
-		float desiredAngle = glm::acos(turnAmount);
-		glm::vec3 eulers = transform.getEulerRotation();
-		transform.setEulerRotation({ eulers.x, eulers.y + desiredAngle, eulers.z });
 		fireDirection = look;
 	}
-
+	fireDirection = glm::normalize(fireDirection);
 
 	if (inputDevice.getRightTrigger())
 	{
@@ -94,14 +90,17 @@ void Sync::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		}
 	}
 
-	for (auto i = blasts.begin(); i < blasts.end(); i++)
+	for (auto i = blasts.begin(); i != blasts.end();)
 	{
 		i->timeElapsed += delta;
-		float r = i->colour.x - i->colour.x * i->timeElapsed / i->endTime;
-		float g = i->colour.y - i->colour.y * i->timeElapsed / i->endTime;
-		float b = i->colour.z - i->colour.z * i->timeElapsed / i->endTime;
+		float r = i->colour.x - i->colour.x * i->timeElapsed / i->lifeSpan;
+		float g = i->colour.y - i->colour.y * i->timeElapsed / i->lifeSpan;
+		float b = i->colour.z - i->colour.z * i->timeElapsed / i->lifeSpan;
 		lines->DrawLineSegment(i->startPosition, i->endPosition, {r,g,b});
-		if (i->timeElapsed > i->endTime) blasts.erase(i);
+		if (i->timeElapsed > i->lifeSpan)
+			i = blasts.erase(i);
+		else
+			++i;
 	}
 }
 
@@ -155,18 +154,82 @@ void Sync::ShootMisfire(Transform& transform)
 void Sync::ShootSniper(glm::vec3 pos)
 {
 	currCharge -= sniperChargeCost;
-	Hit hit;
-	PhysicsSystem::RayCast({pos.x, pos.z}, fireDirection, hit, FLT_MAX, ~(int)CollisionLayers::sync);
-	blasts.push_back({});
+	std::vector<Hit> hits;
+	PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~(int)CollisionLayers::sync);
+	Hit hit = hits[0];
+	blasts.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
+	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+	{
+		hit.sceneObject->health()->subtractHealth(sniperDamage);
+	}
 }
 
 void Sync::ShootOverClocked(glm::vec3 pos)
 {
 	currCharge -= overclockChargeCost;
+	OverclockedRebounding(pos, fireDirection, 0, overclockBeamColour);
 }
 
-void Sync::ShootOverClockedSplit(glm::vec3 pos, glm::vec3 dir, int num)
+void Sync::OverclockedRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour)
 {
+	std::vector<Hit> hits;
+	PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~(int)CollisionLayers::sync);
+	Hit hit = hits[0];
+
+	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+	{
+		hit.sceneObject->health()->subtractHealth(sniperDamage);
+		for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
+		{
+			hit = hits[i];
+			if (i == enemyPierceCount - 1) return;
+			if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+			{
+				hit.sceneObject->health()->subtractHealth(sniperDamage);
+			}
+			else break;
+		}
+	}
+
+	blasts.push_back({ overclockBeamLifeSpan, 0.0f, colour, pos, {hit.position.x, pos.y, hit.position.y} });
+
+	if (hit.collider->collisionLayer & (int)CollisionLayers::ecco)
+	{
+		float s = 75.0f;
+		float v = 100.0f;
+		float angle = -eccoRefractionAngle * eccoRefractionCount / 2.0f;
+		for (int iter = 0; iter < eccoRefractionCount; iter++)
+		{
+			float h = iter * 360.0f / eccoRefractionCount;
+			int i = int(h * 6.0); 
+			float f = h * 6.0 - i;
+			float w = v * (1.0 - s);
+			float q = v * (1.0 - s * f);
+			float t = v * (1.0 - s * (1.0 - f));
+
+			glm::vec3 refractionColour;
+			if (i == 0) refractionColour = {v, t, w};
+			else if (i==1) refractionColour =  {q, v, w};
+			else if (i==2) refractionColour =  {w, v, t};
+			else if (i==3) refractionColour =  {w, q, v};
+			else if (i==4) refractionColour =  {t, w, v};
+			else		   refractionColour =  {v, w, q};
+			float c = cosf(angle * PI / 180.0f);
+			float s = sinf(angle * PI / 180.0f);
+			glm::vec2 refractionDirection =
+			{
+				dir.x * c - dir.y * s,
+				dir.x * s + dir.y * c
+			};
+
+			OverclockedRebounding(pos, refractionDirection, overclockReboundCount + 1, colour);
+		}
+	}
+	else if (count < overclockReboundCount)
+	{
+		OverclockedRebounding(pos, glm::reflect(dir, hit.normal), count + 1, colour);
+	}
+	return;
 }
 
 void Sync::misfireShotOnCollision(Collision collision)
@@ -175,7 +238,6 @@ void Sync::misfireShotOnCollision(Collision collision)
 	{
 		collision.sceneObject->health()->subtractHealth(misfireDamage);
 	}
-
 }
 
 void Sync::sniperShotOnCollision(Collision collision)

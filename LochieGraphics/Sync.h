@@ -33,7 +33,7 @@ public:
 	void ShootMisfire(Transform& transform);
 	void ShootSniper(glm::vec3 pos);
 	void ShootOverClocked(glm::vec3 pos);
-	void ShootOverClockedSplit(glm::vec3 pos, glm::vec3 dir, int num);
+	void OverclockedRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour);
 
 	void misfireShotOnCollision(Collision collision);
 	void sniperShotOnCollision(Collision collision);
@@ -57,15 +57,24 @@ private:
 	float sniperDamage = 0.0f;
 	float sniperChargeCost = 0.0f;
 	float sniperChargeTime = 0.0f;
+	float sniperBeamLifeSpan = 0.5f;
+	glm::vec3 sniperBeamColour = { 1.0f,1.0f,1.0f };
 
 	float overclockDamage = 0.0f;
 	float overclockChargeCost = 0.0f;
 	float overclockChargeTime = 0.0f;
+	float overclockBeamLifeSpan = 1.0f;
+	glm::vec3 overclockBeamColour = { 1.0f,1.0f,1.0f };
+	int enemyPierceCount = 99;
+	int overclockReboundCount = 5;
+
+	float eccoRefractionAngle = 10.0f;
+	int eccoRefractionCount = 5;
 
 	float chargedDuration = 0.0f;
 	bool chargingShot = false;
-	float currCharge = 0.0f;
-	float maxCharge = 10.0f;
+	float currCharge = 100000.0f;
+	float maxCharge = 100000.0f;
 
 	glm::vec2 fireDirection = {1.0f, 0.0f};
 

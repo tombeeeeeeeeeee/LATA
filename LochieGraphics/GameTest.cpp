@@ -35,7 +35,7 @@ void GameTest::Start()
 
 	hRb = new RigidBody();
 	hRb->setMass(1.0f);
-	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, hRadius)});
+	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, hRadius, CollisionLayers::sync)});
 	hRb->setMomentOfInertia(5.0f);
 
 	rRb = new RigidBody();
@@ -45,7 +45,7 @@ void GameTest::Start()
 				{40.0f, -40.0f},
 				{-40.0f, -40.0f},
 				{-40.0f, 40.0f},
-			}, 0.0f) }
+			}, 0.0f, CollisionLayers::ecco) }
 	);
 	rRb->setMass(0.1f);
 	rRb->setMomentOfInertia(5.0f);

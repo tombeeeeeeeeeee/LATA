@@ -13,5 +13,4 @@ struct Hit
 	glm::vec2 position;
 	Collider* collider;
 	SceneObject* sceneObject;
-	std::vector<SceneObject*> otherCollisions;
 };
