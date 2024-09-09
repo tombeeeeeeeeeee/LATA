@@ -63,7 +63,6 @@ void Scene::Save()
 		savedLights.push_back((*i)->Serialise());
 	}
 
-	// TODO: Save Ecco & Sync
 	
 	file << toml::table{
 		{ "WindowName", windowName},

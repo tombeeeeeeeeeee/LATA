@@ -42,8 +42,7 @@ public:
 	// TODO: There is types of animators, don't think its safe to store them like this
 	std::unordered_map<unsigned long long, Animator> animators = {};
 	std::unordered_map<unsigned long long, RigidBody> rigidBodies = {};
-	// TODO: Same as above with animators, data would be lost?
-	std::unordered_map<unsigned long long, Collider> colliders = {};
+	std::unordered_map<unsigned long long, Collider*> colliders = {};
 	std::unordered_map<unsigned long long, Health> healths = {};
 	std::unordered_map<unsigned long long, Enemy> enemies = {};
 	std::vector<Light*> lights = {};

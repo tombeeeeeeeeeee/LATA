@@ -240,7 +240,7 @@ void SceneObject::setCollider(Collider* collider)
 	if (collider)
 	{
 		parts |= Parts::collider;
-		scene->colliders[GUID] = *collider;
+		scene->colliders[GUID] = collider;
 	}
 	else
 	{
@@ -252,7 +252,7 @@ void SceneObject::setCollider(Collider* collider)
 Collider* SceneObject::collider()
 {
 	if (parts & Parts::collider)
-		return &(scene->colliders[GUID]);
+		return (scene->colliders[GUID]);
 	return nullptr;
 }
 

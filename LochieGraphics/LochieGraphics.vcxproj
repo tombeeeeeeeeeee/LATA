@@ -291,6 +291,9 @@
     <ClCompile Include="..\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="..\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\imgui\imgui_widgets.cpp" />
+    <None Include="..\Shaders\paintedNormals.frag">
+      <FileType>CppCode</FileType>
+    </None>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="ArtScene.cpp" />
@@ -340,9 +343,11 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="Serialisation.cpp" />
+    <ClInclude Include="BlastLine.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemySystem.h" />
     <ClInclude Include="Health.h" />
+    <ClInclude Include="Hit.h" />
     <ClInclude Include="LevelEditor.h" />
     <ClInclude Include="Serialisation.h" />
     <ClCompile Include="Server.cpp" />
@@ -460,6 +465,7 @@
     <None Include="..\Shaders\litNormal.vert" />
     <None Include="..\Shaders\oldShader.frag" />
     <None Include="..\Shaders\oldShader.vert" />
+    <None Include="..\Shaders\paintedNormals.vert" />
     <None Include="..\Shaders\pbr.frag" />
     <None Include="..\Shaders\pbr.vert" />
     <None Include="..\Shaders\prefilter.frag" />

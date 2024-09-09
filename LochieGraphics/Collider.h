@@ -12,6 +12,8 @@ enum class CollisionLayers
 	enemy = 1 << 2,
 	player = 1 << 3,
 	reflectiveSurface = 1 << 4,
+	sync = 1 << 5,
+	ecco = 1 << 6,
 };
 
 enum class ColliderType
@@ -43,7 +45,7 @@ struct PolygonCollider : public Collider
 	std::vector<glm::vec2> verts;
 	float radius;
 	virtual const ColliderType getType() const { return ColliderType::polygon; };
-	PolygonCollider(std::vector<glm::vec2> _verts, float _radius) : verts(_verts), radius(_radius) {};
+	PolygonCollider(std::vector<glm::vec2> _verts, float _radius, CollisionLayers layer = CollisionLayers::base) : verts(_verts), radius(_radius) { collisionLayer = (int)layer; };
 	PolygonCollider() {};
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	PolygonCollider(toml::table table);
