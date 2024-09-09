@@ -142,3 +142,4 @@ Model::Model(toml::table table)
 	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
 	LoadModel(Serialisation::LoadAsString(table["path"]));
 }
+

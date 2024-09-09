@@ -96,11 +96,15 @@ void LevelEditor::Start()
 	camera->nearPlane = 10;
 
 	// TODO: Don't load directly here, should be saved as an art asset
-	ground = ResourceManager::LoadModel("models/SM_FloorTile.fbx");
-	wall = ResourceManager::LoadModel("models/SM_adjustedOriginLocWall.fbx");
+	ground = ResourceManager::LoadModelAsset("Assets/SM_FloorTile.model");
+	wall = ResourceManager::LoadModelAsset("Assets/SM_adjustedOriginLocWall.model");
+
+	
 
 	syncSo = new SceneObject(this, "Sync");
 	eccoSo = new SceneObject(this, "Ecco");
+	sync->GUID = syncSo->GUID;
+	ecco->GUID = eccoSo->GUID;
 
 
 	RigidBody* hRb = new RigidBody();
@@ -136,9 +140,8 @@ void LevelEditor::Start()
 	gameCamSystem.cameraPositionDelta = { -150.0f, 100.0f, 150.0f };
 
 	// TODO: Should be using an art asset
-	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModel("models/EccoBlockout_RevisedScale.fbx"), (unsigned long long)0));
+	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset("Assets/SM_EccoBlockout_RevisedScale.model"), (unsigned long long)0));
 	camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f));
-
 }
 
 void LevelEditor::Update(float delta)
@@ -209,6 +212,9 @@ void LevelEditor::Update(float delta)
 			unsigned long long GUID = alreadyPlaced->GUID;
 			// TODO: Might be better to have a mark for deletion type of thing and gets deleted afterwards
 			// Could get put into some collection somewhere
+			if (gui.sceneObjectSelected == sceneObjects[GUID]) {
+				gui.sceneObjectSelected = nullptr;
+			}
 			delete sceneObjects[GUID];
 			sceneObjects.erase(GUID);
 			tiles.erase({ (int)targetCell.x, (int)targetCell.y });
@@ -349,6 +355,11 @@ void LevelEditor::LoadLevel()
 {
 	std::ifstream file("Levels/" + windowName + ".level");
 
+	if (!file) {
+		std::cout << "Level File not found\n";
+		return;
+	}
+
 	toml::table data = toml::parse(file);
 
 	DeleteAllSceneObjects();
@@ -360,6 +371,9 @@ void LevelEditor::LoadLevel()
 	
 	groundTileParent = FindSceneObjectOfName("Ground Tiles");
 	wallTileParent = FindSceneObjectOfName("Wall Tiles");
+	syncSo = FindSceneObjectOfName("Sync");
+	eccoSo = FindSceneObjectOfName("Ecco");
+
 
 	// Refresh the tiles collection
 	tiles.clear();

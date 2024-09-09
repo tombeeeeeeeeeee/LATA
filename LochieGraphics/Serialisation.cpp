@@ -4,6 +4,18 @@
 
 
 
+glm::vec2 Serialisation::LoadAsVec2(toml::v3::array* toml)
+{
+    return glm::vec2(
+        toml->at(0).value_or<float>(0.0f),
+        toml->at(1).value_or<float>(0.0f));
+}
+
+glm::vec2 Serialisation::LoadAsVec2(toml::node_view<toml::node> toml)
+{
+    return LoadAsVec2(toml.as_array());
+}
+
 glm::vec3 Serialisation::LoadAsVec3(toml::v3::array* toml)
 {
     return glm::vec3(
@@ -42,6 +54,11 @@ int Serialisation::LoadAsInt(toml::v3::node_view<toml::v3::node> toml)
     return toml.as_integer()->value_or<int>(0);
 }
 
+float Serialisation::LoadAsFloat(toml::v3::node_view<toml::v3::node> toml)
+{
+    return toml.as_floating_point()->value_or<float>(0.0f);
+}
+
 float Serialisation::LoadAsFloat(toml::node& toml)
 {
     return toml.as_floating_point()->value_or<float>(0.0f);
@@ -55,6 +72,16 @@ glm::quat Serialisation::LoadAsQuaternion(toml::node_view<toml::node> table)
         LoadAsFloat(toml->at(1)),
         LoadAsFloat(toml->at(2)),
         LoadAsFloat(toml->at(3)));
+}
+
+bool Serialisation::LoadAsBool(toml::node_view<toml::node> toml)
+{
+    return toml.as_boolean()->value_or<bool>(false);
+}
+
+toml::array Serialisation::SaveAsVec2(glm::vec2 vec)
+{
+    return toml::array(vec.x, vec.y);
 }
 
 toml::array Serialisation::SaveAsVec3(glm::vec3 vec)

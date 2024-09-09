@@ -223,6 +223,11 @@ void Transform::UpdateGlobalMatrixCascading()
 	}
 }
 
+Transform::Transform()
+{
+	UpdateGlobalMatrixCascading();
+}
+
 void Transform::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);

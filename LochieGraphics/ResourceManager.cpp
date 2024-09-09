@@ -2,6 +2,8 @@
 
 #include "SceneManager.h"
 
+#include "Serialisation.h"
+
 #include "Utilities.h"
 
 #include "EditorGUI.h"
@@ -63,10 +65,10 @@ unsigned long long ResourceManager::hashFNV1A::operator()(std::pair<int, int> ke
 }
 
 
-#define LoadResource(type, collection, ...)                            \
-type newResource = type(__VA_ARGS__ );                                        \
-newResource.GUID = GetNewGuid();                                       \
-return &collection.emplace(newResource.GUID, newResource).first->second\
+#define LoadResource(type, collection, ...)                             \
+type newResource = type(__VA_ARGS__ );                                  \
+newResource.GUID = GetNewGuid();                                        \
+return &collection.emplace(newResource.GUID, newResource).first->second \
 
 Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragmentPath, int flags)
 {
@@ -96,6 +98,14 @@ Shader* ResourceManager::LoadShader(toml::v3::table* toml)
 Model* ResourceManager::LoadModel(std::string path)
 {
 	LoadResource(Model, models, path);
+}
+
+Model* ResourceManager::LoadModelAsset(std::string path)
+{
+	std::ifstream file(path);
+	toml::table data = toml::parse(file);
+	Model newResource = Model(data); 
+	return &models.emplace(newResource.GUID, newResource).first->second;
 }
 
 // TODO: Clean

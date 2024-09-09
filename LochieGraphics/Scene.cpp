@@ -166,6 +166,8 @@ toml::table Scene::SaveSceneObjectsAndParts()
 		{ "RigidBodies", savedrigidBodies},
 		{ "Colliders", savedcolliders},
 		{ "Healths", savedhealths},
+		{ "Sync", sync->Serialise() },
+		{ "Ecco", ecco->Serialise() },
 	};
 }
 
@@ -191,6 +193,8 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	// TODO: Fix for colliders
 	//LoadPart(colliders, "Colliders", Collider);
 	LoadPart(healths, "Healths", Health);
+	*ecco = Ecco(*data["Ecco"].as_table());
+	*sync = Sync(*data["Sync"].as_table());
 
 	// Load Hierarchy Data
 	for (int i = 0; i < loadingSceneObjects->size(); i++)

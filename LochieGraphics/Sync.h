@@ -2,6 +2,7 @@
 #include "Input.h"
 
 #include "Maths.h"
+#include "Serialisation.h"
 
 class Transform;
 class RigidBody;
@@ -14,6 +15,7 @@ public:
 
 
 	Sync() {};
+	Sync(toml::table table);
 
 	void Update(
 		Input::InputDevice& inputDevice,
@@ -23,6 +25,8 @@ public:
 	);
 
 	void GUI();
+
+	toml::table Serialise() const;
 
 	void misfireShotOnCollision(Collision collision);
 	void sniperShotOnCollision(Collision collision);

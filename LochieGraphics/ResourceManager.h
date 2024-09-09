@@ -27,6 +27,7 @@ public:
 	static Shader* LoadShaderDefaultVert(std::string fragmentName, int flags = 0);
 	static Shader* LoadShader(toml::v3::table* toml);
 	static Model* LoadModel(std::string path);
+	static Model* LoadModelAsset(std::string path);
 	static Model* LoadModel();
 	static Mesh* LoadMesh(std::vector<Vertex> vertices, std::vector<GLuint> indices);
 	static Mesh* LoadMesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);

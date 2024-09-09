@@ -40,7 +40,7 @@ void PhysicsSystem::CollisionCheckPhase(
 
 )
 {
-	for (int i = 0; i < CollisionItterations; i++)
+	for (int iteratorNumber = 0; iteratorNumber < CollisionItterations; iteratorNumber++)
 	{
 		std::vector<CollisionPacket> collisions;
 		for (auto i = rigidBodies.begin(); i != rigidBodies.end(); i++)
