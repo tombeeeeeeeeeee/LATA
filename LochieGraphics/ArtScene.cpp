@@ -405,7 +405,9 @@ void ArtScene::GUI()
 		return;
 	}
 	if (ImGui::Begin("Scene Object Menu")) {
-		ImGui::Button("SAVE AS ASSET");
+		if (ImGui::Button("SAVE AS ASSET")) {
+			openSave = true;
+		}
 	}
 	ImGui::End();
 
@@ -425,6 +427,13 @@ void ArtScene::SaveModal()
 
 		for (size_t i = 0; i < renderer->materials.size(); i++)
 		{
+			for (auto& m : materialsToSave)
+			{
+				if (m.first == renderer->materials[i]) {
+					continue;
+				}
+			}
+			if (renderer->materials[i] == nullptr) { continue; }
 			materialsToSave.push_back({ renderer->materials[i], true });
 			for (auto& t : renderer->materials[i]->texturePointers)
 			{
@@ -575,18 +584,6 @@ void ArtScene::SaveArtAsset()
 void ArtScene::Save()
 {
 	openSave = true;
-
-	// TODO:
-	// All materials that are on the sceneobject
-	// The textures for the materials
-	// The model
-	// Model Renderer / sceneobject itself
-
-	// Material should be saved seperatly, with GUID references to the textures
-	// Textures need to be saved as their own file as well, having the path to the texture itself
-	// Rest can just be apart of 'Art Asset' which is basically the sceneObject
-
-
 }
 
 void ArtScene::Load()

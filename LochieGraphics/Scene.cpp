@@ -191,7 +191,15 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(animators, "Animators", Animator);
 	LoadPart(rigidBodies, "RigidBodies", RigidBody);
 	// TODO: Fix for colliders
-	//LoadPart(colliders, "Colliders", Collider);
+	
+
+	toml::array* loadingColliders = data["Colliders"].as_array(); 
+	for (int i = 0; i < loadingColliders->size(); i++) {
+		toml::table* loadingCollider = loadingColliders->at(i).as_table();
+		// TODO: UNCOMMENT
+		//colliders[Serialisation::LoadAsUnsignedLongLong((*loadingCollider)["guid"])] = Collider::Load(*loadingCollider);
+	};
+	
 	LoadPart(healths, "Healths", Health);
 	*ecco = Ecco(*data["Ecco"].as_table());
 	*sync = Sync(*data["Sync"].as_table());

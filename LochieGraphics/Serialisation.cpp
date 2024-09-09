@@ -54,6 +54,11 @@ int Serialisation::LoadAsInt(toml::v3::node_view<toml::v3::node> toml)
     return toml.as_integer()->value_or<int>(0);
 }
 
+int Serialisation::LoadAsInt(toml::node* toml)
+{
+    return toml->as_integer()->value_or<int>(0);
+}
+
 float Serialisation::LoadAsFloat(toml::v3::node_view<toml::v3::node> toml)
 {
     return toml.as_floating_point()->value_or<float>(0.0f);

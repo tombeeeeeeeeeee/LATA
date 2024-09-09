@@ -358,6 +358,7 @@ void LevelEditor::LoadLevel()
 	if (!file) {
 		std::cout << "Level File not found\n";
 		return;
+
 	}
 
 	toml::table data = toml::parse(file);
@@ -366,6 +367,7 @@ void LevelEditor::LoadLevel()
 
 	LoadSceneObjectsAndParts(data);
 
+	gui.sceneObjectSelected = nullptr;
 
 	// TODO:
 	

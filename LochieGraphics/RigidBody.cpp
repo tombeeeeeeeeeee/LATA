@@ -62,17 +62,17 @@ void RigidBody::setMass(float mass)
 
 float RigidBody::getMass()
 {
-	return 1/invMass;
+	return 1 / invMass;
 }
 
 void RigidBody::setMomentOfInertia(float momentOfInertia)
 {
-	invMomentOfInertia = 1/ glm::max(momentOfInertia, 0.0f);
+	invMomentOfInertia = 1 / glm::max(momentOfInertia, 0.0f);
 }
 
 float RigidBody::getMomentOfInertia()
 {
-	return 1/invMomentOfInertia;
+	return 1 / invMomentOfInertia;
 }
 
 glm::vec2 RigidBody::Transform2Din3DSpace(glm::mat4 global, glm::vec2 input)
@@ -113,14 +113,41 @@ void RigidBody::GUI()
 
 toml::table RigidBody::Serialise(unsigned long long GUID) const
 {
-	// ASK: Confirm with Tom what should be saved here
-	// TODO: Save more ofc
+	toml::array savedColliders;
+	for (auto i : colliders)
+	{
+		savedColliders.push_back(i->Serialise(GUID));
+	}
+	// TODO: Ensure function pointers are safe
 	return toml::table{
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
+		{ "netForce", Serialisation::SaveAsVec2(netForce) },
+		{ "netDepen", Serialisation::SaveAsVec2(netDepen) },
+		{ "accel", Serialisation::SaveAsVec2(accel)},
+		{ "vel", Serialisation::SaveAsVec2(vel)},
+		{ "angularVel", angularVel },
+		{ "invMomentOfInertia", invMomentOfInertia},
+		{ "invMass", invMass},
+		{ "elasticicty", elasticicty},
+		{ "colliders", savedColliders},
+		{ "isStatic", isStatic},
 	};
 }
 
 RigidBody::RigidBody(toml::table table)
 {
-	// TODO: Load
+	netForce = Serialisation::LoadAsVec2(table["netForce"]);
+	netDepen = Serialisation::LoadAsVec2(table["netDepen"]);
+	accel = Serialisation::LoadAsVec2(table["accel"]);
+	vel = Serialisation::LoadAsVec2(table["vel"]);
+	angularVel = Serialisation::LoadAsFloat(table["angularVel"]);
+	invMomentOfInertia = Serialisation::LoadAsFloat(table["invMomentOfInertia"]);
+	invMass = Serialisation::LoadAsFloat(table["invMass"]);
+	elasticicty = Serialisation::LoadAsFloat(table["elasticicty"]);
+	isStatic = Serialisation::LoadAsBool(table["isStatic"]);
+	toml::array* loadingColliders = table["colliders"].as_array();
+	for (size_t i = 0; i < loadingColliders->size(); i++)
+	{
+		colliders.push_back(Collider::Load(*loadingColliders->at(i).as_table()));
+	}
 }
