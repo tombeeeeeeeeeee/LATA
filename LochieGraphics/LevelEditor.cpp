@@ -38,6 +38,8 @@ void LevelEditor::RefreshWalls()
 			PlaceWallAt(pos.x, pos.z + offset, 90.0f);
 		}
 	}
+
+
 }
 
 SceneObject* LevelEditor::CellAt(float x, float z)
@@ -54,6 +56,13 @@ SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
 	newWall->transform()->setEulerRotation({0.0f, direction, 0.0f});
 	newWall->transform()->setParent(wallTileParent->transform());
 	newWall->setRenderer(new ModelRenderer(wall, (unsigned long long)0));
+	// TODO: Make sure there isn't memory leaks
+	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, true);
+	newWall->setRigidBody(newRigidBody);
+	newRigidBody = newWall->rigidbody();
+	newRigidBody->addCollider(new PolygonCollider({
+		{x + 20, z + 20}, {x + 20, z - 20}, { x - 20, z + 20 }, {x - 20, z - 20}
+		}, 0.0f));
 	// TODO: Add collider
 	return newWall;
 }
@@ -66,6 +75,31 @@ SceneObject* LevelEditor::PlaceTileAt(float x, float z)
 	newTile->transform()->setParent(groundTileParent->transform());
 	tiles[{(int)x, (int)z}] = newTile;
 	return newTile;
+}
+
+void LevelEditor::EraseCellAt(glm::vec2 targetCell)
+{
+	SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
+	if (!alreadyPlaced) {
+		return;
+	}
+	unsigned long long GUID = alreadyPlaced->GUID;
+	// TODO: Might be better to have a mark for deletion type of thing and gets deleted afterwards
+	// Could get put into some collection somewhere
+	if (gui.sceneObjectSelected) {
+		Transform* selectedObjectParentTransform = gui.sceneObjectSelected->transform()->getParent();
+		if (selectedObjectParentTransform) {
+			SceneObject* selectedObjectParent = selectedObjectParentTransform->getSceneObject();
+			if (selectedObjectParent == groundTileParent || selectedObjectParent == wallTileParent) {
+				gui.sceneObjectSelected = nullptr;
+			}
+		}
+	}
+	delete sceneObjects[GUID];
+	sceneObjects.erase(GUID);
+	tiles.erase({ (int)targetCell.x, (int)targetCell.y });
+
+	if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
 }
 
 LevelEditor::LevelEditor()
@@ -109,17 +143,17 @@ void LevelEditor::Start()
 
 	RigidBody* hRb = new RigidBody();
 	hRb->setMass(1.0f);
-	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, syncRadius) });
+	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, syncRadius, CollisionLayers::sync) });
 	hRb->setMomentOfInertia(5.0f);
 
 	RigidBody* rRb = new RigidBody();
 	rRb->addCollider({ new PolygonCollider(
 			{
-				{40.0f, 40.0f},
-				{40.0f, -40.0f},
-				{-40.0f, -40.0f},
-				{-40.0f, 40.0f},
-			}, 0.0f) }
+				{100.0f, 100.0f},
+				{100.0f, -100.0f},
+				{-100.0f, -100.0f},
+				{-100.0f, 100.0f},
+			}, 0.0f, CollisionLayers::ecco) }
 	);
 	rRb->setMass(0.1f);
 	rRb->setMomentOfInertia(5.0f);
@@ -142,6 +176,8 @@ void LevelEditor::Start()
 	// TODO: Should be using an art asset
 	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset("Assets/SM_EccoBlockout_RevisedScale.model"), (unsigned long long)0));
 	camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f));
+
+	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 }
 
 void LevelEditor::Update(float delta)
@@ -207,21 +243,9 @@ void LevelEditor::Update(float delta)
 		}
 	}
 	// TODO: Refresh mins and maxes
+	// TODO: Break this out more
 	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-		SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
-		if (alreadyPlaced) {
-			unsigned long long GUID = alreadyPlaced->GUID;
-			// TODO: Might be better to have a mark for deletion type of thing and gets deleted afterwards
-			// Could get put into some collection somewhere
-			if (gui.sceneObjectSelected == sceneObjects[GUID]) {
-				gui.sceneObjectSelected = nullptr;
-			}
-			delete sceneObjects[GUID];
-			sceneObjects.erase(GUID);
-			tiles.erase({ (int)targetCell.x, (int)targetCell.y });
-
-			if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
-		}
+		EraseCellAt(targetCell);
 	}
 }
 

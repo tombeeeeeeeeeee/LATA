@@ -51,6 +51,8 @@ private:
 	SceneObject* PlaceWallAt(float x, float z, float direction);
 	SceneObject* PlaceTileAt(float x, float z);
 
+	void EraseCellAt(glm::vec2 targetCell);
+
 	void SaveAsPrompt();
 	void LoadPrompt();
 	
