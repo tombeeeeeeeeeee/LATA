@@ -63,7 +63,6 @@ void Scene::Save()
 		savedLights.push_back((*i)->Serialise());
 	}
 
-	// TODO: Save Ecco & Sync
 	
 	file << toml::table{
 		{ "WindowName", windowName},
@@ -155,7 +154,9 @@ toml::table Scene::SaveSceneObjectsAndParts()
 	SavePart(transforms);
 	SavePart(animators);
 	SavePart(rigidBodies);
-	SavePart(colliders);
+	auto savedcolliders = toml::array(); for (auto i = colliders.begin(); i != colliders.end(); i++) {
+		savedcolliders.push_back(i->second->Serialise(i->first));
+	};
 	SavePart(healths);
 
 	return toml::table{

@@ -166,6 +166,7 @@ void LevelEditor::Update(float delta)
 				*input.inputDevices[1],
 				*syncSo->transform(),
 				*syncSo->rigidbody(),
+				&renderSystem->lines,
 				delta
 			);
 		}

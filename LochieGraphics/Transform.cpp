@@ -187,8 +187,6 @@ void Transform::setPosition(glm::vec3 pos)
 {
 	position = pos;
 	UpdateGlobalMatrixCascading();
-
-
 }
 
 glm::vec3 Transform::forward() const
