@@ -23,12 +23,20 @@ std::string ArtScene::EnsureCorrectFileLocation(std::string& path, std::string& 
 
 	std::string newPath = expected + Utilities::FilenameFromPath(path, true);
 	if (newPath == path) { return newPath; }
-	if (std::filesystem::equivalent(std::filesystem::path(newPath), std::filesystem::path(path)))
+	// TODO: Look into a better way to have this writted, the try catch feels bad
+	try
 	{
-		// Checks if dragging in from the expected location, if so no action is needed
-		return newPath;
+		if (std::filesystem::equivalent(std::filesystem::path(newPath), std::filesystem::path(path)))
+		{
+			// Checks if dragging in from the expected location, if so no action is needed
+			return newPath;
+		}
 	}
-	std::cout << "Potentially Copied file for locality, from:\n" << path << "\n to\n" << newPath << '\n';
+	catch (const std::filesystem::filesystem_error)
+	{
+	}	
+	
+	std::cout << "Potentially Copied file for locality, from, to:\n" << path << "\n" << newPath << '\n';
 	// TODO: Consider using filesystem function to copy file
 	std::ifstream original(path, std::ios::binary);
 	std::ofstream copied(newPath, std::ios::binary);
@@ -273,6 +281,7 @@ ArtScene::ArtScene()
 
 void ArtScene::Start()
 {
+
 	std::string skyboxPaths[6] = {
 		"images/black.png",
 		"images/black.png",
@@ -287,6 +296,10 @@ void ArtScene::Start()
 
 	model = ResourceManager::LoadModel();
 	material = ResourceManager::LoadMaterial("New Material", shaders[super]);
+	unsigned long long GUID = material->GUID;
+	*material = *ResourceManager::defaultMaterial;
+	material->GUID = GUID;
+	material->name = "New Material";
 
 	ModelRenderer* modelRenderer = new ModelRenderer(model, material);
 	sceneObject->setRenderer(modelRenderer);

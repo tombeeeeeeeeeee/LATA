@@ -125,7 +125,7 @@ void Model::Refresh()
 
 std::string Model::getDisplayName()
 {
-	return Utilities::FilenameFromPath(path) + " " + std::to_string(GUID);
+	return Utilities::FilenameFromPath(path);
 }
 
 toml::table Model::Serialise()
