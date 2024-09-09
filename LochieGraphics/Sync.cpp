@@ -131,7 +131,7 @@ void Sync::ShootMisfire(Transform& transform)
 	shot->setRenderer(misfireModelRender);
 
 	shot->setRigidBody(new RigidBody(0.0f,0.0f));
-	Collider collider = PolygonCollider({ {0.0f,0.0f} }, misfireColliderRadius);
+	PolygonCollider collider = PolygonCollider({ {0.0f,0.0f} }, misfireColliderRadius);
 	collider.collisionLayer = (int)CollisionLayers::sync;
 	collider.isTrigger -= true;
 	shot->rigidbody()->addCollider(&collider);
@@ -167,18 +167,89 @@ void Sync::ShootSniper(glm::vec3 pos)
 void Sync::ShootOverClocked(glm::vec3 pos)
 {
 	currCharge -= overclockChargeCost;
-	OverclockedRebounding(pos, fireDirection, 0, overclockBeamColour);
+	OverclockRebounding(pos, fireDirection, 0, overclockBeamColour);
 }
 
-void Sync::OverclockedRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour)
+void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour)
 {
 	std::vector<Hit> hits;
-	PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~(int)CollisionLayers::sync);
+	if (PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~(int)CollisionLayers::sync))
+	{
+		Hit hit = hits[0];
+
+		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+		{
+			hit.sceneObject->health()->subtractHealth(sniperDamage);
+			for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
+			{
+				hit = hits[i];
+				if (i == enemyPierceCount - 1) return;
+				if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+				{
+					hit.sceneObject->health()->subtractHealth(sniperDamage);
+				}
+				else break;
+			}
+		}
+
+		blasts.push_back({ overclockBeamLifeSpan, 0.0f, colour, pos, {hit.position.x, pos.y, hit.position.y} });
+
+		if (hit.collider->collisionLayer & (int)CollisionLayers::ecco)
+		{
+			float s = 0.95f;
+			float v = 0.95f;
+			float angle = -eccoRefractionAngle * eccoRefractionCount / 2.0f;
+			for (int iter = 0; iter < eccoRefractionCount; iter++)
+			{
+				float h = iter / (float)eccoRefractionCount;
+				int i = int(h * 6.0);
+				float f = h * 6.0 - i;
+				float w = v * (1.0 - s);
+				float q = v * (1.0 - s * f);
+				float t = v * (1.0 - s * (1.0 - f));
+
+				glm::vec3 refractionColour;
+				if (i == 0) refractionColour = { v, t, w };
+				else if (i == 1) refractionColour = { q, v, w };
+				else if (i == 2) refractionColour = { w, v, t }; 
+				else if (i == 3) refractionColour = { w, q, v };
+				else if (i == 4) refractionColour = { t, w, v };
+				else		   refractionColour = { v, w, q };
+
+				float c = cosf(angle * PI / 180.0f);
+				float s = sinf(angle * PI / 180.0f);
+
+				glm::vec2 refractionDirection =
+				{
+					dir.x * c - dir.y * s,
+					dir.x * s + dir.y * c
+				};
+
+				OverclockNonRebounding({ hit.position.x, pos.y, hit.position.y }, refractionDirection, refractionColour);
+				angle += eccoRefractionAngle;
+			}
+		}
+		else if (count < overclockReboundCount)
+		{
+			{
+				OverclockRebounding({ hit.position.x,pos.y, hit.position.y }, glm::reflect(dir, hit.normal), count + 1, colour);
+			}
+		}
+	}
+}
+
+void Sync::OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour)
+{
+	std::vector<Hit> hits;
+	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~(int)CollisionLayers::sync);
 	Hit hit = hits[0];
 
 	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 	{
 		hit.sceneObject->health()->subtractHealth(sniperDamage);
+	}
+	if((hit.collider->collisionLayer & (int)CollisionLayers::enemy) | (hit.collider->collisionLayer & (int)CollisionLayers::ecco))
+	{
 		for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
 		{
 			hit = hits[i];
@@ -192,43 +263,6 @@ void Sync::OverclockedRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::v
 	}
 
 	blasts.push_back({ overclockBeamLifeSpan, 0.0f, colour, pos, {hit.position.x, pos.y, hit.position.y} });
-
-	if (hit.collider->collisionLayer & (int)CollisionLayers::ecco)
-	{
-		float s = 75.0f;
-		float v = 100.0f;
-		float angle = -eccoRefractionAngle * eccoRefractionCount / 2.0f;
-		for (int iter = 0; iter < eccoRefractionCount; iter++)
-		{
-			float h = iter * 360.0f / eccoRefractionCount;
-			int i = int(h * 6.0); 
-			float f = h * 6.0 - i;
-			float w = v * (1.0 - s);
-			float q = v * (1.0 - s * f);
-			float t = v * (1.0 - s * (1.0 - f));
-
-			glm::vec3 refractionColour;
-			if (i == 0) refractionColour = {v, t, w};
-			else if (i==1) refractionColour =  {q, v, w};
-			else if (i==2) refractionColour =  {w, v, t};
-			else if (i==3) refractionColour =  {w, q, v};
-			else if (i==4) refractionColour =  {t, w, v};
-			else		   refractionColour =  {v, w, q};
-			float c = cosf(angle * PI / 180.0f);
-			float s = sinf(angle * PI / 180.0f);
-			glm::vec2 refractionDirection =
-			{
-				dir.x * c - dir.y * s,
-				dir.x * s + dir.y * c
-			};
-
-			OverclockedRebounding(pos, refractionDirection, overclockReboundCount + 1, colour);
-		}
-	}
-	else if (count < overclockReboundCount)
-	{
-		OverclockedRebounding(pos, glm::reflect(dir, hit.normal), count + 1, colour);
-	}
 	return;
 }
 

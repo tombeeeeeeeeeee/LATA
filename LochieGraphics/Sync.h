@@ -33,8 +33,8 @@ public:
 	void ShootMisfire(Transform& transform);
 	void ShootSniper(glm::vec3 pos);
 	void ShootOverClocked(glm::vec3 pos);
-	void OverclockedRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour);
-
+	void OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour);
+	void OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour);
 	void misfireShotOnCollision(Collision collision);
 	void sniperShotOnCollision(Collision collision);
 	void overclockShotOnCollision(Collision collision);
@@ -56,15 +56,15 @@ private:
 
 	float sniperDamage = 0.0f;
 	float sniperChargeCost = 0.0f;
-	float sniperChargeTime = 0.0f;
+	float sniperChargeTime = -0.1f;
 	float sniperBeamLifeSpan = 0.5f;
-	glm::vec3 sniperBeamColour = { 1.0f,1.0f,1.0f };
+	glm::vec3 sniperBeamColour = { 0.5f,0.5f,1.0f };
 
 	float overclockDamage = 0.0f;
 	float overclockChargeCost = 0.0f;
-	float overclockChargeTime = 0.0f;
+	float overclockChargeTime = 0.3f;
 	float overclockBeamLifeSpan = 1.0f;
-	glm::vec3 overclockBeamColour = { 1.0f,1.0f,1.0f };
+	glm::vec3 overclockBeamColour = { 1.0f,1.0f,0.5f };
 	int enemyPierceCount = 99;
 	int overclockReboundCount = 5;
 

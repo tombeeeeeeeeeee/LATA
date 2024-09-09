@@ -339,9 +339,11 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 
 }
 
-void PhysicsSystem::SetCollisionLayerMask(int layerA, int layerB, bool state)
+void PhysicsSystem::SetCollisionLayerMask(int a, int b, bool state)
 {
 	//Catch values that don't fit in the layer mask
+	int layerA = glm::log2((float)a);
+	int layerB = glm::log2((float)b);
 	if (layerA < 0 || layerA >= 32) return;
 	if (layerB < 0 || layerB >= 32) return;
 
@@ -540,8 +542,8 @@ CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 d
 			{
 				glm::vec2 c = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), poly->verts[i]);
 				glm::vec2 d = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), poly->verts[(i + 1) % poly->verts.size()]) - c;
-				glm::vec2 normal = { -d.y, d.x };
-				//glm::vec2 normal = { d.y, -d.x };
+				//glm::vec2 normal = { -d.y, d.x };
+				glm::vec2 normal = { d.y, -d.x };
 
 				float denominator = glm::dot(normal, direction);
 				if (denominator <= 0) continue;

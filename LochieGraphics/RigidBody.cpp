@@ -78,8 +78,8 @@ float RigidBody::getMomentOfInertia()
 glm::vec2 RigidBody::Transform2Din3DSpace(glm::mat4 global, glm::vec2 input)
 {
 	glm::vec4 temp = { input.x, 0.0f, input.y, 1.0f };
-	glm::vec3 result = global * temp;
-	return { result.x, result.z };
+	glm::vec4 result = global * temp;
+	return glm::vec2(result.x, result.z);
 }
 
 void RigidBody::GUI()
