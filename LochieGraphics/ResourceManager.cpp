@@ -6,7 +6,7 @@
 
 #include "Utilities.h"
 
-#include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
 
 #include <iostream>
 #include <chrono>
@@ -159,80 +159,72 @@ std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A>& Re
 	return materials;
 }
 
-static int TextSelected(ImGuiInputTextCallbackData* data) {
-	*((bool*)data->UserData) = true;
-	return 0;
-}
-
-#define OPENMODAL
-
-#define GuidSelector(type, collection, selector, ...)                                           \
-	bool returnBool = false;                                                                    \
-	std::string displayName;                                                                    \
-	if (selector != nullptr) {                                                                  \
-		displayName = selector->getDisplayName();                                               \
-	}                                                                                           \
-	else {                                                                                      \
-		displayName = "None";                                                                   \
-	}                                                                                           \
-	std::vector <std::pair<std::string, type *>> filteredType;                                  \
-                                                                                                \
-	bool textSelected = false;                                                                  \
-	/*TODO: Text based input instead of button prompt, the pop up should appear while typing*/  \
-	ImGui::InputText((label + "##" + tag).c_str(), &displayName,                                \
-		ImGuiInputTextFlags_CallbackAlways |                                                    \
-		ImGuiInputTextFlags_AutoSelectAll,                                                      \
-		TextSelected, &textSelected);                                                           \
-	std::string popupName = (label + "##" + tag).c_str();							            \
-	if (textSelected) {																			\
-		ImGui::OpenPopup(popupName.c_str(), ImGuiPopupFlags_NoReopen);							\
-	}																							\
-																								\
-	if (!ImGui::BeginPopup(popupName.c_str())) {												\
-		return false;    																		\
-	}																							\
-	/* Popup has began*/																		\
-	ImGui::SetKeyboardFocusHere();                                                              \
-	ImGui::InputText(("Search##" + tag).c_str(), &filter);					                    \
-																								\
-for (auto& i : collection)																		\
-{																								\
-	std::string name = i.second.getDisplayName();												\
-	if (Utilities::ToLower(name).find(Utilities::ToLower(filter)) != std::string::npos) {	    \
-		filteredType.push_back(std::pair<std::string, type*>{ name, & i.second});	        	\
-	}																							\
-}																								\
-																								\
-																								\
-if (showCreateButton) {																			\
+#define GuidSelector(type, collection, selector, ...)                                              \
+	bool returnBool = false;                                                                       \
+	std::string displayName;                                                                       \
+	if (selector != nullptr) {                                                                     \
+		displayName = selector->getDisplayName();                                                  \
+	}                                                                                              \
+	else {                                                                                         \
+		displayName = "None";                                                                      \
+	}                                                                                              \
+	std::vector <std::pair<std::string, type *>> filteredType;                                     \
+                                                                                                   \
+	bool textSelected = false;                                                                     \
+	/*TODO: Text based input instead of button prompt, the pop up should appear while typing*/     \
+	ImGui::InputText((label + "##" + tag).c_str(), &displayName,                                   \
+		ImGuiInputTextFlags_CallbackAlways |                                                       \
+		ImGuiInputTextFlags_AutoSelectAll,                                                         \
+		ExtraEditorGUI::TextSelected, &textSelected);                                              \
+	std::string popupName = (label + "##" + tag).c_str();							               \
+	if (textSelected) {																			   \
+		ImGui::OpenPopup(popupName.c_str(), ImGuiPopupFlags_NoReopen);							   \
+	}																							   \
+																								   \
+	if (!ImGui::BeginPopup(popupName.c_str())) {												   \
+		return false;    																		   \
+	}																							   \
+	/* Popup has began*/																		   \
+	ImGui::SetKeyboardFocusHere();                                                                 \
+	ImGui::InputText(("Search##" + tag).c_str(), &filter);					                       \
+																								   \
+for (auto& i : collection)																		   \
+{																								   \
+	std::string name = i.second.getDisplayName();												   \
+	if (Utilities::ToLower(name).find(Utilities::ToLower(filter)) != std::string::npos) {	       \
+		filteredType.push_back(std::pair<std::string, type*>{ name, & i.second});	        	   \
+	}																							   \
+}																								   \
+																								   \
+if (showCreateButton) {																			   \
 	if (ImGui::MenuItem(("CREATE NEW " + std::string(#type) + "##" + label).c_str(), "", false)) { \
-		selector = ResourceManager::Load##type("New " + std::string(#type), __VA_ARGS__);       \
-		selector->OpenModal();                                                                  \
-        returnBool = true;                                                                      \
-	}																							\
-}																								\
-if (showNull) {                                                                                 \
-	if (ImGui::MenuItem(("None 0##" + label).c_str(), "", false)) {                             \
-		selector = nullptr;                                                                     \
-		returnBool = true;                                                                      \
-	}                                                                                           \
-}                                                                                               \
-																								\
-for (auto& i : filteredType)																	\
-{																								\
-	bool selected = false;																		\
-	if (i.second == selector) {																	\
-		selected = true;																		\
-	}																							\
-	if (ImGui::MenuItem((i.second->getDisplayName() + "##" + label).c_str(), "", selected)) {	\
-		if (selector != i.second) {                                                             \
-			selector = i.second;																\
-			returnBool = true;                                                                  \
-		}                                                                                       \
-	}																							\
-}																								\
-																								\
-ImGui::EndPopup();																				\
+		selector = ResourceManager::Load##type("New " + std::string(#type), __VA_ARGS__);          \
+		selector->OpenModal();                                                                     \
+        returnBool = true;                                                                         \
+	}																							   \
+}																								   \
+if (showNull) {                                                                                    \
+	if (ImGui::MenuItem(("None 0##" + label).c_str(), "", false)) {                                \
+		selector = nullptr;                                                                        \
+		returnBool = true;                                                                         \
+	}                                                                                              \
+}                                                                                                  \
+																								   \
+for (auto& i : filteredType)																	   \
+{																								   \
+	bool selected = false;																		   \
+	if (i.second == selector) {																	   \
+		selected = true;																		   \
+	}																							   \
+	if (ImGui::MenuItem((i.second->getDisplayName() + "##" + label).c_str(), "", selected)) {	   \
+		if (selector != i.second) {                                                                \
+			selector = i.second;																   \
+			returnBool = true;                                                                     \
+		}                                                                                          \
+	}																							   \
+}																								   \
+																								   \
+ImGui::EndPopup();																				   \
 return returnBool;
 
 

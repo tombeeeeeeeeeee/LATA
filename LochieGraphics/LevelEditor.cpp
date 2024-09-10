@@ -5,19 +5,23 @@
 // TODO: This is only here for the window reference
 #include "SceneManager.h"
 
+#include "ExtraEditorGUI.h"
+
+#include <filesystem>
+
 void LevelEditor::RefreshWalls()
 {
 	auto walls = wallTileParent->transform()->getChildren();
 	
 	while (walls.size())
 	{
+		// TODO: Should be using a delete sceneobject function
 		unsigned long long GUID = walls.front()->getSceneObject()->GUID;
 		delete sceneObjects[GUID];
 		sceneObjects.erase(GUID);
 		walls.erase(walls.begin());
 	}
 	wallCount = 0;
-
 
 	float offset = (gridSize + wallThickness) / 2;
 	for (auto& i : tiles)
@@ -38,8 +42,6 @@ void LevelEditor::RefreshWalls()
 			PlaceWallAt(pos.x, pos.z + offset, 90.0f);
 		}
 	}
-
-
 }
 
 SceneObject* LevelEditor::CellAt(float x, float z)
@@ -63,7 +65,6 @@ SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
 	newRigidBody->addCollider(new PolygonCollider({
 		{x + 20, z + 20}, {x + 20, z - 20}, { x - 20, z + 20 }, {x - 20, z - 20}
 		}, 0.0f));
-	// TODO: Add collider
 	return newWall;
 }
 
@@ -77,7 +78,23 @@ SceneObject* LevelEditor::PlaceTileAt(float x, float z)
 	return newTile;
 }
 
-void LevelEditor::EraseCellAt(glm::vec2 targetCell)
+void LevelEditor::Brush(glm::vec2 targetCell)
+{
+	SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
+	if (alreadyPlaced) {
+		return;
+	}
+	PlaceTileAt(targetCell.x, targetCell.y);
+	// other setup here
+	gridMinX = (int)fminf(targetCell.x, (float)gridMinX);
+	gridMinZ = (int)fminf(targetCell.y, (float)gridMinZ);
+	gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
+	gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
+
+	if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
+}
+
+void LevelEditor::Eraser(glm::vec2 targetCell)
 {
 	SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
 	if (!alreadyPlaced) {
@@ -95,6 +112,7 @@ void LevelEditor::EraseCellAt(glm::vec2 targetCell)
 			}
 		}
 	}
+	// TODO: Should be a delete sceneobject function
 	delete sceneObjects[GUID];
 	sceneObjects.erase(GUID);
 	tiles.erase({ (int)targetCell.x, (int)targetCell.y });
@@ -129,7 +147,6 @@ void LevelEditor::Start()
 	camera->farPlane = 100000;
 	camera->nearPlane = 10;
 
-	// TODO: Don't load directly here, should be saved as an art asset
 	ground = ResourceManager::LoadModelAsset("Assets/SM_FloorTile.model");
 	wall = ResourceManager::LoadModelAsset("Assets/SM_adjustedOriginLocWall.model");
 
@@ -148,12 +165,12 @@ void LevelEditor::Start()
 
 	RigidBody* rRb = new RigidBody();
 	rRb->addCollider({ new PolygonCollider(
-			{
-				{100.0f, 100.0f},
-				{100.0f, -100.0f},
-				{-100.0f, -100.0f},
-				{-100.0f, 100.0f},
-			}, 0.0f, CollisionLayers::ecco) }
+		{
+			{100.0f, 100.0f},
+			{100.0f, -100.0f},
+			{-100.0f, -100.0f},
+			{-100.0f, 100.0f},
+		}, 0.0f, CollisionLayers::ecco) }
 	);
 	rRb->setMass(0.1f);
 	rRb->setMomentOfInertia(5.0f);
@@ -208,10 +225,8 @@ void LevelEditor::Update(float delta)
 		}
 	}
 
-	gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), 0.5f);
-
-	lines.DrawLineSegment({ 0, 0, 0 }, { 1, 1, 1 }, { 1.0f, 0.5f, 0.2f });
-	lines.DrawLineSegment(testPos1, testPos2, {1.0f, 1.0f, 1.0f});
+	// TODO: Need to be able to change the zoomScale
+	gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), 100);
 	
 	lines.SetColour({ 1, 1, 1 });
 	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
@@ -227,25 +242,13 @@ void LevelEditor::Update(float delta)
 	glm::vec3 temp = (camPoint + glm::vec3(adjustedCursor.x * camera->getOrthoWidth(), 0.0f, -adjustedCursor.y * camera->getOrthoHeight())) / gridSize;
 	glm::vec2 targetCell = glm::vec2{ roundf(temp.x), roundf(temp.z) };
 
-	// TODO: Skip if imgui wants mouse input
 	if (ImGui::GetIO().WantCaptureMouse) { return; }
 	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-		SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
-		if (!alreadyPlaced) {
-			PlaceTileAt(targetCell.x, targetCell.y);
-			// other setup here
-			gridMinX = (int)fminf(targetCell.x, (float)gridMinX);
-			gridMinZ = (int)fminf(targetCell.y, (float)gridMinZ);
-			gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
-			gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
-
-			if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
-		}
+		Brush(targetCell);
 	}
 	// TODO: Refresh mins and maxes
-	// TODO: Break this out more
 	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-		EraseCellAt(targetCell);
+		Eraser(targetCell);
 	}
 }
 
@@ -333,11 +336,18 @@ void LevelEditor::SaveAsPrompt()
 		previouslySaved = true;
 		SaveLevel();
 	}
+	ImGui::SameLine();
 	if (ImGui::Button("Cancel##Load")) {
 		ImGui::CloseCurrentPopup();
 	}
 
 	ImGui::EndPopup();
+}
+
+
+bool LevelEditor::InputSearchTest() {
+	//InputSearchBox(loadableFilePathsPointers.begin(), loadableFilePathsPointers.end(), &windowName, "Filename", Utilities::PointerToString(&loadableFilePathsPointers), true);
+	return false;
 }
 
 void LevelEditor::LoadPrompt()
@@ -352,12 +362,29 @@ void LevelEditor::LoadPrompt()
 	if (openLoad) {
 		ImGui::SetKeyboardFocusHere();
 		openLoad = false;
+
+		loadPaths.clear();
+		
+		for (auto& i : std::filesystem::directory_iterator(levelsPath))
+		{
+			loadPaths.push_back(i.path().generic_string());
+		}
+		for (auto& i : loadPaths)
+		{
+			loadPathsPointers.push_back(&i);
+		}
 	}
-	if (ImGui::InputText("Filename##Load", &windowName, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue)) {
+	bool textSelected = false;
+	if (ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &windowName, "Filename", Utilities::PointerToString(&loadPathsPointers), true)) {
 		ImGui::CloseCurrentPopup();
-		previouslySaved = true;
 		LoadLevel();
 	}
+
+	if (ImGui::Button("Load##Load")) {
+		ImGui::CloseCurrentPopup();
+		LoadLevel();
+	}
+	ImGui::SameLine();
 	if (ImGui::Button("Cancel##Load")) {
 		ImGui::CloseCurrentPopup();
 	}
@@ -414,6 +441,7 @@ void LevelEditor::LoadLevel()
 
 
 	file.close();
+	previouslySaved = true;
 }
 
 LevelEditor::~LevelEditor()

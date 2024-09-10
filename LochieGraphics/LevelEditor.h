@@ -13,6 +13,8 @@ class LevelEditor : public Scene
 {
 private:
 
+	std::string levelsPath = "Levels/";
+
 	enum class BrushState {
 		none,
 		brush
@@ -29,9 +31,6 @@ private:
 
 	unsigned int wallCount = 0;
 	unsigned int tileCount = 0;
-
-	glm::vec3 testPos1;
-	glm::vec3 testPos2;
 
 	float gridSize = 300.0f;
 	float wallThickness = 25.0f;
@@ -51,7 +50,8 @@ private:
 	SceneObject* PlaceWallAt(float x, float z, float direction);
 	SceneObject* PlaceTileAt(float x, float z);
 
-	void EraseCellAt(glm::vec2 targetCell);
+	void Brush(glm::vec2 targetCell);
+	void Eraser(glm::vec2 targetCell);
 
 	void SaveAsPrompt();
 	void LoadPrompt();
@@ -75,6 +75,12 @@ private:
 
 	SceneObject* syncSo;
 	SceneObject* eccoSo;
+
+	std::vector<std::string> loadPaths;
+	std::vector<std::string*> loadPathsPointers;
+
+
+	bool InputSearchTest();
 
 public:
 
