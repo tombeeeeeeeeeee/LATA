@@ -67,6 +67,7 @@ public:
 	virtual void OnMouseDown() {};
 	virtual void OnKeyDown(int key, int action) {};
 	virtual void OnKey(int key, int action) {};
+
 	// TODO: Maybe move some of the GUI code that is in the GUI class here
 	void BaseGUI();
 	virtual void GUI() {};

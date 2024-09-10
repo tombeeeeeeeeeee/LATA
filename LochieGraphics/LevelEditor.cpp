@@ -193,7 +193,8 @@ void LevelEditor::Update(float delta)
 			*input.inputDevices[0],
 			*eccoSo->transform(),
 			*eccoSo->rigidbody(),
-			delta
+			delta,
+			camera->transform.getEulerRotation().y
 		);
 
 		if (input.inputDevices.size() > 1)
@@ -203,7 +204,8 @@ void LevelEditor::Update(float delta)
 				*syncSo->transform(),
 				*syncSo->rigidbody(),
 				&renderSystem->lines,
-				delta
+				delta,
+				camera->transform.getEulerRotation().y
 			);
 		}
 	}

@@ -27,10 +27,7 @@ Sync::Sync(toml::table table)
 void Sync::Start(std::vector<Shader*>* shaders)
 {
 	Model* misfireModel = ResourceManager::LoadModel(misfireModelPath);
-	Material* misfireMaterial = ResourceManager::LoadMaterial("misfireProjectile", (*shaders)[super]);
-	misfireMaterial->AddTextures({
-		ResourceManager::LoadTexture("images/defaultTexture.png", Texture::Type::albedo, GL_REPEAT)
-		});
+	Material* misfireMaterial = ResourceManager::defaultMaterial;
 	misfireModelRender = new ModelRenderer(misfireModel, misfireMaterial);
 }
 
@@ -138,15 +135,37 @@ void Sync::GUI()
 		ImGui::DragFloat("Move Speed", &moveSpeed);
 		ImGui::DragFloat("Look DeadZone", &lookDeadZone);
 		ImGui::DragFloat("Move DeadZone", &moveDeadZone);
-		ImGui::DragFloat("Misfire Damage", &misfireDamage);
-		ImGui::DragFloat("Misfire Charge Cost", &misfireChargeCost);
-		ImGui::DragFloat("Sniper Damage", &sniperDamage);
-		ImGui::DragFloat("Sniper Charge Cost", &sniperChargeCost);
-		ImGui::DragFloat("Sniper Charge Time", &sniperChargeTime);
-		ImGui::DragFloat("Overclock Damage", &overclockDamage);
-		ImGui::DragFloat("Overclock Charge Cost", &overclockChargeCost);
-		ImGui::DragFloat("Overlock Charge Time", &overclockChargeTime);
 
+		if (ImGui::CollapsingHeader("Misfire Properties"))
+		{
+			ImGui::DragFloat("Misfire Damage", &misfireDamage);
+			ImGui::DragFloat("Misfire Charge Cost", &misfireChargeCost);
+			ImGui::DragFloat("Misfire Shot Speed", &misfireShotSpeed);
+		}
+		if (ImGui::CollapsingHeader("Sniper Shot Properties"))
+		{
+			ImGui::DragFloat("Sniper Damage", &sniperDamage);
+			ImGui::DragFloat("Sniper Charge Cost", &sniperChargeCost);
+			ImGui::DragFloat("Sniper Charge Time", &sniperChargeTime);
+			ImGui::DragFloat("Sniper Beam life span", &sniperBeamLifeSpan);
+			ImGui::ColorEdit3("Sniper Beam Colour", &sniperBeamColour[0]);
+		}
+		if (ImGui::CollapsingHeader("Overclock Shot Properties"))
+		{
+			ImGui::DragFloat("Damage", &overclockDamage);
+			ImGui::DragFloat("Charge Cost", &overclockChargeCost);
+			ImGui::DragFloat("Charge Time", &overclockChargeTime);
+			ImGui::DragFloat("Beam life span", &overclockBeamLifeSpan);
+			ImGui::ColorEdit3("Beam Colour", &overclockBeamColour[0]);
+			ImGui::DragInt("Max Enemy Pierce Count", &enemyPierceCount);
+			ImGui::DragInt("Rebound Count", &overclockReboundCount);
+			ImGui::DragInt("Refraction Beams Off Ecco", &eccoRefractionCount);
+			ImGui::DragFloat("Refraction Beams Angle", &eccoRefractionAngle);
+		}
+		
+		ImGui::DragFloat("Max Charge", &maxCharge);
+		ImGui::DragFloat("Current Charge", &currCharge);
+		
 	}
 }
 
@@ -170,24 +189,27 @@ void Sync::ShootMisfire(Transform& transform)
 	shot->setRenderer(misfireModelRender);
 
 	shot->setRigidBody(new RigidBody(0.0f,0.0f));
-	PolygonCollider collider = PolygonCollider({ {0.0f,0.0f} }, misfireColliderRadius);
-	collider.collisionLayer = (int)CollisionLayers::sync;
-	collider.isTrigger -= true;
-	shot->rigidbody()->addCollider(&collider);
-	shot->rigidbody()->AddImpulse(fireDirection * misfireShotSpeed);
+	PolygonCollider* collider = new PolygonCollider({ {0.0f,0.0f} }, misfireColliderRadius, CollisionLayers::sync);
+	collider->isTrigger = true;
+	shot->rigidbody()->addCollider(collider);
+	shot->rigidbody()->vel += fireDirection * misfireShotSpeed;
 	shot->rigidbody()->onTrigger.push_back([this](Collision collision) {misfireShotOnCollision(collision); });
-
-	float angle = acosf(glm::dot(fireDirection, { barrelOffset.x, barrelOffset.z }) / glm::length(glm::vec2(barrelOffset.x, barrelOffset.z)));
-	float turnSign = glm::sign(glm::dot(fireDirection, { transform.right().x, transform.right().z }));
-	float c = cos(turnSign * angle);
-	float s = sin(turnSign * angle);
-	glm::vec3 globalBarrelOffset = {
-		barrelOffset.x * c - barrelOffset.z * s,
-		0.0f,
-		barrelOffset.x * s + barrelOffset.z * c
-	};
+	glm::vec3 globalBarrelOffset = barrelOffset;
+	if (glm::length(barrelOffset) != 0.0f)
+	{
+		float ratio = glm::dot(fireDirection, { barrelOffset.x, barrelOffset.z }) / glm::length(glm::vec2(barrelOffset.x, barrelOffset.z));
+		float angle = acosf(glm::clamp(ratio, -1.0f, 1.0f));
+		float turnSign = glm::sign(glm::dot(fireDirection, { transform.right().x, transform.right().z }));
+		float c = cos(turnSign * angle);
+		float s = sin(turnSign * angle);
+		globalBarrelOffset = {
+			barrelOffset.x * c - barrelOffset.z * s,
+			0.0f,
+			barrelOffset.x * s + barrelOffset.z * c
+		};
+	}
 	shot->transform()->setPosition(transform.getGlobalPosition() + globalBarrelOffset);
-
+	shot->transform()->setScale(0.001f);
 }
 
 void Sync::ShootSniper(glm::vec3 pos)
@@ -212,10 +234,9 @@ void Sync::ShootOverClocked(glm::vec3 pos)
 void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour)
 {
 	std::vector<Hit> hits;
-	if (PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~(int)CollisionLayers::sync))
+	if (PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX))
 	{
 		Hit hit = hits[0];
-
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 		{
 			hit.sceneObject->health()->subtractHealth(sniperDamage);
@@ -268,7 +289,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 				angle += eccoRefractionAngle;
 			}
 		}
-		else if (count < overclockReboundCount)
+		else if (count < overclockReboundCount && !(hit.collider->collisionLayer & (int)CollisionLayers::sync))
 		{
 			{
 				OverclockRebounding({ hit.position.x,pos.y, hit.position.y }, glm::reflect(dir, hit.normal), count + 1, colour);
@@ -280,7 +301,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 void Sync::OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour)
 {
 	std::vector<Hit> hits;
-	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~(int)CollisionLayers::sync);
+	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX);
 	Hit hit = hits[0];
 
 	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
@@ -311,6 +332,10 @@ void Sync::misfireShotOnCollision(Collision collision)
 	{
 		collision.sceneObject->health()->subtractHealth(misfireDamage);
 	}
+	//TODO DELETE IN SCENE
+	int GUID = collision.self->GUID;
+	delete collision.self;
+	SceneManager::scene->sceneObjects.erase(GUID);
 }
 
 void Sync::sniperShotOnCollision(Collision collision)

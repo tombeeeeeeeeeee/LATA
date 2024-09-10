@@ -70,8 +70,8 @@ private:
 	int enemyPierceCount = 99;
 	int overclockReboundCount = 5;
 
-	float eccoRefractionAngle = 10.0f;
-	int eccoRefractionCount = 5;
+	float eccoRefractionAngle = 1.0f;
+	int eccoRefractionCount = 360;
 
 	float chargedDuration = 0.0f;
 	bool chargingShot = false;
@@ -82,7 +82,7 @@ private:
 
 	float misfireColliderRadius = 0.1f;
 	ModelRenderer* misfireModelRender = nullptr;
-	std::string misfireModelPath;
+	std::string misfireModelPath = "models/sphere.fbx";
 	std::string misfireMaterialPath;
 
 };

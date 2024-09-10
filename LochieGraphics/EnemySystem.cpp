@@ -14,20 +14,14 @@ EnemySystem::EnemySystem()
 
 void EnemySystem::Start()
 {
-    Material* meleeEnemyMaterial = ResourceManager::LoadMaterial("meleeEnemy", SceneManager::scene->shaders[super]);
-    meleeEnemyMaterial->AddTextures(std::vector<Texture*>{
-        ResourceManager::LoadTexture(meleeEnemyMaterialPath, Texture::Type::albedo, GL_REPEAT, true)
-    });
+    Material* meleeEnemyMaterial = ResourceManager::defaultMaterial;
 
     meleeEnemyRenderer = new ModelRenderer(
         ResourceManager::LoadModel(meleeEnemyModel),
         meleeEnemyMaterial
     );
 
-    Material* rangedEnemyMaterial = ResourceManager::LoadMaterial("rangedEnemy", SceneManager::scene->shaders[super]);
-    rangedEnemyMaterial->AddTextures(std::vector<Texture*>{
-        ResourceManager::LoadTexture(rangedEnemyMaterialPath, Texture::Type::albedo, GL_REPEAT, true)
-    });
+    Material* rangedEnemyMaterial = ResourceManager::defaultMaterial;
 
     rangedEnemyRenderer = new ModelRenderer(
         ResourceManager::LoadModel(rangedEnemyModel),
