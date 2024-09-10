@@ -40,14 +40,14 @@ void ModelRenderer::GUI()
 	if (ImGui::CollapsingHeader("Model Renderer"))
 	{
 		ImGui::BeginDisabled();
-		int mats = materialGUIDs.size();
+		int mats = (int)materialGUIDs.size();
 		ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
 		ImGui::EndDisabled();
 		ImGui::Indent();
 		for (size_t i = 0; i < materialGUIDs.size(); i++)
 		{
 			// TODO: A better way to reference the general default shaders
-			if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], sceneObject->scene->shaders[super], true)) {
+			if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], ResourceManager::defaultShader, true)) {
 				if (materials[i] != nullptr) {
 					materialGUIDs[i] = materials[i]->GUID;
 				}
@@ -72,10 +72,28 @@ void ModelRenderer::GUI()
 
 toml::table ModelRenderer::Serialise(unsigned long long GUID) const
 {
+	toml::array savedMaterials;
+	for (auto& i : materialGUIDs)
+	{
+		savedMaterials.push_back(Serialisation::SaveAsUnsignedLongLong(i));
+	}
+
 	return toml::v3::table{
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
 		{ "modelGuid", Serialisation::SaveAsUnsignedLongLong(modelGUID)},
+		{ "materials", savedMaterials },
 	};
+}
+
+ModelRenderer::ModelRenderer(toml::table table)
+{
+	modelGUID = Serialisation::LoadAsUnsignedLongLong(table["modelGuid"]);
+	toml::array* loadingMaterials = table["materials"].as_array();
+	for (size_t i = 0; i < loadingMaterials->size(); i++)
+	{
+		materialGUIDs.push_back(Serialisation::LoadAsUnsignedLongLong(loadingMaterials->at(i)));
+	}
+	Refresh();
 }
 
 // TODO: Make sure to call this

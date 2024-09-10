@@ -2,6 +2,8 @@
 #include "Input.h"
 #include <string>
 #include "Maths.h"
+#include "Serialisation.h"
+
 #include "BlastLine.h"
 
 class Transform;
@@ -17,6 +19,7 @@ public:
 	unsigned long long GUID = 0;
 
 	Sync() {};
+	Sync(toml::table table);
 
 	void Start(std::vector<Shader*>* shaders);
 
@@ -28,6 +31,7 @@ public:
 
 	void GUI();
 
+	toml::table Serialise() const;
 	void ShootMisfire(Transform& transform);
 	void ShootSniper(glm::vec3 pos);
 	void ShootOverClocked(glm::vec3 pos);

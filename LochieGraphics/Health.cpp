@@ -1,6 +1,11 @@
 #include "Health.h"
 #include "Maths.h"
 
+Health::Health()
+{
+
+}
+
 void Health::addHealth(int addition)
 {
 	int oldHealth = currHealth;
@@ -77,4 +82,10 @@ toml::table Health::Serialise(unsigned long long GUID) const
 		{ "currHealth", currHealth },
 		{ "maxHealth", maxHealth }
 	};
+}
+
+Health::Health(toml::table table)
+{
+	currHealth = Serialisation::LoadAsInt(table["currHealth"]);
+	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
 }

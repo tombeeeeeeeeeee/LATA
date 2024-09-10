@@ -66,3 +66,12 @@ std::string Utilities::ToLower(std::string& str)
 	return newString;
 }
 
+std::string Utilities::FilenameFromPath(std::string& path, bool includeExtension)
+{
+	unsigned long long start = path.find_last_of("/\\") + 1;
+	if (includeExtension) {
+		return path.substr(start);
+	}
+	return path.substr(start, path.find_last_of('.') - start);
+}
+

@@ -57,6 +57,9 @@
     <Filter Include="Source Files\Scene Management\Scenes">
       <UniqueIdentifier>{2a383f46-890a-418c-86ef-63c34d703e53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Parts\Lights">
+      <UniqueIdentifier>{fd18241c-97c2-4dcb-acee-9ffa49f6d7b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -97,9 +100,6 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Source Files\Parts</Filter>
     </ClCompile>
     <ClCompile Include="ModelRenderer.cpp">
       <Filter>Source Files\Parts</Filter>
@@ -224,15 +224,6 @@
     <ClCompile Include="GamePlayCameraSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Spotlight.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="PointLight.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectionalLight.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
     <ClCompile Include="Sync.cpp">
       <Filter>Source Files\Parts</Filter>
     </ClCompile>
@@ -262,6 +253,18 @@
     </ClCompile>
     <ClCompile Include="EnemySystem.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Source Files\Parts\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files\Parts\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Source Files\Parts\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Spotlight.cpp">
+      <Filter>Source Files\Parts\Lights</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -296,9 +299,6 @@
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
@@ -466,18 +466,6 @@
     <ClInclude Include="GamePlayCameraSystem.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Spotlight.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="PointLight.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Lights.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectionalLight.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
     <ClInclude Include="ModelHierarchyInfo.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
@@ -504,6 +492,21 @@
     </ClInclude>
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemySystem.h" />
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Source Files\Parts\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Source Files\Parts\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights.h">
+      <Filter>Source Files\Parts\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Source Files\Parts\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Spotlight.h">
+      <Filter>Source Files\Parts\Lights</Filter>
+    </ClInclude>
     <ClInclude Include="BlastLine.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>

@@ -10,6 +10,8 @@ class Health
 public:
 	int currHealth = 0;
 
+	Health();
+
 	void addHealth(int addition);
 	void subtractHealth(int subtraction);
 
@@ -17,6 +19,7 @@ public:
 	int getMaxHealth();
 
 	toml::table Serialise(unsigned long long GUID) const;
+	Health(toml::table table);
 
 private:
 	int maxHealth = 0;

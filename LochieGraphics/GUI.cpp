@@ -61,6 +61,12 @@ void GUI::Update()
 	if (showHierarchy)    { HierarchyMenu();   }
 	scene->BaseGUI();
 	scene->GUI();
+
+	// Update Potential Modals
+	for (auto& i : ResourceManager::materials)
+	{
+		i.second.ModalGUI();
+	}
 }
 
 void GUI::ResourceMenu()
@@ -175,7 +181,7 @@ void GUI::HierarchyMenu()
 	}
 
 	ImGui::Unindent();
-	ImGui::TreeNodeEx(("NEW SCENEOBJECT##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
+	ImGui::TreeNodeEx(("+ NEW SCENEOBJECT##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
 	if (ImGui::IsItemClicked()) {
 		sceneObjectSelected = new SceneObject(scene);
 	}

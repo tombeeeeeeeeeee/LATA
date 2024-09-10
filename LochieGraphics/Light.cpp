@@ -48,7 +48,7 @@ void Light::GUI()
 
 	float previewScale = 0.1f;
 	if (depthMap) {
-		ImGui::Image((void*)depthMap->GLID, { previewScale * (float)shadowWidth, previewScale * (float)shadowHeight });
+		ImGui::Image((ImTextureID)(unsigned long long)depthMap->GLID, { previewScale * (float)shadowWidth, previewScale * (float)shadowHeight });
 	}
 }
 

@@ -87,7 +87,7 @@ SceneManager::SceneManager(Scene* _scene)
 	ImGui::CreateContext();
 
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
 	// ImGui style
@@ -153,6 +153,7 @@ SceneManager::SceneManager(Scene* _scene)
 	ResourceManager::defaultMaterial->AddTextures({
 		ResourceManager::defaultTexture
 		});
+	ResourceManager::defaultShader = scene->shaders[super];
 
 	scene->Start();
 

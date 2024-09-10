@@ -76,6 +76,7 @@ public:
 
 	void Update();
 
+	bool windowOpen = true;
 	void GUI();
 };
 

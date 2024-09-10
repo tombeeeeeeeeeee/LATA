@@ -2,11 +2,14 @@
 
 #include "SceneManager.h"
 
+#include "Serialisation.h"
+
 #include "Utilities.h"
 
 #include "EditorGUI.h"
 
 #include <iostream>
+#include <chrono>
 
 using Utilities::PointerToString;
 
@@ -23,6 +26,7 @@ Model* ResourceManager::defaultModel = nullptr;
 Mesh* ResourceManager::defaultMesh = nullptr;
 
 unsigned long long ResourceManager::guidCounter = 100;
+std::random_device ResourceManager::guidRandomiser = {};
 
 const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
 const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
@@ -50,11 +54,21 @@ unsigned long long ResourceManager::hashFNV1A::operator()(std::string key) const
 	return hash;
 }
 
+unsigned long long ResourceManager::hashFNV1A::operator()(std::pair<int, int> key) const
+{
+	unsigned long long hash = offset;
+	hash ^= key.first;
+	hash *= prime;
+	hash ^= key.second;
+	hash *= prime;
+	return hash;
+}
 
-#define LoadResource(type, collection, ...)                            \
-type newResource = type(__VA_ARGS__ );                                        \
-newResource.GUID = GetNewGuid();                                       \
-return &collection.emplace(newResource.GUID, newResource).first->second\
+
+#define LoadResource(type, collection, ...)                             \
+type newResource = type(__VA_ARGS__ );                                  \
+newResource.GUID = GetNewGuid();                                        \
+return &collection.emplace(newResource.GUID, newResource).first->second \
 
 Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragmentPath, int flags)
 {
@@ -84,6 +98,14 @@ Shader* ResourceManager::LoadShader(toml::v3::table* toml)
 Model* ResourceManager::LoadModel(std::string path)
 {
 	LoadResource(Model, models, path);
+}
+
+Model* ResourceManager::LoadModelAsset(std::string path)
+{
+	std::ifstream file(path);
+	toml::table data = toml::parse(file);
+	Model newResource = Model(data); 
+	return &models.emplace(newResource.GUID, newResource).first->second;
 }
 
 // TODO: Clean
@@ -142,6 +164,7 @@ static int TextSelected(ImGuiInputTextCallbackData* data) {
 	return 0;
 }
 
+#define OPENMODAL
 
 #define GuidSelector(type, collection, selector, ...)                                           \
 	bool returnBool = false;                                                                    \
@@ -184,6 +207,7 @@ for (auto& i : collection)																		\
 if (showCreateButton) {																			\
 	if (ImGui::MenuItem(("CREATE NEW " + std::string(#type) + "##" + label).c_str(), "", false)) { \
 		selector = ResourceManager::Load##type("New " + std::string(#type), __VA_ARGS__);       \
+		selector->OpenModal();                                                                  \
         returnBool = true;                                                                      \
 	}																							\
 }																								\
@@ -377,7 +401,14 @@ void ResourceManager::GUI()
 
 unsigned long long ResourceManager::GetNewGuid()
 {
-	return ++guidCounter;
+	// TODO: Generate this properly
+	using namespace std::chrono;
+	
+	auto time = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+
+	std::uniform_int_distribution<uint32_t> random;
+
+	return (time << 32) + random(guidRandomiser);
 }
 
 void ResourceManager::BindFlaggedVariables()

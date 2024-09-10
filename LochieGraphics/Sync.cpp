@@ -13,6 +13,17 @@
 #include "PhysicsSystem.h"
 #include "Hit.h"
 
+Sync::Sync(toml::table table)
+{
+	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
+	moveSpeed = Serialisation::LoadAsFloat(table["moveSpeed"]);
+	lookDeadZone = Serialisation::LoadAsFloat(table["lookDeadZone"]);
+	moveDeadZone = Serialisation::LoadAsFloat(table["moveDeadZone"]);
+	misfireDamage = Serialisation::LoadAsFloat(table["misfireDamage"]);
+	sniperDamage = Serialisation::LoadAsFloat(table["sniperDamage"]);
+	overclockDamage = Serialisation::LoadAsFloat(table["overclockChargeTime"]);
+}
+
 void Sync::Start(std::vector<Shader*>* shaders)
 {
 	Model* misfireModel = ResourceManager::LoadModel(misfireModelPath);
@@ -137,6 +148,19 @@ void Sync::GUI()
 		ImGui::DragFloat("Overlock Charge Time", &overclockChargeTime);
 
 	}
+}
+
+toml::table Sync::Serialise() const
+{
+	return toml::table{
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{ "moveSpeed", moveSpeed},
+		{ "lookDeadZone", lookDeadZone},
+		{ "moveDeadZone", moveDeadZone},
+		{ "misfireDamage", misfireDamage},
+		{ "sniperDamage", sniperDamage},
+		{ "overclockChargeTime", overclockChargeTime},
+	};
 }
 
 void Sync::ShootMisfire(Transform& transform)

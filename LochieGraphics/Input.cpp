@@ -66,27 +66,41 @@ void Input::Update()
 
 void Input::GUI()
 {
-	if (ImGui::Begin("Input Debug")) {
-		if (ImGui::Button("Show all controller connection information (console)")) {
-			ShowAllControllerSlotStatuses();
-		}
-		for (int i = 0; i < inputDevices.size(); i++)
-		{
-			if (ImGui::CollapsingHeader(("#" + std::to_string(i)).c_str())) {
-				glm::vec2 move = inputDevices[i]->getMove();
-				glm::vec2 look = inputDevices[i]->getLook();
-				float leftTrigger = inputDevices[i]->getLeftTrigger();
-				float rightTrigger = inputDevices[i]->getRightTrigger();
 
-				ImGui::BeginDisabled();
-
-				ImGui::DragFloat2(("Move##" + Utilities::PointerToString(inputDevices[i])).c_str(), &(move.x));
-				ImGui::DragFloat2(("Look##" + Utilities::PointerToString(inputDevices[i])).c_str(), &(look.x));
-				ImGui::DragFloat(("Left Trigger##" + Utilities::PointerToString(inputDevices[i])).c_str(), &leftTrigger);
-				ImGui::DragFloat(("Right Trigger##" + Utilities::PointerToString(inputDevices[i])).c_str(), &rightTrigger);
-				
-				ImGui::EndDisabled();
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("Windows")) {
+			if (ImGui::MenuItem("Input", nullptr, &windowOpen)) {
 			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+	if (!windowOpen) { return; }
+
+	if (!ImGui::Begin("Input Debug", &windowOpen, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::End();
+		return;
+	}
+	if (ImGui::Button("Show all controller connection information (console)")) {
+		ShowAllControllerSlotStatuses();
+	}
+	for (int i = 0; i < inputDevices.size(); i++)
+	{
+		if (ImGui::CollapsingHeader(("#" + std::to_string(i)).c_str())) {
+			glm::vec2 move = inputDevices[i]->getMove();
+			glm::vec2 look = inputDevices[i]->getLook();
+			float leftTrigger = inputDevices[i]->getLeftTrigger();
+			float rightTrigger = inputDevices[i]->getRightTrigger();
+
+			ImGui::BeginDisabled();
+
+			ImGui::DragFloat2(("Move##" + Utilities::PointerToString(inputDevices[i])).c_str(), &(move.x));
+			ImGui::DragFloat2(("Look##" + Utilities::PointerToString(inputDevices[i])).c_str(), &(look.x));
+			ImGui::DragFloat(("Left Trigger##" + Utilities::PointerToString(inputDevices[i])).c_str(), &leftTrigger);
+			ImGui::DragFloat(("Right Trigger##" + Utilities::PointerToString(inputDevices[i])).c_str(), &rightTrigger);
+				
+			ImGui::EndDisabled();
 		}
 	}
 	ImGui::End();

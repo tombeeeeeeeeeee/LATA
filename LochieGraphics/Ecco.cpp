@@ -14,17 +14,17 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		desired wheel angle = clamp(asin(the dot product), -maxAngle, maxAngle);
 		desired wheel direction = transform.forward() rotated about desired wheel angle
 		wheel direction = lerp(wheelDirection, desiredWheeldirection, amountPerSec)
-		
+
 		check if trigger is on
 		add force in direction of wheel direction
-		
+
 		if veloctiy exceeds friction coefficent
 		spin (add rotational Impulse)
-		
+
 	*/
 
 	//Variables for vector maths
-	glm::vec2 force = {0.0f, 0.0f};
+	glm::vec2 force = { 0.0f, 0.0f };
 	glm::vec3 right = transform.right();
 	glm::vec3 forward = transform.forward();
 	glm::vec2 moveInput = inputDevice.getMove();
@@ -50,7 +50,7 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 			float sign = glm::dot({ right.x, right.z }, moveInput) < 0.0f ? -1.0f : 1.0f;
 			float desiredAngle = (glm::acos(turnAmount)) * sign;
 
-			float maxWheelAngleAfterSpeed = maxWheelAngle - speedWheelTurnInfluence/100.0f * (glm::length(rigidBody.vel)) / (maxCarMoveSpeed)*maxWheelAngle;
+			float maxWheelAngleAfterSpeed = maxWheelAngle - speedWheelTurnInfluence / 100.0f * (glm::length(rigidBody.vel)) / (maxCarMoveSpeed)*maxWheelAngle;
 			desiredAngle = glm::clamp(desiredAngle, -maxWheelAngleAfterSpeed * PI / 180.0f, maxWheelAngleAfterSpeed * PI / 180.0f);
 			//rotate forward by that angle
 			c = cosf(desiredAngle);
@@ -60,9 +60,9 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		}
 		else
 		{
-			float turnAmount = glm::dot({1,0}, moveInput);
+			float turnAmount = glm::dot({ 1,0 }, moveInput);
 			turnAmount = glm::clamp(turnAmount, -1.0f, 1.0f);
-			float maxWheelAngleAfterSpeed = maxWheelAngle - speedWheelTurnInfluence/100.0f * (glm::length(rigidBody.vel)) / (maxCarMoveSpeed)*maxWheelAngle;
+			float maxWheelAngleAfterSpeed = maxWheelAngle - speedWheelTurnInfluence / 100.0f * (glm::length(rigidBody.vel)) / (maxCarMoveSpeed)*maxWheelAngle;
 			float angle = turnAmount * maxWheelAngleAfterSpeed * PI / 180.0f;
 			float c = cosf(angle);
 			float s = sinf(angle);
@@ -98,7 +98,7 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 	}
 
 	//Nothingerator
-	if(glm::length(force) < 0.001f && glm::length(rigidBody.vel) > 0)
+	if (glm::length(force) < 0.001f && glm::length(rigidBody.vel) > 0)
 	{
 		force += -rigidBody.vel * glm::length(rigidBody.vel) * stoppingFrictionCoef;
 	}
@@ -134,7 +134,7 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 void Ecco::GUI()
 {
 	//ImGui::Text("");
-	if(ImGui::CollapsingHeader("Ecco Component"))
+	if (ImGui::CollapsingHeader("Ecco Component"))
 	{
 		ImGui::DragFloat("Car move speed", &carMoveSpeed);
 		ImGui::DragFloat("Car reverse move speed", &carReverseMoveSpeed);
@@ -153,3 +153,42 @@ void Ecco::GUI()
 		ImGui::EndDisabled();
 	}
 }
+
+toml::table Ecco::Serialise()
+{
+	return toml::table{
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{ "wheelDirection", Serialisation::SaveAsVec2(wheelDirection)},
+		{ "carMoveSpeed", carMoveSpeed },
+		{ "carReverseMoveSpeed", carReverseMoveSpeed},
+		{ "maxCarMoveSpeed", maxCarMoveSpeed },
+		{ "deadZone", deadZone },
+		{ "turningCircleScalar", turningCircleScalar },
+		{ "speedWheelTurnInfluence", speedWheelTurnInfluence },
+		{ "maxWheelAngle", maxWheelAngle },
+		{ "wheelTurnSpeed", wheelTurnSpeed },
+		{ "sidewaysFrictionCoef", sidewaysFrictionCoef },
+		{ "portionOfSidewaysSpeedKept", portionOfSidewaysSpeedKept },
+		{ "stoppingFrictionCoef", stoppingFrictionCoef },
+		{ "controlState", controlState},
+	};
+}
+
+Ecco::Ecco(toml::table table)
+{
+	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
+	wheelDirection = Serialisation::LoadAsVec2(table["wheelDirection"]);
+	carMoveSpeed = Serialisation::LoadAsFloat(table["carMoveSpeed"]);
+	carReverseMoveSpeed = Serialisation::LoadAsFloat(table["carReverseMoveSpeed"]);
+	maxCarMoveSpeed = Serialisation::LoadAsFloat(table["maxCarMoveSpeed"]);
+	deadZone = Serialisation::LoadAsFloat(table["deadZone"]);
+	turningCircleScalar = Serialisation::LoadAsFloat(table["turningCircleScalar"]);
+	speedWheelTurnInfluence = Serialisation::LoadAsFloat(table["speedWheelTurnInfluence"]);
+	maxWheelAngle = Serialisation::LoadAsFloat(table["maxWheelAngle"]);
+	wheelTurnSpeed = Serialisation::LoadAsFloat(table["wheelTurnSpeed"]);
+	sidewaysFrictionCoef = Serialisation::LoadAsFloat(table["sidewaysFrictionCoef"]);
+	portionOfSidewaysSpeedKept = Serialisation::LoadAsFloat(table["portionOfSidewaysSpeedKept"]);
+	stoppingFrictionCoef = Serialisation::LoadAsFloat(table["stoppingFrictionCoef"]);
+	controlState = Serialisation::LoadAsBool(table["controlState"]);
+}
+

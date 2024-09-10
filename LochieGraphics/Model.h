@@ -2,6 +2,8 @@
 #include "BoneInfo.h"
 #include "ModelHierarchyInfo.h"
 
+#include "Serialisation.h"
+
 #include <unordered_map>
 
 class SceneObject;
@@ -11,7 +13,8 @@ class Model
 	friend class ResourceManager;
 private:
 	Model();
-	Model(std::string path, bool flipTexturesOnLoad = true);
+	Model(std::string path);
+	Model(toml::table table);
 
 
 public:
@@ -27,7 +30,7 @@ public:
 	unsigned long long GUID;
 
 
-	void LoadModel(std::string path, bool flipTexturesOnLoad = true);
+	void LoadModel(std::string path);
 	//void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
 	void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
 
@@ -42,9 +45,12 @@ public:
 	int materialIDs = 1;
 
 	void GUI();
+	void OpenModal() {};
 
 	void Refresh();
 
 	std::string getDisplayName();
+
+	toml::table Serialise();
 };
 

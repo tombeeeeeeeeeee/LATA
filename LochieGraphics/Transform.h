@@ -51,7 +51,7 @@ public:
 
 	void UpdateGlobalMatrixCascading();
 
-	Transform() { UpdateGlobalMatrixCascading(); }
+	Transform();
 
 	Transform(SceneObject* so,
 		glm::vec3 _position = { 0.f, 0.f, 0.f }, 
@@ -67,5 +67,9 @@ public:
 
 	toml::table Serialise(unsigned long long GUID) const;
 	Transform(toml::table table);
+
+	~Transform();
+
+	// TODO: rule o three
 };
 

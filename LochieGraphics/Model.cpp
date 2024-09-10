@@ -16,13 +16,13 @@ Model::Model()
 {
 }
 
-Model::Model(std::string _path, bool flipTexturesOnLoad) :
+Model::Model(std::string _path) :
 	path(_path)
 {
-	LoadModel(path, flipTexturesOnLoad);
+	LoadModel(path);
 }
 // TODO: Models can no longer flip textures on load as they are always loaded seperatly now
-void Model::LoadModel(std::string _path, bool flipTexturesOnLoad)
+void Model::LoadModel(std::string _path)
 {
 	path = _path;
 	Assimp::Importer importer;
@@ -53,7 +53,7 @@ void Model::LoadModel(std::string _path, bool flipTexturesOnLoad)
 		aiMesh* mesh = scene->mMeshes[i];
 		meshes[i] = ResourceManager::LoadMesh();
 		meshGUIDs[i] = meshes[i]->GUID;
-		meshes[i]->InitialiseFromAiMesh(path, scene, &boneInfoMap, mesh, flipTexturesOnLoad);
+		meshes[i]->InitialiseFromAiMesh(path, scene, &boneInfoMap, mesh);
 		min.x = std::min(meshes[i]->min.x, min.x);
 		min.y = std::min(meshes[i]->min.y, min.y);
 		max.x = std::max(meshes[i]->max.x, max.x);
@@ -101,7 +101,7 @@ void Model::GUI()
 		
 		ImGui::InputScalar(("GUID##" + tag).c_str(), ImGuiDataType_U64, &GUID);
 		ImGui::InputText(("Path##" + tag).c_str(), &path);
-		int meshCount = meshes.size();
+		int meshCount = (int)meshes.size();
 		ImGui::DragInt(("Mesh Count##" + tag).c_str(), &meshCount);
 
 		ImGui::DragFloat2(("Min##" + tag).c_str(), &min.x);
@@ -125,6 +125,21 @@ void Model::Refresh()
 
 std::string Model::getDisplayName()
 {
-	// TODO: the filename from path should be a utilities function
-	return path.substr(path.find_last_of("/\\") + 1) + " " + std::to_string(GUID);
+	return Utilities::FilenameFromPath(path);
 }
+
+toml::table Model::Serialise()
+{
+	// The rest of model data can be reloaded with the path
+	return toml::table{
+		{ "path", path },
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+	};
+}
+
+Model::Model(toml::table table)
+{
+	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
+	LoadModel(Serialisation::LoadAsString(table["path"]));
+}
+

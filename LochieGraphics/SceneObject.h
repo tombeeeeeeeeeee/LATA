@@ -44,7 +44,6 @@ public:
 	unsigned long long GUID = 0;
 	unsigned int parts = 0;
 	Scene* scene = nullptr;
-	SceneObject() {};
 	SceneObject(Scene* _scene, std::string name = "Unnamed Scene Object");
 	SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.0f);
 	SceneObject(Scene* _scene, toml::table* table);
@@ -63,7 +62,7 @@ public:
 #pragma region Part Get and Set
 
 	void setTransform(Transform* transform);
-	Transform* transform();
+	Transform* transform() const;
 
 	void setRenderer(ModelRenderer* renderer);
 	ModelRenderer* renderer();
@@ -82,17 +81,20 @@ public:
 
 	void setEcco(Ecco* ecco);
 	void setEcco();
-	Ecco* ecco();
+	Ecco* ecco() const;
 
 	void setSync(Sync* sync);
 	void setSync();
-	Sync* sync();
+	Sync* sync() const;
 
 	void setHealth(Health* health);
 	Health* health();
 
 	void setEnemy(Enemy* enemy);
 	Enemy* enemy();
+
+	// Make this take a mask for stuff to delete
+	void ClearParts();
 
 #pragma endregion
 

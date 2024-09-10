@@ -15,6 +15,7 @@ SceneObject::SceneObject(Scene* _scene, std::string _name) :
 	GUID = ResourceManager::GetNewGuid();
 	scene->transforms[GUID] = Transform(this);
 	scene->sceneObjects[GUID] = this;
+	// TODO: Put a safetly check for if a guid that gets made is already on a sceneobject
 }
 
 SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation, float _scale) :
@@ -29,7 +30,9 @@ SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation
 
 SceneObject::~SceneObject()
 {
-
+	// TODO: Make sure we want to this this here
+	ClearParts();
+	scene->transforms.erase(GUID);
 }
 
 void SceneObject::Update(float delta)
@@ -128,10 +131,22 @@ void SceneObject::GUI()
 
 toml::table SceneObject::Serialise() const
 {
+	auto parent = transform()->getParent();
+	unsigned long long parentGUID = 0;
+	if (parent) {
+		parentGUID = parent->getSceneObject()->GUID;
+	}
+	toml::array childrenGUIDs;
+	for (auto child : transform()->getChildren())
+	{
+		childrenGUIDs.push_back(Serialisation::SaveAsUnsignedLongLong(child->getSceneObject()->GUID));
+	}
 	return toml::table{
-		{"name", name},
-		{"guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
-		{"parts", parts}
+		{ "name", name},
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{ "parts", parts},
+		{ "parent", Serialisation::SaveAsUnsignedLongLong(parentGUID)},
+		{ "children", childrenGUIDs }
 	};
 }
 
@@ -151,7 +166,7 @@ void SceneObject::setTransform(Transform* transform)
 	scene->transforms[GUID] = (*transform);
 }
 
-Transform* SceneObject::transform()
+Transform* SceneObject::transform() const
 {
 	return &(scene->transforms[GUID]);
 }
@@ -161,8 +176,8 @@ void SceneObject::setRenderer(ModelRenderer* renderer)
 	if (renderer)
 	{
 		parts |= Parts::modelRenderer;
+		// TODO: Ensure that this isn't leaking memory and is alright
 		scene->renderers[GUID] = *renderer;
-		scene->renderers[GUID].sceneObject = this;
 	}
 	else
 	{
@@ -264,7 +279,7 @@ void SceneObject::setEcco()
 		scene->ecco->GUID = GUID;
 }
 
-Ecco* SceneObject::ecco()
+Ecco* SceneObject::ecco() const
 {
 	if (parts & Parts::ecco)
 		return scene->ecco;
@@ -294,7 +309,7 @@ void SceneObject::setSync()
 		scene->sync->GUID = GUID;
 }
 
-Sync* SceneObject::sync()
+Sync* SceneObject::sync() const
 {
 	if (parts & Parts::sync)
 		return scene->sync;
@@ -341,4 +356,18 @@ Enemy* SceneObject::enemy()
 	if (parts & Parts::enemy)
 		return &(scene->enemies[GUID]);
 	return nullptr;
+}
+
+void SceneObject::ClearParts()
+{
+	if (parts & Parts::modelRenderer) { scene->renderers.erase(GUID); }
+	if (parts & Parts::animator) { scene->animators.erase(GUID); }
+	if (parts & Parts::rigidBody) { scene->rigidBodies.erase(GUID); }
+	if (parts & Parts::collider) { scene->colliders.erase(GUID); }
+	if (parts & Parts::ecco) { scene->ecco->GUID = 0; }
+	if (parts & Parts::sync) { scene->sync->GUID = 0; }
+	if (parts & Parts::health) { scene->healths.erase(GUID); }
+	if (parts & Parts::enemy) { scene->enemies.erase(GUID); }
+	
+	parts = Parts::transform;
 }

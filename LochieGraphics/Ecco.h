@@ -4,6 +4,8 @@
 
 #include "Input.h"
 
+#include "Serialisation.h"
+
 class Transform;
 class RigidBody;
 
@@ -15,6 +17,7 @@ public:
 
 
 	Ecco() {};
+	Ecco(toml::table table);
 
 	void Update(
 		Input::InputDevice& inputDevice,
@@ -25,6 +28,7 @@ public:
 	);
 
 	void GUI();
+	toml::table Serialise();
 
 	glm::vec2 wheelDirection = { 0.0f, 0.0f };
 

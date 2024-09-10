@@ -16,12 +16,46 @@
 ArtScene* ArtScene::artScene = nullptr;
 
 
+std::string ArtScene::EnsureCorrectFileLocation(std::string& path, std::string& expected)
+{
+	// Copy the file into the expected path
+	// Return the path to the file in expected
+
+	std::string newPath = expected + Utilities::FilenameFromPath(path, true);
+	if (newPath == path) { return newPath; }
+	// TODO: Look into a better way to have this writted, the try catch feels bad
+	try
+	{
+		if (std::filesystem::equivalent(std::filesystem::path(newPath), std::filesystem::path(path)))
+		{
+			// Checks if dragging in from the expected location, if so no action is needed
+			return newPath;
+		}
+	}
+	catch (const std::filesystem::filesystem_error)
+	{
+	}	
+	
+	std::cout << "Potentially Copied file for locality, from, to:\n" << path << "\n" << newPath << '\n';
+	// TODO: Consider using filesystem function to copy file
+	std::ifstream original(path, std::ios::binary);
+	std::ofstream copied(newPath, std::ios::binary);
+
+	copied << original.rdbuf();	
+
+	original.close();
+	copied.close();
+
+	return newPath;
+}
+
 void ArtScene::RefreshPBR()
 {
 	// TODO: Clean up old PBRs
 
 	int width = 0;
 	int height = 0;
+	std::string name;
 
 	bool foundImage = false;
 
@@ -29,15 +63,16 @@ void ArtScene::RefreshPBR()
 	{
 		if (!i.second->loaded) { continue; }
 		if (foundImage) {
-			if (width != i.second->width || height != i.second->height) {
-				std::cout << "Mismatched PBR texture sizes " << i.second->path << " does not match with the other last given texture\n"
-					<< "this can be ignored if in process of inputting textures\n";
+			if (width != i.second->width || height != i.second->height || name != MaterialNameFromTexturePath(i.second->path)) {
+				std::cout << "Mismatched PBR texture images " << i.second->path << " does not match with the other last given texture (in terms of either size or name)\n"
+					<< "this can be ignored if in process of inputting a new batch of textures\n";
 				return;
 			}
 		}
 		width = i.second->width;
 		height = i.second->height;
 		foundImage = true;
+		name = MaterialNameFromTexturePath(i.second->path);
 	}
 
 
@@ -77,8 +112,9 @@ void ArtScene::RefreshPBR()
 	//pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
 
 	// TODO: Get name from base image
-	int result = stbi_write_tga("./newPBR.tga", width, height, STBI_rgb_alpha, data.data());
-	Texture* pbr = ResourceManager::LoadTexture("newPBR.tga", Texture::Type::PBR);
+	std::string filename = importTextureLocation + texturePrefix + name + "_PBR.tga"; // 
+	int result = stbi_write_tga(("./" + filename).c_str(), width, height, STBI_rgb_alpha, data.data());
+	Texture* pbr = ResourceManager::LoadTexture(filename, Texture::Type::PBR);
 	material->AddTextures({ pbr });
 
 	//int tW, tH, tC;
@@ -167,10 +203,6 @@ void ArtScene::ImportFromPaths(int pathCount, const char* paths[])
 	}
 }
 
-//TODO
-
-// Switch the editing material
-
 void ArtScene::ImportTexture(std::string& path, std::string& filename)
 {
 	// Figure out texture type
@@ -188,14 +220,12 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 	}
 
 	// Load texture
-
 	Texture* newTexture;
-
 	switch (type)
 	{
 	case Texture::Type::albedo: case Texture::Type::normal: case Texture::Type::emission:
-		newTexture = ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip);
-		material->AddTextures(std::vector<Texture*>{ ResourceManager::LoadTexture(path, type, GL_REPEAT, defaultFlip) });
+		newTexture = ResourceManager::LoadTexture(EnsureCorrectFileLocation(path, importTextureLocation), type, GL_REPEAT, defaultFlip);
+		material->AddTextures(std::vector<Texture*>{ newTexture });
 		// Refresh texture preview size
 		texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
 		break;
@@ -225,7 +255,7 @@ void ArtScene::ImportMesh(std::string& path, std::string& filename)
 	// TODO: delete old model
 	//model->meshes.clear();
 
-	model = ResourceManager::LoadModel(path);
+	model = ResourceManager::LoadModel(EnsureCorrectFileLocation(path, importModelLocation));
 
 	sceneObject->renderer()->modelGUID = model->GUID;
 	sceneObject->renderer()->Refresh();
@@ -251,6 +281,7 @@ ArtScene::ArtScene()
 
 void ArtScene::Start()
 {
+
 	std::string skyboxPaths[6] = {
 		"images/black.png",
 		"images/black.png",
@@ -265,6 +296,10 @@ void ArtScene::Start()
 
 	model = ResourceManager::LoadModel();
 	material = ResourceManager::LoadMaterial("New Material", shaders[super]);
+	unsigned long long GUID = material->GUID;
+	*material = *ResourceManager::defaultMaterial;
+	material->GUID = GUID;
+	material->name = "New Material";
 
 	ModelRenderer* modelRenderer = new ModelRenderer(model, material);
 	sceneObject->setRenderer(modelRenderer);
@@ -346,7 +381,7 @@ void ArtScene::GUI()
 				ImGui::BeginGroup();
 				ImGui::Text(i.first.c_str());
 				if ((*i.second) != nullptr) {
-					ImGui::Image((void*)(*i.second)->GLID, { texturePreviewScale * (float)(*i.second)->width, texturePreviewScale * (float)(*i.second)->height });
+					ImGui::Image((ImTextureID)(unsigned long long)(*i.second)->GLID, { texturePreviewScale * (float)(*i.second)->width, texturePreviewScale * (float)(*i.second)->height });
 				}
 				ImGui::EndGroup();
 				ImGui::SameLine();
@@ -356,7 +391,7 @@ void ArtScene::GUI()
 			ImGui::Text("PBR");
 			Texture* pbr = (material->getFirstTextureOfType(Texture::Type::PBR));
 			if (pbr != nullptr) {
-				ImGui::Image((void*)pbr->GLID, { texturePreviewScale * (float)pbr->width, texturePreviewScale * (float)pbr->height });
+				ImGui::Image((ImTextureID)(unsigned long long)pbr->GLID, { texturePreviewScale * (float)pbr->width, texturePreviewScale * (float)pbr->height });
 			}
 
 			ImGui::EndGroup();
@@ -369,6 +404,7 @@ void ArtScene::GUI()
 		}
 
 		// TODO: This should be somewhere else
+		// TODO: The rendering system could have a GUI
 		if (ImGui::CollapsingHeader("SSAO")) {
 			ImGui::DragInt("Kernal Size", &renderSystem->kernelSize);
 			ImGui::DragFloat("Radius", &renderSystem->ssaoRadius);
@@ -377,9 +413,193 @@ void ArtScene::GUI()
 		
 	}
 	ImGui::End();
+
+	if (!gui.showSceneObject) {
+		return;
+	}
+	if (ImGui::Begin("Scene Object Menu")) {
+		if (ImGui::Button("SAVE AS ASSET")) {
+			openSave = true;
+		}
+	}
+	ImGui::End();
+
+	SaveModal();
+}
+
+void ArtScene::SaveModal()
+{
+	ModelRenderer* renderer = sceneObject->renderer();
+
+	if (openSave) {
+		ImGui::OpenPopup("Save Assets");
+		openSave = false;
+
+		materialsToSave.clear();
+		texturesToSave.clear();
+
+		for (size_t i = 0; i < renderer->materials.size(); i++)
+		{
+			for (auto& m : materialsToSave)
+			{
+				if (m.first == renderer->materials[i]) {
+					continue;
+				}
+			}
+			if (renderer->materials[i] == nullptr) { continue; }
+			materialsToSave.push_back({ renderer->materials[i], true });
+			for (auto& t : renderer->materials[i]->texturePointers)
+			{
+				if (std::find(texturesToSave.begin(), texturesToSave.end(), std::pair<std::pair<std::string, Texture*>, bool>{ {t.first, t.second}, true }) == texturesToSave.end()) {
+					if (t.second != nullptr) { texturesToSave.push_back({ {t.first, t.second}, true }); }
+				}
+			}
+		}
+	}
+	if (!ImGui::BeginPopupModal("Save Assets", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		return;
+	}
+
+	// Show everything that can be saved, with the name/filepath it'll have
+
+	ImGui::BeginTable("Saving List", 3);
+
+	ImGui::TableNextRow();
+
+	ImGui::TableSetColumnIndex(0);
+	ImGui::PushItemWidth(200.0f);
+	ImGui::Text("Name");
+	ImGui::TableSetColumnIndex(1);
+	ImGui::Text("Type");
+	ImGui::TableSetColumnIndex(2);
+	ImGui::Text("Save");
+
+	ImGui::TableNextRow();
+
+	ImGui::TableSetColumnIndex(0);
+	ImGui::InputText(("##name" + Utilities::PointerToString(&sceneObject->name)).c_str(), &sceneObject->name, ImGuiInputTextFlags_AutoSelectAll);
+	ImGui::TableSetColumnIndex(1);
+	ImGui::Text("Renderer");
+
+	ImGui::TableSetColumnIndex(2);
+	ImGui::Checkbox(("##saving" + Utilities::PointerToString(renderer)).c_str(), &saveRenderer);
+
+	ImGui::TableNextRow();
+
+	ImGui::TableSetColumnIndex(0);
+	ImGui::Text(model->path.c_str());
+	ImGui::TableSetColumnIndex(1);
+	ImGui::Text("Model");
+
+	ImGui::TableSetColumnIndex(2);
+	ImGui::Checkbox(("##saving" + Utilities::PointerToString(model)).c_str(), &saveModel);
+
+
+	ImGui::TableNextRow();
+
+	// For each Material
+	// TODO: Iterator loop
+	for (size_t i = 0; i < materialsToSave.size(); i++)
+	{
+		Material* material = materialsToSave[i].first;
+		ImGui::TableSetColumnIndex(0);
+
+		ImGui::InputText(("##name" + Utilities::PointerToString(&material->name)).c_str(), &material->name, ImGuiInputTextFlags_AutoSelectAll);
+
+		ImGui::TableSetColumnIndex(1);
+		ImGui::Text("Material");
+
+		ImGui::TableSetColumnIndex(2);
+		ImGui::Checkbox(("##saving" + Utilities::PointerToString(material)).c_str(), &materialsToSave[i].second);
+
+		ImGui::TableNextRow();
+	}
+
+	// For each Texture
+	for (auto i = texturesToSave.begin(); i != texturesToSave.end(); i++)
+	{
+		ImGui::TableSetColumnIndex(0);
+		if (i->first.second) {
+			ImGui::Text(i->first.second->path.c_str());
+		}
+
+		ImGui::TableSetColumnIndex(1);
+		ImGui::Text("Texture");
+
+		ImGui::TableSetColumnIndex(2);
+		bool checked = i->second;
+		if (ImGui::Checkbox(("##saving" + Utilities::PointerToString(&i->first.first)).c_str(), &checked)) {
+			i->second = checked;
+		}
+
+		ImGui::TableNextRow();
+	}
+
+	ImGui::EndTable();
+
+	if (ImGui::Button("Cancel##saving")) {
+		ImGui::CloseCurrentPopup();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Save##ArtAssets")) {
+		ImGui::CloseCurrentPopup();
+		SaveArtAsset();
+	}
+
+	ImGui::EndPopup();
+}
+
+std::string ArtScene::MaterialNameFromTexturePath(std::string& path)
+{
+	std::string filename = Utilities::FilenameFromPath(path);
+	unsigned long long start = filename.find_first_of('_') + 1;
+	unsigned long long end = filename.find_last_of('_');
+	return filename.substr(start, end - start);
 }
 
 ArtScene::~ArtScene()
 {
 
+}
+
+void ArtScene::SaveArtAsset()
+{
+	if (saveRenderer) {
+		std::ofstream file(rendererSaveLocation + sceneObject->name + rendererExtension);
+		// The renderer itself does not need to save its GUID
+		file << sceneObject->renderer()->Serialise(0);
+		file.close();
+	}
+
+	for (auto& i : materialsToSave)
+	{
+		if (!i.second) { continue; }
+		std::ofstream file(materialSaveLocation + i.first->name + materialExtension);
+		file << i.first->Serialise();
+		file.close();
+	}
+
+	for (auto& i : texturesToSave)
+	{
+		if (!i.second) { continue; }
+		std::ofstream file(textureSaveLocation + MaterialNameFromTexturePath(i.first.second->path) + '_' + Texture::TypeNames.at(i.first.second->type) + textureExtension);
+		file << i.first.second->Serialise();
+		file.close();
+	}
+
+	if (saveModel) {
+		std::ofstream file(modelSaveLocation + Utilities::FilenameFromPath(model->path, false) + modelExtension);
+		file << model->Serialise();
+		file.close();
+	}
+}
+
+void ArtScene::Save()
+{
+	openSave = true;
+}
+
+void ArtScene::Load()
+{
+	// Load the whole art asset
 }

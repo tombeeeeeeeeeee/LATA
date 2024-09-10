@@ -317,6 +317,9 @@ void RenderSystem::Update(
     Camera* camera
 )
 {
+    // TODO: There are a few issues when the res is too low
+    if (SCREEN_WIDTH <= 64 || SCREEN_HEIGHT <= 64) { return; }
+
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
     shadowCaster->shadowFrameBuffer->Load();
     unsigned int forwardAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
@@ -784,7 +787,7 @@ void RenderSystem::RenderDownSamples(unsigned int srcTexture)
     for (int i = 0; i < (int)bloomMips.size(); i++)
     {
         const bloomMip& mip = bloomMips[i];
-        glViewport(0, 0, mip.size.x, mip.size.y);
+        glViewport(0, 0, (int)mip.size.x, (int)mip.size.y);
         inverseRes = 1.0f / mip.size;
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
             GL_TEXTURE_2D, mip.texture, 0);

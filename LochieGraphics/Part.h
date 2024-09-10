@@ -6,8 +6,6 @@ class Shader;
 class Part
 {
 public:
-	SceneObject* sceneObject;
-
 	virtual void GUI() {};
 
 	virtual void Update() {};

@@ -221,9 +221,17 @@ void Transform::UpdateGlobalMatrixCascading()
 	}
 }
 
+Transform::Transform()
+{
+	UpdateGlobalMatrixCascading();
+}
+
 void Transform::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
+	if (!ImGui::CollapsingHeader(("Transform##" + tag).c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+		return;
+	}
 
 
 	if(ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f))
@@ -266,4 +274,21 @@ Transform::Transform(toml::table table)
 	scale = Serialisation::LoadAsVec3(table["scale"]);
 
 	UpdateGlobalMatrixCascading();
+}
+
+Transform::~Transform()
+{
+	if (parent) {
+		auto temp = std::find(parent->children.begin(), parent->children.end(), this);
+		if (temp != parent->children.end()) {
+			parent->children.erase(temp);
+		}
+		else {
+			std::cout << "Deleting Transform, parent was missing this in its children\n";
+		}
+	}
+	for (auto i : children)
+	{
+		i->parent = parent;
+	}
 }
