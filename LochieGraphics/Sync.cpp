@@ -23,13 +23,23 @@ void Sync::Start(std::vector<Shader*>* shaders)
 	misfireModelRender = new ModelRenderer(misfireModel, misfireMaterial);
 }
 
-void Sync::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBody& rigidBody, LineRenderer* lines, float delta)
+void Sync::Update(
+	Input::InputDevice& inputDevice, Transform& transform,
+	RigidBody& rigidBody, LineRenderer* lines, 
+	float delta, float cameraAngleOffset
+)
 {
 	glm::vec2 look = inputDevice.getLook();
 	glm::vec2 move = inputDevice.getMove();
 
 	if (glm::length(move) > moveDeadZone)
 	{
+		float c = cosf(cameraAngleOffset * PI / 180.0f);
+		float s = sinf(cameraAngleOffset * PI / 180.0f);
+		move = {
+			move.x * c - move.y * s,
+			move.x * s + move.y * c
+		};
 		rigidBody.vel = moveSpeed * move;
 		fireDirection = move;
 	}
@@ -40,7 +50,12 @@ void Sync::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 
 	if (glm::length(look) > lookDeadZone)
 	{
-		fireDirection = look;
+		float c = cosf(cameraAngleOffset * PI / 180.0f);
+		float s = sinf(cameraAngleOffset * PI / 180.0f);
+		fireDirection = {
+			look.x * c - look.y * s,
+			look.x * s + look.y * c
+		};
 	}
 	fireDirection = glm::normalize(fireDirection);
 

@@ -21,11 +21,9 @@ public:
 	void Start(std::vector<Shader*>* shaders);
 
 	void Update(
-		Input::InputDevice& inputDevice,
-		Transform& transform,
-		RigidBody& rigidBody,
-		LineRenderer* lines,
-		float delta	
+		Input::InputDevice& inputDevice, Transform& transform,
+		RigidBody& rigidBody, LineRenderer* lines,
+		float delta, float cameraAngleOffset
 	);
 
 	void GUI();

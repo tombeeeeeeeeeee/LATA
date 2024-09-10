@@ -5,7 +5,7 @@
 
 #include "EditorGUI.h"
 
-void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBody& rigidBody, float delta)
+void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBody& rigidBody, float delta, float cameraRotationDelta)
 {
 
 	/*
@@ -36,17 +36,25 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 		glm::vec2 desiredWheelDirection;
 		if (!controlState)
 		{
+			float c = cosf(cameraRotationDelta * PI / 180.0f);
+			float s = sinf(cameraRotationDelta * PI / 180.0f);
+			moveInput =
+			{
+				moveInput.x * c - moveInput.y * s,
+				moveInput.x * s + moveInput.y * c
+			};
+
 			//Determine angle for wheel change
 			float turnAmount = glm::dot(glm::vec2(forward.x, forward.z), moveInput);
 			turnAmount = glm::clamp(turnAmount, 0.0f, 1.0f);
 			float sign = glm::dot({ right.x, right.z }, moveInput) < 0.0f ? -1.0f : 1.0f;
-			float desiredAngle = (glm::acos(turnAmount)) * sign + PI / 4;
+			float desiredAngle = (glm::acos(turnAmount)) * sign;
 
 			float maxWheelAngleAfterSpeed = maxWheelAngle - speedWheelTurnInfluence/100.0f * (glm::length(rigidBody.vel)) / (maxCarMoveSpeed)*maxWheelAngle;
 			desiredAngle = glm::clamp(desiredAngle, -maxWheelAngleAfterSpeed * PI / 180.0f, maxWheelAngleAfterSpeed * PI / 180.0f);
 			//rotate forward by that angle
-			float c = cosf(desiredAngle);
-			float s = sinf(desiredAngle);
+			c = cosf(desiredAngle);
+			s = sinf(desiredAngle);
 			desiredWheelDirection = { forward.x * c - forward.z * s, forward.z * c + forward.x * s };
 
 		}
@@ -109,12 +117,12 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 	{
 		float sidewaysForceCoef = glm::dot({ wheelDirection.y, -wheelDirection.x }, glm::normalize(rigidBody.vel));
 		force += -glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * rigidBody.vel;
-		force += wheelDirection * glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * glm::length(rigidBody.vel) * (portionOfSidewaysSpeedKept / 100.0f);
+		force += wheelDirection * glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * glm::length(rigidBody.vel) * (portionOfSidewaysSpeedKept / 100.0f) * (inputDevice.getLeftTrigger() > 0.001f ? -1.0f : 1.0f);
 	}
 
 	rigidBody.angularVel = -turningCircleScalar //scalar that represents wheel distance apart
 		* acos(wheelInDirectionOfForward) //angle wheel makes with forward vector
-		* glm::length(rigidBody.vel) //units per second
+		* abs(glm::length(rigidBody.vel)) //units per second
 		* glm::sign(glm::dot({ right.x, right.z }, wheelDirection)); //reflects based off of left or right
 
 	//Update rigidBody

@@ -155,7 +155,8 @@ void GameTest::Update(float delta)
 					*h->transform(),
 					*h->rigidbody(),
 					&renderSystem->lines,
-					delta
+					delta,
+					camera->transform.getEulerRotation().y
 				);
 			}
 			else
@@ -164,7 +165,8 @@ void GameTest::Update(float delta)
 					*input.inputDevices[0],
 					*r->transform(),
 					*r->rigidbody(),
-					delta
+					delta,
+					camera->transform.getEulerRotation().y
 				);
 			}
 		}
@@ -177,7 +179,8 @@ void GameTest::Update(float delta)
 				*input.inputDevices[0],
 				*r->transform(),
 				*r->rigidbody(),
-				delta
+				delta,
+				camera->transform.getEulerRotation().y
 			);
 
 			if (input.inputDevices.size() > 1)
@@ -187,7 +190,8 @@ void GameTest::Update(float delta)
 					*h->transform(),
 					*h->rigidbody(),
 					&renderSystem->lines,
-					delta
+					delta,
+					camera->transform.getEulerRotation().y
 				);
 			}
 		}
