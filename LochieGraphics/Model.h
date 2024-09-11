@@ -49,7 +49,8 @@ public:
 
 	void Refresh();
 
-	std::string getDisplayName();
+	operator std::string() const;
+	std::string getDisplayName() const;
 
 	toml::table Serialise();
 };

@@ -77,7 +77,8 @@ public:
 
 	static void EditorGUI(std::vector<Texture*>& textures);
 
-	std::string getDisplayName();
+	operator std::string() const;
+	std::string getDisplayName() const;
 
 	void OpenModal() {};
 

@@ -80,7 +80,8 @@ public:
 
 	void DeleteProgram();
 
-	std::string getDisplayName();
+	operator std::string() const;
+	std::string getDisplayName() const;
 
 	toml::table Serialise();
 	Shader(toml::v3::table* toml);

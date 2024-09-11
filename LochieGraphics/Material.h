@@ -45,6 +45,7 @@ public:
 
 	void ModalGUI();
 
+	operator std::string() const;
 	std::string getDisplayName() const;
 
 	toml::table Serialise() const;

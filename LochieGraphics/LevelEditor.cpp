@@ -353,30 +353,37 @@ bool LevelEditor::InputSearchTest() {
 void LevelEditor::LoadPrompt()
 {
 	if (openLoad) {
-		ImGui::OpenPopup("Load Level");
+		ImGui::OpenPopup("Load Level", ImGuiPopupFlags_AnyPopup);
 	}
 	if (!ImGui::BeginPopupModal("Load Level", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		return;
 	}
 
 	if (openLoad) {
-		ImGui::SetKeyboardFocusHere();
 		openLoad = false;
 
 		loadPaths.clear();
+		loadPathsPointers.clear();
 		
 		for (auto& i : std::filesystem::directory_iterator(levelsPath))
 		{
-			loadPaths.push_back(i.path().generic_string());
+			loadPaths.push_back(i.path().generic_string().substr(levelsPath.size()));
+			if (loadPaths.back().substr(loadPaths.back().size() - levelExtension.size()) != levelExtension) {
+				loadPaths.erase(--loadPaths.end());
+				continue;
+			}
+			loadPaths.back() = loadPaths.back().substr(0, loadPaths.back().size() - levelExtension.size());
 		}
 		for (auto& i : loadPaths)
 		{
 			loadPathsPointers.push_back(&i);
 		}
 	}
-	bool textSelected = false;
-	if (ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &windowName, "Filename", Utilities::PointerToString(&loadPathsPointers), true)) {
+	
+	std::string* selected = &windowName;
+	if (ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Filename", Utilities::PointerToString(&loadPathsPointers), false)) {
 		ImGui::CloseCurrentPopup();
+		windowName = *selected;
 		LoadLevel();
 	}
 
@@ -396,7 +403,7 @@ void LevelEditor::LoadPrompt()
 
 void LevelEditor::SaveLevel()
 {
-	std::ofstream file("Levels/" + windowName + ".level");
+	std::ofstream file(levelsPath + windowName + levelExtension);
 
 	file << SaveSceneObjectsAndParts();
 
@@ -405,7 +412,7 @@ void LevelEditor::SaveLevel()
 
 void LevelEditor::LoadLevel()
 {
-	std::ifstream file("Levels/" + windowName + ".level");
+	std::ifstream file(levelsPath + windowName + levelExtension);
 
 	if (!file) {
 		std::cout << "Level File not found\n";

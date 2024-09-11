@@ -123,7 +123,12 @@ void Model::Refresh()
 	}
 }
 
-std::string Model::getDisplayName()
+Model::operator std::string() const
+{
+	return getDisplayName();
+}
+
+std::string Model::getDisplayName() const
 {
 	return Utilities::FilenameFromPath(path);
 }

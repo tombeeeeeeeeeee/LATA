@@ -8,32 +8,31 @@
 #include <string>
 
 class ExtraEditorGUI {
-
+public:
 	static int TextSelected(ImGuiInputTextCallbackData* data);
 
+	// Filter is used for the input search box
 	static std::string filter;
 
 	template <class Type, class Iter>
-	bool InputSearchBox(Iter begin, Iter end, Type selector, std::string label, std::string tag, bool showNull);
-}
-
-
+	static bool InputSearchBox(Iter begin, Iter end, Type** selector, std::string label, std::string tag, bool showNull = false, Type*(*createFunction) (void) = nullptr);
+};
 
 template<class Type, class Iter>
-bool ExtraEditorGUI::InputSearchBox(Iter begin, Iter end, Type selector, std::string label, std::string tag, bool showNull)
+inline bool ExtraEditorGUI::InputSearchBox(Iter begin, Iter end, Type** selector, std::string label, std::string tag, bool showNull, Type*(*createFunction) (void))
 {
-	bool returnBool;
+	bool returnBool = false;
 	std::string displayName;
-	if (selector != nullptr) {
-		displayName = std::string(*selector);
+	if (*selector != nullptr) {
+		displayName = std::string(**selector);
 	}
 	else {
 		displayName = "None";
 	}
-	std::vector <std::pair<std::string, Type>> filteredType;
+	std::vector <std::pair<std::string,Type*>> filteredType;
 
 	bool textSelected = false;
-	/*TODO: Text based input instead of button prompt, the pop up should appear while typing*/
+	// TODO: See if the pop up can appear up better
 	ImGui::InputText((label + "##" + tag).c_str(), &displayName,
 		ImGuiInputTextFlags_CallbackAlways |
 		ImGuiInputTextFlags_AutoSelectAll,
@@ -54,19 +53,19 @@ bool ExtraEditorGUI::InputSearchBox(Iter begin, Iter end, Type selector, std::st
 	{
 		std::string name = (std::string)(**i);
 		if (Utilities::ToLower(name).find(Utilities::ToLower(ExtraEditorGUI::filter)) != std::string::npos) {
-			filteredType.push_back(std::pair<std::string, Type>{ name, * i});
+			filteredType.push_back(std::pair<std::string, Type*>{ name, * i});
 		}
 	}
 
-	//if (showCreateButton) {																			   
-	//	if (ImGui::MenuItem(("CREATE NEW " + std::string(#type) + "##" + label).c_str(), "", false)) { 
-	//		newConstructorLine                                                                         
-	//		returnBool = true;                                                                         
-	//	}																							   
-	//}																								   
+	if (createFunction) {
+		if (ImGui::MenuItem(("CREATE NEW##" + label).c_str(), "", false)) { 
+			*selector = createFunction();
+			returnBool = true;                                                                         
+		}																							   
+	}																								   
 	if (showNull) {
 		if (ImGui::MenuItem(("None 0##" + label).c_str(), "", false)) {
-			selector = nullptr;
+			*selector = nullptr;
 			returnBool = true;
 		}
 	}
@@ -74,12 +73,12 @@ bool ExtraEditorGUI::InputSearchBox(Iter begin, Iter end, Type selector, std::st
 	for (auto& i : filteredType)
 	{
 		bool selected = false;
-		if (i.second == selector) {
+		if (i.second == *selector) {
 			selected = true;
 		}
 		if (ImGui::MenuItem((i.first + "##" + label).c_str(), "", selected)) {
-			if (selector != i.second) {
-				selector = i.second;
+			if (*selector != i.second) {
+				*selector = i.second;
 				returnBool = true;
 			}
 		}

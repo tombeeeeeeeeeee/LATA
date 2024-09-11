@@ -221,6 +221,11 @@ void Material::ModalGUI()
 	ImGui::EndPopup();
 }
 
+Material::operator std::string() const
+{
+	return getDisplayName();
+}
+
 std::string Material::getDisplayName() const
 {
 	return name;

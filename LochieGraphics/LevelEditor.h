@@ -14,6 +14,7 @@ class LevelEditor : public Scene
 private:
 
 	std::string levelsPath = "Levels/";
+	std::string levelExtension = ".level";
 
 	enum class BrushState {
 		none,
@@ -24,7 +25,7 @@ private:
 	SceneObject* groundTileParent = new SceneObject(this, "Ground Tiles");
 	SceneObject* wallTileParent = new SceneObject(this, "Wall Tiles");
 
-	std::unordered_map<std::pair<int, int>, SceneObject*, ResourceManager::hashFNV1A> tiles = {};
+	std::unordered_map<std::pair<int, int>, SceneObject*, hashFNV1A> tiles = {};
 
 	Model* ground;
 	Model* wall;

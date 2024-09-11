@@ -292,7 +292,7 @@
     <ClCompile Include="..\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\imgui\imgui_widgets.cpp" />
     <None Include="..\Shaders\paintedNormals.frag">
-      <FileType>CppCode</FileType>
+      <FileType>Document</FileType>
     </None>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animator.cpp" />
@@ -315,6 +315,7 @@
     <ClCompile Include="GameTest.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="hashFNV1A.cpp" />
     <ClCompile Include="Health.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImGuiStyles.cpp" />
@@ -348,6 +349,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemySystem.h" />
     <ClInclude Include="ExtraEditorGUI.h" />
+    <ClInclude Include="hashFNV1A.h" />
     <ClInclude Include="Health.h" />
     <ClInclude Include="Hit.h" />
     <ClInclude Include="LevelEditor.h" />

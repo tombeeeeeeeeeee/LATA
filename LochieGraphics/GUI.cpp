@@ -17,7 +17,6 @@ void GUI::Update()
 	// TODO: GUI Shouldn't exist for a build version
 	//if (true) { return; }
 
-	//ImGui::ShowDemoWindow();
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("Save")) {
@@ -39,6 +38,7 @@ void GUI::Update()
 			if (ImGui::MenuItem("Hierarchy Menu", NULL, &showHierarchy)) {
 				showSceneObject = showHierarchy;
 			}
+			ImGui::MenuItem("Imgui Demo Window", NULL, &showImguiExampleMenu);
 
 			ImGui::EndMenu();
 		}
@@ -53,12 +53,13 @@ void GUI::Update()
 		ImGui::EndMainMenuBar();
 	}
 
-	if (showTestMenu)     { TestMenu();        }
-	if (showResourceMenu) { ResourceMenu();    }
-	if (showCameraMenu)   { CameraMenu();      }
-	if (showSceneObject)  { SceneObjectMenu(); }
-	if (showLightMenu)    { LightMenu();       }
-	if (showHierarchy)    { HierarchyMenu();   }
+	if (showTestMenu)         { TestMenu();              }
+	if (showResourceMenu)     { ResourceMenu();          }
+	if (showCameraMenu)       { CameraMenu();            }
+	if (showSceneObject)      { SceneObjectMenu();       }
+	if (showLightMenu)        { LightMenu();             }
+	if (showHierarchy)        { HierarchyMenu();         }
+	if (showImguiExampleMenu) { ImGui::ShowDemoWindow(); }
 	scene->BaseGUI();
 	scene->GUI();
 
