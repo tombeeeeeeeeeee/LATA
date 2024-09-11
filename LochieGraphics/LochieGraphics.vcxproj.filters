@@ -63,6 +63,12 @@
     <Filter Include="Source Files\AI">
       <UniqueIdentifier>{f1c7519c-6d74-4601-b4cf-6bf05ffade8a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\AI\Conditions">
+      <UniqueIdentifier>{6f881f94-462e-461e-bc3d-c72adbbec98c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AI\States">
+      <UniqueIdentifier>{f3f5f9a1-eb8b-4cb8-9721-7da3911d4912}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -268,9 +274,6 @@
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Behaviour.cpp">
-      <Filter>Source Files\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -523,7 +526,10 @@
     <ClInclude Include="Enemy.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="Behaviour.h">
+    <ClInclude Include="Condition.h">
+      <Filter>Source Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
       <Filter>Source Files\AI</Filter>
     </ClInclude>
   </ItemGroup>
