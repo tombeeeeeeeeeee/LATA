@@ -19,9 +19,9 @@ Sync::Sync(toml::table table)
 	moveSpeed = Serialisation::LoadAsFloat(table["moveSpeed"]);
 	lookDeadZone = Serialisation::LoadAsFloat(table["lookDeadZone"]);
 	moveDeadZone = Serialisation::LoadAsFloat(table["moveDeadZone"]);
-	misfireDamage = Serialisation::LoadAsFloat(table["misfireDamage"]);
-	sniperDamage = Serialisation::LoadAsFloat(table["sniperDamage"]);
-	overclockDamage = Serialisation::LoadAsFloat(table["overclockChargeTime"]);
+	misfireDamage = Serialisation::LoadAsInt(table["misfireDamage"]);
+	sniperDamage = Serialisation::LoadAsInt(table["sniperDamage"]);
+	overclockDamage = Serialisation::LoadAsInt(table["overclockChargeTime"]);
 }
 
 void Sync::Start(std::vector<Shader*>* shaders)
@@ -138,13 +138,13 @@ void Sync::GUI()
 
 		if (ImGui::CollapsingHeader("Misfire Properties"))
 		{
-			ImGui::DragFloat("Misfire Damage", &misfireDamage);
+			ImGui::DragInt("Misfire Damage", &misfireDamage);
 			ImGui::DragFloat("Misfire Charge Cost", &misfireChargeCost);
 			ImGui::DragFloat("Misfire Shot Speed", &misfireShotSpeed);
 		}
 		if (ImGui::CollapsingHeader("Sniper Shot Properties"))
 		{
-			ImGui::DragFloat("Sniper Damage", &sniperDamage);
+			ImGui::DragInt("Sniper Damage", &sniperDamage);
 			ImGui::DragFloat("Sniper Charge Cost", &sniperChargeCost);
 			ImGui::DragFloat("Sniper Charge Time", &sniperChargeTime);
 			ImGui::DragFloat("Sniper Beam life span", &sniperBeamLifeSpan);
@@ -152,7 +152,7 @@ void Sync::GUI()
 		}
 		if (ImGui::CollapsingHeader("Overclock Shot Properties"))
 		{
-			ImGui::DragFloat("Damage", &overclockDamage);
+			ImGui::DragInt("Damage", &overclockDamage);
 			ImGui::DragFloat("Charge Cost", &overclockChargeCost);
 			ImGui::DragFloat("Charge Time", &overclockChargeTime);
 			ImGui::DragFloat("Beam life span", &overclockBeamLifeSpan);
@@ -262,11 +262,11 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 			for (int iter = 0; iter < eccoRefractionCount; iter++)
 			{
 				float h = iter / (float)eccoRefractionCount;
-				int i = int(h * 6.0);
-				float f = h * 6.0 - i;
-				float w = v * (1.0 - s);
-				float q = v * (1.0 - s * f);
-				float t = v * (1.0 - s * (1.0 - f));
+				int i = int(h * 6.0f);
+				float f = h * 6.0f - i;
+				float w = v * (1.0f - s);
+				float q = v * (1.0f - s * f);
+				float t = v * (1.0f - s * (1.0f - f));
 
 				glm::vec3 refractionColour;
 				if (i == 0) refractionColour = { v, t, w };
@@ -333,7 +333,7 @@ void Sync::misfireShotOnCollision(Collision collision)
 		collision.sceneObject->health()->subtractHealth(misfireDamage);
 	}
 	//TODO DELETE IN SCENE
-	int GUID = collision.self->GUID;
+	unsigned long long GUID = collision.self->GUID;
 	delete collision.self;
 	SceneManager::scene->sceneObjects.erase(GUID);
 }

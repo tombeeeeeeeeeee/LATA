@@ -342,8 +342,8 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 void PhysicsSystem::SetCollisionLayerMask(int a, int b, bool state)
 {
 	//Catch values that don't fit in the layer mask
-	int layerA = glm::log2((float)a);
-	int layerB = glm::log2((float)b);
+	int layerA = (int)glm::log2((float)a);
+	int layerB = (int)glm::log2((float)b);
 	if (layerA < 0 || layerA >= 32) return;
 	if (layerB < 0 || layerB >= 32) return;
 
@@ -373,8 +373,8 @@ void PhysicsSystem::SetCollisionLayerMask(int layer, unsigned int bitMask)
 
 bool PhysicsSystem::GetCollisionLayerBool(int a, int b)
 {
-	int layerA = log2((float)a);
-	int layerB = log2((float)b);
+	int layerA = (int)log2((float)a);
+	int layerB = (int)log2((float)b);
 	return layerMasks[layerA] & (1 << layerB);
 }
 
@@ -444,28 +444,6 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 	std::sort(collisions.begin(), collisions.end(), [](const CollisionPacket& a, const CollisionPacket& b) {
 		return a.depth < b.depth;
 		});
-
-	//bubble sort for smallest distance from ray
-	/*
-	for(int i = 0; i < collisions.size(); i++)
-	{
-		for (int j = i + 1; j < collisions.size(); j++)
-		{
-			if (collisions[i].depth > collisions[j].depth)
-			{
-				CollisionPacket temp = collisions[i];
-				collisions[i] = collisions[j];
-				collisions[j] = temp;
-			}
-		}
-	}*/
-
-	//hit.sceneObject = collisions[0].soA;
-	//hit.collider = collisions[0].colliderA;
-	//hit.normal = collisions[0].normal;
-	//hit.position = collisions[0].contactPoint;
-	//hit.distance = collisions[0].depth;
-	//hits.push_back(hit);
 
 	hits.reserve(collisions.size());
 	for (int i = 0; i < collisions.size(); i++)

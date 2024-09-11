@@ -1,5 +1,7 @@
 #include "EnemySystem.h"
 #include "Enemy.h"
+#include "State.h"
+#include "Condition.h"
 #include "Transform.h"
 #include "RigidBody.h"
 #include "SceneObject.h"
@@ -129,6 +131,25 @@ void EnemySystem::Update(
     SceneObject* ecco, SceneObject* sync, float delta
 )
 {
+    for (auto& enemyPair : enemies)
+    {
+        Enemy& enemy = enemyPair.second;
+        State* newState = nullptr;
+
+        // check the current state's transitions
+        for (auto& t : enemy.state->transitions)
+            if (t.condition->IsTrue(agent)) newState = t.targetState;
+
+
+        if (newState != nullptr && newState != m_currentState)
+        {
+            m_currentState->Exit(agent);
+            m_currentState = newState;
+            m_currentState->Enter(agent);
+        }
+
+        m_currentState->Update(agent, deltaTime);
+    }
 }
 
 std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count)

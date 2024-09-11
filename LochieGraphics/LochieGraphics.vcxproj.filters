@@ -60,6 +60,9 @@
     <Filter Include="Source Files\Parts\Lights">
       <UniqueIdentifier>{fd18241c-97c2-4dcb-acee-9ffa49f6d7b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\AI">
+      <UniqueIdentifier>{f1c7519c-6d74-4601-b4cf-6bf05ffade8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -248,12 +251,6 @@
     <ClCompile Include="LevelEditor.cpp">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemySystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
       <Filter>Source Files\Parts\Lights</Filter>
     </ClCompile>
@@ -265,6 +262,15 @@
     </ClCompile>
     <ClCompile Include="Spotlight.cpp">
       <Filter>Source Files\Parts\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemySystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="Behaviour.cpp">
+      <Filter>Source Files\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -490,8 +496,6 @@
     <ClInclude Include="LevelEditor.h">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemySystem.h" />
     <ClInclude Include="DirectionalLight.h">
       <Filter>Source Files\Parts\Lights</Filter>
     </ClInclude>
@@ -512,6 +516,15 @@
     </ClInclude>
     <ClInclude Include="Hit.h">
       <Filter>Source Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemySystem.h">
+      <Filter>Source Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour.h">
+      <Filter>Source Files\AI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

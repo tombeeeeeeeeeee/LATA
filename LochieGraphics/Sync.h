@@ -52,17 +52,17 @@ private:
 
 	glm::vec3 barrelOffset = { 0.0f, 0.0f, 0.0f };
 
-	float misfireDamage = 0.0f;
+	int misfireDamage = 0;
 	float misfireChargeCost = 0.0f;
 	float misfireShotSpeed = 0.1f;
 
-	float sniperDamage = 0.0f;
+	int sniperDamage = 0;
 	float sniperChargeCost = 0.0f;
 	float sniperChargeTime = -0.1f;
 	float sniperBeamLifeSpan = 0.5f;
 	glm::vec3 sniperBeamColour = { 0.5f,0.5f,1.0f };
 
-	float overclockDamage = 0.0f;
+	int overclockDamage = 0;
 	float overclockChargeCost = 0.0f;
 	float overclockChargeTime = 0.3f;
 	float overclockBeamLifeSpan = 1.0f;
