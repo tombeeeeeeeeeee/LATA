@@ -134,6 +134,7 @@ void EnemySystem::Update(
     for (auto& enemyPair : enemies)
     {
         Enemy& enemy = enemyPair.second;
+        SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
         State* newState = nullptr;
 
         // check the current state's transitions
@@ -141,14 +142,14 @@ void EnemySystem::Update(
             if (t.condition->IsTrue(agent)) newState = t.targetState;
 
 
-        if (newState != nullptr && newState != m_currentState)
+        if (newState != nullptr && newState != enemy.state)
         {
-            m_currentState->Exit(agent);
-            m_currentState = newState;
-            m_currentState->Enter(agent);
+            enemy.state->Exit(agent);
+            enemy.state = newState;
+            enemy.state->Enter(agent);
         }
 
-        m_currentState->Update(agent, deltaTime);
+        enemy.state->Update(agent);
     }
 }
 
