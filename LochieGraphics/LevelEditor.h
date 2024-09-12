@@ -12,23 +12,19 @@
 class LevelEditor : public Scene
 {
 private:
-
-	std::string levelsPath = "Levels/";
-	std::string levelExtension = ".level";
-
 	enum class BrushState {
 		none,
 		brush
 	};
-	BrushState state;
+	BrushState state = BrushState::none;
 
 	SceneObject* groundTileParent = new SceneObject(this, "Ground Tiles");
 	SceneObject* wallTileParent = new SceneObject(this, "Wall Tiles");
 
 	std::unordered_map<std::pair<int, int>, SceneObject*, hashFNV1A> tiles = {};
 
-	Model* ground;
-	Model* wall;
+	Model* ground = nullptr;
+	Model* wall = nullptr;
 
 	unsigned int wallCount = 0;
 	unsigned int tileCount = 0;
@@ -74,8 +70,8 @@ private:
 
 	float syncRadius = 10.0f;
 
-	SceneObject* syncSo;
-	SceneObject* eccoSo;
+	SceneObject* syncSo = nullptr;
+	SceneObject* eccoSo = nullptr;
 
 	std::vector<std::string> loadPaths;
 	std::vector<std::string*> loadPathsPointers;

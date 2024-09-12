@@ -5,6 +5,8 @@
 // TODO: This is only here for the window reference
 #include "SceneManager.h"
 
+#include "Paths.h"
+
 #include "ExtraEditorGUI.h"
 
 #include <filesystem>
@@ -147,8 +149,8 @@ void LevelEditor::Start()
 	camera->farPlane = 100000;
 	camera->nearPlane = 10;
 
-	ground = ResourceManager::LoadModelAsset("Assets/SM_FloorTile.model");
-	wall = ResourceManager::LoadModelAsset("Assets/SM_adjustedOriginLocWall.model");
+	ground = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
+	wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_adjustedOriginLocWall" + Paths::modelExtension);
 
 	
 
@@ -191,7 +193,7 @@ void LevelEditor::Start()
 	gameCamSystem.cameraPositionDelta = { -150.0f, 100.0f, 150.0f };
 
 	// TODO: Should be using an art asset
-	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset("Assets/SM_EccoBlockout_RevisedScale.model"), (unsigned long long)0));
+	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoBlockout_RevisedScale" + Paths::modelExtension), (unsigned long long)0));
 	camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f));
 
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
@@ -269,6 +271,7 @@ void LevelEditor::Draw()
 void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
+		ResourceManager::ModelAssetSelector("Model Asset", &eccoSo->renderer()->model);
 		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0\0")) {
 			switch (state)
 			{
@@ -367,14 +370,14 @@ void LevelEditor::LoadPrompt()
 		loadPaths.clear();
 		loadPathsPointers.clear();
 		
-		for (auto& i : std::filesystem::directory_iterator(levelsPath))
+		for (auto& i : std::filesystem::directory_iterator(Paths::levelsPath))
 		{
-			loadPaths.push_back(i.path().generic_string().substr(levelsPath.size()));
-			if (loadPaths.back().substr(loadPaths.back().size() - levelExtension.size()) != levelExtension) {
+			loadPaths.push_back(i.path().generic_string().substr(Paths::levelsPath.size()));
+			if (loadPaths.back().substr(loadPaths.back().size() - Paths::levelExtension.size()) != Paths::levelExtension) {
 				loadPaths.erase(--loadPaths.end());
 				continue;
 			}
-			loadPaths.back() = loadPaths.back().substr(0, loadPaths.back().size() - levelExtension.size());
+			loadPaths.back() = loadPaths.back().substr(0, loadPaths.back().size() - Paths::levelExtension.size());
 		}
 		for (auto& i : loadPaths)
 		{
@@ -405,7 +408,7 @@ void LevelEditor::LoadPrompt()
 
 void LevelEditor::SaveLevel()
 {
-	std::ofstream file(levelsPath + windowName + levelExtension);
+	std::ofstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
 	file << SaveSceneObjectsAndParts();
 
@@ -414,7 +417,7 @@ void LevelEditor::SaveLevel()
 
 void LevelEditor::LoadLevel()
 {
-	std::ifstream file(levelsPath + windowName + levelExtension);
+	std::ifstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
 	if (!file) {
 		std::cout << "Level File not found\n";

@@ -4,6 +4,8 @@
 #include "SceneManager.h"
 #include "Skybox.h"
 
+#include "Paths.h"
+
 #include "Utilities.h"
 
 #include "EditorGUI.h"
@@ -16,7 +18,7 @@
 ArtScene* ArtScene::artScene = nullptr;
 
 
-std::string ArtScene::EnsureCorrectFileLocation(std::string& path, std::string& expected)
+std::string ArtScene::EnsureCorrectFileLocation(const std::string& path, const std::string& expected) const
 {
 	// Copy the file into the expected path
 	// Return the path to the file in expected
@@ -36,7 +38,7 @@ std::string ArtScene::EnsureCorrectFileLocation(std::string& path, std::string& 
 	{
 	}	
 	
-	std::cout << "Potentially Copied file for locality, from, to:\n" << path << "\n" << newPath << '\n';
+	std::cout << "Copied file for locality, from, to:\n" << path << "\n" << newPath << '\n';
 	// TODO: Consider using filesystem function to copy file
 	std::ifstream original(path, std::ios::binary);
 	std::ofstream copied(newPath, std::ios::binary);
@@ -112,7 +114,7 @@ void ArtScene::RefreshPBR()
 	//pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
 
 	// TODO: Get name from base image
-	std::string filename = importTextureLocation + texturePrefix + name + "_PBR.tga"; // 
+	std::string filename = Paths::importTextureLocation + texturePrefix + name + "_PBR.tga"; // 
 	int result = stbi_write_tga(("./" + filename).c_str(), width, height, STBI_rgb_alpha, data.data());
 	Texture* pbr = ResourceManager::LoadTexture(filename, Texture::Type::PBR);
 	material->AddTextures({ pbr });
@@ -224,7 +226,7 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 	switch (type)
 	{
 	case Texture::Type::albedo: case Texture::Type::normal: case Texture::Type::emission:
-		newTexture = ResourceManager::LoadTexture(EnsureCorrectFileLocation(path, importTextureLocation), type, GL_REPEAT, defaultFlip);
+		newTexture = ResourceManager::LoadTexture(EnsureCorrectFileLocation(path, Paths::importTextureLocation), type, GL_REPEAT, defaultFlip);
 		material->AddTextures(std::vector<Texture*>{ newTexture });
 		// Refresh texture preview size
 		texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
@@ -255,7 +257,7 @@ void ArtScene::ImportMesh(std::string& path, std::string& filename)
 	// TODO: delete old model
 	//model->meshes.clear();
 
-	model = ResourceManager::LoadModel(EnsureCorrectFileLocation(path, importModelLocation));
+	model = ResourceManager::LoadModel(EnsureCorrectFileLocation(path, Paths::importModelLocation));
 
 	sceneObject->renderer()->modelGUID = model->GUID;
 	sceneObject->renderer()->Refresh();
@@ -565,7 +567,7 @@ ArtScene::~ArtScene()
 void ArtScene::SaveArtAsset()
 {
 	if (saveRenderer) {
-		std::ofstream file(rendererSaveLocation + sceneObject->name + rendererExtension);
+		std::ofstream file(Paths::rendererSaveLocation + sceneObject->name + Paths::rendererExtension);
 		// The renderer itself does not need to save its GUID
 		file << sceneObject->renderer()->Serialise(0);
 		file.close();
@@ -574,7 +576,7 @@ void ArtScene::SaveArtAsset()
 	for (auto& i : materialsToSave)
 	{
 		if (!i.second) { continue; }
-		std::ofstream file(materialSaveLocation + i.first->name + materialExtension);
+		std::ofstream file(Paths::materialSaveLocation + i.first->name + Paths::materialExtension);
 		file << i.first->Serialise();
 		file.close();
 	}
@@ -582,13 +584,13 @@ void ArtScene::SaveArtAsset()
 	for (auto& i : texturesToSave)
 	{
 		if (!i.second) { continue; }
-		std::ofstream file(textureSaveLocation + MaterialNameFromTexturePath(i.first.second->path) + '_' + Texture::TypeNames.at(i.first.second->type) + textureExtension);
+		std::ofstream file(Paths::textureSaveLocation + MaterialNameFromTexturePath(i.first.second->path) + '_' + Texture::TypeNames.at(i.first.second->type) + Paths::textureExtension);
 		file << i.first.second->Serialise();
 		file.close();
 	}
 
 	if (saveModel) {
-		std::ofstream file(modelSaveLocation + Utilities::FilenameFromPath(model->path, false) + modelExtension);
+		std::ofstream file(Paths::modelSaveLocation + Utilities::FilenameFromPath(model->path, false) + Paths::modelExtension);
 		file << model->Serialise();
 		file.close();
 	}

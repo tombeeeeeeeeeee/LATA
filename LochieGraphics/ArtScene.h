@@ -32,20 +32,8 @@ private:
 	std::string texturePrefix = "T_";
 	std::string meshPrefix = "SM_";
 
-	std::string importTextureLocation = "images/";
-	std::string importModelLocation = "models/";
 
-	std::string rendererSaveLocation = "Assets/";
-	std::string materialSaveLocation = "Assets/";
-	std::string textureSaveLocation = "Assets/";
-	std::string modelSaveLocation = "Assets/";
-
-	std::string rendererExtension = ".renderer";
-	std::string materialExtension = ".material";
-	std::string textureExtension = ".texture";
-	std::string modelExtension = ".model";
-
-	std::string EnsureCorrectFileLocation(std::string& path, std::string& expected);
+	std::string EnsureCorrectFileLocation(const std::string& path, const std::string& expected) const;
 
 	// Images store the image data
 	Image roughnessImage;

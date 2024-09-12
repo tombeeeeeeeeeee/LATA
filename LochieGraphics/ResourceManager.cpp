@@ -1,6 +1,7 @@
 #include "ResourceManager.h"
 
 #include "SceneManager.h"
+#include "Paths.h"
 
 #include "Serialisation.h"
 
@@ -8,6 +9,7 @@
 
 #include "ExtraEditorGUI.h"
 
+#include <filesystem>
 #include <iostream>
 #include <chrono>
 
@@ -38,6 +40,7 @@ Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragment
 	LoadResource(Shader, shaders, vertexPath, fragmentPath, flags);
 }
 
+// TODO: These paths and extensions should be in the Paths.h
 Shader* ResourceManager::LoadShader(std::string sharedName, int flags)
 {
 	LoadResource(Shader, shaders, "shaders/" + sharedName + ".vert", "shaders/" + sharedName + ".frag", flags);
@@ -66,6 +69,10 @@ Model* ResourceManager::LoadModel(std::string path)
 Model* ResourceManager::LoadModelAsset(std::string path)
 {
 	std::ifstream file(path);
+	if (!file) {
+		std::cout << "Failed to find model, attempted at path: " << path << '\n';
+		return nullptr;
+	}
 	toml::table data = toml::parse(file);
 	unsigned long long loadingGUID = Serialisation::LoadAsUnsignedLongLong(data["guid"]);
 	auto search = models.find(loadingGUID);
@@ -73,6 +80,7 @@ Model* ResourceManager::LoadModelAsset(std::string path)
 		return &search->second;
 	}
 	Model newResource = Model(data);
+	file.close();
 	return &models.emplace(newResource.GUID, newResource).first->second;
 }
 
@@ -160,6 +168,31 @@ bool ResourceManager::MaterialSelector(std::string label, Material** material, S
 bool ResourceManager::ModelSelector(std::string label, Model** model, bool showNull)
 {
 	ResourceSelector(Model, model, (Model * (*)())nullptr);
+}
+
+bool ResourceManager::ModelAssetSelector(std::string label, Model** model)
+{
+	std::string tag = Utilities::PointerToString(model);
+	std::vector<std::string> paths;
+	std::vector<std::string*> pointers;
+	std::string* modelPath = nullptr;
+	for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation)) {
+		paths.push_back(Utilities::FilenameFromPath(i.path().string(), false));
+	}
+	for (size_t i = 0; i < paths.size(); i++)
+	{
+		pointers.push_back(&paths.at(i));
+		if (*model) {
+			if (Utilities::FilenameFromPath((*model)->path, false) == paths.at(i)) {
+				modelPath = pointers.back();
+			}
+		}
+	}
+	if (ExtraEditorGUI::InputSearchBox(pointers.begin(), pointers.end(), &modelPath, "Model", tag, false)) {
+		*model = LoadModelAsset(Paths::modelSaveLocation + *modelPath + Paths::modelExtension);
+		return true;
+	}
+	return false;
 }
 
 #define GetResource(type, collection)                    \
