@@ -43,23 +43,23 @@ void Health::subtractHealth(int subtraction)
 
 	if (currHealth == 0)
 	{
-		for (int i = onHealthZero.size(); i != onHealthZero.size(); i++)
+		for (auto i = onHealthZero.size(); i != onHealthZero.size(); i++)
 		{
-			onHealthZero[i](currHealth);
+			onHealthZero[(int)i](currHealth);
 		}
 	}
 	else if (currHealth > oldHealth)
 	{
-		for (int i = onHealthUp.size(); i != onHealthUp.size(); i++)
+		for (auto i = onHealthUp.size(); i != onHealthUp.size(); i++)
 		{
-			onHealthUp[i](currHealth);
+			onHealthUp[(int)i](currHealth);
 		}
 	}
 	else if (currHealth < oldHealth)
 	{
-		for (int i = onHealthDown.size(); i != onHealthDown.size(); i++)
+		for (auto i = onHealthDown.size(); i != onHealthDown.size(); i++)
 		{
-			onHealthDown[i](currHealth);
+			onHealthDown[(int)i](currHealth);
 		}
 	}
 }

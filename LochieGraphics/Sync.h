@@ -24,11 +24,9 @@ public:
 	void Start(std::vector<Shader*>* shaders);
 
 	void Update(
-		Input::InputDevice& inputDevice,
-		Transform& transform,
-		RigidBody& rigidBody,
-		LineRenderer* lines,
-		float delta	
+		Input::InputDevice& inputDevice, Transform& transform,
+		RigidBody& rigidBody, LineRenderer* lines,
+		float delta, float cameraAngleOffset
 	);
 
 	void GUI();
@@ -37,8 +35,8 @@ public:
 	void ShootMisfire(Transform& transform);
 	void ShootSniper(glm::vec3 pos);
 	void ShootOverClocked(glm::vec3 pos);
-	void OverclockedRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour);
-
+	void OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour);
+	void OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour);
 	void misfireShotOnCollision(Collision collision);
 	void sniperShotOnCollision(Collision collision);
 	void overclockShotOnCollision(Collision collision);
@@ -54,26 +52,26 @@ private:
 
 	glm::vec3 barrelOffset = { 0.0f, 0.0f, 0.0f };
 
-	float misfireDamage = 0.0f;
+	int misfireDamage = 0;
 	float misfireChargeCost = 0.0f;
 	float misfireShotSpeed = 0.1f;
 
-	float sniperDamage = 0.0f;
+	int sniperDamage = 0;
 	float sniperChargeCost = 0.0f;
-	float sniperChargeTime = 0.0f;
+	float sniperChargeTime = -0.1f;
 	float sniperBeamLifeSpan = 0.5f;
-	glm::vec3 sniperBeamColour = { 1.0f,1.0f,1.0f };
+	glm::vec3 sniperBeamColour = { 0.5f,0.5f,1.0f };
 
-	float overclockDamage = 0.0f;
+	int overclockDamage = 0;
 	float overclockChargeCost = 0.0f;
-	float overclockChargeTime = 0.0f;
+	float overclockChargeTime = 0.3f;
 	float overclockBeamLifeSpan = 1.0f;
-	glm::vec3 overclockBeamColour = { 1.0f,1.0f,1.0f };
+	glm::vec3 overclockBeamColour = { 1.0f,1.0f,0.5f };
 	int enemyPierceCount = 99;
 	int overclockReboundCount = 5;
 
-	float eccoRefractionAngle = 10.0f;
-	int eccoRefractionCount = 5;
+	float eccoRefractionAngle = 1.0f;
+	int eccoRefractionCount = 360;
 
 	float chargedDuration = 0.0f;
 	bool chargingShot = false;
@@ -84,7 +82,7 @@ private:
 
 	float misfireColliderRadius = 0.1f;
 	ModelRenderer* misfireModelRender = nullptr;
-	std::string misfireModelPath;
+	std::string misfireModelPath = "models/sphere.fbx";
 	std::string misfireMaterialPath;
 
 };

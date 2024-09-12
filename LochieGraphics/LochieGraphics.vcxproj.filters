@@ -60,6 +60,15 @@
     <Filter Include="Source Files\Parts\Lights">
       <UniqueIdentifier>{fd18241c-97c2-4dcb-acee-9ffa49f6d7b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\AI">
+      <UniqueIdentifier>{f1c7519c-6d74-4601-b4cf-6bf05ffade8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AI\Conditions">
+      <UniqueIdentifier>{6f881f94-462e-461e-bc3d-c72adbbec98c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AI\States">
+      <UniqueIdentifier>{f3f5f9a1-eb8b-4cb8-9721-7da3911d4912}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -248,12 +257,6 @@
     <ClCompile Include="LevelEditor.cpp">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemySystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
       <Filter>Source Files\Parts\Lights</Filter>
     </ClCompile>
@@ -266,11 +269,11 @@
     <ClCompile Include="Spotlight.cpp">
       <Filter>Source Files\Parts\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="ExtraEditorGUI.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="EnemySystem.cpp">
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="hashFNV1A.cpp">
-      <Filter>Source Files\Misc</Filter>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files\Parts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -517,17 +520,17 @@
     <ClInclude Include="Hit.h">
       <Filter>Source Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="hashFNV1A.h">
-      <Filter>Source Files\Misc</Filter>
+    <ClInclude Include="EnemySystem.h">
+      <Filter>Source Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="EnemySystem.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Condition.h">
+      <Filter>Source Files\AI</Filter>
     </ClInclude>
-    <ClInclude Include="ExtraEditorGUI.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="State.h">
+      <Filter>Source Files\AI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -675,10 +678,8 @@
     <None Include="..\Shaders\forward.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Shaders\paintedNormals.vert" />
     <None Include="..\Shaders\paintedNormals.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\paintedNormals.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

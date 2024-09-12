@@ -1,6 +1,7 @@
 #include "PhysicsSystem.h"
 #include "Hit.h"
 #include "Transform.h"
+#include <algorithm>
 
 std::unordered_map<unsigned long long, RigidBody>* PhysicsSystem::rigidBodiesInScene = nullptr;
 std::unordered_map<unsigned long long, Transform>* PhysicsSystem::transformsInScene = nullptr;
@@ -338,9 +339,11 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 
 }
 
-void PhysicsSystem::SetCollisionLayerMask(int layerA, int layerB, bool state)
+void PhysicsSystem::SetCollisionLayerMask(int a, int b, bool state)
 {
 	//Catch values that don't fit in the layer mask
+	int layerA = (int)glm::log2((float)a);
+	int layerB = (int)glm::log2((float)b);
 	if (layerA < 0 || layerA >= 32) return;
 	if (layerB < 0 || layerB >= 32) return;
 
@@ -358,17 +361,20 @@ void PhysicsSystem::SetCollisionLayerMask(int layerA, int layerB, bool state)
 
 void PhysicsSystem::SetCollisionLayerMask(int layer, unsigned int bitMask)
 {
-	layerMasks[layer] = bitMask;
+	int layerIndex = log2((float)layer);
+	layerMasks[layerIndex] = bitMask;
 	for (unsigned int i = 0; i < 32; i++)
 	{
-		layerMasks[i] &= ~(1 << layer);
+		layerMasks[i] &= ~layer;
 		int on = (bitMask & (1 << i)) == (1 << i) ? 1 : 0;
-		layerMasks[i] |= (on << layer);
+		layerMasks[i] |= (on << layerIndex);
 	}
 }
 
-bool PhysicsSystem::GetCollisionLayerBool(int layerA, int layerB)
+bool PhysicsSystem::GetCollisionLayerBool(int a, int b)
 {
+	int layerA = (int)log2((float)a);
+	int layerB = (int)log2((float)b);
 	return layerMasks[layerA] & (1 << layerB);
 }
 
@@ -391,7 +397,7 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 				triggerPassing = false;
 			}
 
-			if ((collider->collisionLayer & layerMask) && triggerPassing)
+			if (triggerPassing && (collider->collisionLayer & layerMask))
 			{
 				CollisionPacket collision = RayCastAgainstCollider(
 					pos, direction,
@@ -405,6 +411,7 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 			}
 		}
 	}
+	//if (collisions.size() == 0){}
 
 	for (auto collider = (*collidersInScene).begin(); collider != (*collidersInScene).end(); collider++)
 	{
@@ -434,29 +441,12 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 		return false;
 	}
 
-	//bubble sort for smallest distance from ray
-	for(int i = 0; i < collisions.size(); i++)
-	{
-		for (int j = i + 1; j < collisions.size(); j++)
-		{
-			if (collisions[i].depth > collisions[j].depth)
-			{
-				CollisionPacket temp = collisions[i];
-				collisions[i] = collisions[j];
-				collisions[j] = temp;
-			}
-		}
-	}
+	std::sort(collisions.begin(), collisions.end(), [](const CollisionPacket& a, const CollisionPacket& b) {
+		return a.depth < b.depth;
+		});
 
-	hit.sceneObject = collisions[0].soA;
-	hit.collider = collisions[0].colliderA;
-	hit.normal = collisions[0].normal;
-	hit.position = collisions[0].contactPoint;
-	hit.distance = collisions[0].depth;
-	hits.push_back(hit);
-
-	hits.reserve(collisions.size() - 1);
-	for (int i = 1; i < collisions.size(); i++)
+	hits.reserve(collisions.size());
+	for (int i = 0; i < collisions.size(); i++)
 	{
 		hits.push_back(
 			{
@@ -468,7 +458,7 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 			});
 	}
 
-	return hit.distance < length;
+	return hits.size() != 0;
 }
 
 CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 direction, Transform& transform, Collider* collider)
@@ -537,35 +527,38 @@ CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 d
 		{
 			for (int i = 0; i < poly->verts.size(); i++)
 			{
+				glm::vec2 a = pos;
+				glm::vec2 b = direction;
 				glm::vec2 c = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), poly->verts[i]);
 				glm::vec2 d = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), poly->verts[(i + 1) % poly->verts.size()]) - c;
-				glm::vec2 normal = { -d.y, d.x };
-				//glm::vec2 normal = { d.y, -d.x };
 
-				float denominator = glm::dot(normal, direction);
+				glm::vec2 dRotated = { d.y, -d.x };
+
+				float denominator = b.x * d.y - b.y * d.x;
 				if (denominator <= 0) continue;
-				float numerator = pos.y * direction.x - direction.y * pos.x - c.y * direction.x + direction.y * c.x;
+				//float numerator = a.y * b.x - b.y * a.x - c.y * b.x + b.y * c.x;
+				float numerator = a.y * b.x + b.y * c.x - a.x * b.y - b.x * c.y;
 				float t2 = numerator / denominator;
 				if (t2 >= 0 && t2 <= 1)
 				{
 					float t1;
-					if (abs(direction.x) > abs(direction.y))
+					if (abs(b.x) > abs(b.y))
 					{
-						t1 = c.x + d.x * t2 - pos.x;
-						t1 /= direction.x;
+						t1 = c.x + d.x * t2 - a.x;
+						t1 /= b.x;
 					}
 					else
 					{
-						t1 = c.y + d.y * t2 - pos.y;
-						t1 /= direction.y;
+						t1 = c.y + d.y * t2 - a.y;
+						t1 /= b.y;
 					}
 
 					if (t1 > 0.0f)
 					{
-						collision.contactPoint = pos + direction * t1;
+						collision.contactPoint = a + b * t1;
 						collision.colliderA = poly;
-						collision.normal = normal;
-						collision.depth = glm::length(direction * t1);
+						collision.normal = glm::normalize(dRotated);
+						collision.depth = glm::length(b * t1);
 						collision.soA = transform.getSceneObject();
 					}
 				}
