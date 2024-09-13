@@ -64,6 +64,7 @@ void GUI::Update()
 	scene->GUI();
 
 	// Update Potential Modals
+	// TODO: Would be good if could be in the material class, perhaps the material input is shown via the material class, so that the material could handle the modal
 	for (auto& i : ResourceManager::materials)
 	{
 		i.second.ModalGUI();
@@ -197,38 +198,34 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	if (sceneObjectSelected == sceneObject) {
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
-	if (sceneObject->transform()->HasChildren()) {
-		bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + PointerToString(sceneObject)).c_str(), nodeFlags);
-		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
-			sceneObjectSelected = sceneObject;
-		}
-		TransformDragDrop(sceneObject);
-		if (nodeOpen) {
-			auto children = sceneObject->transform()->getChildren();
-
-			for (auto child = children.begin(); child != children.end(); child++)
-			{
-				TransformTree((*child)->getSceneObject());
-			}
-			ImGui::TreePop();
-		}
-	}
-	else {
+	bool hasChildren = sceneObject->transform()->HasChildren();
+	if (!hasChildren) {
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-		ImGui::TreeNodeEx((sceneObject->name + "##" + PointerToString(sceneObject)).c_str(), nodeFlags);
-		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
-			sceneObjectSelected = sceneObject;
-		}
-		TransformDragDrop(sceneObject);
 	}
+	bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + PointerToString(sceneObject)).c_str(), nodeFlags);
+	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
+		sceneObjectSelected = sceneObject;
+	}
+
+	TransformDragDrop(sceneObject);
+
+	if (!hasChildren || !nodeOpen) {
+		return;
+	}
+	auto children = sceneObject->transform()->getChildren();
+	for (auto child : children)
+	{
+		TransformTree(child->getSceneObject());
+	}
+	ImGui::TreePop();
 }
 
 void GUI::TransformDragDrop(SceneObject* sceneObject)
 {
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 	{
-		Transform* temp = sceneObject->transform();
-		ImGui::SetDragDropPayload("Transform", &temp, sizeof(temp));
+		Transform* transform = sceneObject->transform();
+		ImGui::SetDragDropPayload("Transform", &transform, sizeof(transform));
 		ImGui::Text(("Transform of: " + sceneObject->name).c_str());
 		ImGui::EndDragDropSource();
 	}
