@@ -1,4 +1,4 @@
-#define TOML_IMPLEMENTATION
+#define TOML_IMPLEMENTATION 1
 #include "Serialisation.h"
 
 

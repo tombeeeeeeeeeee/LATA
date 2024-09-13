@@ -398,6 +398,12 @@ void SceneManager::MouseButtonCallback(GLFWwindow* window, int button, int actio
 
 void SceneManager::ProcessInput(GLFWwindow* window)
 {
+	ProcessKeyboardInput(window);
+	ProcessMouseInput(window);
+}
+
+void SceneManager::ProcessKeyboardInput(GLFWwindow* window)
+{
 	if (ImGui::GetIO().WantCaptureKeyboard) { return; }
 
 	// TODO: Remove this, maybe make a modal pop up window
@@ -405,9 +411,36 @@ void SceneManager::ProcessInput(GLFWwindow* window)
 		glfwSetWindowShouldClose(window, true);
 	}
 
+	// Camera movement
+	float cameraSpeed = 2.0f * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::FORWARD, deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::BACKWARD, deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::LEFT, deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::RIGHT, deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::UP, deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::DOWN, deltaTime); }
+
+	if ((glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) != camera.artKeyDown) {
+		camera.artKeyDown = !camera.artKeyDown;
+		if (camera.state == Camera::State::artEditorMode) {
+			lockedCamera = !camera.artKeyDown;
+			RefreshInputMode();
+		}
+	}
+
+	for (auto i = scene->inputKeyWatch.begin(); i != scene->inputKeyWatch.end(); i++)
+	{
+		scene->OnKey(*i, glfwGetKey(window, *i));
+	}
+}
+
+void SceneManager::ProcessMouseInput(GLFWwindow* window)
+{
+	if (ImGui::GetIO().WantCaptureMouse) { return; }
+
 	// TODO: Some of this should probably be handled within the camera
-	if      (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))   { camera.artState = Camera::ArtState::orbit; }
-	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))  { camera.artState = Camera::ArtState::dolly; }
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT)) { camera.artState = Camera::ArtState::orbit; }
+	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT)) { camera.artState = Camera::ArtState::dolly; }
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE)) { camera.artState = Camera::ArtState::boomTruck; }
 	else { camera.artState = Camera::ArtState::none; }
 
@@ -417,29 +450,6 @@ void SceneManager::ProcessInput(GLFWwindow* window)
 			lockedCamera = !camera.editorRotate;
 			RefreshInputMode();
 		}
-	}
-
-	// Camera movement
-	float cameraSpeed = 2.0f * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)          { camera.ProcessKeyboard(Camera::FORWARD,  deltaTime); }
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)          { camera.ProcessKeyboard(Camera::BACKWARD, deltaTime); }
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)          { camera.ProcessKeyboard(Camera::LEFT,     deltaTime); }
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)          { camera.ProcessKeyboard(Camera::RIGHT,    deltaTime); }
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)      { camera.ProcessKeyboard(Camera::UP,       deltaTime); }
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::DOWN,     deltaTime); }
-
-	if ((glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) != camera.artKeyDown) {
-		camera.artKeyDown = !camera.artKeyDown;
-		if (camera.state == Camera::State::artEditorMode) {
-			lockedCamera = !camera.artKeyDown;
-			RefreshInputMode();
-		}
-	}
-	
-
-	for (auto i = scene->inputKeyWatch.begin(); i != scene->inputKeyWatch.end(); i++)
-	{
-		scene->OnKey(*i, glfwGetKey(window, *i));
 	}
 }
 

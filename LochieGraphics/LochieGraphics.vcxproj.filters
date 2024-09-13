@@ -275,6 +275,12 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>Source Files\Parts</Filter>
     </ClCompile>
+    <ClCompile Include="hashFNV1A.cpp">
+      <Filter>Source Files\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtraEditorGUI.cpp">
+      <Filter>Source Files\Misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
@@ -532,6 +538,15 @@
     <ClInclude Include="State.h">
       <Filter>Source Files\AI</Filter>
     </ClInclude>
+    <ClInclude Include="hashFNV1A.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Paths.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtraEditorGUI.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -678,8 +693,10 @@
     <None Include="..\Shaders\forward.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\paintedNormals.vert" />
     <None Include="..\Shaders\paintedNormals.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\paintedNormals.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

@@ -6,6 +6,7 @@
 #include "EditorGUI.h"
 
 #include <iostream>
+#include <sstream>
 
 SceneObject* Transform::getSceneObject() const
 {
@@ -232,7 +233,22 @@ void Transform::GUI()
 	if (!ImGui::CollapsingHeader(("Transform##" + tag).c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 		return;
 	}
-
+	ImGui::OpenPopupOnItemClick(("Right Click##" + tag).c_str(), ImGuiPopupFlags_MouseButtonRight);
+	if (ImGui::BeginPopup(("Right Click##" + tag).c_str())) {
+		if (ImGui::Button(("Copy##" + tag).c_str())) {
+			std::stringstream clipboard;
+			clipboard << Serialise(0);
+			ImGui::SetClipboardText(clipboard.str().c_str());
+			ImGui::CloseCurrentPopup();
+		}
+		if (ImGui::Button(("Paste##" + tag).c_str())) {
+			std::string clipboard = ImGui::GetClipboardText();
+			toml::table data = toml::parse(clipboard);
+			*this = Transform(data);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 
 	if(ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f))
 	{
