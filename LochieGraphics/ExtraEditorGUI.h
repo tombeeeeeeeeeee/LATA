@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 
+
 class ExtraEditorGUI {
 public:
 	static int TextSelected(ImGuiInputTextCallbackData* data);

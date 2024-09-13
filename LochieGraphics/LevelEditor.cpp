@@ -271,9 +271,6 @@ void LevelEditor::Draw()
 void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
-
-		ImGui::Text("Testing testing");
-
 		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0\0")) {
 			switch (state)
 			{

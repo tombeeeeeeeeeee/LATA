@@ -36,6 +36,7 @@ struct Collider
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	static Collider* Load(toml::table table);
 	Collider() = default;
+	virtual void GUI();
 protected:
 	Collider(toml::table table);
 };
@@ -49,6 +50,7 @@ struct PolygonCollider : public Collider
 	PolygonCollider() {};
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	PolygonCollider(toml::table table);
+	void GUI() override;
 };
 
 struct PlaneCollider : public Collider
@@ -58,6 +60,7 @@ struct PlaneCollider : public Collider
 	virtual const ColliderType getType() const { return ColliderType::plane; };
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	PlaneCollider(toml::table table);
+	void GUI() override;
 };
 
 struct DirectionalCollider : public PolygonCollider
@@ -66,4 +69,5 @@ struct DirectionalCollider : public PolygonCollider
 	virtual const ColliderType getType() const { return ColliderType::directionalPoly; };
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	DirectionalCollider(toml::table table);
+	void GUI() override;
 };
