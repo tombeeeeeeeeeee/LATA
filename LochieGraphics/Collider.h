@@ -8,12 +8,14 @@
 enum class CollisionLayers
 {
 	base = 1 << 0,
-	wall = 1 << 1,
-	enemy = 1 << 2,
-	player = 1 << 3,
-	reflectiveSurface = 1 << 4,
-	sync = 1 << 5,
-	ecco = 1 << 6,
+	enemy = 1 << 1,
+	reflectiveSurface = 1 << 2,
+	sync = 1 << 3,
+	ecco = 1 << 4,
+	syncProjectile = 1 << 5,
+	eccoProjectile = 1 << 6,
+	ignoreRaycast = 1 << 7,
+	count = 1 << 8
 };
 
 enum class ColliderType

@@ -12,6 +12,10 @@
 #include "Enemy.h"
 #include "Animator.h"
 
+#include "PhysicsSystem.h"
+#include "EnemySystem.h"
+#include "GamePlayCameraSystem.h"
+
 #include "Skybox.h"
 #include "ShaderEnum.h"
 
@@ -59,6 +63,9 @@ public:
 	unsigned int* windowHeight;
 
 	RenderSystem* renderSystem;
+	PhysicsSystem physicsSystem;
+	GameplayCameraSystem gameCamSystem;
+	EnemySystem enemySystem;
 
 	virtual void Start() {};
 	virtual void EarlyUpdate() {};

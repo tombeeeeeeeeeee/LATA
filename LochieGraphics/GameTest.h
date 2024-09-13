@@ -1,10 +1,6 @@
 #pragma once
 #include "Scene.h"
 
-#include "PhysicsSystem.h"
-#include "EnemySystem.h"
-#include "GamePlayCameraSystem.h"
-
 #include "Input.h"
 
 #include "Image.h"
@@ -16,10 +12,6 @@ class GameTest : public Scene
 private:
 
 	Input input;
-
-	PhysicsSystem physicsSystem;
-	GameplayCameraSystem gameCamSystem;
-	EnemySystem enemySystem;
 
 	SceneObject* h = new SceneObject(this);
 	SceneObject* r = new SceneObject(this);

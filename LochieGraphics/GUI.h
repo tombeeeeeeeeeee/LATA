@@ -22,6 +22,8 @@ public:
 	bool showCameraMenu = false;
 	bool showHierarchy = false;
 	bool showSceneObject = false;
+	bool showPhysicsMenu = false;
+	bool showEnemyMenu = false;
 	bool showLightMenu = false;
 	bool showImguiExampleMenu = false;
 private:
@@ -45,5 +47,8 @@ private:
 	void TransformTree(SceneObject* sceneObject);
 	void TransformDragDrop(SceneObject* sceneObject);
 	ImGuiTreeNodeFlags baseNodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+	void PhysicsMenu();
+	void EnemyMenu();
 };
 

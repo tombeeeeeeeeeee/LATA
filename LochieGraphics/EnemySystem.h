@@ -29,20 +29,21 @@ private:
 public:
 
 	EnemySystem();
+	EnemySystem(toml::table table);
 	void Start();
 
 	int meleeEnemyHealth = 0;
-	int meleeEnemyMoveSpeed = 0;
+	float meleeEnemyMoveSpeed = 0;
 	int meleeEnemyDamage = 0;
-	Collider meleeEnemyCollider;
+	float meleeEnemyColliderRadius = 0.0f;
 	ModelRenderer* meleeEnemyRenderer;
 	std::string meleeEnemyModel = "models/Sphere.fbx";
 	std::string meleeEnemyMaterialPath = "images/otherskybox/nx.png";
 
 	int rangedEnemyHealth = 0;
-	int rangedEnemyMoveSpeed = 0;
+	float rangedEnemyMoveSpeed = 0;
 	int rangedEnemyDamage = 0;
-	Collider rangedEnemyCollider;
+	float rangedEnemyColliderRadius = 0.0f;
 	ModelRenderer* rangedEnemyRenderer;
 	std::string rangedEnemyModel = "models/Sphere.fbx";
 	std::string rangedEnemyMaterialPath = "images/otherskybox/nx.png";
@@ -61,6 +62,8 @@ public:
 		SceneObject* ecco, SceneObject* sync,
 		float delta
 	);
+
+	toml::table Serialise() const;
 
 	std::vector<unsigned long long> InitialiseMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count);
 	std::vector<unsigned long long> InitialiseRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count);

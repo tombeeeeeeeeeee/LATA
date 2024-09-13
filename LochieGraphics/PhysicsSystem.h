@@ -6,11 +6,12 @@
 
 struct Hit;
 
-const int CollisionItterations = 10;
-
 class PhysicsSystem
 {
 public:
+	PhysicsSystem() {};
+	PhysicsSystem(toml::table table);
+
 	void UpdateRigidBodies(
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
@@ -42,6 +43,7 @@ public:
 	/// Set the collision layer mask to true or false for two collision layers
 	/// </summary>
 	void SetCollisionLayerMask(int layerA, int layerB, bool state);
+	void SetCollisionLayerMaskIndexed(int layerA, int layerB, bool state);
 
 	/// <summary>
 	/// Sets the entire bit mask for a layer in physics collisions
@@ -49,6 +51,8 @@ public:
 	void SetCollisionLayerMask(int layer, unsigned int bitMask);
 
 	bool GetCollisionLayerBool(int layerA, int layerB);
+	bool GetCollisionLayerIndexed(int layerA, int layerB);
+	toml::table Serialise() const;
 
 	unsigned int layerMasks[32] = {
 		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
@@ -60,6 +64,8 @@ public:
 		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
 		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
 	};
+
+	int collisionItterations = 1;
 
 private: 
 	RigidBody dummyRigidBody = RigidBody(0.0f,0.0f);

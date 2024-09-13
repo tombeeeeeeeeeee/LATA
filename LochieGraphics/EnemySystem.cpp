@@ -11,7 +11,25 @@
 
 EnemySystem::EnemySystem()
 {
+}
 
+EnemySystem::EnemySystem(toml::table table)
+{
+    meleeEnemyHealth = Serialisation::LoadAsInt(table["meleeEnemyHealth"]);
+    meleeEnemyMoveSpeed = Serialisation::LoadAsFloat(table["meleeEnemyMoveSpeed"]);
+    meleeEnemyDamage = Serialisation::LoadAsInt(table["meleeEnemyDamage"]);
+    meleeEnemyColliderRadius = Serialisation::LoadAsFloat(table["meleeEnemyColliderRadius"]);
+    meleeEnemyModel = Serialisation::LoadAsString(table["meleeEnemyModel"]);
+    meleeEnemyMaterialPath = Serialisation::LoadAsString(table["meleeEnemyMaterialPath"]);
+
+    rangedEnemyHealth = Serialisation::LoadAsInt(table["rangedEnemyHealth"]);
+    rangedEnemyMoveSpeed = Serialisation::LoadAsFloat(table["rangedEnemyMoveSpeed"]);
+    rangedEnemyDamage = Serialisation::LoadAsInt(table["rangedEnemyDamage"]);
+    rangedEnemyColliderRadius = Serialisation::LoadAsFloat(table["rangedEnemyColliderRadius"]);
+    rangedEnemyModel = Serialisation::LoadAsString(table["rangedEnemyModel"]);
+    rangedEnemyMaterialPath = Serialisation::LoadAsString(table["rangedEnemyMaterialPath"]);
+
+    glm::vec3 offscreenSpawnPosition = Serialisation::LoadAsVec3(table["offscreenSpawnPosition"]);
 }
 
 void EnemySystem::Start()
@@ -51,7 +69,7 @@ unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long
 
     enemy->transform()->setPosition(pos);
     enemy->health()->currHealth = meleeEnemyHealth;
-    enemy->rigidbody()->colliders = { &meleeEnemyCollider };
+    enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
 
     return GUID;
@@ -76,7 +94,7 @@ unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long lon
 
     enemy->transform()->setPosition(pos);
     enemy->health()->currHealth = rangedEnemyHealth;
-    enemy->rigidbody()->colliders = { &rangedEnemyCollider };
+    enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
 
     return GUID;
@@ -151,6 +169,25 @@ void EnemySystem::Update(
 
         enemy.state->Update(agent);
     }
+}
+
+toml::table EnemySystem::Serialise() const
+{
+    return toml::table{
+        { "meleeEnemyHealth", meleeEnemyHealth },
+        { "meleeEnemyMoveSpeed", meleeEnemyMoveSpeed },
+        { "meleeEnemyDamage", meleeEnemyDamage },
+        { "meleeEnemyColliderRadius", meleeEnemyColliderRadius },
+        { "meleeEnemyModel", meleeEnemyModel },
+        { "meleeEnemyMaterialPath", meleeEnemyMaterialPath },
+        { "rangedEnemyHealth", rangedEnemyHealth },
+        { "rangedEnemyMoveSpeed", rangedEnemyMoveSpeed },
+        { "rangedEnemyDamage", rangedEnemyDamage }, 
+        { "rangedEnemyColliderRadius", rangedEnemyColliderRadius },
+        { "rangedEnemyModel", rangedEnemyModel },
+        { "rangedEnemyMaterialPath", rangedEnemyMaterialPath },
+        { "offscreenSpawnPosition", Serialisation::SaveAsVec3(offscreenSpawnPosition) },
+    };
 }
 
 std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count)
