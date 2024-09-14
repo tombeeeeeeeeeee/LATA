@@ -132,6 +132,7 @@ void Sync::GUI()
 	//ImGui::Text("");
 	if (ImGui::CollapsingHeader("Sync Component"))
 	{
+		ImGui::Indent();
 		ImGui::DragFloat("Move Speed", &moveSpeed);
 		ImGui::DragFloat("Look DeadZone", &lookDeadZone);
 		ImGui::DragFloat("Move DeadZone", &moveDeadZone);
@@ -165,7 +166,7 @@ void Sync::GUI()
 		
 		ImGui::DragFloat("Max Charge", &maxCharge);
 		ImGui::DragFloat("Current Charge", &currCharge);
-		
+		ImGui::Unindent();
 	}
 }
 

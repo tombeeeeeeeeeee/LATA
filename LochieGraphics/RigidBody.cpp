@@ -86,6 +86,7 @@ void RigidBody::GUI()
 {
 	if (ImGui::CollapsingHeader("Rigid Body"))
 	{
+		ImGui::Indent();
 		std::string tag = Utilities::PointerToString(this);
 		float mass = getMass();
 		bool isKinematic = invMass == 0;
@@ -113,6 +114,7 @@ void RigidBody::GUI()
 				colliders.at(i)->GUI();
 			}
 		}
+		ImGui::Unindent();
 	}
 }
 

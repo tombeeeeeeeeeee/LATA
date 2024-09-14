@@ -39,6 +39,7 @@ void ModelRenderer::GUI()
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader("Model Renderer"))
 	{
+		ImGui::Indent();
 		ImGui::BeginDisabled();
 		int mats = (int)materialGUIDs.size();
 		ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
@@ -66,6 +67,7 @@ void ModelRenderer::GUI()
 			}
 			Refresh();
 		}
+		ImGui::Unindent();
 	}
 }
 
