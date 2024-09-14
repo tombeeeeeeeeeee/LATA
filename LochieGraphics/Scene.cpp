@@ -123,6 +123,11 @@ void Scene::Load()
 	file.close();
 }
 
+void Scene::DeleteSceneObject(unsigned long long GUID)
+{
+	markedForDeletion.push_back(GUID);
+}
+
 void Scene::DeleteAllSceneObjects()
 {
 	while (!sceneObjects.empty())

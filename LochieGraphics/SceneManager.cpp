@@ -209,9 +209,20 @@ void SceneManager::Update()
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 viewProjection = projection * view;
 
-	//// TODO: Actual draw/update loop
-	scene->EarlyUpdate();
+	// Delete sceneobjects marked for deletion
+	while (!scene->markedForDeletion.empty())
+	{
+		if (scene->gui.sceneObjectSelected) {
+			if (scene->gui.sceneObjectSelected->GUID == scene->markedForDeletion.front()) {
+				scene->gui.sceneObjectSelected = nullptr;
+			}
+		}
+		delete scene->sceneObjects.at(scene->markedForDeletion.front());
+		scene->sceneObjects.erase(scene->markedForDeletion.front());
+		scene->markedForDeletion.erase(scene->markedForDeletion.begin());
+	}
 
+	//// TODO: Actual draw/update loop
 	scene->renderSystem->projection = projection;
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);

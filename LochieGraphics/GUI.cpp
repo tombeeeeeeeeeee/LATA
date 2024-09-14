@@ -194,6 +194,7 @@ void GUI::HierarchyMenu()
 
 void GUI::TransformTree(SceneObject* sceneObject)
 {
+	std::string tag = std::to_string(sceneObject->GUID);
 	ImGuiTreeNodeFlags nodeFlags = baseNodeFlags;
 	if (sceneObjectSelected == sceneObject) {
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
@@ -202,10 +203,21 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	if (!hasChildren) {
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
-	bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + PointerToString(sceneObject)).c_str(), nodeFlags);
-	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
+	bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + tag).c_str(), nodeFlags);
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsItemToggledOpen()) {
 		sceneObjectSelected = sceneObject;
+		std::cout << "Changed gui select!\n";
 	}
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+		ImGui::OpenPopup(("SceneObjectRightClickPopUp##" + tag).c_str());
+	}
+	if (ImGui::BeginPopup(("SceneObjectRightClickPopUp##" + tag).c_str())) {
+		if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
+			scene->DeleteSceneObject(sceneObject->GUID);
+		}
+		ImGui::EndPopup();
+	}
+
 
 	TransformDragDrop(sceneObject);
 
