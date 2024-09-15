@@ -7,6 +7,8 @@
 
 #include "ResourceManager.h"
 
+#include "ImGuizmo.h"
+
 #include <iostream>
 
 using Utilities::PointerToString;
@@ -68,6 +70,49 @@ void GUI::Update()
 	for (auto& i : ResourceManager::materials)
 	{
 		i.second.ModalGUI();
+	}
+
+	// Transform GIZMO
+	if (sceneObjectSelected) {
+		// TODO: This should be somewhere else
+		ImGuizmo::SetOrthographic(SceneManager::scene->camera->InOrthoMode());
+
+		ImGuiIO& io = ImGui::GetIO();
+		//SceneManager
+		// TODO: should be moving window stuff out of scenemanager directly
+		// TODO: There should be a window pos change callback, should justbe stored somewhere
+		int xOffset, yOffset;
+		glfwGetWindowPos(SceneManager::window, &xOffset, &yOffset);
+		ImGuizmo::SetRect(xOffset, yOffset, io.DisplaySize.x, io.DisplaySize.y);
+		glm::mat4 editMatrix = sceneObjectSelected->transform()->getGlobalMatrix();
+		if (ImGuizmo::Manipulate(&SceneManager::view[0][0], &SceneManager::projection[0][0], ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD, &editMatrix[0][0])) {
+			glm::vec3 pos = {};
+			glm::vec3 rot = {};
+			glm::vec3 scl = {};
+			// TODO: Use own function
+			ImGuizmo::DecomposeMatrixToComponents(&editMatrix[0][0], &pos.x, &rot.x, &scl.x);
+			Transform* t = sceneObjectSelected->transform();
+			// TODO: THis might break for children need to be doing stuff in local
+			t->setPosition(pos);
+			t->setEulerRotation(rot);
+			t->setScale(scl);
+		}
+
+		//if (!io.WantCaptureKeyboard) {
+		//	if (glfwGetKey(SceneManager::window, GLFW_KEY_L)) {
+		//		Transform* t = &SceneManager::scene->camera->transform;
+		//		glm::mat4 newCam = glm::lookAt(t->getGlobalPosition(), sceneObjectSelected->transform()->getGlobalPosition(), { 0.0f, 1.0f, 0.0f });
+		//		// TODO: Own function would be good
+		//		glm::vec3 pos = {};
+		//		glm::vec3 rot = {};
+		//		glm::vec3 scl = {};
+		//		// TODO: Use own function
+		//		ImGuizmo::DecomposeMatrixToComponents(&newCam[0][0], &pos.x, &rot.x, &scl.x);
+		//		t->setPosition(pos);
+		//		t->setEulerRotation(rot);
+		//		t->setScale(scl);
+		//	}
+		//}
 	}
 }
 

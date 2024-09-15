@@ -5,6 +5,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "ImGuizmo.h"
 #include "ImGuiStyles.h"
 
 #include <iostream>
@@ -25,6 +26,10 @@ float SceneManager::lastX = 600;
 float SceneManager::lastY = 400;
 bool SceneManager::firstMouse = true;
 bool SceneManager::lockedCamera = true; // TODO: better names for these variables that change input mode
+
+glm::mat4 SceneManager::view = {};
+glm::mat4 SceneManager::projection = {};
+glm::mat4 SceneManager::viewProjection = {};
 
 SceneManager::SceneManager(Scene* _scene)
 {
@@ -203,11 +208,11 @@ void SceneManager::Update()
 	ProcessInput(window);
 	float orthoWidth = camera.getOrthoWidth();
 	float orthoHeight = camera.getOrthoHeight();
-	glm::mat4 projection = camera.InOrthoMode() ?
+	projection = camera.InOrthoMode() ?
 		glm::ortho(-orthoWidth/2.0f, orthoWidth / 2.0f, -orthoHeight / 2.0f, orthoHeight / 2.0f, camera.nearPlane, camera.farPlane) :
 		glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, camera.nearPlane, camera.farPlane);
-	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 viewProjection = projection * view;
+	view = camera.GetViewMatrix();
+	viewProjection = projection * view;
 
 	// Delete sceneobjects marked for deletion
 	while (!scene->markedForDeletion.empty())
@@ -232,6 +237,7 @@ void SceneManager::Update()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGuizmo::BeginFrame();
 	
 	scene->renderSystem->lines.Clear();
 	scene->Update(deltaTime);
@@ -255,7 +261,6 @@ void SceneManager::Update()
 	}
 	scene->Draw();
 	scene->gui.Update();
-
 	ImGui::Render();
 
 	// TODO: remove if if not needed

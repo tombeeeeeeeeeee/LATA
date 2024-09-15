@@ -31,6 +31,11 @@ public:
 
 	static GLFWwindow* window;
 	static Scene* scene;
+
+	static glm::mat4 projection;
+	static glm::mat4 view;
+	static glm::mat4 viewProjection;
+
 private:
 	// TODO: Perhaps variables that need to be accessed by both the scene and scene manager class should be in a seperate class (such as these window height/width)
 
