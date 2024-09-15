@@ -31,6 +31,11 @@ public:
 
 	static GLFWwindow* window;
 	static Scene* scene;
+
+	static glm::mat4 projection;
+	static glm::mat4 view;
+	static glm::mat4 viewProjection;
+
 private:
 	// TODO: Perhaps variables that need to be accessed by both the scene and scene manager class should be in a seperate class (such as these window height/width)
 
@@ -39,6 +44,7 @@ private:
 	static unsigned int windowWidth;
 	static unsigned int windowHeight;
 
+	// TODO: Should prob be static
 	Skybox* defaultSkybox = nullptr;
 
 	// Callbacks //TODO: change how these functions are called, look at other examples on how callbacks can be handled
@@ -54,6 +60,8 @@ private:
 
 
 	static void ProcessInput(GLFWwindow* window);
+	static void ProcessKeyboardInput(GLFWwindow* window);
+	static void ProcessMouseInput(GLFWwindow* window);
 	static void ToggleFullscreen(); // TODO: fullscreen for correct monitor and remember size and pos
 	
 public:

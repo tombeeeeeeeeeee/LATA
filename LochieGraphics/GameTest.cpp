@@ -33,7 +33,7 @@ void GameTest::Start()
 
 	hRb = new RigidBody();
 	hRb->setMass(1.0f);
-	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, hRadius)});
+	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, hRadius, CollisionLayers::sync)});
 	hRb->setMomentOfInertia(5.0f);
 
 	rRb = new RigidBody();
@@ -43,7 +43,7 @@ void GameTest::Start()
 				{40.0f, -40.0f},
 				{-40.0f, -40.0f},
 				{-40.0f, 40.0f},
-			}, 0.0f) }
+			}, 0.0f, CollisionLayers::ecco) }
 	);
 	rRb->setMass(0.1f);
 	rRb->setMomentOfInertia(5.0f);
@@ -85,6 +85,7 @@ void GameTest::Start()
 	r->name = "Ecco";
 	h->name = "Sync";
 
+	sync->Start(&shaders);
 
 	SceneObject* newSceneObject = new SceneObject(this);
 	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, true);
@@ -118,6 +119,8 @@ void GameTest::Start()
 	enemySystem.Start();
 	enemySystem.InitialiseMelee(sceneObjects, 10);
 	enemySystem.InitialiseRanged(sceneObjects, 10);
+
+	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 }
 
 void GameTest::Update(float delta)
@@ -150,7 +153,9 @@ void GameTest::Update(float delta)
 					*input.inputDevices[0],
 					*h->transform(),
 					*h->rigidbody(),
-					delta
+					&renderSystem->lines,
+					delta,
+					camera->transform.getEulerRotation().y
 				);
 			}
 			else
@@ -159,7 +164,8 @@ void GameTest::Update(float delta)
 					*input.inputDevices[0],
 					*r->transform(),
 					*r->rigidbody(),
-					delta
+					delta,
+					camera->transform.getEulerRotation().y
 				);
 			}
 		}
@@ -172,7 +178,8 @@ void GameTest::Update(float delta)
 				*input.inputDevices[0],
 				*r->transform(),
 				*r->rigidbody(),
-				delta
+				delta,
+				camera->transform.getEulerRotation().y
 			);
 
 			if (input.inputDevices.size() > 1)
@@ -181,7 +188,9 @@ void GameTest::Update(float delta)
 					*input.inputDevices[1],
 					*h->transform(),
 					*h->rigidbody(),
-					delta
+					&renderSystem->lines,
+					delta,
+					camera->transform.getEulerRotation().y
 				);
 			}
 		}

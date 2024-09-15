@@ -42,11 +42,12 @@ public:
 	// TODO: There is types of animators, don't think its safe to store them like this
 	std::unordered_map<unsigned long long, Animator> animators = {};
 	std::unordered_map<unsigned long long, RigidBody> rigidBodies = {};
-	// TODO: Same as above with animators, data would be lost?
-	std::unordered_map<unsigned long long, Collider> colliders = {};
+	std::unordered_map<unsigned long long, Collider*> colliders = {};
 	std::unordered_map<unsigned long long, Health> healths = {};
 	std::unordered_map<unsigned long long, Enemy> enemies = {};
 	std::vector<Light*> lights = {};
+
+	std::vector<unsigned long long> markedForDeletion = {};
 
 	Ecco* ecco = nullptr;
 	Sync* sync = nullptr;
@@ -62,12 +63,12 @@ public:
 	RenderSystem* renderSystem;
 
 	virtual void Start() {};
-	virtual void EarlyUpdate() {};
 	virtual void Update(float delta) {};
 	virtual void Draw() {};
 	virtual void OnMouseDown() {};
 	virtual void OnKeyDown(int key, int action) {};
 	virtual void OnKey(int key, int action) {};
+
 	// TODO: Maybe move some of the GUI code that is in the GUI class here
 	void BaseGUI();
 	virtual void GUI() {};
@@ -84,6 +85,7 @@ public:
 	virtual void Save();
 	virtual void Load();
 
+	void DeleteSceneObject(unsigned long long GUID);
 protected:
 
 	void DeleteAllSceneObjects();

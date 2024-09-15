@@ -63,7 +63,6 @@ void Scene::Save()
 		savedLights.push_back((*i)->Serialise());
 	}
 
-	// TODO: Save Ecco & Sync
 	
 	file << toml::table{
 		{ "WindowName", windowName},
@@ -124,6 +123,11 @@ void Scene::Load()
 	file.close();
 }
 
+void Scene::DeleteSceneObject(unsigned long long GUID)
+{
+	markedForDeletion.push_back(GUID);
+}
+
 void Scene::DeleteAllSceneObjects()
 {
 	while (!sceneObjects.empty())
@@ -155,7 +159,9 @@ toml::table Scene::SaveSceneObjectsAndParts()
 	SavePart(transforms);
 	SavePart(animators);
 	SavePart(rigidBodies);
-	SavePart(colliders);
+	auto savedcolliders = toml::array(); for (auto i = colliders.begin(); i != colliders.end(); i++) {
+		savedcolliders.push_back(i->second->Serialise(i->first));
+	};
 	SavePart(healths);
 
 	return toml::table{
@@ -191,7 +197,15 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(animators, "Animators", Animator);
 	LoadPart(rigidBodies, "RigidBodies", RigidBody);
 	// TODO: Fix for colliders
-	//LoadPart(colliders, "Colliders", Collider);
+	
+
+	toml::array* loadingColliders = data["Colliders"].as_array(); 
+	for (int i = 0; i < loadingColliders->size(); i++) {
+		toml::table* loadingCollider = loadingColliders->at(i).as_table();
+		// TODO: UNCOMMENT
+		//colliders[Serialisation::LoadAsUnsignedLongLong((*loadingCollider)["guid"])] = Collider::Load(*loadingCollider);
+	};
+	
 	LoadPart(healths, "Healths", Health);
 	*ecco = Ecco(*data["Ecco"].as_table());
 	*sync = Sync(*data["Sync"].as_table());

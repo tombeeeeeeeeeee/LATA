@@ -266,7 +266,12 @@ void Texture::EditorGUI(std::vector<Texture*>& textures)
 	}
 }
 
-std::string Texture::getDisplayName()
+Texture::operator std::string() const
+{
+	return getDisplayName();
+}
+
+std::string Texture::getDisplayName() const
 {
 	// TODO just the filename
 	return path + " " + std::to_string(GUID);

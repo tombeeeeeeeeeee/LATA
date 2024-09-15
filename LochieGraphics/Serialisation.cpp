@@ -1,4 +1,4 @@
-#define TOML_IMPLEMENTATION
+#define TOML_IMPLEMENTATION 1
 #include "Serialisation.h"
 
 
@@ -52,6 +52,11 @@ std::string Serialisation::LoadAsString(toml::node& toml)
 int Serialisation::LoadAsInt(toml::v3::node_view<toml::v3::node> toml)
 {
     return toml.as_integer()->value_or<int>(0);
+}
+
+int Serialisation::LoadAsInt(toml::node* toml)
+{
+    return toml->as_integer()->value_or<int>(0);
 }
 
 float Serialisation::LoadAsFloat(toml::v3::node_view<toml::v3::node> toml)

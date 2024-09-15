@@ -6,6 +6,7 @@
 #include "EditorGUI.h"
 
 #include <iostream>
+#include <sstream>
 
 SceneObject* Transform::getSceneObject() const
 {
@@ -187,8 +188,6 @@ void Transform::setPosition(glm::vec3 pos)
 {
 	position = pos;
 	UpdateGlobalMatrixCascading();
-
-
 }
 
 glm::vec3 Transform::forward() const
@@ -234,7 +233,27 @@ void Transform::GUI()
 	if (!ImGui::CollapsingHeader(("Transform##" + tag).c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 		return;
 	}
-
+	ImGui::OpenPopupOnItemClick(("Right Click##" + tag).c_str(), ImGuiPopupFlags_MouseButtonRight);
+	if (ImGui::BeginPopup(("Right Click##" + tag).c_str())) {
+		if (ImGui::MenuItem(("Reset##" + tag).c_str())) {
+			setPosition({ 0.0f, 0.0f, 0.0f });
+			setEulerRotation({ 0.0f, 0.0f, 0.0f });
+			setScale({ 1.0f, 1.0f, 1.0f });
+		}
+		if (ImGui::MenuItem(("Copy##" + tag).c_str())) {
+			std::stringstream clipboard;
+			clipboard << Serialise(0);
+			ImGui::SetClipboardText(clipboard.str().c_str());
+			ImGui::CloseCurrentPopup();
+		}
+		if (ImGui::MenuItem(("Paste##" + tag).c_str())) {
+			std::string clipboard = ImGui::GetClipboardText();
+			toml::table data = toml::parse(clipboard);
+			*this = Transform(data);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 
 	if(ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f))
 	{

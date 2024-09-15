@@ -1,5 +1,7 @@
 #include "EnemySystem.h"
 #include "Enemy.h"
+#include "State.h"
+#include "Condition.h"
 #include "Transform.h"
 #include "RigidBody.h"
 #include "SceneObject.h"
@@ -14,20 +16,14 @@ EnemySystem::EnemySystem()
 
 void EnemySystem::Start()
 {
-    Material* meleeEnemyMaterial = ResourceManager::LoadMaterial("meleeEnemy", SceneManager::scene->shaders[super]);
-    meleeEnemyMaterial->AddTextures(std::vector<Texture*>{
-        ResourceManager::LoadTexture(meleeEnemyMaterialPath, Texture::Type::albedo, GL_REPEAT, true)
-    });
+    Material* meleeEnemyMaterial = ResourceManager::defaultMaterial;
 
     meleeEnemyRenderer = new ModelRenderer(
         ResourceManager::LoadModel(meleeEnemyModel),
         meleeEnemyMaterial
     );
 
-    Material* rangedEnemyMaterial = ResourceManager::LoadMaterial("rangedEnemy", SceneManager::scene->shaders[super]);
-    rangedEnemyMaterial->AddTextures(std::vector<Texture*>{
-        ResourceManager::LoadTexture(rangedEnemyMaterialPath, Texture::Type::albedo, GL_REPEAT, true)
-    });
+    Material* rangedEnemyMaterial = ResourceManager::defaultMaterial;
 
     rangedEnemyRenderer = new ModelRenderer(
         ResourceManager::LoadModel(rangedEnemyModel),
@@ -135,6 +131,26 @@ void EnemySystem::Update(
     SceneObject* ecco, SceneObject* sync, float delta
 )
 {
+    for (auto& enemyPair : enemies)
+    {
+        Enemy& enemy = enemyPair.second;
+        SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
+        State* newState = nullptr;
+
+        // check the current state's transitions
+        for (auto& t : enemy.state->transitions)
+            if (t.condition->IsTrue(agent)) newState = t.targetState;
+
+
+        if (newState != nullptr && newState != enemy.state)
+        {
+            enemy.state->Exit(agent);
+            enemy.state = newState;
+            enemy.state->Enter(agent);
+        }
+
+        enemy.state->Update(agent);
+    }
 }
 
 std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count)

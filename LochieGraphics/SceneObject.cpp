@@ -26,8 +26,6 @@ SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation
 	scene->sceneObjects[GUID] = this;
 }
 
-
-
 SceneObject::~SceneObject()
 {
 	// TODO: Make sure we want to this this here
@@ -160,7 +158,6 @@ SceneObject::SceneObject(Scene* _scene, toml::table* table) :
 	scene->sceneObjects[GUID] = this;
 }
 
-
 void SceneObject::setTransform(Transform* transform)
 {
 	scene->transforms[GUID] = (*transform);
@@ -171,76 +168,45 @@ Transform* SceneObject::transform() const
 	return &(scene->transforms[GUID]);
 }
 
-void SceneObject::setRenderer(ModelRenderer* renderer)
-{
-	if (renderer)
-	{
-		parts |= Parts::modelRenderer;
-		// TODO: Ensure that this isn't leaking memory and is alright
-		scene->renderers[GUID] = *renderer;
+#define setPart(part, container, enumValue)                     \
+	if (part) {                                                 \
+		parts |= enumValue;                                     \
+ /*TODO: Ensure that this isn't leaking memory and is alright*/ \
+		scene->container[GUID] = *part;                         \
+	}                                                           \
+	else {                                                      \
+		parts &= ~enumValue;                                    \
+		scene->container.erase(GUID);                           \
 	}
-	else
-	{
-		parts &= ~Parts::modelRenderer;
-		scene->renderers.erase(GUID);
-	}
+
+#define getPart(container, enumValue)     \
+	if (parts & enumValue) {              \
+		return &(scene->container[GUID]); \
+	}                                     \
+	return nullptr
+
+#define SetAndGetForPart(Type, container, enumValue, nameInSet, nameInGet) \
+void SceneObject::set##nameInSet(Type* part)                               \
+{                                                                          \
+	setPart(part, container, enumValue);                                   \
+}                                                                          \
+Type * SceneObject::##nameInGet()                                          \
+{                                                                          \
+	getPart(container, enumValue);                                         \
 }
 
-ModelRenderer* SceneObject::renderer()
-{
-	if (parts & Parts::modelRenderer)
-		return &(scene->renderers[GUID]);
-	return nullptr;
-}
-
-void SceneObject::setAnimator(Animator* animator)
-{
-	if (animator)
-	{
-		parts |= Parts::animator;
-		scene->animators[GUID] = *animator;
-	}
-	else
-	{
-		parts &= ~Parts::animator;
-		scene->animators.erase(GUID);
-	}
-}
-
-Animator* SceneObject::animator()
-{
-	if (parts & Parts::animator)
-		return &(scene->animators[GUID]);
-	return nullptr;
-}
-
-void SceneObject::setRigidBody(RigidBody* rb)
-{
-	if (rb)
-	{
-		parts |= Parts::rigidBody;
-		scene->rigidBodies[GUID] = *rb;
-	}
-	else
-	{
-		parts &= ~Parts::rigidBody;
-		scene->rigidBodies.erase(GUID);
-	}
-}
-
-RigidBody* SceneObject::rigidbody()
-{
-	if (parts & Parts::rigidBody)
-		return &(scene->rigidBodies[GUID]);
-	return nullptr;
-}
+SetAndGetForPart(ModelRenderer, renderers, Parts::modelRenderer, Renderer, renderer)
+SetAndGetForPart(Animator, animators, Parts::animator, Animator, animator)
+SetAndGetForPart(RigidBody, rigidBodies, Parts::rigidBody, RigidBody, rigidbody)
+SetAndGetForPart(Health, healths, Parts::health, Health, health)
+SetAndGetForPart(Enemy, enemies, Parts::enemy, Enemy, enemy)
 
 void SceneObject::setCollider(Collider* collider)
 {
 	if (collider)
 	{
 		parts |= Parts::collider;
-		scene->colliders[GUID] = *collider;
+		scene->colliders[GUID] = collider;
 	}
 	else
 	{
@@ -252,7 +218,7 @@ void SceneObject::setCollider(Collider* collider)
 Collider* SceneObject::collider()
 {
 	if (parts & Parts::collider)
-		return &(scene->colliders[GUID]);
+		return (scene->colliders[GUID]);
 	return nullptr;
 }
 
@@ -314,48 +280,6 @@ Sync* SceneObject::sync() const
 	if (parts & Parts::sync)
 		return scene->sync;
 	else return nullptr;
-}
-
-void SceneObject::setHealth(Health* health)
-{
-	if (health)
-	{
-		parts |= Parts::health;
-		scene->healths[GUID] = *health;
-	}
-	else
-	{
-		parts &= ~Parts::health;
-		scene->healths.erase(GUID);
-	}
-}
-
-Health* SceneObject::health()
-{
-	if (parts & Parts::health)
-		return &(scene->healths[GUID]);
-	return nullptr;
-}
-
-void SceneObject::setEnemy(Enemy* enemy)
-{
-	if (enemy)
-	{
-		parts |= Parts::enemy;
-		scene->enemies[GUID] = *enemy;
-	}
-	else
-	{
-		parts &= ~Parts::enemy;
-		scene->enemies.erase(GUID);
-	}
-}
-
-Enemy* SceneObject::enemy()
-{
-	if (parts & Parts::enemy)
-		return &(scene->enemies[GUID]);
-	return nullptr;
 }
 
 void SceneObject::ClearParts()

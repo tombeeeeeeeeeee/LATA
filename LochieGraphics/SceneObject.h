@@ -61,6 +61,7 @@ public:
 
 #pragma region Part Get and Set
 
+	// TODO: Consider getting rid of the setTransform?
 	void setTransform(Transform* transform);
 	Transform* transform() const;
 
@@ -74,6 +75,7 @@ public:
 	//Light* light();
 
 	void setRigidBody(RigidBody* rb);
+	// TODO: Should be a cap b to match the rest?
 	RigidBody* rigidbody();
 
 	void setCollider(Collider* collider);

@@ -1,4 +1,10 @@
 #pragma once
+#include "Maths.h"
+#include <vector>
+
+struct State;
+class SceneObject;
+struct Node;
 
 enum class EnemyType
 {
@@ -7,11 +13,14 @@ enum class EnemyType
 	other = 3,
 };
 
+
 struct Enemy
 {
-	float moveSpeed = 0.0f;
-	float detectionRange = 0.0f;
-	float damageAmount = 0.0f;
 	EnemyType type = EnemyType::basic;
+	State* state;
+	SceneObject* target;
+	glm::vec3 lastTargetPosition;
+	Node* currentNode;
+	std::vector<Node*> path;
 };
 

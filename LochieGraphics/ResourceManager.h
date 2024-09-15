@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "Model.h"
 #include "Mesh.h"
+#include "hashFNV1A.h"
 
 #include <random>
 
@@ -13,14 +14,6 @@
 //TODO: Maybe get shader without needing both the fragment and vertex shader, it could just find them both if they have the same name and just differing extension or custom file format that stores the name of the others
 class ResourceManager {
 public:
-	// TODO: Consider moving this to it's own seperate file
-	struct hashFNV1A {
-		static const unsigned long long offset;
-		static const unsigned long long prime;
-		unsigned long long operator()(unsigned long long key) const;
-		unsigned long long operator()(std::string key) const;
-		unsigned long long operator()(std::pair<int, int> key) const;
-	};
 	// TODO: Make resources be gathered from a GUID
 	static Shader* LoadShader(std::string vertexPath, std::string fragmentPath, int flags = 0);
 	static Shader* LoadShader(std::string sharedName, int flags = 0);
@@ -43,15 +36,17 @@ public:
 	static Model* GetModel(unsigned long long GUID);
 	static Mesh* GetMesh(unsigned long long GUID);
 	// TODO: Remove this nullptr default for the shader reference, a material can't really exist without a shader
+	// TODO: Should really be called create instead of load
 	static Material* LoadMaterial(std::string name, Shader* shader = nullptr);
+	static Material* LoadDefaultMaterial();
 
 	static std::unordered_map<unsigned long long, Material, hashFNV1A>& getMaterials();
 
 	static bool TextureSelector(std::string label, Texture** texture, bool showNull = true);
 	static bool ShaderSelector(std::string label, Shader** shader, bool showNull = false);
-	static bool MaterialSelector(std::string label, Material** material, Shader* newMaterialShader = nullptr, bool showCreateButton = false, bool showNull = true);
+	static bool MaterialSelector(std::string label, Material** material, Shader* newMaterialShader = nullptr, bool showNull = true);
 	static bool ModelSelector(std::string label, Model** model, bool showNull = true);
-	static std::string filter;
+	static bool ModelAssetSelector(std::string label, Model** model);
 
 	static unsigned long long guidCounter;
 	static std::random_device guidRandomiser;

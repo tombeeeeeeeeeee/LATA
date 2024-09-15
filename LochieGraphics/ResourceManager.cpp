@@ -1,23 +1,26 @@
 #include "ResourceManager.h"
 
 #include "SceneManager.h"
+#include "Paths.h"
 
 #include "Serialisation.h"
 
 #include "Utilities.h"
 
-#include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
 
+#include <fstream>
+#include <filesystem>
 #include <iostream>
 #include <chrono>
 
 using Utilities::PointerToString;
 
-std::unordered_map<unsigned long long, Texture, ResourceManager::hashFNV1A> ResourceManager::textures;
-std::unordered_map<unsigned long long, Shader, ResourceManager::hashFNV1A> ResourceManager::shaders;
-std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A> ResourceManager::materials;
-std::unordered_map<unsigned long long, Model, ResourceManager::hashFNV1A> ResourceManager::models;
-std::unordered_map<unsigned long long, Mesh, ResourceManager::hashFNV1A> ResourceManager::meshes;
+std::unordered_map<unsigned long long, Texture, hashFNV1A> ResourceManager::textures;
+std::unordered_map<unsigned long long, Shader, hashFNV1A> ResourceManager::shaders;
+std::unordered_map<unsigned long long, Material, hashFNV1A> ResourceManager::materials;
+std::unordered_map<unsigned long long, Model, hashFNV1A> ResourceManager::models;
+std::unordered_map<unsigned long long, Mesh, hashFNV1A> ResourceManager::meshes;
 
 Texture* ResourceManager::defaultTexture = nullptr;
 Shader* ResourceManager::defaultShader = nullptr;
@@ -27,43 +30,6 @@ Mesh* ResourceManager::defaultMesh = nullptr;
 
 unsigned long long ResourceManager::guidCounter = 100;
 std::random_device ResourceManager::guidRandomiser = {};
-
-const unsigned long long ResourceManager::hashFNV1A::offset = 14695981039346656037;
-const unsigned long long ResourceManager::hashFNV1A::prime = 1099511628211;
-
-
-std::string ResourceManager::filter = "";
-
-
-unsigned long long ResourceManager::hashFNV1A::operator()(unsigned long long key) const
-{
-	unsigned long long hash = offset;
-	hash ^= key;
-	hash *= prime;
-	return hash;
-}
-
-unsigned long long ResourceManager::hashFNV1A::operator()(std::string key) const
-{
-	unsigned long long hash = offset;
-	for (auto i = 0; i < key.size(); i++)
-	{
-		hash ^= key[i];
-		hash *= prime;
-	}
-	return hash;
-}
-
-unsigned long long ResourceManager::hashFNV1A::operator()(std::pair<int, int> key) const
-{
-	unsigned long long hash = offset;
-	hash ^= key.first;
-	hash *= prime;
-	hash ^= key.second;
-	hash *= prime;
-	return hash;
-}
-
 
 #define LoadResource(type, collection, ...)                             \
 type newResource = type(__VA_ARGS__ );                                  \
@@ -75,6 +41,7 @@ Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragment
 	LoadResource(Shader, shaders, vertexPath, fragmentPath, flags);
 }
 
+// TODO: These paths and extensions should be in the Paths.h
 Shader* ResourceManager::LoadShader(std::string sharedName, int flags)
 {
 	LoadResource(Shader, shaders, "shaders/" + sharedName + ".vert", "shaders/" + sharedName + ".frag", flags);
@@ -103,8 +70,18 @@ Model* ResourceManager::LoadModel(std::string path)
 Model* ResourceManager::LoadModelAsset(std::string path)
 {
 	std::ifstream file(path);
+	if (!file) {
+		std::cout << "Failed to find model, attempted at path: " << path << '\n';
+		return nullptr;
+	}
 	toml::table data = toml::parse(file);
-	Model newResource = Model(data); 
+	unsigned long long loadingGUID = Serialisation::LoadAsUnsignedLongLong(data["guid"]);
+	auto search = models.find(loadingGUID);
+	if (search != models.end()) {
+		return &search->second;
+	}
+	Model newResource = Model(data);
+	file.close();
 	return &models.emplace(newResource.GUID, newResource).first->second;
 }
 
@@ -154,112 +131,69 @@ Material* ResourceManager::LoadMaterial(std::string name, Shader* shader)
 	LoadResource(Material, materials, name, shader);
 }
 
-std::unordered_map<unsigned long long, Material, ResourceManager::hashFNV1A>& ResourceManager::getMaterials()
+Material* ResourceManager::LoadDefaultMaterial()
+{
+	LoadResource(Material, materials, "New Material", defaultShader);
+}
+
+std::unordered_map<unsigned long long, Material, hashFNV1A>& ResourceManager::getMaterials()
 {
 	return materials;
 }
 
-static int TextSelected(ImGuiInputTextCallbackData* data) {
-	*((bool*)data->UserData) = true;
-	return 0;
-}
-
-#define OPENMODAL
-
-#define GuidSelector(type, collection, selector, ...)                                           \
-	bool returnBool = false;                                                                    \
-	std::string displayName;                                                                    \
-	if (selector != nullptr) {                                                                  \
-		displayName = selector->getDisplayName();                                               \
-	}                                                                                           \
-	else {                                                                                      \
-		displayName = "None";                                                                   \
-	}                                                                                           \
-	std::vector <std::pair<std::string, type *>> filteredType;                                  \
-                                                                                                \
-	bool textSelected = false;                                                                  \
-	/*TODO: Text based input instead of button prompt, the pop up should appear while typing*/  \
-	ImGui::InputText((label + "##" + tag).c_str(), &displayName,                                \
-		ImGuiInputTextFlags_CallbackAlways |                                                    \
-		ImGuiInputTextFlags_AutoSelectAll,                                                      \
-		TextSelected, &textSelected);                                                           \
-	std::string popupName = (label + "##" + tag).c_str();							            \
-	if (textSelected) {																			\
-		ImGui::OpenPopup(popupName.c_str(), ImGuiPopupFlags_NoReopen);							\
-	}																							\
-																								\
-	if (!ImGui::BeginPopup(popupName.c_str())) {												\
-		return false;    																		\
-	}																							\
-	/* Popup has began*/																		\
-	ImGui::SetKeyboardFocusHere();                                                              \
-	ImGui::InputText(("Search##" + tag).c_str(), &filter);					                    \
-																								\
-for (auto& i : collection)																		\
-{																								\
-	std::string name = i.second.getDisplayName();												\
-	if (Utilities::ToLower(name).find(Utilities::ToLower(filter)) != std::string::npos) {	    \
-		filteredType.push_back(std::pair<std::string, type*>{ name, & i.second});	        	\
-	}																							\
-}																								\
-																								\
-																								\
-if (showCreateButton) {																			\
-	if (ImGui::MenuItem(("CREATE NEW " + std::string(#type) + "##" + label).c_str(), "", false)) { \
-		selector = ResourceManager::Load##type("New " + std::string(#type), __VA_ARGS__);       \
-		selector->OpenModal();                                                                  \
-        returnBool = true;                                                                      \
-	}																							\
-}																								\
-if (showNull) {                                                                                 \
-	if (ImGui::MenuItem(("None 0##" + label).c_str(), "", false)) {                             \
-		selector = nullptr;                                                                     \
-		returnBool = true;                                                                      \
-	}                                                                                           \
-}                                                                                               \
-																								\
-for (auto& i : filteredType)																	\
-{																								\
-	bool selected = false;																		\
-	if (i.second == selector) {																	\
-		selected = true;																		\
-	}																							\
-	if (ImGui::MenuItem((i.second->getDisplayName() + "##" + label).c_str(), "", selected)) {	\
-		if (selector != i.second) {                                                             \
-			selector = i.second;																\
-			returnBool = true;                                                                  \
-		}                                                                                       \
-	}																							\
-}																								\
-																								\
-ImGui::EndPopup();																				\
-return returnBool;
+#define ResourceSelector(Type, selector, createFunction)    \
+	std::string tag = Utilities::PointerToString(selector); \
+	std::vector<Type*> pointers;                            \
+	for (auto& i : ##selector##s)                           \
+	{                                                       \
+		pointers.push_back(&i.second);                      \
+	}                                                       \
+	return ExtraEditorGUI::InputSearchBox(pointers.begin(), pointers.end(), selector, #Type, tag, showNull, createFunction)
 
 
 bool ResourceManager::TextureSelector(std::string label, Texture** texture, bool showNull)
 {
-	bool showCreateButton = false;
-	std::string tag = Utilities::PointerToString(texture);
-	GuidSelector(Texture, textures, (*texture), Texture::Type::count)
+	ResourceSelector(Texture, texture, (Texture * (*)())nullptr);
 }
 
 bool ResourceManager::ShaderSelector(std::string label, Shader** shader, bool showNull)
 {
-	bool showCreateButton = false;
-	std::string tag = Utilities::PointerToString(shader);
-	GuidSelector(Shader, shaders, (*shader))
+	ResourceSelector(Shader, shader, (Shader*(*)())nullptr);
 }
 
-bool ResourceManager::MaterialSelector(std::string label, Material** material, Shader* newMaterialShader, bool showCreateButton, bool showNull) {
-	std::string tag = Utilities::PointerToString(material);
-	GuidSelector(Material, materials, (*material), newMaterialShader)
+bool ResourceManager::MaterialSelector(std::string label, Material** material, Shader* newMaterialShader, bool showNull)
+{
+	ResourceSelector(Material, material, LoadDefaultMaterial);
 }
 
 bool ResourceManager::ModelSelector(std::string label, Model** model, bool showNull)
 {
-	bool showCreateButton = false;
+	ResourceSelector(Model, model, (Model * (*)())nullptr);
+}
+
+bool ResourceManager::ModelAssetSelector(std::string label, Model** model)
+{
 	std::string tag = Utilities::PointerToString(model);
-	GuidSelector(Model, models, (*model))
+	std::vector<std::string> paths;
+	std::vector<std::string*> pointers;
+	std::string* modelPath = nullptr;
+	for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation)) {
+		paths.push_back(Utilities::FilenameFromPath(i.path().string(), false));
+	}
+	for (size_t i = 0; i < paths.size(); i++)
+	{
+		pointers.push_back(&paths.at(i));
+		if (*model) {
+			if (Utilities::FilenameFromPath((*model)->path, false) == paths.at(i)) {
+				modelPath = pointers.back();
+			}
+		}
+	}
+	if (ExtraEditorGUI::InputSearchBox(pointers.begin(), pointers.end(), &modelPath, "Model", tag, false)) {
+		*model = LoadModelAsset(Paths::modelSaveLocation + *modelPath + Paths::modelExtension);
+		return true;
+	}
+	return false;
 }
 
 #define GetResource(type, collection)                    \

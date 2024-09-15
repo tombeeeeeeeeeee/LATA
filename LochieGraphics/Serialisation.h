@@ -5,7 +5,7 @@
 
 #include <string>
 
-#define TOML_HEADER_ONLY 1
+#define TOML_HEADER_ONLY 0
 #include "toml.hpp"
 
 
@@ -21,6 +21,7 @@ public:
 	static std::string LoadAsString(toml::v3::node_view<toml::v3::node> toml);
 	static std::string LoadAsString(toml::node& toml);
 	static int LoadAsInt(toml::v3::node_view<toml::v3::node> toml);
+	static int LoadAsInt(toml::node* toml);
 	static float LoadAsFloat(toml::v3::node_view<toml::v3::node> toml);
 	static float LoadAsFloat(toml::node& toml);
 	static glm::quat LoadAsQuaternion(toml::node_view<toml::node> toml);

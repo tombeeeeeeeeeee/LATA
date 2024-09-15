@@ -23,6 +23,7 @@ public:
 	bool showHierarchy = false;
 	bool showSceneObject = false;
 	bool showLightMenu = false;
+	bool showImguiExampleMenu = false;
 private:
 
 	ImGuiWindowFlags defaultWindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize;

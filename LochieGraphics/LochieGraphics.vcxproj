@@ -291,6 +291,9 @@
     <ClCompile Include="..\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="..\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\imgui\imgui_widgets.cpp" />
+    <None Include="..\Shaders\paintedNormals.frag">
+      <FileType>Document</FileType>
+    </None>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="ArtScene.cpp" />
@@ -306,14 +309,17 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemySystem.cpp" />
     <ClCompile Include="eNetTest.cpp" />
+    <ClCompile Include="ExtraEditorGUI.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GamePlayCameraSystem.cpp" />
     <ClCompile Include="GameTest.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="hashFNV1A.cpp" />
     <ClCompile Include="Health.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImGuiStyles.cpp" />
+    <ClCompile Include="ImGuizmo.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="InputTest.cpp" />
     <ClCompile Include="LevelEditor.cpp" />
@@ -340,10 +346,18 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="Serialisation.cpp" />
+    <ClInclude Include="BlastLine.h" />
+    <ClInclude Include="Condition.h" />
+    <ClInclude Include="EditorGUI.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemySystem.h" />
+    <ClInclude Include="ExtraEditorGUI.h" />
+    <ClInclude Include="hashFNV1A.h" />
     <ClInclude Include="Health.h" />
+    <ClInclude Include="Hit.h" />
+    <ClInclude Include="ImGuizmo.h" />
     <ClInclude Include="LevelEditor.h" />
+    <ClInclude Include="Paths.h" />
     <ClInclude Include="Serialisation.h" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -356,6 +370,7 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Vertex.cpp" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\imgui\imconfig.h" />
@@ -424,6 +439,7 @@
     <ClInclude Include="ShaderEnum.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Spotlight.h" />
+    <ClInclude Include="State.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="Sync.h" />
@@ -460,6 +476,7 @@
     <None Include="..\Shaders\litNormal.vert" />
     <None Include="..\Shaders\oldShader.frag" />
     <None Include="..\Shaders\oldShader.vert" />
+    <None Include="..\Shaders\paintedNormals.vert" />
     <None Include="..\Shaders\pbr.frag" />
     <None Include="..\Shaders\pbr.vert" />
     <None Include="..\Shaders\prefilter.frag" />

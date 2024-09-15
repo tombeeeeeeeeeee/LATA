@@ -10,4 +10,5 @@ struct Collision
 	SceneObject* sceneObject;
 	glm::vec2 normal;
 	int collisionMask;
+	SceneObject* self;
 };

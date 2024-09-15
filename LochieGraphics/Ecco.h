@@ -23,7 +23,8 @@ public:
 		Input::InputDevice& inputDevice,
 		Transform& transform,
 		RigidBody& rigidBody,
-		float delta
+		float delta,
+		float cameraRotationDelta
 	);
 
 	void GUI();

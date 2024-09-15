@@ -12,26 +12,22 @@
 class LevelEditor : public Scene
 {
 private:
-
 	enum class BrushState {
 		none,
 		brush
 	};
-	BrushState state;
+	BrushState state = BrushState::none;
 
 	SceneObject* groundTileParent = new SceneObject(this, "Ground Tiles");
 	SceneObject* wallTileParent = new SceneObject(this, "Wall Tiles");
 
-	std::unordered_map<std::pair<int, int>, SceneObject*, ResourceManager::hashFNV1A> tiles = {};
+	std::unordered_map<std::pair<int, int>, SceneObject*, hashFNV1A> tiles = {};
 
-	Model* ground;
-	Model* wall;
+	Model* ground = nullptr;
+	Model* wall = nullptr;
 
 	unsigned int wallCount = 0;
 	unsigned int tileCount = 0;
-
-	glm::vec3 testPos1;
-	glm::vec3 testPos2;
 
 	float gridSize = 300.0f;
 	float wallThickness = 25.0f;
@@ -50,6 +46,9 @@ private:
 	// Worldspace placing issue
 	SceneObject* PlaceWallAt(float x, float z, float direction);
 	SceneObject* PlaceTileAt(float x, float z);
+
+	void Brush(glm::vec2 targetCell);
+	void Eraser(glm::vec2 targetCell);
 
 	void SaveAsPrompt();
 	void LoadPrompt();
@@ -71,8 +70,14 @@ private:
 
 	float syncRadius = 10.0f;
 
-	SceneObject* syncSo;
-	SceneObject* eccoSo;
+	SceneObject* syncSo = nullptr;
+	SceneObject* eccoSo = nullptr;
+
+	std::vector<std::string> loadPaths;
+	std::vector<std::string*> loadPathsPointers;
+
+
+	bool InputSearchTest();
 
 public:
 

@@ -5,19 +5,28 @@
 // TODO: This is only here for the window reference
 #include "SceneManager.h"
 
+#include "Paths.h"
+
+#include "ExtraEditorGUI.h"
+
+#include <fstream>
+#include <iostream>
+#include <filesystem>
+
+
 void LevelEditor::RefreshWalls()
 {
 	auto walls = wallTileParent->transform()->getChildren();
 	
 	while (walls.size())
 	{
+		// TODO: Should be using a delete sceneobject function
 		unsigned long long GUID = walls.front()->getSceneObject()->GUID;
 		delete sceneObjects[GUID];
 		sceneObjects.erase(GUID);
 		walls.erase(walls.begin());
 	}
 	wallCount = 0;
-
 
 	float offset = (gridSize + wallThickness) / 2;
 	for (auto& i : tiles)
@@ -54,7 +63,13 @@ SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
 	newWall->transform()->setEulerRotation({0.0f, direction, 0.0f});
 	newWall->transform()->setParent(wallTileParent->transform());
 	newWall->setRenderer(new ModelRenderer(wall, (unsigned long long)0));
-	// TODO: Add collider
+	// TODO: Make sure there isn't memory leaks
+	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, true);
+	newWall->setRigidBody(newRigidBody);
+	newRigidBody = newWall->rigidbody();
+	newRigidBody->addCollider(new PolygonCollider({
+		{x + 20, z + 20}, {x + 20, z - 20}, { x - 20, z + 20 }, {x - 20, z - 20}
+		}, 0.0f));
 	return newWall;
 }
 
@@ -66,6 +81,48 @@ SceneObject* LevelEditor::PlaceTileAt(float x, float z)
 	newTile->transform()->setParent(groundTileParent->transform());
 	tiles[{(int)x, (int)z}] = newTile;
 	return newTile;
+}
+
+void LevelEditor::Brush(glm::vec2 targetCell)
+{
+	SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
+	if (alreadyPlaced) {
+		return;
+	}
+	PlaceTileAt(targetCell.x, targetCell.y);
+	// other setup here
+	gridMinX = (int)fminf(targetCell.x, (float)gridMinX);
+	gridMinZ = (int)fminf(targetCell.y, (float)gridMinZ);
+	gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
+	gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
+
+	if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
+}
+
+void LevelEditor::Eraser(glm::vec2 targetCell)
+{
+	SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
+	if (!alreadyPlaced) {
+		return;
+	}
+	unsigned long long GUID = alreadyPlaced->GUID;
+	// TODO: Might be better to have a mark for deletion type of thing and gets deleted afterwards
+	// Could get put into some collection somewhere
+	if (gui.sceneObjectSelected) {
+		Transform* selectedObjectParentTransform = gui.sceneObjectSelected->transform()->getParent();
+		if (selectedObjectParentTransform) {
+			SceneObject* selectedObjectParent = selectedObjectParentTransform->getSceneObject();
+			if (selectedObjectParent == groundTileParent || selectedObjectParent == wallTileParent) {
+				gui.sceneObjectSelected = nullptr;
+			}
+		}
+	}
+	// TODO: Should be a delete sceneobject function
+	delete sceneObjects[GUID];
+	sceneObjects.erase(GUID);
+	tiles.erase({ (int)targetCell.x, (int)targetCell.y });
+
+	if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
 }
 
 LevelEditor::LevelEditor()
@@ -95,11 +152,8 @@ void LevelEditor::Start()
 	camera->farPlane = 100000;
 	camera->nearPlane = 10;
 
-	// TODO: Don't load directly here, should be saved as an art asset
-	ground = ResourceManager::LoadModelAsset("Assets/SM_FloorTile.model");
-	wall = ResourceManager::LoadModelAsset("Assets/SM_adjustedOriginLocWall.model");
-
-	
+	ground = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
+	wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_adjustedOriginLocWall" + Paths::modelExtension);
 
 	syncSo = new SceneObject(this, "Sync");
 	eccoSo = new SceneObject(this, "Ecco");
@@ -109,17 +163,17 @@ void LevelEditor::Start()
 
 	RigidBody* hRb = new RigidBody();
 	hRb->setMass(1.0f);
-	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, syncRadius) });
+	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, syncRadius, CollisionLayers::sync) });
 	hRb->setMomentOfInertia(5.0f);
 
 	RigidBody* rRb = new RigidBody();
 	rRb->addCollider({ new PolygonCollider(
-			{
-				{40.0f, 40.0f},
-				{40.0f, -40.0f},
-				{-40.0f, -40.0f},
-				{-40.0f, 40.0f},
-			}, 0.0f) }
+		{
+			{100.0f, 100.0f},
+			{100.0f, -100.0f},
+			{-100.0f, -100.0f},
+			{-100.0f, 100.0f},
+		}, 0.0f, CollisionLayers::ecco) }
 	);
 	rRb->setMass(0.1f);
 	rRb->setMomentOfInertia(5.0f);
@@ -140,8 +194,10 @@ void LevelEditor::Start()
 	gameCamSystem.cameraPositionDelta = { -150.0f, 100.0f, 150.0f };
 
 	// TODO: Should be using an art asset
-	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset("Assets/SM_EccoBlockout_RevisedScale.model"), (unsigned long long)0));
+	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoBlockout_RevisedScale" + Paths::modelExtension), (unsigned long long)0));
 	camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f));
+
+	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 }
 
 void LevelEditor::Update(float delta)
@@ -157,7 +213,8 @@ void LevelEditor::Update(float delta)
 			*input.inputDevices[0],
 			*eccoSo->transform(),
 			*eccoSo->rigidbody(),
-			delta
+			delta,
+			camera->transform.getEulerRotation().y
 		);
 
 		if (input.inputDevices.size() > 1)
@@ -166,15 +223,15 @@ void LevelEditor::Update(float delta)
 				*input.inputDevices[1],
 				*syncSo->transform(),
 				*syncSo->rigidbody(),
-				delta
+				&renderSystem->lines,
+				delta,
+				camera->transform.getEulerRotation().y
 			);
 		}
 	}
 
-	gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), 0.5f);
-
-	lines.DrawLineSegment({ 0, 0, 0 }, { 1, 1, 1 }, { 1.0f, 0.5f, 0.2f });
-	lines.DrawLineSegment(testPos1, testPos2, {1.0f, 1.0f, 1.0f});
+	// TODO: Need to be able to change the zoomScale
+	gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), 100);
 	
 	lines.SetColour({ 1, 1, 1 });
 	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
@@ -190,37 +247,13 @@ void LevelEditor::Update(float delta)
 	glm::vec3 temp = (camPoint + glm::vec3(adjustedCursor.x * camera->getOrthoWidth(), 0.0f, -adjustedCursor.y * camera->getOrthoHeight())) / gridSize;
 	glm::vec2 targetCell = glm::vec2{ roundf(temp.x), roundf(temp.z) };
 
-	// TODO: Skip if imgui wants mouse input
 	if (ImGui::GetIO().WantCaptureMouse) { return; }
 	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-		SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
-		if (!alreadyPlaced) {
-			PlaceTileAt(targetCell.x, targetCell.y);
-			// other setup here
-			gridMinX = (int)fminf(targetCell.x, (float)gridMinX);
-			gridMinZ = (int)fminf(targetCell.y, (float)gridMinZ);
-			gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
-			gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
-
-			if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
-		}
+		Brush(targetCell);
 	}
 	// TODO: Refresh mins and maxes
 	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-		SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
-		if (alreadyPlaced) {
-			unsigned long long GUID = alreadyPlaced->GUID;
-			// TODO: Might be better to have a mark for deletion type of thing and gets deleted afterwards
-			// Could get put into some collection somewhere
-			if (gui.sceneObjectSelected == sceneObjects[GUID]) {
-				gui.sceneObjectSelected = nullptr;
-			}
-			delete sceneObjects[GUID];
-			sceneObjects.erase(GUID);
-			tiles.erase({ (int)targetCell.x, (int)targetCell.y });
-
-			if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
-		}
+		Eraser(targetCell);
 	}
 }
 
@@ -234,7 +267,6 @@ void LevelEditor::Draw()
 		camera
 	);
 }
-
 
 void LevelEditor::GUI()
 {
@@ -308,6 +340,7 @@ void LevelEditor::SaveAsPrompt()
 		previouslySaved = true;
 		SaveLevel();
 	}
+	ImGui::SameLine();
 	if (ImGui::Button("Cancel##Load")) {
 		ImGui::CloseCurrentPopup();
 	}
@@ -315,24 +348,54 @@ void LevelEditor::SaveAsPrompt()
 	ImGui::EndPopup();
 }
 
+
+bool LevelEditor::InputSearchTest() {
+	//InputSearchBox(loadableFilePathsPointers.begin(), loadableFilePathsPointers.end(), &windowName, "Filename", Utilities::PointerToString(&loadableFilePathsPointers), true);
+	return false;
+}
+
 void LevelEditor::LoadPrompt()
 {
 	if (openLoad) {
-		ImGui::OpenPopup("Load Level");
+		ImGui::OpenPopup("Load Level", ImGuiPopupFlags_AnyPopup);
 	}
 	if (!ImGui::BeginPopupModal("Load Level", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		return;
 	}
 
 	if (openLoad) {
-		ImGui::SetKeyboardFocusHere();
 		openLoad = false;
+
+		loadPaths.clear();
+		loadPathsPointers.clear();
+		
+		for (auto& i : std::filesystem::directory_iterator(Paths::levelsPath))
+		{
+			loadPaths.push_back(i.path().generic_string().substr(Paths::levelsPath.size()));
+			if (loadPaths.back().substr(loadPaths.back().size() - Paths::levelExtension.size()) != Paths::levelExtension) {
+				loadPaths.erase(--loadPaths.end());
+				continue;
+			}
+			loadPaths.back() = loadPaths.back().substr(0, loadPaths.back().size() - Paths::levelExtension.size());
+		}
+		for (auto& i : loadPaths)
+		{
+			loadPathsPointers.push_back(&i);
+		}
 	}
-	if (ImGui::InputText("Filename##Load", &windowName, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue)) {
+	
+	std::string* selected = &windowName;
+	if (ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Filename", Utilities::PointerToString(&loadPathsPointers), false)) {
 		ImGui::CloseCurrentPopup();
-		previouslySaved = true;
+		windowName = *selected;
 		LoadLevel();
 	}
+
+	if (ImGui::Button("Load##Load")) {
+		ImGui::CloseCurrentPopup();
+		LoadLevel();
+	}
+	ImGui::SameLine();
 	if (ImGui::Button("Cancel##Load")) {
 		ImGui::CloseCurrentPopup();
 	}
@@ -344,7 +407,7 @@ void LevelEditor::LoadPrompt()
 
 void LevelEditor::SaveLevel()
 {
-	std::ofstream file("Levels/" + windowName + ".level");
+	std::ofstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
 	file << SaveSceneObjectsAndParts();
 
@@ -353,11 +416,12 @@ void LevelEditor::SaveLevel()
 
 void LevelEditor::LoadLevel()
 {
-	std::ifstream file("Levels/" + windowName + ".level");
+	std::ifstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
 	if (!file) {
 		std::cout << "Level File not found\n";
 		return;
+
 	}
 
 	toml::table data = toml::parse(file);
@@ -366,6 +430,7 @@ void LevelEditor::LoadLevel()
 
 	LoadSceneObjectsAndParts(data);
 
+	gui.sceneObjectSelected = nullptr;
 
 	// TODO:
 	
@@ -387,6 +452,7 @@ void LevelEditor::LoadLevel()
 
 
 	file.close();
+	previouslySaved = true;
 }
 
 LevelEditor::~LevelEditor()

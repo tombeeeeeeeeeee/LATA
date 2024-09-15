@@ -19,7 +19,7 @@ namespace Utilities {
 		return (((value - originalMin) / (originalMax - originalMin)) * (newMax - newMin)) + newMin;
 	}
 
-	std::string ToLower(std::string& str);
+	std::string ToLower(const std::string& str);
 
-	std::string FilenameFromPath(std::string& path, bool includeExtension = true);
+	std::string FilenameFromPath(const std::string& path, bool includeExtension = true);
 }

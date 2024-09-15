@@ -123,9 +123,14 @@ void Model::Refresh()
 	}
 }
 
-std::string Model::getDisplayName()
+Model::operator std::string() const
 {
-	return Utilities::FilenameFromPath(path) + " " + std::to_string(GUID);
+	return getDisplayName();
+}
+
+std::string Model::getDisplayName() const
+{
+	return Utilities::FilenameFromPath(path);
 }
 
 toml::table Model::Serialise()

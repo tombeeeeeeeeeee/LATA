@@ -86,7 +86,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 
 void Camera::ProcessMouseScroll(float yoffset)
 {
-    if (state == editorMode) {
+    if (state == editorMode && !editorOrth) {
         fov -= static_cast<float>(yoffset);
         if (fov < 10.0f) {
             fov = 10.0f;
@@ -117,7 +117,7 @@ void Camera::GUI()
     ImGui::DragFloat("Near plane##Camera", &nearPlane, 0.01f, 0.01f, FLT_MAX);
     ImGui::DragFloat("Far plane##Camera", &farPlane, 0.01f, 0.01f, FLT_MAX);
 
-    ImGui::Combo("Mode", (int*)&state, "Editor\0Targeting Position\0Targeting Players\0Art\0");
+    ImGui::Combo("Mode", (int*)&state, "Editor\0Targeting Position\0Targeting Players\0Art\0Tile Placing\0");
     if (state == editorMode) {
         ImGui::Checkbox("Orthographic Mode", &editorOrth);
     }

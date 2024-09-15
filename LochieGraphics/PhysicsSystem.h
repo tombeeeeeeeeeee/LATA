@@ -1,9 +1,10 @@
 #pragma once
 #include "RigidBody.h"
+#include "Transform.h"
 #include <unordered_map>
 #include "CollisionFunctions.h"
 
-class Transform;
+struct Hit;
 
 const int CollisionItterations = 10;
 
@@ -20,7 +21,7 @@ public:
 	(
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
-		std::unordered_map<unsigned long long, Collider> & colliders
+		std::unordered_map<unsigned long long, Collider*>& colliders
 	);
 
 	void GetCollisions(
@@ -61,5 +62,18 @@ public:
 	};
 
 private: 
-	RigidBody dumbyRigidBody = RigidBody(0.0f,0.0f);
+	RigidBody dummyRigidBody = RigidBody(0.0f,0.0f);
+
+public:
+	static bool RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>& hits, float length = FLT_MAX, int layerMask = INT32_MAX, bool ignoreTriggers = true);
+
+private:
+	static std::unordered_map<unsigned long long, Transform>* transformsInScene;
+	static std::unordered_map<unsigned long long, RigidBody>* rigidBodiesInScene;
+	static std::unordered_map<unsigned long long, Collider*>* collidersInScene;
+
+	static CollisionPacket RayCastAgainstCollider(
+		glm::vec2 pos, glm::vec2 direction,
+		Transform& transform, Collider* collider
+		);
 };

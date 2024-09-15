@@ -65,7 +65,6 @@ public:
 
 	TestScene();
 	void Start() override;
-	void EarlyUpdate() override;
 	void Update(float delta) override;
 	void Draw() override;
 	void OnMouseDown() override;

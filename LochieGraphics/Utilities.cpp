@@ -56,7 +56,7 @@ glm::vec3 Utilities::Lerp(glm::vec3 a, glm::vec3 b, float t)
 	return a * (1 - t) + b * t;
 }
 
-std::string Utilities::ToLower(std::string& str)
+std::string Utilities::ToLower(const std::string& str)
 {
 	std::string newString;
 	for (char c : str)
@@ -66,7 +66,7 @@ std::string Utilities::ToLower(std::string& str)
 	return newString;
 }
 
-std::string Utilities::FilenameFromPath(std::string& path, bool includeExtension)
+std::string Utilities::FilenameFromPath(const std::string& path, bool includeExtension)
 {
 	unsigned long long start = path.find_last_of("/\\") + 1;
 	if (includeExtension) {

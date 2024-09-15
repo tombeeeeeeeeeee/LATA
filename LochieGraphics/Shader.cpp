@@ -193,7 +193,12 @@ void Shader::DeleteProgram()
 	glDeleteProgram(GLID);
 }
 
-std::string Shader::getDisplayName()
+Shader::operator std::string() const
+{
+	return getDisplayName();
+}
+
+std::string Shader::getDisplayName() const
 {
 	// TODO: Better name
 	return fragmentPath + " " + std::to_string(GUID);
