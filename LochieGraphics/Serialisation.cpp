@@ -1,7 +1,7 @@
 #define TOML_IMPLEMENTATION 1
 #include "Serialisation.h"
 
-
+#include <iostream>
 
 
 glm::vec2 Serialisation::LoadAsVec2(toml::v3::array* toml)
@@ -21,6 +21,10 @@ glm::vec2 Serialisation::LoadAsVec2(toml::node_view<toml::node> toml)
 
 glm::vec3 Serialisation::LoadAsVec3(toml::v3::array* toml)
 {
+    if (!toml) {
+        std::cout << "Failed to load vec3\n";
+        return {0.0f, 0.0f, 0.0f};
+    }
     return glm::vec3(
         toml->at(0).value_or<float>(0.0f),
         toml->at(1).value_or<float>(0.0f),
@@ -54,8 +58,13 @@ std::string Serialisation::LoadAsString(toml::node& toml)
 
 int Serialisation::LoadAsInt(toml::v3::node_view<toml::v3::node> toml)
 {
-    if (!toml) { return 0.0f; }
-    return toml.as_integer()->value_or<int>(0);
+    if (!toml) { return 0; }
+    auto asInt = toml.as_integer();
+    if (!asInt) {
+        std::cout << "Failed to load int\n";
+        return 0;
+    }
+    return asInt->value_or<int>(0);
 }
 
 int Serialisation::LoadAsInt(toml::node* toml)

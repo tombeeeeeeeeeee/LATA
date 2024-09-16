@@ -67,8 +67,10 @@ SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
 	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, true);
 	newWall->setRigidBody(newRigidBody);
 	newRigidBody = newWall->rigidbody();
+	float wallLength = 150.f;
+	float wallThickness = 12.5f;
 	newRigidBody->addCollider(new PolygonCollider({
-		{ + 12.5,  +300}, { +12.5,  - 300}, {  -12.5,  - 300 }, { -12.5,  + 300}
+		{ +wallThickness,  +wallLength}, { +wallThickness,  -wallLength}, {  -wallThickness,  -wallLength }, { -wallThickness,  +wallLength}
 		}, 0.0f));
 
 	return newWall;
@@ -168,7 +170,7 @@ void LevelEditor::Start()
 	hRb->setMomentOfInertia(5.0f);
 
 	RigidBody* rRb = new RigidBody();
-	float eccoColliderSize = 100.0f;
+	float eccoColliderSize = 75.0f;
 	rRb->addCollider({ new PolygonCollider(
 		{
 			{eccoColliderSize, eccoColliderSize},
@@ -257,6 +259,9 @@ void LevelEditor::Update(float delta)
 	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
 		Eraser(targetCell);
 	}
+
+
+	//ImGui::Checkbox("Draw Colliders", &drawColliders);
 }
 
 void LevelEditor::Draw()
