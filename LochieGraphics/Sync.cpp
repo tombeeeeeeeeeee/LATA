@@ -12,6 +12,7 @@
 #include "SceneManager.h"
 #include "PhysicsSystem.h"
 #include "Hit.h"
+#include "Paths.h"
 
 Sync::Sync(toml::table table)
 {
@@ -43,7 +44,7 @@ Sync::Sync(toml::table table)
 
 void Sync::Start(std::vector<Shader*>* shaders)
 {
-	Model* misfireModel = ResourceManager::LoadModel(misfireModelPath);
+	Model* misfireModel = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + misfireModelPath + Paths::modelExtension);
 	Material* misfireMaterial = ResourceManager::defaultMaterial;
 	misfireModelRender = new ModelRenderer(misfireModel, misfireMaterial);
 }
@@ -371,21 +372,5 @@ void Sync::misfireShotOnCollision(Collision collision)
 	unsigned long long GUID = collision.self->GUID;
 	delete collision.self;
 	SceneManager::scene->sceneObjects.erase(GUID);
-}
-
-void Sync::sniperShotOnCollision(Collision collision)
-{
-	if (collision.collisionMask & (unsigned int)CollisionLayers::enemy)
-	{
-		collision.sceneObject->health()->subtractHealth(sniperDamage);
-	}
-}
-
-void Sync::overclockShotOnCollision(Collision collision)
-{
-	if (collision.collisionMask & (unsigned int)CollisionLayers::enemy)
-	{
-		collision.sceneObject->health()->subtractHealth(overclockDamage);
-	}
 }
 

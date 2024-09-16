@@ -87,7 +87,7 @@ void GUI::Update()
 		// TODO: There should be a window pos change callback, should justbe stored somewhere
 		int xOffset, yOffset;
 		glfwGetWindowPos(SceneManager::window, &xOffset, &yOffset);
-		ImGuizmo::SetRect(xOffset, yOffset, io.DisplaySize.x, io.DisplaySize.y);
+		ImGuizmo::SetRect((float)xOffset, (float)yOffset, io.DisplaySize.x, io.DisplaySize.y);
 		glm::mat4 editMatrix = sceneObjectSelected->transform()->getGlobalMatrix();
 		if (ImGuizmo::Manipulate(&SceneManager::view[0][0], &SceneManager::projection[0][0], ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD, &editMatrix[0][0])) {
 			glm::vec3 pos = {};
@@ -307,8 +307,9 @@ void GUI::PhysicsMenu()
 		return;
 	}
 
-	int flagCount = (int)log2((int)CollisionLayers::count);
+	//TODO SAVE AND LOAD
 
+	int flagCount = (int)log2((int)CollisionLayers::count);
 
 	ImGui::Text("0 : base");
 	ImGui::Text("1 : enemy");
@@ -353,23 +354,31 @@ void GUI::EnemyMenu()
 		ImGui::End();
 		return;
 	}
-
 	EnemySystem& es = scene->enemySystem;
+
+	//TODO SAVE AND LOAD
+
 	ImGui::Text("MELEE ENEMY STATS");
 	ImGui::DragInt("Melee Enemy Health", &es.meleeEnemyHealth);
 	ImGui::DragFloat("Melee Enemy Move Speed", &es.meleeEnemyMoveSpeed);
 	ImGui::DragInt("Melee Enemy Damage", &es.meleeEnemyDamage);
 	ImGui::DragFloat("Melee Enemy Collider Radius", &es.meleeEnemyColliderRadius);
-	ImGui::InputText("Melee Enemy Model Path", &es.meleeEnemyModel);
+	if (ResourceManager::ModelAssetSelector("Melee Enemy Model", &(es.meleeEnemyRenderer->model)))
+	{
+		es.meleeEnemyModel = es.meleeEnemyRenderer->model->path;
+	}
 	ImGui::InputText("Melee Enemy Material", &es.meleeEnemyMaterialPath);
 	ImGui::Text("");
 	ImGui::Text("RANGED ENEMY STATS");
-	ImGui::DragInt("Ranged Enemy Health", &es.meleeEnemyHealth);
-	ImGui::DragFloat("Ranged Enemy Move Speed", &es.meleeEnemyMoveSpeed);
-	ImGui::DragInt("Ranged Enemy Damage", &es.meleeEnemyDamage);
-	ImGui::DragFloat("Ranged Enemy Collider Radius", &es.meleeEnemyColliderRadius);
-	ImGui::InputText("Ranged Enemy Model Path", &es.meleeEnemyModel);
-	ImGui::InputText("Ranged Enemy Material", &es.meleeEnemyMaterialPath);
+	ImGui::DragInt("Ranged Enemy Health", &es.rangedEnemyHealth);
+	ImGui::DragFloat("Ranged Enemy Move Speed", &es.rangedEnemyMoveSpeed);
+	ImGui::DragInt("Ranged Enemy Damage", &es.rangedEnemyDamage);
+	ImGui::DragFloat("Ranged Enemy Collider Radius", &es.rangedEnemyColliderRadius);
+	if (ResourceManager::ModelAssetSelector("Ranged Enemy Model", &(es.rangedEnemyRenderer->model)))
+	{
+		es.rangedEnemyModel = es.rangedEnemyRenderer->model->path;
+	}
+	ImGui::InputText("Ranged Enemy Material", &es.rangedEnemyMaterialPath);
 
 	ImGui::End();
 }

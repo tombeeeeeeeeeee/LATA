@@ -8,6 +8,7 @@
 #include "Health.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
+#include "Paths.h"
 
 EnemySystem::EnemySystem()
 {
@@ -37,14 +38,14 @@ void EnemySystem::Start()
     Material* meleeEnemyMaterial = ResourceManager::defaultMaterial;
 
     meleeEnemyRenderer = new ModelRenderer(
-        ResourceManager::LoadModel(meleeEnemyModel),
+        ResourceManager::LoadModelAsset(Paths::modelSaveLocation + meleeEnemyModel + Paths::modelExtension),
         meleeEnemyMaterial
     );
 
     Material* rangedEnemyMaterial = ResourceManager::defaultMaterial;
 
     rangedEnemyRenderer = new ModelRenderer(
-        ResourceManager::LoadModel(rangedEnemyModel),
+        ResourceManager::LoadModelAsset(Paths::modelSaveLocation + rangedEnemyModel + Paths::modelExtension),
         rangedEnemyMaterial
     );
 }
@@ -157,7 +158,13 @@ void EnemySystem::Update(
 
         // check the current state's transitions
         for (auto& t : enemy.state->transitions)
-            if (t.condition->IsTrue(agent)) newState = t.targetState;
+        {
+            if (t.condition->IsTrue(agent)) 
+            {
+                newState = t.targetState;
+                break;
+            }
+        }
 
 
         if (newState != nullptr && newState != enemy.state)

@@ -37,7 +37,7 @@ public:
 	int meleeEnemyDamage = 0;
 	float meleeEnemyColliderRadius = 0.0f;
 	ModelRenderer* meleeEnemyRenderer;
-	std::string meleeEnemyModel = "models/Sphere.fbx";
+	std::string meleeEnemyModel = "SM_Sphere";
 	std::string meleeEnemyMaterialPath = "images/otherskybox/nx.png";
 
 	int rangedEnemyHealth = 0;
@@ -45,7 +45,7 @@ public:
 	int rangedEnemyDamage = 0;
 	float rangedEnemyColliderRadius = 0.0f;
 	ModelRenderer* rangedEnemyRenderer;
-	std::string rangedEnemyModel = "models/Sphere.fbx";
+	std::string rangedEnemyModel = "SM_Sphere";
 	std::string rangedEnemyMaterialPath = "images/otherskybox/nx.png";
 
 	glm::vec3 offscreenSpawnPosition = {-1000.0f,-3000.0f,-1000.0f};

@@ -21,6 +21,10 @@ public:
 		virtual glm::vec2 getLook() const = 0;
 		virtual float getLeftTrigger()  const = 0;
 		virtual float getRightTrigger() const = 0;
+		virtual bool getButton1() const = 0;
+		virtual bool getButton2() const = 0;
+		virtual bool getButton3() const = 0;
+		virtual bool getButton4() const = 0;
 		virtual Type getType() const = 0;
 	};
 
@@ -39,10 +43,19 @@ public:
 		const int keyLeftTrigger = GLFW_KEY_LEFT_CONTROL;
 		const int keyRightTrigger = GLFW_KEY_LEFT_SHIFT;
 
+		const int keyButton1 = GLFW_KEY_E;
+		const int keyButton2 = GLFW_KEY_Q;
+		const int keyButton3 = GLFW_KEY_F;
+		const int keyButton4 = GLFW_KEY_R;
+
 		glm::vec2 getMove() const override;
 		glm::vec2 getLook() const override;
 		float getLeftTrigger() const override;
 		float getRightTrigger() const override;
+		bool getButton1() const override;
+		bool getButton2() const override;
+		bool getButton3() const override;
+		bool getButton4() const override;
 		Type getType() const override;
 	};
 
@@ -58,6 +71,10 @@ public:
 		glm::vec2 getLook() const override;
 		float getLeftTrigger() const override;
 		float getRightTrigger() const override;
+		bool getButton1() const override;
+		bool getButton2() const override;
+		bool getButton3() const override;
+		bool getButton4() const override;
 		Type getType() const override;
 	};
 

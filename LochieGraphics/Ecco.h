@@ -8,7 +8,7 @@
 
 class Transform;
 class RigidBody;
-
+struct Collision;
 
 class Ecco
 {
@@ -26,6 +26,8 @@ public:
 		float delta,
 		float cameraRotationDelta
 	);
+
+	void OnCollision(Collision collision);
 
 	void GUI();
 	toml::table Serialise();
@@ -45,4 +47,11 @@ private:
 	float portionOfSidewaysSpeedKept = 100.0f;
 	float stoppingFrictionCoef = 0.8f;
 	bool controlState = false;
+	float speedBoost = 1.0f;
+	float speedBoostCooldown = 0.1f;
+	bool speedBoostUnactuated = true;
+	float lastSpeedBoostPressed = 0.0f;
+	float minSpeedDamageThreshold = 0.0f;
+	int speedDamage = 0;
+	float speedReductionAfterDamaging = 0.0f;
 };

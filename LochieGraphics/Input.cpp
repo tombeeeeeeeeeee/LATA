@@ -169,6 +169,26 @@ float Input::Controller::getRightTrigger() const
 	return Utilities::mapValueTo(currentState.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER], -1.0f, 1.0f, 0.0f, 1.0f);
 }
 
+bool Input::Controller::getButton1() const
+{
+	return currentState.buttons[GLFW_GAMEPAD_BUTTON_A];
+}
+
+bool Input::Controller::getButton2() const
+{
+	return currentState.buttons[GLFW_GAMEPAD_BUTTON_B];
+}
+
+bool Input::Controller::getButton3() const
+{
+	return currentState.buttons[GLFW_GAMEPAD_BUTTON_X];
+}
+
+bool Input::Controller::getButton4() const
+{
+	return currentState.buttons[GLFW_GAMEPAD_BUTTON_Y];
+}
+
 Input::Type Input::Controller::getType() const
 {
 	return Type::Controller;
@@ -198,6 +218,26 @@ float Input::Keyboard::getRightTrigger() const
 {
 	float right = (float)glfwGetKey(SceneManager::window, keyRightTrigger);
 	return right;
+}
+
+bool Input::Keyboard::getButton1() const
+{
+	return glfwGetKey(SceneManager::window, keyButton1);
+}
+
+bool Input::Keyboard::getButton2() const
+{
+	return glfwGetKey(SceneManager::window, keyButton2);
+}
+
+bool Input::Keyboard::getButton3() const
+{
+	return glfwGetKey(SceneManager::window, keyButton3);
+}
+
+bool Input::Keyboard::getButton4() const
+{
+	return glfwGetKey(SceneManager::window, keyButton4);
 }
 
 Input::Type Input::Keyboard::getType() const

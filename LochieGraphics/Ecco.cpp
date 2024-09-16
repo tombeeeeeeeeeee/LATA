@@ -2,7 +2,10 @@
 
 #include "Transform.h"
 #include "RigidBody.h"
-
+#include "Collision.h"
+#include "SceneObject.h"
+#include "Enemy.h"
+#include "Health.h"
 #include "EditorGUI.h"
 
 void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBody& rigidBody, float delta, float cameraRotationDelta)
@@ -128,7 +131,31 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 	//Update rigidBody
 	rigidBody.netForce += force;
 
+
+	if (inputDevice.getButton1())// && lastSpeedBoostPressed + speedBoostCooldown > Time.time)
+	{
+		if(speedBoostUnactuated)
+			rigidBody.AddImpulse(speedBoost * wheelDirection);
+		speedBoostUnactuated = false;
+	}
+	else
+	{
+		speedBoostUnactuated = true;
+	}
 	//TODO add skidding.
+}
+
+void Ecco::OnCollision(Collision collision)
+{
+	if (collision.sceneObject->parts & Parts::enemy)
+	{
+		RigidBody* rb = collision.self->rigidbody();
+		if (glm::length(rb->vel) > minSpeedDamageThreshold)
+		{
+			collision.sceneObject->health()->subtractHealth(speedDamage);
+		}
+		rb->AddImpulse(glm::normalize(rb->vel) * -speedReductionAfterDamaging);
+	}
 }
 
 void Ecco::GUI()
@@ -148,7 +175,11 @@ void Ecco::GUI()
 		ImGui::DragFloat("Portion of Sideways Speed Kept", &portionOfSidewaysSpeedKept, 1.0f, 0.0f, 100.0f);
 		ImGui::DragFloat("Stopping Wheel Drag", &stoppingFrictionCoef, 0.01f, 0.0f);
 		ImGui::Checkbox("Local Steering", &controlState);
-
+		ImGui::DragFloat("Speed Boost", &speedBoost);
+		ImGui::DragFloat("Speed Boost Cooldown", &speedBoostCooldown);
+		ImGui::DragFloat("Minimum damaging speed", &minSpeedDamageThreshold);
+		ImGui::DragInt("On Collision Damage", &speedDamage);
+		ImGui::DragFloat("Speed reduction after damage", &speedReductionAfterDamaging);
 		ImGui::BeginDisabled();
 		ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
 		ImGui::EndDisabled();
@@ -173,6 +204,11 @@ toml::table Ecco::Serialise()
 		{ "portionOfSidewaysSpeedKept", portionOfSidewaysSpeedKept },
 		{ "stoppingFrictionCoef", stoppingFrictionCoef },
 		{ "controlState", controlState},
+		{ "speedBoost", speedBoost},
+		{ "speedBoostCooldown", speedBoostCooldown},
+		{ "minSpeedDamageThreshold", minSpeedDamageThreshold},
+		{ "speedDamage", speedDamage},
+		{ "speedReductionAfterDamaging", speedReductionAfterDamaging},
 	};
 }
 
@@ -192,5 +228,10 @@ Ecco::Ecco(toml::table table)
 	portionOfSidewaysSpeedKept = Serialisation::LoadAsFloat(table["portionOfSidewaysSpeedKept"]);
 	stoppingFrictionCoef = Serialisation::LoadAsFloat(table["stoppingFrictionCoef"]);
 	controlState = Serialisation::LoadAsBool(table["controlState"]);
+	speedBoost = Serialisation::LoadAsFloat(table["speedBoost"]);
+	speedBoostCooldown = Serialisation::LoadAsFloat(table["speedBoostCooldown"]);
+	minSpeedDamageThreshold = Serialisation::LoadAsFloat(table["minSpeedDamageThreshold"]);
+	speedDamage = Serialisation::LoadAsInt(table["speedDamage"]);
+	speedReductionAfterDamaging = Serialisation::LoadAsFloat(table["speedReductionAfterDamaging"]);
 }
 

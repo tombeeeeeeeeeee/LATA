@@ -38,8 +38,6 @@ public:
 	void OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour);
 	void OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour);
 	void misfireShotOnCollision(Collision collision);
-	void sniperShotOnCollision(Collision collision);
-	void overclockShotOnCollision(Collision collision);
 
 private:
 
@@ -82,7 +80,7 @@ private:
 
 	float misfireColliderRadius = 0.1f;
 	ModelRenderer* misfireModelRender = nullptr;
-	std::string misfireModelPath = "models/sphere.fbx";
+	std::string misfireModelPath = "SM_Sphere";
 	std::string misfireMaterialPath;
 
 };

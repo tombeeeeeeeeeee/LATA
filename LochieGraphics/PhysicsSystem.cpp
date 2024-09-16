@@ -393,14 +393,14 @@ void PhysicsSystem::SetCollisionLayerMask(int layer, unsigned int bitMask)
 	}
 }
 
-bool PhysicsSystem::GetCollisionLayerBool(int a, int b)
+bool PhysicsSystem::GetCollisionLayerBool(const int a, const int b)
 {
 	int layerA = (int)log2((float)a);
 	int layerB = (int)log2((float)b);
 	return layerMasks[layerA] & (1 << layerB);
 }
 
-bool PhysicsSystem::GetCollisionLayerIndexed(int layerA, int layerB)
+bool PhysicsSystem::GetCollisionLayerIndexed(const int layerA, const int layerB)
 {
 	return layerMasks[layerA] & (1 << layerB);
 }
