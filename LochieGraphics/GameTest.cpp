@@ -87,8 +87,8 @@ void GameTest::Start()
 
 	sync->Start(&shaders);
 
-	SceneObject* newSceneObject = new SceneObject(this);
-	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, true);
+	SceneObject* newSceneObject = new SceneObject(this, "Walls");
+	RigidBody* newRigidBody = new RigidBody(0.0f, 0.0f, {}, true);
 	newSceneObject->setRigidBody(newRigidBody);
 
 	for (int y = 0; y < level.height; y++)
@@ -139,9 +139,6 @@ void GameTest::Update(float delta)
 	}
 
 	LineRenderer& lines = renderSystem->lines;
-
-	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
-	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 
 	if (singlePlayerMode)
 	{
@@ -246,8 +243,6 @@ void GameTest::Update(float delta)
 	lines.DrawLineSegment(extraPoints[7], otherPos4);
 	
 	lines.DrawCircle(h->transform()->getGlobalPosition(), hRadius, 40);
-	
-
 
 	for (int y = 0; y < level.height - 1; y++)
 	{
@@ -291,6 +286,9 @@ void GameTest::Update(float delta)
 		}
 	}
 
+	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
+
+	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 }
 
 void GameTest::Draw()

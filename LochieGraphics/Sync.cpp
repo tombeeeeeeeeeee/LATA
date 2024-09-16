@@ -19,9 +19,26 @@ Sync::Sync(toml::table table)
 	moveSpeed = Serialisation::LoadAsFloat(table["moveSpeed"]);
 	lookDeadZone = Serialisation::LoadAsFloat(table["lookDeadZone"]);
 	moveDeadZone = Serialisation::LoadAsFloat(table["moveDeadZone"]);
+	barrelOffset = Serialisation::LoadAsVec3(table["barrelOffset"]);
 	misfireDamage = Serialisation::LoadAsInt(table["misfireDamage"]);
+	misfireChargeCost = Serialisation::LoadAsFloat(table["misfireChargeCost"]);
+	misfireShotSpeed = Serialisation::LoadAsFloat(table["misfireShotSpeed"]);
 	sniperDamage = Serialisation::LoadAsInt(table["sniperDamage"]);
-	overclockDamage = Serialisation::LoadAsInt(table["overclockChargeTime"]);
+	sniperChargeCost = Serialisation::LoadAsFloat(table["sniperChargeCost"]);
+	sniperChargeTime = Serialisation::LoadAsFloat(table["sniperChargeTime"]);
+	sniperBeamLifeSpan = Serialisation::LoadAsFloat(table["sniperBeamLifeSpan"]);
+	sniperBeamColour = Serialisation::LoadAsVec3(table["sniperBeamColour"]);
+	overclockDamage = Serialisation::LoadAsInt(table["overclockDamage"]);
+	overclockChargeCost = Serialisation::LoadAsFloat(table["overclockChargeCost"]);
+	overclockChargeTime = Serialisation::LoadAsFloat(table["overclockChargeTime"]);
+	overclockBeamLifeSpan = Serialisation::LoadAsFloat(table["overclockBeamLifeSpan"]);
+	overclockBeamColour = Serialisation::LoadAsVec3(table["overclockBeamColour"]);
+	overclockReboundCount = Serialisation::LoadAsInt(table["overclockReboundCount"]);
+	enemyPierceCount = Serialisation::LoadAsInt(table["enemyPierceCount"]);
+	eccoRefractionAngle = Serialisation::LoadAsFloat(table["eccoRefractionAngle"]);
+	eccoRefractionCount = Serialisation::LoadAsInt(table["eccoRefractionCount"]);
+	maxCharge = Serialisation::LoadAsFloat(table["maxCharge"]);
+	misfireColliderRadius = Serialisation::LoadAsFloat(table["misfireColliderRadius"]);                                                                                                                                                                                                                                                                                                                                                                          
 }
 
 void Sync::Start(std::vector<Shader*>* shaders)
@@ -174,12 +191,29 @@ toml::table Sync::Serialise() const
 {
 	return toml::table{
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
-		{ "moveSpeed", moveSpeed},
-		{ "lookDeadZone", lookDeadZone},
-		{ "moveDeadZone", moveDeadZone},
-		{ "misfireDamage", misfireDamage},
-		{ "sniperDamage", sniperDamage},
-		{ "overclockChargeTime", overclockChargeTime},
+		{ "moveSpeed", moveSpeed },
+		{ "lookDeadZone", lookDeadZone },
+		{ "moveDeadZone", moveDeadZone },
+		{ "barrelOffset", Serialisation::SaveAsVec3(barrelOffset) },
+		{ "misfireDamage", misfireDamage },
+		{ "misfireChargeCost", misfireChargeCost },
+		{ "misfireShotSpeed", misfireShotSpeed },
+		{ "sniperDamage", sniperDamage },
+		{ "sniperChargeCost", sniperChargeCost },
+		{ "sniperChargeTime", sniperChargeTime },
+		{ "sniperBeamLifeSpan", sniperBeamLifeSpan },
+		{ "sniperBeamColour", Serialisation::SaveAsVec3(sniperBeamColour) },
+		{ "overclockDamage", overclockDamage },
+		{ "overclockChargeCost", overclockChargeCost },
+		{ "overclockChargeTime", overclockChargeTime },
+		{ "overclockBeamLifeSpan", overclockBeamLifeSpan },
+		{ "overclockBeamColour", Serialisation::SaveAsVec3(overclockBeamColour) },
+		{ "overclockReboundCount", overclockReboundCount },
+		{ "enemyPierceCount", enemyPierceCount },
+		{ "eccoRefractionAngle", eccoRefractionAngle },
+		{ "eccoRefractionCount", eccoRefractionCount },
+		{ "maxCharge", maxCharge },
+		{ "misfireColliderRadius", misfireColliderRadius },
 	};
 }
 
@@ -302,14 +336,14 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 void Sync::OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour)
 {
 	std::vector<Hit> hits;
-	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX);
+	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~(int)CollisionLayers::ecco);
 	Hit hit = hits[0];
 
 	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 	{
 		hit.sceneObject->health()->subtractHealth(sniperDamage);
 	}
-	if((hit.collider->collisionLayer & (int)CollisionLayers::enemy) | (hit.collider->collisionLayer & (int)CollisionLayers::ecco))
+	if((hit.collider->collisionLayer & (int)CollisionLayers::enemy))
 	{
 		for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
 		{

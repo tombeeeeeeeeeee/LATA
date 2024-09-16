@@ -7,6 +7,16 @@ std::unordered_map<unsigned long long, RigidBody>* PhysicsSystem::rigidBodiesInS
 std::unordered_map<unsigned long long, Transform>* PhysicsSystem::transformsInScene = nullptr;
 std::unordered_map<unsigned long long, Collider*>* PhysicsSystem::collidersInScene = nullptr;
 
+PhysicsSystem::PhysicsSystem(toml::table table)
+{
+	collisionItterations = Serialisation::LoadAsInt(table["collisionItterations"]);
+
+	for (int i = 0; i < 32; i++)
+	{
+		layerMasks[i] = Serialisation::LoadAsInt(table["layerMask" + i]);
+	}
+}
+
 void PhysicsSystem::UpdateRigidBodies(
 	std::unordered_map<unsigned long long, Transform>& transforms,
 	std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
@@ -48,7 +58,7 @@ void PhysicsSystem::CollisionCheckPhase(
 	rigidBodiesInScene = &rigidBodies;
 	collidersInScene = &colliders;
 	
-	for (int iteratorNumber = 0; iteratorNumber < CollisionItterations; iteratorNumber++)
+	for (int iteratorNumber = 0; iteratorNumber < collisionItterations; iteratorNumber++)
 	{
 		std::vector<CollisionPacket> collisions;
 		for (auto i = rigidBodies.begin(); i != rigidBodies.end(); i++)
@@ -87,8 +97,6 @@ void PhysicsSystem::GetCollisions(
 	Transform* transformA, Transform* transformB,
 	std::vector<CollisionPacket>& collisions)
 {
-
-
 	std::vector<Collider*> aCols = (*a->getColliders());
 	std::vector<Collider*> bCols = (*b->getColliders());
 
@@ -302,8 +310,8 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 		collision.rigidBodyB->onCollision[i](collisionFromBsPerspective);
 	}
 
-
-	if (collision.rigidBodyA->invMass + collision.rigidBodyB->invMass == 0) return;
+	if (collision.colliderA->isTrigger || collision.colliderB->isTrigger) return;
+	else if (collision.rigidBodyA->invMass + collision.rigidBodyB->invMass == 0) return;
 
 	glm::vec2 radiusPerpA = collision.tangentA;
 	glm::vec2 radiusPerpB = collision.tangentB;
@@ -320,8 +328,8 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 
 	float totalInverseMass = (collision.rigidBodyA->invMass + collision.rigidBodyB->invMass);
 
-	float j = -(1.0f + glm::max(collision.rigidBodyA->elasticicty, collision.rigidBodyB->elasticicty)) * glm::dot(relativeVelocity, collision.normal) /
-		(totalInverseMass);// +(float)pow(glm::dot(radiusPerpA, collision.normal), 2) * collision.rigidBodyA->invMomentOfInertia
+	float j = -(1.0f + glm::max(collision.rigidBodyA->elasticicty, collision.rigidBodyB->elasticicty)) 
+		* glm::dot(relativeVelocity, collision.normal) / (totalInverseMass);// +(float)pow(glm::dot(radiusPerpA, collision.normal), 2) * collision.rigidBodyA->invMomentOfInertia
 			//+ (float)pow(glm::dot(radiusPerpB, collision.normal), 2) * collision.rigidBodyB->invMomentOfInertia);
 
 	if (j <= 0.0f) return;
@@ -347,7 +355,6 @@ void PhysicsSystem::SetCollisionLayerMask(int a, int b, bool state)
 	if (layerA < 0 || layerA >= 32) return;
 	if (layerB < 0 || layerB >= 32) return;
 
-
 	layerMasks[layerA] &= ~(1 << layerB);
 	layerMasks[layerB] &= ~(1 << layerA);
 
@@ -359,9 +366,24 @@ void PhysicsSystem::SetCollisionLayerMask(int a, int b, bool state)
 	}
 }
 
+void PhysicsSystem::SetCollisionLayerMaskIndexed(int layerA, int layerB, bool state)
+{
+	if (layerA < 0 || layerA >= 32) return;
+	if (layerB < 0 || layerB >= 32) return;
+
+	layerMasks[layerA] &= ~(1 << layerB);
+	layerMasks[layerB] &= ~(1 << layerA);
+
+	if (state)
+	{
+		layerMasks[layerA] |= (1 << layerB);
+		layerMasks[layerB] |= (1 << layerA);
+	}
+}
+
 void PhysicsSystem::SetCollisionLayerMask(int layer, unsigned int bitMask)
 {
-	int layerIndex = log2((float)layer);
+	int layerIndex = (int)log2((float)layer);
 	layerMasks[layerIndex] = bitMask;
 	for (unsigned int i = 0; i < 32; i++)
 	{
@@ -376,6 +398,50 @@ bool PhysicsSystem::GetCollisionLayerBool(int a, int b)
 	int layerA = (int)log2((float)a);
 	int layerB = (int)log2((float)b);
 	return layerMasks[layerA] & (1 << layerB);
+}
+
+bool PhysicsSystem::GetCollisionLayerIndexed(int layerA, int layerB)
+{
+	return layerMasks[layerA] & (1 << layerB);
+}
+
+toml::table PhysicsSystem::Serialise() const
+{
+	return toml::table{
+		{ "collisionItterations", collisionItterations },
+		{ "layerMask0", layerMasks[0] },
+		{ "layerMask1", layerMasks[1] },
+		{ "layerMask2", layerMasks[2] },
+		{ "layerMask3", layerMasks[3] },
+		{ "layerMask4", layerMasks[4] },
+		{ "layerMask5", layerMasks[5] },
+		{ "layerMask6", layerMasks[6] },
+		{ "layerMask7", layerMasks[7] },
+		{ "layerMask8", layerMasks[8] },
+		{ "layerMask9", layerMasks[9] },
+		{ "layerMask10", layerMasks[10] },
+		{ "layerMask11", layerMasks[11] },
+		{ "layerMask12", layerMasks[12] },
+		{ "layerMask13", layerMasks[13] },
+		{ "layerMask14", layerMasks[14] },
+		{ "layerMask15", layerMasks[15] },
+		{ "layerMask16", layerMasks[16] },
+		{ "layerMask17", layerMasks[17] },
+		{ "layerMask18", layerMasks[18] },
+		{ "layerMask19", layerMasks[19] },
+		{ "layerMask20", layerMasks[20] },
+		{ "layerMask21", layerMasks[21] },
+		{ "layerMask22", layerMasks[22] },
+		{ "layerMask23", layerMasks[23] },
+		{ "layerMask24", layerMasks[24] },
+		{ "layerMask25", layerMasks[25] },
+		{ "layerMask26", layerMasks[26] },
+		{ "layerMask27", layerMasks[27] },
+		{ "layerMask28", layerMasks[28] },
+		{ "layerMask29", layerMasks[29] },
+		{ "layerMask30", layerMasks[30] },
+		{ "layerMask31", layerMasks[31] },
+	};
 }
 
 bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>& hits, float length, int layerMask, bool ignoreTriggers)
@@ -411,7 +477,6 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 			}
 		}
 	}
-	//if (collisions.size() == 0){}
 
 	for (auto collider = (*collidersInScene).begin(); collider != (*collidersInScene).end(); collider++)
 	{
@@ -434,7 +499,7 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 			}
 		}
 	}
-	Hit hit;
+
 	//Post casting ray sorting to see what has been hit.
 	if (collisions.size() == 0)
 	{

@@ -40,6 +40,8 @@ void GUI::Update()
 			if (ImGui::MenuItem("Hierarchy Menu", NULL, &showHierarchy)) {
 				showSceneObject = showHierarchy;
 			}
+			ImGui::MenuItem("Physics Menu", NULL, &showPhysicsMenu);
+			ImGui::MenuItem("Enemy Menu", NULL, &showEnemyMenu);
 			ImGui::MenuItem("Imgui Demo Window", NULL, &showImguiExampleMenu);
 
 			ImGui::EndMenu();
@@ -61,6 +63,8 @@ void GUI::Update()
 	if (showSceneObject)      { SceneObjectMenu();       }
 	if (showLightMenu)        { LightMenu();             }
 	if (showHierarchy)        { HierarchyMenu();         }
+	if (showPhysicsMenu)	  { PhysicsMenu();           }
+	if (showEnemyMenu)	      { EnemyMenu();             }
 	if (showImguiExampleMenu) { ImGui::ShowDemoWindow(); }
 	scene->BaseGUI();
 	scene->GUI();
@@ -294,4 +298,78 @@ void GUI::TransformDragDrop(SceneObject* sceneObject)
 		}
 		ImGui::EndDragDropTarget();
 	}
+}
+
+void GUI::PhysicsMenu()
+{
+	if (!ImGui::Begin("Physics Menu", &showPhysicsMenu, defaultWindowFlags)) {
+		ImGui::End();
+		return;
+	}
+
+	int flagCount = (int)log2((int)CollisionLayers::count);
+
+
+	ImGui::Text("0 : base");
+	ImGui::Text("1 : enemy");
+	ImGui::Text("2 : reflectiveSurface");
+	ImGui::Text("3 : sync");
+	ImGui::Text("4 : ecco");
+	ImGui::Text("5 : syncProjectile");
+	ImGui::Text("6 : eccoProjectile");
+	ImGui::Text("7 : ignoreRaycast");
+
+	ImGui::Text("");
+	ImGui::Text(" ");
+	for (int i = 0; i < flagCount; i++)
+	{
+		ImGui::SameLine();
+		ImGui::Text((std::to_string(i) + "  ").c_str());
+	}
+	for (int i = 0; i < flagCount; i++)
+	{
+		ImGui::Text(std::to_string(i).c_str());
+		for (int j = 0; j < flagCount; j++)
+		{
+			bool layerToggle = scene->physicsSystem.GetCollisionLayerIndexed(i, j);
+			ImGui::SameLine();
+			if (ImGui::Checkbox(("##" + std::to_string(i) + " " + std::to_string(j) + " collisionLayer").c_str(), &layerToggle))
+			{
+				scene->physicsSystem.SetCollisionLayerMaskIndexed(i, j, layerToggle);
+			}
+		}
+	}
+
+	ImGui::Text("");
+	ImGui::TextColored({ 0.2f,0.8f,0.2f, 1.0f }, "Ask Tom for more collision layers");
+
+	ImGui::DragInt("Collision Itterations", &scene->physicsSystem.collisionItterations, 0.5f, 0);
+	ImGui::End();
+}
+
+void GUI::EnemyMenu()
+{
+	if (!ImGui::Begin("Enemy Menu", &showEnemyMenu, defaultWindowFlags)) {
+		ImGui::End();
+		return;
+	}
+
+	EnemySystem& es = scene->enemySystem;
+	ImGui::Text("MELEE ENEMY STATS");
+	ImGui::DragInt("Melee Enemy Health", &es.meleeEnemyHealth);
+	ImGui::DragFloat("Melee Enemy Move Speed", &es.meleeEnemyMoveSpeed);
+	ImGui::DragInt("Melee Enemy Damage", &es.meleeEnemyDamage);
+	ImGui::DragFloat("Melee Enemy Collider Radius", &es.meleeEnemyColliderRadius);
+	ImGui::InputText("Melee Enemy Model Path", &es.meleeEnemyModel);
+	ImGui::InputText("Melee Enemy Material", &es.meleeEnemyMaterialPath);
+	ImGui::Text("");
+	ImGui::Text("RANGED ENEMY STATS");
+	ImGui::DragInt("Ranged Enemy Health", &es.meleeEnemyHealth);
+	ImGui::DragFloat("Ranged Enemy Move Speed", &es.meleeEnemyMoveSpeed);
+	ImGui::DragInt("Ranged Enemy Damage", &es.meleeEnemyDamage);
+	ImGui::DragFloat("Ranged Enemy Collider Radius", &es.meleeEnemyColliderRadius);
+	ImGui::InputText("Ranged Enemy Model Path", &es.meleeEnemyModel);
+	ImGui::InputText("Ranged Enemy Material", &es.meleeEnemyMaterialPath);
+
+	ImGui::End();
 }
