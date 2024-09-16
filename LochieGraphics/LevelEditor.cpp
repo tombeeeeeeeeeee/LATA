@@ -68,8 +68,9 @@ SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
 	newWall->setRigidBody(newRigidBody);
 	newRigidBody = newWall->rigidbody();
 	newRigidBody->addCollider(new PolygonCollider({
-		{x + 20, z + 20}, {x + 20, z - 20}, { x - 20, z + 20 }, {x - 20, z - 20}
+		{ + 12.5,  +300}, { +12.5,  - 300}, {  -12.5,  - 300 }, { -12.5,  + 300}
 		}, 0.0f));
+
 	return newWall;
 }
 
@@ -167,12 +168,13 @@ void LevelEditor::Start()
 	hRb->setMomentOfInertia(5.0f);
 
 	RigidBody* rRb = new RigidBody();
+	float eccoColliderSize = 100.0f;
 	rRb->addCollider({ new PolygonCollider(
 		{
-			{100.0f, 100.0f},
-			{100.0f, -100.0f},
-			{-100.0f, -100.0f},
-			{-100.0f, 100.0f},
+			{eccoColliderSize, eccoColliderSize},
+			{eccoColliderSize, -eccoColliderSize},
+			{-eccoColliderSize, -eccoColliderSize},
+			{-eccoColliderSize, eccoColliderSize},
 		}, 0.0f, CollisionLayers::ecco) }
 	);
 	rRb->setMass(0.1f);
@@ -424,6 +426,15 @@ void LevelEditor::LoadLevel()
 
 	}
 
+	// TODO: Should be a function
+	//toml::parse_result parsed = toml::parse(file);
+	//if (!parsed) {
+	//	// TODO: Error
+	//	std::cout << "Failed to load level\n";
+	//	file.close();
+	//	return;
+	//}
+	//toml::table data = std::move(parsed).table();
 	toml::table data = toml::parse(file);
 
 	DeleteAllSceneObjects();
@@ -438,6 +449,7 @@ void LevelEditor::LoadLevel()
 	wallTileParent = FindSceneObjectOfName("Wall Tiles");
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
+
 
 
 	// Refresh the tiles collection

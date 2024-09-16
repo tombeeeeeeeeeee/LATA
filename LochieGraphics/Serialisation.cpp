@@ -6,6 +6,9 @@
 
 glm::vec2 Serialisation::LoadAsVec2(toml::v3::array* toml)
 {
+    // TODO: Show error message
+
+    if (!toml) { return { 0.0f, 0.0f }; }
     return glm::vec2(
         toml->at(0).value_or<float>(0.0f),
         toml->at(1).value_or<float>(0.0f));
@@ -51,16 +54,27 @@ std::string Serialisation::LoadAsString(toml::node& toml)
 
 int Serialisation::LoadAsInt(toml::v3::node_view<toml::v3::node> toml)
 {
+    if (!toml) { return 0.0f; }
     return toml.as_integer()->value_or<int>(0);
 }
 
 int Serialisation::LoadAsInt(toml::node* toml)
 {
+    if (!toml) { return 0.0f; }
+
     return toml->as_integer()->value_or<int>(0);
+}
+
+int Serialisation::LoadAsInt(toml::node& toml)
+{
+    return toml.as_integer()->value_or<int>(0);
 }
 
 float Serialisation::LoadAsFloat(toml::v3::node_view<toml::v3::node> toml)
 {
+    // TODO: Show error message
+
+    if (!toml) { return 0.0f; }
     return toml.as_floating_point()->value_or<float>(0.0f);
 }
 
@@ -81,6 +95,8 @@ glm::quat Serialisation::LoadAsQuaternion(toml::node_view<toml::node> table)
 
 bool Serialisation::LoadAsBool(toml::node_view<toml::node> toml)
 {
+    // TODO: Show error message
+    if (!toml) { return false; }
     return toml.as_boolean()->value_or<bool>(false);
 }
 

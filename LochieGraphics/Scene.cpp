@@ -83,7 +83,17 @@ void Scene::Load()
 {
 	std::ifstream file("TestScene.toml");
 
+	// TODO: Should be a function
+	//toml::parse_result parsed = toml::parse(file);
+	//if (!parsed) {
+	//	// TODO: Error
+	//	std::cout << "Failed to load scene\n";
+	//	file.close();
+	//	return;
+	//}
+	//toml::table data = std::move(parsed).table();
 	toml::table data = toml::parse(file);
+
 
 	// TODO: Move most of this camera stuff to the camera class
 	auto cam = data["Camera"];

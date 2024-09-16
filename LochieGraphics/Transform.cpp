@@ -248,8 +248,20 @@ void Transform::GUI()
 		}
 		if (ImGui::MenuItem(("Paste##" + tag).c_str())) {
 			std::string clipboard = ImGui::GetClipboardText();
+			// TODO: Should be a function
+			//toml::parse_result parsed = toml::parse(clipboard);
+			//if (!parsed) {
+			//	// TODO: Error
+			//	std::cout << "Failed to load clipboard data\n";
+			//	//return;
+			//}
+			//else {
+
+			//toml::table data = std::move(parsed).table();
 			toml::table data = toml::parse(clipboard);
+
 			*this = Transform(data);
+			//}
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
