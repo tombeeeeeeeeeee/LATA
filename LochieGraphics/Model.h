@@ -16,6 +16,7 @@ private:
 	Model(std::string path);
 	Model(toml::table table);
 
+	static void HierarchyGUI(ModelHierarchyInfo* info);
 
 public:
 	glm::vec3 min;

@@ -11,6 +11,7 @@
 #include "assimp/postprocess.h"
 
 #include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
 
 Model::Model()
 {
@@ -110,6 +111,26 @@ void Model::GUI()
 		ImGui::DragInt("Material IDs", &materialIDs);
 		
 		ImGui::EndDisabled();
+		if (ImGui::CollapsingHeader(("Bone Info##" + tag).c_str())) {
+			ImGui::BeginDisabled();
+			for (auto& i : boneInfoMap)
+			{
+				if (ImGui::CollapsingHeader((i.first + "##" + tag).c_str())) {
+					ExtraEditorGUI::Mat4Input(tag, &i.second.offset);
+				}
+			}
+			if (boneInfoMap.empty()) {
+				ImGui::Text("Empty!");
+			}
+			ImGui::EndDisabled();
+		}
+
+		HierarchyGUI(&root);
+		ImGui::BeginDisabled();
+
+
+
+		ImGui::EndDisabled();
 
 		ImGui::Unindent();
 	}
@@ -146,5 +167,20 @@ Model::Model(toml::table table)
 {
 	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
 	LoadModel(Serialisation::LoadAsString(table["path"]));
+}
+
+void Model::HierarchyGUI(ModelHierarchyInfo* info)
+{
+	std::string tag = Utilities::PointerToString(info);
+	if (ImGui::CollapsingHeader((info->name + "##" + tag).c_str())) {
+		ImGui::Indent();
+		info->transform.GUI();
+
+		for (auto i : info->children)
+		{
+			HierarchyGUI(i);
+		}
+		ImGui::Unindent();
+	}
 }
 

@@ -10,6 +10,9 @@
 
 class ExtraEditorGUI {
 public:
+
+	static bool Mat4Input(std::string tag, glm::mat4* mat);
+
 	static int TextSelected(ImGuiInputTextCallbackData* data);
 
 	// Filter is used for the input search box
