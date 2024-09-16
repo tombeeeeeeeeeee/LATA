@@ -27,7 +27,8 @@ toml::table Collider::Serialise(unsigned long long GUID) const
 
 Collider* Collider::Load(toml::table table)
 {
-	switch ((ColliderType)Serialisation::LoadAsInt(table["type"]))
+	int colliderTypeInt = Serialisation::LoadAsInt(table["type"]);
+	switch ((ColliderType)colliderTypeInt)
 	{
 	case ColliderType::polygon:
 		return new PolygonCollider(table);

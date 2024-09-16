@@ -153,6 +153,10 @@ RigidBody::RigidBody(toml::table table)
 	elasticicty = Serialisation::LoadAsFloat(table["elasticicty"]);
 	isStatic = Serialisation::LoadAsBool(table["isStatic"]);
 	toml::array* loadingColliders = table["colliders"].as_array();
+	if (!loadingColliders) {
+		colliders.resize(0);
+		return;
+	}
 	for (size_t i = 0; i < loadingColliders->size(); i++)
 	{
 		colliders.push_back(Collider::Load(*loadingColliders->at(i).as_table()));

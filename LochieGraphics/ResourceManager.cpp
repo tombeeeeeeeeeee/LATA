@@ -74,6 +74,15 @@ Model* ResourceManager::LoadModelAsset(std::string path)
 		std::cout << "Failed to find model, attempted at path: " << path << '\n';
 		return nullptr;
 	}
+	// TODO: Should be a function
+	//toml::parse_result parsed = toml::parse(file);
+	//if (!parsed) {
+	//	// TODO: Error
+	//	file.close();
+	//	std::cout << "Failed to load model asset\n";
+	//	return ResourceManager::defaultModel;
+	//}
+	//toml::table data = std::move(parsed).table();
 	toml::table data = toml::parse(file);
 	unsigned long long loadingGUID = Serialisation::LoadAsUnsignedLongLong(data["guid"]);
 	auto search = models.find(loadingGUID);

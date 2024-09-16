@@ -67,9 +67,12 @@ SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
 	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, true);
 	newWall->setRigidBody(newRigidBody);
 	newRigidBody = newWall->rigidbody();
+	float wallLength = 150.f;
+	float wallThickness = 12.5f;
 	newRigidBody->addCollider(new PolygonCollider({
-		{x + 20, z + 20}, {x + 20, z - 20}, { x - 20, z + 20 }, {x - 20, z - 20}
+		{ +wallThickness,  +wallLength}, { +wallThickness,  -wallLength}, {  -wallThickness,  -wallLength }, { -wallThickness,  +wallLength}
 		}, 0.0f));
+
 	return newWall;
 }
 
@@ -167,12 +170,13 @@ void LevelEditor::Start()
 	hRb->setMomentOfInertia(5.0f);
 
 	RigidBody* rRb = new RigidBody();
+	float eccoColliderSize = 75.0f;
 	rRb->addCollider({ new PolygonCollider(
 		{
-			{100.0f, 100.0f},
-			{100.0f, -100.0f},
-			{-100.0f, -100.0f},
-			{-100.0f, 100.0f},
+			{eccoColliderSize, eccoColliderSize},
+			{eccoColliderSize, -eccoColliderSize},
+			{-eccoColliderSize, -eccoColliderSize},
+			{-eccoColliderSize, eccoColliderSize},
 		}, 0.0f, CollisionLayers::ecco) }
 	);
 	rRb->setMass(0.1f);
@@ -256,6 +260,9 @@ void LevelEditor::Update(float delta)
 	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
 		Eraser(targetCell);
 	}
+
+
+	//ImGui::Checkbox("Draw Colliders", &drawColliders);
 }
 
 void LevelEditor::Draw()
@@ -425,6 +432,15 @@ void LevelEditor::LoadLevel()
 
 	}
 
+	// TODO: Should be a function
+	//toml::parse_result parsed = toml::parse(file);
+	//if (!parsed) {
+	//	// TODO: Error
+	//	std::cout << "Failed to load level\n";
+	//	file.close();
+	//	return;
+	//}
+	//toml::table data = std::move(parsed).table();
 	toml::table data = toml::parse(file);
 
 	DeleteAllSceneObjects();
@@ -439,6 +455,7 @@ void LevelEditor::LoadLevel()
 	wallTileParent = FindSceneObjectOfName("Wall Tiles");
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
+
 
 
 	// Refresh the tiles collection

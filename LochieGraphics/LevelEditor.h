@@ -76,6 +76,7 @@ private:
 	std::vector<std::string> loadPaths;
 	std::vector<std::string*> loadPathsPointers;
 
+	bool drawColliders = true;
 
 	bool InputSearchTest();
 
