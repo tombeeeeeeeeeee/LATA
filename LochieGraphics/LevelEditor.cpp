@@ -213,6 +213,7 @@ void LevelEditor::Update(float delta)
 			*input.inputDevices[0],
 			*eccoSo->transform(),
 			*eccoSo->rigidbody(),
+			*eccoSo->health(),
 			delta,
 			camera->transform.getEulerRotation().y
 		);

@@ -8,7 +8,14 @@
 #include "Health.h"
 #include "EditorGUI.h"
 
-void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBody& rigidBody, float delta, float cameraRotationDelta)
+void Ecco::Update(
+	Input::InputDevice& inputDevice, 
+	Transform& transform, 
+	RigidBody& rigidBody, 
+	Health& health,
+	float delta, 
+	float cameraRotationDelta
+)
 {
 
 	/*
@@ -134,8 +141,11 @@ void Ecco::Update(Input::InputDevice& inputDevice, Transform& transform, RigidBo
 
 	if (inputDevice.getButton1())// && lastSpeedBoostPressed + speedBoostCooldown > Time.time)
 	{
-		if(speedBoostUnactuated)
+		if (speedBoostUnactuated)
+		{
 			rigidBody.AddImpulse(speedBoost * wheelDirection);
+			health.subtractHealth(speedBoostHPCost);
+		}
 		speedBoostUnactuated = false;
 	}
 	else
@@ -153,9 +163,15 @@ void Ecco::OnCollision(Collision collision)
 		if (glm::length(rb->vel) > minSpeedDamageThreshold)
 		{
 			collision.sceneObject->health()->subtractHealth(speedDamage);
+			rb->AddImpulse(glm::normalize(rb->vel) * -speedReductionAfterDamaging);
+			collision.self->health()->addHealth(healingFromDamage);
 		}
-		rb->AddImpulse(glm::normalize(rb->vel) * -speedReductionAfterDamaging);
 	}
+}
+
+void Ecco::OnHealthDown(HealthPacket healthPacket)
+{
+	//TODO: Lose Condition.
 }
 
 void Ecco::GUI()
@@ -179,7 +195,9 @@ void Ecco::GUI()
 		ImGui::DragFloat("Speed Boost Cooldown", &speedBoostCooldown);
 		ImGui::DragFloat("Minimum damaging speed", &minSpeedDamageThreshold);
 		ImGui::DragInt("On Collision Damage", &speedDamage);
+		ImGui::DragInt("On Collision Heal", &healingFromDamage);
 		ImGui::DragFloat("Speed reduction after damage", &speedReductionAfterDamaging);
+		ImGui::DragInt("Max Health", &maxHealth);
 		ImGui::BeginDisabled();
 		ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
 		ImGui::EndDisabled();
@@ -208,7 +226,9 @@ toml::table Ecco::Serialise()
 		{ "speedBoostCooldown", speedBoostCooldown},
 		{ "minSpeedDamageThreshold", minSpeedDamageThreshold},
 		{ "speedDamage", speedDamage},
+		{ "healingFromDamage", healingFromDamage},
 		{ "speedReductionAfterDamaging", speedReductionAfterDamaging},
+		{ "maxHealth", maxHealth},
 	};
 }
 
@@ -232,6 +252,15 @@ Ecco::Ecco(toml::table table)
 	speedBoostCooldown = Serialisation::LoadAsFloat(table["speedBoostCooldown"]);
 	minSpeedDamageThreshold = Serialisation::LoadAsFloat(table["minSpeedDamageThreshold"]);
 	speedDamage = Serialisation::LoadAsInt(table["speedDamage"]);
+	healingFromDamage = Serialisation::LoadAsInt(table["healingFromDamage"]);
 	speedReductionAfterDamaging = Serialisation::LoadAsFloat(table["speedReductionAfterDamaging"]);
+	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
+}
+
+void Ecco::Start(
+	Health& health
+)
+{
+	health.setMaxHealth(maxHealth);
 }
 

@@ -8,6 +8,8 @@
 
 class Transform;
 class RigidBody;
+class Health;
+struct HealthPacket;
 struct Collision;
 
 class Ecco
@@ -18,16 +20,20 @@ public:
 
 	Ecco() {};
 	Ecco(toml::table table);
-
+	void Start(
+		Health& health
+	);
 	void Update(
 		Input::InputDevice& inputDevice,
 		Transform& transform,
 		RigidBody& rigidBody,
+		Health& health,
 		float delta,
 		float cameraRotationDelta
 	);
 
 	void OnCollision(Collision collision);
+	void OnHealthDown(HealthPacket healthPacket);
 
 	void GUI();
 	toml::table Serialise();
@@ -49,9 +55,12 @@ private:
 	bool controlState = false;
 	float speedBoost = 1.0f;
 	float speedBoostCooldown = 0.1f;
+	int speedBoostHPCost = 0;
 	bool speedBoostUnactuated = true;
 	float lastSpeedBoostPressed = 0.0f;
 	float minSpeedDamageThreshold = 0.0f;
 	int speedDamage = 0;
+	int healingFromDamage = 0;
 	float speedReductionAfterDamaging = 0.0f;
+	int maxHealth = 10;
 };

@@ -6,8 +6,9 @@ Health::Health()
 
 }
 
-void Health::addHealth(int addition)
+void Health::addHealth(int addition, SceneObject* so)
 {
+	timeSinceLastChange = 0.0f;
 	int oldHealth = currHealth;
 	currHealth += addition;
 	glm::clamp(currHealth, 0, maxHealth);
@@ -16,27 +17,28 @@ void Health::addHealth(int addition)
 	{
 		for (int i = onHealthZero.size(); i != onHealthZero.size(); i++)
 		{
-			onHealthZero[i](currHealth);
+			onHealthZero[i]({currHealth - oldHealth, so});
 		}
 	}
 	else if (currHealth > oldHealth)
 	{
 		for (int i = onHealthUp.size(); i != onHealthUp.size(); i++)
 		{
-			onHealthUp[i](currHealth);
+			onHealthUp[i]({currHealth - oldHealth, so});
 		}
 	}
 	else if (currHealth < oldHealth)
 	{
 		for (int i = onHealthDown.size(); i != onHealthDown.size(); i++)
 		{
-			onHealthDown[i](currHealth);
+			onHealthDown[i]({currHealth - oldHealth, so});
 		}
 	}
 }
 
-void Health::subtractHealth(int subtraction)
+void Health::subtractHealth(int subtraction, SceneObject* so)
 {
+	timeSinceLastChange = 0.0f;
 	int oldHealth = currHealth;
 	currHealth -= subtraction;
 	glm::clamp(currHealth, 0, maxHealth);
@@ -45,21 +47,21 @@ void Health::subtractHealth(int subtraction)
 	{
 		for (auto i = onHealthZero.size(); i != onHealthZero.size(); i++)
 		{
-			onHealthZero[(int)i](currHealth);
+			onHealthZero[(int)i]({ currHealth - oldHealth, so });
 		}
 	}
 	else if (currHealth > oldHealth)
 	{
 		for (auto i = onHealthUp.size(); i != onHealthUp.size(); i++)
 		{
-			onHealthUp[(int)i](currHealth);
+			onHealthUp[(int)i]({ currHealth - oldHealth, so });
 		}
 	}
 	else if (currHealth < oldHealth)
 	{
 		for (auto i = onHealthDown.size(); i != onHealthDown.size(); i++)
 		{
-			onHealthDown[(int)i](currHealth);
+			onHealthDown[(int)i]({ currHealth - oldHealth, so });
 		}
 	}
 }

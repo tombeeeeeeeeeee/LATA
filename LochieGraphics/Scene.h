@@ -14,6 +14,7 @@
 
 #include "PhysicsSystem.h"
 #include "EnemySystem.h"
+#include "HealthSystem.h"
 #include "GamePlayCameraSystem.h"
 
 #include "Skybox.h"
@@ -67,6 +68,7 @@ public:
 	RenderSystem* renderSystem;
 	PhysicsSystem physicsSystem;
 	GameplayCameraSystem gameCamSystem;
+	HealthSystem healthSystem;
 	EnemySystem enemySystem;
 
 	virtual void Start() {};

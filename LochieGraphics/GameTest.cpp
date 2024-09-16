@@ -86,6 +86,9 @@ void GameTest::Start()
 	h->name = "Sync";
 
 	sync->Start(&shaders);
+	ecco->Start(
+		*r->health()
+	);
 
 	SceneObject* newSceneObject = new SceneObject(this, "Walls");
 	RigidBody* newRigidBody = new RigidBody(0.0f, 0.0f, {}, true);
@@ -120,11 +123,23 @@ void GameTest::Start()
 	enemySystem.InitialiseMelee(sceneObjects, 10);
 	enemySystem.InitialiseRanged(sceneObjects, 10);
 
+	healthSystem.Start(healths);
+
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 }
 
 void GameTest::Update(float delta)
 {
+	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
+
+	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
+
+	healthSystem.Update(
+		healths,
+		renderers,
+		delta
+	);
+
 	input.Update();
 	if(ecco->GUID != 0)
 	r = sceneObjects[ecco->GUID];
@@ -161,6 +176,7 @@ void GameTest::Update(float delta)
 					*input.inputDevices[0],
 					*r->transform(),
 					*r->rigidbody(),
+					*r->health(),
 					delta,
 					camera->transform.getEulerRotation().y
 				);
@@ -175,6 +191,7 @@ void GameTest::Update(float delta)
 				*input.inputDevices[0],
 				*r->transform(),
 				*r->rigidbody(),
+				*r->health(),
 				delta,
 				camera->transform.getEulerRotation().y
 			);
@@ -285,10 +302,6 @@ void GameTest::Update(float delta)
 			}
 		}
 	}
-
-	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
-
-	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 }
 
 void GameTest::Draw()

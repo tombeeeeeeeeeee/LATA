@@ -5,15 +5,25 @@
 #include <functional>
 #include <vector>
 
+class SceneObject;
+
+struct HealthPacket
+{
+	int healthChange;
+	SceneObject* so;
+
+	HealthPacket(int _healthChange, SceneObject* _so = nullptr) : healthChange(_healthChange), so(_so) {};
+};
+
 class Health
 {
 public:
 	int currHealth = 0;
-
+	float timeSinceLastChange = 0.0f;
 	Health();
 
-	void addHealth(int addition);
-	void subtractHealth(int subtraction);
+	void addHealth(int addition, SceneObject* so = nullptr);
+	void subtractHealth(int subtraction, SceneObject* so = nullptr);
 
 	void setMaxHealth(int max);
 	int getMaxHealth();
@@ -21,10 +31,12 @@ public:
 	toml::table Serialise(unsigned long long GUID) const;
 	Health(toml::table table);
 
+	std::vector<std::function<void(HealthPacket)>> onHealthUp = {};
+	std::vector<std::function<void(HealthPacket)>> onHealthDown = {};
+	std::vector<std::function<void(HealthPacket)>> onHealthZero = {};
+
 private:
 	int maxHealth = 0;
-	std::vector<std::function<void(int)>> onHealthUp = {};
-	std::vector<std::function<void(int)>> onHealthDown = {};
-	std::vector<std::function<void(int)>> onHealthZero = {};
+
 };
 
