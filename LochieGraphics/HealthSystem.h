@@ -1,10 +1,11 @@
 #pragma once
-#include <unordered_map>
-#include <vector>
 #include "Maths.h"
 
+#include <unordered_map>
+#include <vector>
+
 class Health;
-class ModelRender;
+class ModelRenderer;
 struct HealthPacket;
 
 class HealthSystem
