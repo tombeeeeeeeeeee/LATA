@@ -1,6 +1,4 @@
 #pragma once
-#include "Part.h"
-
 #include "Serialisation.h"
 
 #include <vector>
@@ -9,7 +7,7 @@ class Model;
 class Shader;
 class Material;
 
-class ModelRenderer : public Part
+class ModelRenderer
 {
 public:
 	Model* model;
@@ -26,7 +24,7 @@ public:
 	ModelRenderer(Model* _model, unsigned long long _materialGUID);
 	ModelRenderer(Model* _model, Material* _material);
 
-	virtual void GUI() override;
+	void GUI();
 
 	toml::table Serialise(unsigned long long GUID) const;
 	ModelRenderer(toml::table table);

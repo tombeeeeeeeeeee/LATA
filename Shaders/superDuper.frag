@@ -107,7 +107,7 @@ const float MAX_REFLECTION_LOD = 4.0;
 void main()
 {
     vec3 PBR = texture(material.PBR, texCoords).rgb;
-    albedo = texture(material.albedo, texCoords).rgb;
+    albedo = texture(material.albedo, texCoords).rgb * fragmentColour;
 
     //TODO: Add atlasing
     //albedo *= texture(brushStrokes, texCoords).rgb;

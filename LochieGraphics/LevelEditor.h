@@ -64,10 +64,6 @@ private:
 
 	Input input;
 
-	PhysicsSystem physicsSystem;
-	GameplayCameraSystem gameCamSystem;
-	EnemySystem enemySystem;
-
 	float syncRadius = 10.0f;
 
 	SceneObject* syncSo = nullptr;

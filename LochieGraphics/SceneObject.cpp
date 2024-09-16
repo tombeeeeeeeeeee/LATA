@@ -42,13 +42,12 @@ void SceneObject::GUI()
 	ImGui::InputText("Name", &name);
 	scene->transforms[GUID].GUI();
 
-	if (parts & Parts::modelRenderer) {
-		scene->renderers[GUID].GUI();
-	}
-
-	if (parts & Parts::rigidBody) {
-		scene->rigidBodies[GUID].GUI();
-	}
+	if (parts & Parts::modelRenderer) { scene->renderers[GUID].GUI(); }
+	if (parts & Parts::rigidBody) { scene->rigidBodies[GUID].GUI(); }
+	if (parts & Parts::collider) { scene->colliders[GUID]->GUI(); }
+	if (parts & Parts::enemy) { scene->enemies[GUID].GUI(); }
+	if (parts & Parts::health) { scene->healths[GUID].GUI(); }
+	
 
 	if (parts & Parts::ecco)
 	{
@@ -62,7 +61,7 @@ void SceneObject::GUI()
 			scene->sync->GUI();
 	}
 
-	//TODO Add animator parts;
+	// TODO: Add animator parts;
 	//if ((parts & Parts::animator)) {
 	//	scene->animators[GUID].GUI();
 	//}

@@ -35,6 +35,8 @@ public:
 	std::vector<std::function<void(HealthPacket)>> onHealthDown = {};
 	std::vector<std::function<void(HealthPacket)>> onHealthZero = {};
 
+	void GUI();
+
 private:
 	int maxHealth = 0;
 

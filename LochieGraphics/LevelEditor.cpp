@@ -211,6 +211,14 @@ void LevelEditor::Update(float delta)
 
 	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
+
+	healthSystem.Update(
+		healths,
+		renderers,
+		delta
+	);
+
+
 	if (input.inputDevices.size() > 0)
 	{
 		ecco->Update(
