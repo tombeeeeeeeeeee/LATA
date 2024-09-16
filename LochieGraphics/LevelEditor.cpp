@@ -9,7 +9,10 @@
 
 #include "ExtraEditorGUI.h"
 
+#include <fstream>
+#include <iostream>
 #include <filesystem>
+
 
 void LevelEditor::RefreshWalls()
 {
@@ -152,8 +155,6 @@ void LevelEditor::Start()
 	ground = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
 	wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_adjustedOriginLocWall" + Paths::modelExtension);
 
-	
-
 	syncSo = new SceneObject(this, "Sync");
 	eccoSo = new SceneObject(this, "Ecco");
 	sync->GUID = syncSo->GUID;
@@ -267,11 +268,9 @@ void LevelEditor::Draw()
 	);
 }
 
-
 void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
-		ResourceManager::ModelAssetSelector("Model Asset", &eccoSo->renderer()->model);
 		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0\0")) {
 			switch (state)
 			{

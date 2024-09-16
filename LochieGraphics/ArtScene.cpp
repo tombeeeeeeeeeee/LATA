@@ -13,6 +13,10 @@
 #include "stb_image.h"
 #include "stb_image_write.h"
 
+#include <ios>
+#include <fstream>
+#include <ostream>
+#include <iostream>
 #include <filesystem>
 
 ArtScene* ArtScene::artScene = nullptr;

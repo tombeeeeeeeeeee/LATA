@@ -9,6 +9,7 @@
 
 #include "ExtraEditorGUI.h"
 
+#include <fstream>
 #include <filesystem>
 #include <iostream>
 #include <chrono>

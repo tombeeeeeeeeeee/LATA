@@ -51,6 +51,8 @@ public:
 	std::unordered_map<unsigned long long, Enemy> enemies = {};
 	std::vector<Light*> lights = {};
 
+	std::vector<unsigned long long> markedForDeletion = {};
+
 	Ecco* ecco = nullptr;
 	Sync* sync = nullptr;
 
@@ -68,7 +70,6 @@ public:
 	EnemySystem enemySystem;
 
 	virtual void Start() {};
-	virtual void EarlyUpdate() {};
 	virtual void Update(float delta) {};
 	virtual void Draw() {};
 	virtual void OnMouseDown() {};
@@ -91,6 +92,7 @@ public:
 	virtual void Save();
 	virtual void Load();
 
+	void DeleteSceneObject(unsigned long long GUID);
 protected:
 
 	void DeleteAllSceneObjects();

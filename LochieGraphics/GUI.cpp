@@ -7,6 +7,8 @@
 
 #include "ResourceManager.h"
 
+#include "ImGuizmo.h"
+
 #include <iostream>
 
 using Utilities::PointerToString;
@@ -68,9 +70,53 @@ void GUI::Update()
 	scene->GUI();
 
 	// Update Potential Modals
+	// TODO: Would be good if could be in the material class, perhaps the material input is shown via the material class, so that the material could handle the modal
 	for (auto& i : ResourceManager::materials)
 	{
 		i.second.ModalGUI();
+	}
+
+	// Transform GIZMO
+	if (sceneObjectSelected) {
+		// TODO: This should be somewhere else
+		ImGuizmo::SetOrthographic(SceneManager::scene->camera->InOrthoMode());
+
+		ImGuiIO& io = ImGui::GetIO();
+		//SceneManager
+		// TODO: should be moving window stuff out of scenemanager directly
+		// TODO: There should be a window pos change callback, should justbe stored somewhere
+		int xOffset, yOffset;
+		glfwGetWindowPos(SceneManager::window, &xOffset, &yOffset);
+		ImGuizmo::SetRect(xOffset, yOffset, io.DisplaySize.x, io.DisplaySize.y);
+		glm::mat4 editMatrix = sceneObjectSelected->transform()->getGlobalMatrix();
+		if (ImGuizmo::Manipulate(&SceneManager::view[0][0], &SceneManager::projection[0][0], ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD, &editMatrix[0][0])) {
+			glm::vec3 pos = {};
+			glm::vec3 rot = {};
+			glm::vec3 scl = {};
+			// TODO: Use own function
+			ImGuizmo::DecomposeMatrixToComponents(&editMatrix[0][0], &pos.x, &rot.x, &scl.x);
+			Transform* t = sceneObjectSelected->transform();
+			// TODO: THis might break for children need to be doing stuff in local
+			t->setPosition(pos);
+			t->setEulerRotation(rot);
+			t->setScale(scl);
+		}
+
+		//if (!io.WantCaptureKeyboard) {
+		//	if (glfwGetKey(SceneManager::window, GLFW_KEY_L)) {
+		//		Transform* t = &SceneManager::scene->camera->transform;
+		//		glm::mat4 newCam = glm::lookAt(t->getGlobalPosition(), sceneObjectSelected->transform()->getGlobalPosition(), { 0.0f, 1.0f, 0.0f });
+		//		// TODO: Own function would be good
+		//		glm::vec3 pos = {};
+		//		glm::vec3 rot = {};
+		//		glm::vec3 scl = {};
+		//		// TODO: Use own function
+		//		ImGuizmo::DecomposeMatrixToComponents(&newCam[0][0], &pos.x, &rot.x, &scl.x);
+		//		t->setPosition(pos);
+		//		t->setEulerRotation(rot);
+		//		t->setScale(scl);
+		//	}
+		//}
 	}
 }
 
@@ -197,42 +243,50 @@ void GUI::HierarchyMenu()
 
 void GUI::TransformTree(SceneObject* sceneObject)
 {
+	std::string tag = std::to_string(sceneObject->GUID);
 	ImGuiTreeNodeFlags nodeFlags = baseNodeFlags;
 	if (sceneObjectSelected == sceneObject) {
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
-	if (sceneObject->transform()->HasChildren()) {
-		bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + PointerToString(sceneObject)).c_str(), nodeFlags);
-		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
-			sceneObjectSelected = sceneObject;
-		}
-		TransformDragDrop(sceneObject);
-		if (nodeOpen) {
-			auto children = sceneObject->transform()->getChildren();
-
-			for (auto child = children.begin(); child != children.end(); child++)
-			{
-				TransformTree((*child)->getSceneObject());
-			}
-			ImGui::TreePop();
-		}
-	}
-	else {
+	bool hasChildren = sceneObject->transform()->HasChildren();
+	if (!hasChildren) {
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-		ImGui::TreeNodeEx((sceneObject->name + "##" + PointerToString(sceneObject)).c_str(), nodeFlags);
-		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
-			sceneObjectSelected = sceneObject;
-		}
-		TransformDragDrop(sceneObject);
 	}
+	bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + tag).c_str(), nodeFlags);
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsItemToggledOpen()) {
+		sceneObjectSelected = sceneObject;
+		std::cout << "Changed gui select!\n";
+	}
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+		ImGui::OpenPopup(("SceneObjectRightClickPopUp##" + tag).c_str());
+	}
+	if (ImGui::BeginPopup(("SceneObjectRightClickPopUp##" + tag).c_str())) {
+		if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
+			scene->DeleteSceneObject(sceneObject->GUID);
+		}
+		ImGui::EndPopup();
+	}
+
+
+	TransformDragDrop(sceneObject);
+
+	if (!hasChildren || !nodeOpen) {
+		return;
+	}
+	auto children = sceneObject->transform()->getChildren();
+	for (auto child : children)
+	{
+		TransformTree(child->getSceneObject());
+	}
+	ImGui::TreePop();
 }
 
 void GUI::TransformDragDrop(SceneObject* sceneObject)
 {
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 	{
-		Transform* temp = sceneObject->transform();
-		ImGui::SetDragDropPayload("Transform", &temp, sizeof(temp));
+		Transform* transform = sceneObject->transform();
+		ImGui::SetDragDropPayload("Transform", &transform, sizeof(transform));
 		ImGui::Text(("Transform of: " + sceneObject->name).c_str());
 		ImGui::EndDragDropSource();
 	}

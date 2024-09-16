@@ -1,0 +1,5 @@
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define SetAndGetForPart(Type, container, enumValue, nameInSet, nameInGet) void SceneObject::set##nameInSet(Type* part) { setPart(part, container, enumValue); } Type * SceneObject::##nameInGet() { getPart(container, enumValue); }
+#define GetResource(type, collection) type* ResourceManager::Get##type(unsigned long long GUID){ auto search = collection.find(GUID); if (search == collection.end()){ return default##type; } return &search->second; }

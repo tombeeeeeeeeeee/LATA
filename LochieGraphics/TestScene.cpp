@@ -167,10 +167,6 @@ void TestScene::Start()
 	vampire->setAnimator(&vampireAnimator);
 }
 
-void TestScene::EarlyUpdate()
-{
-}
-
 void TestScene::Update(float delta)
 {
 	LineRenderer& lines = renderSystem->lines;

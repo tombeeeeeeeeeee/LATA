@@ -1,5 +1,8 @@
 #include "Collider.h"
 
+#include "Utilities.h"
+#include "EditorGUI.h"
+
 #include <iostream>
 
 void Collider::setCollisionLayer(int layer)
@@ -38,6 +41,28 @@ Collider* Collider::Load(toml::table table)
 	}
 }
 
+void Collider::GUI()
+{
+	ImGui::Indent();
+	std::string tag = Utilities::PointerToString(this);
+	ImGui::BeginDisabled();
+	std::string type = "Error!";
+	switch (getType())
+	{
+	case ColliderType::empty:           type = "Empty";               break;
+	case ColliderType::polygon:         type = "Polygon";             break;
+	case ColliderType::plane:           type = "Plane";               break;
+	case ColliderType::directionalPoly: type = "Directional Polygon"; break;
+	}
+	ImGui::InputText(("Type##" + tag).c_str(), &type);
+	ImGui::EndDisabled();
+	ImGui::Checkbox(("Trigger##" + tag).c_str(), &isTrigger);
+
+	// TODO: Better gui to show what layer this is on
+	ImGui::DragInt(("Layers##" + tag).c_str(), &collisionLayer);
+	ImGui::Unindent();
+}
+
 Collider::Collider(toml::table table)
 {
 	isTrigger = Serialisation::LoadAsBool(table["isTrigger"]);
@@ -68,6 +93,21 @@ PolygonCollider::PolygonCollider(toml::table table) : Collider(table)
 	radius = Serialisation::LoadAsFloat(table["radius"]);
 }
 
+void PolygonCollider::GUI()
+{
+	Collider::GUI();
+	ImGui::Indent();
+	std::string tag = Utilities::PointerToString(this);
+	if (ImGui::CollapsingHeader(("Verts##" + tag).c_str())) {
+		for (size_t i = 0; i < verts.size(); i++)
+		{
+			ImGui::DragFloat2(("Vert " + std::to_string(i) + "##" + tag).c_str(), &verts[i].x);
+		}
+	}
+	ImGui::DragFloat(("Radius##" + tag).c_str(), &radius);
+	ImGui::Unindent();
+}
+
 toml::table PlaneCollider::Serialise(unsigned long long GUID) const
 {
 	toml::table table = Collider::Serialise(GUID);
@@ -81,6 +121,17 @@ PlaneCollider::PlaneCollider(toml::table table) : Collider(table)
 {
 	normal = Serialisation::LoadAsVec2(table["normal"]);
 	displacement = Serialisation::LoadAsFloat(table["displacement"]);
+}
+
+void PlaneCollider::GUI()
+{
+	Collider::GUI();
+	ImGui::Indent();
+	std::string tag = Utilities::PointerToString(this);
+	// TODO: Better gui option for normal vectors
+	ImGui::DragFloat2(("Normal##" + tag).c_str(), &normal.x);
+	ImGui::DragFloat(("Displacement##" + tag).c_str(), &displacement);
+	ImGui::Unindent();
 }
 
 toml::table DirectionalCollider::Serialise(unsigned long long GUID) const
@@ -102,4 +153,18 @@ DirectionalCollider::DirectionalCollider(toml::table table) : PolygonCollider(ta
 	{
 		collidingFaces.push_back(Serialisation::LoadAsInt(&loadingFaces->at(i)));
 	}
+}
+
+void DirectionalCollider::GUI()
+{
+	PolygonCollider::GUI();
+	ImGui::Indent();
+	std::string tag = Utilities::PointerToString(this);
+	if (ImGui::CollapsingHeader(("Colliding Faces##" + tag).c_str())) {
+		for (size_t i = 0; i < collidingFaces.size(); i++)
+		{
+			ImGui::DragInt(("##" + std::to_string(i) + tag).c_str(), &collidingFaces[i]);
+		}
+	}
+	ImGui::Unindent();
 }

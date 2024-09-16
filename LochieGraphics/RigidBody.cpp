@@ -84,9 +84,9 @@ glm::vec2 RigidBody::Transform2Din3DSpace(glm::mat4 global, glm::vec2 input)
 
 void RigidBody::GUI()
 {
-	//ImGui::Text("");
 	if (ImGui::CollapsingHeader("Rigid Body"))
 	{
+		ImGui::Indent();
 		std::string tag = Utilities::PointerToString(this);
 		float mass = getMass();
 		bool isKinematic = invMass == 0;
@@ -107,7 +107,14 @@ void RigidBody::GUI()
 		}
 		ImGui::Checkbox(("Static##rigidBody" + tag).c_str(), &isStatic);
 		ImGui::DragFloat(("Elasticity##rigidBody" + tag).c_str(), &elasticicty, 0.01f, 0.0f, 1.0f);
-		//TODO: add collider gui
+
+		for (auto i = 0; i < colliders.size(); i++)
+		{
+			if (ImGui::CollapsingHeader(("Collider " + std::to_string(i) + "##" + tag).c_str())) {
+				colliders.at(i)->GUI();
+			}
+		}
+		ImGui::Unindent();
 	}
 }
 

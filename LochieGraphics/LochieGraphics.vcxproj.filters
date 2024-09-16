@@ -69,6 +69,9 @@
     <Filter Include="Source Files\AI\States">
       <UniqueIdentifier>{f3f5f9a1-eb8b-4cb8-9721-7da3911d4912}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Third-Party\imguizmo">
+      <UniqueIdentifier>{88879a22-0acc-4dea-ae36-98856c989c42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -274,6 +277,15 @@
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <Filter>Source Files\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="hashFNV1A.cpp">
+      <Filter>Source Files\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtraEditorGUI.cpp">
+      <Filter>Source Files\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuizmo.cpp">
+      <Filter>Source Files\Third-Party\imguizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -532,6 +544,21 @@
     <ClInclude Include="State.h">
       <Filter>Source Files\AI</Filter>
     </ClInclude>
+    <ClInclude Include="hashFNV1A.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Paths.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtraEditorGUI.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorGUI.h">
+      <Filter>Source Files\Third-Party</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuizmo.h">
+      <Filter>Source Files\Third-Party\imguizmo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -678,9 +705,14 @@
     <None Include="..\Shaders\forward.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\paintedNormals.vert" />
     <None Include="..\Shaders\paintedNormals.frag">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\paintedNormals.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="cpp.hint">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>

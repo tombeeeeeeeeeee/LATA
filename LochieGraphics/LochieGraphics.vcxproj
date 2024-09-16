@@ -319,6 +319,7 @@
     <ClCompile Include="Health.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImGuiStyles.cpp" />
+    <ClCompile Include="ImGuizmo.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="InputTest.cpp" />
     <ClCompile Include="LevelEditor.cpp" />
@@ -347,12 +348,14 @@
     <ClCompile Include="Serialisation.cpp" />
     <ClInclude Include="BlastLine.h" />
     <ClInclude Include="Condition.h" />
+    <ClInclude Include="EditorGUI.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemySystem.h" />
     <ClInclude Include="ExtraEditorGUI.h" />
     <ClInclude Include="hashFNV1A.h" />
     <ClInclude Include="Health.h" />
     <ClInclude Include="Hit.h" />
+    <ClInclude Include="ImGuizmo.h" />
     <ClInclude Include="LevelEditor.h" />
     <ClInclude Include="Paths.h" />
     <ClInclude Include="Serialisation.h" />
@@ -367,6 +370,7 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Vertex.cpp" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\imgui\imconfig.h" />

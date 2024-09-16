@@ -136,6 +136,7 @@ void Ecco::GUI()
 	//ImGui::Text("");
 	if (ImGui::CollapsingHeader("Ecco Component"))
 	{
+		ImGui::Indent();
 		ImGui::DragFloat("Car move speed", &carMoveSpeed);
 		ImGui::DragFloat("Car reverse move speed", &carReverseMoveSpeed);
 		ImGui::DragFloat("Max car move speed", &maxCarMoveSpeed);
@@ -151,6 +152,7 @@ void Ecco::GUI()
 		ImGui::BeginDisabled();
 		ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
 		ImGui::EndDisabled();
+		ImGui::Unindent();
 	}
 }
 
