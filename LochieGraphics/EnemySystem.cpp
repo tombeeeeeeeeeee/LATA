@@ -48,6 +48,8 @@ void EnemySystem::Start()
         ResourceManager::LoadModelAsset(Paths::modelSaveLocation + rangedEnemyModel + Paths::modelExtension),
         rangedEnemyMaterial
     );
+
+
 }
 
 unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos)
@@ -101,9 +103,10 @@ unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long lon
     return GUID;
 }
 
-bool EnemySystem::DespawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, unsigned long long GUID)
+bool EnemySystem::DespawnMelee(SceneObject* sceneObject)
 {
     bool hasBeenDespawned = false;
+    int GUID = sceneObject->GUID;
 
     for (auto i = meleeActivePool.begin(); i != meleeActivePool.end(); i++)
     {
@@ -112,7 +115,7 @@ bool EnemySystem::DespawnMelee(std::unordered_map<unsigned long long, SceneObjec
             hasBeenDespawned = true;
             meleeActivePool.erase(i);
             meleeInactivePool.push_back(GUID);
-            SceneObject* enemy = sceneObjects[GUID];
+            SceneObject* enemy = sceneObject;
             enemy->transform()->setPosition(offscreenSpawnPosition);
             enemy->rigidbody()->colliders = {};
             enemy->rigidbody()->isStatic = true;
@@ -122,18 +125,19 @@ bool EnemySystem::DespawnMelee(std::unordered_map<unsigned long long, SceneObjec
     return hasBeenDespawned;
 }
 
-bool EnemySystem::DespawnRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, unsigned long long GUID)
+bool EnemySystem::DespawnRanged(SceneObject* sceneObject)
 {
     bool hasBeenDespawned = false;
+    int GUID = sceneObject->GUID;
 
-    for (auto i = rangedActivePool.begin(); i != rangedActivePool.end(); i++)
+    for (auto i = meleeActivePool.begin(); i != meleeActivePool.end(); i++)
     {
         if ((*i) == GUID)
         {
             hasBeenDespawned = true;
             rangedActivePool.erase(i);
             rangedInactivePool.push_back(GUID);
-            SceneObject* enemy = sceneObjects[GUID];
+            SceneObject* enemy = sceneObject;
             enemy->transform()->setPosition(offscreenSpawnPosition);
             enemy->rigidbody()->colliders = {};
             enemy->rigidbody()->isStatic = true;
@@ -141,6 +145,22 @@ bool EnemySystem::DespawnRanged(std::unordered_map<unsigned long long, SceneObje
         }
     }
     return hasBeenDespawned;
+}
+
+void EnemySystem::OnHealthZeroMelee(HealthPacket healthpacket)
+{
+    if (healthpacket.so)
+    {
+        DespawnMelee(healthpacket.so);
+    }
+}
+
+void EnemySystem::OnHealthZeroRanged(HealthPacket healthpacket)
+{
+    if (healthpacket.so)
+    {
+        DespawnRanged(healthpacket.so);
+    }
 }
 
 //TODO: Add AI Pathfinding and attacking in here.
@@ -209,6 +229,7 @@ std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<
         enemy->transform()->setPosition(offscreenSpawnPosition);
         enemy->setHealth(new Health());
         enemy->health()->setMaxHealth(meleeEnemyHealth);
+        enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroMelee(hp); });
         enemy->setRigidBody(new RigidBody());
         enemy->rigidbody()->invMass = 1.0f;
         enemy->setRenderer(
@@ -234,6 +255,7 @@ std::vector<unsigned long long> EnemySystem::InitialiseRanged(std::unordered_map
         enemy->transform()->setPosition(offscreenSpawnPosition);
         enemy->setHealth(new Health());
         enemy->health()->setMaxHealth(rangedEnemyHealth);
+        enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroRanged(hp); });
         enemy->setRigidBody(new RigidBody());
         enemy->rigidbody()->invMass = 1.0f;
         enemy->setRenderer(

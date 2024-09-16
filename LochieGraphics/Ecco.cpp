@@ -162,9 +162,9 @@ void Ecco::OnCollision(Collision collision)
 		RigidBody* rb = collision.self->rigidbody();
 		if (glm::length(rb->vel) > minSpeedDamageThreshold)
 		{
-			collision.sceneObject->health()->subtractHealth(speedDamage);
+			collision.sceneObject->health()->subtractHealth( speedDamage, collision.sceneObject);
 			rb->AddImpulse(glm::normalize(rb->vel) * -speedReductionAfterDamaging);
-			collision.self->health()->addHealth(healingFromDamage);
+			collision.self->health()->addHealth(healingFromDamage, collision.self);
 		}
 	}
 }

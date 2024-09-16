@@ -10,7 +10,7 @@ class Transform;
 class RigidBody;
 class SceneObject;
 class ModelRenderer;
-
+struct HealthPacket;
 //Might need these later.
 //class Ecco;
 //class Sync;
@@ -52,8 +52,11 @@ public:
 
 	unsigned long long SpawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos);
 	unsigned long long SpawnRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos);
-	bool DespawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, unsigned long long GUID);
-	bool DespawnRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, unsigned long long GUID);
+	bool DespawnMelee(SceneObject* sceneObject);
+	bool DespawnRanged(SceneObject* sceneObject);
+
+	void OnHealthZeroMelee(HealthPacket health);
+	void OnHealthZeroRanged(HealthPacket health);
 
 	//TODO: ADD AI PATHFINDING, and general AI STUFF IN HERE
 	void Update(
