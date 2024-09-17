@@ -19,7 +19,7 @@ class Health
 {
 public:
 	int currHealth = 0;
-	float timeSinceLastChange = 0.0f;
+	float timeSinceLastChange = 1.0f;
 	Health();
 
 	void addHealth(int addition, SceneObject* so = nullptr);

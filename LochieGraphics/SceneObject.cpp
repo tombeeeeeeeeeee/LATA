@@ -98,6 +98,11 @@ void SceneObject::GUI()
 				setSync();
 			}
 		}
+		if (health() == nullptr) {
+			if (ImGui::MenuItem("Health##Add part")) {
+				setHealth(new Health());
+			}
+		}
 		ImGui::EndPopup();
 	}
 

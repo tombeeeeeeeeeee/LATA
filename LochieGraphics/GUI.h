@@ -26,6 +26,7 @@ public:
 	bool showEnemyMenu = false;
 	bool showLightMenu = false;
 	bool showImguiExampleMenu = false;
+	bool showRenderSystemMenu = false;
 private:
 
 	ImGuiWindowFlags defaultWindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize;
