@@ -108,21 +108,7 @@ void LevelEditor::Eraser(glm::vec2 targetCell)
 	if (!alreadyPlaced) {
 		return;
 	}
-	unsigned long long GUID = alreadyPlaced->GUID;
-	// TODO: Might be better to have a mark for deletion type of thing and gets deleted afterwards
-	// Could get put into some collection somewhere
-	if (gui.sceneObjectSelected) {
-		Transform* selectedObjectParentTransform = gui.sceneObjectSelected->transform()->getParent();
-		if (selectedObjectParentTransform) {
-			SceneObject* selectedObjectParent = selectedObjectParentTransform->getSceneObject();
-			if (selectedObjectParent == groundTileParent || selectedObjectParent == wallTileParent) {
-				gui.sceneObjectSelected = nullptr;
-			}
-		}
-	}
-	// TODO: Should be a delete sceneobject function
-	delete sceneObjects[GUID];
-	sceneObjects.erase(GUID);
+	DeleteSceneObject(alreadyPlaced->GUID);
 	tiles.erase({ (int)targetCell.x, (int)targetCell.y });
 
 	if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
@@ -197,7 +183,6 @@ void LevelEditor::Start()
 
 	gameCamSystem.cameraPositionDelta = { -150.0f, 100.0f, 150.0f };
 
-	// TODO: Should be using an art asset
 	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension), (unsigned long long)0));
 	camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f));
 
@@ -273,19 +258,15 @@ void LevelEditor::Update(float delta)
 	lines.AddPointToLine({ gridSize * gridMaxX + gridSize + gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f});
 	lines.FinishLineLoop();
 
-	glm::vec3 camPoint = camera->transform.getGlobalPosition();
-	camPoint = glm::vec3(camPoint.x, camPoint.y, camPoint.z);
-
-	glm::vec2 adjustedCursor = *cursorPos - glm::vec2{ 0.5f, 0.5f };
-	glm::vec3 temp = (camPoint + glm::vec3(adjustedCursor.x * camera->getOrthoWidth(), 0.0f, -adjustedCursor.y * camera->getOrthoHeight())) / gridSize;
-	glm::vec2 targetCell = glm::vec2{ roundf(temp.x), roundf(temp.z) };
+	glm::vec2 targetCell = EditorCamMouseToWorld() / gridSize;
+	targetCell = glm::vec2{ roundf(targetCell.x), roundf(targetCell.y) };
 
 	if (ImGui::GetIO().WantCaptureMouse) { return; }
-	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+	if (state == BrushState::brush && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
 		Brush(targetCell);
 	}
 	// TODO: Refresh mins and maxes
-	if (state != BrushState::none && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+	if (state == BrushState::brush && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
 		Eraser(targetCell);
 	}
 
@@ -296,8 +277,6 @@ void LevelEditor::Update(float delta)
 		syncSo,
 		delta
 	);
-
-	//ImGui::Checkbox("Draw Colliders", &drawColliders);
 }
 
 void LevelEditor::Draw()
@@ -314,13 +293,15 @@ void LevelEditor::Draw()
 void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
-		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0\0")) {
+		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0Asset Placer\0\0")) {
 			switch (state)
 			{
 			case LevelEditor::BrushState::none:
 				camera->state = Camera::State::editorMode;
 				break;
-			case LevelEditor::BrushState::brush:
+			case LevelEditor::BrushState::brush: 
+				[[	]];
+			case LevelEditor::BrushState::assetPlacer:
 				camera->state = Camera::State::tilePlacing;
 				camera->transform.setEulerRotation({ -90.0f, 0.0f, -90.0f });
 				glm::vec3 pos = camera->transform.getPosition();
@@ -330,6 +311,11 @@ void LevelEditor::GUI()
 			default:
 				break;
 			}
+		}
+
+		if (state == BrushState::assetPlacer) {
+			ResourceManager::ModelAssetSelector("Asset To Place", &assetPlacer);
+			ImGui::DragFloat("Asset Placement Height", &assetPlacerHeight);
 		}
 
 		ImGui::Checkbox("Always refresh walls", &alwaysRefreshWallsOnPlace);
@@ -358,6 +344,29 @@ void LevelEditor::GUI()
 	}
 
 	input.GUI();
+}
+
+void LevelEditor::OnMouseDown()
+{
+	if (state != BrushState::assetPlacer || assetPlacer == nullptr) {
+		return;
+	}
+
+	glm::vec2 mouseWorld = EditorCamMouseToWorld();
+
+	glm::vec3 pos = { mouseWorld.x, assetPlacerHeight, mouseWorld.y };
+
+	SceneObject* newSceneObject = new SceneObject(this, Utilities::FilenameFromPath(assetPlacer->path, false));
+	newSceneObject->setRenderer(new ModelRenderer(assetPlacer, 0ull));
+	newSceneObject->transform()->setPosition(pos);
+	newSceneObject->setCollider(new PolygonCollider({
+		{ +defaultColliderLength, +defaultColliderLength},
+		{ +defaultColliderLength, -defaultColliderLength},
+		{ -defaultColliderLength, -defaultColliderLength},
+		{ -defaultColliderLength, +defaultColliderLength}
+		}, 0.0f));
+
+	gui.sceneObjectSelected = newSceneObject;
 }
 
 void LevelEditor::SaveAsPrompt()
@@ -389,12 +398,6 @@ void LevelEditor::SaveAsPrompt()
 	}
 
 	ImGui::EndPopup();
-}
-
-
-bool LevelEditor::InputSearchTest() {
-	//InputSearchBox(loadableFilePathsPointers.begin(), loadableFilePathsPointers.end(), &windowName, "Filename", Utilities::PointerToString(&loadableFilePathsPointers), true);
-	return false;
 }
 
 void LevelEditor::LoadPrompt()
@@ -444,7 +447,6 @@ void LevelEditor::LoadPrompt()
 	}
 
 
-
 	ImGui::EndPopup();
 }
 
@@ -464,18 +466,7 @@ void LevelEditor::LoadLevel()
 	if (!file) {
 		std::cout << "Level File not found\n";
 		return;
-
 	}
-
-	// TODO: Should be a function
-	//toml::parse_result parsed = toml::parse(file);
-	//if (!parsed) {
-	//	// TODO: Error
-	//	std::cout << "Failed to load level\n";
-	//	file.close();
-	//	return;
-	//}
-	//toml::table data = std::move(parsed).table();
 	toml::table data = toml::parse(file);
 
 	DeleteAllSceneObjects();
@@ -508,6 +499,17 @@ void LevelEditor::LoadLevel()
 
 	file.close();
 	previouslySaved = true;
+}
+
+glm::vec2 LevelEditor::EditorCamMouseToWorld() const
+{
+	glm::vec3 camPos = camera->transform.getGlobalPosition();
+	glm::vec2 camPoint = glm::vec2(camPos.x, camPos.z);
+
+	glm::vec2 adjustedCursor = *cursorPos - glm::vec2{ 0.5f, 0.5f };
+	glm::vec2 temp = camPoint + glm::vec2(adjustedCursor.x * camera->getOrthoWidth(), -adjustedCursor.y * camera->getOrthoHeight());
+	
+	return temp;
 }
 
 LevelEditor::~LevelEditor()
