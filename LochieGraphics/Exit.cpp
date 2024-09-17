@@ -12,8 +12,9 @@
 
 void Exit::Initialise(SceneObject* so)
 {
-	if (so->parts & Parts::rigidBody)
+	if (so->parts & Parts::rigidBody && !hasBeenBound)
 	{
+		hasBeenBound = true;
 		so->rigidbody()->onTrigger.push_back([this](Collision collision) { OnTrigger(collision); });
 	}
 }
@@ -42,8 +43,14 @@ void Exit::OnTrigger(Collision collision)
 	}
 }
 
-void Exit::GUI()
+void Exit::GUI(SceneObject* so)
 {
+	if (hasBeenBound)ImGui::BeginDisabled();
+	if (ImGui::Button("Bind OnTrigger"))
+	{
+		Initialise(so);
+	}
+	if (hasBeenBound)ImGui::EndDisabled();
 	ImGui::Checkbox("Ecco In Exit", &eccoInExit);
 	ImGui::Checkbox("Sync In Exit", &syncInExit);
 

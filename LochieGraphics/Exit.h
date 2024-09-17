@@ -7,15 +7,17 @@ class Exit
 {
 public:
 
-	void Initialise(SceneObject* so);
 	void Update();
 	void OnTrigger(Collision collision);
 
-	void GUI();
+	void GUI(SceneObject* so);
 
 private:
+	void Initialise(SceneObject* so);
+	bool hasBeenBound = false;
 	bool eccoInExit = false;
 	bool syncInExit = false;
 	std::string levelToLoad = "";
+
 };
 
