@@ -56,7 +56,7 @@ private:
 	bool openLoad = false;
 
 	void SaveLevel();
-	void LoadLevel();
+
 
 	Input input;
 
@@ -95,5 +95,6 @@ public:
 
 	void Save() override;
 	void Load() override;
+	void LoadLevel(std::string levelToLoad = "");
 };
 

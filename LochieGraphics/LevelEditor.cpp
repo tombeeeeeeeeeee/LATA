@@ -457,8 +457,9 @@ void LevelEditor::SaveLevel()
 	file.close();
 }
 
-void LevelEditor::LoadLevel()
+void LevelEditor::LoadLevel(std::string levelToLoad)
 {
+	if (levelToLoad != "") windowName = levelToLoad;
 	std::ifstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
 	if (!file) {

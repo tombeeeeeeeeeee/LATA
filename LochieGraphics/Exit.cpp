@@ -1,0 +1,74 @@
+#include "Exit.h"
+#include "LevelEditor.h"
+#include "SceneManager.h"
+#include "Collision.h"
+#include "SceneObject.h"
+#include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
+#include "Paths.h"
+
+#include <vector>
+#include <filesystem>
+
+void Exit::Initialise(SceneObject* so)
+{
+	if (so->parts & Parts::rigidBody)
+	{
+		so->rigidbody()->onTrigger.push_back([this](Collision collision) { OnTrigger(collision); });
+	}
+}
+
+void Exit::Update()
+{
+	if (syncInExit && eccoInExit)
+	{
+		((LevelEditor*)SceneManager::scene)->LoadLevel(levelToLoad);
+	}
+	else
+	{
+		syncInExit = eccoInExit = false;
+	}
+}
+
+void Exit::OnTrigger(Collision collision)
+{
+	if (collision.collisionMask & Parts::ecco)
+	{
+		eccoInExit = true;
+	}
+	else if (collision.collisionMask & Parts::sync)
+	{
+		syncInExit = true;
+	}
+}
+
+void Exit::GUI()
+{
+	ImGui::Checkbox("Ecco In Exit", &eccoInExit);
+	ImGui::Checkbox("Sync In Exit", &syncInExit);
+
+	std::vector<std::string> loadPaths = {};
+	std::vector<std::string*> loadPathsPointers = {};
+	loadPaths.clear();
+	loadPathsPointers.clear();
+
+	for (auto& i : std::filesystem::directory_iterator(Paths::levelsPath))
+	{
+		loadPaths.push_back(i.path().generic_string().substr(Paths::levelsPath.size()));
+		if (loadPaths.back().substr(loadPaths.back().size() - Paths::levelExtension.size()) != Paths::levelExtension) {
+			loadPaths.erase(--loadPaths.end());
+			continue;
+		}
+		loadPaths.back() = loadPaths.back().substr(0, loadPaths.back().size() - Paths::levelExtension.size());
+	}
+	for (auto& i : loadPaths)
+	{
+		loadPathsPointers.push_back(&i);
+	}
+
+	std::string* selected = &levelToLoad;
+	if (ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Filename", Utilities::PointerToString(&loadPathsPointers), false)) {
+		ImGui::CloseCurrentPopup();
+		levelToLoad = *selected;
+	}
+}
