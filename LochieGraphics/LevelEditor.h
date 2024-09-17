@@ -10,7 +10,8 @@ class LevelEditor : public Scene
 private:
 	enum class BrushState {
 		none,
-		brush
+		brush,
+		assetPlacer,
 	};
 	BrushState state = BrushState::none;
 
@@ -34,6 +35,26 @@ private:
 	int gridMaxZ = INT_MIN;
 
 	bool alwaysRefreshWallsOnPlace = true;
+	
+	// For save to open the save as prompt, or just save
+	bool previouslySaved = false;
+
+	bool openSaveAs = false;
+	bool openLoad = false;
+
+	Input input;
+
+	float syncRadius = 10.0f;
+
+	SceneObject* syncSo = nullptr;
+	SceneObject* eccoSo = nullptr;
+
+	std::vector<std::string> loadPaths;
+	std::vector<std::string*> loadPathsPointers;
+
+	Model* assetPlacer = nullptr;
+	float assetPlacerHeight = 0.0f;
+	float defaultColliderLength = 50.0f;
 
 	void RefreshWalls();
 
@@ -48,29 +69,11 @@ private:
 
 	void SaveAsPrompt();
 	void LoadPrompt();
-	
-	// For save to open the save as prompt, or just save
-	bool previouslySaved = false;
-
-	bool openSaveAs = false;
-	bool openLoad = false;
 
 	void SaveLevel();
 
 
-	Input input;
-
-	float syncRadius = 10.0f;
-
-	SceneObject* syncSo = nullptr;
-	SceneObject* eccoSo = nullptr;
-
-	std::vector<std::string> loadPaths;
-	std::vector<std::string*> loadPathsPointers;
-
-	bool drawColliders = true;
-
-	bool InputSearchTest();
+	glm::vec2 EditorCamMouseToWorld() const;
 
 public:
 
@@ -91,8 +94,8 @@ public:
 	void Update(float delta) override;
 	void Draw() override;
 	void GUI() override;
+	void OnMouseDown() override;
 	~LevelEditor() override;
-
 	void Save() override;
 	void Load() override;
 	void LoadLevel(std::string levelToLoad = "");

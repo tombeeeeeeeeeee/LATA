@@ -6,6 +6,8 @@
 #include "Image.h"
 #include "Utilities.h"
 
+#include "EditorGUI.h"
+
 #include <array>
 
 bool GameTest::MapCellIs(unsigned char* cell, unsigned char r, unsigned char g, unsigned char b)

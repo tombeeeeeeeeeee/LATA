@@ -5,6 +5,8 @@
 
 #include "Utilities.h"
 
+#include "EditorGUI.h"
+
 #include "Graphics.h"
 
 #include <iostream>

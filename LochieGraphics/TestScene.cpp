@@ -1,5 +1,7 @@
 #include "TestScene.h"
 
+#include "EditorGUI.h"
+
 #include "stb_image.h"
 
 #include <iostream>
