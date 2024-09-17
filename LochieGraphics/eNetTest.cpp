@@ -1,5 +1,7 @@
 #include "eNetTest.h"
 
+#include "EditorGUI.h"
+
 #include <iostream>
 
 void eNetTestScene::Start()

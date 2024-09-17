@@ -1,7 +1,5 @@
 #pragma once
 
-#include "EditorGUI.h"
-
 #include <string>
 
 class Scene;
@@ -29,7 +27,8 @@ public:
 	bool showRenderSystemMenu = false;
 private:
 
-	ImGuiWindowFlags defaultWindowFlags = ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize;
+	// ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize
+	int defaultWindowFlags = 64;
 
 	void ResourceMenu();
 
@@ -47,7 +46,12 @@ private:
 	void HierarchyMenu();
 	void TransformTree(SceneObject* sceneObject);
 	void TransformDragDrop(SceneObject* sceneObject);
-	ImGuiTreeNodeFlags baseNodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	// ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	int baseNodeFlags = 128 | 64 | 2048;
+
+	bool operationChanged = false;
+	// ImGuizmo::OPERATION::TRANSLATE
+	unsigned int transformGizmoOperation = 7;
 
 	void PhysicsMenu();
 	void EnemyMenu();
