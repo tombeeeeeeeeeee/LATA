@@ -181,7 +181,9 @@ SceneManager::SceneManager(Scene* _scene)
 
 SceneManager::~SceneManager()
 {
-	delete scene;
+	// TODO: Call unload scene or something in place of destructor
+	//delete scene;
+	
 
 	// Textures
 	ResourceManager::UnloadAll();

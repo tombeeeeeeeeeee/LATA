@@ -37,12 +37,13 @@ void GUI::Update()
 				showHierarchy = showSceneObject;
 			}
 			ImGui::MenuItem("Light Menu", NULL, &showLightMenu);
-			if (ImGui::MenuItem("Hierarchy Menu", NULL, &showHierarchy)) {
+			if (ImGui::MenuItem("Hierarchy", NULL, &showHierarchy)) {
 				showSceneObject = showHierarchy;
 			}
-			ImGui::MenuItem("Physics Menu", NULL, &showPhysicsMenu);
-			ImGui::MenuItem("Enemy Menu", NULL, &showEnemyMenu);
-			ImGui::MenuItem("Imgui Demo Window", NULL, &showImguiExampleMenu);
+			ImGui::MenuItem("Physics System", NULL, &showPhysicsMenu);
+			ImGui::MenuItem("Enemy System", NULL, &showEnemyMenu);
+			ImGui::MenuItem("Imgui Demo", NULL, &showImguiExampleMenu);
+			ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
 
 			ImGui::EndMenu();
 		}
@@ -57,15 +58,16 @@ void GUI::Update()
 		ImGui::EndMainMenuBar();
 	}
 
-	if (showTestMenu)         { TestMenu();              }
-	if (showResourceMenu)     { ResourceMenu();          }
-	if (showCameraMenu)       { CameraMenu();            }
-	if (showSceneObject)      { SceneObjectMenu();       }
-	if (showLightMenu)        { LightMenu();             }
-	if (showHierarchy)        { HierarchyMenu();         }
-	if (showPhysicsMenu)	  { PhysicsMenu();           }
-	if (showEnemyMenu)	      { EnemyMenu();             }
-	if (showImguiExampleMenu) { ImGui::ShowDemoWindow(); }
+	if (showTestMenu)         { TestMenu();                 }
+	if (showResourceMenu)     { ResourceMenu();             }
+	if (showCameraMenu)       { CameraMenu();               }
+	if (showSceneObject)      { SceneObjectMenu();          }
+	if (showLightMenu)        { LightMenu();                }
+	if (showHierarchy)        { HierarchyMenu();            }
+	if (showPhysicsMenu)	  { PhysicsMenu();              }
+	if (showEnemyMenu)	      { EnemyMenu();                }
+	if (showImguiExampleMenu) { ImGui::ShowDemoWindow();    }
+	if (showRenderSystemMenu) { scene->renderSystem->GUI(); }
 	scene->BaseGUI();
 	scene->GUI();
 

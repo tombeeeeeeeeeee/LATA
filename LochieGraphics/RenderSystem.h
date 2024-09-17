@@ -74,6 +74,8 @@ public:
     float ssaoRadius = 0.5f;
     float ssaoBias = 0.025f;
 
+    void GUI();
+
 private:
 
     Mesh* shadowDebugQuad;

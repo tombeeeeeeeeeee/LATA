@@ -10,6 +10,7 @@
 #include "FrameBuffer.h"
 
 #include "Utilities.h"
+#include "EditorGUI.h"
 
 #include <random>
 
@@ -721,6 +722,20 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
     glViewport(0, 0, scrWidth, scrHeight);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
+}
+
+void RenderSystem::GUI()
+{
+    if (ImGui::Begin("Render System", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+
+        if (ImGui::CollapsingHeader("SSAO")) {
+            ImGui::DragInt("Kernal Size", &kernelSize);
+            ImGui::DragFloat("Radius", &ssaoRadius);
+            ImGui::DragFloat("Bias", &ssaoBias);
+        }
+        ImGui::End();
+    }
+
 }
 
 void RenderSystem::BloomSetup()
