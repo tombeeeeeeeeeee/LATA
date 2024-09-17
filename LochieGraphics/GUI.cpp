@@ -165,6 +165,10 @@ void GUI::CameraMenu()
 
 	scene->camera->GUI();
 
+	scene->gameCamSystem.GUI();
+
+
+
 	ImGui::End();
 }
 

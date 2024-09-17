@@ -32,7 +32,7 @@ public:
 	void GUI();
 
 	toml::table Serialise() const;
-	void ShootMisfire(Transform& transform);
+	void ShootMisfire(glm::vec3 pos);
 	void ShootSniper(glm::vec3 pos);
 	void ShootOverClocked(glm::vec3 pos);
 	void OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour);
@@ -49,7 +49,7 @@ private:
 	float moveDeadZone = 0.10f;
 
 	glm::vec3 barrelOffset = { 0.0f, 0.0f, 0.0f };
-
+	glm::vec3 globalBarrelOffset = {};
 	int misfireDamage = 0;
 	float misfireChargeCost = 0.0f;
 	float misfireShotSpeed = 0.1f;

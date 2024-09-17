@@ -326,53 +326,6 @@ void GameTest::GUI()
 
 	gameCamSystem.GUI();
 
-
-
-	if (ImGui::Checkbox("Single Player Editor Mode", &singlePlayerMode))
-	{
-		if (singlePlayerMode)
-		{
-			camera->state = Camera::targetingPosition;
-			if (targettingP1)
-				gameCamSystem.target = r->transform()->getGlobalPosition();
-			else
-				gameCamSystem.target = h->transform()->getGlobalPosition();
-		}
-		else
-		{
-			camera->state = Camera::targetingPlayers;
-		}
-	}
-
-	ImGui::DragFloat("SinglePlayerZoom", &singlePlayerZoom, 0.03f, 0.01f);
-
-
-	if (camera->state != Camera::targetingPosition)
-	{
-		ImGui::BeginDisabled();
-	}
-	if (ImGui::Button("Swap Player targeting"))
-	{
-		if (targettingP1)
-		{
-			gameCamSystem.target = r->transform()->getGlobalPosition();
-		}
-		else
-		{
-			gameCamSystem.target = h->transform()->getGlobalPosition();
-		}
-		targettingP1 = !targettingP1;
-	}
-
-	if (camera->state != Camera::targetingPosition)
-	{
-		ImGui::EndDisabled();
-	}
-
-	if (ImGui::Button("Ortho Camera Angle Bake"))
-	{
-		gameCamSystem.cameraRotationWhileTargeting = camera->transform.getRotation();
-	}
 }
 
 GameTest::~GameTest()

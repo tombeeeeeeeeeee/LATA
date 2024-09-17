@@ -10,7 +10,7 @@ class GameplayCameraSystem
 {
 public:
 	glm::vec3 cameraPositionDelta;
-	glm::quat cameraRotationWhileTargeting;
+	glm::vec3 viewAngle = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 target = { 0.0f, 0.0f, 0.0f};
 	glm::vec3 anchor = { 0.0f, 0.0f, 0.0f };
 	glm::vec2 constraint = { 0.0f, 0.0f };
@@ -20,6 +20,8 @@ public:
 	float cameraZoomSpeed = 0.33f;
 	float cameraMoveSpeed = 0.33f;
 
+	GameplayCameraSystem() {};
+	GameplayCameraSystem(toml::table table);
 
 	void setCameraPositionDelta(glm::vec3 pos) { cameraPositionDelta = pos; };
 
@@ -34,4 +36,8 @@ public:
 	void ChangeCameraState(Camera& camera, Camera::State state);
 
 	void GUI();
+	toml::table Serialise();
+private:
+	Camera* cam = nullptr;
+
 };

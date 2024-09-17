@@ -85,7 +85,7 @@ void Sync::Update(
 	}
 	fireDirection = glm::normalize(fireDirection);
 
-	float angle = atan2f(fireDirection.y, fireDirection.x);
+	float angle = atan2f(fireDirection.x, fireDirection.y) * 180.0f/PI + 90.0f;
 	glm::vec3 eulers = transform.getEulerRotation();
 	eulers.y = angle;
 	transform.setEulerRotation(eulers);
@@ -122,17 +122,34 @@ void Sync::Update(
 	else if (chargingShot)
 	{
 		chargingShot = false;
+
+		globalBarrelOffset = barrelOffset;
+		glm::vec2 barrelOFfset2D = { barrelOffset.x, barrelOffset.z };
+		if (glm::length(barrelOFfset2D) != 0.0f)
+		{
+			float ratio = glm::dot(fireDirection, barrelOFfset2D) / glm::length(barrelOFfset2D);
+			float angle = acosf(glm::clamp(ratio, -1.0f, 1.0f));
+			float turnSign = glm::sign(glm::dot(fireDirection, { transform.right().x, transform.right().z }));
+			float c = cos(turnSign * angle);
+			float s = sin(turnSign * angle);
+			globalBarrelOffset = {
+				barrelOffset.x * c - barrelOffset.z * s,
+				barrelOffset.y,
+				barrelOffset.x * s + barrelOffset.z * c
+			};
+		}
+
 		if (chargedDuration >= overclockChargeTime)
 		{
-			ShootOverClocked(transform.getGlobalPosition());
+			ShootOverClocked(transform.getGlobalPosition() + globalBarrelOffset);
 		}
 		else if (chargedDuration >= sniperChargeTime)
 		{
-			ShootSniper(transform.getGlobalPosition());
+			ShootSniper(transform.getGlobalPosition() + globalBarrelOffset);
 		}
 		else
 		{
-			ShootMisfire(transform);
+			ShootMisfire(transform.getGlobalPosition() + globalBarrelOffset);
 		}
 	}
 
@@ -159,6 +176,8 @@ void Sync::GUI()
 		ImGui::DragFloat("Move Speed", &moveSpeed);
 		ImGui::DragFloat("Look DeadZone", &lookDeadZone);
 		ImGui::DragFloat("Move DeadZone", &moveDeadZone);
+
+		ImGui::DragFloat3("Barrel Offset", &barrelOffset[0]);
 
 		if (ImGui::CollapsingHeader("Misfire Properties"))
 		{
@@ -223,7 +242,7 @@ toml::table Sync::Serialise() const
 	};
 }
 
-void Sync::ShootMisfire(Transform& transform)
+void Sync::ShootMisfire(glm::vec3 pos)
 {
 	currCharge -= misfireChargeCost;
 	SceneObject* shot = new SceneObject(SceneManager::scene);
@@ -235,21 +254,7 @@ void Sync::ShootMisfire(Transform& transform)
 	shot->rigidbody()->addCollider(collider);
 	shot->rigidbody()->vel += fireDirection * misfireShotSpeed;
 	shot->rigidbody()->onTrigger.push_back([this](Collision collision) {misfireShotOnCollision(collision); });
-	glm::vec3 globalBarrelOffset = barrelOffset;
-	if (glm::length(barrelOffset) != 0.0f)
-	{
-		float ratio = glm::dot(fireDirection, { barrelOffset.x, barrelOffset.z }) / glm::length(glm::vec2(barrelOffset.x, barrelOffset.z));
-		float angle = acosf(glm::clamp(ratio, -1.0f, 1.0f));
-		float turnSign = glm::sign(glm::dot(fireDirection, { transform.right().x, transform.right().z }));
-		float c = cos(turnSign * angle);
-		float s = sin(turnSign * angle);
-		globalBarrelOffset = {
-			barrelOffset.x * c - barrelOffset.z * s,
-			0.0f,
-			barrelOffset.x * s + barrelOffset.z * c
-		};
-	}
-	shot->transform()->setPosition(transform.getGlobalPosition() + globalBarrelOffset);
+	shot->transform()->setPosition(pos);
 	shot->transform()->setScale(0.001f);
 }
 

@@ -264,7 +264,7 @@ void LevelEditor::Update(float delta)
 	}
 
 	// TODO: Need to be able to change the zoomScale
-	gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), 100);
+	gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
 	
 	lines.SetColour({ 1, 1, 1 });
 	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });

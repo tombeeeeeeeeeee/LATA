@@ -31,7 +31,10 @@ enum Parts
 	ecco =          1 << 6,
 	sync =          1 << 7,
 	health =        1 << 8,
-	enemy =         1 << 9, 
+	enemy =         1 << 9,
+	exit =			1 << 10,
+	spikes =		1 << 11,
+	plate = 		1 << 12,
 };
 
 class Scene;
