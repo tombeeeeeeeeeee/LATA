@@ -23,7 +23,7 @@ void HealthSystem::Update(
 	{
 		float timeSinceDamage = healthPair.second.timeSinceLastChange;
 		timeSinceDamage /= colourTime;
-		if (timeSinceDamage <= 1.0f)
+		//if (timeSinceDamage <= 1.0f)
 		{
 			timeSinceDamage = glm::clamp(timeSinceDamage, 0.0f, 1.0f);
 			std::vector<Material*>& mats = renderers[healthPair.first].materials;

@@ -7,7 +7,9 @@
 
 #include "ResourceManager.h"
 
+#include "EditorGUI.h"
 #include "ImGuizmo.h"
+
 
 #include <iostream>
 
@@ -16,6 +18,7 @@ using Utilities::PointerToString;
 //TODO: move some of these to their own classes
 void GUI::Update()
 {
+	ImGuiIO& io = ImGui::GetIO();
 	// TODO: GUI Shouldn't exist for a build version
 	//if (true) { return; }
 
@@ -78,12 +81,27 @@ void GUI::Update()
 		i.second.ModalGUI();
 	}
 
+	// TODO: Customisable keys
+	if (glfwGetKey(SceneManager::window, GLFW_KEY_G) == GLFW_PRESS && !io.WantCaptureKeyboard) {
+		if (!operationChanged) {
+			if (transformGizmoOperation == 7) {
+				transformGizmoOperation = 120;
+			}
+			else if (transformGizmoOperation == 120) {
+				transformGizmoOperation = 7;
+			}
+		}
+		operationChanged = true;
+	}
+	else {
+		operationChanged = false;
+	}
+
 	// Transform GIZMO
 	if (sceneObjectSelected) {
 		// TODO: This should be somewhere else
 		ImGuizmo::SetOrthographic(SceneManager::scene->camera->InOrthoMode());
 
-		ImGuiIO& io = ImGui::GetIO();
 		//SceneManager
 		// TODO: should be moving window stuff out of scenemanager directly
 		// TODO: There should be a window pos change callback, should justbe stored somewhere
@@ -91,7 +109,7 @@ void GUI::Update()
 		glfwGetWindowPos(SceneManager::window, &xOffset, &yOffset);
 		ImGuizmo::SetRect((float)xOffset, (float)yOffset, io.DisplaySize.x, io.DisplaySize.y);
 		glm::mat4 editMatrix = sceneObjectSelected->transform()->getGlobalMatrix();
-		if (ImGuizmo::Manipulate(&SceneManager::view[0][0], &SceneManager::projection[0][0], ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD, &editMatrix[0][0])) {
+		if (ImGuizmo::Manipulate(&SceneManager::view[0][0], &SceneManager::projection[0][0], (ImGuizmo::OPERATION)transformGizmoOperation, ImGuizmo::MODE::WORLD, &editMatrix[0][0])) {
 			glm::vec3 pos = {};
 			glm::vec3 rot = {};
 			glm::vec3 scl = {};
@@ -105,6 +123,7 @@ void GUI::Update()
 		}
 
 		if (!io.WantCaptureKeyboard) {
+			// TODO: Customisable key
 			if (glfwGetKey(SceneManager::window, GLFW_KEY_L)) {
 				Transform* t = &SceneManager::scene->camera->transform;
 				glm::mat4 newCam = glm::lookAt(t->getGlobalPosition(), sceneObjectSelected->transform()->getGlobalPosition(), { 0.0f, 1.0f, 0.0f });

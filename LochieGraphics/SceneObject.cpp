@@ -44,7 +44,13 @@ void SceneObject::GUI()
 
 	if (parts & Parts::modelRenderer) { scene->renderers[GUID].GUI(); }
 	if (parts & Parts::rigidBody) { scene->rigidBodies[GUID].GUI(); }
-	if (parts & Parts::collider) { scene->colliders[GUID]->GUI(); }
+
+	if (parts & Parts::collider) { 
+		if (ImGui::CollapsingHeader(("Collider##" + Utilities::PointerToString(this)).c_str())) {
+			scene->colliders[GUID]->GUI();
+		}
+	}
+	
 	if (parts & Parts::enemy) { scene->enemies[GUID].GUI(); }
 	if (parts & Parts::health) { scene->healths[GUID].GUI(); }
 	

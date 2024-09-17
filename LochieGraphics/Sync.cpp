@@ -85,10 +85,10 @@ void Sync::Update(
 	}
 	fireDirection = glm::normalize(fireDirection);
 
-	float turnSign = glm::sign(glm::dot(fireDirection, { transform.right().x, transform.right().z }));
-	float angle = acosf(glm::dot(fireDirection, { transform.forward().x, transform.forward().z })) * PI / 180.0f;
+	float angle = atan2f(fireDirection.y, fireDirection.x);
 	glm::vec3 eulers = transform.getEulerRotation();
-	transform.setEulerRotation({eulers.x, angle * turnSign, eulers.z});
+	eulers.y = angle;
+	transform.setEulerRotation(eulers);
 
 	if (inputDevice.getRightTrigger())
 	{
