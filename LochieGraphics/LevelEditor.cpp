@@ -198,10 +198,30 @@ void LevelEditor::Start()
 	gameCamSystem.cameraPositionDelta = { -150.0f, 100.0f, 150.0f };
 
 	// TODO: Should be using an art asset
-	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoBlockout_RevisedScale" + Paths::modelExtension), (unsigned long long)0));
+	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension), (unsigned long long)0));
 	camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f));
 
+	eccoSo->setHealth(new Health());
+	syncSo->setHealth(new Health());
+
+	ecco->Start
+	(
+		*eccoSo->health()
+	);
+	sync->Start(&shaders);
+
+	enemySystem.Start();
+	healthSystem.Start(healths);
+
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
+
+	for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation))
+	{
+		ResourceManager::LoadModelAsset(i.path().string());
+	}
+
+	renderSystem->ssaoRadius = 150.0f;
+	renderSystem->ssaoBias = 50.0f;
 }
 
 void LevelEditor::Update(float delta)
@@ -211,6 +231,14 @@ void LevelEditor::Update(float delta)
 
 	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
+
+	healthSystem.Update(
+		healths,
+		renderers,
+		delta
+	);
+
+
 	if (input.inputDevices.size() > 0)
 	{
 		ecco->Update(
@@ -261,6 +289,13 @@ void LevelEditor::Update(float delta)
 		Eraser(targetCell);
 	}
 
+	enemySystem.Update(
+		enemies,
+		transforms,
+		eccoSo,
+		syncSo,
+		delta
+	);
 
 	//ImGui::Checkbox("Draw Colliders", &drawColliders);
 }
@@ -456,8 +491,10 @@ void LevelEditor::LoadLevel()
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
 
+	enemySystem.InitialiseMelee(sceneObjects, 5);
+	enemySystem.InitialiseRanged(sceneObjects, 5);
 
-
+	enemySystem.SpawnMelee(sceneObjects, {600.0f, 50.0f, 600.0f});
 	// Refresh the tiles collection
 	tiles.clear();
 	auto children = groundTileParent->transform()->getChildren();

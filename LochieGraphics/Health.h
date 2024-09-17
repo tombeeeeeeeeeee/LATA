@@ -19,7 +19,7 @@ class Health
 {
 public:
 	int currHealth = 0;
-	float timeSinceLastChange = 0.0f;
+	float timeSinceLastChange = 1.0f;
 	Health();
 
 	void addHealth(int addition, SceneObject* so = nullptr);
@@ -34,6 +34,8 @@ public:
 	std::vector<std::function<void(HealthPacket)>> onHealthUp = {};
 	std::vector<std::function<void(HealthPacket)>> onHealthDown = {};
 	std::vector<std::function<void(HealthPacket)>> onHealthZero = {};
+
+	void GUI();
 
 private:
 	int maxHealth = 0;

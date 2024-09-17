@@ -22,5 +22,7 @@ struct Enemy
 	glm::vec3 lastTargetPosition;
 	Node* currentNode;
 	std::vector<Node*> path;
+
+	void GUI();
 };
 

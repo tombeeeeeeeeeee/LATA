@@ -28,7 +28,7 @@ bool ExtraEditorGUI::Mat4Input(std::string tag, glm::mat4 * mat)
 	if (edited) {
 		ImGuizmo::RecomposeMatrixFromComponents(&pos.x, &rot.x, &scl.x, &(*mat)[0][0]);
 	}
-
+	return edited;
 }
 
 int ExtraEditorGUI::TextSelected(ImGuiInputTextCallbackData* data)

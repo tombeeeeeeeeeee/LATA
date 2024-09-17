@@ -3,10 +3,6 @@
 
 #include "ResourceManager.h"
 
-#include "PhysicsSystem.h"
-#include "GamePlayCameraSystem.h"
-#include "EnemySystem.h"
-
 #include <unordered_map>
 
 class LevelEditor : public Scene
@@ -63,10 +59,6 @@ private:
 	void LoadLevel();
 
 	Input input;
-
-	PhysicsSystem physicsSystem;
-	GameplayCameraSystem gameCamSystem;
-	EnemySystem enemySystem;
 
 	float syncRadius = 10.0f;
 

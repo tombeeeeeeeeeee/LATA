@@ -1,6 +1,9 @@
 #include "Health.h"
 #include "Maths.h"
 
+#include "EditorGUI.h"
+#include "Utilities.h"
+
 Health::Health()
 {
 
@@ -90,4 +93,13 @@ Health::Health(toml::table table)
 {
 	currHealth = Serialisation::LoadAsInt(table["currHealth"]);
 	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
+}
+
+void Health::GUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	if (ImGui::CollapsingHeader(("Health##" + tag).c_str())) {
+		ImGui::DragInt(("Current##" + tag).c_str(), &currHealth);
+		ImGui::DragFloat(("Time Since Last Change##" + tag).c_str(), &timeSinceLastChange);
+	}
 }
