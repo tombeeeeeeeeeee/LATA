@@ -10,7 +10,7 @@
 
 int main()
 {
-	SceneManager sceneManager(new GameTest());
+	SceneManager sceneManager(new LevelEditor());
 	while (!sceneManager.ShouldClose())
 	{
 		sceneManager.Update();

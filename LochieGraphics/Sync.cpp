@@ -85,6 +85,11 @@ void Sync::Update(
 	}
 	fireDirection = glm::normalize(fireDirection);
 
+	float angle = atan2f(fireDirection.y, fireDirection.x);
+	glm::vec3 eulers = transform.getEulerRotation();
+	eulers.y = angle;
+	transform.setEulerRotation(eulers);
+
 	if (inputDevice.getRightTrigger())
 	{
 		//Begin Chagrging Shot
