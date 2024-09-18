@@ -19,6 +19,11 @@ void ExitElevator::Initialise(SceneObject* so)
 	}
 }
 
+ExitElevator::ExitElevator(toml::table table)
+{
+	levelToLoad = Serialisation::LoadAsString(table["levelToLoad"]);
+}
+
 void ExitElevator::Update()
 {
 	if (syncInExit && eccoInExit)
@@ -78,4 +83,12 @@ void ExitElevator::GUI(SceneObject* so)
 		ImGui::CloseCurrentPopup();
 		levelToLoad = *selected;
 	}
+}
+
+toml::table ExitElevator::Serialise(unsigned long long GUID) const
+{
+	return toml::table
+	{
+		{"levelToLoad", levelToLoad}
+	};
 }
