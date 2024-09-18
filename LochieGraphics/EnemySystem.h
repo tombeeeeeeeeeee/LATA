@@ -26,6 +26,13 @@ private:
 	std::vector<unsigned long long> rangedInactivePool;
 	std::vector<unsigned long long> rangedActivePool;
 
+	float perceptionRadius = 10.0f;
+	float seperationCoef = 0.2f;
+	float alignmentCoef = 0.5f;
+	float cohesionCoef = 0.5f;
+
+	float maxSpeed = 5.0f;
+	float maxForce = 0.1f;
 public:
 
 	EnemySystem();
@@ -58,10 +65,32 @@ public:
 	void OnHealthZeroMelee(HealthPacket health);
 	void OnHealthZeroRanged(HealthPacket health);
 
+	void Seperation(
+		std::unordered_map<unsigned long long, Enemy>& enemies,
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+		SceneObject* ecco, SceneObject* sync
+	);
+
+	void Alingment(
+		std::unordered_map<unsigned long long, Enemy>& enemies,
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+		SceneObject* ecco, SceneObject* sync
+	);
+
+	void Cohesion(
+		std::unordered_map<unsigned long long, Enemy>& enemies,
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+		SceneObject* ecco, SceneObject* sync
+	);
+
 	//TODO: ADD AI PATHFINDING, and general AI STUFF IN HERE
 	void Update(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
 		SceneObject* ecco, SceneObject* sync,
 		float delta
 	);

@@ -163,10 +163,93 @@ void EnemySystem::OnHealthZeroRanged(HealthPacket healthpacket)
     }
 }
 
+void EnemySystem::Seperation(std::unordered_map<unsigned long long, Enemy>& enemies, std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidbodies, SceneObject* ecco, SceneObject* sync)
+{
+    glm::vec2 syncPos2D = {sync->transform()->getGlobalPosition().x, sync->transform()->getGlobalPosition().z };
+    glm::vec2 eccoPos2D = {ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
+    for (auto& enemyPair : enemies)
+    {
+        glm::vec2 enemyPos2D = { transforms[enemyPair.first].getGlobalPosition().x, transforms[enemyPair.first].getGlobalPosition().z };
+        glm::vec2 direction;
+        if (glm::length(syncPos2D - enemyPos2D) < glm::length(eccoPos2D - enemyPos2D))
+        {
+            direction = glm::normalize(syncPos2D - enemyPos2D);
+        }
+        else
+        {
+            direction = glm::normalize(eccoPos2D - enemyPos2D);
+        }
+        int total = 0;
+        for (auto& otherEnemyPair : enemies)
+        {
+            if (otherEnemyPair.first == enemyPair.first) continue;
+            float distance = glm::distance({ transforms[otherEnemyPair.first].getGlobalPosition().x,transforms[otherEnemyPair.first].getGlobalPosition().z }, enemyPos2D);
+            if (distance <= perceptionRadius)
+            {
+                glm::vec2 otherEnemyPos2D= { transforms[otherEnemyPair.first].getGlobalPosition().x,transforms[otherEnemyPair.first].getGlobalPosition().z };
+                glm::vec2 diff = enemyPos2D - otherEnemyPos2D;
+                diff /= distance * distance;
+                direction += diff;
+                total++;
+            }
+        }
+        if (total == 0) continue;
+        direction /= total + 1;
+        direction *= maxSpeed;
+        glm::vec2 force = direction - rigidbodies[enemyPair.first].vel;
+        force = glm::clamp(force, 0.0f, maxForce);
+        force *= seperationCoef;
+        rigidbodies[enemyPair.first].netForce += force;
+    }
+}
+
+void EnemySystem::Alingment(std::unordered_map<unsigned long long, Enemy>& enemies, std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidbodies, SceneObject* ecco, SceneObject* sync)
+{
+    glm::vec2 syncPos2D = { sync->transform()->getGlobalPosition().x, sync->transform()->getGlobalPosition().z };
+    glm::vec2 eccoPos2D = { ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
+    for (auto& enemyPair : enemies)
+    {
+        glm::vec2 enemyPos2D = { transforms[enemyPair.first].getGlobalPosition().x, transforms[enemyPair.first].getGlobalPosition().z };
+        glm::vec2 direction;
+        if (glm::length(syncPos2D - enemyPos2D) < glm::length(eccoPos2D - enemyPos2D))
+        {
+            direction = glm::normalize(syncPos2D - enemyPos2D);
+        }
+        else
+        {
+            direction = glm::normalize(eccoPos2D - enemyPos2D);
+        }
+        int total = 0;
+        for (auto& otherEnemyPair : enemies)
+        {
+            if (otherEnemyPair.first == enemyPair.first) continue;
+            float distance = glm::distance({ transforms[otherEnemyPair.first].getGlobalPosition().x,transforms[otherEnemyPair.first].getGlobalPosition().z }, enemyPos2D);
+            if (distance <= perceptionRadius)
+            {
+                direction += rigidbodies[otherEnemyPair.first].vel;
+                total++;
+            }
+        }
+
+        if (total == 0) continue;
+        direction /= total + 1;
+        direction *= maxSpeed;
+        glm::vec2 force = direction - rigidbodies[enemyPair.first].vel;
+        force = glm::clamp(force, 0.0f, maxForce);
+        force *= alignmentCoef;
+        rigidbodies[enemyPair.first].netForce += force;
+    }
+}
+
+void EnemySystem::Cohesion(std::unordered_map<unsigned long long, Enemy>& enemies, std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidbodies, SceneObject* ecco, SceneObject* sync)
+{
+}
+
 //TODO: Add AI Pathfinding and attacking in here.
 void EnemySystem::Update(
     std::unordered_map<unsigned long long, Enemy>& enemies,
     std::unordered_map<unsigned long long, Transform>& transforms, 
+    std::unordered_map<unsigned long long, RigidBody>& rigidbodies, 
     SceneObject* ecco, SceneObject* sync, float delta
 )
 {
