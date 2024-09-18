@@ -3,7 +3,7 @@
 struct Collision;
 class SceneObject;
 
-class Exit
+class ExitElevator
 {
 public:
 

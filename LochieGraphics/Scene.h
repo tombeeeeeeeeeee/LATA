@@ -10,6 +10,7 @@
 #include "Health.h"
 #include "RigidBody.h"
 #include "Enemy.h"
+#include "ExitElevator.h"
 #include "Animator.h"
 
 #include "PhysicsSystem.h"
@@ -50,6 +51,7 @@ public:
 	std::unordered_map<unsigned long long, Collider*> colliders = {};
 	std::unordered_map<unsigned long long, Health> healths = {};
 	std::unordered_map<unsigned long long, Enemy> enemies = {};
+	std::unordered_map<unsigned long long, ExitElevator> exits = {};
 	std::vector<Light*> lights = {};
 
 	std::vector<unsigned long long> markedForDeletion = {};
