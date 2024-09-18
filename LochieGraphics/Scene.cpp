@@ -35,12 +35,14 @@ Scene::~Scene()
 		saved##container.push_back(i->second.Serialise(i->first)); \
 	}
 
-#define LoadPart(container, savedName, type)                                                           \
-toml::array* loading##type##s = data[##savedName].as_array();                                          \
-for (int i = 0; i < loading##type##s->size(); i++)                                                     \
-{                                                                                                      \
-	toml::table* loading##type = loading##type##s->at(i).as_table();                                   \
-	container[Serialisation::LoadAsUnsignedLongLong((*loading##type)["guid"])] = type(*loading##type); \
+#define LoadPart(container, savedName, type)                                                               \
+toml::array* loading##type##s = data[##savedName].as_array();                                              \
+if(loading##type##s){																				       \
+	for (int i = 0; i < loading##type##s->size(); i++)                                                     \
+	{                                                                                                      \
+		toml::table* loading##type = loading##type##s->at(i).as_table();                                   \
+		container[Serialisation::LoadAsUnsignedLongLong((*loading##type)["guid"])] = type(*loading##type); \
+	}																								       \
 }
 
 
@@ -219,7 +221,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	};
 	
 	LoadPart(healths, "Healths", Health);
-	LoadPart(exits, "exits", ExitElevator);
+	LoadPart(exits, "Exits", ExitElevator);
 
 	*ecco = Ecco(*data["Ecco"].as_table());
 	*sync = Sync(*data["Sync"].as_table());

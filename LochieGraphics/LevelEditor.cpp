@@ -223,6 +223,7 @@ void LevelEditor::Update(float delta)
 		delta
 	);
 
+	for (auto& exitPair : exits) exitPair.second.Update();
 
 	if (input.inputDevices.size() > 0)
 	{
