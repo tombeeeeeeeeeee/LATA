@@ -6947,7 +6947,7 @@ void ImGui::ShowUserGuide()
     ImGui::BulletText("Arrow keys to navigate.");
     ImGui::BulletText("Space to activate a widget.");
     ImGui::BulletText("Return to input text into a widget.");
-    ImGui::BulletText("Escape to deactivate a widget, close popup, exit child window.");
+    ImGui::BulletText("Escape to deactivate a widget, close popup, exitElevator child window.");
     ImGui::BulletText("Alt to jump to the menu layer of a window.");
     ImGui::Unindent();
 }

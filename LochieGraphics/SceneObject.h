@@ -16,6 +16,7 @@ class Sync;
 class Health;
 class Animator;
 class RigidBody;
+class ExitElevator;
 struct Enemy;
 // TODO: Look into how instancing should be handled
 
@@ -32,7 +33,7 @@ enum Parts
 	sync =          1 << 7,
 	health =        1 << 8,
 	enemy =         1 << 9,
-	exit =			1 << 10,
+	exitElevator =	1 << 10,
 	spikes =		1 << 11,
 	plate = 		1 << 12,
 };
@@ -97,6 +98,9 @@ public:
 
 	void setEnemy(Enemy* enemy);
 	Enemy* enemy();
+
+	void setExitElevator(ExitElevator* exitElevator);
+	ExitElevator* exitElevator();
 
 	// Make this take a mask for stuff to delete
 	void ClearParts();

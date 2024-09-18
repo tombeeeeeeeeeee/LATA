@@ -1,4 +1,4 @@
-#include "Exit.h"
+#include "ExitElevator.h"
 #include "LevelEditor.h"
 #include "SceneManager.h"
 #include "Collision.h"
@@ -10,7 +10,7 @@
 #include <vector>
 #include <filesystem>
 
-void Exit::Initialise(SceneObject* so)
+void ExitElevator::Initialise(SceneObject* so)
 {
 	if (so->parts & Parts::rigidBody && !hasBeenBound)
 	{
@@ -19,7 +19,7 @@ void Exit::Initialise(SceneObject* so)
 	}
 }
 
-void Exit::Update()
+void ExitElevator::Update()
 {
 	if (syncInExit && eccoInExit)
 	{
@@ -31,7 +31,7 @@ void Exit::Update()
 	}
 }
 
-void Exit::OnTrigger(Collision collision)
+void ExitElevator::OnTrigger(Collision collision)
 {
 	if (collision.collisionMask & Parts::ecco)
 	{
@@ -43,7 +43,7 @@ void Exit::OnTrigger(Collision collision)
 	}
 }
 
-void Exit::GUI(SceneObject* so)
+void ExitElevator::GUI(SceneObject* so)
 {
 	if (hasBeenBound)ImGui::BeginDisabled();
 	if (ImGui::Button("Bind OnTrigger"))
