@@ -67,7 +67,7 @@ void SceneObject::GUI()
 			scene->sync->GUI();
 	}
 
-	if (parts && Parts::exitElevator)
+	if (parts & Parts::exitElevator)
 	{
 		scene->exits[GUID].GUI(this);
 	}
