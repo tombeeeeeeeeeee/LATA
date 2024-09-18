@@ -131,7 +131,6 @@ private:
         );
 
 
-
     void ActivateFlaggedVariables(
         Shader* shader,
         Material* mat

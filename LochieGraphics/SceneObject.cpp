@@ -3,7 +3,7 @@
 #include "ResourceManager.h"
 #include "Animator.h"
 #include "Collider.h"
-
+#include "ExitElevator.h"
 #include "EditorGUI.h"
 
 #include "Scene.h"
@@ -67,6 +67,10 @@ void SceneObject::GUI()
 			scene->sync->GUI();
 	}
 
+	if (parts & Parts::exitElevator)
+	{
+		scene->exits[GUID].GUI(this);
+	}
 	// TODO: Add animator parts;
 	//if ((parts & Parts::animator)) {
 	//	scene->animators[GUID].GUI();
@@ -109,6 +113,16 @@ void SceneObject::GUI()
 				setHealth(new Health());
 			}
 		}
+		if (enemy() == nullptr) {
+			if (ImGui::MenuItem("Enemy##Add part")) {
+				setEnemy(new Enemy());
+			}
+		}
+		if (exitElevator() == nullptr) {
+			if (ImGui::MenuItem("Exit Elevator##Add part")) {
+				setExitElevator(new ExitElevator());
+			}
+		}
 		ImGui::EndPopup();
 	}
 
@@ -131,6 +145,11 @@ void SceneObject::GUI()
 		if (parts & Parts::sync) {
 			if (ImGui::MenuItem("Sync##Remove part")) {
 				setSync(nullptr);
+			}
+		}
+		if (parts & Parts::exitElevator) {
+			if (ImGui::MenuItem("Exit##Remove part")) {
+				setExitElevator(nullptr);
 			}
 		}
 		ImGui::EndPopup();
@@ -210,6 +229,7 @@ SetAndGetForPart(Animator, animators, Parts::animator, Animator, animator)
 SetAndGetForPart(RigidBody, rigidBodies, Parts::rigidBody, RigidBody, rigidbody)
 SetAndGetForPart(Health, healths, Parts::health, Health, health)
 SetAndGetForPart(Enemy, enemies, Parts::enemy, Enemy, enemy)
+SetAndGetForPart(ExitElevator, exits, Parts::exitElevator, ExitElevator, exitElevator)
 
 void SceneObject::setCollider(Collider* collider)
 {

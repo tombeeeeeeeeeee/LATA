@@ -173,6 +173,7 @@ toml::table Scene::SaveSceneObjectsAndParts()
 		savedcolliders.push_back(i->second->Serialise(i->first));
 	};
 	SavePart(healths);
+	SavePart(exits);
 
 	return toml::table{
 		{ "SceneObjects", savedSceneObjects },
@@ -182,6 +183,7 @@ toml::table Scene::SaveSceneObjectsAndParts()
 		{ "RigidBodies", savedrigidBodies},
 		{ "Colliders", savedcolliders},
 		{ "Healths", savedhealths},
+		{ "Exits", savedexits},
 		{ "Sync", sync->Serialise() },
 		{ "Ecco", ecco->Serialise() },
 	};
@@ -217,6 +219,8 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	};
 	
 	LoadPart(healths, "Healths", Health);
+	LoadPart(exits, "exits", ExitElevator);
+
 	*ecco = Ecco(*data["Ecco"].as_table());
 	*sync = Sync(*data["Sync"].as_table());
 
