@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 
-#include "LineRenderer.h"
+#include "Lights.h"
 
 class EmptyScene : public Scene
 {

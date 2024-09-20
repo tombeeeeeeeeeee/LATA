@@ -2,8 +2,14 @@
 
 #include "Skybox.h"
 #include "ResourceManager.h"
-
 #include "Image.h"
+#include "SceneObject.h"
+#include "Collider.h"
+#include "Camera.h"
+#include "Ecco.h"
+#include "shaderEnum.h"
+#include "Sync.h"
+
 #include "Utilities.h"
 
 #include "EditorGUI.h"
@@ -15,7 +21,9 @@ bool GameTest::MapCellIs(unsigned char* cell, unsigned char r, unsigned char g, 
 	return cell[0] == r && cell[1] == g && cell[2] == b;
 }
 
-GameTest::GameTest()
+GameTest::GameTest() :
+	h(new SceneObject(this)),
+	r(new SceneObject(this))
 {
 }
 
@@ -154,10 +162,10 @@ void GameTest::Update(float delta)
 	{
 		firstFrame = false;
 		Skybox irradiance = Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(irradianceFaces.data()));
-		renderSystem->SetIrradianceMap(irradiance.texture);
+		renderSystem.SetIrradianceMap(irradiance.texture);
 	}
 
-	LineRenderer& lines = renderSystem->lines;
+	LineRenderer& lines = renderSystem.lines;
 
 	if (singlePlayerMode)
 	{
@@ -169,7 +177,7 @@ void GameTest::Update(float delta)
 					*input.inputDevices[0],
 					*h->transform(),
 					*h->rigidbody(),
-					&renderSystem->lines,
+					&renderSystem.lines,
 					delta,
 					camera->transform.getEulerRotation().y
 				);
@@ -206,7 +214,7 @@ void GameTest::Update(float delta)
 					*input.inputDevices[1],
 					*h->transform(),
 					*h->rigidbody(),
-					&renderSystem->lines,
+					&renderSystem.lines,
 					delta,
 					camera->transform.getEulerRotation().y
 				);
@@ -310,7 +318,7 @@ void GameTest::Update(float delta)
 
 void GameTest::Draw()
 {
-	renderSystem->Update(
+	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,

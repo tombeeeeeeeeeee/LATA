@@ -30,7 +30,7 @@ void InputTest::Update(float delta)
 
 void InputTest::Draw()
 {
-	renderSystem->Update(
+	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,

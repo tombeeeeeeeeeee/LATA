@@ -14,6 +14,8 @@
 #include "Hit.h"
 #include "Paths.h"
 #include "Collision.h"
+#include "Collider.h"
+#include "Scene.h"
 
 #include "Serialisation.h"
 

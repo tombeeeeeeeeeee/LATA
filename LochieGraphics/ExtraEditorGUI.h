@@ -2,6 +2,7 @@
 
 #include "EditorGUI.h"
 
+// Needs to be included due to the template definition being here
 #include "Utilities.h"
 
 #include <vector>

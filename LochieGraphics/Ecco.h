@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Utilities.h"
-
 #include "Input.h"
 
 class Transform;

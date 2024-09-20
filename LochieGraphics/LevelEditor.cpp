@@ -1,11 +1,14 @@
 #include "LevelEditor.h"
 
+#include "SceneObject.h"
 #include "ResourceManager.h"
-
 // TODO: This is only here for the window reference
 #include "SceneManager.h"
-
 #include "Paths.h"
+#include "Collider.h"
+#include "Sync.h"
+#include "Ecco.h"
+#include "RenderSystem.h"
 
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
@@ -114,9 +117,10 @@ void LevelEditor::Eraser(glm::vec2 targetCell)
 	if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
 }
 
-LevelEditor::LevelEditor()
+LevelEditor::LevelEditor() :
+	groundTileParent(new SceneObject(this, "Ground Tiles")),
+	wallTileParent(new SceneObject(this, "Wall Tiles"))
 {
-
 }
 
 void LevelEditor::Start()
@@ -205,13 +209,13 @@ void LevelEditor::Start()
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 
-	renderSystem->ssaoRadius = 150.0f;
-	renderSystem->ssaoBias = 50.0f;
+	renderSystem.ssaoRadius = 150.0f;
+	renderSystem.ssaoBias = 50.0f;
 }
 
 void LevelEditor::Update(float delta)
 {
-	LineRenderer& lines = renderSystem->lines;
+	LineRenderer& lines = renderSystem.lines;
 	input.Update();
 
 	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
@@ -242,7 +246,7 @@ void LevelEditor::Update(float delta)
 				*input.inputDevices[1],
 				*syncSo->transform(),
 				*syncSo->rigidbody(),
-				&renderSystem->lines,
+				&renderSystem.lines,
 				delta,
 				camera->transform.getEulerRotation().y
 			);
@@ -282,7 +286,7 @@ void LevelEditor::Update(float delta)
 
 void LevelEditor::Draw()
 {
-	renderSystem->Update(
+	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,

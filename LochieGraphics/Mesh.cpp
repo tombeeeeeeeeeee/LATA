@@ -1,5 +1,6 @@
 #include "Mesh.h"
 
+#include "Vertex.h"
 #include "BoneInfo.h"
 
 #include "AssimpMatrixToGLM.h"

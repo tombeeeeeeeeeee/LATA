@@ -23,7 +23,7 @@ void EmptyScene::Update(float delta)
 
 void EmptyScene::Draw()
 {
-	renderSystem->Update(
+	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,

@@ -1,10 +1,14 @@
 #pragma once
 
-#include "Camera.h"
-
-#include "Utilities.h"
+#include "Maths.h"
 
 class Transform;
+class Camera;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 class GameplayCameraSystem
 {
@@ -33,7 +37,7 @@ public:
 		float zoomScale
 	);
 
-	void ChangeCameraState(Camera& camera, Camera::State state);
+	//void ChangeCameraState(Camera& camera, Camera::State state);
 
 	void GUI();
 	toml::table Serialise();

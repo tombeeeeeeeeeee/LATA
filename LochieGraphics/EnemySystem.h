@@ -1,9 +1,10 @@
 #pragma once
+
+#include "Maths.h"
+
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include "Collider.h"
-#include "Maths.h"
 
 struct Enemy;
 class Transform;
@@ -11,6 +12,12 @@ class RigidBody;
 class SceneObject;
 class ModelRenderer;
 struct HealthPacket;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
+
 //Might need these later.
 //class Ecco;
 //class Sync;

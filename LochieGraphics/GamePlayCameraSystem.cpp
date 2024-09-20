@@ -1,6 +1,11 @@
 #include "GamePlayCameraSystem.h"
-#include "Serialisation.h"
+
 #include "SceneManager.h"
+#include "Camera.h"
+
+#include "Utilities.h"
+
+#include "Serialisation.h"
 #include "EditorGUI.h"
 
 GameplayCameraSystem::GameplayCameraSystem(toml::table table)
@@ -37,10 +42,9 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 	}
 }
 
-void GameplayCameraSystem::ChangeCameraState(Camera& camera, Camera::State state)
-{
-
-}
+//void GameplayCameraSystem::ChangeCameraState(Camera& camera, Camera::State state)
+//{
+//}
 
 void GameplayCameraSystem::GUI()
 {

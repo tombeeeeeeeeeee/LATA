@@ -1,5 +1,6 @@
 #pragma once
 #include "Maths.h"
+
 #include <vector>
 
 struct State;

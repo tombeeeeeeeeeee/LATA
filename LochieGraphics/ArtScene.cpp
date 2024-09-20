@@ -3,8 +3,10 @@
 #include "ResourceManager.h"
 #include "SceneManager.h"
 #include "Skybox.h"
-
+#include "Camera.h"
+#include "SceneObject.h"
 #include "Paths.h"
+#include "ShaderEnum.h"
 
 #include "Utilities.h"
 
@@ -281,7 +283,8 @@ void ArtScene::ImportFolder(std::string& path)
 	ImportFromPaths((int)newPaths.size(), newPaths.data());
 }
 
-ArtScene::ArtScene()
+ArtScene::ArtScene() :
+	sceneObject(new SceneObject(this, "Editing Scene Object"))
 {
 	artScene = this;
 }
@@ -362,7 +365,7 @@ void ArtScene::Update(float delta)
 
 void ArtScene::Draw()
 {
-	renderSystem->Update(
+	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,

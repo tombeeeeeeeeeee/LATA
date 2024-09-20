@@ -4,6 +4,8 @@
 #include "Transform.h"
 #include "Collider.h"
 #include "Collision.h"
+#include "CollisionPacket.h"
+#include "CollisionFunctions.h"
 
 #include "Serialisation.h"
 

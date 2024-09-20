@@ -4,8 +4,11 @@
 #include "Animator.h"
 #include "Collider.h"
 #include "ExitElevator.h"
-
+#include "Sync.h"
+#include "Ecco.h"
 #include "Scene.h"
+
+#include "Utilities.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"

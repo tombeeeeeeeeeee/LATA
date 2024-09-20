@@ -2,8 +2,6 @@
 
 #include "Transform.h"
 
-#include "Maths.h"
-
 #include <vector>
 
 namespace toml {
@@ -95,8 +93,8 @@ public:
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset);
 
-    float getOrthoHeight() { return 9.0f * orthoScale; };
-    float getOrthoWidth() { return 16.0f * orthoScale; };
+    float getOrthoHeight() const { return 9.0f * orthoScale; };
+    float getOrthoWidth() const { return 16.0f * orthoScale; };
 
     bool InOrthoMode() const;
 

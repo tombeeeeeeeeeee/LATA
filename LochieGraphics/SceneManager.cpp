@@ -1,6 +1,11 @@
 #include "SceneManager.h"
 
+#include "Scene.h"
+#include "Skybox.h"
 #include "ResourceManager.h"
+#include "ShaderEnum.h"
+#include "SceneObject.h"
+#include "Lights.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -118,6 +123,8 @@ SceneManager::SceneManager(Scene* _scene)
 	// Draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	scene->renderSystem.window = window;
+
 	camera.nearPlane = 0.5f;
 	camera.farPlane = 100.0f;
 	scene->camera = &camera;
@@ -144,8 +151,6 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/superDuper.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
 	});
 
-	scene->renderSystem = new RenderSystem(window);
-
 	std::array<std::string, 6> skyboxFaces = { "images/SkyBox Volume 2/Stars01/leftImage.png", "images/SkyBox Volume 2/Stars01/rightImage.png", "images/SkyBox Volume 2/Stars01/upImage.png", "images/SkyBox Volume 2/Stars01/downImage.png", "images/SkyBox Volume 2/Stars01/frontImage.png", "images/SkyBox Volume 2/Stars01/backImage.png" };
 	defaultSkybox = new Skybox(scene->shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data()));
 
@@ -162,7 +167,7 @@ SceneManager::SceneManager(Scene* _scene)
 
 	scene->Start();
 
-	scene->renderSystem->Start(
+	scene->renderSystem.Start(
 		scene->skybox->texture,
 		&scene->shaders,
 		scene->lights.front(),
@@ -230,7 +235,7 @@ void SceneManager::Update()
 	}
 
 	//// TODO: Actual draw/update loop
-	scene->renderSystem->projection = projection;
+	scene->renderSystem.projection = projection;
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -241,9 +246,9 @@ void SceneManager::Update()
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 	ImGuizmo::BeginFrame();
 	
-	scene->renderSystem->lines.Clear();
+	scene->renderSystem.lines.Clear();
 	scene->Update(deltaTime);
-	scene->renderSystem->lines.Compile();
+	scene->renderSystem.lines.Compile();
 
 	scene->skybox->Update(&camera, (float)windowWidth / (float)windowHeight);
 
@@ -297,7 +302,7 @@ void SceneManager::FramebufferSizeCallback(GLFWwindow* window, int width, int he
 	windowWidth = width;
 	windowHeight = height;
 
-	scene->renderSystem->ScreenResize(windowWidth, windowHeight);
+	scene->renderSystem.ScreenResize(windowWidth, windowHeight);
 	scene->OnWindowResize();
 }
 

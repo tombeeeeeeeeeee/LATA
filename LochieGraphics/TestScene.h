@@ -1,12 +1,9 @@
 #pragma once
 #include "Scene.h"
 
-#include "ResourceManager.h"
-#include "Light.h"
-#include "Skybox.h"
+#include "Lights.h"
 #include "MessengerInterface.h"
 #include "Animator.h"
-#include "FrameBuffer.h"
 #include "BlendedAnimator.h"
 
 class TestScene : public Scene
@@ -28,16 +25,15 @@ private:
 	Model* vampireModel;
 	Model* tiresModel;
 
-
-	SceneObject* backpack   = new SceneObject(this, "backpack   ");
-	SceneObject* soulSpear  = new SceneObject(this, "soulSpear  ");
-	SceneObject* testRedBox = new SceneObject(this, "testRedBox ");
-	SceneObject* grass      = new SceneObject(this, "grass      ");
-	SceneObject* boxes      = new SceneObject(this, "boxes      ");
-	SceneObject* lightCube  = new SceneObject(this, "lightCube  ");
-	SceneObject* xbot       = new SceneObject(this, "xbot       ");
-	SceneObject* vampire    = new SceneObject(this, "vampire    ");
-	SceneObject* tires      = new SceneObject(this, "tires      ");
+	SceneObject* backpack;
+	SceneObject* soulSpear;
+	SceneObject* testRedBox;
+	SceneObject* grass;
+	SceneObject* boxes;
+	SceneObject* lightCube;
+	SceneObject* xbot;
+	SceneObject* vampire;
+	SceneObject* tires;
 
 	Animation xbotChicken;
 	Animation xbotIdle;

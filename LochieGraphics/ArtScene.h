@@ -3,6 +3,7 @@
 
 #include "Texture.h"
 #include "Image.h"
+#include "Lights.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -10,11 +11,6 @@
 class ArtScene : public Scene
 {
 private:
-
-	std::string filter = "";
-
-	std::string artAssetExtension = "Art";
-
 	std::unordered_map<std::string, Texture::Type> acceptableImportTypeNames = {
 		{ "BaseColour", Texture::Type::albedo },
 		{ "BaseColor",  Texture::Type::albedo },
@@ -60,7 +56,7 @@ private:
 
 	Material* material = nullptr;
 	Model* model = nullptr;
-	SceneObject* sceneObject = new SceneObject(this, "Editing Scene Object");
+	SceneObject* sceneObject;
 
 	float loadTargetPreviewSize = 128.0f;
 	float texturePreviewScale = 0.01f;

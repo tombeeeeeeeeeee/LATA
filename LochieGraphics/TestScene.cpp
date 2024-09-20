@@ -1,5 +1,11 @@
 #include "TestScene.h"
 
+#include "SceneObject.h"
+#include "Camera.h"
+#include "ShaderEnum.h"
+#include "Skybox.h"
+#include "ResourceManager.h"
+
 #include "EditorGUI.h"
 
 #include "stb_image.h"
@@ -7,7 +13,16 @@
 #include <iostream>
 #include <array>
 
-TestScene::TestScene()
+TestScene::TestScene() : 
+	backpack   (new SceneObject(this, "backpack   ")),
+	soulSpear  (new SceneObject(this, "soulSpear  ")),
+	testRedBox (new SceneObject(this, "testRedBox ")),
+	grass      (new SceneObject(this, "grass      ")),
+	boxes      (new SceneObject(this, "boxes      ")),
+	lightCube  (new SceneObject(this, "lightCube  ")),
+	xbot       (new SceneObject(this, "xbot       ")),
+	vampire    (new SceneObject(this, "vampire    ")),
+	tires      (new SceneObject(this, "tires      "))
 {
 	lights = std::vector<Light*>{
 		&directionalLight,
@@ -171,7 +186,7 @@ void TestScene::Start()
 
 void TestScene::Update(float delta)
 {
-	LineRenderer& lines = renderSystem->lines;
+	LineRenderer& lines = renderSystem.lines;
 
 	lines.SetColour({ 0.0f, 1.0f, 0.0f });
 	lines.DrawLineSegment({ 0.0f, 0.0f, 0.0f }, { 10.0f, 0.0f, 10.0f });
@@ -238,7 +253,7 @@ void TestScene::Draw()
 
 	auto& xbotInterpolatedAnimations = xbotBlendedAnimator.getFinalBoneMatrices();
 
-	renderSystem->Update(
+	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
@@ -270,17 +285,17 @@ void TestScene::GUI()
 	else {
 		ImGui::DragFloat("Ortho Camera Zoom", &camera->orthoScale, 0.1f, 0, 100.0f);
 		ImGui::SliderFloat("Animation trans", &xbotBlendedAnimator.lerpAmount, 0.f, 1.0f);
-		ImGui::Checkbox("Show shadow debug", &renderSystem->showShadowDebug);
-		ImGui::DragFloat("Exposure", &renderSystem->exposure, 0.01f, 0.0f, 5.0f);
+		ImGui::Checkbox("Show shadow debug", &renderSystem.showShadowDebug);
+		ImGui::DragFloat("Exposure", &renderSystem.exposure, 0.01f, 0.0f, 5.0f);
 		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, (unsigned int)(skyboxes.size() - 1))) {
 			skybox = skyboxes[skyboxIndex];
-			renderSystem->skyboxTexture = skybox->texture;
-			renderSystem->IBLBufferSetup(skybox->texture);
+			renderSystem.skyboxTexture = skybox->texture;
+			renderSystem.IBLBufferSetup(skybox->texture);
 		}
 
-		ImGui::DragInt("SSAO kernelSize", &renderSystem->kernelSize);
-		ImGui::DragFloat("SSAO Radius", &renderSystem->ssaoRadius);
-		ImGui::DragFloat("SSAO Bias", &renderSystem->ssaoBias);
+		ImGui::DragInt("SSAO kernelSize", &renderSystem.kernelSize);
+		ImGui::DragFloat("SSAO Radius", &renderSystem.ssaoRadius);
+		ImGui::DragFloat("SSAO Bias", &renderSystem.ssaoBias);
 
 		ImGui::End();
 	}

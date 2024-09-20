@@ -2,6 +2,9 @@
 
 #include "SceneManager.h"
 #include "Paths.h"
+#include "ShaderEnum.h"
+#include "Scene.h"
+#include "Vertex.h"
 
 #include "Serialisation.h"
 

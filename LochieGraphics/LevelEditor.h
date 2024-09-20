@@ -1,7 +1,10 @@
 #pragma once
 #include "Scene.h"
 
-#include "ResourceManager.h"
+#include "Input.h"
+#include "Lights.h"
+
+#include "hashFNV1A.h"
 
 #include <unordered_map>
 
@@ -15,8 +18,8 @@ private:
 	};
 	BrushState state = BrushState::none;
 
-	SceneObject* groundTileParent = new SceneObject(this, "Ground Tiles");
-	SceneObject* wallTileParent = new SceneObject(this, "Wall Tiles");
+	SceneObject* groundTileParent;
+	SceneObject* wallTileParent;
 
 	std::unordered_map<std::pair<int, int>, SceneObject*, hashFNV1A> tiles = {};
 

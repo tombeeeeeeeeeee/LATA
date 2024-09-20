@@ -1,6 +1,4 @@
 #pragma once
-#include "Vertex.h"
-
 #include "Graphics.h"
 
 #include "Maths.h"
@@ -13,6 +11,7 @@
 #include <unordered_map>
 
 struct BoneInfo;
+struct Vertex;
 
 class Mesh
 {

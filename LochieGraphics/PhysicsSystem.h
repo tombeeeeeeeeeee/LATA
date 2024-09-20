@@ -1,10 +1,12 @@
 #pragma once
+
 #include "RigidBody.h"
-#include "Transform.h"
+
 #include <unordered_map>
-#include "CollisionFunctions.h"
 
 struct Hit;
+class Transform;
+struct CollisionPacket;
 
 class PhysicsSystem
 {

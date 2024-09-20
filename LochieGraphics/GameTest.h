@@ -2,10 +2,10 @@
 #include "Scene.h"
 
 #include "Input.h"
+#include "Lights.h"
 
 #include "Image.h"
 #include <array>
-
 
 class GameTest : public Scene
 {
@@ -13,8 +13,8 @@ private:
 
 	Input input;
 
-	SceneObject* h = new SceneObject(this);
-	SceneObject* r = new SceneObject(this);
+	SceneObject* h;
+	SceneObject* r;
 
 	RigidBody* hRb = nullptr;
 	RigidBody* rRb = nullptr;

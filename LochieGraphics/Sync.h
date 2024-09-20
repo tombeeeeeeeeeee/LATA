@@ -2,8 +2,6 @@
 #include "BlastLine.h"
 #include "Input.h"
 
-#include "Maths.h"
-
 #include <string>
 
 class Transform;

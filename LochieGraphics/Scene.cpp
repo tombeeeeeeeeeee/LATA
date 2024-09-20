@@ -1,6 +1,14 @@
 #include "Scene.h"
 
+#include "SceneObject.h"
+#include "Lights.h"
+#include "Camera.h"
+#include "Ecco.h"
+#include "Sync.h"
 #include "ResourceManager.h"
+#include "ShaderEnum.h"
+#include "Skybox.h"
+#include "Collider.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"

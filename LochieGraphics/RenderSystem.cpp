@@ -8,16 +8,12 @@
 #include "Skybox.h"
 #include "Animator.h"
 #include "FrameBuffer.h"
+#include "shaderEnum.h"
 
 #include "Utilities.h"
 #include "EditorGUI.h"
 
 #include <random>
-
-RenderSystem::RenderSystem(GLFWwindow* _window)
-{
-    window = _window;
-}
 
 void RenderSystem::Start(
     unsigned int _skyboxTexture,

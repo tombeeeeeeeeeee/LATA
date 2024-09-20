@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ShaderEnum.h"
 #include "LineRenderer.h"
 #include "Graphics.h"
 
@@ -32,8 +31,6 @@ class RenderSystem
 public:
 
     LineRenderer lines;
-
-    RenderSystem(GLFWwindow* window);
 
     void Start(
         unsigned int _skyboxTexture,
@@ -74,6 +71,12 @@ public:
     float ssaoRadius = 0.5f;
     float ssaoBias = 0.025f;
 
+    /// <summary>
+    /// Pointer to current window
+    /// </summary>
+    GLFWwindow* window;
+
+
     void GUI();
 
 private:
@@ -100,11 +103,6 @@ private:
     unsigned int modelLocation;
 
     glm::mat4 viewMatrix;
-
-    /// <summary>
-    /// Pointer to current window
-    /// </summary>
-    GLFWwindow* window;
 
     /// <summary>
     /// List of entities in order of the shader they use.

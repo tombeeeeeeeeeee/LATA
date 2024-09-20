@@ -7,12 +7,6 @@
 
 #include <iostream>
 
-namespace toml {
-	inline namespace v3 {
-		class table;
-	}
-}
-
 void Collider::setCollisionLayer(int layer)
 {
 	collisionLayer = layer;

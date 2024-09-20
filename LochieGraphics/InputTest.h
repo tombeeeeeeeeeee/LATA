@@ -2,6 +2,7 @@
 #include "Scene.h"
 
 #include "Input.h"
+#include "Lights.h"
 
 class InputTest : public Scene
 {

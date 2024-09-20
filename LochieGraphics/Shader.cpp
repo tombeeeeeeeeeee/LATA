@@ -216,7 +216,7 @@ toml::table Shader::Serialise()
 	};
 }
 
-Shader::Shader(toml::v3::table* toml)
+Shader::Shader(toml::table* toml)
 {
 	auto temp = (*toml)["guid"];
 	GUID = Serialisation::LoadAsUnsignedLongLong((*toml)["guid"]);

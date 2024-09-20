@@ -1,32 +1,27 @@
 #pragma once
 
-#include "SceneObject.h"
-#include "Camera.h"
-#include "Lights.h"
-#include "Transform.h"
 #include "ModelRenderer.h"
-#include "Ecco.h"
-#include "Sync.h"
-#include "Health.h"
+#include "Transform.h"
+#include "Animator.h"
 #include "RigidBody.h"
+#include "Health.h"
 #include "Enemy.h"
 #include "ExitElevator.h"
-#include "Animator.h"
-
-#include "PhysicsSystem.h"
-#include "EnemySystem.h"
-#include "HealthSystem.h"
-#include "GamePlayCameraSystem.h"
-
-#include "Skybox.h"
-#include "ShaderEnum.h"
 
 #include "RenderSystem.h"
+#include "PhysicsSystem.h"
+#include "GamePlayCameraSystem.h"
+#include "HealthSystem.h"
+#include "EnemySystem.h"
 
-#include "Maths.h"
 #include "GUI.h"
 
 #include <string>
+
+class SceneObject;
+class Ecco;
+class Sync;
+class Skybox;
 
 class Scene
 {
@@ -67,7 +62,7 @@ public:
 	unsigned int* windowWidth;
 	unsigned int* windowHeight;
 
-	RenderSystem* renderSystem;
+	RenderSystem renderSystem;
 	PhysicsSystem physicsSystem;
 	GameplayCameraSystem gameCamSystem;
 	HealthSystem healthSystem;

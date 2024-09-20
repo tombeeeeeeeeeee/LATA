@@ -84,7 +84,7 @@ public:
 	std::string getDisplayName() const;
 
 	toml::table Serialise();
-	Shader(toml::v3::table* toml);
+	Shader(toml::table* toml);
 
 	void OpenModal() {};
 

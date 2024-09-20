@@ -3,13 +3,14 @@
 #include "SceneObject.h"
 #include "Scene.h"
 #include "SceneManager.h"
-#include "Utilities.h"
-
 #include "ResourceManager.h"
+#include "Lights.h"
+#include "Collider.h"
+
+#include "Utilities.h"
 
 #include "EditorGUI.h"
 #include "ImGuizmo.h"
-
 
 #include <iostream>
 
@@ -70,7 +71,7 @@ void GUI::Update()
 	if (showPhysicsMenu)	  { PhysicsMenu();              }
 	if (showEnemyMenu)	      { EnemyMenu();                }
 	if (showImguiExampleMenu) { ImGui::ShowDemoWindow();    }
-	if (showRenderSystemMenu) { scene->renderSystem->GUI(); }
+	if (showRenderSystemMenu) { scene->renderSystem.GUI(); }
 	scene->BaseGUI();
 	scene->GUI();
 

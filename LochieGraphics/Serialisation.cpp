@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-glm::vec2 Serialisation::LoadAsVec2(toml::v3::array* toml)
+glm::vec2 Serialisation::LoadAsVec2(toml::array* toml)
 {
     // TODO: Show error message
 
@@ -19,7 +19,7 @@ glm::vec2 Serialisation::LoadAsVec2(toml::node_view<toml::node> toml)
     return LoadAsVec2(toml.as_array());
 }
 
-glm::vec3 Serialisation::LoadAsVec3(toml::v3::array* toml)
+glm::vec3 Serialisation::LoadAsVec3(toml::array* toml)
 {
     if (!toml) {
         std::cout << "Failed to load vec3\n";
@@ -36,7 +36,7 @@ glm::vec3 Serialisation::LoadAsVec3(toml::node_view<toml::node> toml)
     return LoadAsVec3(toml.as_array());
 }
 
-unsigned long long Serialisation::LoadAsUnsignedLongLong(toml::v3::node_view<toml::v3::node> toml)
+unsigned long long Serialisation::LoadAsUnsignedLongLong(toml::node_view<toml::node> toml)
 {
     return std::strtoull(LoadAsString(toml).c_str(), 0, 10);
 }
@@ -46,7 +46,7 @@ unsigned long long Serialisation::LoadAsUnsignedLongLong(toml::node& toml)
     return std::strtoull(LoadAsString(toml).c_str(), 0, 10);
 }
 
-std::string Serialisation::LoadAsString(toml::v3::node_view<toml::v3::node> toml)
+std::string Serialisation::LoadAsString(toml::node_view<toml::node> toml)
 {
     return toml.as_string()->value_or<std::string>("");
 }
@@ -56,7 +56,7 @@ std::string Serialisation::LoadAsString(toml::node& toml)
     return toml.as_string()->value_or<std::string>("");
 }
 
-int Serialisation::LoadAsInt(toml::v3::node_view<toml::v3::node> toml)
+int Serialisation::LoadAsInt(toml::node_view<toml::node> toml)
 {
     if (!toml) { return 0; }
     auto asInt = toml.as_integer();
@@ -79,7 +79,7 @@ int Serialisation::LoadAsInt(toml::node& toml)
     return toml.as_integer()->value_or<int>(0);
 }
 
-float Serialisation::LoadAsFloat(toml::v3::node_view<toml::v3::node> toml)
+float Serialisation::LoadAsFloat(toml::node_view<toml::node> toml)
 {
     // TODO: Show error message
 

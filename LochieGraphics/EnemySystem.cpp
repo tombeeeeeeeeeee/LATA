@@ -9,6 +9,9 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Paths.h"
+#include "Collider.h"
+#include "ModelRenderer.h"
+#include "Scene.h"
 
 #include "Serialisation.h"
 

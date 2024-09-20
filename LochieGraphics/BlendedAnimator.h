@@ -1,5 +1,6 @@
 #pragma once
 #include "Animator.h"
+
 class BlendedAnimator : public Animator
 {
     Animation* otherCurrentAnimation;
