@@ -278,6 +278,7 @@ void LevelEditor::Update(float delta)
 	enemySystem.Update(
 		enemies,
 		transforms,
+		rigidBodies,
 		eccoSo,
 		syncSo,
 		delta
