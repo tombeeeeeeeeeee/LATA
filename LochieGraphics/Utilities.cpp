@@ -56,6 +56,24 @@ glm::vec3 Utilities::Lerp(glm::vec3 a, glm::vec3 b, float t)
 	return a * (1 - t) + b * t;
 }
 
+glm::vec2 Utilities::ClampMag(glm::vec2 v, float min, float max)
+{
+	float originalLength = glm::length(v);
+	glm::vec2 normalized = glm::normalize(v);
+	if (originalLength < min) originalLength = min;
+	else if (originalLength > max) originalLength = max;
+	return normalized * originalLength;
+}
+
+glm::vec3 Utilities::ClampMag(glm::vec3 v, float min, float max)
+{
+	float originalLength = glm::length(v);
+	glm::vec3 normalized = glm::normalize(v);
+	if (originalLength < min) originalLength = min;
+	else if (originalLength > max) originalLength = max;
+	return normalized * originalLength;
+}
+
 std::string Utilities::ToLower(const std::string& str)
 {
 	std::string newString;

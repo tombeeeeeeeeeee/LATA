@@ -170,11 +170,12 @@ void EnemySystem::Boiding(
     std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
     SceneObject* ecco, SceneObject* sync)
 {
+
     glm::vec2 syncPos2D = { sync->transform()->getGlobalPosition().x, sync->transform()->getGlobalPosition().z };
     glm::vec2 eccoPos2D = { ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
-    for (auto& enemyPair : enemies)
+    for (auto& enemyGUID : meleeActivePool)
     {
-        glm::vec2 enemyPos2D = { transforms[enemyPair.first].getGlobalPosition().x, transforms[enemyPair.first].getGlobalPosition().z };
+        glm::vec2 enemyPos2D = { transforms[enemyGUID].getGlobalPosition().x, transforms[enemyGUID].getGlobalPosition().z };
         glm::vec2 direction;
         if (glm::length(syncPos2D - enemyPos2D) < glm::length(eccoPos2D - enemyPos2D))
         {
@@ -190,10 +191,10 @@ void EnemySystem::Boiding(
         glm::vec2 coh = direction;
 
         int total = 1;
-        for (auto& otherEnemyPair : enemies)
+        for (auto& otherEnemyGUID : meleeActivePool)
         {
-            if (otherEnemyPair.first == enemyPair.first) continue;
-            glm::vec2 otherEnemyPos2D = { transforms[otherEnemyPair.first].getGlobalPosition().x,transforms[otherEnemyPair.first].getGlobalPosition().z };
+            if (otherEnemyGUID == enemyGUID) continue;
+            glm::vec2 otherEnemyPos2D = { transforms[otherEnemyGUID].getGlobalPosition().x,transforms[otherEnemyGUID].getGlobalPosition().z };
             float distance = glm::distance(otherEnemyPos2D, enemyPos2D);
             if (distance <= perceptionRadius)
             {
@@ -202,7 +203,7 @@ void EnemySystem::Boiding(
                 diff /= distance * distance;
                 sep += diff;
 
-                ali += rigidbodies[otherEnemyPair.first].vel;
+                ali += rigidbodies[otherEnemyGUID].vel;
 
                 coh += otherEnemyPos2D;
 
@@ -213,25 +214,25 @@ void EnemySystem::Boiding(
 
         sep /= total;
         sep *= maxSpeed;
-        glm::vec2 sumSep = sep - rigidbodies[enemyPair.first].vel;
-        sumSep = glm::clamp(sumSep, 0.0f, maxForce);
+        glm::vec2 sumSep = sep - rigidbodies[enemyGUID].vel;
+        sumSep = Utilities::ClampMag(sumSep, 0, maxForce);
         sumSep *= seperationCoef;
 
         ali /= total;
         ali *= maxSpeed;
-        glm::vec2 sumAli = ali - rigidbodies[enemyPair.first].vel;
-        sumAli = glm::clamp(sumAli, 0.0f, maxForce);
+        glm::vec2 sumAli = ali - rigidbodies[enemyGUID].vel;
+        sumAli = Utilities::ClampMag(sumAli, 0, maxForce);
         sumAli *= alignmentCoef;
 
         coh /= total;
         glm::vec2 sumCoh = coh - enemyPos2D;
-        sumCoh = glm::clamp(sumCoh, 0.0f, maxSpeed);
-        sumCoh = sumCoh - rigidbodies[enemyPair.first].vel;
-        sumCoh = glm::clamp(sumCoh, 0.0f, maxForce);
+        sumCoh = Utilities::ClampMag(sumCoh, 0, maxSpeed);
+        sumCoh = sumCoh - rigidbodies[enemyGUID].vel;
+        sumCoh = Utilities::ClampMag(sumCoh, 0, maxForce);
         sumCoh *= cohesionCoef;
 
         glm::vec2 force = sumSep + sumAli + sumCoh;
-        rigidbodies[enemyPair.first].netForce += force;
+        rigidbodies[enemyGUID].netForce += force;
     }
 }
 
