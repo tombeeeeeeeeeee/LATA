@@ -2,6 +2,8 @@
 
 #include "Utilities.h"
 
+#include "Serialisation.h"
+
 #include <iostream>
 #include <sstream>
 #include <fstream>

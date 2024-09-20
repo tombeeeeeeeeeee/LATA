@@ -2,6 +2,8 @@
 
 #include "ModelHierarchyInfo.h"
 
+#include "Serialisation.h"
+
 Animator::Animator(Animation* animation) :
     currentAnimation(animation)
 {

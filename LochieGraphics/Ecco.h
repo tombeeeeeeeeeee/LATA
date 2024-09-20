@@ -4,13 +4,16 @@
 
 #include "Input.h"
 
-#include "Serialisation.h"
-
 class Transform;
 class RigidBody;
 class Health;
 struct HealthPacket;
 struct Collision;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 class Ecco
 {

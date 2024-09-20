@@ -2,7 +2,11 @@
 
 #include "Animation.h"
 
-#include "Serialisation.h"
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 class Animator
 {

@@ -4,9 +4,11 @@
 #include "Animator.h"
 #include "Collider.h"
 #include "ExitElevator.h"
-#include "EditorGUI.h"
 
 #include "Scene.h"
+
+#include "EditorGUI.h"
+#include "Serialisation.h"
 
 SceneObject::SceneObject(Scene* _scene, std::string _name) :
 	scene(_scene),

@@ -1,9 +1,13 @@
 #pragma once
 #include <string>
-#include "Serialisation.h"
 
 struct Collision;
 class SceneObject;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 class ExitElevator
 {

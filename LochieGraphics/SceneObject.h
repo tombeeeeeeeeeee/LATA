@@ -1,5 +1,4 @@
 #pragma once
-#include "Serialisation.h"
 
 #include "Maths.h"
 
@@ -18,6 +17,11 @@ class Animator;
 class RigidBody;
 class ExitElevator;
 struct Enemy;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 // TODO: Look into how instancing should be handled
 
 //TODO: Add GetPart Functions

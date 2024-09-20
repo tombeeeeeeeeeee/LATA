@@ -7,6 +7,7 @@
 #include "Utilities.h"
 
 #include "EditorGUI.h"
+#include "Serialisation.h"
 
 ModelRenderer::ModelRenderer()
 {

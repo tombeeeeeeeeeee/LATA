@@ -1,9 +1,17 @@
 #include "Collider.h"
 
 #include "Utilities.h"
+
 #include "EditorGUI.h"
+#include "Serialisation.h"
 
 #include <iostream>
+
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 void Collider::setCollisionLayer(int layer)
 {
@@ -38,7 +46,7 @@ Collider* Collider::Load(toml::table table)
 		return new DirectionalCollider(table);
 	default:
 		std::cout << "Unsupported Collider attempting to load\n";
-		break;
+		return nullptr;
 	}
 }
 

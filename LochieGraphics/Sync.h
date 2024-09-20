@@ -1,10 +1,10 @@
 #pragma once
-#include "Input.h"
-#include <string>
-#include "Maths.h"
-#include "Serialisation.h"
-
 #include "BlastLine.h"
+#include "Input.h"
+
+#include "Maths.h"
+
+#include <string>
 
 class Transform;
 class RigidBody;
@@ -12,6 +12,11 @@ class LineRenderer;
 class ModelRenderer;
 class Shader;
 struct Collision;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 class Sync
 {

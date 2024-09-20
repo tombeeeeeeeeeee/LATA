@@ -2,11 +2,15 @@
 
 #include "Maths.h"
 
-#include "Serialisation.h"
-
 class FrameBuffer;
 class Texture;
 class Shader;
+
+namespace toml {
+    inline namespace v3 {
+        class table;
+    }
+}
 
 class Light
 {

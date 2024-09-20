@@ -1,6 +1,12 @@
 #include "PhysicsSystem.h"
+
 #include "Hit.h"
 #include "Transform.h"
+#include "Collider.h"
+#include "Collision.h"
+
+#include "Serialisation.h"
+
 #include <algorithm>
 
 std::unordered_map<unsigned long long, RigidBody>* PhysicsSystem::rigidBodiesInScene = nullptr;

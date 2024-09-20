@@ -5,12 +5,15 @@
 #include "assimp/scene.h"
 #include "assimp/cimport.h"
 
-#include "Serialisation.h"
-
 #include <string>
 #include <unordered_map>
 
 class Shader;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 // TODO: I think textures should be used slightly differently with materials, rather than always binding them starting from 1, as many textures should be bound at once and only if there is more than the limit (32/31?) should it actually be changed 
 // The limit isn't 32, there is a gl function to get the limit

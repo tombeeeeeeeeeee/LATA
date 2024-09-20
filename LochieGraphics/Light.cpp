@@ -6,6 +6,7 @@
 #include "FrameBuffer.h"
 
 #include "EditorGUI.h"
+#include "Serialisation.h"
 
 using Utilities::PointerToString;
 

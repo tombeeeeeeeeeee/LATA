@@ -4,9 +4,13 @@
 
 #include "Maths.h"
 
-#include "Serialisation.h"
-
 #include <vector>
+
+namespace toml {
+    inline namespace v3 {
+        class table;
+    }
+}
 
 // TODO: Make this fit better with the sceneObject system
 class Camera

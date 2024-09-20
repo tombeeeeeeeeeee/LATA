@@ -1,11 +1,15 @@
 #pragma once
-#include "Serialisation.h"
 
 #include <vector>
 
 class Model;
 class Shader;
 class Material;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 class ModelRenderer
 {

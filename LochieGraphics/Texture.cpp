@@ -4,12 +4,12 @@
 // Cubemap stuff should be seperated
 #include "Shader.h"
 
-#include "Graphics.h"
-
-#include "stb_image.h"
-#include "imgui.h"
-#include "imgui_stdlib.h"
 #include "Utilities.h"
+
+#include "Graphics.h"
+#include "EditorGUI.h"
+#include "Serialisation.h"
+#include "stb_image.h"
 
 #include <iostream>
 

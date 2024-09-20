@@ -2,6 +2,7 @@
 
 #include "RigidBody.h"
 #include "Transform.h"
+#include "Collider.h"
 
 #include "Utilities.h"
 /*

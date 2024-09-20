@@ -1,11 +1,13 @@
 #pragma once
 
-#include "Serialisation.h"
-
 #include <functional>
 #include <vector>
 
 class SceneObject;
+
+namespace toml { inline namespace v3 { 
+	class table; 
+} }
 
 struct HealthPacket
 {

@@ -1,12 +1,18 @@
 #pragma once
 
-#include "Collision.h"
-#include "Collider.h"
+#include "Maths.h"
 
 #include <vector>
 #include <functional>
 
-#include "Serialisation.h"
+struct Collision;
+struct Collider;
+
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 class RigidBody
 {

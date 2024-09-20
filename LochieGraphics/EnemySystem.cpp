@@ -10,6 +10,8 @@
 #include "ResourceManager.h"
 #include "Paths.h"
 
+#include "Serialisation.h"
+
 EnemySystem::EnemySystem()
 {
 }

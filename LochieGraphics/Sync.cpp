@@ -7,12 +7,15 @@
 #include "ModelRenderer.h"
 #include "LineRenderer.h"
 #include "ResourceManager.h"
-#include "shaderEnum.h"
+#include "ShaderEnum.h"
 #include "EditorGUI.h"
 #include "SceneManager.h"
 #include "PhysicsSystem.h"
 #include "Hit.h"
 #include "Paths.h"
+#include "Collision.h"
+
+#include "Serialisation.h"
 
 Sync::Sync(toml::table table)
 {

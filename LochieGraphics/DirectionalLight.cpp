@@ -5,6 +5,7 @@
 #include "Utilities.h"
 
 #include "EditorGUI.h"
+#include "Serialisation.h"
 
 DirectionalLight::DirectionalLight(glm::vec3 _colour, glm::vec3 _direction) :
 	Light(_colour),

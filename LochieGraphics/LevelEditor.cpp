@@ -8,11 +8,11 @@
 #include "Paths.h"
 
 #include "ExtraEditorGUI.h"
+#include "Serialisation.h"
 
 #include <fstream>
 #include <iostream>
 #include <filesystem>
-
 
 void LevelEditor::RefreshWalls()
 {

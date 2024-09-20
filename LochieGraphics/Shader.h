@@ -4,7 +4,13 @@
 
 #include "Maths.h"
 
-#include "Serialisation.h"
+#include <string>
+
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 // TODO: Some shaders can be quite similar, see if there is or make a solution to not having to have to have a lot of shaders.
 // Shader system
@@ -12,17 +18,11 @@
 // Structs
 // 'Static' functions
 // 
-// 
 // There seems to be an extension for opengl already https://registry.khronos.org/OpenGL/extensions/ARB/ARB_shading_language_include.txt
 // Is it worth using that or doing it myself, 
 // note: recursion
-//
 
 
-//
-// Shader flags
-// 
-//
 class Shader
 {
 private:

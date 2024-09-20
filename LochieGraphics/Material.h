@@ -4,12 +4,15 @@
 
 #include "Maths.h"
 
-#include "Serialisation.h"
-
 #include <vector>
 #include <unordered_map>
 
 class Shader;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 class Material
 {

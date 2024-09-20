@@ -3,6 +3,7 @@
 #include "ResourceManager.h"
 
 #include "EditorGUI.h"
+#include "Serialisation.h"
 
 #include <fstream>
 #include <iostream>

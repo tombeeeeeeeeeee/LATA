@@ -2,11 +2,14 @@
 
 #include "Maths.h"
 
-#include "Serialisation.h"
-
 #include <vector>
 
 class SceneObject;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 class Transform
 {

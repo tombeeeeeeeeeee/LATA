@@ -9,6 +9,7 @@
 #include "Utilities.h"
 
 #include "EditorGUI.h"
+#include "Serialisation.h"
 
 #include "stb_image.h"
 #include "stb_image_write.h"

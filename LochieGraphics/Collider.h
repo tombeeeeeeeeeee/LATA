@@ -1,9 +1,13 @@
 #pragma once
 #include "Maths.h"
 
-#include "Serialisation.h"
-
 #include <vector>
+
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 enum class CollisionLayers
 {

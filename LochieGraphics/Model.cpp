@@ -6,12 +6,13 @@
 
 #include "Utilities.h"
 
-#include <iostream>
-#include <assimp/Importer.hpp>
+#include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 
-#include "EditorGUI.h"
 #include "ExtraEditorGUI.h"
+#include "Serialisation.h"
+
+#include <iostream>
 
 Model::Model()
 {

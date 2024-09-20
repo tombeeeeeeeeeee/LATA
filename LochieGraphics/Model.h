@@ -2,12 +2,16 @@
 #include "BoneInfo.h"
 #include "ModelHierarchyInfo.h"
 
-#include "Serialisation.h"
-
 #include <unordered_map>
 
 class SceneObject;
 class Mesh;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
+
 class Model
 {
 	friend class ResourceManager;
