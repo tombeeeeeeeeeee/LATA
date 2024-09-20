@@ -33,6 +33,8 @@ private:
 
 	float maxSpeed = 5.0f;
 	float maxForce = 0.1f;
+
+	bool aiUpdating = false;
 public:
 
 	EnemySystem();
@@ -65,21 +67,7 @@ public:
 	void OnHealthZeroMelee(HealthPacket health);
 	void OnHealthZeroRanged(HealthPacket health);
 
-	void Seperation(
-		std::unordered_map<unsigned long long, Enemy>& enemies,
-		std::unordered_map<unsigned long long, Transform>& transforms,
-		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
-		SceneObject* ecco, SceneObject* sync
-	);
-
-	void Alingment(
-		std::unordered_map<unsigned long long, Enemy>& enemies,
-		std::unordered_map<unsigned long long, Transform>& transforms,
-		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
-		SceneObject* ecco, SceneObject* sync
-	);
-
-	void Cohesion(
+	void Boiding(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
@@ -94,6 +82,8 @@ public:
 		SceneObject* ecco, SceneObject* sync,
 		float delta
 	);
+
+	void GUI();
 
 	toml::table Serialise() const;
 

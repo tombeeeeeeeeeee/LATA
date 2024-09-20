@@ -383,27 +383,5 @@ void GUI::EnemyMenu()
 
 	//TODO SAVE AND LOAD
 
-	ImGui::Text("MELEE ENEMY STATS");
-	ImGui::DragInt("Melee Enemy Health", &es.meleeEnemyHealth);
-	ImGui::DragFloat("Melee Enemy Move Speed", &es.meleeEnemyMoveSpeed);
-	ImGui::DragInt("Melee Enemy Damage", &es.meleeEnemyDamage);
-	ImGui::DragFloat("Melee Enemy Collider Radius", &es.meleeEnemyColliderRadius);
-	if (ResourceManager::ModelAssetSelector("Melee Enemy Model", &(es.meleeEnemyRenderer->model)))
-	{
-		es.meleeEnemyModel = es.meleeEnemyRenderer->model->path;
-	}
-	ImGui::InputText("Melee Enemy Material", &es.meleeEnemyMaterialPath);
-	ImGui::Text("");
-	ImGui::Text("RANGED ENEMY STATS");
-	ImGui::DragInt("Ranged Enemy Health", &es.rangedEnemyHealth);
-	ImGui::DragFloat("Ranged Enemy Move Speed", &es.rangedEnemyMoveSpeed);
-	ImGui::DragInt("Ranged Enemy Damage", &es.rangedEnemyDamage);
-	ImGui::DragFloat("Ranged Enemy Collider Radius", &es.rangedEnemyColliderRadius);
-	if (ResourceManager::ModelAssetSelector("Ranged Enemy Model", &(es.rangedEnemyRenderer->model)))
-	{
-		es.rangedEnemyModel = es.rangedEnemyRenderer->model->path;
-	}
-	ImGui::InputText("Ranged Enemy Material", &es.rangedEnemyMaterialPath);
-
-	ImGui::End();
+	es.GUI();
 }

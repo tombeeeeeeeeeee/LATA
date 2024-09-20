@@ -91,6 +91,11 @@ void RigidBody::GUI()
 		float mass = getMass();
 		bool isKinematic = invMass == 0;
 
+		ImGui::BeginDisabled();
+		ImGui::DragFloat2("Velocity", &vel[0]);
+		ImGui::DragFloat2("Accel", &accel[0]);
+		ImGui::EndDisabled();
+
 		if (isKinematic) ImGui::BeginDisabled();
 		if (ImGui::DragFloat(("Mass##rigidBody" + tag).c_str(), &mass, 0.1f, 0.001f, 100000.0f))
 		{
@@ -114,6 +119,7 @@ void RigidBody::GUI()
 				colliders.at(i)->GUI();
 			}
 		}
+
 		ImGui::Unindent();
 	}
 }

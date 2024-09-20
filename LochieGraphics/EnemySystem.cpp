@@ -9,6 +9,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Paths.h"
+#include "EditorGUI.h"
 
 EnemySystem::EnemySystem()
 {
@@ -163,47 +164,11 @@ void EnemySystem::OnHealthZeroRanged(HealthPacket healthpacket)
     }
 }
 
-void EnemySystem::Seperation(std::unordered_map<unsigned long long, Enemy>& enemies, std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidbodies, SceneObject* ecco, SceneObject* sync)
-{
-    glm::vec2 syncPos2D = {sync->transform()->getGlobalPosition().x, sync->transform()->getGlobalPosition().z };
-    glm::vec2 eccoPos2D = {ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
-    for (auto& enemyPair : enemies)
-    {
-        glm::vec2 enemyPos2D = { transforms[enemyPair.first].getGlobalPosition().x, transforms[enemyPair.first].getGlobalPosition().z };
-        glm::vec2 direction;
-        if (glm::length(syncPos2D - enemyPos2D) < glm::length(eccoPos2D - enemyPos2D))
-        {
-            direction = glm::normalize(syncPos2D - enemyPos2D);
-        }
-        else
-        {
-            direction = glm::normalize(eccoPos2D - enemyPos2D);
-        }
-        int total = 0;
-        for (auto& otherEnemyPair : enemies)
-        {
-            if (otherEnemyPair.first == enemyPair.first) continue;
-            float distance = glm::distance({ transforms[otherEnemyPair.first].getGlobalPosition().x,transforms[otherEnemyPair.first].getGlobalPosition().z }, enemyPos2D);
-            if (distance <= perceptionRadius)
-            {
-                glm::vec2 otherEnemyPos2D= { transforms[otherEnemyPair.first].getGlobalPosition().x,transforms[otherEnemyPair.first].getGlobalPosition().z };
-                glm::vec2 diff = enemyPos2D - otherEnemyPos2D;
-                diff /= distance * distance;
-                direction += diff;
-                total++;
-            }
-        }
-        if (total == 0) continue;
-        direction /= total + 1;
-        direction *= maxSpeed;
-        glm::vec2 force = direction - rigidbodies[enemyPair.first].vel;
-        force = glm::clamp(force, 0.0f, maxForce);
-        force *= seperationCoef;
-        rigidbodies[enemyPair.first].netForce += force;
-    }
-}
-
-void EnemySystem::Alingment(std::unordered_map<unsigned long long, Enemy>& enemies, std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidbodies, SceneObject* ecco, SceneObject* sync)
+void EnemySystem::Boiding(
+    std::unordered_map<unsigned long long, Enemy>& enemies,
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+    SceneObject* ecco, SceneObject* sync)
 {
     glm::vec2 syncPos2D = { sync->transform()->getGlobalPosition().x, sync->transform()->getGlobalPosition().z };
     glm::vec2 eccoPos2D = { ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
@@ -219,30 +184,55 @@ void EnemySystem::Alingment(std::unordered_map<unsigned long long, Enemy>& enemi
         {
             direction = glm::normalize(eccoPos2D - enemyPos2D);
         }
-        int total = 0;
+
+        glm::vec2 sep = direction;
+        glm::vec2 ali = direction;
+        glm::vec2 coh = direction;
+
+        int total = 1;
         for (auto& otherEnemyPair : enemies)
         {
             if (otherEnemyPair.first == enemyPair.first) continue;
-            float distance = glm::distance({ transforms[otherEnemyPair.first].getGlobalPosition().x,transforms[otherEnemyPair.first].getGlobalPosition().z }, enemyPos2D);
+            glm::vec2 otherEnemyPos2D = { transforms[otherEnemyPair.first].getGlobalPosition().x,transforms[otherEnemyPair.first].getGlobalPosition().z };
+            float distance = glm::distance(otherEnemyPos2D, enemyPos2D);
             if (distance <= perceptionRadius)
             {
-                direction += rigidbodies[otherEnemyPair.first].vel;
+                glm::vec2 diff = enemyPos2D - otherEnemyPos2D;
+                
+                diff /= distance * distance;
+                sep += diff;
+
+                ali += rigidbodies[otherEnemyPair.first].vel;
+
+                coh += otherEnemyPos2D;
+
                 total++;
             }
         }
-
         if (total == 0) continue;
-        direction /= total + 1;
-        direction *= maxSpeed;
-        glm::vec2 force = direction - rigidbodies[enemyPair.first].vel;
-        force = glm::clamp(force, 0.0f, maxForce);
-        force *= alignmentCoef;
+
+        sep /= total;
+        sep *= maxSpeed;
+        glm::vec2 sumSep = sep - rigidbodies[enemyPair.first].vel;
+        sumSep = glm::clamp(sumSep, 0.0f, maxForce);
+        sumSep *= seperationCoef;
+
+        ali /= total;
+        ali *= maxSpeed;
+        glm::vec2 sumAli = ali - rigidbodies[enemyPair.first].vel;
+        sumAli = glm::clamp(sumAli, 0.0f, maxForce);
+        sumAli *= alignmentCoef;
+
+        coh /= total;
+        glm::vec2 sumCoh = coh - enemyPos2D;
+        sumCoh = glm::clamp(sumCoh, 0.0f, maxSpeed);
+        sumCoh = sumCoh - rigidbodies[enemyPair.first].vel;
+        sumCoh = glm::clamp(sumCoh, 0.0f, maxForce);
+        sumCoh *= cohesionCoef;
+
+        glm::vec2 force = sumSep + sumAli + sumCoh;
         rigidbodies[enemyPair.first].netForce += force;
     }
-}
-
-void EnemySystem::Cohesion(std::unordered_map<unsigned long long, Enemy>& enemies, std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidbodies, SceneObject* ecco, SceneObject* sync)
-{
 }
 
 //TODO: Add AI Pathfinding and attacking in here.
@@ -253,32 +243,83 @@ void EnemySystem::Update(
     SceneObject* ecco, SceneObject* sync, float delta
 )
 {
-    for (auto& enemyPair : enemies)
+    if (aiUpdating)
     {
-        Enemy& enemy = enemyPair.second;
-        SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
-        State* newState = nullptr;
+        Boiding(
+            enemies,
+            transforms,
+            rigidbodies,
+            ecco, sync
+        );
 
-        // check the current state's transitions
-        for (auto& t : enemy.state->transitions)
-        {
-            if (t.condition->IsTrue(agent)) 
-            {
-                newState = t.targetState;
-                break;
-            }
-        }
-
-
-        if (newState != nullptr && newState != enemy.state)
-        {
-            enemy.state->Exit(agent);
-            enemy.state = newState;
-            enemy.state->Enter(agent);
-        }
-
-        enemy.state->Update(agent);
+        //TODO ADD States and Transitions
+        //for (auto& enemyPair : enemies)
+        //{
+        //    Enemy& enemy = enemyPair.second;
+        //    SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
+        //    State* newState = nullptr;
+        //
+        //    // check the current state's transitions
+        //    for (auto& t : enemy.state->transitions)
+        //    {
+        //        if (t.condition->IsTrue(agent))
+        //        {
+        //            newState = t.targetState;
+        //            break;
+        //        }
+        //    }
+        //
+        //
+        //    if (newState != nullptr && newState != enemy.state)
+        //    {
+        //        enemy.state->Exit(agent);
+        //        enemy.state = newState;
+        //        enemy.state->Enter(agent);
+        //    }
+        //
+        //    enemy.state->Update(agent);
+        //}
     }
+    
+}
+
+void EnemySystem::GUI()
+{
+    ImGui::Checkbox("AI Updating",&aiUpdating);
+    ImGui::Text("AI STATS");
+    ImGui::DragFloat("Sense Radius", &perceptionRadius);
+    ImGui::DragFloat("Alignment Coefficient", &alignmentCoef);
+    ImGui::DragFloat("Cohesion Coefficient", &cohesionCoef);
+    ImGui::DragFloat("Seperation Coefficient", &seperationCoef);
+    ImGui::DragFloat("Max Force", &maxForce);
+    ImGui::DragFloat("Max Speed", &maxSpeed);
+
+
+
+
+    ImGui::Text("MELEE ENEMY STATS");
+    ImGui::DragInt("Melee Enemy Health", &meleeEnemyHealth);
+    ImGui::DragFloat("Melee Enemy Move Speed", &meleeEnemyMoveSpeed);
+    ImGui::DragInt("Melee Enemy Damage", &meleeEnemyDamage);
+    ImGui::DragFloat("Melee Enemy Collider Radius", &meleeEnemyColliderRadius);
+    if (ResourceManager::ModelAssetSelector("Melee Enemy Model", &(meleeEnemyRenderer->model)))
+    {
+        meleeEnemyModel = meleeEnemyRenderer->model->path;
+    }
+    ImGui::InputText("Melee Enemy Material", &meleeEnemyMaterialPath);
+    ImGui::Text("");
+    ImGui::Text("RANGED ENEMY STATS");
+    ImGui::DragInt("Ranged Enemy Health", &rangedEnemyHealth);
+    ImGui::DragFloat("Ranged Enemy Move Speed", &rangedEnemyMoveSpeed);
+    ImGui::DragInt("Ranged Enemy Damage", &rangedEnemyDamage);
+    ImGui::DragFloat("Ranged Enemy Collider Radius", &rangedEnemyColliderRadius);
+    if (ResourceManager::ModelAssetSelector("Ranged Enemy Model", &(rangedEnemyRenderer->model)))
+    {
+        rangedEnemyModel = rangedEnemyRenderer->model->path;
+    }
+    ImGui::InputText("Ranged Enemy Material", &rangedEnemyMaterialPath);
+
+    ImGui::End();
 }
 
 toml::table EnemySystem::Serialise() const
@@ -310,6 +351,7 @@ std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<
     {
         SceneObject* enemy = new SceneObject(scene, "MeleeEnemy" + std::to_string(meleeEnemyPoolCount));
         enemy->transform()->setPosition(offscreenSpawnPosition);
+        enemy->setEnemy(new Enemy());
         enemy->setHealth(new Health());
         enemy->health()->setMaxHealth(meleeEnemyHealth);
         enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroMelee(hp); });
