@@ -1,4 +1,5 @@
 #include "EnemySystem.h"
+
 #include "Enemy.h"
 #include "State.h"
 #include "Condition.h"
@@ -8,10 +9,12 @@
 #include "Health.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
-#include "Paths.h"
 #include "Collider.h"
 #include "ModelRenderer.h"
 #include "Scene.h"
+#include "Paths.h"
+
+#include "Utilities.h"
 
 #include "Serialisation.h"
 #include "EditorGUI.h"

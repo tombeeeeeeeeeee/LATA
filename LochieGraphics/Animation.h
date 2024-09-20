@@ -5,7 +5,7 @@
 
 #include "assimp/scene.h"
 
-#include "unordered_map"
+#include <unordered_map>
 
 class Model;
 class ModelHierarchyInfo;
@@ -61,9 +61,5 @@ public:
 
 private:
 	void ReadMissingBones(const aiAnimation* animation, Model* model);
-
-	// TODO: move this?
-public:
-	static void ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src);
 };
 

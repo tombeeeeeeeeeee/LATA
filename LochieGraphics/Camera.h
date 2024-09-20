@@ -2,8 +2,6 @@
 
 #include "Transform.h"
 
-#include <vector>
-
 namespace toml {
     inline namespace v3 {
         class table;

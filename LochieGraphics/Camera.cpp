@@ -1,7 +1,5 @@
 #include "Camera.h"
 
-#include "Maths.h"
-
 #include "EditorGUI.h"
 #include "Serialisation.h"
 

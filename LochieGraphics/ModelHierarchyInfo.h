@@ -15,4 +15,3 @@ public:
 	// TODO: Actually delete them
 	std::vector<ModelHierarchyInfo*> children;
 };
-

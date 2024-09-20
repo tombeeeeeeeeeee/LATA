@@ -9,7 +9,6 @@
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
 
-#include <vector>
 #include <filesystem>
 
 void ExitElevator::Initialise(SceneObject* so)

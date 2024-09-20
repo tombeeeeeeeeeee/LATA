@@ -1,8 +1,10 @@
 #include "HealthSystem.h"
+
 #include "Health.h"
 #include "ModelRenderer.h"
 #include "SceneObject.h"
 #include "Material.h"
+
 #include "Utilities.h"
 
 void HealthSystem::Start(std::unordered_map<unsigned long long, Health>& healths)

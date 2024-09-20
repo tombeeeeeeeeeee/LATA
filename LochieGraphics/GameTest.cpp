@@ -7,7 +7,7 @@
 #include "Collider.h"
 #include "Camera.h"
 #include "Ecco.h"
-#include "shaderEnum.h"
+#include "ShaderEnum.h"
 #include "Sync.h"
 
 #include "Utilities.h"

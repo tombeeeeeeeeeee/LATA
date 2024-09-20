@@ -1,16 +1,13 @@
 #include "ResourceManager.h"
 
-#include "SceneManager.h"
 #include "Paths.h"
 #include "ShaderEnum.h"
-#include "Scene.h"
 #include "Vertex.h"
-
-#include "Serialisation.h"
 
 #include "Utilities.h"
 
 #include "ExtraEditorGUI.h"
+#include "Serialisation.h"
 
 #include <fstream>
 #include <filesystem>
@@ -251,7 +248,7 @@ void ResourceManager::GUI()
 		}
 
 		if (ImGui::Button("Create new Material")) {
-			LoadMaterial("", SceneManager::scene->shaders[ShaderIndex::super]);
+			LoadMaterial("", defaultShader);
 		}
 
 	}

@@ -5,6 +5,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Lights.h"
+// Needed for the physics menu
 #include "Collider.h"
 
 #include "Utilities.h"

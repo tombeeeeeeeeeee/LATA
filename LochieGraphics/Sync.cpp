@@ -6,16 +6,17 @@
 #include "Health.h"
 #include "ModelRenderer.h"
 #include "LineRenderer.h"
-#include "ResourceManager.h"
 #include "ShaderEnum.h"
-#include "EditorGUI.h"
-#include "SceneManager.h"
-#include "PhysicsSystem.h"
 #include "Hit.h"
 #include "Paths.h"
 #include "Collision.h"
 #include "Collider.h"
 #include "Scene.h"
+#include "PhysicsSystem.h"
+#include "SceneManager.h"
+#include "ResourceManager.h"
+
+#include "EditorGUI.h"
 
 #include "Serialisation.h"
 

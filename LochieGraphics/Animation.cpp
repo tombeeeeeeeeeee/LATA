@@ -2,8 +2,6 @@
 
 #include "Model.h"
 
-#include "AssimpMatrixToGLM.h"
-
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -96,38 +94,4 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model* model)
 		bones.push_back(Bone(channel->mNodeName.data, newBoneInfoMap[channel->mNodeName.data].ID, channel));
 	}
 	boneInfoMap = newBoneInfoMap;
-}
-
-void Animation::ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src)
-{
-	if (!src) {
-		std::cout << "Error, Failed to read animation hierarchy\n";
-		return;
-	}
-
-	dest->name = src->mName.data;
-	if (dest->name == "RootNode") {
-		std::cout << "t";
-	}
-
-	aiVector3D pos;
-	aiQuaternion rot;
-	aiVector3D scale;
-
-	src->mTransformation.Decompose(scale, rot, pos);
-	dest->transform.getPosition() = AssimpVecToGLM(pos);
-	dest->transform.setRotation(AssimpQuatToGLM(rot));
-	dest->transform.setScale(AssimpVecToGLM(scale));
-	
-	//dest.transform.chi children.reserve(src->mNumChildren);
-
-	for (unsigned int i = 0; i < src->mNumChildren; i++)
-	{
-		ModelHierarchyInfo* newData = new ModelHierarchyInfo();
-		ReadHierarchyData(newData, src->mChildren[i]);
-		
-		dest->children.push_back(newData);
-		
-		newData->transform.setParent(&dest->transform);
-	}
 }

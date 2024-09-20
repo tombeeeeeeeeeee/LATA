@@ -1,7 +1,8 @@
 #include "Enemy.h"
 
-#include "EditorGUI.h"
 #include "Utilities.h"
+
+#include "EditorGUI.h"
 
 
 void Enemy::GUI()

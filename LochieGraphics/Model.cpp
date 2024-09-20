@@ -6,11 +6,12 @@
 
 #include "Utilities.h"
 
-#include "assimp/Importer.hpp"
-#include "assimp/postprocess.h"
-
+#include "AssimpMatrixToGLM.h"
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
+
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
 
 #include <iostream>
 
@@ -63,7 +64,7 @@ void Model::LoadModel(std::string _path)
 	}
 	materialIDs = scene->mNumMaterials;
 
-	Animation::ReadHierarchyData(&root, scene->mRootNode);
+	ReadHierarchyData(&root, scene->mRootNode);
 	// TODO: Do I need to do this, check exactly what should be done
 	//aiReleaseImport(scene);
 }
@@ -153,6 +154,40 @@ Model::operator std::string() const
 std::string Model::getDisplayName() const
 {
 	return Utilities::FilenameFromPath(path);
+}
+
+void Model::ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src)
+{
+	if (!src) {
+		std::cout << "Error, Failed to read animation hierarchy\n";
+		return;
+	}
+
+	dest->name = src->mName.data;
+	if (dest->name == "RootNode") {
+		std::cout << "t";
+	}
+
+	aiVector3D pos;
+	aiQuaternion rot;
+	aiVector3D scale;
+
+	src->mTransformation.Decompose(scale, rot, pos);
+	dest->transform.getPosition() = AssimpVecToGLM(pos);
+	dest->transform.setRotation(AssimpQuatToGLM(rot));
+	dest->transform.setScale(AssimpVecToGLM(scale));
+
+	//dest.transform.chi children.reserve(src->mNumChildren);
+
+	for (unsigned int i = 0; i < src->mNumChildren; i++)
+	{
+		ModelHierarchyInfo* newData = new ModelHierarchyInfo();
+		ReadHierarchyData(newData, src->mChildren[i]);
+
+		dest->children.push_back(newData);
+
+		newData->transform.setParent(&dest->transform);
+	}
 }
 
 toml::table Model::Serialise()

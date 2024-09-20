@@ -8,8 +8,6 @@
 #include "EditorGUI.h"
 #include "Serialisation.h"
 
-using Utilities::PointerToString;
-
 Light::Light(glm::vec3 _colour) :
 	colour(_colour)
 {
@@ -31,7 +29,7 @@ glm::mat4 Light::getShadowViewProjection() const
 
 void Light::GUI()
 {
-	std::string tag = PointerToString(this);
+	std::string tag = Utilities::PointerToString(this);
 	//CHECK:
 	ImGui::ColorEdit3(("Colour##" + tag).c_str(), &colour[0], ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_Float);
 

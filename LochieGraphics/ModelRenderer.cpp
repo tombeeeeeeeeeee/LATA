@@ -1,7 +1,5 @@
 #include "ModelRenderer.h"
 
-#include "SceneObject.h"
-#include "Scene.h"
 #include "ResourceManager.h"
 
 #include "Utilities.h"

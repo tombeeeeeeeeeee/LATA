@@ -8,12 +8,10 @@
 #include "Skybox.h"
 #include "Animator.h"
 #include "FrameBuffer.h"
-#include "shaderEnum.h"
+#include "ShaderEnum.h"
 
 #include "Utilities.h"
 #include "EditorGUI.h"
-
-#include <random>
 
 void RenderSystem::Start(
     unsigned int _skyboxTexture,

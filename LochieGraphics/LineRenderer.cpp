@@ -1,4 +1,5 @@
 #include "LineRenderer.h"
+
 #include <iostream>
 
 void LineRenderer::Initialise()
@@ -99,7 +100,7 @@ void LineRenderer::UpdateFrame()
 {
 	if (positions.size() != colours.size())
 	{
-		std::cout << "ERROR: Somehow, position and colour buffer are different sizes in the line renderer. This should never happen.\n";
+		std::cout << "ERROR: Position and colour buffer are different sizes in the line renderer which should not happen.\n";
 		return;
 	}
 	if (positions.size() > 0)

@@ -1,6 +1,6 @@
 #include "Server.h"
 
-#include<string>
+#include <string>
 
 
 bool Server::Start()

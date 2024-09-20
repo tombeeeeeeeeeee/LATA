@@ -23,14 +23,6 @@ SceneObject::SceneObject(Scene* _scene, std::string _name) :
 	// TODO: Put a safetly check for if a guid that gets made is already on a sceneobject
 }
 
-SceneObject::SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation, float _scale) :
-	scene(_scene)
-{
-	GUID = ResourceManager::GetNewGuid();
-	scene->transforms[GUID] = Transform(this, _position, _rotation, _scale);
-	scene->sceneObjects[GUID] = this;
-}
-
 SceneObject::~SceneObject()
 {
 	// TODO: Make sure we want to this this here

@@ -2,7 +2,6 @@
 #include "Maths.h"
 
 #include <unordered_map>
-#include <vector>
 
 class Health;
 class ModelRenderer;

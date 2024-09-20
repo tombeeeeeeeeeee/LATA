@@ -16,8 +16,6 @@
 
 #include "GUI.h"
 
-#include <string>
-
 class SceneObject;
 class Ecco;
 class Sync;

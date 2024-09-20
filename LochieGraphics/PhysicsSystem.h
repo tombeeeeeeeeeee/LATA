@@ -1,5 +1,6 @@
 #pragma once
 
+// Is only included for the dummy rigidbody
 #include "RigidBody.h"
 
 #include <unordered_map>

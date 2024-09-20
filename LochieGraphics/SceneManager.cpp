@@ -7,6 +7,7 @@
 #include "SceneObject.h"
 #include "Lights.h"
 
+// This includes imgui differently then other files as it is managed here
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"

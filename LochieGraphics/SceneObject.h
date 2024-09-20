@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Maths.h"
-
-#include <vector>
 #include <string>
 
 struct Collider;
@@ -53,7 +50,6 @@ public:
 	unsigned int parts = 0;
 	Scene* scene = nullptr;
 	SceneObject(Scene* _scene, std::string name = "Unnamed Scene Object");
-	SceneObject(Scene* _scene, glm::vec3 _position, glm::vec3 _rotation = { 0.f, 0.f, 0.f }, float _scale = 1.0f);
 	SceneObject(Scene* _scene, toml::table* table);
 
 	~SceneObject();

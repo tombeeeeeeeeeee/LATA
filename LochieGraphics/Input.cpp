@@ -7,8 +7,6 @@
 
 #include "EditorGUI.h"
 
-#include "Graphics.h"
-
 #include <iostream>
 
 Input* Input::input = nullptr;

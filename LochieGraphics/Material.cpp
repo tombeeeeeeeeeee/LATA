@@ -1,5 +1,6 @@
 #include "Material.h"
 
+// TODO: Don't like how the resource manager is included here
 #include "ResourceManager.h"
 
 #include "Utilities.h"

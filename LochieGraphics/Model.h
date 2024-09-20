@@ -2,6 +2,8 @@
 #include "BoneInfo.h"
 #include "ModelHierarchyInfo.h"
 
+#include "assimp/scene.h"
+
 #include <unordered_map>
 
 class SceneObject;
@@ -56,6 +58,8 @@ public:
 
 	operator std::string() const;
 	std::string getDisplayName() const;
+
+	static void ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src);
 
 	toml::table Serialise();
 };

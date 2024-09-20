@@ -5,8 +5,8 @@
 #include "Skybox.h"
 #include "Camera.h"
 #include "SceneObject.h"
-#include "Paths.h"
 #include "ShaderEnum.h"
+#include "Paths.h"
 
 #include "Utilities.h"
 

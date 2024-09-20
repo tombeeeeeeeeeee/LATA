@@ -4,7 +4,6 @@
 #include "RigidBody.h"
 #include "Collision.h"
 #include "SceneObject.h"
-#include "Enemy.h"
 #include "Health.h"
 
 #include "EditorGUI.h"

@@ -1,6 +1,5 @@
 #include "GamePlayCameraSystem.h"
 
-#include "SceneManager.h"
 #include "Camera.h"
 
 #include "Utilities.h"
