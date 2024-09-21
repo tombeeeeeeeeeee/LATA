@@ -210,8 +210,8 @@ void LevelEditor::Start()
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 
-	renderSystem.ssaoRadius = 150.0f;
-	renderSystem.ssaoBias = 50.0f;
+	renderSystem.ssaoRadius = 64.0f;
+	renderSystem.ssaoBias = 32.0f;
 }
 
 void LevelEditor::Update(float delta)
@@ -490,6 +490,7 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
 
+	enemySystem.Start();
 	enemySystem.InitialiseMelee(sceneObjects, 5);
 	enemySystem.InitialiseRanged(sceneObjects, 5);
 

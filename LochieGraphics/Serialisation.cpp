@@ -69,7 +69,7 @@ int Serialisation::LoadAsInt(toml::node_view<toml::node> toml)
 
 int Serialisation::LoadAsInt(toml::node* toml)
 {
-    if (!toml) { return 0.0f; }
+    if (!toml) { return 0; }
 
     return toml->as_integer()->value_or<int>(0);
 }

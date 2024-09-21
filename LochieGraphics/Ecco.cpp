@@ -2,6 +2,7 @@
 
 #include "Transform.h"
 #include "RigidBody.h"
+#include "Collider.h"
 #include "Collision.h"
 #include "SceneObject.h"
 #include "Health.h"

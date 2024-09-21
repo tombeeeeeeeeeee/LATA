@@ -46,21 +46,28 @@ EnemySystem::EnemySystem(toml::table table)
 
 void EnemySystem::Start()
 {
-    Material* meleeEnemyMaterial = ResourceManager::defaultMaterial;
+    inactiveMeleeParent = new SceneObject(SceneManager::scene, "Inactive Melee Enemies");
+    inactiveRangedParent = new SceneObject(SceneManager::scene, "Inactive Ranged Enemies");
 
-    meleeEnemyRenderer = new ModelRenderer(
-        ResourceManager::LoadModelAsset(Paths::modelSaveLocation + meleeEnemyModel + Paths::modelExtension),
-        meleeEnemyMaterial
-    );
+    if (!meleeEnemyRenderer)
+    {
+        Material* meleeEnemyMaterial = ResourceManager::defaultMaterial;
 
-    Material* rangedEnemyMaterial = ResourceManager::defaultMaterial;
+        meleeEnemyRenderer = new ModelRenderer(
+            ResourceManager::LoadModelAsset(Paths::modelSaveLocation + meleeEnemyModel + Paths::modelExtension),
+            meleeEnemyMaterial
+        );
+    }
 
-    rangedEnemyRenderer = new ModelRenderer(
-        ResourceManager::LoadModelAsset(Paths::modelSaveLocation + rangedEnemyModel + Paths::modelExtension),
-        rangedEnemyMaterial
-    );
+    if (!rangedEnemyRenderer)
+    {
+        Material* rangedEnemyMaterial = ResourceManager::defaultMaterial;
 
-
+        rangedEnemyRenderer = new ModelRenderer(
+            ResourceManager::LoadModelAsset(Paths::modelSaveLocation + rangedEnemyModel + Paths::modelExtension),
+            rangedEnemyMaterial
+        );
+    }
 }
 
 unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos)
@@ -81,6 +88,7 @@ unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long
     SceneObject* enemy = sceneObjects[GUID];
     meleeActivePool.push_back(GUID);
 
+    enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
     enemy->health()->currHealth = meleeEnemyHealth;
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
@@ -105,7 +113,7 @@ unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long lon
 
     SceneObject* enemy = sceneObjects[GUID];
     rangedActivePool.push_back(GUID);
-
+    enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
     enemy->health()->currHealth = rangedEnemyHealth;
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
@@ -127,6 +135,7 @@ bool EnemySystem::DespawnMelee(SceneObject* sceneObject)
             meleeActivePool.erase(i);
             meleeInactivePool.push_back(GUID);
             SceneObject* enemy = sceneObject;
+            enemy->transform()->setParent(inactiveMeleeParent->transform());
             enemy->transform()->setPosition(offscreenSpawnPosition);
             enemy->rigidbody()->colliders = {};
             enemy->rigidbody()->isStatic = true;
@@ -149,6 +158,7 @@ bool EnemySystem::DespawnRanged(SceneObject* sceneObject)
             rangedActivePool.erase(i);
             rangedInactivePool.push_back(GUID);
             SceneObject* enemy = sceneObject;
+            enemy->transform()->setParent(inactiveRangedParent->transform());
             enemy->transform()->setPosition(offscreenSpawnPosition);
             enemy->rigidbody()->colliders = {};
             enemy->rigidbody()->isStatic = true;
@@ -322,12 +332,22 @@ void EnemySystem::Update(
         //    enemy.state->Update(agent);
         //}
     }
+    if (addEnemiesThisUpdate)
+    {
+
+    }
     
 }
 
 void EnemySystem::GUI()
 {
     ImGui::Checkbox("AI Updating",&aiUpdating);
+
+    if(ImGui::Button("Add New Enemies to list"))
+    {
+        addEnemiesThisUpdate = true;
+    }
+
     ImGui::Text("AI STATS");
     ImGui::DragFloat("Sense Radius", &perceptionRadius);
     ImGui::DragFloat("Alignment Coefficient", &alignmentCoef);
@@ -392,6 +412,7 @@ std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<
     for (int i = 0; i < count; i++)
     {
         SceneObject* enemy = new SceneObject(scene, "MeleeEnemy" + std::to_string(meleeEnemyPoolCount));
+        enemy->transform()->setParent(inactiveMeleeParent->transform());
         enemy->transform()->setPosition(offscreenSpawnPosition);
         enemy->setEnemy(new Enemy());
         enemy->setHealth(new Health());
@@ -419,6 +440,7 @@ std::vector<unsigned long long> EnemySystem::InitialiseRanged(std::unordered_map
     for (int i = 0; i < count; i++)
     {
         SceneObject* enemy = new SceneObject(scene, "RangedEnemy" + std::to_string(rangedEnemyPoolCount));
+        enemy->transform()->setParent(inactiveRangedParent->transform());
         enemy->transform()->setPosition(offscreenSpawnPosition);
         enemy->setHealth(new Health());
         enemy->health()->setMaxHealth(rangedEnemyHealth);

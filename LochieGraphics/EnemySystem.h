@@ -26,11 +26,14 @@ namespace toml {
 class EnemySystem
 {
 private:
+
 	int meleeEnemyPoolCount = 0;
+	SceneObject* inactiveMeleeParent;
 	std::vector<unsigned long long> meleeInactivePool;
 	std::vector<unsigned long long> meleeActivePool;
 
 	int rangedEnemyPoolCount = 0;
+	SceneObject* inactiveRangedParent;
 	std::vector<unsigned long long> rangedInactivePool;
 	std::vector<unsigned long long> rangedActivePool;
 
@@ -43,6 +46,7 @@ private:
 	float maxForce = 15.0f;
 
 	bool aiUpdating = false;
+	bool addEnemiesThisUpdate = false;
 public:
 
 	EnemySystem();

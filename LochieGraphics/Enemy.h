@@ -6,18 +6,26 @@
 struct State;
 class SceneObject;
 struct Node;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 enum class EnemyType
 {
-	basic = 1,
-	smart = 2,
-	other = 3,
+	explosive,
+	melee,
+	ranged
 };
 
 
 struct Enemy
 {
-	EnemyType type = EnemyType::basic;
+	Enemy() {};
+	Enemy(toml::table table);
+
+	EnemyType type = EnemyType::melee;
 	State* state;
 	SceneObject* target;
 	glm::vec3 lastTargetPosition;
@@ -25,5 +33,6 @@ struct Enemy
 	std::vector<Node*> path;
 
 	void GUI();
+	toml::table Serialise();
 };
 
