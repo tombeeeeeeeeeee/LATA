@@ -18,13 +18,9 @@ class Ecco
 public:
 	unsigned long long GUID = 0;
 
-
 	Ecco() {};
 	Ecco(toml::table table);
-	void Start(
-		Health& health,
-		RigidBody& rb
-	);
+	
 	void Update(
 		Input::InputDevice& inputDevice,
 		Transform& transform,
@@ -41,6 +37,9 @@ public:
 	toml::table Serialise();
 
 	glm::vec2 wheelDirection = { 0.0f, 0.0f };
+
+	int currHealth = 10;
+	int maxHealth = 10;
 
 private:
 	float carMoveSpeed = 0.25f;
@@ -64,5 +63,4 @@ private:
 	int speedDamage = 0;
 	int healingFromDamage = 0;
 	float speedReductionAfterDamaging = 0.0f;
-	int maxHealth = 10;
 };

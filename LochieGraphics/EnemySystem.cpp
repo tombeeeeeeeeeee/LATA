@@ -198,6 +198,7 @@ void EnemySystem::Boiding(
         glm::vec2 enemyPos2D = { transforms[enemyGUID].getGlobalPosition().x, transforms[enemyGUID].getGlobalPosition().z };
         int total = 0;
         glm::vec2 direction = {};
+        glm::vec2 targetPos = {};
         float distanceToSync = FLT_MAX;
 
         std::vector<Hit> syncHits;
@@ -214,6 +215,7 @@ void EnemySystem::Boiding(
                 {
                     distanceToSync = hit.distance;
                     direction = glm::normalize(syncPos2D - enemyPos2D);
+                    targetPos = syncPos2D;
                     total = 1;
                 }
             }
@@ -231,6 +233,7 @@ void EnemySystem::Boiding(
                     if (hit.distance < distanceToSync)
                     {
                         direction = glm::normalize(eccoPos2D - enemyPos2D);
+                        targetPos = eccoPos2D;
                         total = 1;
                     }
                 }
@@ -238,9 +241,9 @@ void EnemySystem::Boiding(
         }
 
 
-        glm::vec2 sep;
+        glm::vec2 sep = direction;
         glm::vec2 ali = direction;
-        glm::vec2 coh = direction;
+        glm::vec2 coh = targetPos;
 
         for (auto& otherEnemyGUID : meleeActivePool)
         {
@@ -261,29 +264,34 @@ void EnemySystem::Boiding(
                 total++;
             }
         }
-        if (total == 0) continue;
+        if (total == 0)
+        {
+            rigidbodies[enemyGUID].vel = {0.0f, 0.0f};
+        }
+        else
+        {
+            sep /= total;
+            sep *= maxSpeed;
+            glm::vec2 sumSep = sep - rigidbodies[enemyGUID].vel;
+            sumSep = Utilities::ClampMag(sumSep, 0, maxForce);
+            sumSep *= seperationCoef;
 
-        sep /= total;
-        sep *= maxSpeed;
-        glm::vec2 sumSep = sep - rigidbodies[enemyGUID].vel;
-        sumSep = Utilities::ClampMag(sumSep, 0, maxForce);
-        sumSep *= seperationCoef;
+            ali /= total;
+            ali *= maxSpeed;
+            glm::vec2 sumAli = ali - rigidbodies[enemyGUID].vel;
+            sumAli = Utilities::ClampMag(sumAli, 0, maxForce);
+            sumAli *= alignmentCoef;
 
-        ali /= total;
-        ali *= maxSpeed;
-        glm::vec2 sumAli = ali - rigidbodies[enemyGUID].vel;
-        sumAli = Utilities::ClampMag(sumAli, 0, maxForce);
-        sumAli *= alignmentCoef;
+            coh /= total;
+            glm::vec2 sumCoh = coh - enemyPos2D;
+            sumCoh = Utilities::ClampMag(sumCoh, 0, maxSpeed);
+            sumCoh = sumCoh - rigidbodies[enemyGUID].vel;
+            sumCoh = Utilities::ClampMag(sumCoh, 0, maxForce);
+            sumCoh *= cohesionCoef;
 
-        coh /= total;
-        glm::vec2 sumCoh = coh - enemyPos2D;
-        sumCoh = Utilities::ClampMag(sumCoh, 0, maxSpeed);
-        sumCoh = sumCoh - rigidbodies[enemyGUID].vel;
-        sumCoh = Utilities::ClampMag(sumCoh, 0, maxForce);
-        sumCoh *= cohesionCoef;
-
-        glm::vec2 force = sumSep + sumAli + sumCoh;
-        rigidbodies[enemyGUID].netForce += force;
+            glm::vec2 force = sumSep + sumAli + sumCoh;
+            rigidbodies[enemyGUID].netForce += force;
+        }
     }
 }
 
@@ -334,9 +342,70 @@ void EnemySystem::Update(
     }
     if (addEnemiesThisUpdate)
     {
+        for (auto& enemyPair : enemies)
+        {
+            bool isAlreadyMarked = false;
+            switch (enemyPair.second.type)
+            {
+            case EnemyType::melee:
 
+                for (int i = 0; i < meleeInactivePool.size(); i++)
+                {
+                    if (meleeInactivePool[i] == enemyPair.first)
+                    {
+                        isAlreadyMarked = true;
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < meleeActivePool.size(); i++)
+                {
+                    if (meleeActivePool[i] == enemyPair.first)
+                    {
+                        isAlreadyMarked = true;
+                        break;
+                    }
+                }
+                if (isAlreadyMarked) break;
+
+                else 
+                {
+                    meleeActivePool.push_back(enemyPair.first);
+                    meleeEnemyPoolCount++;
+                }
+
+                break;
+
+            case EnemyType::ranged:
+
+                for (int i = 0; i < rangedInactivePool.size(); i++)
+                {
+                    if (rangedInactivePool[i] == enemyPair.first)
+                    {
+                        isAlreadyMarked = true;
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < rangedActivePool.size(); i++)
+                {
+                    if (rangedActivePool[i] == enemyPair.first)
+                    {
+                        isAlreadyMarked = true;
+                        break;
+                    }
+                }
+                if (isAlreadyMarked) break;
+
+                else
+                {
+                    rangedActivePool.push_back(enemyPair.first);
+                    rangedEnemyPoolCount++;
+                }
+                break;
+            }
+        }
     }
-    
 }
 
 void EnemySystem::GUI()

@@ -12,6 +12,7 @@
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
+#include "Paths.h"
 
 #include <fstream>
 #include <iostream>
@@ -254,4 +255,61 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 			sceneObject->transform()->AddChild(sceneObjects[childGUID]->transform());
 		}
 	}
+}
+
+void Scene::InitialisePlayers()
+{
+	//ecco
+	SceneObject* eccoSO = sceneObjects[ecco->GUID];
+	if (!eccoSO->health()) eccoSO->setHealth(new Health());
+	eccoSO->health()->currHealth = ecco->currHealth;
+	eccoSO->health()->setMaxHealth(ecco->maxHealth);
+
+	if (!eccoSO->rigidbody()) eccoSO->setRigidBody(new RigidBody(1.0f, 1.0f));
+	if (eccoSO->rigidbody()->colliders.size() < 1)
+	{
+		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
+		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
+	}
+	else if(eccoSO->rigidbody()->colliders.size() < 2)
+	{
+		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
+	}
+
+	eccoSO->rigidbody()->colliders[0]->collisionLayer = (int)CollisionLayers::ecco;
+	((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->verts = {
+			{75.0f,   75.0f},
+			{75.0f,  -75.0f},
+			{-75.0f, -75.0f},
+			{-75.0f,  75.0f},
+	};
+
+	eccoSO->rigidbody()->colliders[1]->collisionLayer = (int)CollisionLayers::reflectiveSurface;
+	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->verts = { {0.0f, 0.0f} };
+	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 40.0f;
+	if (!eccoSO->renderer()) eccoSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension),(unsigned long long) 0));
+	else eccoSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension);
+
+	//sync
+	SceneObject* syncSO = sceneObjects[sync->GUID];
+	if (!syncSO->health()) syncSO->setHealth(new Health());
+	syncSO->health()->currHealth = sync->currHealth;
+	syncSO->health()->setMaxHealth(sync->maxHealth);
+
+	if (!syncSO->rigidbody()) syncSO->setRigidBody(new RigidBody(1.0f, 1.0f));
+	if (syncSO->rigidbody()->colliders.size() < 1)
+	{
+		syncSO->rigidbody()->colliders.push_back(new PolygonCollider());
+	}
+
+	syncSO->rigidbody()->colliders[0]->collisionLayer = (int)CollisionLayers::sync;
+	((PolygonCollider*)syncSO->rigidbody()->colliders[0])->verts = {
+			{0.0f, 0.0f}
+	};
+
+	((PolygonCollider*)syncSO->rigidbody()->colliders[0])->radius = 40.0f;
+
+	if (!syncSO->renderer()) syncSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension), (unsigned long long) 0));
+	else syncSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension);
+
 }

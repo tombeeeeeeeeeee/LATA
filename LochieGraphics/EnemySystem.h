@@ -40,7 +40,7 @@ private:
 	float perceptionRadius = 1000.0f;
 	float alignmentCoef = 15.0f;
 	float cohesionCoef = 10.0f;
-	float seperationCoef = 2.0f;
+	float seperationCoef = 4.0f;
 
 	float maxSpeed = 100.0f;
 	float maxForce = 15.0f;

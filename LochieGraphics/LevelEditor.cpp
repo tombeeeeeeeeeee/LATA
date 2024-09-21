@@ -190,15 +190,7 @@ void LevelEditor::Start()
 	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension), (unsigned long long)0));
 	camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f));
 
-	eccoSo->setHealth(new Health());
-	syncSo->setHealth(new Health());
-
-	ecco->Start
-	(
-		*eccoSo->health(),
-		*eccoSo->rigidbody()
-	);
-	sync->Start(&shaders, *syncSo->rigidbody());
+	sync->Start(&shaders);
 
 	enemySystem.Start();
 	healthSystem.Start(healths);
@@ -471,6 +463,9 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	if (levelToLoad != "") windowName = levelToLoad;
 	std::ifstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
+	ecco->currHealth = healths[ecco->GUID].currHealth;
+	sync->currHealth = healths[sync->GUID].currHealth;
+
 	if (!file) {
 		std::cout << "Level File not found\n";
 		return;
@@ -483,6 +478,7 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 
 	gui.sceneObjectSelected = nullptr;
 
+	InitialisePlayers();
 	// TODO:
 	
 	groundTileParent = FindSceneObjectOfName("Ground Tiles");

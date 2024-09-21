@@ -259,12 +259,4 @@ Ecco::Ecco(toml::table table)
 	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
 }
 
-void Ecco::Start(
-	Health& health,
-	RigidBody& rb
-)
-{
-	health.setMaxHealth(maxHealth);
-	rb.colliders[0]->collisionLayer = (int)CollisionLayers::ecco;
-}
 

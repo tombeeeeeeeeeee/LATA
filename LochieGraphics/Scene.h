@@ -98,4 +98,5 @@ protected:
 
 	toml::table SaveSceneObjectsAndParts();
 	void LoadSceneObjectsAndParts(toml::table& data);
+	void InitialisePlayers();
 };

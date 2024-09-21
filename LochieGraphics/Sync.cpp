@@ -49,15 +49,12 @@ Sync::Sync(toml::table table)
 }
 
 void Sync::Start(
-	std::vector<Shader*>* shaders,
-	RigidBody& rb
+	std::vector<Shader*>* shaders
 )
 {
 	Model* misfireModel = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + misfireModelPath + Paths::modelExtension);
 	Material* misfireMaterial = ResourceManager::defaultMaterial;
 	misfireModelRender = new ModelRenderer(misfireModel, misfireMaterial);
-
-	rb.colliders[0]->collisionLayer = (int)CollisionLayers::sync;
 }
 
 void Sync::Update(
@@ -273,7 +270,7 @@ void Sync::ShootSniper(glm::vec3 pos)
 {
 	currCharge -= sniperChargeCost;
 	std::vector<Hit> hits;
-	PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~(int)CollisionLayers::sync);
+	PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast));
 	Hit hit = hits[0];
 	blasts.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
 	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
@@ -291,7 +288,7 @@ void Sync::ShootOverClocked(glm::vec3 pos)
 void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour)
 {
 	std::vector<Hit> hits;
-	if (PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX))
+	if (PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast)))
 	{
 		Hit hit = hits[0];
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
@@ -311,7 +308,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 
 		blasts.push_back({ overclockBeamLifeSpan, 0.0f, colour, pos, {hit.position.x, pos.y, hit.position.y} });
 
-		if (hit.collider->collisionLayer & (int)CollisionLayers::ecco)
+		if (hit.collider->collisionLayer & (int)CollisionLayers::reflectiveSurface)
 		{
 			float s = 0.95f;
 			float v = 0.95f;
@@ -358,7 +355,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 void Sync::OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour)
 {
 	std::vector<Hit> hits;
-	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~(int)CollisionLayers::ecco);
+	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::ecco | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::reflectiveSurface | (int)CollisionLayers::ignoreRaycast));
 	Hit hit = hits[0];
 
 	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)

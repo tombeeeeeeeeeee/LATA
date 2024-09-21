@@ -24,7 +24,7 @@ public:
 	Sync() {};
 	Sync(toml::table table);
 
-	void Start(std::vector<Shader*>* shaders, RigidBody& rb);
+	void Start(std::vector<Shader*>* shaders);
 
 	void Update(
 		Input::InputDevice& inputDevice, Transform& transform,
@@ -42,6 +42,8 @@ public:
 	void OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour);
 	void misfireShotOnCollision(Collision collision);
 
+	int currHealth = 5;
+	int maxHealth = 5;
 private:
 
 	std::vector<unsigned long long> misfireShots;
@@ -50,6 +52,7 @@ private:
 	float moveSpeed = 1.0f;
 	float lookDeadZone = 0.03f;
 	float moveDeadZone = 0.10f;
+	
 
 	glm::vec3 barrelOffset = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 globalBarrelOffset = {};
