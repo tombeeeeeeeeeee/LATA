@@ -18,6 +18,8 @@
 
 #include "Serialisation.h"
 #include "EditorGUI.h"
+#include "PhysicsSystem.h"
+#include "Hit.h"
 
 EnemySystem::EnemySystem()
 {
@@ -184,21 +186,52 @@ void EnemySystem::Boiding(
     for (auto& enemyGUID : meleeActivePool)
     {
         glm::vec2 enemyPos2D = { transforms[enemyGUID].getGlobalPosition().x, transforms[enemyGUID].getGlobalPosition().z };
-        glm::vec2 direction;
-        if (glm::length(syncPos2D - enemyPos2D) < glm::length(eccoPos2D - enemyPos2D))
+        int total = 0;
+        glm::vec2 direction = {};
+        float distanceToSync = FLT_MAX;
+
+        std::vector<Hit> syncHits;
+        std::vector<Hit> eccoHits;
+        if (PhysicsSystem::RayCast(
+            enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
+            syncHits, perceptionRadius, 
+            (int)CollisionLayers::sync | (int)CollisionLayers::base)
+        )
         {
-            direction = glm::normalize(syncPos2D - enemyPos2D);
+            for (Hit& hit : syncHits)
+            {
+                if (hit.sceneObject->parts & Parts::sync)
+                {
+                    distanceToSync = hit.distance;
+                    direction = glm::normalize(syncPos2D - enemyPos2D);
+                    total = 1;
+                }
+            }
         }
-        else
+        if (PhysicsSystem::RayCast(
+            enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
+            eccoHits, perceptionRadius,
+            (int)CollisionLayers::ecco | (int)CollisionLayers::base)
+            )
         {
-            direction = glm::normalize(eccoPos2D - enemyPos2D);
+            for (Hit& hit : eccoHits)
+            {
+                if (hit.sceneObject->parts & Parts::ecco)
+                {
+                    if (hit.distance < distanceToSync)
+                    {
+                        direction = glm::normalize(eccoPos2D - enemyPos2D);
+                        total = 1;
+                    }
+                }
+            }
         }
 
-        glm::vec2 sep = direction;
+
+        glm::vec2 sep;
         glm::vec2 ali = direction;
         glm::vec2 coh = direction;
 
-        int total = 1;
         for (auto& otherEnemyGUID : meleeActivePool)
         {
             if (otherEnemyGUID == enemyGUID) continue;

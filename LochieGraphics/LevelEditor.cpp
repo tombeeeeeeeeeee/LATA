@@ -195,9 +195,10 @@ void LevelEditor::Start()
 
 	ecco->Start
 	(
-		*eccoSo->health()
+		*eccoSo->health(),
+		*eccoSo->rigidbody()
 	);
-	sync->Start(&shaders);
+	sync->Start(&shaders, *syncSo->rigidbody());
 
 	enemySystem.Start();
 	healthSystem.Start(healths);

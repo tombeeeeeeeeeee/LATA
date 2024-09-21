@@ -22,7 +22,8 @@ public:
 	Ecco() {};
 	Ecco(toml::table table);
 	void Start(
-		Health& health
+		Health& health,
+		RigidBody& rb
 	);
 	void Update(
 		Input::InputDevice& inputDevice,
