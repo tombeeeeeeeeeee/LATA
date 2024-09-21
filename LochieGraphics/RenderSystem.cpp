@@ -441,8 +441,6 @@ void RenderSystem::Update(
 
     RenderBloom(bloomBuffer);
 
-
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Unbind framebuffer
@@ -716,7 +714,7 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
     (*shaders)[ShaderIndex::super]->Use();
-
+    
     int scrWidth, scrHeight;
     glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);

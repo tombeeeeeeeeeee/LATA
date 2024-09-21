@@ -11,6 +11,7 @@ class RigidBody;
 class SceneObject;
 class ModelRenderer;
 struct HealthPacket;
+
 //Might need these later.
 //class Ecco;
 //class Sync;
@@ -26,13 +27,13 @@ private:
 	std::vector<unsigned long long> rangedInactivePool;
 	std::vector<unsigned long long> rangedActivePool;
 
-	float perceptionRadius = 10.0f;
-	float seperationCoef = 0.2f;
-	float alignmentCoef = 0.5f;
-	float cohesionCoef = 0.5f;
+	float perceptionRadius = 1000.0f;
+	float alignmentCoef = 15.0f;
+	float cohesionCoef = 10.0f;
+	float seperationCoef = 2.0f;
 
-	float maxSpeed = 5.0f;
-	float maxForce = 0.1f;
+	float maxSpeed = 100.0f;
+	float maxForce = 15.0f;
 
 	bool aiUpdating = false;
 public:
@@ -44,7 +45,7 @@ public:
 	int meleeEnemyHealth = 0;
 	float meleeEnemyMoveSpeed = 0;
 	int meleeEnemyDamage = 0;
-	float meleeEnemyColliderRadius = 0.0f;
+	float meleeEnemyColliderRadius = 30.0f;
 	ModelRenderer* meleeEnemyRenderer;
 	std::string meleeEnemyModel = "SM_Sphere";
 	std::string meleeEnemyMaterialPath = "images/otherskybox/nx.png";
@@ -52,7 +53,7 @@ public:
 	int rangedEnemyHealth = 0;
 	float rangedEnemyMoveSpeed = 0;
 	int rangedEnemyDamage = 0;
-	float rangedEnemyColliderRadius = 0.0f;
+	float rangedEnemyColliderRadius = 30.0f;
 	ModelRenderer* rangedEnemyRenderer;
 	std::string rangedEnemyModel = "SM_Sphere";
 	std::string rangedEnemyMaterialPath = "images/otherskybox/nx.png";

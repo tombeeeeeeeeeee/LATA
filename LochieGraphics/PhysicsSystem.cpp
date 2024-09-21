@@ -444,6 +444,14 @@ toml::table PhysicsSystem::Serialise() const
 	};
 }
 
+
+/// <param name="pos">Starting position of cast</param>
+/// <param name="direction">direction of the raycast</param>
+/// <param name="hits"> output of hits</param>
+/// <param name="length"> distance raycast can travel</param>
+/// <param name="layerMask"> layers that the raycast will hit</param>
+/// <param name="ignoreTriggers"> whether the raycast ignores triggers, is true by default</param>
+/// <returns> whether it hit anything</returns>
 bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>& hits, float length, int layerMask, bool ignoreTriggers)
 {
 	std::vector<CollisionPacket> collisions;

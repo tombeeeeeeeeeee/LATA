@@ -258,9 +258,11 @@ Ecco::Ecco(toml::table table)
 }
 
 void Ecco::Start(
-	Health& health
+	Health& health,
+	RigidBody& rb
 )
 {
 	health.setMaxHealth(maxHealth);
+	rb.colliders[0]->collisionLayer = (int)CollisionLayers::ecco;
 }
 

@@ -89,9 +89,10 @@ void GameTest::Start()
 	r->name = "Ecco";
 	h->name = "Sync";
 
-	sync->Start(&shaders);
+	sync->Start(&shaders, *h->rigidbody());
 	ecco->Start(
-		*r->health()
+		*r->health(),
+		*r->rigidbody()
 	);
 
 	SceneObject* newSceneObject = new SceneObject(this, "Walls");

@@ -42,11 +42,16 @@ Sync::Sync(toml::table table)
 	misfireColliderRadius = Serialisation::LoadAsFloat(table["misfireColliderRadius"]);                                                                                                                                                                                                                                                                                                                                                                          
 }
 
-void Sync::Start(std::vector<Shader*>* shaders)
+void Sync::Start(
+	std::vector<Shader*>* shaders,
+	RigidBody& rb
+)
 {
 	Model* misfireModel = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + misfireModelPath + Paths::modelExtension);
 	Material* misfireMaterial = ResourceManager::defaultMaterial;
 	misfireModelRender = new ModelRenderer(misfireModel, misfireMaterial);
+
+	rb.colliders[0]->collisionLayer = (int)CollisionLayers::sync;
 }
 
 void Sync::Update(
