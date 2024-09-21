@@ -371,7 +371,6 @@ void EnemySystem::Update(
                 else 
                 {
                     meleeActivePool.push_back(enemyPair.first);
-                    meleeEnemyPoolCount++;
                 }
 
                 break;
@@ -400,7 +399,6 @@ void EnemySystem::Update(
                 else
                 {
                     rangedActivePool.push_back(enemyPair.first);
-                    rangedEnemyPoolCount++;
                 }
                 break;
             }
