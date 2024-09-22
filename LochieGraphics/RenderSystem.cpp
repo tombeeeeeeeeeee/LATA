@@ -13,6 +13,8 @@
 #include "Utilities.h"
 #include "EditorGUI.h"
 
+LineRenderer RenderSystem::lines;
+
 void RenderSystem::Start(
     unsigned int _skyboxTexture,
     std::vector<Shader*>* _shaders,
@@ -55,6 +57,7 @@ void RenderSystem::Start(
     screenQuad = ResourceManager::LoadMesh();
     shadowDebugQuad->InitialiseQuad(0.5f, 0.5f);
     screenQuad->InitialiseQuad(1.f, 0.0f);
+
 
     // Create colour attachment texture for fullscreen framebuffer
     screenColourBuffer = ResourceManager::LoadTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);

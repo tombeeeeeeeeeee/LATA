@@ -19,6 +19,7 @@
 #include "Serialisation.h"
 #include "EditorGUI.h"
 #include "PhysicsSystem.h"
+#include "RenderSystem.h"
 #include "Hit.h"
 
 EnemySystem::EnemySystem()
@@ -197,6 +198,7 @@ void EnemySystem::Boiding(
     {
         glm::vec2 enemyPos2D = { transforms[enemyGUID].getGlobalPosition().x, transforms[enemyGUID].getGlobalPosition().z };
         int total = 0;
+        int alignmentTotal = 0;
         glm::vec2 direction = {};
         float distanceToSync = FLT_MAX;
 
@@ -216,6 +218,7 @@ void EnemySystem::Boiding(
                     direction = glm::normalize(syncPos2D - enemyPos2D);
                 }
             }
+
         }
         if (PhysicsSystem::RayCast(
             enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
@@ -235,57 +238,64 @@ void EnemySystem::Boiding(
             }
         }
 
-
-        glm::vec2 sep;
-        glm::vec2 ali;
-        glm::vec2 coh;
-
-        for (auto& otherEnemyGUID : meleeActivePool)
+        if (glm::length(direction) > 0)
         {
-            if (otherEnemyGUID == enemyGUID) continue;
-            glm::vec2 otherEnemyPos2D = { transforms[otherEnemyGUID].getGlobalPosition().x,transforms[otherEnemyGUID].getGlobalPosition().z };
-            float distance = glm::distance(otherEnemyPos2D, enemyPos2D);
-            if (distance <= perceptionRadius)
-            {
-                glm::vec2 diff = enemyPos2D - otherEnemyPos2D;
-                
-                diff /= distance * distance;
-                sep += diff;
-
-                ali += rigidbodies[otherEnemyGUID].vel;
-
-                coh += otherEnemyPos2D;
-
-                total++;
-            }
-        }
-        if (total == 0)
-        {
-            rigidbodies[enemyGUID].vel = {0.0f, 0.0f};
+            rigidbodies[enemyGUID].vel = direction * maxSpeed;
         }
         else
         {
-            sep /= total;
-            sep *= maxSpeed;
-            glm::vec2 sumSep = sep - rigidbodies[enemyGUID].vel;
-            sumSep = Utilities::ClampMag(sumSep, 0, maxForce);
-            sumSep *= seperationCoef;
+            glm::vec2 sep = {0.0f, 0.0f};
+            glm::vec2 ali = {0.0f, 0.0f};
+            glm::vec2 coh = {0.0f, 0.0f};
 
-            ali /= total;
-            ali *= maxSpeed;
-            glm::vec2 sumAli = ali - rigidbodies[enemyGUID].vel;
-            sumAli = Utilities::ClampMag(sumAli, 0, maxForce);
-            sumAli *= alignmentCoef;
+            for (auto& otherEnemyGUID : meleeActivePool)
+            {
+                if (otherEnemyGUID == enemyGUID) continue;
+                glm::vec2 otherEnemyPos2D = { transforms[otherEnemyGUID].getGlobalPosition().x, transforms[otherEnemyGUID].getGlobalPosition().z };
+                float distance = glm::length(otherEnemyPos2D - enemyPos2D);
+                if (distance <= perceptionRadius)
+                {
+                    glm::vec2 diff = enemyPos2D - otherEnemyPos2D;
 
-            coh /= total;
-            glm::vec2 sumCoh = coh - enemyPos2D;
-            sumCoh = Utilities::ClampMag(sumCoh, 0, maxSpeed);
-            sumCoh = sumCoh - rigidbodies[enemyGUID].vel;
-            sumCoh = Utilities::ClampMag(sumCoh, 0, maxForce);
-            sumCoh *= cohesionCoef;
+                    sep += diff;
+                    if (distance <= alignmentRadius)
+                    {
+                        ali += rigidbodies[otherEnemyGUID].vel;
+                        alignmentTotal++;
+                    }
 
-            glm::vec2 force = sumSep + sumAli + sumCoh + direction * playerCoef;
-            rigidbodies[enemyGUID].netForce += force;
+                    coh += otherEnemyPos2D;
+
+                    total++;
+                }
+            }
+            if (total == 0)
+            {
+                rigidbodies[enemyGUID].vel = {0.0f, 0.0f};
+            }
+            else
+            {
+                sep *= seperationCoef;
+
+                glm::vec2 sumAli = { 0.0f, 0.0f };
+                if (alignmentTotal != 0)
+                {
+                    ali /= alignmentTotal;
+                    sumAli = ali - rigidbodies[enemyGUID].vel;
+                    sumAli *= alignmentCoef;
+                }
+
+                coh /= total;
+                glm::vec2 sumCoh = coh - enemyPos2D;
+                sumCoh *= cohesionCoef;
+
+                glm::vec2 vel = sep + sumAli + sumCoh;
+
+                vel = Utilities::ClampMag(vel, 0, maxSpeed);
+
+                RenderSystem::lines.DrawLineSegment(transforms[enemyGUID].getGlobalPosition(), transforms[enemyGUID].getGlobalPosition() + glm::vec3(vel.x*2, 0.0f, vel.y*2), {1,0,0});
+                rigidbodies[enemyGUID].vel = vel;
+            }
         }
     }
 }
@@ -435,11 +445,7 @@ void EnemySystem::GUI()
     ImGui::DragFloat("Alignment Coefficient", &alignmentCoef);
     ImGui::DragFloat("Cohesion Coefficient", &cohesionCoef);
     ImGui::DragFloat("Seperation Coefficient", &seperationCoef);
-    ImGui::DragFloat("Player Coefficient", &playerCoef);
-    ImGui::DragFloat("Max Force", &maxForce);
     ImGui::DragFloat("Max Speed", &maxSpeed);
-
-
 
 
     ImGui::Text("MELEE ENEMY STATS");

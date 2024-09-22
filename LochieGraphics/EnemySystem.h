@@ -38,13 +38,12 @@ private:
 	std::vector<unsigned long long> rangedActivePool;
 
 	float perceptionRadius = 3000.0f;
-	float alignmentCoef = 10.0f;
-	float cohesionCoef = 5.0f;
-	float seperationCoef = 5.0f;
-	float playerCoef = 128.0f;
+	float alignmentRadius = 1000.0f;
+	float alignmentCoef = 0.5f;
+	float cohesionCoef = 0.5f;
+	float seperationCoef = 0.5f;
 
-	float maxSpeed = 100.0f;
-	float maxForce = 15.0f;
+	float maxSpeed = 700.0f;
 
 	bool aiUpdating = false;
 	bool addEnemiesThisUpdate = false;

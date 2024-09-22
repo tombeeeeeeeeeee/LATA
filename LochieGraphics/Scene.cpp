@@ -312,4 +312,8 @@ void Scene::InitialisePlayers()
 	if (!syncSO->renderer()) syncSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension), (unsigned long long) 0));
 	else syncSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension);
 
+	for (int i = 1; i < (int)CollisionLayers::count; i *= 2)
+	{
+		physicsSystem.SetCollisionLayerMask((int)CollisionLayers::reflectiveSurface, i, false);
+	}
 }
