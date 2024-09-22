@@ -487,8 +487,11 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	eccoSo = FindSceneObjectOfName("Ecco");
 
 	enemySystem.Start();
-	enemySystem.InitialiseMelee(sceneObjects, 5);
-	enemySystem.InitialiseRanged(sceneObjects, 5);
+	enemySystem.AddUnlistedEnemiesToSystem(enemies, transforms);
+	if(enemySystem.getInactiveMeleeCount() == 0)
+		enemySystem.InitialiseMelee(sceneObjects, 5);
+	if(enemySystem.getInactiveRangedCount() == 0)
+		enemySystem.InitialiseRanged(sceneObjects, 5);
 
 	enemySystem.SpawnMelee(sceneObjects, {600.0f, 50.0f, 600.0f});
 	// Refresh the tiles collection

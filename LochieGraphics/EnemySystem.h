@@ -37,10 +37,11 @@ private:
 	std::vector<unsigned long long> rangedInactivePool;
 	std::vector<unsigned long long> rangedActivePool;
 
-	float perceptionRadius = 1000.0f;
-	float alignmentCoef = 15.0f;
-	float cohesionCoef = 10.0f;
-	float seperationCoef = 4.0f;
+	float perceptionRadius = 3000.0f;
+	float alignmentCoef = 10.0f;
+	float cohesionCoef = 5.0f;
+	float seperationCoef = 5.0f;
+	float playerCoef = 128.0f;
 
 	float maxSpeed = 100.0f;
 	float maxForce = 15.0f;
@@ -79,6 +80,9 @@ public:
 	void OnHealthZeroMelee(HealthPacket health);
 	void OnHealthZeroRanged(HealthPacket health);
 
+	int getInactiveMeleeCount()  { return meleeEnemyPoolCount;  };
+	int getInactiveRangedCount() { return rangedEnemyPoolCount; };
+
 	void Boiding(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
@@ -93,6 +97,11 @@ public:
 		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
 		SceneObject* ecco, SceneObject* sync,
 		float delta
+	);
+
+	void AddUnlistedEnemiesToSystem(
+		std::unordered_map<unsigned long long, Enemy>& enemies,
+		std::unordered_map<unsigned long long, Transform>& transforms
 	);
 
 	void GUI();

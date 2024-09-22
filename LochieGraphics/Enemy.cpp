@@ -13,6 +13,7 @@ Enemy::Enemy(toml::table table)
 void Enemy::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
+
 	if (ImGui::CollapsingHeader(("Enemy##" + tag).c_str())) {
 		bool explosive = (1 << (int)EnemyType::explosive & 1 << (int)type);
 		bool melee = (1 << (int)EnemyType::melee & 1 << (int)type);

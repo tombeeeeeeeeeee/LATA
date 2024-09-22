@@ -198,14 +198,13 @@ void EnemySystem::Boiding(
         glm::vec2 enemyPos2D = { transforms[enemyGUID].getGlobalPosition().x, transforms[enemyGUID].getGlobalPosition().z };
         int total = 0;
         glm::vec2 direction = {};
-        glm::vec2 targetPos = {};
         float distanceToSync = FLT_MAX;
 
         std::vector<Hit> syncHits;
         std::vector<Hit> eccoHits;
         if (PhysicsSystem::RayCast(
             enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
-            syncHits, perceptionRadius, 
+            syncHits, FLT_MAX,
             (int)CollisionLayers::sync | (int)CollisionLayers::base)
         )
         {
@@ -215,14 +214,12 @@ void EnemySystem::Boiding(
                 {
                     distanceToSync = hit.distance;
                     direction = glm::normalize(syncPos2D - enemyPos2D);
-                    targetPos = syncPos2D;
-                    total = 1;
                 }
             }
         }
         if (PhysicsSystem::RayCast(
             enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
-            eccoHits, perceptionRadius,
+            eccoHits, FLT_MAX,
             (int)CollisionLayers::ecco | (int)CollisionLayers::base)
             )
         {
@@ -233,17 +230,15 @@ void EnemySystem::Boiding(
                     if (hit.distance < distanceToSync)
                     {
                         direction = glm::normalize(eccoPos2D - enemyPos2D);
-                        targetPos = eccoPos2D;
-                        total = 1;
                     }
                 }
             }
         }
 
 
-        glm::vec2 sep = direction;
-        glm::vec2 ali = direction;
-        glm::vec2 coh = targetPos;
+        glm::vec2 sep;
+        glm::vec2 ali;
+        glm::vec2 coh;
 
         for (auto& otherEnemyGUID : meleeActivePool)
         {
@@ -289,7 +284,7 @@ void EnemySystem::Boiding(
             sumCoh = Utilities::ClampMag(sumCoh, 0, maxForce);
             sumCoh *= cohesionCoef;
 
-            glm::vec2 force = sumSep + sumAli + sumCoh;
+            glm::vec2 force = sumSep + sumAli + sumCoh + direction * playerCoef;
             rigidbodies[enemyGUID].netForce += force;
         }
     }
@@ -342,66 +337,86 @@ void EnemySystem::Update(
     }
     if (addEnemiesThisUpdate)
     {
-        for (auto& enemyPair : enemies)
+        AddUnlistedEnemiesToSystem(enemies, transforms);
+    }
+}
+
+void EnemySystem::AddUnlistedEnemiesToSystem(
+    std::unordered_map<unsigned long long, Enemy>& enemies,
+    std::unordered_map<unsigned long long, Transform>& transforms
+)
+{
+    for (auto& enemyPair : enemies)
+    {
+        bool isAlreadyMarked = false;
+        switch (enemyPair.second.type)
         {
-            bool isAlreadyMarked = false;
-            switch (enemyPair.second.type)
+        case EnemyType::melee:
+
+            for (int i = 0; i < meleeInactivePool.size(); i++)
             {
-            case EnemyType::melee:
-
-                for (int i = 0; i < meleeInactivePool.size(); i++)
+                if (meleeInactivePool[i] == enemyPair.first)
                 {
-                    if (meleeInactivePool[i] == enemyPair.first)
-                    {
-                        isAlreadyMarked = true;
-                        break;
-                    }
+                    isAlreadyMarked = true;
+                    break;
                 }
+            }
 
-                for (int i = 0; i < meleeActivePool.size(); i++)
+            for (int i = 0; i < meleeActivePool.size(); i++)
+            {
+                if (meleeActivePool[i] == enemyPair.first)
                 {
-                    if (meleeActivePool[i] == enemyPair.first)
-                    {
-                        isAlreadyMarked = true;
-                        break;
-                    }
+                    isAlreadyMarked = true;
+                    break;
                 }
-                if (isAlreadyMarked) break;
+            }
+            if (isAlreadyMarked) break;
 
-                else 
-                {
+            else
+            {
+                if(transforms[enemyPair.first].getGlobalPosition().y == 0.0f)
                     meleeActivePool.push_back(enemyPair.first);
-                }
-
-                break;
-
-            case EnemyType::ranged:
-
-                for (int i = 0; i < rangedInactivePool.size(); i++)
-                {
-                    if (rangedInactivePool[i] == enemyPair.first)
-                    {
-                        isAlreadyMarked = true;
-                        break;
-                    }
-                }
-
-                for (int i = 0; i < rangedActivePool.size(); i++)
-                {
-                    if (rangedActivePool[i] == enemyPair.first)
-                    {
-                        isAlreadyMarked = true;
-                        break;
-                    }
-                }
-                if (isAlreadyMarked) break;
-
                 else
                 {
-                    rangedActivePool.push_back(enemyPair.first);
+                    meleeInactivePool.push_back(enemyPair.first);
+                    meleeEnemyPoolCount++;
                 }
-                break;
             }
+
+            break;
+
+        case EnemyType::ranged:
+
+            for (int i = 0; i < rangedInactivePool.size(); i++)
+            {
+                if (rangedInactivePool[i] == enemyPair.first)
+                {
+                    isAlreadyMarked = true;
+                    break;
+                }
+            }
+
+            for (int i = 0; i < rangedActivePool.size(); i++)
+            {
+                if (rangedActivePool[i] == enemyPair.first)
+                {
+                    isAlreadyMarked = true;
+                    break;
+                }
+            }
+            if (isAlreadyMarked) break;
+
+            else
+            {
+                if (transforms[enemyPair.first].getGlobalPosition().y == 0.0f)
+                    rangedActivePool.push_back(enemyPair.first);
+                else
+                {
+                    rangedInactivePool.push_back(enemyPair.first);
+                    rangedEnemyPoolCount++;
+                }
+            }
+            break;
         }
     }
 }
@@ -420,6 +435,7 @@ void EnemySystem::GUI()
     ImGui::DragFloat("Alignment Coefficient", &alignmentCoef);
     ImGui::DragFloat("Cohesion Coefficient", &cohesionCoef);
     ImGui::DragFloat("Seperation Coefficient", &seperationCoef);
+    ImGui::DragFloat("Player Coefficient", &playerCoef);
     ImGui::DragFloat("Max Force", &maxForce);
     ImGui::DragFloat("Max Speed", &maxSpeed);
 

@@ -11,6 +11,7 @@
 #include "Utilities.h"
 
 #include "EditorGUI.h"
+#include "Paths.h"
 #include "ImGuizmo.h"
 
 #include <iostream>
@@ -384,6 +385,23 @@ void GUI::EnemyMenu()
 	EnemySystem& es = scene->enemySystem;
 
 	//TODO SAVE AND LOAD
+
+	if (ImGui::Button("Spawn Enemies for Tom!"))
+	{
+		for (int i = 0; i < 36; i++)
+		{
+			SceneObject* enemy = new SceneObject(scene, ("Test Enemy: " + std::to_string(i)).c_str());
+			enemy->transform()->setPosition({ -50.0f * (i / 6) - 50.0f, 0.0f, -50.0f * (i % 6) - 50.0f});
+			enemy->setEnemy(new Enemy());
+			enemy->setRigidBody(new RigidBody(1.0f, 1.0f));
+			enemy->rigidbody()->colliders.push_back(new PolygonCollider({ {0.0f, 0.0f} }, 75.0f, CollisionLayers::enemy));
+			enemy->setRenderer(new ModelRenderer(
+				ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Sphere" + Paths::modelExtension),
+				ResourceManager::defaultMaterial
+				)
+			);
+		}
+	}
 
 	es.GUI();
 }
