@@ -57,6 +57,8 @@ private:
 
 	Model* assetPlacer = nullptr;
 	float assetPlacerHeight = 0.0f;
+	// TODO: Implement
+	float assetPlacerRotation = 0.0f;
 	float defaultColliderLength = 50.0f;
 
 	void RefreshWalls();

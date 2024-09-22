@@ -96,6 +96,6 @@ protected:
 
 	SceneObject* FindSceneObjectOfName(std::string name);
 
-	toml::table SaveSceneObjectsAndParts();
+	toml::table SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*) = nullptr);
 	void LoadSceneObjectsAndParts(toml::table& data);
 };
