@@ -39,7 +39,7 @@ CollisionPacket CollisionFunctions::CircleOnCircleCollision(
 
     collision.depth = overlap;
     collision.normal = (centreDistance != 0) ? (posA + circleA->verts[0]) - (posB + circleB->verts[0]) / centreDistance : glm::vec2(1, 0);
-
+	collision.normal = glm::normalize(collision.normal);
     collision.contactPoint = circleB->verts[0] + posB + collision.normal * circleB->radius;
 
     collision.soA = transformA->getSceneObject();
