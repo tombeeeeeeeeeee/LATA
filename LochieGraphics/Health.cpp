@@ -45,7 +45,7 @@ void Health::subtractHealth(int subtraction, SceneObject* so)
 	timeSinceLastChange = 0.0f;
 	int oldHealth = currHealth;
 	currHealth -= subtraction;
-	glm::clamp(currHealth, 0, maxHealth);
+	currHealth = glm::clamp(currHealth, 0, maxHealth);
 
 	if (currHealth == 0)
 	{

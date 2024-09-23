@@ -384,6 +384,16 @@ void EnemySystem::AddUnlistedEnemiesToSystem(
 
             else
             {
+                Health* health = transforms[enemyPair.first].getSceneObject()->health();
+                if (!health)
+                {
+                    health = new Health();
+                    transforms[enemyPair.first].getSceneObject()->setHealth(health);
+                }
+                health->setMaxHealth(meleeEnemyHealth);
+                health->currHealth = meleeEnemyHealth;
+                health->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroMelee(hp); });
+
                 if(transforms[enemyPair.first].getGlobalPosition().y == 0.0f)
                     meleeActivePool.push_back(enemyPair.first);
                 else
@@ -418,6 +428,17 @@ void EnemySystem::AddUnlistedEnemiesToSystem(
 
             else
             {
+                Health* health = transforms[enemyPair.first].getSceneObject()->health();
+                if (!health)
+                {
+                    health = new Health();
+                    transforms[enemyPair.first].getSceneObject()->setHealth(health);
+                }
+                health->setMaxHealth(rangedEnemyHealth);
+                health->currHealth = rangedEnemyHealth;
+                health->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroRanged(hp); });
+
+
                 if (transforms[enemyPair.first].getGlobalPosition().y == 0.0f)
                     rangedActivePool.push_back(enemyPair.first);
                 else

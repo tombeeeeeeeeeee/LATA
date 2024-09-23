@@ -43,6 +43,9 @@ void ModelRenderer::GUI()
 		int mats = (int)materialGUIDs.size();
 		ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
 		ImGui::EndDisabled();
+
+		ImGui::ColorPicker3("Material Tint", &materialTint[0]);
+
 		ImGui::Indent();
 		for (size_t i = 0; i < materialGUIDs.size(); i++)
 		{
@@ -72,6 +75,7 @@ void ModelRenderer::GUI()
 
 toml::table ModelRenderer::Serialise(unsigned long long GUID) const
 {
+
 	toml::array savedMaterials;
 	for (auto& i : materialGUIDs)
 	{
@@ -81,6 +85,7 @@ toml::table ModelRenderer::Serialise(unsigned long long GUID) const
 	return toml::v3::table{
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
 		{ "modelGuid", Serialisation::SaveAsUnsignedLongLong(modelGUID)},
+		{ "materialTint", Serialisation::SaveAsVec3(materialTint)},
 		{ "materials", savedMaterials },
 	};
 }
@@ -88,6 +93,7 @@ toml::table ModelRenderer::Serialise(unsigned long long GUID) const
 ModelRenderer::ModelRenderer(toml::table table)
 {
 	modelGUID = Serialisation::LoadAsUnsignedLongLong(table["modelGuid"]);
+	materialTint = Serialisation::LoadAsVec3(table["materialTint"]);
 	toml::array* loadingMaterials = table["materials"].as_array();
 	for (size_t i = 0; i < loadingMaterials->size(); i++)
 	{

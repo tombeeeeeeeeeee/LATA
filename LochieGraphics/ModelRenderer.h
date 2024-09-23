@@ -1,4 +1,5 @@
 #pragma once
+#include "Maths.h"
 
 #include <vector>
 
@@ -20,6 +21,8 @@ public:
 	// I think that there are material slots, so it should be for how ever many materials the model needs
 
 	std::vector<Material*> materials = {};
+	glm::vec3 materialTint = { 1.0f,1.0f,1.0f };
+
 	std::vector<unsigned long long> materialGUIDs = {};
 
 	//ASK: Made to ease errors with unordered maps
