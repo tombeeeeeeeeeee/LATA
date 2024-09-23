@@ -72,6 +72,9 @@
     <Filter Include="Source Files\Third-Party\imguizmo">
       <UniqueIdentifier>{88879a22-0acc-4dea-ae36-98856c989c42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scene Management\Scenes\Dev">
+      <UniqueIdentifier>{8082ed72-48d6-4656-906e-10874141fd51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -286,6 +289,12 @@
     </ClCompile>
     <ClCompile Include="ExitElevator.cpp">
       <Filter>Source Files\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="LocWorkshop.cpp">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -562,6 +571,10 @@
     <ClInclude Include="eNetTest.h">
       <Filter>Source Files\Networking\eNet</Filter>
     </ClInclude>
+    <ClInclude Include="LocWorkshop.h">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -716,6 +729,9 @@
     </None>
     <None Include="cpp.hint">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="LocsComputeShader.comp">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>
