@@ -169,7 +169,6 @@ void Material::GUI()
 	}
 	
 	ImGui::ColorEdit3(("Colour Picker##" + tag).c_str(), &colour[0]);
-	//ImGui::
 
 	for (auto i = texturePointers.begin(); i != texturePointers.end(); i++)
 	{

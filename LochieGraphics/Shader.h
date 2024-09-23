@@ -5,6 +5,7 @@
 #include "Maths.h"
 
 #include <string>
+#include <vector>
 
 namespace toml {
 	inline namespace v3 {
@@ -25,11 +26,14 @@ namespace toml {
 
 class Shader
 {
-private:
+protected:
 	GLint getUniformLocation(const std::string& name) const;
 	static GLuint CompileShader(std::string path, int type);
+	static GLuint CreateProgram(std::vector<GLuint> shaders);
 	bool loaded = false;
 	int updateFlag;
+
+	Shader() = default;
 
 public:
 

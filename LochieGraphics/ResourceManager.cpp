@@ -150,34 +150,34 @@ std::unordered_map<unsigned long long, Material, hashFNV1A>& ResourceManager::ge
 	return materials;
 }
 
-#define ResourceSelector(Type, selector, createFunction)    \
+#define ResourceSelector(Type, selector, label, createFunction)    \
 	std::string tag = Utilities::PointerToString(selector); \
 	std::vector<Type*> pointers;                            \
 	for (auto& i : ##selector##s)                           \
 	{                                                       \
 		pointers.push_back(&i.second);                      \
 	}                                                       \
-	return ExtraEditorGUI::InputSearchBox(pointers.begin(), pointers.end(), selector, #Type, tag, showNull, createFunction)
+	return ExtraEditorGUI::InputSearchBox(pointers.begin(), pointers.end(), selector, label, tag, showNull, createFunction)
 
 
 bool ResourceManager::TextureSelector(std::string label, Texture** texture, bool showNull)
 {
-	ResourceSelector(Texture, texture, (Texture * (*)())nullptr);
+	ResourceSelector(Texture, texture, label, (Texture * (*)())nullptr);
 }
 
 bool ResourceManager::ShaderSelector(std::string label, Shader** shader, bool showNull)
 {
-	ResourceSelector(Shader, shader, (Shader*(*)())nullptr);
+	ResourceSelector(Shader, shader, label, (Shader*(*)())nullptr);
 }
 
 bool ResourceManager::MaterialSelector(std::string label, Material** material, Shader* newMaterialShader, bool showNull)
 {
-	ResourceSelector(Material, material, LoadDefaultMaterial);
+	ResourceSelector(Material, material, label, LoadDefaultMaterial);
 }
 
 bool ResourceManager::ModelSelector(std::string label, Model** model, bool showNull)
 {
-	ResourceSelector(Model, model, (Model * (*)())nullptr);
+	ResourceSelector(Model, model, label, (Model * (*)())nullptr);
 }
 
 bool ResourceManager::ModelAssetSelector(std::string label, Model** model)

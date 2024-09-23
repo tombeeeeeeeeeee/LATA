@@ -72,15 +72,13 @@ GLuint Shader::CompileShader(std::string path, int type)
 	return shader;
 }
 
-void Shader::Load()
+GLuint Shader::CreateProgram(std::vector<GLuint> shaders)
 {
-	if (loaded) { DeleteProgram(); }
-	GLuint vertex = CompileShader(vertexPath, GL_VERTEX_SHADER);
-	GLuint fragment = CompileShader(fragmentPath, GL_FRAGMENT_SHADER);
-
-	GLID = glCreateProgram();
-	glAttachShader(GLID, vertex);
-	glAttachShader(GLID, fragment);
+	auto GLID = glCreateProgram();
+	for (auto& i : shaders)
+	{
+		glAttachShader(GLID, i);
+	}
 	glLinkProgram(GLID);
 
 	// Print any linking errors
@@ -89,12 +87,23 @@ void Shader::Load()
 	glGetProgramiv(GLID, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(GLID, 512, NULL, infoLog);
-		std::cout << "Shader error, program linking failed\n" << "Vertex path: " << vertexPath << "\n" << "Fragment path: " << fragmentPath << "\n" << infoLog << "\n";
+		std::cout << "Shader error, program linking failed\n" << infoLog << "\n";
 	}
 	else
 	{
-		std::cout << "Created shader ID: " << GLID << " with vertex: " << vertexPath << " and fragment: " << fragmentPath << "\n";
-	}
+		std::cout << "Created shader ID: " << GLID << "\n";
+	}	
+
+	return GLID;
+}
+
+void Shader::Load()
+{
+	if (loaded) { DeleteProgram(); }
+	GLuint vertex = CompileShader(vertexPath, GL_VERTEX_SHADER);
+	GLuint fragment = CompileShader(fragmentPath, GL_FRAGMENT_SHADER);
+
+	GLID = CreateProgram({ vertex, fragment });
 
 	// TODO: Could keep track of individual vertex and fragment shaders for fast loading
 	glDeleteShader(vertex);
