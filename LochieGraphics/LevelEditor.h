@@ -15,6 +15,7 @@ private:
 		none,
 		brush,
 		assetPlacer,
+		viewSelect,
 	};
 	BrushState state = BrushState::none;
 
@@ -61,6 +62,8 @@ private:
 	float assetPlacerRotation = 0.0f;
 	float defaultColliderLength = 50.0f;
 
+	float selectSize = 50.0f;
+
 	void RefreshWalls();
 
 	SceneObject* CellAt(float x, float z);
@@ -71,12 +74,13 @@ private:
 
 	void Brush(glm::vec2 targetCell);
 	void Eraser(glm::vec2 targetCell);
+	void AssetPlacer(glm::vec2 targetPos);
+	void Selector(glm::vec2 targetPos);
 
 	void SaveAsPrompt();
 	void LoadPrompt();
 
 	void SaveLevel();
-
 
 	glm::vec2 EditorCamMouseToWorld() const;
 

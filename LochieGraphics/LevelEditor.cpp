@@ -20,7 +20,7 @@
 void LevelEditor::RefreshWalls()
 {
 	auto walls = wallTileParent->transform()->getChildren();
-	
+
 	while (walls.size())
 	{
 		// TODO: Should be using a delete sceneobject function
@@ -54,7 +54,7 @@ void LevelEditor::RefreshWalls()
 
 SceneObject* LevelEditor::CellAt(float x, float z)
 {
-	auto tile = tiles.find({(int)x, (int)z});
+	auto tile = tiles.find({ (int)x, (int)z });
 	if (tile == tiles.end()) { return nullptr; }
 	else { return tile->second; }
 }
@@ -63,7 +63,7 @@ SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
 {
 	SceneObject* newWall = new SceneObject(this, "newWall" + std::to_string(++wallCount));
 	newWall->transform()->setPosition({ x, 0.0f, z });
-	newWall->transform()->setEulerRotation({0.0f, direction, 0.0f});
+	newWall->transform()->setEulerRotation({ 0.0f, direction, 0.0f });
 	newWall->transform()->setParent(wallTileParent->transform());
 	newWall->setRenderer(new ModelRenderer(wall, (unsigned long long)0));
 	// TODO: Make sure there isn't memory leaks
@@ -140,7 +140,7 @@ void LevelEditor::Start()
 
 	camera->transform.setPosition({ 0, 50, 0 });
 	camera->orthoScale = 300;
-	
+
 	camera->editorSpeed.move = 300;
 	camera->farPlane = 100000;
 	camera->nearPlane = 10;
@@ -255,12 +255,12 @@ void LevelEditor::Update(float delta)
 
 	// TODO: Need to be able to change the zoomScale
 	gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
-	
+
 	lines.SetColour({ 1, 1, 1 });
 	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
 	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + gridSize + gridSize / 2.0f });
 	lines.AddPointToLine({ gridSize * gridMaxX + gridSize + gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + gridSize + gridSize / 2.0f });
-	lines.AddPointToLine({ gridSize * gridMaxX + gridSize + gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f});
+	lines.AddPointToLine({ gridSize * gridMaxX + gridSize + gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
 	lines.FinishLineLoop();
 
 	glm::vec2 targetCell = EditorCamMouseToWorld() / gridSize;
@@ -299,15 +299,15 @@ void LevelEditor::Draw()
 void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
-		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0Asset Placer\0\0")) {
+		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0Asset Placer\0View Select\0\0")) {
 			switch (state)
 			{
 			case LevelEditor::BrushState::none:
 				camera->state = Camera::State::editorMode;
 				break;
-			case LevelEditor::BrushState::brush: 
-				[[	]];
-			case LevelEditor::BrushState::assetPlacer:
+			case LevelEditor::BrushState::brush: [[fallthrough]];
+			case LevelEditor::BrushState::assetPlacer: [[fallthrough]];
+			case LevelEditor::BrushState::viewSelect:
 				camera->state = Camera::State::tilePlacing;
 				camera->transform.setEulerRotation({ -90.0f, 0.0f, -90.0f });
 				glm::vec3 pos = camera->transform.getPosition();
@@ -354,25 +354,15 @@ void LevelEditor::GUI()
 
 void LevelEditor::OnMouseDown()
 {
-	if (state != BrushState::assetPlacer || assetPlacer == nullptr) {
-		return;
+	if (state == BrushState::assetPlacer && assetPlacer != nullptr) {
+		glm::vec2 mouseWorld = EditorCamMouseToWorld();
+		AssetPlacer(mouseWorld);
 	}
 
-	glm::vec2 mouseWorld = EditorCamMouseToWorld();
-
-	glm::vec3 pos = { mouseWorld.x, assetPlacerHeight, mouseWorld.y };
-
-	SceneObject* newSceneObject = new SceneObject(this, Utilities::FilenameFromPath(assetPlacer->path, false));
-	newSceneObject->setRenderer(new ModelRenderer(assetPlacer, 0ull));
-	newSceneObject->transform()->setPosition(pos);
-	newSceneObject->setCollider(new PolygonCollider({
-		{ +defaultColliderLength, +defaultColliderLength},
-		{ +defaultColliderLength, -defaultColliderLength},
-		{ -defaultColliderLength, -defaultColliderLength},
-		{ -defaultColliderLength, +defaultColliderLength}
-		}, 0.0f));
-
-	gui.sceneObjectSelected = newSceneObject;
+	if (camera->state == Camera::State::tilePlacing) {
+		glm::vec2 mouseWorld = EditorCamMouseToWorld();
+		Selector(mouseWorld);
+	}
 }
 
 void LevelEditor::SaveAsPrompt()
@@ -420,7 +410,7 @@ void LevelEditor::LoadPrompt()
 
 		loadPaths.clear();
 		loadPathsPointers.clear();
-		
+
 		for (auto& i : std::filesystem::directory_iterator(Paths::levelsPath))
 		{
 			loadPaths.push_back(i.path().generic_string().substr(Paths::levelsPath.size()));
@@ -435,7 +425,7 @@ void LevelEditor::LoadPrompt()
 			loadPathsPointers.push_back(&i);
 		}
 	}
-	
+
 	std::string* selected = &windowName;
 	if (ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Filename", Utilities::PointerToString(&loadPathsPointers), false)) {
 		ImGui::CloseCurrentPopup();
@@ -482,8 +472,6 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 
 	gui.sceneObjectSelected = nullptr;
 
-	// TODO:
-	
 	groundTileParent = FindSceneObjectOfName("Ground Tiles");
 	wallTileParent = FindSceneObjectOfName("Wall Tiles");
 	syncSo = FindSceneObjectOfName("Sync");
@@ -492,7 +480,7 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	enemySystem.InitialiseMelee(sceneObjects, 5);
 	enemySystem.InitialiseRanged(sceneObjects, 5);
 
-	enemySystem.SpawnMelee(sceneObjects, {600.0f, 50.0f, 600.0f});
+	enemySystem.SpawnMelee(sceneObjects, { 600.0f, 50.0f, 600.0f });
 	// Refresh the tiles collection
 	tiles.clear();
 	auto children = groundTileParent->transform()->getChildren();
@@ -502,10 +490,44 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 		tiles[{(int)adjustedPos.x, (int)adjustedPos.z}] = children[i]->getSceneObject();
 	}
 
-
-
 	file.close();
 	previouslySaved = true;
+}
+
+void LevelEditor::AssetPlacer(glm::vec2 targetPos)
+{
+	glm::vec3 pos = { targetPos.x, assetPlacerHeight, targetPos.y };
+
+	SceneObject* newSceneObject = new SceneObject(this, Utilities::FilenameFromPath(assetPlacer->path, false));
+	newSceneObject->setRenderer(new ModelRenderer(assetPlacer, 0ull));
+	newSceneObject->transform()->setPosition(pos);
+	newSceneObject->setCollider(new PolygonCollider({
+		{ +defaultColliderLength, +defaultColliderLength},
+		{ +defaultColliderLength, -defaultColliderLength},
+		{ -defaultColliderLength, -defaultColliderLength},
+		{ -defaultColliderLength, +defaultColliderLength}
+		}, 0.0f));
+
+	gui.sceneObjectSelected = newSceneObject;
+}
+
+void LevelEditor::Selector(glm::vec2 targetPos)
+{
+	for (auto& i : transforms)
+	{
+		Transform* parent = i.second.getParent();
+		if (parent) {
+			if (parent->getSceneObject() == wallTileParent || parent->getSceneObject() == groundTileParent) {
+				continue;
+			}
+		}
+		if (i.second.getSceneObject() == gui.sceneObjectSelected) { continue; }
+		glm::vec3 temp = i.second.getPosition();
+		glm::vec2 pos = { temp.x, temp.z };
+		if (glm::length(pos - targetPos) < selectSize) {
+			gui.sceneObjectSelected = i.second.getSceneObject();
+		}
+	}
 }
 
 glm::vec2 LevelEditor::EditorCamMouseToWorld() const
@@ -515,7 +537,7 @@ glm::vec2 LevelEditor::EditorCamMouseToWorld() const
 
 	glm::vec2 adjustedCursor = *cursorPos - glm::vec2{ 0.5f, 0.5f };
 	glm::vec2 temp = camPoint + glm::vec2(adjustedCursor.x * camera->getOrthoWidth(), -adjustedCursor.y * camera->getOrthoHeight());
-	
+
 	return temp;
 }
 
