@@ -67,7 +67,7 @@ SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
 	newWall->transform()->setParent(wallTileParent->transform());
 	newWall->setRenderer(new ModelRenderer(wall, (unsigned long long)0));
 	// TODO: Make sure there isn't memory leaks
-	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, true);
+	RigidBody* newRigidBody = new RigidBody(0.0f, 0.25f, {}, true);
 	newWall->setRigidBody(newRigidBody);
 	newRigidBody = newWall->rigidbody();
 	float wallLength = 150.f;

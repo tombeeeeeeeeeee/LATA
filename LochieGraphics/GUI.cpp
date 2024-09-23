@@ -394,6 +394,8 @@ void GUI::EnemyMenu()
 			enemy->transform()->setPosition({ -250.0f * (i / 6) - 250.0f, 0.0f, -250.0f * (i % 6) - 250.0f});
 			enemy->setEnemy(new Enemy());
 			enemy->setHealth(new Health());
+			enemy->health()->currHealth = scene->enemySystem.meleeEnemyHealth;
+			enemy->health()->setMaxHealth(scene->enemySystem.meleeEnemyHealth);
 			enemy->setRigidBody(new RigidBody(1.0f, 1.0f));
 			enemy->rigidbody()->colliders.push_back(new PolygonCollider({ {0.0f, 0.0f} }, 100.0f, CollisionLayers::enemy));
 			enemy->setRenderer(new ModelRenderer(
@@ -402,6 +404,8 @@ void GUI::EnemyMenu()
 				)
 			);
 		}
+
+		scene->enemySystem.AddUnlistedEnemiesToSystem(scene->enemies, scene->transforms);
 	}
 
 	es.GUI();
