@@ -26,6 +26,10 @@ class Scene
 public:
 	std::string windowName = "Lochie's Scene";
 
+	bool inPlay = false;
+	bool lastFramePlayState = false;
+	bool displayGUI = true;
+
 	Camera* camera = nullptr;
 	glm::vec2* cursorPos = nullptr;
 	GUI gui;

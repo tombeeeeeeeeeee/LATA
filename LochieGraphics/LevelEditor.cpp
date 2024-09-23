@@ -208,6 +208,14 @@ void LevelEditor::Start()
 
 void LevelEditor::Update(float delta)
 {
+	if (!lastFramePlayState && inPlay)
+	{
+		lastFramePlayState = inPlay;
+	}
+	else
+	{
+		lastFramePlayState = inPlay;
+	}
 	LineRenderer& lines = renderSystem.lines;
 	input.Update();
 
@@ -468,22 +476,14 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 
 	gui.sceneObjectSelected = nullptr;
 
-	InitialisePlayers();
-	
 	groundTileParent = FindSceneObjectOfName("Ground Tiles");
 	wallTileParent = FindSceneObjectOfName("Wall Tiles");
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
 
-	enemySystem.Start();
-	enemySystem.AddUnlistedEnemiesToSystem(enemies, transforms);
-	if(enemySystem.getInactiveMeleeCount() == 0)
-		enemySystem.InitialiseMelee(sceneObjects, 5);
-	if(enemySystem.getInactiveRangedCount() == 0)
-		enemySystem.InitialiseRanged(sceneObjects, 5);
 
-	enemySystem.SpawnMelee(sceneObjects, { 600.0f, 50.0f, 600.0f });
-	//enemySystem.SpawnMelee(sceneObjects, {600.0f, 50.0f, 600.0f});
+	enemySystem.Start();
+
 	// Refresh the tiles collection
 	tiles.clear();
 	auto children = groundTileParent->transform()->getChildren();
@@ -494,6 +494,8 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	}
 
 	file.close();
+	InitialisePlayers();
+
 	previouslySaved = true;
 }
 

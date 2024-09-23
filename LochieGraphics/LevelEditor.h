@@ -11,6 +11,7 @@
 class LevelEditor : public Scene
 {
 private:
+
 	enum class BrushState {
 		none,
 		brush,

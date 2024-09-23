@@ -294,7 +294,8 @@ void Scene::InitialisePlayers()
 	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 15.0f;
 	if (!eccoSO->renderer()) eccoSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension),(unsigned long long) 0));
 	else eccoSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension);
-
+	eccoSO->renderer()->materialTint = {0.0f, 102.0f, 204.0f};
+	eccoSO->renderer()->materialTint /= 255.0f;
 	//sync
 	SceneObject* syncSO = sceneObjects[sync->GUID];
 	if (!syncSO->health()) syncSO->setHealth(new Health());
@@ -316,6 +317,8 @@ void Scene::InitialisePlayers()
 
 	if (!syncSO->renderer()) syncSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension), (unsigned long long) 0));
 	else syncSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension);
+	syncSO->renderer()->materialTint = {0.0f, 204.0f, 0.0f};
+	syncSO->renderer()->materialTint /= 255.0f;
 
 	for (int i = 1; i < (int)CollisionLayers::count; i *= 2)
 	{

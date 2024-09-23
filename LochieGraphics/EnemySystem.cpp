@@ -47,9 +47,6 @@ EnemySystem::EnemySystem(toml::table table)
 
 void EnemySystem::Start()
 {
-    inactiveMeleeParent = new SceneObject(SceneManager::scene, "Inactive Melee Enemies");
-    inactiveRangedParent = new SceneObject(SceneManager::scene, "Inactive Ranged Enemies");
-
     if (!meleeEnemyRenderer)
     {
         Material* meleeEnemyMaterial = ResourceManager::defaultMaterial;
@@ -137,46 +134,14 @@ unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long lon
 bool EnemySystem::DespawnMelee(SceneObject* sceneObject)
 {
     bool hasBeenDespawned = false;
-    int GUID = sceneObject->GUID;
 
-    for (auto i = meleeActivePool.begin(); i != meleeActivePool.end(); i++)
-    {
-        if ((*i) == GUID)
-        {
-            hasBeenDespawned = true;
-            meleeActivePool.erase(i);
-            meleeInactivePool.push_back(GUID);
-            SceneObject* enemy = sceneObject;
-            enemy->transform()->setParent(inactiveMeleeParent->transform());
-            enemy->transform()->setPosition(offscreenSpawnPosition);
-            enemy->rigidbody()->colliders = {};
-            enemy->rigidbody()->isStatic = true;
-            break;
-        }
-    }
     return hasBeenDespawned;
 }
 
 bool EnemySystem::DespawnRanged(SceneObject* sceneObject)
 {
     bool hasBeenDespawned = false;
-    int GUID = sceneObject->GUID;
-
-    for (auto i = meleeActivePool.begin(); i != meleeActivePool.end(); i++)
-    {
-        if ((*i) == GUID)
-        {
-            hasBeenDespawned = true;
-            rangedActivePool.erase(i);
-            rangedInactivePool.push_back(GUID);
-            SceneObject* enemy = sceneObject;
-            enemy->transform()->setParent(inactiveRangedParent->transform());
-            enemy->transform()->setPosition(offscreenSpawnPosition);
-            enemy->rigidbody()->colliders = {};
-            enemy->rigidbody()->isStatic = true;
-            break;
-        }
-    }
+    
     return hasBeenDespawned;
 }
 
@@ -205,9 +170,9 @@ void EnemySystem::Boiding(
 
     glm::vec2 syncPos2D = { sync->transform()->getGlobalPosition().x, sync->transform()->getGlobalPosition().z };
     glm::vec2 eccoPos2D = { ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
-    for (auto& enemyGUID : meleeActivePool)
+    for (auto& enemyPair : enemies)
     {
-        glm::vec2 enemyPos2D = { transforms[enemyGUID].getGlobalPosition().x, transforms[enemyGUID].getGlobalPosition().z };
+        glm::vec2 enemyPos2D = { transforms[enemyPair.first].getGlobalPosition().x, transforms[enemyPair.first].getGlobalPosition().z };
         int total = 0;
         int alignmentTotal = 0;
         glm::vec2 direction = {};
@@ -218,40 +183,34 @@ void EnemySystem::Boiding(
         if (PhysicsSystem::RayCast(
             enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
             syncHits, FLT_MAX,
-            (int)CollisionLayers::sync | (int)CollisionLayers::base)
-        )
-        {
-            for (Hit& hit : syncHits)
+            (int)CollisionLayers::sync | (int)CollisionLayers::base )
+        ) {
+            Hit hit = syncHits[0];
+            if (hit.sceneObject->parts & Parts::sync)
             {
-                if (hit.sceneObject->parts & Parts::sync)
-                {
-                    distanceToSync = hit.distance;
-                    direction = glm::normalize(syncPos2D - enemyPos2D);
-                }
+                distanceToSync = hit.distance;
+                direction = glm::normalize(syncPos2D - enemyPos2D);
             }
-
         }
         if (PhysicsSystem::RayCast(
             enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
             eccoHits, FLT_MAX,
-            (int)CollisionLayers::ecco | (int)CollisionLayers::base)
+            (int)CollisionLayers::ecco | (int)CollisionLayers::base )
             )
         {
-            for (Hit& hit : eccoHits)
+            Hit hit = eccoHits[0];
+            if (hit.sceneObject->parts & Parts::ecco)
             {
-                if (hit.sceneObject->parts & Parts::ecco)
+                if (hit.distance < distanceToSync)
                 {
-                    if (hit.distance < distanceToSync)
-                    {
-                        direction = glm::normalize(eccoPos2D - enemyPos2D);
-                    }
+                    direction = glm::normalize(eccoPos2D - enemyPos2D);
                 }
             }
         }
 
         if (glm::length(direction) > 0)
         {
-            rigidbodies[enemyGUID].vel = direction * maxSpeed;
+            rigidbodies[enemyPair.first].vel = direction * maxSpeed;
         }
         else
         {
@@ -259,10 +218,10 @@ void EnemySystem::Boiding(
             glm::vec2 ali = {0.0f, 0.0f};
             glm::vec2 coh = {0.0f, 0.0f};
 
-            for (auto& otherEnemyGUID : meleeActivePool)
+            for (auto& otherEnemyPair : enemies)
             {
-                if (otherEnemyGUID == enemyGUID) continue;
-                glm::vec2 otherEnemyPos2D = { transforms[otherEnemyGUID].getGlobalPosition().x, transforms[otherEnemyGUID].getGlobalPosition().z };
+                if (otherEnemyPair.first == enemyPair.first) continue;
+                glm::vec2 otherEnemyPos2D = { transforms[otherEnemyPair.first].getGlobalPosition().x, transforms[otherEnemyPair.first].getGlobalPosition().z };
                 float distance = glm::length(otherEnemyPos2D - enemyPos2D);
                 if (distance <= perceptionRadius)
                 {
@@ -271,7 +230,7 @@ void EnemySystem::Boiding(
                     sep += diff;
                     if (distance <= alignmentRadius)
                     {
-                        ali += rigidbodies[otherEnemyGUID].vel;
+                        ali += rigidbodies[otherEnemyPair.first].vel;
                         alignmentTotal++;
                     }
 
@@ -282,7 +241,7 @@ void EnemySystem::Boiding(
             }
             if (total == 0)
             {
-                rigidbodies[enemyGUID].vel = {0.0f, 0.0f};
+                rigidbodies[enemyPair.first].vel = {0.0f, 0.0f};
             }
             else
             {
@@ -292,7 +251,7 @@ void EnemySystem::Boiding(
                 if (alignmentTotal != 0)
                 {
                     ali /= alignmentTotal;
-                    sumAli = ali - rigidbodies[enemyGUID].vel;
+                    sumAli = ali - rigidbodies[enemyPair.first].vel;
                     sumAli *= alignmentCoef;
                 }
 
@@ -304,8 +263,8 @@ void EnemySystem::Boiding(
 
                 vel = Utilities::ClampMag(vel, 0, maxSpeed);
 
-                RenderSystem::lines.DrawLineSegment(transforms[enemyGUID].getGlobalPosition(), transforms[enemyGUID].getGlobalPosition() + glm::vec3(vel.x*2, 0.0f, vel.y*2), {1,0,0});
-                rigidbodies[enemyGUID].vel = vel;
+                RenderSystem::lines.DrawLineSegment(transforms[enemyPair.first].getGlobalPosition(), transforms[enemyPair.first].getGlobalPosition() + glm::vec3(vel.x*2, 0.0f, vel.y*2), {1,0,0});
+                rigidbodies[enemyPair.first].vel = vel;
             }
         }
     }
