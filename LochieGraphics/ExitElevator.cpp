@@ -92,7 +92,7 @@ toml::table ExitElevator::Serialise(unsigned long long GUID) const
 {
 	return toml::table
 	{
-		{"GUID", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{"guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
 		{"levelToLoad", levelToLoad}
 	};
 }
