@@ -30,7 +30,7 @@ class RenderSystem
 {
 public:
 
-    LineRenderer lines;
+    static LineRenderer lines;
 
     void Start(
         unsigned int _skyboxTexture,

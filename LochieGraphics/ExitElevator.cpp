@@ -57,6 +57,8 @@ void ExitElevator::GUI(SceneObject* so)
 		Initialise(so);
 	}
 	if (hasBeenBound)ImGui::EndDisabled();
+	if (ImGui::Button("Finish Level")) eccoInExit = syncInExit = true;
+
 	ImGui::Checkbox("Ecco In Exit", &eccoInExit);
 	ImGui::Checkbox("Sync In Exit", &syncInExit);
 
@@ -90,6 +92,7 @@ toml::table ExitElevator::Serialise(unsigned long long GUID) const
 {
 	return toml::table
 	{
+		{"GUID", Serialisation::SaveAsUnsignedLongLong(GUID)},
 		{"levelToLoad", levelToLoad}
 	};
 }

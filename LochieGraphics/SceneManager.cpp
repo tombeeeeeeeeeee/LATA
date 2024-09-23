@@ -468,7 +468,7 @@ void SceneManager::ProcessMouseInput(GLFWwindow* window)
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE)) { camera.artState = Camera::ArtState::boomTruck; }
 	else { camera.artState = Camera::ArtState::none; }
 
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) != camera.editorRotate) {
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) != (int)camera.editorRotate) {
 		camera.editorRotate = !camera.editorRotate;
 		if (camera.state == Camera::State::editorMode) {
 			lockedCamera = !camera.editorRotate;

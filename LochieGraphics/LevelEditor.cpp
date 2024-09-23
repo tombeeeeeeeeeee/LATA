@@ -190,13 +190,6 @@ void LevelEditor::Start()
 	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension), (unsigned long long)0));
 	camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f));
 
-	eccoSo->setHealth(new Health());
-	syncSo->setHealth(new Health());
-
-	ecco->Start
-	(
-		*eccoSo->health()
-	);
 	sync->Start(&shaders);
 
 	enemySystem.Start();
@@ -209,8 +202,8 @@ void LevelEditor::Start()
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 
-	renderSystem.ssaoRadius = 150.0f;
-	renderSystem.ssaoBias = 50.0f;
+	renderSystem.ssaoRadius = 64.0f;
+	renderSystem.ssaoBias = 32.0f;
 }
 
 void LevelEditor::Update(float delta)
@@ -460,6 +453,9 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	if (levelToLoad != "") windowName = levelToLoad;
 	std::ifstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
+	ecco->currHealth = healths[ecco->GUID].currHealth;
+	sync->currHealth = healths[sync->GUID].currHealth;
+
 	if (!file) {
 		std::cout << "Level File not found\n";
 		return;
@@ -472,15 +468,22 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 
 	gui.sceneObjectSelected = nullptr;
 
+	InitialisePlayers();
+	
 	groundTileParent = FindSceneObjectOfName("Ground Tiles");
 	wallTileParent = FindSceneObjectOfName("Wall Tiles");
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
 
-	enemySystem.InitialiseMelee(sceneObjects, 5);
-	enemySystem.InitialiseRanged(sceneObjects, 5);
+	enemySystem.Start();
+	enemySystem.AddUnlistedEnemiesToSystem(enemies, transforms);
+	if(enemySystem.getInactiveMeleeCount() == 0)
+		enemySystem.InitialiseMelee(sceneObjects, 5);
+	if(enemySystem.getInactiveRangedCount() == 0)
+		enemySystem.InitialiseRanged(sceneObjects, 5);
 
 	enemySystem.SpawnMelee(sceneObjects, { 600.0f, 50.0f, 600.0f });
+	//enemySystem.SpawnMelee(sceneObjects, {600.0f, 50.0f, 600.0f});
 	// Refresh the tiles collection
 	tiles.clear();
 	auto children = groundTileParent->transform()->getChildren();

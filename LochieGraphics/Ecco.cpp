@@ -2,6 +2,7 @@
 
 #include "Transform.h"
 #include "RigidBody.h"
+#include "Collider.h"
 #include "Collision.h"
 #include "SceneObject.h"
 #include "Health.h"
@@ -258,10 +259,4 @@ Ecco::Ecco(toml::table table)
 	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
 }
 
-void Ecco::Start(
-	Health& health
-)
-{
-	health.setMaxHealth(maxHealth);
-}
 

@@ -13,6 +13,8 @@
 #include "Utilities.h"
 #include "EditorGUI.h"
 
+LineRenderer RenderSystem::lines;
+
 void RenderSystem::Start(
     unsigned int _skyboxTexture,
     std::vector<Shader*>* _shaders,
@@ -55,6 +57,7 @@ void RenderSystem::Start(
     screenQuad = ResourceManager::LoadMesh();
     shadowDebugQuad->InitialiseQuad(0.5f, 0.5f);
     screenQuad->InitialiseQuad(1.f, 0.0f);
+
 
     // Create colour attachment texture for fullscreen framebuffer
     screenColourBuffer = ResourceManager::LoadTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
@@ -435,8 +438,6 @@ void RenderSystem::Update(
 
     RenderBloom(bloomBuffer);
 
-
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Unbind framebuffer
@@ -710,7 +711,7 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
     (*shaders)[ShaderIndex::super]->Use();
-
+    
     int scrWidth, scrHeight;
     glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
