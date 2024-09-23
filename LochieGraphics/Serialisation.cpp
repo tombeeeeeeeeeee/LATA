@@ -23,7 +23,7 @@ glm::vec3 Serialisation::LoadAsVec3(toml::array* toml)
 {
     if (!toml) {
         std::cout << "Failed to load vec3\n";
-        return {0.0f, 0.0f, 0.0f};
+        return {NAN, NAN, NAN};
     }
     return glm::vec3(
         toml->at(0).value_or<float>(0.0f),

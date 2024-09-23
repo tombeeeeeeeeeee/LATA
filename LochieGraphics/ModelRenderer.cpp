@@ -94,6 +94,7 @@ ModelRenderer::ModelRenderer(toml::table table)
 {
 	modelGUID = Serialisation::LoadAsUnsignedLongLong(table["modelGuid"]);
 	materialTint = Serialisation::LoadAsVec3(table["materialTint"]);
+	if (isnan(materialTint.x)) materialTint = {1.0f,1.0f,1.0f};
 	toml::array* loadingMaterials = table["materials"].as_array();
 	for (size_t i = 0; i < loadingMaterials->size(); i++)
 	{

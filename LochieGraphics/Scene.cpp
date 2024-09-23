@@ -291,7 +291,7 @@ void Scene::InitialisePlayers()
 
 	eccoSO->rigidbody()->colliders[1]->collisionLayer = (int)CollisionLayers::reflectiveSurface;
 	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->verts = { {0.0f, 0.0f} };
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 40.0f;
+	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 15.0f;
 	if (!eccoSO->renderer()) eccoSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension),(unsigned long long) 0));
 	else eccoSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension);
 

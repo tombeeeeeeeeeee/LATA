@@ -391,10 +391,11 @@ void GUI::EnemyMenu()
 		for (int i = 0; i < 36; i++)
 		{
 			SceneObject* enemy = new SceneObject(scene, ("Test Enemy: " + std::to_string(i)).c_str());
-			enemy->transform()->setPosition({ -50.0f * (i / 6) - 50.0f, 0.0f, -50.0f * (i % 6) - 50.0f});
+			enemy->transform()->setPosition({ -250.0f * (i / 6) - 250.0f, 0.0f, -250.0f * (i % 6) - 250.0f});
 			enemy->setEnemy(new Enemy());
+			enemy->setHealth(new Health());
 			enemy->setRigidBody(new RigidBody(1.0f, 1.0f));
-			enemy->rigidbody()->colliders.push_back(new PolygonCollider({ {0.0f, 0.0f} }, 75.0f, CollisionLayers::enemy));
+			enemy->rigidbody()->colliders.push_back(new PolygonCollider({ {0.0f, 0.0f} }, 100.0f, CollisionLayers::enemy));
 			enemy->setRenderer(new ModelRenderer(
 				ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Sphere" + Paths::modelExtension),
 				ResourceManager::defaultMaterial

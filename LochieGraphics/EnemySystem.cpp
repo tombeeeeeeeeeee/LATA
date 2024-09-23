@@ -87,8 +87,13 @@ unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long
     }
 
     SceneObject* enemy = sceneObjects[GUID];
+    if (!enemy)
+    {
+        meleeEnemyPoolCount = meleeInactivePool.size();
+        return SpawnMelee(sceneObjects, pos);
+    }
     meleeActivePool.push_back(GUID);
-
+ 
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
     enemy->health()->currHealth = meleeEnemyHealth;
@@ -110,6 +115,12 @@ unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long lon
     {
         GUID = rangedInactivePool[--rangedEnemyPoolCount];
         rangedInactivePool.pop_back();
+    }
+
+    if (!enemy)
+    {
+        rangedEnemyPoolCount = rangedInactivePool.size();
+        return SpawnRanged(sceneObjects, pos);
     }
 
     SceneObject* enemy = sceneObjects[GUID];

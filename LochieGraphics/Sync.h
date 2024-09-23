@@ -54,7 +54,7 @@ private:
 	float moveDeadZone = 0.10f;
 	
 
-	glm::vec3 barrelOffset = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 barrelOffset = { 50.0f, 70.0f, 80.0f };
 	glm::vec3 globalBarrelOffset = {};
 	int misfireDamage = 0;
 	float misfireChargeCost = 0.0f;
@@ -74,8 +74,8 @@ private:
 	int enemyPierceCount = 99;
 	int overclockReboundCount = 5;
 
-	float eccoRefractionAngle = 1.0f;
-	int eccoRefractionCount = 360;
+	float eccoRefractionAngle = 30.0f;
+	int eccoRefractionCount = 5;
 
 	float chargedDuration = 0.0f;
 	bool chargingShot = false;

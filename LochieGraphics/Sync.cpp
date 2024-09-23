@@ -132,20 +132,9 @@ void Sync::Update(
 		chargingShot = false;
 
 		globalBarrelOffset = barrelOffset;
-		glm::vec2 barrelOFfset2D = { barrelOffset.x, barrelOffset.z };
-		if (glm::length(barrelOFfset2D) != 0.0f)
-		{
-			float ratio = glm::dot(fireDirection, barrelOFfset2D) / glm::length(barrelOFfset2D);
-			float angle = acosf(glm::clamp(ratio, -1.0f, 1.0f));
-			float turnSign = glm::sign(glm::dot(fireDirection, { transform.right().x, transform.right().z }));
-			float c = cos(turnSign * angle);
-			float s = sin(turnSign * angle);
-			globalBarrelOffset = {
-				barrelOffset.x * c - barrelOffset.z * s,
-				barrelOffset.y,
-				barrelOffset.x * s + barrelOffset.z * c
-			};
-		}
+		glm::vec2 barrelOffset2D = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), {barrelOffset.x, barrelOffset.z});
+		globalBarrelOffset = { barrelOffset2D.x, barrelOffset.y, barrelOffset2D.y };
+		
 
 		if (chargedDuration >= overclockChargeTime)
 		{
@@ -270,12 +259,14 @@ void Sync::ShootSniper(glm::vec3 pos)
 {
 	currCharge -= sniperChargeCost;
 	std::vector<Hit> hits;
-	PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast));
-	Hit hit = hits[0];
-	blasts.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
-	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+	if (PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast)))
 	{
-		hit.sceneObject->health()->subtractHealth(sniperDamage, hit.sceneObject);
+		Hit hit = hits[0];
+		blasts.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
+		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+		{
+			hit.sceneObject->health()->subtractHealth(sniperDamage, hit.sceneObject);
+		}
 	}
 }
 
@@ -312,8 +303,8 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 		{
 			float s = 0.95f;
 			float v = 0.95f;
-			float angle = -eccoRefractionAngle * eccoRefractionCount / 2.0f;
-			for (int iter = 0; iter < eccoRefractionCount; iter++)
+			float angle = - eccoRefractionAngle / 2.0f;
+			for (int iter = 0; iter < eccoRefractionCount; iter++, angle += eccoRefractionAngle / (eccoRefractionCount - 1))
 			{
 				float h = iter / (float)eccoRefractionCount;
 				int i = int(h * 6.0f);
@@ -340,7 +331,6 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 				};
 
 				OverclockNonRebounding({ hit.position.x, pos.y, hit.position.y }, refractionDirection, refractionColour);
-				angle += eccoRefractionAngle;
 			}
 		}
 		else if (count < overclockReboundCount && !(hit.collider->collisionLayer & (int)CollisionLayers::sync))
