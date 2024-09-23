@@ -14,15 +14,16 @@
 #include <array>
 
 TestScene::TestScene() : 
-	backpack   (new SceneObject(this, "backpack   ")),
-	soulSpear  (new SceneObject(this, "soulSpear  ")),
-	testRedBox (new SceneObject(this, "testRedBox ")),
-	grass      (new SceneObject(this, "grass      ")),
-	boxes      (new SceneObject(this, "boxes      ")),
-	lightCube  (new SceneObject(this, "lightCube  ")),
-	xbot       (new SceneObject(this, "xbot       ")),
-	vampire    (new SceneObject(this, "vampire    ")),
-	tires      (new SceneObject(this, "tires      "))
+	backpack   (new SceneObject(this, "backpack")),
+	soulSpear  (new SceneObject(this, "soulSpear")),
+	testRedBox (new SceneObject(this, "testRedBox")),
+	grass      (new SceneObject(this, "grass")),
+	boxes      (new SceneObject(this, "boxes")),
+	lightCube  (new SceneObject(this, "lightCube")),
+	xbot       (new SceneObject(this, "xbot")),
+	vampire    (new SceneObject(this, "vampire")),
+	tires      (new SceneObject(this, "tires")),
+	aniTest    (new SceneObject(this, "ani Test"))
 {
 	lights = std::vector<Light*>{
 		&directionalLight,
@@ -49,8 +50,8 @@ void TestScene::Start()
 		pbrShader,
 		simpleTextured,
 	});
-
 	// TODO: This needs to be cleaned up
+	#pragma region Skyboxes
 	std::array<std::string, 6> skyboxFaces;
 	skyboxFaces = { "images/skybox/right.jpg", "images/skybox/left.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
 	skyboxes.push_back(new Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data())));
@@ -76,6 +77,7 @@ void TestScene::Start()
 	//skybox = new Skybox(skyBoxShader, Texture::LoadCubeMap(skyboxFaces));
 	skybox = skyboxes[9];
 	skyboxIndex = 9;
+	#pragma endregion // Skyboxes
 
 	Material* boxMaterial = ResourceManager::LoadMaterial("box", shaders[super]);
 	boxMaterial->AddTextures(std::vector<Texture*> {
@@ -312,7 +314,4 @@ TestScene::~TestScene()
 {
 	// TODO: Not deleting the textures properly
 	// TODO: Move to Render System
-	//glDeleteTextures(1, &textureColorbuffer);
-	//delete shadowFrameBuffer;
-	//delete screenFrameBuffer;
 }

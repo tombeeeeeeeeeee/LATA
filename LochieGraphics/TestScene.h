@@ -33,11 +33,12 @@ private:
 	SceneObject* lightCube;
 	SceneObject* xbot;
 	SceneObject* vampire;
+	SceneObject* aniTest;
 	SceneObject* tires;
 
 	Animation xbotChicken;
 	Animation xbotIdle;
-	Animator xbotAnimator; // TODO: Make a better or new animator class that can go between two animations
+	Animator xbotAnimator;
 	Animator xbotOtherAnimator;
 	BlendedAnimator xbotBlendedAnimator;
 	float lerpAmount = 0.f;
