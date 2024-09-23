@@ -26,7 +26,6 @@ namespace toml {
 class EnemySystem
 {
 private:
-
 	float perceptionRadius = 3000.0f;
 	float alignmentRadius = 3000.0f;
 	float alignmentCoef = 0.5f;
@@ -35,8 +34,12 @@ private:
 
 	float maxSpeed = 700.0f;
 
+	int meleeEnemyCount = 0;
+	int rangedEnemyCount = 0;
+
 	bool aiUpdating = false;
 	bool addEnemiesThisUpdate = false;
+
 public:
 
 	EnemySystem();
@@ -69,7 +72,7 @@ public:
 	void OnHealthZeroMelee(HealthPacket health);
 	void OnHealthZeroRanged(HealthPacket health);
 
-	void Boiding(
+	void TempBehaviour(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
@@ -85,7 +88,7 @@ public:
 		float delta
 	);
 
-	void AddUnlistedEnemiesToSystem(
+	void SpawnEnemies(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms
 	);

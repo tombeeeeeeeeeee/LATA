@@ -211,10 +211,12 @@ void LevelEditor::Update(float delta)
 	if (!lastFramePlayState && inPlay)
 	{
 		lastFramePlayState = inPlay;
+		displayGUI = false;
 	}
-	else
+	else if(lastFramePlayState && !inPlay)
 	{
 		lastFramePlayState = inPlay;
+		displayGUI = true;
 	}
 	LineRenderer& lines = renderSystem.lines;
 	input.Update();
