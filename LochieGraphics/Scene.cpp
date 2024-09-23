@@ -227,7 +227,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	for (int i = 0; i < loadingColliders->size(); i++) {
 		toml::table* loadingCollider = loadingColliders->at(i).as_table();
 		// TODO: UNCOMMENT
-		//colliders[Serialisation::LoadAsUnsignedLongLong((*loadingCollider)["guid"])] = Collider::Load(*loadingCollider);
+		colliders[Serialisation::LoadAsUnsignedLongLong((*loadingCollider)["guid"])] = Collider::Load(*loadingCollider);
 	};
 	
 	LoadPart(healths, "Healths", Health);

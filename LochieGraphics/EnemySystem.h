@@ -109,5 +109,7 @@ public:
 
 	std::vector<unsigned long long> InitialiseMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count);
 	std::vector<unsigned long long> InitialiseRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count);
+
+	//void OnMeleeCollision(Collision collision);
 };
 
