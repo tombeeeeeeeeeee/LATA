@@ -234,12 +234,10 @@ void LevelEditor::Update(float delta)
 	LineRenderer& lines = renderSystem.lines;
 	input.Update();
 
-	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 
 	if (inPlay)
 	{
-
 		healthSystem.Update(
 			healths,
 			renderers,
@@ -247,6 +245,18 @@ void LevelEditor::Update(float delta)
 		);
 
 		for (auto& exitPair : exits) exitPair.second.Update();
+
+		physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
+		gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
+
+		enemySystem.Update(
+			enemies,
+			transforms,
+			rigidBodies,
+			eccoSo,
+			syncSo,
+			delta
+		);
 	}
 
 
@@ -287,7 +297,7 @@ void LevelEditor::Update(float delta)
 	}
 
 
-	gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
+
 
 	lines.SetColour({ 1, 1, 1 });
 	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
@@ -308,14 +318,6 @@ void LevelEditor::Update(float delta)
 		Eraser(targetCell);
 	}
 
-	enemySystem.Update(
-		enemies,
-		transforms,
-		rigidBodies,
-		eccoSo,
-		syncSo,
-		delta
-	);
 }
 
 void LevelEditor::Draw()
