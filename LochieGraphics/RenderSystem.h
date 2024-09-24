@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 
 class Animator;
 class FrameBuffer;
@@ -125,6 +126,7 @@ private:
     void DrawRenderers(
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
         std::unordered_map<unsigned long long, Transform>& transforms,
+        std::unordered_set<unsigned long long> animatedRenderered,
         Shader* shader = nullptr
         );
 

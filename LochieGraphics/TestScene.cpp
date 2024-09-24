@@ -184,6 +184,8 @@ void TestScene::Start()
 	vampireWalk = Animation("models/Skinning Test.fbx", vampireModel);
 	vampireAnimator = Animator(&vampireWalk);
 	vampire->setAnimator(&vampireAnimator);
+
+	//aniTest->setRenderer(new ModelRenderer(ResourceManager::LoadModel("C:/Users/s220518/Downloads/test/Anim_Sync_RunTEST.fbx"), ResourceManager::LoadDefaultMaterial()));
 }
 
 void TestScene::Update(float delta)
@@ -249,11 +251,11 @@ void TestScene::Update(float delta)
 
 void TestScene::Draw()
 {
-	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
-	auto& xBotOtherTransforms = xbotOtherAnimator.getFinalBoneMatrices();
-	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
+	//auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
+	//auto& xBotOtherTransforms = xbotOtherAnimator.getFinalBoneMatrices();
+	//auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
 
-	auto& xbotInterpolatedAnimations = xbotBlendedAnimator.getFinalBoneMatrices();
+	//auto& xbotInterpolatedAnimations = xbotBlendedAnimator.getFinalBoneMatrices();
 
 	renderSystem.Update(
 		renderers,

@@ -11,6 +11,10 @@ private:
 	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
 
 	SceneObject* sceneObject;
+	SceneObject* aniTest;
+
+	Animation animation;
+	Animator* animator;
 
 public:
 

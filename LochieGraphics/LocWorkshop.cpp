@@ -5,6 +5,7 @@
 #include "ResourceManager.h"
 #include "Paths.h"
 #include "ComputeShader.h"
+#include "Animation.h"
 
 LocWorkshop::LocWorkshop()
 {
@@ -21,7 +22,7 @@ void LocWorkshop::Start()
 	camera->transform.setEulerRotation({ 0.0f, 0.0f, -90.0f });
 
 	sceneObject = new SceneObject(this, "Testing!");
-	sceneObject->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension), ResourceManager::defaultMaterial));
+	//sceneObject->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension), ResourceManager::defaultMaterial));
 
 	
 	int max_compute_work_group_count[3];
@@ -50,11 +51,16 @@ void LocWorkshop::Start()
 
 	Texture* texture = ResourceManager::LoadTexture(1024u, 1024u);
 
-	sceneObject->renderer()->materials.front()->texturePointers["material.albedo"] = texture;
+	//sceneObject->renderer()->materials.front()->texturePointers["material.albedo"] = texture;
 
+	aniTest = new SceneObject(this, "Animation Test");
+	Model* aniTestModel = ResourceManager::LoadModel("C:/Users/s220518/Downloads/test/SM_X Bot.fbx");
+	aniTest->setRenderer(new ModelRenderer(aniTestModel, ResourceManager::defaultMaterial));
 
+	animation = Animation("C:/Users/s220518/Downloads/test/SM_Chicken Dance.fbx", aniTestModel);
 
-
+	animator = new Animator(&animation);
+	aniTest->setAnimator(animator);
 }
 
 void LocWorkshop::Update(float delta)

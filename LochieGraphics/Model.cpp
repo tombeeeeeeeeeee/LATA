@@ -114,7 +114,6 @@ void Model::GUI()
 		
 		ImGui::EndDisabled();
 		if (ImGui::CollapsingHeader(("Bone Info##" + tag).c_str())) {
-			ImGui::BeginDisabled();
 			for (auto& i : boneInfoMap)
 			{
 				if (ImGui::CollapsingHeader((i.first + "##" + tag).c_str())) {
@@ -124,7 +123,6 @@ void Model::GUI()
 			if (boneInfoMap.empty()) {
 				ImGui::Text("Empty!");
 			}
-			ImGui::EndDisabled();
 		}
 
 		HierarchyGUI(&root);
