@@ -324,4 +324,5 @@ void Scene::InitialisePlayers()
 	{
 		physicsSystem.SetCollisionLayerMask((int)CollisionLayers::reflectiveSurface, i, false);
 	}
+	sync->barrelOffset = { -75.0f, 70.0f, 5.0f };
 }

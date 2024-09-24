@@ -44,6 +44,8 @@ public:
 
 	int currHealth = 5;
 	int maxHealth = 5;
+	glm::vec3 globalBarrelOffset = {};
+	glm::vec3 barrelOffset = { -80.0f, 70.0f, 5.0f };
 private:
 
 	std::vector<unsigned long long> misfireShots;
@@ -54,8 +56,7 @@ private:
 	float moveDeadZone = 0.10f;
 	
 
-	glm::vec3 barrelOffset = { 50.0f, 70.0f, 80.0f };
-	glm::vec3 globalBarrelOffset = {};
+	
 	int misfireDamage = 0;
 	float misfireChargeCost = 0.0f;
 	float misfireShotSpeed = 0.1f;

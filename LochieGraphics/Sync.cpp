@@ -153,9 +153,9 @@ void Sync::Update(
 	for (auto i = blasts.begin(); i != blasts.end();)
 	{
 		i->timeElapsed += delta;
-		float r = i->colour.x - i->colour.x * i->timeElapsed / i->lifeSpan;
-		float g = i->colour.y - i->colour.y * i->timeElapsed / i->lifeSpan;
-		float b = i->colour.z - i->colour.z * i->timeElapsed / i->lifeSpan;
+		float r = 1.5f * i->colour.x - i->colour.x * i->timeElapsed / i->lifeSpan;
+		float g = 1.5f * i->colour.y - i->colour.y * i->timeElapsed / i->lifeSpan;
+		float b = 1.5f * i->colour.z - i->colour.z * i->timeElapsed / i->lifeSpan;
 		lines->DrawLineSegment(i->startPosition, i->endPosition, {r,g,b});
 		if (i->timeElapsed > i->lifeSpan)
 			i = blasts.erase(i);
@@ -166,7 +166,7 @@ void Sync::Update(
 
 void Sync::GUI()
 {
-	//ImGui::Text("");
+	//ImGui::Text(""); 
 	if (ImGui::CollapsingHeader("Sync Component"))
 	{
 		ImGui::Indent();
@@ -259,7 +259,7 @@ void Sync::ShootSniper(glm::vec3 pos)
 {
 	currCharge -= sniperChargeCost;
 	std::vector<Hit> hits;
-	if (PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast)))
+	if (PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::ecco | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast)))
 	{
 		Hit hit = hits[0];
 		blasts.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
