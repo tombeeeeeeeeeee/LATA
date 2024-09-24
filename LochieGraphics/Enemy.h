@@ -14,6 +14,7 @@ namespace toml {
 
 enum class EnemyType
 {
+	spawnSpot,
 	explosive,
 	melee,
 	ranged
@@ -25,10 +26,10 @@ struct Enemy
 	Enemy() {};
 	Enemy(toml::table table);
 
-	EnemyType type = EnemyType::melee;
+	EnemyType type = EnemyType::spawnSpot;
 	State* state;
 	SceneObject* target;
-	glm::vec3 lastTargetPosition;
+	glm::vec2 lastTargetPosition = { 0.0f, 0.0f };
 	Node* currentNode;
 	std::vector<Node*> path;
 

@@ -208,6 +208,16 @@ void LevelEditor::Start()
 
 void LevelEditor::Update(float delta)
 {
+	if (!lastFramePlayState && inPlay)
+	{
+		lastFramePlayState = inPlay;
+		displayGUI = false;
+	}
+	else if(lastFramePlayState && !inPlay)
+	{
+		lastFramePlayState = inPlay;
+		displayGUI = true;
+	}
 	LineRenderer& lines = renderSystem.lines;
 	input.Update();
 
@@ -224,13 +234,24 @@ void LevelEditor::Update(float delta)
 
 	if (input.inputDevices.size() > 0)
 	{
+		float camera2DForwardLength = glm::length(glm::vec2( camera->transform.forward().x, camera->transform.forward().z ));
+		float angle = 0.0f;
+		if (camera2DForwardLength == 0.0f)
+			angle = camera->transform.getEulerRotation().y;
+		else
+		{
+			angle = atan2f(camera->transform.forward().z, camera->transform.forward().x);
+			angle *= 180.0f / PI;
+			angle += 90.0f;
+		}
+
 		ecco->Update(
 			*input.inputDevices[0],
 			*eccoSo->transform(),
 			*eccoSo->rigidbody(),
 			*eccoSo->health(),
 			delta,
-			camera->transform.getEulerRotation().y
+			angle
 		);
 
 		if (input.inputDevices.size() > 1)
@@ -241,7 +262,7 @@ void LevelEditor::Update(float delta)
 				*syncSo->rigidbody(),
 				&renderSystem.lines,
 				delta,
-				camera->transform.getEulerRotation().y
+				angle
 			);
 		}
 	}
@@ -468,22 +489,14 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 
 	gui.sceneObjectSelected = nullptr;
 
-	InitialisePlayers();
-	
 	groundTileParent = FindSceneObjectOfName("Ground Tiles");
 	wallTileParent = FindSceneObjectOfName("Wall Tiles");
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
 
-	enemySystem.Start();
-	enemySystem.AddUnlistedEnemiesToSystem(enemies, transforms);
-	if(enemySystem.getInactiveMeleeCount() == 0)
-		enemySystem.InitialiseMelee(sceneObjects, 5);
-	if(enemySystem.getInactiveRangedCount() == 0)
-		enemySystem.InitialiseRanged(sceneObjects, 5);
 
-	enemySystem.SpawnMelee(sceneObjects, { 600.0f, 50.0f, 600.0f });
-	//enemySystem.SpawnMelee(sceneObjects, {600.0f, 50.0f, 600.0f});
+	enemySystem.Start();
+
 	// Refresh the tiles collection
 	tiles.clear();
 	auto children = groundTileParent->transform()->getChildren();
@@ -494,6 +507,8 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	}
 
 	file.close();
+	InitialisePlayers();
+
 	previouslySaved = true;
 }
 

@@ -8,5 +8,5 @@ in vec3 Colour;
 void main()
 {
 	FragColour = vec4(Colour, 1);
-	bloomColour = FragColour;
+	bloomColour = FragColour * 10.0f;
 }

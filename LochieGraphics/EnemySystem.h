@@ -26,27 +26,20 @@ namespace toml {
 class EnemySystem
 {
 private:
-
-	int meleeEnemyPoolCount = 0;
-	SceneObject* inactiveMeleeParent;
-	std::vector<unsigned long long> meleeInactivePool;
-	std::vector<unsigned long long> meleeActivePool;
-
-	int rangedEnemyPoolCount = 0;
-	SceneObject* inactiveRangedParent;
-	std::vector<unsigned long long> rangedInactivePool;
-	std::vector<unsigned long long> rangedActivePool;
-
 	float perceptionRadius = 3000.0f;
-	float alignmentRadius = 1000.0f;
+	float alignmentRadius = 3000.0f;
 	float alignmentCoef = 0.5f;
 	float cohesionCoef = 0.5f;
 	float seperationCoef = 0.5f;
 
 	float maxSpeed = 700.0f;
 
+	int meleeEnemyCount = 0;
+	int rangedEnemyCount = 0;
+
 	bool aiUpdating = false;
 	bool addEnemiesThisUpdate = false;
+
 public:
 
 	EnemySystem();
@@ -79,10 +72,7 @@ public:
 	void OnHealthZeroMelee(HealthPacket health);
 	void OnHealthZeroRanged(HealthPacket health);
 
-	int getInactiveMeleeCount()  { return meleeEnemyPoolCount;  };
-	int getInactiveRangedCount() { return rangedEnemyPoolCount; };
-
-	void Boiding(
+	void TempBehaviour(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
@@ -98,7 +88,7 @@ public:
 		float delta
 	);
 
-	void AddUnlistedEnemiesToSystem(
+	void SpawnEnemies(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms
 	);
@@ -106,9 +96,6 @@ public:
 	void GUI();
 
 	toml::table Serialise() const;
-
-	std::vector<unsigned long long> InitialiseMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count);
-	std::vector<unsigned long long> InitialiseRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count);
 
 	//void OnMeleeCollision(Collision collision);
 };
