@@ -7,7 +7,7 @@
 
 Enemy::Enemy(toml::table table)
 {
-	type = (EnemyType)Serialisation::LoadAsInt(table["type"]);
+	type = Serialisation::LoadAsInt(table["type"]);
 }
 
 void Enemy::GUI()
@@ -15,23 +15,53 @@ void Enemy::GUI()
 	std::string tag = Utilities::PointerToString(this);
 
 	if (ImGui::CollapsingHeader(("Enemy##" + tag).c_str())) {
-		bool explosive = (1 << (int)EnemyType::explosive & 1 << (int)type);
-		bool melee = (1 << (int)EnemyType::melee & 1 << (int)type);
-		bool ranged = (1 << (int)EnemyType::ranged & 1 << (int)type);
+		bool spawnSpot = ((int)EnemyType::spawnSpot & type);
+		bool explosive = ((int)EnemyType::explosive & type);
+		bool melee = ((int)EnemyType::melee & type);
+		bool ranged = ((int)EnemyType::ranged & type);
+
+		if (ImGui::Checkbox("Spawn Spot: ", &spawnSpot))
+		{
+			if(spawnSpot) type |= (int)EnemyType::spawnSpot;
+			else type &= (int)EnemyType::spawnSpot;
+		}
 
 		if (ImGui::Checkbox("Explosive type:", &explosive))
-			type = EnemyType::explosive;
+		{
+			if (type & (int)EnemyType::spawnSpot)
+				type = (int)EnemyType::spawnSpot;
+			else
+				type = 0;
+
+			type |= (int)EnemyType::explosive;
+		}
+			
 		if (ImGui::Checkbox("Melee type:", &melee))
-			type = EnemyType::melee;
+		{
+			if (type & (int)EnemyType::spawnSpot)
+				type = (int)EnemyType::spawnSpot;
+			else
+				type = 0;
+
+			type |= (int)EnemyType::melee;
+		}
 		if (ImGui::Checkbox("Ranged type:", &ranged))
-			type = EnemyType::ranged;
+		{
+			if (type & (int)EnemyType::spawnSpot)
+				type = (int)EnemyType::spawnSpot;
+			else
+				type = 0;
+
+			type |= (int)EnemyType::ranged;
+		}
 	}
 }
 
-toml::table Enemy::Serialise()
+toml::table Enemy::Serialise(unsigned long long GUID)
 {
 	return toml::table
 	{
-		{"type", (int)type}
+		{"guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{"type", type},
 	};
 }

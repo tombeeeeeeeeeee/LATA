@@ -13,14 +13,14 @@ namespace toml {
 class GameplayCameraSystem
 {
 public:
-	glm::vec3 cameraPositionDelta;
-	glm::vec3 viewAngle = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 cameraPositionDelta = {550.0f, 1000.0f, 750.0f};
+	glm::vec3 viewAngle = { -135.0f, 35.0f, -120.0f };
 	glm::vec3 target = { 0.0f, 0.0f, 0.0f};
 	glm::vec3 anchor = { 0.0f, 0.0f, 0.0f };
 	glm::vec2 constraint = { 0.0f, 0.0f };
 	bool anchoring = false;
-	float cameraZoomScale = 0.2f;
-	float cameraZoomMinimum = 0.5f;
+	float cameraZoomScale = 0.13f;
+	float cameraZoomMinimum = 125.0f;
 	float cameraZoomSpeed = 0.33f;
 	float cameraMoveSpeed = 0.33f;
 

@@ -208,15 +208,28 @@ void LevelEditor::Start()
 
 void LevelEditor::Update(float delta)
 {
-	if (!lastFramePlayState && inPlay)
+	if (!lastFramePlayState && inPlay) //On Play Enter
 	{
+		SaveLevel();
+
 		lastFramePlayState = inPlay;
 		displayGUI = false;
+		enemySystem.aiUpdating = true;
+
+		enemySystem.SpawnEnemies(enemies, transforms);
+
+		camera->state = Camera::targetingPlayers;
+		gameCamSystem.cameraPositionDelta = { 550.0f, 1000.0f, 750.0f };
 	}
-	else if(lastFramePlayState && !inPlay)
+	else if(lastFramePlayState && !inPlay) //On Play exit
 	{
+		LoadLevel();
+
 		lastFramePlayState = inPlay;
 		displayGUI = true;
+		enemySystem.aiUpdating = false;
+
+		camera->state = Camera::editorMode;
 	}
 	LineRenderer& lines = renderSystem.lines;
 	input.Update();
@@ -224,13 +237,19 @@ void LevelEditor::Update(float delta)
 	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 
-	healthSystem.Update(
-		healths,
-		renderers,
-		delta
-	);
+	if (inPlay)
+	{
 
-	for (auto& exitPair : exits) exitPair.second.Update();
+		healthSystem.Update(
+			healths,
+			renderers,
+			delta
+		);
+
+		for (auto& exitPair : exits) exitPair.second.Update();
+	}
+
+
 
 	if (input.inputDevices.size() > 0)
 	{
@@ -267,7 +286,7 @@ void LevelEditor::Update(float delta)
 		}
 	}
 
-	// TODO: Need to be able to change the zoomScale
+
 	gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
 
 	lines.SetColour({ 1, 1, 1 });
@@ -313,6 +332,10 @@ void LevelEditor::Draw()
 void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
+
+		if (ImGui::Button("PLAY"))
+			inPlay = !inPlay;
+
 		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0Asset Placer\0View Select\0\0")) {
 			switch (state)
 			{

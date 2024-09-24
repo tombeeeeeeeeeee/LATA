@@ -50,7 +50,7 @@ protected:
 struct PolygonCollider : public Collider
 {
 	std::vector<glm::vec2> verts;
-	float radius;
+	float radius = 0.0f;
 	virtual const ColliderType getType() const { return ColliderType::polygon; };
 	PolygonCollider(std::vector<glm::vec2> _verts, float _radius, CollisionLayers layer = CollisionLayers::base) : verts(_verts), radius(_radius) { collisionLayer = (int)layer; };
 	PolygonCollider() {};

@@ -13,6 +13,7 @@
 #include "ModelRenderer.h"
 #include "Scene.h"
 #include "Paths.h"
+#include "Collision.h"
 
 #include "Utilities.h"
 
@@ -22,9 +23,6 @@
 #include "RenderSystem.h"
 #include "Hit.h"
 
-EnemySystem::EnemySystem()
-{
-}
 
 EnemySystem::EnemySystem(toml::table table)
 {
@@ -68,7 +66,7 @@ void EnemySystem::Start()
     }
 }
 
-unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos)
+void EnemySystem::SpawnMelee(glm::vec3 pos)
 {
     Scene* scene = SceneManager::scene;
 
@@ -87,11 +85,9 @@ unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long
     enemy->health()->currHealth = meleeEnemyHealth;
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
-
-    return enemy->GUID;
 }
 
-unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos)
+void EnemySystem::SpawnRanged(glm::vec3 pos)
 {
     Scene* scene = SceneManager::scene;
 
@@ -109,31 +105,26 @@ unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long lon
     enemy->transform()->setPosition(pos);
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
-
-    return enemy->GUID;
 }
 
-//TODO: REMAKE
-bool EnemySystem::DespawnMelee(SceneObject* sceneObject)
+bool EnemySystem::Despawn(SceneObject* sceneObject)
 {
-    bool hasBeenDespawned = false;
 
-    return hasBeenDespawned;
+    if (sceneObject->parts & Parts::enemy)
+    {
+        SceneManager::scene->DeleteSceneObject(sceneObject->GUID);
+        return true;
+    }
+
+    return false;
 }
 
-//TODO: REMAKE DELETE SCENE OBJECT
-bool EnemySystem::DespawnRanged(SceneObject* sceneObject)
-{
-    bool hasBeenDespawned = false;
-    
-    return hasBeenDespawned;
-}
 
 void EnemySystem::OnHealthZeroMelee(HealthPacket healthpacket)
 {
     if (healthpacket.so)
     {
-        DespawnMelee(healthpacket.so);
+        Despawn(healthpacket.so);
     }
 }
 
@@ -141,7 +132,7 @@ void EnemySystem::OnHealthZeroRanged(HealthPacket healthpacket)
 {
     if (healthpacket.so)
     {
-        DespawnRanged(healthpacket.so);
+        Despawn(healthpacket.so);
     }
 }
 
@@ -258,10 +249,6 @@ void EnemySystem::Update(
         //    enemy.state->Update(agent);
         //}
     }
-    if (addEnemiesThisUpdate)
-    {
-        SpawnEnemies(enemies, transforms);
-    }
 }
 
 void EnemySystem::SpawnEnemies(
@@ -269,17 +256,21 @@ void EnemySystem::SpawnEnemies(
     std::unordered_map<unsigned long long, Transform>& transforms
 )
 {
-    
+    for (auto& enemyPair : enemies)
+    {
+        if (enemyPair.second.type & (int)EnemyType::spawnSpot)
+        {
+            if (enemyPair.second.type & (int)EnemyType::melee)
+                SpawnMelee(transforms[enemyPair.first].getGlobalPosition());
+            else if (enemyPair.second.type & (int)EnemyType::ranged)
+                SpawnRanged(transforms[enemyPair.first].getGlobalPosition());
+        }
+    }
 }
 
 void EnemySystem::GUI()
 {
     ImGui::Checkbox("AI Updating",&aiUpdating);
-
-    if(ImGui::Button("Add New Enemies to list"))
-    {
-        addEnemiesThisUpdate = true;
-    }
 
     ImGui::Text("AI STATS");
     ImGui::DragFloat("Sense Radius", &perceptionRadius);
@@ -329,7 +320,14 @@ toml::table EnemySystem::Serialise() const
         { "rangedEnemyColliderRadius", rangedEnemyColliderRadius },
         { "rangedEnemyModel", rangedEnemyModel },
         { "rangedEnemyMaterialPath", rangedEnemyMaterialPath },
-        { "offscreenSpawnPosition", Serialisation::SaveAsVec3(offscreenSpawnPosition) },
     };
+}
+
+void EnemySystem::OnMeleeCollision(Collision collision)
+{
+    if (collision.collisionMask & (int)CollisionLayers::sync || collision.collisionMask & (int)CollisionLayers::ecco)
+    {
+        collision.sceneObject->health()->subtractHealth(meleeEnemyDamage);
+    }
 }
 
