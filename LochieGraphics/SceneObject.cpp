@@ -311,14 +311,15 @@ Sync* SceneObject::sync() const
 
 void SceneObject::ClearParts()
 {
-	if (parts & Parts::modelRenderer) { scene->renderers.erase(GUID); }
-	if (parts & Parts::animator) { scene->animators.erase(GUID); }
-	if (parts & Parts::rigidBody) { scene->rigidBodies.erase(GUID); }
-	if (parts & Parts::collider) { scene->colliders.erase(GUID); }
-	if (parts & Parts::ecco) { scene->ecco->GUID = 0; }
-	if (parts & Parts::sync) { scene->sync->GUID = 0; }
-	if (parts & Parts::health) { scene->healths.erase(GUID); }
-	if (parts & Parts::enemy) { scene->enemies.erase(GUID); }
-	
-	parts = Parts::transform;
+	if (parts & Parts::modelRenderer) { scene->renderers.erase(GUID);  parts &= ~(Parts::modelRenderer); }
+	if (parts & Parts::animator) { scene->animators.erase(GUID);  parts &= ~(Parts::animator);}
+	if (parts & Parts::rigidBody) { scene->rigidBodies.erase(GUID);  parts &= ~(Parts::rigidBody);}
+	if (parts & Parts::collider) { scene->colliders.erase(GUID);  parts &= ~(Parts::collider);}
+	if (parts & Parts::ecco) { scene->ecco->GUID = 0;  parts &= ~(Parts::ecco);}
+	if (parts & Parts::sync) { scene->sync->GUID = 0;  parts &= ~(Parts::sync);}
+	if (parts & Parts::health) { scene->healths.erase(GUID);  parts &= ~(Parts::health);}
+	if (parts & Parts::enemy) { scene->enemies.erase(GUID);  parts &= ~(Parts::enemy);}
+	if (parts & Parts::exitElevator) { scene->exits.erase(GUID);  parts &= ~(Parts::exitElevator);}
+
+	assert(parts == 0);
 }

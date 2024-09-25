@@ -28,15 +28,12 @@ Sync::Sync(toml::table table)
 	moveDeadZone = Serialisation::LoadAsFloat(table["moveDeadZone"]);
 	barrelOffset = Serialisation::LoadAsVec3(table["barrelOffset"]);
 	misfireDamage = Serialisation::LoadAsInt(table["misfireDamage"]);
-	misfireChargeCost = Serialisation::LoadAsFloat(table["misfireChargeCost"]);
 	misfireShotSpeed = Serialisation::LoadAsFloat(table["misfireShotSpeed"]);
 	sniperDamage = Serialisation::LoadAsInt(table["sniperDamage"]);
-	sniperChargeCost = Serialisation::LoadAsFloat(table["sniperChargeCost"]);
 	sniperChargeTime = Serialisation::LoadAsFloat(table["sniperChargeTime"]);
 	sniperBeamLifeSpan = Serialisation::LoadAsFloat(table["sniperBeamLifeSpan"]);
 	sniperBeamColour = Serialisation::LoadAsVec3(table["sniperBeamColour"]);
 	overclockDamage = Serialisation::LoadAsInt(table["overclockDamage"]);
-	overclockChargeCost = Serialisation::LoadAsFloat(table["overclockChargeCost"]);
 	overclockChargeTime = Serialisation::LoadAsFloat(table["overclockChargeTime"]);
 	overclockBeamLifeSpan = Serialisation::LoadAsFloat(table["overclockBeamLifeSpan"]);
 	overclockBeamColour = Serialisation::LoadAsVec3(table["overclockBeamColour"]);
@@ -44,7 +41,6 @@ Sync::Sync(toml::table table)
 	enemyPierceCount = Serialisation::LoadAsInt(table["enemyPierceCount"]);
 	eccoRefractionAngle = Serialisation::LoadAsFloat(table["eccoRefractionAngle"]);
 	eccoRefractionCount = Serialisation::LoadAsInt(table["eccoRefractionCount"]);
-	maxCharge = Serialisation::LoadAsFloat(table["maxCharge"]);
 	misfireColliderRadius = Serialisation::LoadAsFloat(table["misfireColliderRadius"]);                                                                                                                                                                                                                                                                                                                                                                          
 }
 
@@ -106,25 +102,18 @@ void Sync::Update(
 			chargingShot = true;
 			chargedDuration = 0.0f;
 		}
-
-		//Charging shot.
-		if (chargedDuration < sniperChargeTime && currCharge > sniperChargeCost)
+		else
 		{
-			if (chargedDuration + delta > sniperChargeTime)
+			if (chargedDuration + delta >= sniperChargeTime && chargedDuration < sniperChargeTime)
 			{
-				//Do charging stuff
+				//At this time the charge is enough to shoot the sniper.
+			}
+			else if (chargedDuration + delta >= overclockChargeTime && chargedDuration < overclockChargeTime)
+			{
+				//At this time the charge is enough to shoot the reflecting shot
 			}
 			chargedDuration += delta;
 		}
-		else if (chargedDuration < overclockChargeTime && currCharge > overclockChargeCost)
-		{
-			if (chargedDuration + delta > overclockChargeTime) 
-			{
-			//Do charging stuff
-			}
-			chargedDuration += delta;
-		}
-	
 		//TODO: add rumble
 	}
 	else if (chargingShot)
@@ -138,15 +127,15 @@ void Sync::Update(
 
 		if (chargedDuration >= overclockChargeTime)
 		{
-			ShootOverClocked(transform.getGlobalPosition() + globalBarrelOffset);
+			ShootOverClocked(globalBarrelOffset);
 		}
 		else if (chargedDuration >= sniperChargeTime)
 		{
-			ShootSniper(transform.getGlobalPosition() + globalBarrelOffset);
+			ShootSniper(globalBarrelOffset);
 		}
 		else
 		{
-			ShootMisfire(transform.getGlobalPosition() + globalBarrelOffset);
+			ShootMisfire(globalBarrelOffset);
 		}
 	}
 
@@ -179,13 +168,11 @@ void Sync::GUI()
 		if (ImGui::CollapsingHeader("Misfire Properties"))
 		{
 			ImGui::DragInt("Misfire Damage", &misfireDamage);
-			ImGui::DragFloat("Misfire Charge Cost", &misfireChargeCost);
 			ImGui::DragFloat("Misfire Shot Speed", &misfireShotSpeed);
 		}
 		if (ImGui::CollapsingHeader("Sniper Shot Properties"))
 		{
 			ImGui::DragInt("Sniper Damage", &sniperDamage);
-			ImGui::DragFloat("Sniper Charge Cost", &sniperChargeCost);
 			ImGui::DragFloat("Sniper Charge Time", &sniperChargeTime);
 			ImGui::DragFloat("Sniper Beam life span", &sniperBeamLifeSpan);
 			ImGui::ColorEdit3("Sniper Beam Colour", &sniperBeamColour[0]);
@@ -193,7 +180,6 @@ void Sync::GUI()
 		if (ImGui::CollapsingHeader("Overclock Shot Properties"))
 		{
 			ImGui::DragInt("Damage", &overclockDamage);
-			ImGui::DragFloat("Charge Cost", &overclockChargeCost);
 			ImGui::DragFloat("Charge Time", &overclockChargeTime);
 			ImGui::DragFloat("Beam life span", &overclockBeamLifeSpan);
 			ImGui::ColorEdit3("Beam Colour", &overclockBeamColour[0]);
@@ -203,8 +189,6 @@ void Sync::GUI()
 			ImGui::DragFloat("Refraction Beams Angle", &eccoRefractionAngle);
 		}
 		
-		ImGui::DragFloat("Max Charge", &maxCharge);
-		ImGui::DragFloat("Current Charge", &currCharge);
 		ImGui::Unindent();
 	}
 }
@@ -218,15 +202,12 @@ toml::table Sync::Serialise() const
 		{ "moveDeadZone", moveDeadZone },
 		{ "barrelOffset", Serialisation::SaveAsVec3(barrelOffset) },
 		{ "misfireDamage", misfireDamage },
-		{ "misfireChargeCost", misfireChargeCost },
 		{ "misfireShotSpeed", misfireShotSpeed },
 		{ "sniperDamage", sniperDamage },
-		{ "sniperChargeCost", sniperChargeCost },
 		{ "sniperChargeTime", sniperChargeTime },
 		{ "sniperBeamLifeSpan", sniperBeamLifeSpan },
 		{ "sniperBeamColour", Serialisation::SaveAsVec3(sniperBeamColour) },
 		{ "overclockDamage", overclockDamage },
-		{ "overclockChargeCost", overclockChargeCost },
 		{ "overclockChargeTime", overclockChargeTime },
 		{ "overclockBeamLifeSpan", overclockBeamLifeSpan },
 		{ "overclockBeamColour", Serialisation::SaveAsVec3(overclockBeamColour) },
@@ -234,14 +215,12 @@ toml::table Sync::Serialise() const
 		{ "enemyPierceCount", enemyPierceCount },
 		{ "eccoRefractionAngle", eccoRefractionAngle },
 		{ "eccoRefractionCount", eccoRefractionCount },
-		{ "maxCharge", maxCharge },
 		{ "misfireColliderRadius", misfireColliderRadius },
 	};
 }
 
 void Sync::ShootMisfire(glm::vec3 pos)
 {
-	currCharge -= misfireChargeCost;
 	SceneObject* shot = new SceneObject(SceneManager::scene);
 	shot->setRenderer(misfireModelRender);
 
@@ -257,7 +236,6 @@ void Sync::ShootMisfire(glm::vec3 pos)
 
 void Sync::ShootSniper(glm::vec3 pos)
 {
-	currCharge -= sniperChargeCost;
 	std::vector<Hit> hits;
 	if (PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::ecco | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast)))
 	{
@@ -272,7 +250,6 @@ void Sync::ShootSniper(glm::vec3 pos)
 
 void Sync::ShootOverClocked(glm::vec3 pos)
 {
-	currCharge -= overclockChargeCost;
 	OverclockRebounding(pos, fireDirection, 0, overclockBeamColour);
 }
 
