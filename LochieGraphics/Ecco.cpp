@@ -167,6 +167,7 @@ void Ecco::OnCollision(Collision collision)
 			collision.sceneObject->health()->subtractHealth( speedDamage, collision.sceneObject);
 			rb->AddImpulse(glm::normalize(rb->vel) * -speedReductionAfterDamaging);
 			collision.self->health()->addHealth(healingFromDamage, collision.self);
+			rb->ignoreThisCollision = true;
 		}
 	}
 }

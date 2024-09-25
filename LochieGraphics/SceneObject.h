@@ -24,7 +24,6 @@ namespace toml {
 //TODO: Add GetPart Functions
 enum Parts
 {
-	transform =     1 << 0,
 	modelRenderer = 1 << 1,
 	animator =      1 << 2,
 	rigidBody =     1 << 3,

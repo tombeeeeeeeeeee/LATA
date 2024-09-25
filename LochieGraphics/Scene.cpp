@@ -9,6 +9,7 @@
 #include "ShaderEnum.h"
 #include "Skybox.h"
 #include "Collider.h"
+#include "Collision.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
@@ -186,6 +187,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 	SavePart(transforms);
 	SavePart(animators);
 	SavePart(rigidBodies);
+	SavePart(enemies);
 	auto savedcolliders = toml::array(); for (auto i = colliders.begin(); i != colliders.end(); i++) {
 		savedcolliders.push_back(i->second->Serialise(i->first));
 	};
@@ -199,6 +201,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 		{ "Animators", savedanimators},
 		{ "RigidBodies", savedrigidBodies},
 		{ "Colliders", savedcolliders},
+		{ "Enemies", savedenemies},
 		{ "Healths", savedhealths},
 		{ "Exits", savedexits},
 		{ "Sync", sync->Serialise() },
@@ -225,6 +228,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	}
 	LoadPart(animators, "Animators", Animator);
 	LoadPart(rigidBodies, "RigidBodies", RigidBody);
+	LoadPart(enemies, "Enemies", Enemy);
 	// TODO: Fix for colliders
 	
 
@@ -276,7 +280,7 @@ void Scene::InitialisePlayers()
 		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
 		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
 	}
-	else if(eccoSO->rigidbody()->colliders.size() < 2)
+	else if (eccoSO->rigidbody()->colliders.size() < 2)
 	{
 		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
 	}
@@ -292,6 +296,9 @@ void Scene::InitialisePlayers()
 	eccoSO->rigidbody()->colliders[1]->collisionLayer = (int)CollisionLayers::reflectiveSurface;
 	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->verts = { {0.0f, 0.0f} };
 	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 15.0f;
+
+	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { ecco->OnCollision(collision); });
+
 	if (!eccoSO->renderer()) eccoSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension),(unsigned long long) 0));
 	else eccoSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension);
 	eccoSO->renderer()->materialTint = {0.0f, 102.0f, 204.0f};

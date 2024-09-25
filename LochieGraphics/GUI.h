@@ -7,7 +7,7 @@ class SceneObject;
 class GUI
 {
 public:
-	Scene* scene;
+	Scene* scene = nullptr;
 
 	SceneObject* sceneObjectSelected = nullptr;
 
@@ -53,5 +53,6 @@ private:
 
 	void PhysicsMenu();
 	void EnemyMenu();
+	bool disableGUIHeld = false;
 };
 

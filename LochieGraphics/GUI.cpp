@@ -24,7 +24,13 @@ void GUI::Update()
 	ImGuiIO& io = ImGui::GetIO();
 	// TODO: GUI Shouldn't exist for a build version
 	//if (true) { return; }
-	if (glfwGetKey(SceneManager::window, GLFW_KEY_RIGHT_ALT)) scene->displayGUI = !scene->displayGUI;
+	if (glfwGetKey(SceneManager::window, GLFW_KEY_RIGHT_ALT))
+	{
+		if (!disableGUIHeld)
+			scene->displayGUI = !scene->displayGUI;
+		disableGUIHeld = true;
+	}
+	else disableGUIHeld = false;
 
 	if (scene->displayGUI)
 	{
@@ -394,22 +400,10 @@ void GUI::EnemyMenu()
 	{
 		for (int i = 0; i < 36; i++)
 		{
-			SceneObject* enemy = new SceneObject(scene, ("Test Enemy: " + std::to_string(i)).c_str());
-			enemy->transform()->setPosition({ -250.0f * (i / 6) - 250.0f, 0.0f, -250.0f * (i % 6) - 250.0f});
-			enemy->setEnemy(new Enemy());
-			enemy->setHealth(new Health());
-			enemy->health()->currHealth = scene->enemySystem.meleeEnemyHealth;
-			enemy->health()->setMaxHealth(scene->enemySystem.meleeEnemyHealth);
-			enemy->setRigidBody(new RigidBody(1.0f, 1.0f));
-			enemy->rigidbody()->colliders.push_back(new PolygonCollider({ {0.0f, 0.0f} }, 100.0f, CollisionLayers::enemy));
-			enemy->setRenderer(new ModelRenderer(
-				ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Sphere" + Paths::modelExtension),
-				ResourceManager::defaultMaterial
-				)
-			);
+			glm::vec3 pos = { -250.0f * (i / 6) - 250.0f, 0.0f, -250.0f * (i % 6) - 250.0f };
+			es.SpawnMelee(pos);
 		}
 
-		scene->enemySystem.SpawnEnemies(scene->enemies, scene->transforms);
 	}
 
 	es.GUI();

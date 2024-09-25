@@ -36,7 +36,7 @@ public:
 	void GUI();
 	toml::table Serialise();
 
-	glm::vec2 wheelDirection = { 0.0f, 0.0f };
+	glm::vec2 wheelDirection = { 0.0f, 0.0f };	
 
 	int currHealth = 10;
 	int maxHealth = 10;
