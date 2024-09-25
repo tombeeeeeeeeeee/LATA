@@ -31,7 +31,7 @@ struct Enemy
 	SceneObject* target = nullptr;
 	glm::vec2 lastTargetPos = { 0.0f, 0.0f };
 	bool hasLOS = false;
-	Node* currentNode = nullptr;
+	int nodeIndex = 0;
 	std::vector<Node*> path = {};
 
 	void GUI();

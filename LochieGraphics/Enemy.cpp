@@ -23,7 +23,7 @@ void Enemy::GUI()
 		if (ImGui::Checkbox("Spawn Spot: ", &spawnSpot))
 		{
 			if(spawnSpot) type |= (int)EnemyType::spawnSpot;
-			else type &= (int)EnemyType::spawnSpot;
+			else type &= ~(int)EnemyType::spawnSpot;
 		}
 
 		if (ImGui::Checkbox("Explosive type:", &explosive))

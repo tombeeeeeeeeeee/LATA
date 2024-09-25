@@ -13,6 +13,8 @@ class SceneObject;
 class ModelRenderer;
 struct HealthPacket;
 struct Collision;
+struct Node;
+struct Edge;
 
 namespace toml {
 	inline namespace v3 {
@@ -39,7 +41,6 @@ public:
 	EnemySystem() {};
 	EnemySystem(toml::table table);
 	void Start();
-
 
 	int explosiveEnemyHealth = 0;
 	float explosiveEnemyMoveSpeed = 0;
@@ -75,13 +76,6 @@ public:
 	void OnHealthZeroMelee(HealthPacket healthPacket);
 	void OnHealthZeroRanged(HealthPacket healthPacket);
 
-	void LineOfSightAndTargetCheck(
-		std::unordered_map<unsigned long long, Enemy>& enemies,
-		std::unordered_map<unsigned long long, Transform>& transforms,
-		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
-		SceneObject* ecco, SceneObject* sync
-	);
-
 	//TODO: ADD AI PATHFINDING, and general AI STUFF IN HERE
 	void Update(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
@@ -101,5 +95,25 @@ public:
 	toml::table Serialise() const;
 
 	void OnMeleeCollision(Collision collision);
+
+private:
+	//TODO: DELETE
+	std::vector<Node*> AStarSearch(Node* startNode, Node* endNode);
+	float Hueristic(Node* pos, Node* end);
+	bool CompareNodes(Node* a, Node* b);
+
+	void LineOfSightAndTargetCheck(
+		std::unordered_map<unsigned long long, Enemy>& enemies,
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+		SceneObject* ecco, SceneObject* sync
+	);
+
+	void UpdateEnemiesPathFinding(
+		Enemy& enemy,
+		Transform& transform, 
+		RigidBody& rb,
+		float delta
+	);
 };
 

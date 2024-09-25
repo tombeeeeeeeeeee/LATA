@@ -22,6 +22,7 @@
 #include "PhysicsSystem.h"
 #include "RenderSystem.h"
 #include "Hit.h"
+#include "Node.h"
 
 
 EnemySystem::EnemySystem(toml::table table)
@@ -216,6 +217,11 @@ void EnemySystem::LineOfSightAndTargetCheck(
     }
 }
 
+void EnemySystem::UpdateEnemiesPathFinding(Enemy& enemy, Transform& transform, RigidBody& rb, float delta)
+{
+    
+}
+
 //TODO: Add AI Pathfinding and attacking in here.
 void EnemySystem::Update(
     std::unordered_map<unsigned long long, Enemy>& enemies,
@@ -234,32 +240,33 @@ void EnemySystem::Update(
         );
 
         //TODO ADD States and Transitions
-        //for (auto& enemyPair : enemies)
-        //{
-        //    Enemy& enemy = enemyPair.second;
-        //    SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
-        //    State* newState = nullptr;
-        //
-        //    // check the current state's transitions
-        //    for (auto& t : enemy.state->transitions)
-        //    {
-        //        if (t.condition->IsTrue(agent))
-        //        {
-        //            newState = t.targetState;
-        //            break;
-        //        }
-        //    }
-        //
-        //
-        //    if (newState != nullptr && newState != enemy.state)
-        //    {
-        //        enemy.state->Exit(agent);
-        //        enemy.state = newState;
-        //        enemy.state->Enter(agent);
-        //    }
-        //
-        //    enemy.state->Update(agent);
-        //}
+        for (auto& enemyPair : enemies)
+        {
+            Enemy& enemy = enemyPair.second;
+            SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
+            State* newState = nullptr;
+        
+            // check the current state's transitions
+            for (auto& t : enemy.state->transitions)
+            {
+                if (t.condition->IsTrue(agent))
+                {
+                    newState = t.targetState;
+                    break;
+                }
+            }
+        
+        
+            if (newState != nullptr && newState != enemy.state)
+            {
+                enemy.state->Exit(agent);
+                enemy.state = newState;
+                enemy.state->Enter(agent);
+            }
+        
+            enemy.state->Update(agent);
+            UpdateEnemiesPathFinding(enemy, transforms[enemyPair.first], rigidbodies[enemyPair.first], delta);
+        }
     }
 }
 
@@ -278,6 +285,84 @@ void EnemySystem::SpawnEnemies(
                 SpawnRanged(transforms[enemyPair.first].getGlobalPosition());
         }
     }
+}
+
+std::vector<Node*> EnemySystem::AStarSearch(Node* startNode, Node* endNode)
+{
+    std::vector<Node*> open;
+    std::vector<Node*> closed;
+    std::vector<Node*> path;
+
+    Node* currNode = nullptr;
+    int gScore = 0;
+
+    if (startNode == nullptr || endNode == nullptr)
+    {
+        return std::vector<Node*>();
+    }
+    else if (startNode == endNode)
+    {
+        return std::vector<Node*>();
+    }
+
+    startNode->gScore = 0;
+    startNode->previous = nullptr;
+
+    open.push_back(startNode);
+
+    do
+    {
+        //sort(open.begin(), open.end(), CompareNodes);
+        currNode = open.back();
+        open.pop_back();
+        if (currNode == endNode)  break;
+        closed.push_back(currNode);
+
+        for (auto con : currNode->connections)
+        {
+            if (find(closed.begin(), closed.end(), con.target) == closed.end())
+            {
+                gScore = currNode->gScore + con.cost;
+                float hScore = Hueristic(con.target, endNode);
+                float fScore = gScore + hScore;
+                if (find(open.begin(), open.end(), con.target) == open.end())
+                {
+                    con.target->gScore = gScore;
+                    con.target->fScore = fScore;
+                    con.target->previous = currNode;
+                    open.push_back(con.target);
+                }
+                else if (fScore < con.target->fScore)
+                {
+                    con.target->gScore = gScore;
+                    con.target->fScore = fScore;
+                    con.target->previous = currNode;
+                }
+            }
+        }
+
+    } while (open.size() != 0);
+
+    if (open.empty()) return std::vector<Node*>();
+
+    currNode = endNode;
+    do
+    {
+        path.insert(path.begin(), currNode);
+        currNode = currNode->previous;
+    } while (currNode != nullptr);
+
+    return path;
+}
+
+float EnemySystem::Hueristic(Node* pos, Node* end)
+{
+    return 0.0f;
+}
+
+bool EnemySystem::CompareNodes(Node* a, Node* b)
+{
+    return a->fScore > b->fScore;
 }
 
 void EnemySystem::GUI()
