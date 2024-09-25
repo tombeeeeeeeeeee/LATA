@@ -216,7 +216,7 @@ void LevelEditor::Update(float delta)
 		displayGUI = false;
 		enemySystem.aiUpdating = true;
 
-		enemySystem.SpawnEnemies(enemies, transforms);
+		enemySystem.SpawnEnemiesInScene(enemies, transforms);
 
 		camera->state = Camera::targetingPlayers;
 		gameCamSystem.cameraPositionDelta = { 550.0f, 1000.0f, 750.0f };

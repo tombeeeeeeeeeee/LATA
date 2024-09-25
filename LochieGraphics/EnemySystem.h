@@ -85,9 +85,10 @@ public:
 		float delta
 	);
 
-	void SpawnEnemies(
+	void SpawnEnemiesInScene(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
-		std::unordered_map<unsigned long long, Transform>& transforms
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		bool spawner = true
 	);
 
 	void GUI();

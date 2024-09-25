@@ -270,19 +270,22 @@ void EnemySystem::Update(
     }
 }
 
-void EnemySystem::SpawnEnemies(
+void EnemySystem::SpawnEnemiesInScene(
     std::unordered_map<unsigned long long, Enemy>& enemies,
-    std::unordered_map<unsigned long long, Transform>& transforms
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    bool spawner
 )
 {
     for (auto& enemyPair : enemies)
     {
-        if (enemyPair.second.type & (int)EnemyType::spawnSpot)
+        if ((enemyPair.second.type & (int)EnemyType::spawnSpot) == (int)spawner)
         {
             if (enemyPair.second.type & (int)EnemyType::melee)
                 SpawnMelee(transforms[enemyPair.first].getGlobalPosition());
             else if (enemyPair.second.type & (int)EnemyType::ranged)
                 SpawnRanged(transforms[enemyPair.first].getGlobalPosition());
+            else if (enemyPair.second.type & (int)EnemyType::explosive)
+                SpawnExplosive(transforms[enemyPair.first].getGlobalPosition());
         }
     }
 }
