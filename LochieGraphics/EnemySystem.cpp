@@ -66,6 +66,27 @@ void EnemySystem::Start()
     }
 }
 
+void EnemySystem::SpawnExplosive(glm::vec3 pos)
+{
+    Scene* scene = SceneManager::scene;
+
+    SceneObject* enemy = new SceneObject(scene, "ExplosiveEnemy" + std::to_string(explosiveEnemyCount++));
+    enemy->setEnemy(new Enemy());
+    enemy->setHealth(new Health());
+    enemy->health()->setMaxHealth(explosiveEnemyHealth);
+    enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroExplosive(hp); });
+    enemy->setRigidBody(new RigidBody());
+    enemy->rigidbody()->invMass = 1.0f;
+    enemy->setRenderer(
+        explosiveEnemyRenderer
+    );
+    enemy->transform()->setParent(nullptr);
+    enemy->transform()->setPosition(pos);
+    enemy->health()->currHealth = explosiveEnemyHealth;
+    enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy) };
+    enemy->rigidbody()->isStatic = false;
+}
+
 void EnemySystem::SpawnMelee(glm::vec3 pos)
 {
     Scene* scene = SceneManager::scene;
@@ -120,6 +141,14 @@ bool EnemySystem::Despawn(SceneObject* sceneObject)
 }
 
 
+void EnemySystem::OnHealthZeroExplosive(HealthPacket healthpacket)
+{
+    if (healthpacket.so)
+    {
+        Despawn(healthpacket.so);
+    }
+}
+
 void EnemySystem::OnHealthZeroMelee(HealthPacket healthpacket)
 {
     if (healthpacket.so)
@@ -148,9 +177,9 @@ void EnemySystem::TempBehaviour(
     for (auto& enemyPair : enemies)
     {
         glm::vec2 enemyPos2D = { transforms[enemyPair.first].getGlobalPosition().x, transforms[enemyPair.first].getGlobalPosition().z };
-        int total = 0;
-        int alignmentTotal = 0;
-        glm::vec2 direction = {};
+
+            
+        glm::vec2 direction = {0.0f, 0.0f};
         float distanceToSync = FLT_MAX;
 
         std::vector<Hit> syncHits;
@@ -165,7 +194,7 @@ void EnemySystem::TempBehaviour(
             {
                 distanceToSync = hit.distance;
                 direction = glm::normalize(syncPos2D - enemyPos2D);
-                enemyPair.second.lastTargetPosition = syncPos2D;
+                enemyPair.second.lastTargetPos = syncPos2D;
             }
         }
         if (PhysicsSystem::RayCast(
@@ -180,7 +209,7 @@ void EnemySystem::TempBehaviour(
                 if (hit.distance < distanceToSync)
                 {
                     direction = glm::normalize(eccoPos2D - enemyPos2D);
-                    enemyPair.second.lastTargetPosition = eccoPos2D;
+                    enemyPair.second.lastTargetPos = eccoPos2D;
                 }
             }
         }
@@ -188,13 +217,15 @@ void EnemySystem::TempBehaviour(
         if (glm::length(direction) > 0)
         {
             rigidbodies[enemyPair.first].vel = direction * maxSpeed;
+            enemyPair.second.hasLOS = false;
         }
         else 
         {
-            float length = glm::length(enemyPair.second.lastTargetPosition - enemyPos2D);
+            enemyPair.second.hasLOS = true;
+            float length = glm::length(enemyPair.second.lastTargetPos - enemyPos2D);
             if (length)
             {
-                rigidbodies[enemyPair.first].vel = maxSpeed * (enemyPair.second.lastTargetPosition - enemyPos2D) / length;
+                rigidbodies[enemyPair.first].vel = maxSpeed * (enemyPair.second.lastTargetPos - enemyPos2D) / length;
             }
             else
             {
@@ -273,10 +304,6 @@ void EnemySystem::GUI()
     ImGui::Checkbox("AI Updating",&aiUpdating);
 
     ImGui::Text("AI STATS");
-    ImGui::DragFloat("Sense Radius", &perceptionRadius);
-    ImGui::DragFloat("Alignment Coefficient", &alignmentCoef);
-    ImGui::DragFloat("Cohesion Coefficient", &cohesionCoef);
-    ImGui::DragFloat("Seperation Coefficient", &seperationCoef);
     ImGui::DragFloat("Max Speed", &maxSpeed);
 
 

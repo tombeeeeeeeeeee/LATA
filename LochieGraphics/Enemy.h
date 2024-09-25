@@ -29,7 +29,8 @@ struct Enemy
 	int type = (int)EnemyType::spawnSpot;
 	State* state = nullptr;
 	SceneObject* target = nullptr;
-	glm::vec2 lastTargetPosition = { 0.0f, 0.0f };
+	glm::vec2 lastTargetPos = { 0.0f, 0.0f };
+	bool hasLOS = false;
 	Node* currentNode = nullptr;
 	std::vector<Node*> path = {};
 

@@ -27,14 +27,9 @@ namespace toml {
 class EnemySystem
 {
 private:
-	float perceptionRadius = 3000.0f;
-	float alignmentRadius = 3000.0f;
-	float alignmentCoef = 0.5f;
-	float cohesionCoef = 0.5f;
-	float seperationCoef = 0.5f;
-
 	float maxSpeed = 700.0f;
 
+	int explosiveEnemyCount = 0;
 	int meleeEnemyCount = 0;
 	int rangedEnemyCount = 0;
 
@@ -44,6 +39,16 @@ public:
 	EnemySystem() {};
 	EnemySystem(toml::table table);
 	void Start();
+
+
+	int explosiveEnemyHealth = 0;
+	float explosiveEnemyMoveSpeed = 0;
+	int explosiveEnemyDamage = 0;
+	float explosiveEnemyColliderRadius = 120.0f;
+	ModelRenderer* explosiveEnemyRenderer = nullptr;
+	std::string explosiveEnemyModel = "SM_Sphere";
+	std::string explosiveEnemyMaterialPath = "images/otherskybox/nx.png";
+
 
 	int meleeEnemyHealth = 0;
 	float meleeEnemyMoveSpeed = 0;
@@ -61,12 +66,14 @@ public:
 	std::string rangedEnemyModel = "SM_Sphere";
 	std::string rangedEnemyMaterialPath = "images/otherskybox/nx.png";
 
+	void SpawnExplosive(glm::vec3 pos);
 	void SpawnMelee(glm::vec3 pos);
 	void SpawnRanged(glm::vec3 pos);
 	bool Despawn(SceneObject* sceneObject);
 
-	void OnHealthZeroMelee(HealthPacket health);
-	void OnHealthZeroRanged(HealthPacket health);
+	void OnHealthZeroExplosive(HealthPacket healthPacket);
+	void OnHealthZeroMelee(HealthPacket healthPacket);
+	void OnHealthZeroRanged(HealthPacket healthPacket);
 
 	void TempBehaviour(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
