@@ -28,15 +28,12 @@ Sync::Sync(toml::table table)
 	moveDeadZone = Serialisation::LoadAsFloat(table["moveDeadZone"]);
 	barrelOffset = Serialisation::LoadAsVec3(table["barrelOffset"]);
 	misfireDamage = Serialisation::LoadAsInt(table["misfireDamage"]);
-	misfireChargeCost = Serialisation::LoadAsFloat(table["misfireChargeCost"]);
 	misfireShotSpeed = Serialisation::LoadAsFloat(table["misfireShotSpeed"]);
 	sniperDamage = Serialisation::LoadAsInt(table["sniperDamage"]);
-	sniperChargeCost = Serialisation::LoadAsFloat(table["sniperChargeCost"]);
 	sniperChargeTime = Serialisation::LoadAsFloat(table["sniperChargeTime"]);
 	sniperBeamLifeSpan = Serialisation::LoadAsFloat(table["sniperBeamLifeSpan"]);
 	sniperBeamColour = Serialisation::LoadAsVec3(table["sniperBeamColour"]);
 	overclockDamage = Serialisation::LoadAsInt(table["overclockDamage"]);
-	overclockChargeCost = Serialisation::LoadAsFloat(table["overclockChargeCost"]);
 	overclockChargeTime = Serialisation::LoadAsFloat(table["overclockChargeTime"]);
 	overclockBeamLifeSpan = Serialisation::LoadAsFloat(table["overclockBeamLifeSpan"]);
 	overclockBeamColour = Serialisation::LoadAsVec3(table["overclockBeamColour"]);
@@ -44,7 +41,6 @@ Sync::Sync(toml::table table)
 	enemyPierceCount = Serialisation::LoadAsInt(table["enemyPierceCount"]);
 	eccoRefractionAngle = Serialisation::LoadAsFloat(table["eccoRefractionAngle"]);
 	eccoRefractionCount = Serialisation::LoadAsInt(table["eccoRefractionCount"]);
-	maxCharge = Serialisation::LoadAsFloat(table["maxCharge"]);
 	misfireColliderRadius = Serialisation::LoadAsFloat(table["misfireColliderRadius"]);                                                                                                                                                                                                                                                                                                                                                                          
 }
 
@@ -106,25 +102,18 @@ void Sync::Update(
 			chargingShot = true;
 			chargedDuration = 0.0f;
 		}
-
-		//Charging shot.
-		if (chargedDuration < sniperChargeTime && currCharge > sniperChargeCost)
+		else
 		{
-			if (chargedDuration + delta > sniperChargeTime)
+			if (chargedDuration + delta >= sniperChargeTime && chargedDuration < sniperChargeTime)
 			{
-				//Do charging stuff
+				//At this time the charge is enough to shoot the sniper.
+			}
+			else if (chargedDuration + delta >= overclockChargeTime && chargedDuration < overclockChargeTime)
+			{
+				//At this time the charge is enough to shoot the reflecting shot
 			}
 			chargedDuration += delta;
 		}
-		else if (chargedDuration < overclockChargeTime && currCharge > overclockChargeCost)
-		{
-			if (chargedDuration + delta > overclockChargeTime) 
-			{
-			//Do charging stuff
-			}
-			chargedDuration += delta;
-		}
-	
 		//TODO: add rumble
 	}
 	else if (chargingShot)
@@ -132,41 +121,30 @@ void Sync::Update(
 		chargingShot = false;
 
 		globalBarrelOffset = barrelOffset;
-		glm::vec2 barrelOFfset2D = { barrelOffset.x, barrelOffset.z };
-		if (glm::length(barrelOFfset2D) != 0.0f)
-		{
-			float ratio = glm::dot(fireDirection, barrelOFfset2D) / glm::length(barrelOFfset2D);
-			float angle = acosf(glm::clamp(ratio, -1.0f, 1.0f));
-			float turnSign = glm::sign(glm::dot(fireDirection, { transform.right().x, transform.right().z }));
-			float c = cos(turnSign * angle);
-			float s = sin(turnSign * angle);
-			globalBarrelOffset = {
-				barrelOffset.x * c - barrelOffset.z * s,
-				barrelOffset.y,
-				barrelOffset.x * s + barrelOffset.z * c
-			};
-		}
+		glm::vec2 barrelOffset2D = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), {barrelOffset.x, barrelOffset.z});
+		globalBarrelOffset = { barrelOffset2D.x, barrelOffset.y, barrelOffset2D.y };
+		
 
 		if (chargedDuration >= overclockChargeTime)
 		{
-			ShootOverClocked(transform.getGlobalPosition() + globalBarrelOffset);
+			ShootOverClocked(globalBarrelOffset);
 		}
 		else if (chargedDuration >= sniperChargeTime)
 		{
-			ShootSniper(transform.getGlobalPosition() + globalBarrelOffset);
+			ShootSniper(globalBarrelOffset);
 		}
 		else
 		{
-			ShootMisfire(transform.getGlobalPosition() + globalBarrelOffset);
+			ShootMisfire(globalBarrelOffset);
 		}
 	}
 
 	for (auto i = blasts.begin(); i != blasts.end();)
 	{
 		i->timeElapsed += delta;
-		float r = i->colour.x - i->colour.x * i->timeElapsed / i->lifeSpan;
-		float g = i->colour.y - i->colour.y * i->timeElapsed / i->lifeSpan;
-		float b = i->colour.z - i->colour.z * i->timeElapsed / i->lifeSpan;
+		float r = 1.5f * i->colour.x - i->colour.x * i->timeElapsed / i->lifeSpan;
+		float g = 1.5f * i->colour.y - i->colour.y * i->timeElapsed / i->lifeSpan;
+		float b = 1.5f * i->colour.z - i->colour.z * i->timeElapsed / i->lifeSpan;
 		lines->DrawLineSegment(i->startPosition, i->endPosition, {r,g,b});
 		if (i->timeElapsed > i->lifeSpan)
 			i = blasts.erase(i);
@@ -177,7 +155,7 @@ void Sync::Update(
 
 void Sync::GUI()
 {
-	//ImGui::Text("");
+	//ImGui::Text(""); 
 	if (ImGui::CollapsingHeader("Sync Component"))
 	{
 		ImGui::Indent();
@@ -190,13 +168,11 @@ void Sync::GUI()
 		if (ImGui::CollapsingHeader("Misfire Properties"))
 		{
 			ImGui::DragInt("Misfire Damage", &misfireDamage);
-			ImGui::DragFloat("Misfire Charge Cost", &misfireChargeCost);
 			ImGui::DragFloat("Misfire Shot Speed", &misfireShotSpeed);
 		}
 		if (ImGui::CollapsingHeader("Sniper Shot Properties"))
 		{
 			ImGui::DragInt("Sniper Damage", &sniperDamage);
-			ImGui::DragFloat("Sniper Charge Cost", &sniperChargeCost);
 			ImGui::DragFloat("Sniper Charge Time", &sniperChargeTime);
 			ImGui::DragFloat("Sniper Beam life span", &sniperBeamLifeSpan);
 			ImGui::ColorEdit3("Sniper Beam Colour", &sniperBeamColour[0]);
@@ -204,7 +180,6 @@ void Sync::GUI()
 		if (ImGui::CollapsingHeader("Overclock Shot Properties"))
 		{
 			ImGui::DragInt("Damage", &overclockDamage);
-			ImGui::DragFloat("Charge Cost", &overclockChargeCost);
 			ImGui::DragFloat("Charge Time", &overclockChargeTime);
 			ImGui::DragFloat("Beam life span", &overclockBeamLifeSpan);
 			ImGui::ColorEdit3("Beam Colour", &overclockBeamColour[0]);
@@ -214,8 +189,6 @@ void Sync::GUI()
 			ImGui::DragFloat("Refraction Beams Angle", &eccoRefractionAngle);
 		}
 		
-		ImGui::DragFloat("Max Charge", &maxCharge);
-		ImGui::DragFloat("Current Charge", &currCharge);
 		ImGui::Unindent();
 	}
 }
@@ -229,15 +202,12 @@ toml::table Sync::Serialise() const
 		{ "moveDeadZone", moveDeadZone },
 		{ "barrelOffset", Serialisation::SaveAsVec3(barrelOffset) },
 		{ "misfireDamage", misfireDamage },
-		{ "misfireChargeCost", misfireChargeCost },
 		{ "misfireShotSpeed", misfireShotSpeed },
 		{ "sniperDamage", sniperDamage },
-		{ "sniperChargeCost", sniperChargeCost },
 		{ "sniperChargeTime", sniperChargeTime },
 		{ "sniperBeamLifeSpan", sniperBeamLifeSpan },
 		{ "sniperBeamColour", Serialisation::SaveAsVec3(sniperBeamColour) },
 		{ "overclockDamage", overclockDamage },
-		{ "overclockChargeCost", overclockChargeCost },
 		{ "overclockChargeTime", overclockChargeTime },
 		{ "overclockBeamLifeSpan", overclockBeamLifeSpan },
 		{ "overclockBeamColour", Serialisation::SaveAsVec3(overclockBeamColour) },
@@ -245,14 +215,12 @@ toml::table Sync::Serialise() const
 		{ "enemyPierceCount", enemyPierceCount },
 		{ "eccoRefractionAngle", eccoRefractionAngle },
 		{ "eccoRefractionCount", eccoRefractionCount },
-		{ "maxCharge", maxCharge },
 		{ "misfireColliderRadius", misfireColliderRadius },
 	};
 }
 
 void Sync::ShootMisfire(glm::vec3 pos)
 {
-	currCharge -= misfireChargeCost;
 	SceneObject* shot = new SceneObject(SceneManager::scene);
 	shot->setRenderer(misfireModelRender);
 
@@ -268,27 +236,27 @@ void Sync::ShootMisfire(glm::vec3 pos)
 
 void Sync::ShootSniper(glm::vec3 pos)
 {
-	currCharge -= sniperChargeCost;
 	std::vector<Hit> hits;
-	PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast));
-	Hit hit = hits[0];
-	blasts.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
-	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+	if (PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::ecco | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast)))
 	{
-		hit.sceneObject->health()->subtractHealth(sniperDamage, hit.sceneObject);
+		Hit hit = hits[0];
+		blasts.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
+		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+		{
+			hit.sceneObject->health()->subtractHealth(sniperDamage, hit.sceneObject);
+		}
 	}
 }
 
 void Sync::ShootOverClocked(glm::vec3 pos)
 {
-	currCharge -= overclockChargeCost;
 	OverclockRebounding(pos, fireDirection, 0, overclockBeamColour);
 }
 
 void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour)
 {
 	std::vector<Hit> hits;
-	if (PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast)))
+	if (PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::eccoProjectile | (int)CollisionLayers::ecco | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast)))
 	{
 		Hit hit = hits[0];
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
@@ -312,8 +280,8 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 		{
 			float s = 0.95f;
 			float v = 0.95f;
-			float angle = -eccoRefractionAngle * eccoRefractionCount / 2.0f;
-			for (int iter = 0; iter < eccoRefractionCount; iter++)
+			float angle = - eccoRefractionAngle / 2.0f;
+			for (int iter = 0; iter < eccoRefractionCount; iter++, angle += eccoRefractionAngle / (eccoRefractionCount - 1))
 			{
 				float h = iter / (float)eccoRefractionCount;
 				int i = int(h * 6.0f);
@@ -340,7 +308,6 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 				};
 
 				OverclockNonRebounding({ hit.position.x, pos.y, hit.position.y }, refractionDirection, refractionColour);
-				angle += eccoRefractionAngle;
 			}
 		}
 		else if (count < overclockReboundCount && !(hit.collider->collisionLayer & (int)CollisionLayers::sync))

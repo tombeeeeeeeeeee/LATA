@@ -13,6 +13,7 @@
 #include "ModelRenderer.h"
 #include "Scene.h"
 #include "Paths.h"
+#include "Collision.h"
 
 #include "Utilities.h"
 
@@ -21,10 +22,8 @@
 #include "PhysicsSystem.h"
 #include "RenderSystem.h"
 #include "Hit.h"
+#include "Node.h"
 
-EnemySystem::EnemySystem()
-{
-}
 
 EnemySystem::EnemySystem(toml::table table)
 {
@@ -47,9 +46,6 @@ EnemySystem::EnemySystem(toml::table table)
 
 void EnemySystem::Start()
 {
-    inactiveMeleeParent = new SceneObject(SceneManager::scene, "Inactive Melee Enemies");
-    inactiveRangedParent = new SceneObject(SceneManager::scene, "Inactive Ranged Enemies");
-
     if (!meleeEnemyRenderer)
     {
         Material* meleeEnemyMaterial = ResourceManager::defaultMaterial;
@@ -71,109 +67,94 @@ void EnemySystem::Start()
     }
 }
 
-unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos)
+void EnemySystem::SpawnExplosive(glm::vec3 pos)
 {
-    unsigned long long GUID = 0;
+    Scene* scene = SceneManager::scene;
 
-    //If there is no enemies left in the pool make a new enemy
-    if (meleeEnemyPoolCount <= 0)
-    {
-        GUID = InitialiseMelee(sceneObjects, 1)[0];
-    }
-    else
-    {
-        GUID = meleeInactivePool[--meleeEnemyPoolCount];
-        meleeInactivePool.pop_back();
-    }
+    SceneObject* enemy = new SceneObject(scene, "ExplosiveEnemy" + std::to_string(explosiveEnemyCount++));
+    enemy->setEnemy(new Enemy());
+    enemy->setHealth(new Health());
+    enemy->health()->setMaxHealth(explosiveEnemyHealth);
+    enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroExplosive(hp); });
+    enemy->setRigidBody(new RigidBody());
+    enemy->rigidbody()->invMass = 1.0f;
+    enemy->setRenderer(
+        explosiveEnemyRenderer
+    );
+    enemy->transform()->setParent(nullptr);
+    enemy->transform()->setPosition(pos);
+    enemy->health()->currHealth = explosiveEnemyHealth;
+    enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy) };
+    enemy->rigidbody()->isStatic = false;
+}
 
-    SceneObject* enemy = sceneObjects[GUID];
-    meleeActivePool.push_back(GUID);
+void EnemySystem::SpawnMelee(glm::vec3 pos)
+{
+    Scene* scene = SceneManager::scene;
 
+    SceneObject* enemy = new SceneObject(scene, "MeleeEnemy" + std::to_string(meleeEnemyCount++));
+    enemy->setEnemy(new Enemy());
+    enemy->setHealth(new Health());
+    enemy->health()->setMaxHealth(meleeEnemyHealth);
+    enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroMelee(hp); });
+    enemy->setRigidBody(new RigidBody());
+    enemy->rigidbody()->invMass = 1.0f;
+    enemy->setRenderer(
+        meleeEnemyRenderer
+    );
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
     enemy->health()->currHealth = meleeEnemyHealth;
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
-
-    return GUID;
 }
 
-unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos)
+void EnemySystem::SpawnRanged(glm::vec3 pos)
 {
-    unsigned long long GUID = 0;
+    Scene* scene = SceneManager::scene;
 
-    if (rangedEnemyPoolCount <= 0)
-    {
-        GUID = InitialiseRanged(sceneObjects, 1)[0];
-    }
-    else
-    {
-        GUID = rangedInactivePool[--rangedEnemyPoolCount];
-        rangedInactivePool.pop_back();
-    }
-
-    SceneObject* enemy = sceneObjects[GUID];
-    rangedActivePool.push_back(GUID);
+    SceneObject* enemy = new SceneObject(scene, "RangedEnemy" + std::to_string(rangedEnemyCount++));
+    enemy->setHealth(new Health());
+    enemy->health()->setMaxHealth(rangedEnemyHealth);
+    enemy->health()->currHealth = rangedEnemyHealth;
+    enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroRanged(hp); });
+    enemy->setRigidBody(new RigidBody());
+    enemy->rigidbody()->invMass = 1.0f;
+    enemy->setRenderer(
+        rangedEnemyRenderer
+    );
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
-    enemy->health()->currHealth = rangedEnemyHealth;
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
-
-    return GUID;
 }
 
-bool EnemySystem::DespawnMelee(SceneObject* sceneObject)
+bool EnemySystem::Despawn(SceneObject* sceneObject)
 {
-    bool hasBeenDespawned = false;
-    int GUID = sceneObject->GUID;
 
-    for (auto i = meleeActivePool.begin(); i != meleeActivePool.end(); i++)
+    if (sceneObject->parts & Parts::enemy)
     {
-        if ((*i) == GUID)
-        {
-            hasBeenDespawned = true;
-            meleeActivePool.erase(i);
-            meleeInactivePool.push_back(GUID);
-            SceneObject* enemy = sceneObject;
-            enemy->transform()->setParent(inactiveMeleeParent->transform());
-            enemy->transform()->setPosition(offscreenSpawnPosition);
-            enemy->rigidbody()->colliders = {};
-            enemy->rigidbody()->isStatic = true;
-            break;
-        }
+        SceneManager::scene->DeleteSceneObject(sceneObject->GUID);
+        return true;
     }
-    return hasBeenDespawned;
+
+    return false;
 }
 
-bool EnemySystem::DespawnRanged(SceneObject* sceneObject)
-{
-    bool hasBeenDespawned = false;
-    int GUID = sceneObject->GUID;
 
-    for (auto i = meleeActivePool.begin(); i != meleeActivePool.end(); i++)
+void EnemySystem::OnHealthZeroExplosive(HealthPacket healthpacket)
+{
+    if (healthpacket.so)
     {
-        if ((*i) == GUID)
-        {
-            hasBeenDespawned = true;
-            rangedActivePool.erase(i);
-            rangedInactivePool.push_back(GUID);
-            SceneObject* enemy = sceneObject;
-            enemy->transform()->setParent(inactiveRangedParent->transform());
-            enemy->transform()->setPosition(offscreenSpawnPosition);
-            enemy->rigidbody()->colliders = {};
-            enemy->rigidbody()->isStatic = true;
-            break;
-        }
+        Despawn(healthpacket.so);
     }
-    return hasBeenDespawned;
 }
 
 void EnemySystem::OnHealthZeroMelee(HealthPacket healthpacket)
 {
     if (healthpacket.so)
     {
-        DespawnMelee(healthpacket.so);
+        Despawn(healthpacket.so);
     }
 }
 
@@ -181,11 +162,11 @@ void EnemySystem::OnHealthZeroRanged(HealthPacket healthpacket)
 {
     if (healthpacket.so)
     {
-        DespawnRanged(healthpacket.so);
+        Despawn(healthpacket.so);
     }
 }
 
-void EnemySystem::Boiding(
+void EnemySystem::LineOfSightAndTargetCheck(
     std::unordered_map<unsigned long long, Enemy>& enemies,
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
@@ -194,12 +175,11 @@ void EnemySystem::Boiding(
 
     glm::vec2 syncPos2D = { sync->transform()->getGlobalPosition().x, sync->transform()->getGlobalPosition().z };
     glm::vec2 eccoPos2D = { ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
-    for (auto& enemyGUID : meleeActivePool)
+    for (auto& enemyPair : enemies)
     {
-        glm::vec2 enemyPos2D = { transforms[enemyGUID].getGlobalPosition().x, transforms[enemyGUID].getGlobalPosition().z };
-        int total = 0;
-        int alignmentTotal = 0;
-        glm::vec2 direction = {};
+        enemyPair.second.hasLOS = false;
+        glm::vec2 enemyPos2D = { transforms[enemyPair.first].getGlobalPosition().x, transforms[enemyPair.first].getGlobalPosition().z };
+
         float distanceToSync = FLT_MAX;
 
         std::vector<Hit> syncHits;
@@ -207,97 +187,39 @@ void EnemySystem::Boiding(
         if (PhysicsSystem::RayCast(
             enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
             syncHits, FLT_MAX,
-            (int)CollisionLayers::sync | (int)CollisionLayers::base)
-        )
+            (int)CollisionLayers::sync | (int)CollisionLayers::base )
+        ) 
         {
-            for (Hit& hit : syncHits)
+            Hit hit = syncHits[0];
+            if (hit.sceneObject->parts & Parts::sync)
             {
-                if (hit.sceneObject->parts & Parts::sync)
-                {
-                    distanceToSync = hit.distance;
-                    direction = glm::normalize(syncPos2D - enemyPos2D);
-                }
+                distanceToSync = hit.distance;
+                enemyPair.second.lastTargetPos = syncPos2D;
+                enemyPair.second.hasLOS = true;
             }
-
         }
         if (PhysicsSystem::RayCast(
             enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
             eccoHits, FLT_MAX,
-            (int)CollisionLayers::ecco | (int)CollisionLayers::base)
+            (int)CollisionLayers::ecco | (int)CollisionLayers::base )
             )
         {
-            for (Hit& hit : eccoHits)
+            Hit hit = eccoHits[0];
+            if (hit.sceneObject->parts & Parts::ecco)
             {
-                if (hit.sceneObject->parts & Parts::ecco)
+                if (hit.distance < distanceToSync)
                 {
-                    if (hit.distance < distanceToSync)
-                    {
-                        direction = glm::normalize(eccoPos2D - enemyPos2D);
-                    }
+                    enemyPair.second.lastTargetPos = eccoPos2D;
+                    enemyPair.second.hasLOS = true;
                 }
-            }
-        }
-
-        if (glm::length(direction) > 0)
-        {
-            rigidbodies[enemyGUID].vel = direction * maxSpeed;
-        }
-        else
-        {
-            glm::vec2 sep = {0.0f, 0.0f};
-            glm::vec2 ali = {0.0f, 0.0f};
-            glm::vec2 coh = {0.0f, 0.0f};
-
-            for (auto& otherEnemyGUID : meleeActivePool)
-            {
-                if (otherEnemyGUID == enemyGUID) continue;
-                glm::vec2 otherEnemyPos2D = { transforms[otherEnemyGUID].getGlobalPosition().x, transforms[otherEnemyGUID].getGlobalPosition().z };
-                float distance = glm::length(otherEnemyPos2D - enemyPos2D);
-                if (distance <= perceptionRadius)
-                {
-                    glm::vec2 diff = enemyPos2D - otherEnemyPos2D;
-
-                    sep += diff;
-                    if (distance <= alignmentRadius)
-                    {
-                        ali += rigidbodies[otherEnemyGUID].vel;
-                        alignmentTotal++;
-                    }
-
-                    coh += otherEnemyPos2D;
-
-                    total++;
-                }
-            }
-            if (total == 0)
-            {
-                rigidbodies[enemyGUID].vel = {0.0f, 0.0f};
-            }
-            else
-            {
-                sep *= seperationCoef;
-
-                glm::vec2 sumAli = { 0.0f, 0.0f };
-                if (alignmentTotal != 0)
-                {
-                    ali /= alignmentTotal;
-                    sumAli = ali - rigidbodies[enemyGUID].vel;
-                    sumAli *= alignmentCoef;
-                }
-
-                coh /= total;
-                glm::vec2 sumCoh = coh - enemyPos2D;
-                sumCoh *= cohesionCoef;
-
-                glm::vec2 vel = sep + sumAli + sumCoh;
-
-                vel = Utilities::ClampMag(vel, 0, maxSpeed);
-
-                RenderSystem::lines.DrawLineSegment(transforms[enemyGUID].getGlobalPosition(), transforms[enemyGUID].getGlobalPosition() + glm::vec3(vel.x*2, 0.0f, vel.y*2), {1,0,0});
-                rigidbodies[enemyGUID].vel = vel;
             }
         }
     }
+}
+
+void EnemySystem::UpdateEnemiesPathFinding(Enemy& enemy, Transform& transform, RigidBody& rb, float delta)
+{
+    
 }
 
 //TODO: Add AI Pathfinding and attacking in here.
@@ -310,7 +232,7 @@ void EnemySystem::Update(
 {
     if (aiUpdating)
     {
-        Boiding(
+        LineOfSightAndTargetCheck(
             enemies,
             transforms,
             rigidbodies,
@@ -318,133 +240,139 @@ void EnemySystem::Update(
         );
 
         //TODO ADD States and Transitions
-        //for (auto& enemyPair : enemies)
-        //{
-        //    Enemy& enemy = enemyPair.second;
-        //    SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
-        //    State* newState = nullptr;
-        //
-        //    // check the current state's transitions
-        //    for (auto& t : enemy.state->transitions)
-        //    {
-        //        if (t.condition->IsTrue(agent))
-        //        {
-        //            newState = t.targetState;
-        //            break;
-        //        }
-        //    }
-        //
-        //
-        //    if (newState != nullptr && newState != enemy.state)
-        //    {
-        //        enemy.state->Exit(agent);
-        //        enemy.state = newState;
-        //        enemy.state->Enter(agent);
-        //    }
-        //
-        //    enemy.state->Update(agent);
-        //}
-    }
-    if (addEnemiesThisUpdate)
-    {
-        AddUnlistedEnemiesToSystem(enemies, transforms);
+        for (auto& enemyPair : enemies)
+        {
+            Enemy& enemy = enemyPair.second;
+            SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
+            State* newState = nullptr;
+        
+            // check the current state's transitions
+            for (auto& t : enemy.state->transitions)
+            {
+                if (t.condition->IsTrue(agent))
+                {
+                    newState = t.targetState;
+                    break;
+                }
+            }
+        
+        
+            if (newState != nullptr && newState != enemy.state)
+            {
+                enemy.state->Exit(agent);
+                enemy.state = newState;
+                enemy.state->Enter(agent);
+            }
+        
+            enemy.state->Update(agent);
+            UpdateEnemiesPathFinding(enemy, transforms[enemyPair.first], rigidbodies[enemyPair.first], delta);
+        }
     }
 }
 
-void EnemySystem::AddUnlistedEnemiesToSystem(
+void EnemySystem::SpawnEnemiesInScene(
     std::unordered_map<unsigned long long, Enemy>& enemies,
-    std::unordered_map<unsigned long long, Transform>& transforms
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    bool spawner
 )
 {
     for (auto& enemyPair : enemies)
     {
-        bool isAlreadyMarked = false;
-        switch (enemyPair.second.type)
+        if ((enemyPair.second.type & (int)EnemyType::spawnSpot) == (int)spawner)
         {
-        case EnemyType::melee:
-
-            for (int i = 0; i < meleeInactivePool.size(); i++)
-            {
-                if (meleeInactivePool[i] == enemyPair.first)
-                {
-                    isAlreadyMarked = true;
-                    break;
-                }
-            }
-
-            for (int i = 0; i < meleeActivePool.size(); i++)
-            {
-                if (meleeActivePool[i] == enemyPair.first)
-                {
-                    isAlreadyMarked = true;
-                    break;
-                }
-            }
-            if (isAlreadyMarked) break;
-
-            else
-            {
-                if(transforms[enemyPair.first].getGlobalPosition().y == 0.0f)
-                    meleeActivePool.push_back(enemyPair.first);
-                else
-                {
-                    meleeInactivePool.push_back(enemyPair.first);
-                    meleeEnemyPoolCount++;
-                }
-            }
-
-            break;
-
-        case EnemyType::ranged:
-
-            for (int i = 0; i < rangedInactivePool.size(); i++)
-            {
-                if (rangedInactivePool[i] == enemyPair.first)
-                {
-                    isAlreadyMarked = true;
-                    break;
-                }
-            }
-
-            for (int i = 0; i < rangedActivePool.size(); i++)
-            {
-                if (rangedActivePool[i] == enemyPair.first)
-                {
-                    isAlreadyMarked = true;
-                    break;
-                }
-            }
-            if (isAlreadyMarked) break;
-
-            else
-            {
-                if (transforms[enemyPair.first].getGlobalPosition().y == 0.0f)
-                    rangedActivePool.push_back(enemyPair.first);
-                else
-                {
-                    rangedInactivePool.push_back(enemyPair.first);
-                    rangedEnemyPoolCount++;
-                }
-            }
-            break;
+            if (enemyPair.second.type & (int)EnemyType::melee)
+                SpawnMelee(transforms[enemyPair.first].getGlobalPosition());
+            else if (enemyPair.second.type & (int)EnemyType::ranged)
+                SpawnRanged(transforms[enemyPair.first].getGlobalPosition());
+            else if (enemyPair.second.type & (int)EnemyType::explosive)
+                SpawnExplosive(transforms[enemyPair.first].getGlobalPosition());
         }
     }
+}
+
+std::vector<Node*> EnemySystem::AStarSearch(Node* startNode, Node* endNode)
+{
+    std::vector<Node*> open;
+    std::vector<Node*> closed;
+    std::vector<Node*> path;
+
+    Node* currNode = nullptr;
+    int gScore = 0;
+
+    if (startNode == nullptr || endNode == nullptr)
+    {
+        return std::vector<Node*>();
+    }
+    else if (startNode == endNode)
+    {
+        return std::vector<Node*>();
+    }
+
+    startNode->gScore = 0;
+    startNode->previous = nullptr;
+
+    open.push_back(startNode);
+
+    do
+    {
+        //sort(open.begin(), open.end(), CompareNodes);
+        currNode = open.back();
+        open.pop_back();
+        if (currNode == endNode)  break;
+        closed.push_back(currNode);
+
+        for (auto con : currNode->connections)
+        {
+            if (find(closed.begin(), closed.end(), con.target) == closed.end())
+            {
+                gScore = currNode->gScore + con.cost;
+                float hScore = Hueristic(con.target, endNode);
+                float fScore = gScore + hScore;
+                if (find(open.begin(), open.end(), con.target) == open.end())
+                {
+                    con.target->gScore = gScore;
+                    con.target->fScore = fScore;
+                    con.target->previous = currNode;
+                    open.push_back(con.target);
+                }
+                else if (fScore < con.target->fScore)
+                {
+                    con.target->gScore = gScore;
+                    con.target->fScore = fScore;
+                    con.target->previous = currNode;
+                }
+            }
+        }
+
+    } while (open.size() != 0);
+
+    if (open.empty()) return std::vector<Node*>();
+
+    currNode = endNode;
+    do
+    {
+        path.insert(path.begin(), currNode);
+        currNode = currNode->previous;
+    } while (currNode != nullptr);
+
+    return path;
+}
+
+float EnemySystem::Hueristic(Node* pos, Node* end)
+{
+    return 0.0f;
+}
+
+bool EnemySystem::CompareNodes(Node* a, Node* b)
+{
+    return a->fScore > b->fScore;
 }
 
 void EnemySystem::GUI()
 {
     ImGui::Checkbox("AI Updating",&aiUpdating);
 
-    if(ImGui::Button("Add New Enemies to list"))
-    {
-        addEnemiesThisUpdate = true;
-    }
-
     ImGui::Text("AI STATS");
-    ImGui::DragFloat("Sense Radius", &perceptionRadius);
-    ImGui::DragFloat("Alignment Coefficient", &alignmentCoef);
-    ImGui::DragFloat("Cohesion Coefficient", &cohesionCoef);
-    ImGui::DragFloat("Seperation Coefficient", &seperationCoef);
     ImGui::DragFloat("Max Speed", &maxSpeed);
 
 
@@ -488,62 +416,14 @@ toml::table EnemySystem::Serialise() const
         { "rangedEnemyColliderRadius", rangedEnemyColliderRadius },
         { "rangedEnemyModel", rangedEnemyModel },
         { "rangedEnemyMaterialPath", rangedEnemyMaterialPath },
-        { "offscreenSpawnPosition", Serialisation::SaveAsVec3(offscreenSpawnPosition) },
     };
 }
 
-std::vector<unsigned long long> EnemySystem::InitialiseMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count)
+void EnemySystem::OnMeleeCollision(Collision collision)
 {
-    std::vector<unsigned long long> enemiesSpawned;
-    enemiesSpawned.reserve(count);
-    Scene* scene = SceneManager::scene;
-
-    for (int i = 0; i < count; i++)
+    if (collision.collisionMask & (int)CollisionLayers::sync || collision.collisionMask & (int)CollisionLayers::ecco)
     {
-        SceneObject* enemy = new SceneObject(scene, "MeleeEnemy" + std::to_string(meleeEnemyPoolCount));
-        enemy->transform()->setParent(inactiveMeleeParent->transform());
-        enemy->transform()->setPosition(offscreenSpawnPosition);
-        enemy->setEnemy(new Enemy());
-        enemy->setHealth(new Health());
-        enemy->health()->setMaxHealth(meleeEnemyHealth);
-        enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroMelee(hp); });
-        enemy->setRigidBody(new RigidBody());
-        enemy->rigidbody()->invMass = 1.0f;
-        enemy->setRenderer(
-            meleeEnemyRenderer
-        );
-        enemiesSpawned.push_back(enemy->GUID);
-        meleeEnemyPoolCount++;
+        collision.sceneObject->health()->subtractHealth(meleeEnemyDamage);
     }
-    meleeInactivePool.insert(meleeInactivePool.end(), enemiesSpawned.begin(), enemiesSpawned.end());
-
-    return enemiesSpawned;
-}
-
-std::vector<unsigned long long> EnemySystem::InitialiseRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, int count)
-{
-    std::vector<unsigned long long> enemiesSpawned;
-    enemiesSpawned.reserve(count);
-    Scene* scene = SceneManager::scene;
-
-    for (int i = 0; i < count; i++)
-    {
-        SceneObject* enemy = new SceneObject(scene, "RangedEnemy" + std::to_string(rangedEnemyPoolCount));
-        enemy->transform()->setParent(inactiveRangedParent->transform());
-        enemy->transform()->setPosition(offscreenSpawnPosition);
-        enemy->setHealth(new Health());
-        enemy->health()->setMaxHealth(rangedEnemyHealth);
-        enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroRanged(hp); });
-        enemy->setRigidBody(new RigidBody());
-        enemy->rigidbody()->invMass = 1.0f;
-        enemy->setRenderer(
-            rangedEnemyRenderer
-        );
-        enemiesSpawned.push_back(enemy->GUID);
-        rangedEnemyPoolCount++;
-    }
-    rangedInactivePool.insert(rangedInactivePool.end(), enemiesSpawned.begin(), enemiesSpawned.end());
-
-    return enemiesSpawned;
 }
 

@@ -289,8 +289,9 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 
 void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 {
-	Collision collisionFromBsPerspective = { collision.rigidBodyA, collision.soA, collision.normal, collision.colliderA->collisionLayer | collision.colliderB->collisionLayer , collision.soB };
-	Collision collisionFromAsPerspective = { collision.rigidBodyB, collision.soB, -collision.normal, collision.colliderA->collisionLayer | collision.colliderB->collisionLayer , collision.soA };
+
+	Collision collisionFromBsPerspective = { collision.rigidBodyA, collision.soA, collision.normal, collision.colliderA->collisionLayer | collision.colliderB->collisionLayer, collision.soB };
+	Collision collisionFromAsPerspective = { collision.rigidBodyB, collision.soB, -collision.normal, collision.colliderA->collisionLayer | collision.colliderB->collisionLayer, collision.soA };
 
 	if (collision.depth < 0) return;
 	if (collision.colliderA->isTrigger && collision.colliderB->isTrigger) return;
@@ -329,10 +330,7 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 	collision.rigidBodyA->AddDepen(collision.normal * collision.depth * collision.rigidBodyA->invMass / totalMass);
 	collision.rigidBodyB->AddDepen(-collision.normal * collision.depth * collision.rigidBodyB->invMass / totalMass);
 
-	glm::vec2 relativeVelocity = 
-		collision.rigidBodyA->vel - collision.rigidBodyB->vel;
-		//(collision.rigidBodyA->vel + collision.rigidBodyA->angularVel * radiusPerpA)
-		//- (collision.rigidBodyB->vel + collision.rigidBodyB->angularVel * radiusPerpB);
+	glm::vec2 relativeVelocity = collision.rigidBodyA->vel - collision.rigidBodyB->vel;
 
 	float totalInverseMass = (collision.rigidBodyA->invMass + collision.rigidBodyB->invMass);
 
@@ -344,15 +342,18 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 
 	glm::vec2 linearRestitution = j * collision.normal;
 
-	collision.rigidBodyA->AddImpulse(linearRestitution);
-	collision.rigidBodyB->AddImpulse(-linearRestitution);
+	if(!collision.rigidBodyA->ignoreThisCollision)
+		collision.rigidBodyA->AddImpulse(linearRestitution);
+	if (!collision.rigidBodyB->ignoreThisCollision)
+		collision.rigidBodyB->AddImpulse(-linearRestitution);
 
 	//if (abs(glm::dot(radiusPerpA, collision.normal)) > 0.000001f)
 	//	collision.rigidBodyA->AddRotationalImpulse(glm::dot(radiusPerpA, linearRestitution));
 	//
 	//if (abs(glm::dot(radiusPerpB, collision.normal)) > 0.000001f)
 	//	collision.rigidBodyB->AddRotationalImpulse(glm::dot(radiusPerpB, -linearRestitution));
-
+	collision.rigidBodyA->ignoreThisCollision = false;
+	collision.rigidBodyB->ignoreThisCollision = false;
 }
 
 void PhysicsSystem::SetCollisionLayerMask(int a, int b, bool state)

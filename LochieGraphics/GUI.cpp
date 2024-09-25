@@ -24,121 +24,131 @@ void GUI::Update()
 	ImGuiIO& io = ImGui::GetIO();
 	// TODO: GUI Shouldn't exist for a build version
 	//if (true) { return; }
-
-	if (ImGui::BeginMainMenuBar()) {
-		if (ImGui::BeginMenu("File")) {
-			if (ImGui::MenuItem("Save")) {
-				scene->Save();
-			}
-			if (ImGui::MenuItem("Load")) {
-				scene->Load();
-			}
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("Windows")) {
-			ImGui::MenuItem("Test Menu", NULL, &showTestMenu);
-			ImGui::MenuItem("Resource Menu", NULL, &showResourceMenu);
-			ImGui::MenuItem("Camera Menu", NULL, &showCameraMenu);
-			if (ImGui::MenuItem("SceneObject Menu", NULL, &showSceneObject)) {
-				showHierarchy = showSceneObject;
-			}
-			ImGui::MenuItem("Light Menu", NULL, &showLightMenu);
-			if (ImGui::MenuItem("Hierarchy", NULL, &showHierarchy)) {
-				showSceneObject = showHierarchy;
-			}
-			ImGui::MenuItem("Physics System", NULL, &showPhysicsMenu);
-			ImGui::MenuItem("Enemy System", NULL, &showEnemyMenu);
-			ImGui::MenuItem("Imgui Demo", NULL, &showImguiExampleMenu);
-			ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
-
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("SceneObject")) {
-			if (ImGui::MenuItem("Create New")) {
-				// NOTE: This is okay, it's the scene's responsibility to delete the sceneobjects
-				// TODO: This looks bad, make a scene function instead so it can look bad somewhere else
-				new SceneObject(scene);
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMainMenuBar();
-	}
-
-	if (showTestMenu)         { TestMenu();                 }
-	if (showResourceMenu)     { ResourceMenu();             }
-	if (showCameraMenu)       { CameraMenu();               }
-	if (showSceneObject)      { SceneObjectMenu();          }
-	if (showLightMenu)        { LightMenu();                }
-	if (showHierarchy)        { HierarchyMenu();            }
-	if (showPhysicsMenu)	  { PhysicsMenu();              }
-	if (showEnemyMenu)	      { EnemyMenu();                }
-	if (showImguiExampleMenu) { ImGui::ShowDemoWindow();    }
-	if (showRenderSystemMenu) { scene->renderSystem.GUI(); }
-	scene->BaseGUI();
-	scene->GUI();
-
-	// Update Potential Modals
-	// TODO: Would be good if could be in the material class, perhaps the material input is shown via the material class, so that the material could handle the modal
-	for (auto& i : ResourceManager::materials)
+	if (glfwGetKey(SceneManager::window, GLFW_KEY_RIGHT_ALT))
 	{
-		i.second.ModalGUI();
+		if (!disableGUIHeld)
+			scene->displayGUI = !scene->displayGUI;
+		disableGUIHeld = true;
 	}
+	else disableGUIHeld = false;
 
-	// TODO: Customisable keys
-	if (glfwGetKey(SceneManager::window, GLFW_KEY_G) == GLFW_PRESS && !io.WantCaptureKeyboard) {
-		if (!operationChanged) {
-			if (transformGizmoOperation == 7) {
-				transformGizmoOperation = 120;
+	if (scene->displayGUI)
+	{
+		if (ImGui::BeginMainMenuBar()) {
+			if (ImGui::BeginMenu("File")) {
+				if (ImGui::MenuItem("Save")) {
+					scene->Save();
+				}
+				if (ImGui::MenuItem("Load")) {
+					scene->Load();
+				}
+				ImGui::EndMenu();
 			}
-			else if (transformGizmoOperation == 120) {
-				transformGizmoOperation = 7;
+			if (ImGui::BeginMenu("Windows")) {
+				ImGui::MenuItem("Test Menu", NULL, &showTestMenu);
+				ImGui::MenuItem("Resource Menu", NULL, &showResourceMenu);
+				ImGui::MenuItem("Camera Menu", NULL, &showCameraMenu);
+				if (ImGui::MenuItem("SceneObject Menu", NULL, &showSceneObject)) {
+					showHierarchy = showSceneObject;
+				}
+				ImGui::MenuItem("Light Menu", NULL, &showLightMenu);
+				if (ImGui::MenuItem("Hierarchy", NULL, &showHierarchy)) {
+					showSceneObject = showHierarchy;
+				}
+				ImGui::MenuItem("Physics System", NULL, &showPhysicsMenu);
+				ImGui::MenuItem("Enemy System", NULL, &showEnemyMenu);
+				ImGui::MenuItem("Imgui Demo", NULL, &showImguiExampleMenu);
+				ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
+
+				ImGui::EndMenu();
 			}
-		}
-		operationChanged = true;
-	}
-	else {
-		operationChanged = false;
-	}
-
-	// Transform GIZMO
-	if (sceneObjectSelected) {
-		// TODO: This should be somewhere else
-		ImGuizmo::SetOrthographic(SceneManager::scene->camera->InOrthoMode());
-
-		//SceneManager
-		// TODO: should be moving window stuff out of scenemanager directly
-		// TODO: There should be a window pos change callback, should justbe stored somewhere
-		int xOffset, yOffset;
-		glfwGetWindowPos(SceneManager::window, &xOffset, &yOffset);
-		ImGuizmo::SetRect((float)xOffset, (float)yOffset, io.DisplaySize.x, io.DisplaySize.y);
-		glm::mat4 editMatrix = sceneObjectSelected->transform()->getGlobalMatrix();
-		if (ImGuizmo::Manipulate(&SceneManager::view[0][0], &SceneManager::projection[0][0], (ImGuizmo::OPERATION)transformGizmoOperation, ImGuizmo::MODE::WORLD, &editMatrix[0][0])) {
-			glm::vec3 pos = {};
-			glm::vec3 rot = {};
-			glm::vec3 scl = {};
-			// TODO: Use own function
-			ImGuizmo::DecomposeMatrixToComponents(&editMatrix[0][0], &pos.x, &rot.x, &scl.x);
-			Transform* t = sceneObjectSelected->transform();
-			// TODO: THis might break for children need to be doing stuff in local
-			t->setPosition(pos);
-			t->setEulerRotation(rot);
-			t->setScale(scl);
+			if (ImGui::BeginMenu("SceneObject")) {
+				if (ImGui::MenuItem("Create New")) {
+					// NOTE: This is okay, it's the scene's responsibility to delete the sceneobjects
+					// TODO: This looks bad, make a scene function instead so it can look bad somewhere else
+					new SceneObject(scene);
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
 		}
 
-		if (!io.WantCaptureKeyboard) {
-			// TODO: Customisable key
-			if (glfwGetKey(SceneManager::window, GLFW_KEY_L)) {
-				Transform* t = &SceneManager::scene->camera->transform;
-				glm::mat4 newCam = glm::lookAt(t->getGlobalPosition(), sceneObjectSelected->transform()->getGlobalPosition(), { 0.0f, 1.0f, 0.0f });
-				// TODO: Own function would be good
-				glm::vec3 pos = { 0.0f, 0.0f, 0.0f};
-				glm::vec3 rot = { 0.0f, 0.0f, 0.0f};
+		if (showTestMenu) { TestMenu(); }
+		if (showResourceMenu) { ResourceMenu(); }
+		if (showCameraMenu) { CameraMenu(); }
+		if (showSceneObject) { SceneObjectMenu(); }
+		if (showLightMenu) { LightMenu(); }
+		if (showHierarchy) { HierarchyMenu(); }
+		if (showPhysicsMenu) { PhysicsMenu(); }
+		if (showEnemyMenu) { EnemyMenu(); }
+		if (showImguiExampleMenu) { ImGui::ShowDemoWindow(); }
+		if (showRenderSystemMenu) { scene->renderSystem.GUI(); }
+		scene->BaseGUI();
+		scene->GUI();
+
+		// Update Potential Modals
+		// TODO: Would be good if could be in the material class, perhaps the material input is shown via the material class, so that the material could handle the modal
+		for (auto& i : ResourceManager::materials)
+		{
+			i.second.ModalGUI();
+		}
+
+		// TODO: Customisable keys
+		if (glfwGetKey(SceneManager::window, GLFW_KEY_G) == GLFW_PRESS && !io.WantCaptureKeyboard) {
+			if (!operationChanged) {
+				if (transformGizmoOperation == 7) {
+					transformGizmoOperation = 120;
+				}
+				else if (transformGizmoOperation == 120) {
+					transformGizmoOperation = 7;
+				}
+			}
+			operationChanged = true;
+		}
+		else {
+			operationChanged = false;
+		}
+
+		// Transform GIZMO
+		if (sceneObjectSelected) {
+			// TODO: This should be somewhere else
+			ImGuizmo::SetOrthographic(SceneManager::scene->camera->InOrthoMode());
+
+			//SceneManager
+			// TODO: should be moving window stuff out of scenemanager directly
+			// TODO: There should be a window pos change callback, should justbe stored somewhere
+			int xOffset, yOffset;
+			glfwGetWindowPos(SceneManager::window, &xOffset, &yOffset);
+			ImGuizmo::SetRect((float)xOffset, (float)yOffset, io.DisplaySize.x, io.DisplaySize.y);
+			glm::mat4 editMatrix = sceneObjectSelected->transform()->getGlobalMatrix();
+			if (ImGuizmo::Manipulate(&SceneManager::view[0][0], &SceneManager::projection[0][0], (ImGuizmo::OPERATION)transformGizmoOperation, ImGuizmo::MODE::WORLD, &editMatrix[0][0])) {
+				glm::vec3 pos = {};
+				glm::vec3 rot = {};
 				glm::vec3 scl = {};
 				// TODO: Use own function
-				ImGuizmo::DecomposeMatrixToComponents(&newCam[0][0], &pos.x, &rot.x, &scl.x);
-				//t->setPosition(pos);
+				ImGuizmo::DecomposeMatrixToComponents(&editMatrix[0][0], &pos.x, &rot.x, &scl.x);
+				Transform* t = sceneObjectSelected->transform();
+				// TODO: THis might break for children need to be doing stuff in local
+				t->setPosition(pos);
 				t->setEulerRotation(rot);
-				//t->setScale(scl);
+				t->setScale(scl);
+			}
+
+			if (!io.WantCaptureKeyboard) {
+				// TODO: Customisable key
+				if (glfwGetKey(SceneManager::window, GLFW_KEY_L)) {
+					Transform* t = &SceneManager::scene->camera->transform;
+					glm::mat4 newCam = glm::lookAt(t->getGlobalPosition(), sceneObjectSelected->transform()->getGlobalPosition(), { 0.0f, 1.0f, 0.0f });
+					// TODO: Own function would be good
+					glm::vec3 pos = { 0.0f, 0.0f, 0.0f };
+					glm::vec3 rot = { 0.0f, 0.0f, 0.0f };
+					glm::vec3 scl = {};
+					// TODO: Use own function
+					ImGuizmo::DecomposeMatrixToComponents(&newCam[0][0], &pos.x, &rot.x, &scl.x);
+					//t->setPosition(pos);
+					t->setEulerRotation(rot);
+					//t->setScale(scl);
+				}
 			}
 		}
 	}
@@ -390,17 +400,10 @@ void GUI::EnemyMenu()
 	{
 		for (int i = 0; i < 36; i++)
 		{
-			SceneObject* enemy = new SceneObject(scene, ("Test Enemy: " + std::to_string(i)).c_str());
-			enemy->transform()->setPosition({ -50.0f * (i / 6) - 50.0f, 0.0f, -50.0f * (i % 6) - 50.0f});
-			enemy->setEnemy(new Enemy());
-			enemy->setRigidBody(new RigidBody(1.0f, 1.0f));
-			enemy->rigidbody()->colliders.push_back(new PolygonCollider({ {0.0f, 0.0f} }, 75.0f, CollisionLayers::enemy));
-			enemy->setRenderer(new ModelRenderer(
-				ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Sphere" + Paths::modelExtension),
-				ResourceManager::defaultMaterial
-				)
-			);
+			glm::vec3 pos = { -250.0f * (i / 6) - 250.0f, 0.0f, -250.0f * (i % 6) - 250.0f };
+			es.SpawnMelee(pos);
 		}
+
 	}
 
 	es.GUI();

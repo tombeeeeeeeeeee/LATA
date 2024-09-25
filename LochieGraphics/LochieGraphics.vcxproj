@@ -295,6 +295,9 @@
     <ClCompile Include="..\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="..\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="WanderState.cpp" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="WanderState.h" />
     <None Include="..\Shaders\paintedNormals.frag">
       <FileType>Document</FileType>
     </None>
@@ -308,6 +311,7 @@
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
+    <ClCompile Include="DistanceAndLOSCondition.cpp" />
     <ClCompile Include="Ecco.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="CollisionFunctions.cpp" />
@@ -355,6 +359,7 @@
     <ClInclude Include="BlastLine.h" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="Condition.h" />
+    <ClInclude Include="DistanceAndLOSCondition.h" />
     <ClInclude Include="EditorGUI.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemySystem.h" />

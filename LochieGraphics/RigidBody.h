@@ -71,6 +71,7 @@ public:
 	toml::table Serialise(unsigned long long GUID) const;
 	RigidBody(toml::table table);
 
+	bool ignoreThisCollision = false;
 private:
 	//TODO: ADD FUNCTION POINTERS FOR ON COLLISION AND ON TRIGGER
 };

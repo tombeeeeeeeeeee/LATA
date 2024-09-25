@@ -112,11 +112,11 @@ void Ecco::Update(
 	//Nothingerator
 	if (glm::length(force) < 0.001f && glm::length(rigidBody.vel) > 0)
 	{
-		force += -rigidBody.vel * glm::length(rigidBody.vel) * stoppingFrictionCoef;
+		force += -rigidBody.vel * stoppingFrictionCoef;
 	}
 
 	//Stop Speed exceeding speed limit (Could change to be drag)
-	if (glm::length(rigidBody.vel + rigidBody.invMass * (force + rigidBody.netForce)) > maxCarMoveSpeed)
+	if (glm::length(rigidBody.vel + rigidBody.invMass * (force + rigidBody.netForce)) > maxCarMoveSpeed && glm::dot(force, rigidBody.vel) > 0)
 	{
 		force = glm::normalize(force) * (maxCarMoveSpeed - glm::length(rigidBody.vel)) / rigidBody.invMass;
 	}
@@ -167,6 +167,7 @@ void Ecco::OnCollision(Collision collision)
 			collision.sceneObject->health()->subtractHealth( speedDamage, collision.sceneObject);
 			rb->AddImpulse(glm::normalize(rb->vel) * -speedReductionAfterDamaging);
 			collision.self->health()->addHealth(healingFromDamage, collision.self);
+			rb->ignoreThisCollision = true;
 		}
 	}
 }
@@ -194,6 +195,7 @@ void Ecco::GUI()
 		ImGui::DragFloat("Stopping Wheel Drag", &stoppingFrictionCoef, 0.01f, 0.0f);
 		ImGui::Checkbox("Local Steering", &controlState);
 		ImGui::DragFloat("Speed Boost", &speedBoost);
+		ImGui::DragInt("Speed boost self damage", &speedBoostHPCost);
 		ImGui::DragFloat("Speed Boost Cooldown", &speedBoostCooldown);
 		ImGui::DragFloat("Minimum damaging speed", &minSpeedDamageThreshold);
 		ImGui::DragInt("On Collision Damage", &speedDamage);

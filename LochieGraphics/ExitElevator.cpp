@@ -29,6 +29,7 @@ void ExitElevator::Update()
 {
 	if (syncInExit && eccoInExit)
 	{
+		syncInExit = eccoInExit = false;
 		((LevelEditor*)SceneManager::scene)->LoadLevel(levelToLoad);
 	}
 	else
@@ -51,40 +52,43 @@ void ExitElevator::OnTrigger(Collision collision)
 
 void ExitElevator::GUI(SceneObject* so)
 {
-	if (hasBeenBound)ImGui::BeginDisabled();
-	if (ImGui::Button("Bind OnTrigger"))
+	if (ImGui::CollapsingHeader("Model Renderer"))
 	{
-		Initialise(so);
-	}
-	if (hasBeenBound)ImGui::EndDisabled();
-	if (ImGui::Button("Finish Level")) eccoInExit = syncInExit = true;
-
-	ImGui::Checkbox("Ecco In Exit", &eccoInExit);
-	ImGui::Checkbox("Sync In Exit", &syncInExit);
-
-	std::vector<std::string> loadPaths = {};
-	std::vector<std::string*> loadPathsPointers = {};
-	loadPaths.clear();
-	loadPathsPointers.clear();
-
-	for (auto& i : std::filesystem::directory_iterator(Paths::levelsPath))
-	{
-		loadPaths.push_back(i.path().generic_string().substr(Paths::levelsPath.size()));
-		if (loadPaths.back().substr(loadPaths.back().size() - Paths::levelExtension.size()) != Paths::levelExtension) {
-			loadPaths.erase(--loadPaths.end());
-			continue;
+		if (hasBeenBound)ImGui::BeginDisabled();
+		if (ImGui::Button("Bind OnTrigger"))
+		{
+			Initialise(so);
 		}
-		loadPaths.back() = loadPaths.back().substr(0, loadPaths.back().size() - Paths::levelExtension.size());
-	}
-	for (auto& i : loadPaths)
-	{
-		loadPathsPointers.push_back(&i);
-	}
+		if (hasBeenBound)ImGui::EndDisabled();
+		if (ImGui::Button("Finish Level")) eccoInExit = syncInExit = true;
 
-	std::string* selected = &levelToLoad;
-	if (ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Filename", Utilities::PointerToString(&loadPathsPointers), false)) {
-		ImGui::CloseCurrentPopup();
-		levelToLoad = *selected;
+		ImGui::Checkbox("Ecco In Exit", &eccoInExit);
+		ImGui::Checkbox("Sync In Exit", &syncInExit);
+
+		std::vector<std::string> loadPaths = {};
+		std::vector<std::string*> loadPathsPointers = {};
+		loadPaths.clear();
+		loadPathsPointers.clear();
+
+		for (auto& i : std::filesystem::directory_iterator(Paths::levelsPath))
+		{
+			loadPaths.push_back(i.path().generic_string().substr(Paths::levelsPath.size()));
+			if (loadPaths.back().substr(loadPaths.back().size() - Paths::levelExtension.size()) != Paths::levelExtension) {
+				loadPaths.erase(--loadPaths.end());
+				continue;
+			}
+			loadPaths.back() = loadPaths.back().substr(0, loadPaths.back().size() - Paths::levelExtension.size());
+		}
+		for (auto& i : loadPaths)
+		{
+			loadPathsPointers.push_back(&i);
+		}
+
+		std::string* selected = &levelToLoad;
+		if (ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Filename", Utilities::PointerToString(&loadPathsPointers), false)) {
+			ImGui::CloseCurrentPopup();
+			levelToLoad = *selected;
+		}
 	}
 }
 
@@ -92,7 +96,7 @@ toml::table ExitElevator::Serialise(unsigned long long GUID) const
 {
 	return toml::table
 	{
-		{"GUID", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{"guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
 		{"levelToLoad", levelToLoad}
 	};
 }

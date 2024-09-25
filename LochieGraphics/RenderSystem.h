@@ -63,11 +63,11 @@ public:
 
     void IBLBufferSetup(unsigned int skybox);
 
-    int SCREEN_WIDTH, SCREEN_HEIGHT;
+    int SCREEN_WIDTH, SCREEN_HEIGHT = 0;
 
     bool showShadowDebug = false;
-    unsigned int skyboxTexture;
-    glm::mat4 projection;
+    unsigned int skyboxTexture = 0;
+    glm::mat4 projection = glm::zero<glm::mat4>();
     int kernelSize = 64;
     float ssaoRadius = 0.5f;
     float ssaoBias = 0.025f;
@@ -75,35 +75,34 @@ public:
     /// <summary>
     /// Pointer to current window
     /// </summary>
-    GLFWwindow* window;
+    GLFWwindow* window = nullptr;
 
 
     void GUI();
 
 private:
 
-    Mesh* shadowDebugQuad;
-    Mesh* screenQuad;
-    Mesh* buttonQuad;
+    Mesh* shadowDebugQuad = nullptr;
+    Mesh* screenQuad = nullptr;
+    Mesh* buttonQuad = nullptr;
 
     Texture* screenColourBuffer = nullptr;
 
     FrameBuffer* screenFrameBuffer = nullptr;
-    //Texture* screenTexture = nullptr;
 
-    Light* shadowCaster;
+    Light* shadowCaster = nullptr;
 
     /// <summary>
     /// Missing Texture VRAM location
     /// </summary>
-    unsigned int missingTextureTexture;
+    unsigned int missingTextureTexture = 0;
 
     /// <summary>
     /// Location of the Model Matrix 
     /// </summary>
-    unsigned int modelLocation;
+    unsigned int modelLocation = 0;
 
-    glm::mat4 viewMatrix;
+    glm::mat4 viewMatrix = glm::zero<glm::mat4>();
 
     /// <summary>
     /// List of entities in order of the shader they use.
@@ -113,7 +112,7 @@ private:
     /// <summary>
     /// shader programs
     /// </summary>
-    std::vector<Shader*>* shaders;
+    std::vector<Shader*>* shaders = {};
 
 
     void DrawAnimation(
@@ -121,20 +120,20 @@ private:
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
         Shader* shader = nullptr
-        );
+    );
 
     void DrawRenderers(
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_set<unsigned long long> animatedRenderered,
         Shader* shader = nullptr
-        );
+    );
 
 
     void ActivateFlaggedVariables(
         Shader* shader,
         Material* mat
-        );
+    );
 
     //void BindLightUniform(unsigned int shaderProgram,
     //    std::unordered_map<unsigned int, Light>& lightComponents,
@@ -143,16 +142,16 @@ private:
     void HDRBufferSetUp();
     void OutputBufferSetUp();
 
-    unsigned int hdrFBO;
-    unsigned int bloomBuffer;
-    unsigned int colorBuffer;
-    unsigned int rboDepth;
+    unsigned int hdrFBO = 0;
+    unsigned int bloomBuffer = 0;
+    unsigned int colorBuffer = 0;
+    unsigned int rboDepth = 0;
 
     unsigned int outputFBO = 0;
     unsigned int outputTexture = 0;
 
-    unsigned int captureFBO;
-    unsigned int captureRBO;
+    unsigned int captureFBO = 0;
+    unsigned int captureRBO = 0;
 
     unsigned int irradianceMap = 0;
     unsigned int brdfLUTTexture = 0;
@@ -160,8 +159,8 @@ private:
     Texture* paintStrokeTexture = nullptr;
 
     void BloomSetup();
-    unsigned int mFBO;
-    std::vector<bloomMip> bloomMips;
+    unsigned int mFBO = 0;
+    std::vector<bloomMip> bloomMips = {};
 
     void RenderBloom(unsigned int srcTexture);
 
@@ -173,13 +172,13 @@ private:
     unsigned int forwardFBO = 0;
     void ForwardSetup();
 
-    unsigned int ssaoFBO;
-    unsigned int ssaoColorBuffer;
-    unsigned int ssaoBlurFBO;
-    unsigned int ssaoBluredBuffer;
-    std::vector<glm::vec3> ssaoKernel;
-    std::vector<glm::vec3> ssaoNoise;
-    unsigned int noiseTexture;
+    unsigned int ssaoFBO = 0;
+    unsigned int ssaoColorBuffer = 0;
+    unsigned int ssaoBlurFBO = 0;
+    unsigned int ssaoBluredBuffer = 0;
+    std::vector<glm::vec3> ssaoKernel = {};
+    std::vector<glm::vec3> ssaoNoise = {};
+    unsigned int noiseTexture = 0;
     void SSAOSetup();
 
     void RenderSSAO();

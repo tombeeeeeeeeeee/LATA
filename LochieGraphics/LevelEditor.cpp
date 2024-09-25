@@ -67,7 +67,7 @@ SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
 	newWall->transform()->setParent(wallTileParent->transform());
 	newWall->setRenderer(new ModelRenderer(wall, (unsigned long long)0));
 	// TODO: Make sure there isn't memory leaks
-	RigidBody* newRigidBody = new RigidBody(1.0f, 0.25f, {}, true);
+	RigidBody* newRigidBody = new RigidBody(0.0f, 0.25f, {}, true);
 	newWall->setRigidBody(newRigidBody);
 	newRigidBody = newWall->rigidbody();
 	float wallLength = 150.f;
@@ -208,29 +208,79 @@ void LevelEditor::Start()
 
 void LevelEditor::Update(float delta)
 {
+	if (!lastFramePlayState && inPlay) //On Play Enter
+	{
+		SaveLevel();
+
+		lastFramePlayState = inPlay;
+		displayGUI = false;
+		enemySystem.aiUpdating = true;
+
+		enemySystem.SpawnEnemiesInScene(enemies, transforms);
+
+		camera->state = Camera::targetingPlayers;
+		gameCamSystem.cameraPositionDelta = { 550.0f, 1000.0f, 750.0f };
+	}
+	else if(lastFramePlayState && !inPlay) //On Play exit
+	{
+		LoadLevel();
+
+		lastFramePlayState = inPlay;
+		displayGUI = true;
+		enemySystem.aiUpdating = false;
+
+		camera->state = Camera::editorMode;
+	}
 	LineRenderer& lines = renderSystem.lines;
 	input.Update();
 
-	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 
-	healthSystem.Update(
-		healths,
-		renderers,
-		delta
-	);
+	if (inPlay)
+	{
+		healthSystem.Update(
+			healths,
+			renderers,
+			delta
+		);
 
-	for (auto& exitPair : exits) exitPair.second.Update();
+		for (auto& exitPair : exits) exitPair.second.Update();
+
+		physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
+		gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
+
+		enemySystem.Update(
+			enemies,
+			transforms,
+			rigidBodies,
+			eccoSo,
+			syncSo,
+			delta
+		);
+	}
+
+
 
 	if (input.inputDevices.size() > 0)
 	{
+		float camera2DForwardLength = glm::length(glm::vec2( camera->transform.forward().x, camera->transform.forward().z ));
+		float angle = 0.0f;
+		if (camera2DForwardLength == 0.0f)
+			angle = camera->transform.getEulerRotation().y;
+		else
+		{
+			angle = atan2f(camera->transform.forward().z, camera->transform.forward().x);
+			angle *= 180.0f / PI;
+			angle += 90.0f;
+		}
+
 		ecco->Update(
 			*input.inputDevices[0],
 			*eccoSo->transform(),
 			*eccoSo->rigidbody(),
 			*eccoSo->health(),
 			delta,
-			camera->transform.getEulerRotation().y
+			angle
 		);
 
 		if (input.inputDevices.size() > 1)
@@ -241,13 +291,13 @@ void LevelEditor::Update(float delta)
 				*syncSo->rigidbody(),
 				&renderSystem.lines,
 				delta,
-				camera->transform.getEulerRotation().y
+				angle
 			);
 		}
 	}
 
-	// TODO: Need to be able to change the zoomScale
-	gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
+
+
 
 	lines.SetColour({ 1, 1, 1 });
 	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
@@ -268,14 +318,6 @@ void LevelEditor::Update(float delta)
 		Eraser(targetCell);
 	}
 
-	enemySystem.Update(
-		enemies,
-		transforms,
-		rigidBodies,
-		eccoSo,
-		syncSo,
-		delta
-	);
 }
 
 void LevelEditor::Draw()
@@ -292,6 +334,10 @@ void LevelEditor::Draw()
 void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
+
+		if (ImGui::Button("PLAY"))
+			inPlay = !inPlay;
+
 		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0Asset Placer\0View Select\0\0")) {
 			switch (state)
 			{
@@ -468,22 +514,14 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 
 	gui.sceneObjectSelected = nullptr;
 
-	InitialisePlayers();
-	
 	groundTileParent = FindSceneObjectOfName("Ground Tiles");
 	wallTileParent = FindSceneObjectOfName("Wall Tiles");
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
 
-	enemySystem.Start();
-	enemySystem.AddUnlistedEnemiesToSystem(enemies, transforms);
-	if(enemySystem.getInactiveMeleeCount() == 0)
-		enemySystem.InitialiseMelee(sceneObjects, 5);
-	if(enemySystem.getInactiveRangedCount() == 0)
-		enemySystem.InitialiseRanged(sceneObjects, 5);
 
-	enemySystem.SpawnMelee(sceneObjects, { 600.0f, 50.0f, 600.0f });
-	//enemySystem.SpawnMelee(sceneObjects, {600.0f, 50.0f, 600.0f});
+	enemySystem.Start();
+
 	// Refresh the tiles collection
 	tiles.clear();
 	auto children = groundTileParent->transform()->getChildren();
@@ -494,6 +532,8 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	}
 
 	file.close();
+	InitialisePlayers();
+
 	previouslySaved = true;
 }
 

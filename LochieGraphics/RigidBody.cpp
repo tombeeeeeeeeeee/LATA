@@ -98,6 +98,7 @@ void RigidBody::GUI()
 		ImGui::DragFloat2("Velocity", &vel[0]);
 		ImGui::DragFloat2("Accel", &accel[0]);
 		ImGui::EndDisabled();
+		if (ImGui::Button("Kill Movement")) vel = accel = {0.0f,0.0f};
 
 		if (isKinematic) ImGui::BeginDisabled();
 		if (ImGui::DragFloat(("Mass##rigidBody" + tag).c_str(), &mass, 0.1f, 0.001f, 100000.0f))
