@@ -398,9 +398,9 @@ void GUI::EnemyMenu()
 
 	if (ImGui::Button("Spawn Enemies for Tom!"))
 	{
-		for (int i = 0; i < 36; i++)
+		for (int i = 0; i < 4; i++)
 		{
-			glm::vec3 pos = { -250.0f * (i / 6) - 250.0f, 0.0f, -250.0f * (i % 6) - 250.0f };
+			glm::vec3 pos = { -250.0f * (i / 6) - 250.0f, 0.0f, -300.0f * (i % 6) - 250.0f };
 			es.SpawnMelee(pos);
 		}
 

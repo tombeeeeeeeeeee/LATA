@@ -29,7 +29,7 @@ namespace toml {
 class EnemySystem
 {
 private:
-	float maxSpeed = 700.0f;
+	float maxSpeed = 200.0f;
 
 	int explosiveEnemyCount = 0;
 	int meleeEnemyCount = 0;
@@ -42,6 +42,13 @@ public:
 	EnemySystem(toml::table table);
 	void Start();
 
+	float perceptionRadius = 500.0f;
+	float separationRadius = 300.0f;
+
+	float alignmentCoef = 0.5f;
+	float cohesionCoef = 0.5f;
+	float seperationCoef = 0.5f;
+
 	int explosiveEnemyHealth = 0;
 	float explosiveEnemyMoveSpeed = 0;
 	int explosiveEnemyDamage = 0;
@@ -49,7 +56,6 @@ public:
 	ModelRenderer* explosiveEnemyRenderer = nullptr;
 	std::string explosiveEnemyModel = "SM_Sphere";
 	std::string explosiveEnemyMaterialPath = "images/otherskybox/nx.png";
-
 
 	int meleeEnemyHealth = 0;
 	float meleeEnemyMoveSpeed = 0;
@@ -110,11 +116,11 @@ private:
 		SceneObject* ecco, SceneObject* sync
 	);
 
-	void UpdateEnemiesPathFinding(
-		Enemy& enemy,
-		Transform& transform, 
-		RigidBody& rb,
+	void Steering(
+		std::unordered_map<unsigned long long, Enemy>& enemies,
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
 		float delta
-	);
+		);
 };
 

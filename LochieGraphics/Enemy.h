@@ -28,11 +28,14 @@ struct Enemy
 
 	int type = (int)EnemyType::spawnSpot;
 	State* state = nullptr;
-	SceneObject* target = nullptr;
+
 	glm::vec2 lastTargetPos = { 0.0f, 0.0f };
+	glm::vec2 influenceThisFrame = { 0.0f, 0.0f };
 	bool hasLOS = false;
 	int nodeIndex = 0;
 	std::vector<Node*> path = {};
+
+	glm::vec2 boidVelocity = { 0.0f, 0.0f };
 
 	void GUI();
 	toml::table Serialise(unsigned long long GUID);

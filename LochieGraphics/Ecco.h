@@ -56,6 +56,10 @@ private:
 	bool controlState = false;
 	float speedBoost = 1.0f;
 	float speedBoostCooldown = 0.1f;
+	float speedBoostDuration = 0.0f;
+	float timeSinceSpeedBoost = 0.0f;
+	float timeInSpeedBoost = 0.0f;
+	bool boosting = false;
 	int speedBoostHPCost = 0;
 	bool speedBoostUnactuated = true;
 	float lastSpeedBoostPressed = 0.0f;
@@ -63,4 +67,8 @@ private:
 	int speedDamage = 0;
 	int healingFromDamage = 0;
 	float speedReductionAfterDamaging = 0.0f;
+
+	//TESTING VALUES
+	bool speedBoostInDirectionOfBody = true;
+
 };

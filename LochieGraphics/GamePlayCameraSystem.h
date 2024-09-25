@@ -21,6 +21,7 @@ public:
 	bool anchoring = false;
 	float cameraZoomScale = 0.13f;
 	float cameraZoomMinimum = 125.0f;
+	float cameraZoomMaximum = 205.0f;
 	float cameraZoomSpeed = 0.33f;
 	float cameraMoveSpeed = 0.33f;
 

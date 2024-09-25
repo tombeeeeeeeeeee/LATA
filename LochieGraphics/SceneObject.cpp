@@ -227,6 +227,7 @@ SetAndGetForPart(RigidBody, rigidBodies, Parts::rigidBody, RigidBody, rigidbody)
 SetAndGetForPart(Health, healths, Parts::health, Health, health)
 SetAndGetForPart(Enemy, enemies, Parts::enemy, Enemy, enemy)
 SetAndGetForPart(ExitElevator, exits, Parts::exitElevator, ExitElevator, exitElevator)
+SetAndGetForPart(SpawnManager, spawnManagers, Parts::spawnManager, SpawnManager, spawnManager)
 
 void SceneObject::setCollider(Collider* collider)
 {
@@ -320,6 +321,7 @@ void SceneObject::ClearParts()
 	if (parts & Parts::health) { scene->healths.erase(GUID);  parts &= ~(Parts::health);}
 	if (parts & Parts::enemy) { scene->enemies.erase(GUID);  parts &= ~(Parts::enemy);}
 	if (parts & Parts::exitElevator) { scene->exits.erase(GUID);  parts &= ~(Parts::exitElevator);}
+	if (parts & Parts::spawnManager) { scene->spawnManagers.erase(GUID);  parts &= ~(Parts::spawnManager);}
 
 	assert(parts == 0);
 }
