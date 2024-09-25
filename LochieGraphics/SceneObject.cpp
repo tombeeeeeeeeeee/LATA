@@ -30,10 +30,6 @@ SceneObject::~SceneObject()
 	scene->transforms.erase(GUID);
 }
 
-void SceneObject::Update(float delta)
-{
-}
-
 void SceneObject::GUI()
 {
 	ImGui::InputText("Name", &name);

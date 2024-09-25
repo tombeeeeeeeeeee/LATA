@@ -249,6 +249,10 @@ void SceneManager::Update()
 	
 	scene->renderSystem.lines.Clear();
 	scene->Update(deltaTime);
+	for (auto& i : scene->animators)
+	{
+		i.second.UpdateAnimation(deltaTime);
+	}
 	scene->renderSystem.lines.Compile();
 
 	scene->skybox->Update(&camera, (float)windowWidth / (float)windowHeight);

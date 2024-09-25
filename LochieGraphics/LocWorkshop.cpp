@@ -54,10 +54,11 @@ void LocWorkshop::Start()
 	//sceneObject->renderer()->materials.front()->texturePointers["material.albedo"] = texture;
 
 	aniTest = new SceneObject(this, "Animation Test");
-	Model* aniTestModel = ResourceManager::LoadModel("C:/Users/s220518/Downloads/test/SM_X Bot.fbx");
+	std::string path = "models/Anim_Sync_RunTEST.fbx";
+	Model* aniTestModel = ResourceManager::LoadModel(path);
 	aniTest->setRenderer(new ModelRenderer(aniTestModel, ResourceManager::defaultMaterial));
 
-	animation = Animation("C:/Users/s220518/Downloads/test/SM_Chicken Dance.fbx", aniTestModel);
+	animation = Animation(path, aniTestModel);
 
 	animator = new Animator(&animation);
 	aniTest->setAnimator(animator);
