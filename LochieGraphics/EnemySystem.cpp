@@ -165,7 +165,7 @@ void EnemySystem::OnHealthZeroRanged(HealthPacket healthpacket)
     }
 }
 
-void EnemySystem::TempBehaviour(
+void EnemySystem::LineOfSightAndTargetCheck(
     std::unordered_map<unsigned long long, Enemy>& enemies,
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
@@ -176,10 +176,9 @@ void EnemySystem::TempBehaviour(
     glm::vec2 eccoPos2D = { ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
     for (auto& enemyPair : enemies)
     {
+        enemyPair.second.hasLOS = false;
         glm::vec2 enemyPos2D = { transforms[enemyPair.first].getGlobalPosition().x, transforms[enemyPair.first].getGlobalPosition().z };
 
-            
-        glm::vec2 direction = {0.0f, 0.0f};
         float distanceToSync = FLT_MAX;
 
         std::vector<Hit> syncHits;
@@ -188,13 +187,14 @@ void EnemySystem::TempBehaviour(
             enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
             syncHits, FLT_MAX,
             (int)CollisionLayers::sync | (int)CollisionLayers::base )
-        ) {
+        ) 
+        {
             Hit hit = syncHits[0];
             if (hit.sceneObject->parts & Parts::sync)
             {
                 distanceToSync = hit.distance;
-                direction = glm::normalize(syncPos2D - enemyPos2D);
                 enemyPair.second.lastTargetPos = syncPos2D;
+                enemyPair.second.hasLOS = true;
             }
         }
         if (PhysicsSystem::RayCast(
@@ -208,28 +208,9 @@ void EnemySystem::TempBehaviour(
             {
                 if (hit.distance < distanceToSync)
                 {
-                    direction = glm::normalize(eccoPos2D - enemyPos2D);
                     enemyPair.second.lastTargetPos = eccoPos2D;
+                    enemyPair.second.hasLOS = true;
                 }
-            }
-        }
-
-        if (glm::length(direction) > 0)
-        {
-            rigidbodies[enemyPair.first].vel = direction * maxSpeed;
-            enemyPair.second.hasLOS = false;
-        }
-        else 
-        {
-            enemyPair.second.hasLOS = true;
-            float length = glm::length(enemyPair.second.lastTargetPos - enemyPos2D);
-            if (length)
-            {
-                rigidbodies[enemyPair.first].vel = maxSpeed * (enemyPair.second.lastTargetPos - enemyPos2D) / length;
-            }
-            else
-            {
-                rigidbodies[enemyPair.first].vel = {0.0f, 0.0f};
             }
         }
     }
@@ -245,7 +226,7 @@ void EnemySystem::Update(
 {
     if (aiUpdating)
     {
-        TempBehaviour(
+        LineOfSightAndTargetCheck(
             enemies,
             transforms,
             rigidbodies,

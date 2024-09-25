@@ -75,7 +75,7 @@ public:
 	void OnHealthZeroMelee(HealthPacket healthPacket);
 	void OnHealthZeroRanged(HealthPacket healthPacket);
 
-	void TempBehaviour(
+	void LineOfSightAndTargetCheck(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,

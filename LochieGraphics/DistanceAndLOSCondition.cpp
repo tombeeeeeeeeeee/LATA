@@ -12,11 +12,11 @@ bool DistanceAndLOSCondition::IsTrue(SceneObject* so)
 		{
 			if (IsTrueWhenLessThan)
 			{
-				return glm::length(so->transform()->getGlobalPosition() - enemy->lastTargetPos) < range;
+				return glm::length(so->transform()->get2DGlobalPosition() - enemy->lastTargetPos) < range;
 			}
 			else
 			{
-				return glm::length(so->transform()->getGlobalPosition() - enemy->lastTargetPos) > range;
+				return glm::length(so->transform()->get2DGlobalPosition() - enemy->lastTargetPos) > range;
 			}
 		}
 	}
