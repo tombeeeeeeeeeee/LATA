@@ -13,6 +13,7 @@
 #include "ModelRenderer.h"
 #include "Scene.h"
 #include "Paths.h"
+#include "Collision.h"
 
 #include "Utilities.h"
 
@@ -21,10 +22,8 @@
 #include "PhysicsSystem.h"
 #include "RenderSystem.h"
 #include "Hit.h"
+#include "Node.h"
 
-EnemySystem::EnemySystem()
-{
-}
 
 EnemySystem::EnemySystem(toml::table table)
 {
@@ -68,7 +67,28 @@ void EnemySystem::Start()
     }
 }
 
-unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos)
+void EnemySystem::SpawnExplosive(glm::vec3 pos)
+{
+    Scene* scene = SceneManager::scene;
+
+    SceneObject* enemy = new SceneObject(scene, "ExplosiveEnemy" + std::to_string(explosiveEnemyCount++));
+    enemy->setEnemy(new Enemy());
+    enemy->setHealth(new Health());
+    enemy->health()->setMaxHealth(explosiveEnemyHealth);
+    enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroExplosive(hp); });
+    enemy->setRigidBody(new RigidBody());
+    enemy->rigidbody()->invMass = 1.0f;
+    enemy->setRenderer(
+        explosiveEnemyRenderer
+    );
+    enemy->transform()->setParent(nullptr);
+    enemy->transform()->setPosition(pos);
+    enemy->health()->currHealth = explosiveEnemyHealth;
+    enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy) };
+    enemy->rigidbody()->isStatic = false;
+}
+
+void EnemySystem::SpawnMelee(glm::vec3 pos)
 {
     Scene* scene = SceneManager::scene;
 
@@ -87,11 +107,9 @@ unsigned long long EnemySystem::SpawnMelee(std::unordered_map<unsigned long long
     enemy->health()->currHealth = meleeEnemyHealth;
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
-
-    return enemy->GUID;
 }
 
-unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long long, SceneObject*>& sceneObjects, glm::vec3 pos)
+void EnemySystem::SpawnRanged(glm::vec3 pos)
 {
     Scene* scene = SceneManager::scene;
 
@@ -109,31 +127,34 @@ unsigned long long EnemySystem::SpawnRanged(std::unordered_map<unsigned long lon
     enemy->transform()->setPosition(pos);
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
-
-    return enemy->GUID;
 }
 
-//TODO: REMAKE
-bool EnemySystem::DespawnMelee(SceneObject* sceneObject)
+bool EnemySystem::Despawn(SceneObject* sceneObject)
 {
-    bool hasBeenDespawned = false;
 
-    return hasBeenDespawned;
+    if (sceneObject->parts & Parts::enemy)
+    {
+        SceneManager::scene->DeleteSceneObject(sceneObject->GUID);
+        return true;
+    }
+
+    return false;
 }
 
-//TODO: REMAKE DELETE SCENE OBJECT
-bool EnemySystem::DespawnRanged(SceneObject* sceneObject)
+
+void EnemySystem::OnHealthZeroExplosive(HealthPacket healthpacket)
 {
-    bool hasBeenDespawned = false;
-    
-    return hasBeenDespawned;
+    if (healthpacket.so)
+    {
+        Despawn(healthpacket.so);
+    }
 }
 
 void EnemySystem::OnHealthZeroMelee(HealthPacket healthpacket)
 {
     if (healthpacket.so)
     {
-        DespawnMelee(healthpacket.so);
+        Despawn(healthpacket.so);
     }
 }
 
@@ -141,11 +162,11 @@ void EnemySystem::OnHealthZeroRanged(HealthPacket healthpacket)
 {
     if (healthpacket.so)
     {
-        DespawnRanged(healthpacket.so);
+        Despawn(healthpacket.so);
     }
 }
 
-void EnemySystem::TempBehaviour(
+void EnemySystem::LineOfSightAndTargetCheck(
     std::unordered_map<unsigned long long, Enemy>& enemies,
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
@@ -156,10 +177,9 @@ void EnemySystem::TempBehaviour(
     glm::vec2 eccoPos2D = { ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
     for (auto& enemyPair : enemies)
     {
+        enemyPair.second.hasLOS = false;
         glm::vec2 enemyPos2D = { transforms[enemyPair.first].getGlobalPosition().x, transforms[enemyPair.first].getGlobalPosition().z };
-        int total = 0;
-        int alignmentTotal = 0;
-        glm::vec2 direction = {};
+
         float distanceToSync = FLT_MAX;
 
         std::vector<Hit> syncHits;
@@ -168,13 +188,14 @@ void EnemySystem::TempBehaviour(
             enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
             syncHits, FLT_MAX,
             (int)CollisionLayers::sync | (int)CollisionLayers::base )
-        ) {
+        ) 
+        {
             Hit hit = syncHits[0];
             if (hit.sceneObject->parts & Parts::sync)
             {
                 distanceToSync = hit.distance;
-                direction = glm::normalize(syncPos2D - enemyPos2D);
-                enemyPair.second.lastTargetPosition = syncPos2D;
+                enemyPair.second.lastTargetPos = syncPos2D;
+                enemyPair.second.hasLOS = true;
             }
         }
         if (PhysicsSystem::RayCast(
@@ -188,29 +209,17 @@ void EnemySystem::TempBehaviour(
             {
                 if (hit.distance < distanceToSync)
                 {
-                    direction = glm::normalize(eccoPos2D - enemyPos2D);
-                    enemyPair.second.lastTargetPosition = eccoPos2D;
+                    enemyPair.second.lastTargetPos = eccoPos2D;
+                    enemyPair.second.hasLOS = true;
                 }
             }
         }
-
-        if (glm::length(direction) > 0)
-        {
-            rigidbodies[enemyPair.first].vel = direction * maxSpeed;
-        }
-        else 
-        {
-            float length = glm::length(enemyPair.second.lastTargetPosition - enemyPos2D);
-            if (length)
-            {
-                rigidbodies[enemyPair.first].vel = maxSpeed * (enemyPair.second.lastTargetPosition - enemyPos2D) / length;
-            }
-            else
-            {
-                rigidbodies[enemyPair.first].vel = {0.0f, 0.0f};
-            }
-        }
     }
+}
+
+void EnemySystem::UpdateEnemiesPathFinding(Enemy& enemy, Transform& transform, RigidBody& rb, float delta)
+{
+    
 }
 
 //TODO: Add AI Pathfinding and attacking in here.
@@ -223,7 +232,7 @@ void EnemySystem::Update(
 {
     if (aiUpdating)
     {
-        TempBehaviour(
+        LineOfSightAndTargetCheck(
             enemies,
             transforms,
             rigidbodies,
@@ -231,61 +240,139 @@ void EnemySystem::Update(
         );
 
         //TODO ADD States and Transitions
-        //for (auto& enemyPair : enemies)
-        //{
-        //    Enemy& enemy = enemyPair.second;
-        //    SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
-        //    State* newState = nullptr;
-        //
-        //    // check the current state's transitions
-        //    for (auto& t : enemy.state->transitions)
-        //    {
-        //        if (t.condition->IsTrue(agent))
-        //        {
-        //            newState = t.targetState;
-        //            break;
-        //        }
-        //    }
-        //
-        //
-        //    if (newState != nullptr && newState != enemy.state)
-        //    {
-        //        enemy.state->Exit(agent);
-        //        enemy.state = newState;
-        //        enemy.state->Enter(agent);
-        //    }
-        //
-        //    enemy.state->Update(agent);
-        //}
-    }
-    if (addEnemiesThisUpdate)
-    {
-        SpawnEnemies(enemies, transforms);
+        for (auto& enemyPair : enemies)
+        {
+            Enemy& enemy = enemyPair.second;
+            SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
+            State* newState = nullptr;
+        
+            // check the current state's transitions
+            for (auto& t : enemy.state->transitions)
+            {
+                if (t.condition->IsTrue(agent))
+                {
+                    newState = t.targetState;
+                    break;
+                }
+            }
+        
+        
+            if (newState != nullptr && newState != enemy.state)
+            {
+                enemy.state->Exit(agent);
+                enemy.state = newState;
+                enemy.state->Enter(agent);
+            }
+        
+            enemy.state->Update(agent);
+            UpdateEnemiesPathFinding(enemy, transforms[enemyPair.first], rigidbodies[enemyPair.first], delta);
+        }
     }
 }
 
-void EnemySystem::SpawnEnemies(
+void EnemySystem::SpawnEnemiesInScene(
     std::unordered_map<unsigned long long, Enemy>& enemies,
-    std::unordered_map<unsigned long long, Transform>& transforms
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    bool spawner
 )
 {
-    
+    for (auto& enemyPair : enemies)
+    {
+        if ((enemyPair.second.type & (int)EnemyType::spawnSpot) == (int)spawner)
+        {
+            if (enemyPair.second.type & (int)EnemyType::melee)
+                SpawnMelee(transforms[enemyPair.first].getGlobalPosition());
+            else if (enemyPair.second.type & (int)EnemyType::ranged)
+                SpawnRanged(transforms[enemyPair.first].getGlobalPosition());
+            else if (enemyPair.second.type & (int)EnemyType::explosive)
+                SpawnExplosive(transforms[enemyPair.first].getGlobalPosition());
+        }
+    }
+}
+
+std::vector<Node*> EnemySystem::AStarSearch(Node* startNode, Node* endNode)
+{
+    std::vector<Node*> open;
+    std::vector<Node*> closed;
+    std::vector<Node*> path;
+
+    Node* currNode = nullptr;
+    int gScore = 0;
+
+    if (startNode == nullptr || endNode == nullptr)
+    {
+        return std::vector<Node*>();
+    }
+    else if (startNode == endNode)
+    {
+        return std::vector<Node*>();
+    }
+
+    startNode->gScore = 0;
+    startNode->previous = nullptr;
+
+    open.push_back(startNode);
+
+    do
+    {
+        //sort(open.begin(), open.end(), CompareNodes);
+        currNode = open.back();
+        open.pop_back();
+        if (currNode == endNode)  break;
+        closed.push_back(currNode);
+
+        for (auto con : currNode->connections)
+        {
+            if (find(closed.begin(), closed.end(), con.target) == closed.end())
+            {
+                gScore = currNode->gScore + con.cost;
+                float hScore = Hueristic(con.target, endNode);
+                float fScore = gScore + hScore;
+                if (find(open.begin(), open.end(), con.target) == open.end())
+                {
+                    con.target->gScore = gScore;
+                    con.target->fScore = fScore;
+                    con.target->previous = currNode;
+                    open.push_back(con.target);
+                }
+                else if (fScore < con.target->fScore)
+                {
+                    con.target->gScore = gScore;
+                    con.target->fScore = fScore;
+                    con.target->previous = currNode;
+                }
+            }
+        }
+
+    } while (open.size() != 0);
+
+    if (open.empty()) return std::vector<Node*>();
+
+    currNode = endNode;
+    do
+    {
+        path.insert(path.begin(), currNode);
+        currNode = currNode->previous;
+    } while (currNode != nullptr);
+
+    return path;
+}
+
+float EnemySystem::Hueristic(Node* pos, Node* end)
+{
+    return 0.0f;
+}
+
+bool EnemySystem::CompareNodes(Node* a, Node* b)
+{
+    return a->fScore > b->fScore;
 }
 
 void EnemySystem::GUI()
 {
     ImGui::Checkbox("AI Updating",&aiUpdating);
 
-    if(ImGui::Button("Add New Enemies to list"))
-    {
-        addEnemiesThisUpdate = true;
-    }
-
     ImGui::Text("AI STATS");
-    ImGui::DragFloat("Sense Radius", &perceptionRadius);
-    ImGui::DragFloat("Alignment Coefficient", &alignmentCoef);
-    ImGui::DragFloat("Cohesion Coefficient", &cohesionCoef);
-    ImGui::DragFloat("Seperation Coefficient", &seperationCoef);
     ImGui::DragFloat("Max Speed", &maxSpeed);
 
 
@@ -329,7 +416,14 @@ toml::table EnemySystem::Serialise() const
         { "rangedEnemyColliderRadius", rangedEnemyColliderRadius },
         { "rangedEnemyModel", rangedEnemyModel },
         { "rangedEnemyMaterialPath", rangedEnemyMaterialPath },
-        { "offscreenSpawnPosition", Serialisation::SaveAsVec3(offscreenSpawnPosition) },
     };
+}
+
+void EnemySystem::OnMeleeCollision(Collision collision)
+{
+    if (collision.collisionMask & (int)CollisionLayers::sync || collision.collisionMask & (int)CollisionLayers::ecco)
+    {
+        collision.sceneObject->health()->subtractHealth(meleeEnemyDamage);
+    }
 }
 

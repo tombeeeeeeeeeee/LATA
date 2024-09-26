@@ -28,7 +28,8 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 		glm::vec3 deltaPos = eccoTransform.getGlobalPosition() - syncTransform.getGlobalPosition();
 		zoomScale = glm::max(glm::length(deltaPos) * cameraZoomScale, cameraZoomMinimum);
 		target = syncTransform.getGlobalPosition() + (deltaPos * 0.5f);
-		
+		[[fallthrough]];
+
 	case Camera::targetingPosition: 
 
 		camera.orthoScale = Utilities::Lerp(camera.orthoScale, zoomScale, cameraZoomSpeed);

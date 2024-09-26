@@ -26,6 +26,7 @@ class Scene
 public:
 	std::string windowName = "Lochie's Scene";
 
+	
 	bool inPlay = false;
 	bool lastFramePlayState = false;
 	bool displayGUI = true;
@@ -61,8 +62,8 @@ public:
 
 	std::vector<int> inputKeyWatch{};
 
-	unsigned int* windowWidth;
-	unsigned int* windowHeight;
+	unsigned int* windowWidth = 0;
+	unsigned int* windowHeight = 0;
 
 	RenderSystem renderSystem;
 	PhysicsSystem physicsSystem;

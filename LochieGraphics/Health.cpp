@@ -19,21 +19,21 @@ void Health::addHealth(int addition, SceneObject* so)
 
 	if (currHealth == 0)
 	{
-		for (int i = onHealthZero.size(); i != onHealthZero.size(); i++)
+		for (int i = (int)onHealthZero.size(); i != onHealthZero.size(); i++)
 		{
 			onHealthZero[i]({currHealth - oldHealth, so});
 		}
 	}
 	else if (currHealth > oldHealth)
 	{
-		for (int i = onHealthUp.size(); i != onHealthUp.size(); i++)
+		for (int i = (int)onHealthUp.size(); i != onHealthUp.size(); i++)
 		{
 			onHealthUp[i]({currHealth - oldHealth, so});
 		}
 	}
 	else if (currHealth < oldHealth)
 	{
-		for (int i = onHealthDown.size(); i != onHealthDown.size(); i++)
+		for (int i = (int)onHealthDown.size(); i != onHealthDown.size(); i++)
 		{
 			onHealthDown[i]({currHealth - oldHealth, so});
 		}
