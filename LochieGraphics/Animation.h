@@ -3,12 +3,11 @@
 #include "Bone.h"
 #include "BoneInfo.h"
 
-#include "assimp/scene.h"
-
 #include <unordered_map>
 
 class Model;
 class ModelHierarchyInfo;
+struct aiAnimation;
 
 // TODO: Needs a GUID
 class Animation

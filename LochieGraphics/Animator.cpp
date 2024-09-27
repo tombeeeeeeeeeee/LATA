@@ -1,7 +1,9 @@
 #include "Animator.h"
 
+#include "Animation.h"
 #include "ModelHierarchyInfo.h"
 
+#include "ExtraEditorGUI.h"
 #include "Serialisation.h"
 
 Animator::Animator(Animation* animation) :
@@ -78,4 +80,26 @@ toml::table Animator::Serialise(unsigned long long GUID) const
 Animator::Animator(toml::table table)
 {
     // TODO: Write
+}
+
+void Animator::GUI()
+{
+    std::string tag = Utilities::PointerToString(this);
+    if (ImGui::CollapsingHeader(("Animator##" + tag).c_str())) {
+        ImGui::Indent();
+        if (ImGui::CollapsingHeader(("Final Bone Matrices##" + tag).c_str())) {
+            ImGui::Indent();
+            for (size_t i = 0; i < finalBoneMatrices.size(); i++)
+            {
+                if (ImGui::CollapsingHeader(("Bone ID " + std::to_string(i) + "##" + tag).c_str())) {
+                    ExtraEditorGUI::Mat4Input(tag, &finalBoneMatrices[i]);
+                }
+            }
+            ImGui::Unindent();
+        }
+        // TODO: Show the animation
+        // currentAnimation.GUI();
+        ImGui::DragFloat(("Animation Time##" + tag).c_str(), &currentTime);
+        ImGui::Unindent();
+    }
 }

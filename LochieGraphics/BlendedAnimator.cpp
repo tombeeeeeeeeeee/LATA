@@ -1,5 +1,6 @@
 #include "BlendedAnimator.h"
 
+#include "Animation.h"
 #include "ModelHierarchyInfo.h"
 
 BlendedAnimator::BlendedAnimator(Animation* one, Animation* two) : Animator(one),

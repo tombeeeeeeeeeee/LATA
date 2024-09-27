@@ -2,6 +2,7 @@
 #include "Scene.h"
 
 #include "DirectionalLight.h"
+#include "Animation.h"
 
 class LocWorkshop : public Scene
 {

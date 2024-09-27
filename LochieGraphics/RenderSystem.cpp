@@ -13,6 +13,8 @@
 #include "Utilities.h"
 #include "EditorGUI.h"
 
+#include <iostream>
+
 LineRenderer RenderSystem::lines;
 
 void RenderSystem::Start(

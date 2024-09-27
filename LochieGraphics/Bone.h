@@ -2,10 +2,10 @@
 
 #include "Maths.h"
 
-#include "assimp/scene.h"
-
 #include <vector>
 #include <string>
+
+struct aiNodeAnim;
 
 struct Key {
 	glm::vec3 position;

@@ -12,6 +12,14 @@ direction(_direction), cutOff(_cutOff), outerCutOff(_outerCutOff)
 {
 }
 
+Spotlight::Spotlight(glm::vec3 _colour, glm::vec3 _position, float _range, glm::vec3 _direction, float _cutOff, float _outerCutOff) : 
+	PointLight(_colour, _position, _range, -1),
+	direction(_direction),
+	cutOff(_cutOff),
+	outerCutOff(_outerCutOff)
+{
+}
+
 void Spotlight::ApplyToShader(Shader* shader)
 {
 	shader->Use();

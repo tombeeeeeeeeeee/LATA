@@ -7,6 +7,8 @@
 #include "ComputeShader.h"
 #include "Animation.h"
 
+#include <iostream>
+
 LocWorkshop::LocWorkshop()
 {
 }
@@ -24,10 +26,10 @@ void LocWorkshop::Start()
 	sceneObject = new SceneObject(this, "Testing!");
 	//sceneObject->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension), ResourceManager::defaultMaterial));
 
-	
-	int max_compute_work_group_count[3];
-	int max_compute_work_group_size[3];
-	int max_compute_work_group_invocations;
+
+	int max_compute_work_group_count[3] = {};
+	int max_compute_work_group_size[3] = {};
+	int max_compute_work_group_invocations = {};
 
 	for (int idx = 0; idx < 3; idx++) {
 		glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, idx, &max_compute_work_group_count[idx]);

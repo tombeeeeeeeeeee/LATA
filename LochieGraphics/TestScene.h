@@ -5,6 +5,7 @@
 #include "MessengerInterface.h"
 #include "Animator.h"
 #include "BlendedAnimator.h"
+#include "Animation.h"
 
 class TestScene : public Scene
 {

@@ -1,7 +1,11 @@
 #pragma once
 
-#include "Animation.h"
+#include "Maths.h"
 
+#include <vector>
+
+class Animation;
+class ModelHierarchyInfo;
 namespace toml {
 	inline namespace v3 {
 		class table;
@@ -55,5 +59,7 @@ public:
 
 	toml::table Serialise(unsigned long long GUID) const;
 	Animator(toml::table table);
+
+	void GUI();
 };
 

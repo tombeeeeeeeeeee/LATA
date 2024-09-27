@@ -1,5 +1,6 @@
 #include "Bone.h"
 
+#include "assimp/anim.h"
 #include "AssimpMatrixToGLM.h"
 
 #include <iostream>
