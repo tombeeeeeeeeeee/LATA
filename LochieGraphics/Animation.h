@@ -22,11 +22,8 @@ private:
 	// The bones apart of the model for this animation
 	std::vector<Bone> bones = {};
 
-	//// The root node of the bones
-	//Transform* rootNode;
-
 	// String to bone infos
-	std::unordered_map<std::string, BoneInfo> boneInfoMap;
+	//std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
 public:
 
