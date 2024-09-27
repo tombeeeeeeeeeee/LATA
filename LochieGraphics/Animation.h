@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Bone.h"
-#include "BoneInfo.h"
 
 #include <unordered_map>
 
 class Model;
 class ModelHierarchyInfo;
 struct aiAnimation;
+struct BoneInfo;
 
 // TODO: Needs a GUID
 class Animation
@@ -21,9 +21,6 @@ private:
 
 	// The bones apart of the model for this animation
 	std::vector<Bone> bones = {};
-
-	// String to bone infos
-	//std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
 public:
 
@@ -46,7 +43,6 @@ public:
 	/// <returns>A Bone pointer</returns>
 	Bone* FindBone(const std::string& name);
 	
-	
 	float getTicksPerSecond() const;
 
 	float getDuration() const;
@@ -54,6 +50,8 @@ public:
 	const ModelHierarchyInfo* getRootNode() const;
 
 	const std::unordered_map<std::string, BoneInfo>& getBoneIDMap() const;
+
+	void GUI();
 
 private:
 	void ReadMissingBones(const aiAnimation* animation, Model* model);

@@ -1,6 +1,11 @@
 #include "Animation.h"
 
+#include "BoneInfo.h"
 #include "Model.h"
+
+#include "Utilities.h"
+
+#include "EditorGUI.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -69,6 +74,22 @@ const ModelHierarchyInfo* Animation::getRootNode() const
 const std::unordered_map<std::string, BoneInfo>& Animation::getBoneIDMap() const
 {
 	return model->boneInfoMap;
+}
+
+void Animation::GUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	if (ImGui::CollapsingHeader(("Animation##" + tag).c_str())) {
+		ImGui::Indent();
+		ImGui::DragFloat(("Duration##" + tag).c_str(), &duration);
+		ImGui::DragFloat(("Ticks Per Second##" + tag).c_str(), &ticksPerSecond);
+		// TODO: GUI for the bone animation info
+		ImGui::BeginDisabled();
+		std::string modelName = model->getDisplayName();
+		ImGui::InputText(("Model##" + tag).c_str(), &modelName);
+		ImGui::EndDisabled();
+		ImGui::Unindent();
+	}
 }
 
 void Animation::ReadMissingBones(const aiAnimation* animation, Model* model)

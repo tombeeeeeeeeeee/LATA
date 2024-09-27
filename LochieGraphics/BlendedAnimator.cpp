@@ -2,6 +2,7 @@
 
 #include "Animation.h"
 #include "ModelHierarchyInfo.h"
+#include "BoneInfo.h"
 
 BlendedAnimator::BlendedAnimator(Animation* one, Animation* two) : Animator(one),
     otherCurrentAnimation(two)

@@ -2,6 +2,7 @@
 
 #include "Animation.h"
 #include "ModelHierarchyInfo.h"
+#include "BoneInfo.h"
 
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
@@ -98,7 +99,7 @@ void Animator::GUI()
             ImGui::Unindent();
         }
         // TODO: Show the animation
-        // currentAnimation.GUI();
+        currentAnimation->GUI();
         ImGui::DragFloat(("Animation Time##" + tag).c_str(), &currentTime);
         ImGui::Unindent();
     }
