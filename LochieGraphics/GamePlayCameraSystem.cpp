@@ -26,7 +26,7 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 		
 		camera.transform.setEulerRotation(viewAngle);
 		glm::vec3 deltaPos = eccoTransform.getGlobalPosition() - syncTransform.getGlobalPosition();
-		zoomScale = glm::max(glm::length(deltaPos) * cameraZoomScale, cameraZoomMinimum);
+		zoomScale = glm::clamp(glm::length(deltaPos) * cameraZoomScale, cameraZoomMinimum, cameraZoomMaximum);
 		target = syncTransform.getGlobalPosition() + (deltaPos * 0.5f);
 		[[fallthrough]];
 

@@ -7,6 +7,7 @@
 #include "Health.h"
 #include "Enemy.h"
 #include "ExitElevator.h"
+#include "SpawnManager.h"
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
@@ -50,6 +51,7 @@ public:
 	std::unordered_map<unsigned long long, Health> healths = {};
 	std::unordered_map<unsigned long long, Enemy> enemies = {};
 	std::unordered_map<unsigned long long, ExitElevator> exits = {};
+	std::unordered_map<unsigned long long, SpawnManager> spawnManagers = {};
 	std::vector<Light*> lights = {};
 
 	std::vector<unsigned long long> markedForDeletion = {};

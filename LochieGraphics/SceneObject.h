@@ -13,6 +13,7 @@ class Health;
 class Animator;
 class RigidBody;
 class ExitElevator;
+class SpawnManager;
 struct Enemy;
 namespace toml {
 	inline namespace v3 {
@@ -36,6 +37,7 @@ enum Parts
 	exitElevator =	1 << 10,
 	spikes =		1 << 11,
 	plate = 		1 << 12,
+	spawnManager =	1 << 13,
 };
 
 class Scene;
@@ -101,6 +103,8 @@ public:
 	void setExitElevator(ExitElevator* exitElevator);
 	ExitElevator* exitElevator();
 
+	void setSpawnManager(SpawnManager* spawnManager);
+	SpawnManager* spawnManager();
 	// Make this take a mask for stuff to delete
 	void ClearParts();
 

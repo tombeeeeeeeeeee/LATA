@@ -217,13 +217,70 @@ void EnemySystem::LineOfSightAndTargetCheck(
     }
 }
 
-void EnemySystem::UpdateEnemiesPathFinding(Enemy& enemy, Transform& transform, RigidBody& rb, float delta)
+void EnemySystem::Steering(std::unordered_map<unsigned long long, Enemy>& enemies, std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidBodies, float delta)
 {
-    
+    for (auto& enemyPair : enemies)
+    {
+        glm::vec2 avgPos = { 0.0f, 0.0f };
+        glm::vec2 avgVel = { 0.0f, 0.0f };
+
+        int totalNeighbours = 0;
+
+        glm::vec2 enemyPos = transforms[enemyPair.first].get2DGlobalPosition();
+
+        for (auto& otherEnemyPair : enemies)
+        {
+            glm::vec2 otherEnemyPos = transforms[otherEnemyPair.first].get2DGlobalPosition();
+            if (enemyPair.first == otherEnemyPair.first) continue;
+            glm::vec2 displacement = otherEnemyPos - enemyPos;
+            float distanceSq = glm::dot(displacement, displacement);
+
+            if (distanceSq <= perceptionRadius * perceptionRadius)
+            {
+                avgPos += otherEnemyPos;
+                avgVel += otherEnemyPair.second.boidVelocity;
+
+                totalNeighbours++;
+
+                if (distanceSq <= separationRadius * separationRadius)
+                {
+                    glm::vec2 otherToSelf = enemyPos - otherEnemyPos;
+                    float distance =  glm::length(otherToSelf);
+                    float strength = 1.0f - (distance / separationRadius);
+                
+                    enemyPair.second.influenceThisFrame += (otherToSelf / distance) * strength * seperationCoef;
+                }
+            }
+        }
+        if (totalNeighbours == 0) continue;
+
+        avgPos /= totalNeighbours;
+        avgVel /= totalNeighbours;
+        //Todo: enemyPair.second.lastTargetPos
+        glm::vec2 alignmentForce = avgVel * alignmentCoef;
+        glm::vec2 cohesionForce = (avgPos - enemyPos) * cohesionCoef;
+        enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce;
+    }
+
+    for (auto& enemyPair : enemies)
+    {
+        enemyPair.second.boidVelocity += enemyPair.second.influenceThisFrame;
+        if (enemyPair.second.boidVelocity.x != 0.0f || enemyPair.second.boidVelocity.y != 0.0f)
+        {
+            enemyPair.second.boidVelocity = Utilities::ClampMag(enemyPair.second.boidVelocity, maxSpeed, maxSpeed);
+        }
+        enemyPair.second.influenceThisFrame = {0.0f, 0.0f};
+
+        glm::vec2 curVel = rigidBodies[enemyPair.first].vel;
+        glm::vec2 velocityDelta = enemyPair.second.boidVelocity - curVel;
+        glm::vec2 forceThisFrame = velocityDelta / delta;
+        rigidBodies[enemyPair.first].netForce += forceThisFrame;
+    }
+
 }
 
 //TODO: Add AI Pathfinding and attacking in here.
-void EnemySystem::Update(
+void EnemySystem::Update   (
     std::unordered_map<unsigned long long, Enemy>& enemies,
     std::unordered_map<unsigned long long, Transform>& transforms, 
     std::unordered_map<unsigned long long, RigidBody>& rigidbodies, 
@@ -239,35 +296,41 @@ void EnemySystem::Update(
             ecco, sync
         );
 
+        Steering(
+            enemies, 
+            transforms, 
+            rigidbodies, 
+            delta
+        );
+
         //TODO ADD States and Transitions
-        for (auto& enemyPair : enemies)
-        {
-            Enemy& enemy = enemyPair.second;
-            SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
-            State* newState = nullptr;
-        
-            // check the current state's transitions
-            for (auto& t : enemy.state->transitions)
-            {
-                if (t.condition->IsTrue(agent))
-                {
-                    newState = t.targetState;
-                    break;
-                }
-            }
-        
-        
-            if (newState != nullptr && newState != enemy.state)
-            {
-                enemy.state->Exit(agent);
-                enemy.state = newState;
-                enemy.state->Enter(agent);
-            }
-        
-            enemy.state->Update(agent);
-            UpdateEnemiesPathFinding(enemy, transforms[enemyPair.first], rigidbodies[enemyPair.first], delta);
-        }
-    }
+        //for (auto& enemyPair : enemies)
+        //{
+        //    Enemy& enemy = enemyPair.second;
+        //    SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
+        //    State* newState = nullptr;
+        //
+        //    // check the current state's transitions
+        //    for (auto& t : enemy.state->transitions)
+        //    {
+        //        if (t.condition->IsTrue(agent))
+        //        {
+        //            newState = t.targetState;
+        //            break;
+        //        }
+        //    }
+        //
+        //
+        //    if (newState != nullptr && newState != enemy.state)
+        //    {
+        //        enemy.state->Exit(agent);
+        //        enemy.state = newState;
+        //        enemy.state->Enter(agent);
+        //    }
+        //
+        //    enemy.state->Update(agent);
+        //}
+    }   //
 }
 
 void EnemySystem::SpawnEnemiesInScene(
@@ -374,7 +437,9 @@ void EnemySystem::GUI()
 
     ImGui::Text("AI STATS");
     ImGui::DragFloat("Max Speed", &maxSpeed);
-
+    ImGui::DragFloat("Alignment Coef", &alignmentCoef);
+    ImGui::DragFloat("Cohesion Coef", &cohesionCoef);
+    ImGui::DragFloat("Seperation Coef", &seperationCoef);
 
     ImGui::Text("MELEE ENEMY STATS");
     ImGui::DragInt("Melee Enemy Health", &meleeEnemyHealth);
@@ -397,6 +462,10 @@ void EnemySystem::GUI()
         rangedEnemyModel = rangedEnemyRenderer->model->path;
     }
     ImGui::InputText("Ranged Enemy Material", &rangedEnemyMaterialPath);
+
+    ImGui::Text("BOID TESTING");
+    ImGui::DragFloat("Perception Radius", &perceptionRadius);
+    ImGui::DragFloat("Separation Radius", &separationRadius);
 
     ImGui::End();
 }

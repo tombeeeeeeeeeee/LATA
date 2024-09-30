@@ -97,33 +97,46 @@ void Ecco::Update(
 		wheelDirection = { forward.x * c - forward.z * s, forward.z * c + forward.x * s };
 	}
 
-	//Accelerator
-	if (glm::length(inputDevice.getRightTrigger()) > 0.01f)
+	timeSinceSpeedBoost += delta;
+	if (boosting)
 	{
-		force += glm::vec2(forward.x, forward.z) * carMoveSpeed * inputDevice.getRightTrigger();
-	}
+		timeInSpeedBoost += delta;
 
-	//Reversaccelrator
-	if (glm::length(inputDevice.getLeftTrigger()) > 0.01f)
+		force = speedBoost * wheelDirection;
+		if (timeInSpeedBoost >= speedBoostDuration)
+		{
+			boosting = false;
+			timeSinceSpeedBoost = 0.0f;
+		}
+	}
+	else
 	{
-		force -= glm::vec2(forward.x, forward.z) * carReverseMoveSpeed * inputDevice.getLeftTrigger();
-	}
+		//Accelerator
+		if (glm::length(inputDevice.getRightTrigger()) > 0.01f)
+		{
+			force += glm::vec2(forward.x, forward.z) * carMoveSpeed * inputDevice.getRightTrigger();
+		}
 
-	//Nothingerator
-	if (glm::length(force) < 0.001f && glm::length(rigidBody.vel) > 0)
-	{
-		force += -rigidBody.vel * stoppingFrictionCoef;
-	}
+		//Reversaccelrator
+		if (glm::length(inputDevice.getLeftTrigger()) > 0.01f)
+		{
+			force -= glm::vec2(forward.x, forward.z) * carReverseMoveSpeed * inputDevice.getLeftTrigger();
+		}
 
-	//Stop Speed exceeding speed limit (Could change to be drag)
-	if (glm::length(rigidBody.vel + rigidBody.invMass * (force + rigidBody.netForce)) > maxCarMoveSpeed && glm::dot(force, rigidBody.vel) > 0)
-	{
-		force = glm::normalize(force) * (maxCarMoveSpeed - glm::length(rigidBody.vel)) / rigidBody.invMass;
-	}
+		//Nothingerator
+		if (glm::length(force) < 0.001f && glm::length(rigidBody.vel) > 0)
+		{
+			force += -rigidBody.vel * stoppingFrictionCoef;
+		}
 
+		//Stop Speed exceeding speed limit (Could change to be drag)
+		if (glm::length(rigidBody.vel + rigidBody.invMass * (force + rigidBody.netForce)) > maxCarMoveSpeed && glm::dot(force, rigidBody.vel) > 0)
+		{
+			force = glm::normalize(force) * (maxCarMoveSpeed - glm::length(rigidBody.vel)) / rigidBody.invMass;
+		}
+	}
 	float wheelInDirectionOfForward = glm::dot(wheelDirection, { forward.x , forward.z });
 	wheelInDirectionOfForward = glm::clamp(wheelInDirectionOfForward, -1.0f, 1.0f);
-
 	//Sideways drag coefficent
 	if (glm::length(rigidBody.vel) > 0.00001f)
 	{
@@ -143,11 +156,20 @@ void Ecco::Update(
 
 	if (inputDevice.getButton1())// && lastSpeedBoostPressed + speedBoostCooldown > Time.time)
 	{
-		if (speedBoostUnactuated)
+		if (!boosting && speedBoostUnactuated && timeSinceSpeedBoost >= speedBoostCooldown)
 		{
+			if (speedBoostInDirectionOfBody)
+			{
+				wheelDirection = { transform.forward().x, transform.forward().z };
+			}
+
 			rigidBody.AddImpulse(speedBoost * wheelDirection);
 			health.subtractHealth(speedBoostHPCost);
+			boosting = true;
+			timeSinceSpeedBoost = 0.0f;
+			timeInSpeedBoost = 0.0f;
 		}
+
 		speedBoostUnactuated = false;
 	}
 	else
@@ -205,6 +227,11 @@ void Ecco::GUI()
 		ImGui::BeginDisabled();
 		ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
 		ImGui::EndDisabled();
+
+		ImGui::Text("");
+		ImGui::Text("TESTING PARTS");
+		ImGui::Checkbox("Boost Not In Wheel Direction", &speedBoostInDirectionOfBody);
+		ImGui::DragFloat("Speed Boost Duration", &speedBoostDuration );
 		ImGui::Unindent();
 	}
 }
@@ -232,6 +259,7 @@ toml::table Ecco::Serialise()
 		{ "speedDamage", speedDamage},
 		{ "healingFromDamage", healingFromDamage},
 		{ "speedReductionAfterDamaging", speedReductionAfterDamaging},
+		{ "speedBoostDuration", speedBoostDuration},
 		{ "maxHealth", maxHealth},
 	};
 }
@@ -258,6 +286,7 @@ Ecco::Ecco(toml::table table)
 	speedDamage = Serialisation::LoadAsInt(table["speedDamage"]);
 	healingFromDamage = Serialisation::LoadAsInt(table["healingFromDamage"]);
 	speedReductionAfterDamaging = Serialisation::LoadAsFloat(table["speedReductionAfterDamaging"]);
+	speedBoostDuration = Serialisation::LoadAsFloat(table["speedBoostDuration"]);
 	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
 }
 
