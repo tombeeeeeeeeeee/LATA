@@ -299,6 +299,8 @@ void Scene::InitialisePlayers()
 
 	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { ecco->OnCollision(collision); });
 
+	eccoSO->rigidbody()->vel = {0.0f, 0.0f};
+
 	if (!eccoSO->renderer()) eccoSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension),(unsigned long long) 0));
 	else eccoSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension);
 	eccoSO->renderer()->materialTint = {0.0f, 102.0f, 204.0f};
@@ -321,6 +323,8 @@ void Scene::InitialisePlayers()
 	};
 
 	((PolygonCollider*)syncSO->rigidbody()->colliders[0])->radius = 40.0f;
+
+	syncSO->rigidbody()->vel = { 0.0f, 0.0f };
 
 	if (!syncSO->renderer()) syncSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension), (unsigned long long) 0));
 	else syncSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension);

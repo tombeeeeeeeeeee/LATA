@@ -235,6 +235,8 @@ void LevelEditor::Update(float delta)
 	input.Update();
 
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
+	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
+
 
 	if (inPlay)
 	{
@@ -246,7 +248,6 @@ void LevelEditor::Update(float delta)
 
 		for (auto& exitPair : exits) exitPair.second.Update();
 
-		physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 		gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
 
 		enemySystem.Update(
