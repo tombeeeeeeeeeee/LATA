@@ -23,6 +23,8 @@
 #include "RenderSystem.h"
 #include "Hit.h"
 #include "Node.h"
+#include "Paths.h"
+#include "stb_image.h"
 
 
 EnemySystem::EnemySystem(toml::table table)
@@ -488,11 +490,79 @@ toml::table EnemySystem::Serialise() const
     };
 }
 
+void EnemySystem::LoadLevelParametres(toml::table table)
+{
+    mapMinCorner = Serialisation::LoadAsVec2(table["mapMinCorner"]);
+    mapDimensions = Serialisation::LoadAsVec2(table["mapDimensions"]);
+}
+
+toml::table EnemySystem::SerialiseForLevel() const
+{
+    return toml::table
+    {
+        { "mapMinCorner", Serialisation::SaveAsVec2(mapMinCorner)},
+        { "mapDimensions", Serialisation::SaveAsVec2(mapDimensions)},
+    }; 
+}
+
 void EnemySystem::OnMeleeCollision(Collision collision)
 {
     if (collision.collisionMask & (int)CollisionLayers::sync || collision.collisionMask & (int)CollisionLayers::ecco)
     {
         collision.sceneObject->health()->subtractHealth(meleeEnemyDamage);
     }
+}
+
+void EnemySystem::UpdateNormalFlowMap(
+    std::string levelName,
+    std::unordered_map<unsigned long long, Transform> transforms,
+    std::unordered_map<unsigned long long, RigidBody> rigidBodies
+)
+{
+    int w, h, channels;
+    unsigned char* nfmImage = stbi_load(
+        (Paths::levelsPath + SceneManager::scene->windowName + Paths::imageExtension).c_str(),
+        &w, &h, &channels, STBI_rgb
+        );
+
+    if (nfmImage)
+    {
+        currentNormalFlowMapDensity = mapDimensions.x / (float) w;
+        LoadNormalFlowMapFromImage(nfmImage, w, h);
+    }
+    else
+    {
+        PopulateNormalFlowMapFromRigidBodies(transforms, rigidBodies);
+    }
+}
+
+void EnemySystem::LoadNormalFlowMapFromImage(unsigned char* image, int width, int height)
+{
+    normalFlowMap.clear();
+    normalFlowMap.reserve(width * height);
+    for (int i = 0; i < width * height; i++)
+    {
+        normalFlowMap.push_back(glm::vec2(
+            image[4 * i + 0], image[4 * i + 1]
+        ));
+    }
+
+}
+
+void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsigned long long, Transform> transforms, std::unordered_map<unsigned long long, RigidBody> rigidbodies)
+{
+    /*
+    * For each rigidbody
+    *   for each collider
+    *     if poly
+    *        for each normal
+    *           for each pixel
+    *               calculate influence
+    *     if circle
+    *        for distance from centre
+    *           for each pixel
+    *               calculate influence
+    */
+
 }
 

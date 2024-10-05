@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 
+
 struct Enemy;
 class Transform;
 class RigidBody;
@@ -34,6 +35,9 @@ private:
 	int explosiveEnemyCount = 0;
 	int meleeEnemyCount = 0;
 	int rangedEnemyCount = 0;
+	
+	float defaultNormalFlowMapDensity = 1.0f;
+	float currentNormalFlowMapDensity = 1.0f;
 
 public:
 	bool aiUpdating = false;
@@ -101,7 +105,30 @@ public:
 
 	toml::table Serialise() const;
 
+
+	//TODO: call load and save on level load and save
+	//TODO: call populateNormalMap on level save.
+
+	void LoadLevelParametres(toml::table table);
+	toml::table SerialiseForLevel() const;
+
 	void OnMeleeCollision(Collision collision);
+
+	glm::vec2 mapMinCorner = { 0.0f, 0.0f };
+	glm::vec2 mapDimensions = { 0.0f, 0.0f };
+
+	std::vector<glm::vec2> normalFlowMap;
+
+	void UpdateNormalFlowMap(
+		std::string levelName,
+		std::unordered_map<unsigned long long, Transform> transforms,
+		std::unordered_map<unsigned long long, RigidBody> rigidBodies);
+	void LoadNormalFlowMapFromImage(unsigned char* image, int width, int height);
+	void PopulateNormalFlowMapFromRigidBodies(
+		std::unordered_map<unsigned long long, Transform> transforms,
+		std::unordered_map<unsigned long long, RigidBody> rigidbodies
+	);
+
 
 private:
 	//TODO: DELETE

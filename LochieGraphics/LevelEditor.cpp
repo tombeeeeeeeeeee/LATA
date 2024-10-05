@@ -99,8 +99,12 @@ void LevelEditor::Brush(glm::vec2 targetCell)
 	// other setup here
 	gridMinX = (int)fminf(targetCell.x, (float)gridMinX);
 	gridMinZ = (int)fminf(targetCell.y, (float)gridMinZ);
+
+	enemySystem.mapMinCorner = { gridMinX, gridMinZ };
+
 	gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
 	gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
+	enemySystem.mapMinCorner = { gridMaxX - gridMinX, gridMaxZ - gridMinZ };
 
 	if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
 }
