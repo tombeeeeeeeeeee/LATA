@@ -83,7 +83,16 @@ void Animation::GUI()
 		ImGui::Indent();
 		ImGui::DragFloat(("Duration##" + tag).c_str(), &duration);
 		ImGui::DragFloat(("Ticks Per Second##" + tag).c_str(), &ticksPerSecond);
-		// TODO: GUI for the bone animation info
+		
+		if (ImGui::CollapsingHeader(("Bones##" + tag).c_str())) {
+			ImGui::Indent();
+			for (size_t i = 0; i < bones.size(); i++)
+			{
+				bones[i].GUI();
+			}
+			ImGui::Unindent();
+		}
+
 		ImGui::BeginDisabled();
 		std::string modelName = model->getDisplayName();
 		ImGui::InputText(("Model##" + tag).c_str(), &modelName);

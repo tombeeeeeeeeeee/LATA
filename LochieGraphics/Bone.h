@@ -65,6 +65,8 @@ public:
 
 	int getIndex(float animationTime) const;
 
+	void GUI();
+
 private:
 	
 	float getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const;

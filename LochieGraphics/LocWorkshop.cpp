@@ -46,7 +46,7 @@ void LocWorkshop::Start()
 	std::cout << "Maximum size of a work group in Y dimension " << max_compute_work_group_size[1] << '\n';
 	std::cout << "Maximum size of a work group in Z dimension " << max_compute_work_group_size[2] << '\n';
 
-	std::cout << "Number of invocations in a single local work group that may be dispatched to a compute shader " << max_compute_work_group_invocations << '\n\n';
+	std::cout << "Number of invocations in a single local work group that may be dispatched to a compute shader " << max_compute_work_group_invocations << "\n\n";
 
 	//ComputeShader computeShader = ComputeShader("shaders/LocsComputeShader.comp");
 
@@ -56,7 +56,7 @@ void LocWorkshop::Start()
 	//sceneObject->renderer()->materials.front()->texturePointers["material.albedo"] = texture;
 
 	aniTest = new SceneObject(this, "Animation Test");
-	std::string path = "models/Anim_Sync_RunTEST.fbx";
+	std::string path = "models/Anim_Sync_RunTEST03.fbx";
 	Model* aniTestModel = ResourceManager::LoadModel(path);
 	aniTest->setRenderer(new ModelRenderer(aniTestModel, ResourceManager::defaultMaterial));
 
