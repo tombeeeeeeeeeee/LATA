@@ -36,6 +36,13 @@ void GUI::Update()
 		return;
 	}
 
+	// TODO: Rebind-able key
+	if (glfwGetKey(SceneManager::window, GLFW_KEY_DELETE)) {
+		if (sceneObjectSelected) {
+			scene->DeleteSceneObject(sceneObjectSelected->GUID);
+		}
+	}
+
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("Save")) {
