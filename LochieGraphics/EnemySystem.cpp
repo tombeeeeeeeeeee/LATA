@@ -493,6 +493,10 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
     */
     normalFlowMap.clear();
     normalFlowMap.reserve(mapDimensions.x * mapDimensions.y);
+    for (int i = 0; i < mapDimensions.x * mapDimensions.y; i++)
+    {
+        normalFlowMap.push_back({0.0f, 0.0f});
+    }
     
     for (auto& rigidBodyPair : rigidbodies)
     {
@@ -500,9 +504,67 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
         {
             if (collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::halfCover | (int)CollisionLayers::softCover))
             {
+                if (collider->getType() == ColliderType::polygon)
+                {
+                    PolygonCollider* poly = (PolygonCollider*)collider;
+                    
+                    if (poly->verts.size() == 1)
+                    {
+                        glm::vec2 pos = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[0]);
+                        float radius = poly->radius;
+                        for (int x = 0; x < mapDimensions.x; x++)
+                        {
+                            for (int z = 0; z < mapDimensions.y; z++)
+                            {
+                                glm::vec2 tilePos = {x + mapDimensions.x, z + mapDimensions.y};
+                                glm::vec2 delta = tilePos - pos;
+                                float distance = glm::dot(delta, delta);
+                                if (distance >= radius)
+                                {
+                                    glm::vec2 normal = glm::normalize(delta);
+                                    normalFlowMap[x + z * mapDimensions.y] += normal / distance;
+                                }
+                            }
+                        }
+                    }
 
+                    else
+                    {
+                        for (int i = 0; i < poly->verts.size(); i++)
+                        {
+                            glm::vec2 vertA = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[i]);
+                            glm::vec2 vertB = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[(i + 1) % poly->verts.size()]);
+
+                            glm::vec2 tangent = vertB - vertA;
+                            float distanceBetween = glm::dot(vertB, tangent);
+                            tangent = glm::normalize(tangent);
+                            glm::vec2 normal = {tangent.y, -tangent.x};
+                            float comparisonNormal = glm::dot(vertB, normal);
+                            float comparisonTangentA = glm::dot(vertA, tangent);
+                            float comparisonTangentB = glm::dot(vertB, tangent);
+
+                            for (int x = 0; x < mapDimensions.x; x++)
+                            {
+                                for (int z = 0; z < mapDimensions.y; z++)
+                                {
+                                    glm::vec2 tilePos = { x + mapDimensions.x, z + mapDimensions.y };
+                                    float normalDot = glm::dot(tilePos, normal);
+                                    if (normalDot >= comparisonNormal)
+                                    {
+                                        float tanDot = glm::dot(tilePos, tangent);
+                                        if ( tanDot > comparisonTangentA && tanDot < comparisonTangentB)
+                                        {
+                                            normalFlowMap[x + z * mapDimensions.y] += normal / (normalDot - comparisonNormal);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+    //TODO: write to image
 }
 
