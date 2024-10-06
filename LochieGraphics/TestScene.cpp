@@ -184,6 +184,8 @@ void TestScene::Start()
 	vampireWalk = Animation("models/Skinning Test.fbx", vampireModel);
 	vampireAnimator = Animator(&vampireWalk);
 	vampire->setAnimator(&vampireAnimator);
+
+	//aniTest->setRenderer(new ModelRenderer(ResourceManager::LoadModel("C:/Users/s220518/Downloads/test/Anim_Sync_RunTEST.fbx"), ResourceManager::LoadDefaultMaterial()));
 }
 
 void TestScene::Update(float delta)
@@ -227,33 +229,14 @@ void TestScene::Update(float delta)
 	lightCube->transform()->setPosition(pointLights[0].position);
 	spotlight.position = camera->transform.getPosition();
 	spotlight.direction = camera->transform.forward();
-
-	// Different View Projection matrix for the skybox, as translations shouldn't affect it
-	// TODO: This math shouldn't be here, maybe move to camera class or get the projection from scenemanager
-
-	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
-	{
-		(*i).second->Update(delta);
-	}
-
-	for (auto i = animators.begin(); i != animators.end(); i++)
-	{
-		(*i).second.UpdateAnimation(delta);
-	}
-
-	//xbotAnimator.UpdateAnimation(delta);
-	//xbotOtherAnimator.UpdateAnimation(delta);
-	//xbotBlendedAnimator.UpdateAnimation(delta);
-	//vampireAnimator.UpdateAnimation(delta);
 }
 
 void TestScene::Draw()
 {
-	auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
-	auto& xBotOtherTransforms = xbotOtherAnimator.getFinalBoneMatrices();
-	auto& vampTransforms = vampireAnimator.getFinalBoneMatrices();
-
-	auto& xbotInterpolatedAnimations = xbotBlendedAnimator.getFinalBoneMatrices();
+	//auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
+	//auto& xBotOtherTransforms = xbotOtherAnimator.getFinalBoneMatrices();
+	
+	//auto& xbotInterpolatedAnimations = xbotBlendedAnimator.getFinalBoneMatrices();
 
 	renderSystem.Update(
 		renderers,

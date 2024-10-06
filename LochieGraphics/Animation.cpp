@@ -1,6 +1,11 @@
 #include "Animation.h"
 
+#include "BoneInfo.h"
 #include "Model.h"
+
+#include "Utilities.h"
+
+#include "EditorGUI.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -49,14 +54,6 @@ Bone* Animation::FindBone(const std::string& name)
 		return nullptr;
 	}
 	return &(*search);
-
-	//for (auto i = bones.begin(); i != bones.end(); i++)
-	//{
-	//	if (i->getBoneName() == name) {
-	//		return &(*i);
-	//	}
-	//}
-	//return nullptr;
 }
 
 float Animation::getTicksPerSecond() const
@@ -76,7 +73,32 @@ const ModelHierarchyInfo* Animation::getRootNode() const
 
 const std::unordered_map<std::string, BoneInfo>& Animation::getBoneIDMap() const
 {
-	return boneInfoMap;
+	return model->boneInfoMap;
+}
+
+void Animation::GUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	if (ImGui::CollapsingHeader(("Animation##" + tag).c_str())) {
+		ImGui::Indent();
+		ImGui::DragFloat(("Duration##" + tag).c_str(), &duration);
+		ImGui::DragFloat(("Ticks Per Second##" + tag).c_str(), &ticksPerSecond);
+		
+		if (ImGui::CollapsingHeader(("Bones##" + tag).c_str())) {
+			ImGui::Indent();
+			for (size_t i = 0; i < bones.size(); i++)
+			{
+				bones[i].GUI();
+			}
+			ImGui::Unindent();
+		}
+
+		ImGui::BeginDisabled();
+		std::string modelName = model->getDisplayName();
+		ImGui::InputText(("Model##" + tag).c_str(), &modelName);
+		ImGui::EndDisabled();
+		ImGui::Unindent();
+	}
 }
 
 void Animation::ReadMissingBones(const aiAnimation* animation, Model* model)
@@ -89,9 +111,8 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model* model)
 		std::string boneName = channel->mNodeName.data;
 
 		if (newBoneInfoMap.find(boneName) == newBoneInfoMap.end()) {
-			newBoneInfoMap[boneName].ID = (unsigned int)boneInfoMap.size() + 1;
+			newBoneInfoMap[boneName].ID = (unsigned int)newBoneInfoMap.size() + 1;
 		}
 		bones.push_back(Bone(channel->mNodeName.data, newBoneInfoMap[channel->mNodeName.data].ID, channel));
 	}
-	boneInfoMap = newBoneInfoMap;
 }

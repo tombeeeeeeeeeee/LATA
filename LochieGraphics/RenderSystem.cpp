@@ -13,6 +13,8 @@
 #include "Utilities.h"
 #include "EditorGUI.h"
 
+#include <iostream>
+
 LineRenderer RenderSystem::lines;
 
 void RenderSystem::Start(
@@ -315,6 +317,12 @@ void RenderSystem::Update(
     Camera* camera
 )
 {
+    std::unordered_set<unsigned long long> animatedRenderered = {};
+    for (auto& i : animators)
+    {
+        animatedRenderered.emplace(i.first);
+    }
+
     // TODO: There are a few issues when the res is too low
     if (SCREEN_WIDTH <= 64 || SCREEN_HEIGHT <= 64) { return; }
 
@@ -339,7 +347,6 @@ void RenderSystem::Update(
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //RENDER SCENE FOR SHADOWS
-
     for(auto i = shadowCasters.begin(); i != shadowCasters.end(); i++)
     {
         // TODO: This is only using the first material found on the model, each mesh could potentially have a different material?
@@ -351,7 +358,6 @@ void RenderSystem::Update(
             alphaMap = currentRenderer.materials[0]->getFirstTextureOfType(Texture::Type::albedo);
         }
         if (alphaMap) {
-            // TODO: Really should be using a Texture bind function here.
             alphaMap->Bind(1);
             (*shaders)[shadowMapDepth]->setSampler("alphaDiscardMap", 1);
         }
@@ -373,6 +379,7 @@ void RenderSystem::Update(
 
     DrawAnimation(animators, transforms, shadowCasters, (*shaders)[shadowMapDepth]);
     
+
     // Render scene with shadow map, to the screen framebuffer
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -386,7 +393,7 @@ void RenderSystem::Update(
 
     glDrawBuffers(2, forwardAttachments);
     DrawAnimation(animators, transforms, renders, (*shaders)[forward]);
-    DrawRenderers(renders, transforms, (*shaders)[forward]);
+    DrawRenderers(renders, transforms, animatedRenderered, (*shaders)[forward]);
 
     RenderSSAO();
     glDisable(GL_DEPTH_TEST);
@@ -418,7 +425,7 @@ void RenderSystem::Update(
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    DrawRenderers(renders, transforms);
+    DrawRenderers(renders, transforms, animatedRenderered);
 
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Draw();
@@ -434,7 +441,7 @@ void RenderSystem::Update(
     glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, camera->nearPlane, camera->farPlane);
     (*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
     
-    DrawAnimation(animators, transforms, renders, (*shaders)[ShaderIndex::super]);
+    DrawAnimation(animators, transforms, renders);
 
     RenderBloom(bloomBuffer);
 
@@ -527,95 +534,128 @@ void RenderSystem::ScreenResize(int width, int height)
     BloomUpdate();
 }
 
+// TODO: Should probably be called something more like DrawAnimators
+// TODO: This is quite similiar to DrawRenderers, would be nice to clean up together
 void RenderSystem::DrawAnimation(
     std::unordered_map<unsigned long long, Animator>& animators,
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-    Shader* shader
+    Shader* givenShader
 )
 {
-    shader->Use();
+    Material* previousMaterial = nullptr;
     for (auto iter = animators.begin(); iter != animators.end(); iter++)
     {
-        std::vector<glm::mat4> animations = iter->second.getFinalBoneMatrices();
-        for (int i = 0; i < animations.size(); i++)
-        {
-            shader->setMat4("boneMatrices[" + std::to_string(i) + "]", animations[i]);
-        }
-        shader->setMat4("model", transforms[iter->first].getGlobalMatrix());
-
-        ModelRenderer animationRenderer = renderers[iter->first];
-        if (!shader)
-        {
-            // TODO: This is only using the first material found on the model, each mesh could potentially have a different material?
-            animationRenderer.materials[0]->Use();
-            animationRenderer.materials[0]->getShader()->setMat4("model", transforms[iter->first].getGlobalMatrix());
-        }
-        else 
-        {
-        	shader->setMat4("model", transforms[iter->first].getGlobalMatrix());
-        }
-
-        //Model* model = animationRenderer.model;
-        //for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
-        //{
-        //    (*mesh)->Draw();
-        //}
-    }
-}
-
-void RenderSystem::DrawRenderers(
-    std::unordered_map<unsigned long long, ModelRenderer>& renderers, 
-    std::unordered_map<unsigned long long, Transform>& transforms,
-    Shader* _shader
-)
-{
-    for (auto i = renderers.begin(); i != renderers.end(); i++)
-    {
-        //// TODO: This is only using the first material found on the model, each mesh could potentially have a different material?
-        //i->second.materials[0]->Use();
-        //Shader* curShader = i->second.materials[0]->getShader();
-        //curShader->setMat4("model", transforms[i->first].getGlobalMatrix());
-
-        //// TODO: Is this supposed to be used for something?
-        //// ASK:
-        //int samplerCount = i->second.materials[0]->texturePointers.size();
-
-        //ActivateFlaggedVariables(curShader, i->second.materials[0]);
-
-        //// TODO: use shader function
-        //curShader->setVec3("materialColour", i->second.materials[0]->colour);
-
-        Model* model = i->second.model;
-        //for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
-        //{
-        //    (*mesh)->Draw();
-        //}
-
-        Shader* prevShader = nullptr;
-        int prevMaterialID = -1;
+        ModelRenderer& animationRenderer = renderers[iter->first];
+        Model* model = animationRenderer.model;
         if (model == nullptr) { continue; }
+        Shader* previousShader = nullptr;
+
+
+        // TODO: Foreach style loop
         for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
         {
             int materialID = (*mesh)->materialID;
 
             // Ensure that the materialID is valid
+            Material* currentMaterial = nullptr;
+            if (materialID >= model->materialIDs || renderers[iter->first].materials[materialID] == nullptr) {
+                materialID = 0;
+                // TODO: Should probably be a warning here
+            }
+            currentMaterial = renderers[iter->first].materials[materialID];
+
+            // Only bind material if using a different material
+            if (currentMaterial != previousMaterial) {
+                // Skip if no material is set
+                if (currentMaterial == nullptr) { continue; }
+                currentMaterial->Use(givenShader ? givenShader: nullptr);
+                previousMaterial = currentMaterial;
+            }
+
+            Shader* shader;
+            if (givenShader == nullptr) {
+                Material* material = renderers[iter->first].materials[materialID];
+                // TODO: maybe a error / warning
+                if (!material) { continue; }
+                shader = material->getShader();
+            }
+            else {
+                shader = givenShader;
+            }
+            if (previousShader != shader) {
+                shader->Use();
+                previousShader = shader;
+                shader->setMat4("view", viewMatrix);
+                shader->setMat4("model", transforms[iter->first].getGlobalMatrix());
+                ActivateFlaggedVariables(shader, renderers[iter->first].materials[materialID]);
+                shader->setVec3("materialColour", renderers[iter->first].materials[materialID]->colour);
+
+                // Set uniforms needed for animations
+                std::vector<glm::mat4> boneMatrices = iter->second.getFinalBoneMatrices();
+                for (int i = 0; i < boneMatrices.size(); i++)
+                {
+                    shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
+                }
+            }
+
+            (*mesh)->Draw();
+        }
+    }
+}
+
+// TODO: Clean up
+void RenderSystem::DrawRenderers(
+    std::unordered_map<unsigned long long, ModelRenderer>& renderers, 
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    std::unordered_set<unsigned long long> animatedRenderered,
+    Shader* _shader
+)
+{
+    Material* previousMaterial = nullptr;
+    // TODO: Foreach style loop
+    for (auto i = renderers.begin(); i != renderers.end(); i++)
+    {
+        // Don't render animated models as they get rendered elsewhere
+        if (animatedRenderered.find(i->first) != animatedRenderered.end()) { continue; }
+
+        Model* model = i->second.model;
+
+        if (model == nullptr) { continue; }
+        // Previous shader is here because shader uniforms likely change between renderers
+        Shader* prevShader = nullptr;
+        // TODO: Foreach style loop
+        for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
+        {
+            int materialID = (*mesh)->materialID;
+
+            // Ensure that the materialID is valid
+            Material* currentMaterial = nullptr;
             if (materialID >= model->materialIDs || i->second.materials[materialID] == nullptr) {
                 materialID = 0;
+                // TODO: Should probably be a warning here
             }
-            // Only bind textures if using a different material
-            if (materialID != prevMaterialID) {
-                if (i->second.materials[materialID] == nullptr) { continue; }
-                i->second.materials[materialID]->Use(_shader ? _shader : nullptr);
-            }
-            // Only need to set shader variables if using a different shader
-           
-            Shader* shader;
-            if (_shader == nullptr)
-                shader = i->second.materials[materialID]->getShader();
-            else
-                shader = _shader;
+            currentMaterial = i->second.materials[materialID];
 
+            // Only bind material if using a different material
+            if (currentMaterial != previousMaterial) {
+                // Skip if no material is set
+                if (currentMaterial == nullptr) { continue; }
+                currentMaterial->Use(_shader ? _shader : nullptr);
+                previousMaterial = currentMaterial;
+            }
+           
+            // Only need to set shader variables if using a different shader
+            Shader* shader;
+            if (_shader == nullptr) {
+                Material* material = i->second.materials[materialID];
+                // TODO: maybe a error / warning
+                if (!material) { continue; }
+                shader = material->getShader();
+            }
+            else {
+                shader = _shader;
+            }
 
             if (prevShader != shader) {
                 shader->Use();

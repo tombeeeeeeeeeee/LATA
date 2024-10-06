@@ -1,6 +1,9 @@
 #include "Bone.h"
 
+#include "ExtraEditorGUI.h"
 #include "AssimpMatrixToGLM.h"
+
+#include "assimp/anim.h"
 
 #include <iostream>
 
@@ -60,6 +63,39 @@ int Bone::getIndex(float animationTime) const
 	return 0;
 	//TODO: No asserts, here and the other get index
 	//assert(0); 
+}
+
+void Bone::GUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	//if (ImGui::CollapsingHeader((name + "##" + tag).c_str())) {
+		//ImGui::Indent();
+		ImGui::InputText(("Name##" + tag).c_str(), &name);
+		ExtraEditorGUI::Mat4Input(tag, &localTransform);
+		ImGui::InputInt(("ID##" + tag).c_str(), &ID);
+		if (ImGui::CollapsingHeader(("Keys##" + tag).c_str())) {
+			ImGui::Indent();
+			for (size_t i = 0; i < keys.size(); i++)
+			{
+				Key& key = keys[i];
+				std::string keyTag = Utilities::PointerToString(&keys[i]);
+				if (!ImGui::CollapsingHeader(("Key " + std::to_string(i) + "##" + keyTag).c_str())) {
+					continue;
+				}
+				ImGui::DragFloat3(("Pos##" + keyTag).c_str(), &key.position.x);
+				ImGui::DragFloat4(("Quat##" + keyTag).c_str(), &key.orientation[0]);
+				ImGui::BeginDisabled();
+				glm::vec3 rot = glm::eulerAngles(key.orientation);
+				ImGui::DragFloat3(("Rot##" + keyTag).c_str(), &rot.x);
+				ImGui::EndDisabled();
+				ImGui::DragFloat3(("Scale##" + keyTag).c_str(), &key.scale.x);
+				ImGui::DragFloat(("Time stamp##" + keyTag).c_str(), &key.timeStamp);
+			}
+			ImGui::Unindent();
+		}
+
+		//ImGui::Unindent();
+	//}
 }
 
 float Bone::getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const

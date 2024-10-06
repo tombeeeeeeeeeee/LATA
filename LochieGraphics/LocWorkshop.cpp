@@ -5,6 +5,9 @@
 #include "ResourceManager.h"
 #include "Paths.h"
 #include "ComputeShader.h"
+#include "Animation.h"
+
+#include <iostream>
 
 LocWorkshop::LocWorkshop()
 {
@@ -21,12 +24,12 @@ void LocWorkshop::Start()
 	camera->transform.setEulerRotation({ 0.0f, 0.0f, -90.0f });
 
 	sceneObject = new SceneObject(this, "Testing!");
-	sceneObject->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension), ResourceManager::defaultMaterial));
+	//sceneObject->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension), ResourceManager::defaultMaterial));
 
-	
-	int max_compute_work_group_count[3];
-	int max_compute_work_group_size[3];
-	int max_compute_work_group_invocations;
+
+	int max_compute_work_group_count[3] = {};
+	int max_compute_work_group_size[3] = {};
+	int max_compute_work_group_invocations = {};
 
 	for (int idx = 0; idx < 3; idx++) {
 		glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, idx, &max_compute_work_group_count[idx]);
@@ -43,18 +46,24 @@ void LocWorkshop::Start()
 	std::cout << "Maximum size of a work group in Y dimension " << max_compute_work_group_size[1] << '\n';
 	std::cout << "Maximum size of a work group in Z dimension " << max_compute_work_group_size[2] << '\n';
 
-	std::cout << "Number of invocations in a single local work group that may be dispatched to a compute shader " << max_compute_work_group_invocations << '\n\n';
+	std::cout << "Number of invocations in a single local work group that may be dispatched to a compute shader " << max_compute_work_group_invocations << "\n\n";
 
 	//ComputeShader computeShader = ComputeShader("shaders/LocsComputeShader.comp");
 
 
 	Texture* texture = ResourceManager::LoadTexture(1024u, 1024u);
 
-	sceneObject->renderer()->materials.front()->texturePointers["material.albedo"] = texture;
+	//sceneObject->renderer()->materials.front()->texturePointers["material.albedo"] = texture;
 
+	aniTest = new SceneObject(this, "Animation Test");
+	std::string path = "models/Anim_Sync_RunTEST03.fbx";
+	Model* aniTestModel = ResourceManager::LoadModel(path);
+	aniTest->setRenderer(new ModelRenderer(aniTestModel, ResourceManager::defaultMaterial));
 
+	animation = Animation(path, aniTestModel);
 
-
+	animator = new Animator(&animation);
+	aniTest->setAnimator(animator);
 }
 
 void LocWorkshop::Update(float delta)

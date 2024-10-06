@@ -30,9 +30,20 @@ SceneObject::~SceneObject()
 	scene->transforms.erase(GUID);
 }
 
-void SceneObject::Update(float delta)
-{
+#define AddPartGUI(getter, setter, type, label) \
+if (getter() == nullptr) {                      \
+if (ImGui::MenuItem(label)) {                   \
+		setter(new type());                     \
+	}                                           \
 }
+
+#define RemovePartGUI(partsType, setter, label) \
+if (parts & Parts::partsType) {                 \
+	if (ImGui::MenuItem(label)) {               \
+		setter(nullptr);                        \
+	}                                           \
+}
+
 
 void SceneObject::GUI()
 {
@@ -43,6 +54,7 @@ void SceneObject::GUI()
 	if (parts & Parts::rigidBody) { scene->rigidBodies[GUID].GUI(); }
 
 	if (parts & Parts::collider) { 
+		// Collapsing Header is not apart of the collider GUI as it can be apart of the rigidbody too
 		if (ImGui::CollapsingHeader(("Collider##" + Utilities::PointerToString(this)).c_str())) {
 			scene->colliders[GUID]->GUI();
 		}
@@ -50,7 +62,6 @@ void SceneObject::GUI()
 	
 	if (parts & Parts::enemy) { scene->enemies[GUID].GUI(); }
 	if (parts & Parts::health) { scene->healths[GUID].GUI(); }
-	
 
 	if (parts & Parts::ecco)
 	{
@@ -69,9 +80,9 @@ void SceneObject::GUI()
 		scene->exits[GUID].GUI(this);
 	}
 	// TODO: Add animator parts;
-	//if ((parts & Parts::animator)) {
-	//	scene->animators[GUID].GUI();
-	//}
+	if ((parts & Parts::animator)) {
+		scene->animators[GUID].GUI();
+	}
 
 	const char addPopup[] = "SceneObject Add Part";
 	const char removePopup[] = "SceneObject Remove Part";
@@ -85,16 +96,9 @@ void SceneObject::GUI()
 	}
 
 	if (ImGui::BeginPopup(addPopup)) {
-		if (renderer() == nullptr) {
-			if (ImGui::MenuItem("Model Renderer##Add part")) {
-				setRenderer(new ModelRenderer());
-			}
-		}
-		if (rigidbody() == nullptr) {
-			if (ImGui::MenuItem("Rigid Body##Add part")) {
-				setRigidBody(new RigidBody());
-			}
-		}
+		AddPartGUI(renderer, setRenderer, ModelRenderer, "Model Renderer##Add part");
+		AddPartGUI(rigidbody, setRigidBody, RigidBody, "Rigid Body##Add part");
+
 		if (ecco() == nullptr && scene->ecco->GUID == 0) {
 			if (ImGui::MenuItem("Ecco##Add part")) {
 				setEcco();
@@ -105,35 +109,18 @@ void SceneObject::GUI()
 				setSync();
 			}
 		}
-		if (health() == nullptr) {
-			if (ImGui::MenuItem("Health##Add part")) {
-				setHealth(new Health());
-			}
-		}
-		if (enemy() == nullptr) {
-			if (ImGui::MenuItem("Enemy##Add part")) {
-				setEnemy(new Enemy());
-			}
-		}
-		if (exitElevator() == nullptr) {
-			if (ImGui::MenuItem("Exit Elevator##Add part")) {
-				setExitElevator(new ExitElevator());
-			}
-		}
+		
+		AddPartGUI(health, setHealth, Health, "Health##Add part");
+		AddPartGUI(enemy, setEnemy, Enemy, "Enemy##Add part");
+		AddPartGUI(exitElevator, setExitElevator, ExitElevator, "Exit Elevator##Add part");
+		
 		ImGui::EndPopup();
 	}
 
 	if (ImGui::BeginPopup(removePopup)) {
-		if (parts & Parts::modelRenderer) {
-			if (ImGui::MenuItem("Model Renderer##Remove part")) {
-				setRenderer(nullptr);
-			}
-		}
-		if (parts & Parts::rigidBody) {
-			if (ImGui::MenuItem("Rigid Body##Remove part")) {
-				setRigidBody(nullptr);
-			}
-		}
+		RemovePartGUI(modelRenderer, setRenderer, "Model Renderer##Remove part");
+		RemovePartGUI(rigidBody, setRigidBody, "Rigid Body##Remove part");
+
 		if (parts & Parts::ecco) {
 			if (ImGui::MenuItem("Ecco##Remove part")) {
 				setEcco(nullptr);
@@ -144,11 +131,7 @@ void SceneObject::GUI()
 				setSync(nullptr);
 			}
 		}
-		if (parts & Parts::exitElevator) {
-			if (ImGui::MenuItem("Exit##Remove part")) {
-				setExitElevator(nullptr);
-			}
-		}
+		RemovePartGUI(exitElevator, setExitElevator, "Exit##Remove part");
 		ImGui::EndPopup();
 	}
 }
@@ -312,16 +295,16 @@ Sync* SceneObject::sync() const
 
 void SceneObject::ClearParts()
 {
-	if (parts & Parts::modelRenderer) { scene->renderers.erase(GUID);  parts &= ~(Parts::modelRenderer); }
-	if (parts & Parts::animator) { scene->animators.erase(GUID);  parts &= ~(Parts::animator);}
-	if (parts & Parts::rigidBody) { scene->rigidBodies.erase(GUID);  parts &= ~(Parts::rigidBody);}
-	if (parts & Parts::collider) { scene->colliders.erase(GUID);  parts &= ~(Parts::collider);}
-	if (parts & Parts::ecco) { scene->ecco->GUID = 0;  parts &= ~(Parts::ecco);}
-	if (parts & Parts::sync) { scene->sync->GUID = 0;  parts &= ~(Parts::sync);}
-	if (parts & Parts::health) { scene->healths.erase(GUID);  parts &= ~(Parts::health);}
-	if (parts & Parts::enemy) { scene->enemies.erase(GUID);  parts &= ~(Parts::enemy);}
-	if (parts & Parts::exitElevator) { scene->exits.erase(GUID);  parts &= ~(Parts::exitElevator);}
-	if (parts & Parts::spawnManager) { scene->spawnManagers.erase(GUID);  parts &= ~(Parts::spawnManager);}
+	if (parts & Parts::modelRenderer) { scene->renderers.erase(GUID);     parts &= ~(Parts::modelRenderer); }
+	if (parts & Parts::animator)      { scene->animators.erase(GUID);     parts &= ~(Parts::animator);}
+	if (parts & Parts::rigidBody)     { scene->rigidBodies.erase(GUID);   parts &= ~(Parts::rigidBody);}
+	if (parts & Parts::collider)      { scene->colliders.erase(GUID);     parts &= ~(Parts::collider);}
+	if (parts & Parts::ecco)          { scene->ecco->GUID = 0;            parts &= ~(Parts::ecco);}
+	if (parts & Parts::sync)          { scene->sync->GUID = 0;            parts &= ~(Parts::sync);}
+	if (parts & Parts::health)        { scene->healths.erase(GUID);       parts &= ~(Parts::health);}
+	if (parts & Parts::enemy)         { scene->enemies.erase(GUID);       parts &= ~(Parts::enemy);}
+	if (parts & Parts::exitElevator)  { scene->exits.erase(GUID);         parts &= ~(Parts::exitElevator);}
+	if (parts & Parts::spawnManager)  { scene->spawnManagers.erase(GUID); parts &= ~(Parts::spawnManager);}
 
 	assert(parts == 0);
 }

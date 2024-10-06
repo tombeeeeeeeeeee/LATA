@@ -4,7 +4,6 @@
 #include <vector>
 
 class Model;
-class Shader;
 class Material;
 namespace toml {
 	inline namespace v3 {

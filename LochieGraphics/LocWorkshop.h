@@ -2,6 +2,7 @@
 #include "Scene.h"
 
 #include "DirectionalLight.h"
+#include "Animation.h"
 
 class LocWorkshop : public Scene
 {
@@ -11,6 +12,10 @@ private:
 	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
 
 	SceneObject* sceneObject;
+	SceneObject* aniTest;
+
+	Animation animation;
+	Animator* animator;
 
 public:
 

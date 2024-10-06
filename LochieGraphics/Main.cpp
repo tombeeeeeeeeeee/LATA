@@ -7,6 +7,7 @@
 #include "InputTest.h"
 #include "GameTest.h"
 #include "LevelEditor.h"
+#include "LocWorkshop.h"
 
 int main()
 {

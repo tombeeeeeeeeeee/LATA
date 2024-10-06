@@ -15,13 +15,13 @@ bool ExtraEditorGUI::Mat4Input(std::string tag, glm::mat4 * mat)
 
 	bool edited = false;
 
-	if (ImGui::DragFloat3(("Position" + tag).c_str(), &pos.x)) {
+	if (ImGui::DragFloat3(("Position##" + tag).c_str(), &pos.x)) {
 		edited = true;
 	}
-	if (ImGui::DragFloat3(("Rotation" + tag).c_str(), &rot.x)) {
+	if (ImGui::DragFloat3(("Rotation##" + tag).c_str(), &rot.x)) {
 		edited = true;
 	}
-	if (ImGui::DragFloat3(("Scale" + tag).c_str(), &scl.x)) {
+	if (ImGui::DragFloat3(("Scale##" + tag).c_str(), &scl.x)) {
 		edited = true;
 	}
 

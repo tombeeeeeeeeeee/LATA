@@ -58,7 +58,6 @@ public:
 	//SceneObject(const SceneObject& other) = delete;
 	//SceneObject& operator=(const SceneObject& other) = delete;
 
-	void Update(float delta);
 	void GUI();
 
 	toml::table Serialise() const;
