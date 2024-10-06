@@ -330,6 +330,7 @@ void Scene::InitialisePlayers()
 	else syncSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension);
 	syncSO->renderer()->materialTint = {0.0f, 204.0f, 0.0f};
 	syncSO->renderer()->materialTint /= 255.0f;
+	sync->barrelOffset = { -75.0f, 70.0f, 5.0f };
 
 	for (int i = 1; i < (int)CollisionLayers::count; i *= 2)
 	{
@@ -367,5 +368,13 @@ void Scene::InitialisePlayers()
 			break;
 		}
 	}
-	sync->barrelOffset = { -75.0f, 70.0f, 5.0f };
+
+	gameCamSystem.setCameraPositionDelta({-135, 35, -120});
+	gameCamSystem.cameraZoomMinimum = 125.0f;
+	gameCamSystem.cameraZoomMaximum = 205.0f;
+	gameCamSystem.cameraZoomScale = 0.130f;
+	gameCamSystem.cameraZoomSpeed = 0.330f;
+	gameCamSystem.cameraMoveSpeed = 0.330f;
+	gameCamSystem.viewAngle = {-135, 35, -120};
+	gameCamSystem.setCameraPositionDelta({700, 1000, 700});
 }

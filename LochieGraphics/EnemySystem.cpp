@@ -25,6 +25,7 @@
 #include "Node.h"
 #include "Paths.h"
 #include "stb_image.h"
+#include "stb_image_write.h"
 
 
 EnemySystem::EnemySystem(toml::table table)
@@ -449,7 +450,7 @@ void EnemySystem::UpdateNormalFlowMap(
     int w, h, channels;
     unsigned char* nfmImage = stbi_load(
         (Paths::levelsPath + SceneManager::scene->windowName + Paths::imageExtension).c_str(),
-        &w, &h, &channels, STBI_rgb
+        &w, &h, &channels, STBI_rgb_alpha
         );
 
     if (nfmImage)
@@ -468,9 +469,12 @@ void EnemySystem::LoadNormalFlowMapFromImage(unsigned char* image, int width, in
     normalFlowMap.reserve(width * height);
     for (int i = 0; i < width * height; i++)
     {
-        normalFlowMap.push_back(glm::vec2(
+        glm::vec2 colour = glm::vec2(
             image[4 * i + 0], image[4 * i + 1]
-        ));
+        );
+        colour -= 0.5f;
+        colour *= 2.0f;
+        normalFlowMap.push_back(colour);
     }
 
 }
@@ -491,11 +495,16 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
     * 
     * save as image
     */
+    return;
+
+    std::vector<glm::vec4> mapColours;
+    mapColours.reserve(mapDimensions.x * mapDimensions.y);
     normalFlowMap.clear();
     normalFlowMap.reserve(mapDimensions.x * mapDimensions.y);
     for (int i = 0; i < mapDimensions.x * mapDimensions.y; i++)
     {
         normalFlowMap.push_back({0.0f, 0.0f});
+        mapColours.push_back({0.0f, 0.0f, 0.75f, 1.0f});
     }
     
     for (auto& rigidBodyPair : rigidbodies)
@@ -516,13 +525,17 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                         {
                             for (int z = 0; z < mapDimensions.y; z++)
                             {
-                                glm::vec2 tilePos = {x + mapDimensions.x, z + mapDimensions.y};
+                                glm::vec2 tilePos = {x + mapMinCorner.x, z + mapMinCorner.y};
                                 glm::vec2 delta = tilePos - pos;
                                 float distance = glm::dot(delta, delta);
                                 if (distance >= radius)
                                 {
                                     glm::vec2 normal = glm::normalize(delta);
-                                    normalFlowMap[x + z * mapDimensions.y] += normal / distance;
+                                    glm::vec2 influence = normal / distance;
+                                    normalFlowMap[x + z * mapDimensions.y] += influence;
+                                    influence /= 2.0f;
+                                    influence += 0.5f;
+                                    mapColours[x + z * (int)mapDimensions.y] += glm::vec4(influence.x, influence.y, 0.0f, 0.0f);
                                 }
                             }
                         }
@@ -547,14 +560,18 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                             {
                                 for (int z = 0; z < mapDimensions.y; z++)
                                 {
-                                    glm::vec2 tilePos = { x + mapDimensions.x, z + mapDimensions.y };
+                                    glm::vec2 tilePos = { x + mapMinCorner.x, z + mapMinCorner.y };
                                     float normalDot = glm::dot(tilePos, normal);
                                     if (normalDot >= comparisonNormal)
                                     {
                                         float tanDot = glm::dot(tilePos, tangent);
                                         if ( tanDot > comparisonTangentA && tanDot < comparisonTangentB)
                                         {
-                                            normalFlowMap[x + z * mapDimensions.y] += normal / (normalDot - comparisonNormal);
+                                            glm::vec2 influence = normal / (normalDot - comparisonNormal);
+                                            normalFlowMap[x + z * mapDimensions.y] += influence;
+                                            influence /= 2.0f;
+                                            influence += 0.5f;
+                                            mapColours[x + z * (int)mapDimensions.y] += glm::vec4(influence.x, influence.y, 0.0f, 0.0f);
                                         }
                                     }
                                 }
@@ -565,6 +582,6 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
             }
         }
     }
-    //TODO: write to image
+
 }
 
