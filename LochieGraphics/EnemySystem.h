@@ -35,16 +35,16 @@ private:
 	int explosiveEnemyCount = 0;
 	int meleeEnemyCount = 0;
 	int rangedEnemyCount = 0;
-	
-	float defaultNormalFlowMapDensity = 1.0f;
-	float currentNormalFlowMapDensity = 1.0f;
 
 public:
 	bool aiUpdating = false;
 
 	EnemySystem() {};
 	EnemySystem(toml::table table);
-	void Start();
+	void Start(
+		std::unordered_map<unsigned long long, Transform> transforms,
+		std::unordered_map<unsigned long long, RigidBody> rigidbodies
+	);
 
 	float perceptionRadius = 500.0f;
 	float separationRadius = 300.0f;
@@ -86,7 +86,6 @@ public:
 	void OnHealthZeroMelee(HealthPacket healthPacket);
 	void OnHealthZeroRanged(HealthPacket healthPacket);
 
-	//TODO: ADD AI PATHFINDING, and general AI STUFF IN HERE
 	void Update(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
@@ -116,7 +115,6 @@ public:
 	std::vector<glm::vec2> normalFlowMap;
 
 	void UpdateNormalFlowMap(
-		std::string levelName,
 		std::unordered_map<unsigned long long, Transform> transforms,
 		std::unordered_map<unsigned long long, RigidBody> rigidBodies);
 	void LoadNormalFlowMapFromImage(unsigned char* image, int width, int height);

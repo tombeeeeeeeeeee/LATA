@@ -46,7 +46,10 @@ EnemySystem::EnemySystem(toml::table table)
     glm::vec3 offscreenSpawnPosition = Serialisation::LoadAsVec3(table["offscreenSpawnPosition"]);
 }
 
-void EnemySystem::Start()
+void EnemySystem::Start(
+    std::unordered_map<unsigned long long, Transform> transforms,
+    std::unordered_map<unsigned long long, RigidBody> rigidbodies
+)
 {
     if (!meleeEnemyRenderer)
     {
@@ -67,6 +70,8 @@ void EnemySystem::Start()
             rangedEnemyMaterial
         );
     }
+
+    UpdateNormalFlowMap(transforms, rigidbodies);
 }
 
 void EnemySystem::SpawnExplosive(glm::vec3 pos)
@@ -437,7 +442,6 @@ void EnemySystem::OnMeleeCollision(Collision collision)
 }
 
 void EnemySystem::UpdateNormalFlowMap(
-    std::string levelName,
     std::unordered_map<unsigned long long, Transform> transforms,
     std::unordered_map<unsigned long long, RigidBody> rigidBodies
 )
@@ -450,7 +454,6 @@ void EnemySystem::UpdateNormalFlowMap(
 
     if (nfmImage)
     {
-        currentNormalFlowMapDensity = mapDimensions.x / (float) w;
         LoadNormalFlowMapFromImage(nfmImage, w, h);
     }
     else
@@ -485,7 +488,21 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
     *        for distance from centre
     *           for each pixel
     *               calculate influence
+    * 
+    * save as image
     */
+    normalFlowMap.clear();
+    normalFlowMap.reserve(mapDimensions.x * mapDimensions.y);
+    
+    for (auto& rigidBodyPair : rigidbodies)
+    {
+        for (auto& collider : rigidBodyPair.second.colliders)
+        {
+            if (collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::halfCover | (int)CollisionLayers::softCover))
+            {
 
+            }
+        }
+    }
 }
 

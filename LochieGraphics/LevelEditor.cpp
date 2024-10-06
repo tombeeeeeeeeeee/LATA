@@ -196,7 +196,6 @@ void LevelEditor::Start()
 
 	sync->Start(&shaders);
 
-	enemySystem.Start();
 	healthSystem.Start(healths);
 
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
@@ -490,6 +489,8 @@ void LevelEditor::LoadPrompt()
 
 void LevelEditor::SaveLevel()
 {
+	enemySystem.PopulateNormalFlowMapFromRigidBodies(transforms, rigidBodies);
+
 	std::ofstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
 	file << SaveSceneObjectsAndParts();
@@ -524,7 +525,7 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 
 	enemySystem.LoadLevelParametres(data);
 
-	enemySystem.Start();
+	enemySystem.Start(transforms, rigidBodies);
 
 	// Refresh the tiles collection
 	tiles.clear();
