@@ -105,10 +105,6 @@ public:
 
 	toml::table Serialise() const;
 
-
-	//TODO: call load and save on level load and save
-	//TODO: call populateNormalMap on level save.
-
 	void LoadLevelParametres(toml::table table);
 	toml::table SerialiseForLevel() const;
 
@@ -131,10 +127,6 @@ public:
 
 
 private:
-	//TODO: DELETE
-	std::vector<Node*> AStarSearch(Node* startNode, Node* endNode);
-	float Hueristic(Node* pos, Node* end);
-	bool CompareNodes(Node* a, Node* b);
 
 	void LineOfSightAndTargetCheck(
 		std::unordered_map<unsigned long long, Enemy>& enemies,

@@ -493,7 +493,7 @@ void LevelEditor::SaveLevel()
 	std::ofstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
 	file << SaveSceneObjectsAndParts();
-
+	file << enemySystem.SerialiseForLevel();
 	file.close();
 }
 
@@ -522,6 +522,7 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
 
+	enemySystem.LoadLevelParametres(data);
 
 	enemySystem.Start();
 

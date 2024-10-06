@@ -333,7 +333,39 @@ void Scene::InitialisePlayers()
 
 	for (int i = 1; i < (int)CollisionLayers::count; i *= 2)
 	{
+
 		physicsSystem.SetCollisionLayerMask((int)CollisionLayers::reflectiveSurface, i, false);
+		physicsSystem.SetCollisionLayerMask(i, i, false);
+		switch (i)
+		{
+		case (int)CollisionLayers::base:
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
+				break;
+		case (int)CollisionLayers::enemy:
+			physicsSystem.SetCollisionLayerMask(i, i, true);
+			break;
+		case (int)CollisionLayers::syncProjectile:
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::eccoProjectile, i, false);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::enemyProjectile, i, false);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
+			break;
+		case (int)CollisionLayers::eccoProjectile:
+				physicsSystem.SetCollisionLayerMask((int)CollisionLayers::enemyProjectile, i, false);
+				physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
+				physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
+				break;
+		case (int)CollisionLayers::enemyProjectile:
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
+			break;
+		case (int)CollisionLayers::softCover:
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
+			break;
+		default:
+			break;
+		}
 	}
 	sync->barrelOffset = { -75.0f, 70.0f, 5.0f };
 }
