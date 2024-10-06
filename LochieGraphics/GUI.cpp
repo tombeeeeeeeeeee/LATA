@@ -356,7 +356,9 @@ void GUI::PhysicsMenu()
 	ImGui::Text("4 : ecco");
 	ImGui::Text("5 : syncProjectile");
 	ImGui::Text("6 : eccoProjectile");
-	ImGui::Text("7 : ignoreRaycast");
+	ImGui::Text("7 : enemyProjectile");
+	ImGui::Text("8 : softCover");
+	ImGui::Text("9 : halfCover");
 
 	ImGui::Text("");
 	ImGui::Text(" ");

@@ -6,9 +6,10 @@
 
 glm::vec2 Serialisation::LoadAsVec2(toml::array* toml)
 {
-    // TODO: Show error message
-
-    if (!toml) { return { 0.0f, 0.0f }; }
+    if (!toml) {
+        std::cout << "Failed to load vec3\n";
+        return { NAN, NAN };
+    }
     return glm::vec2(
         toml->at(0).value_or<float>(0.0f),
         toml->at(1).value_or<float>(0.0f));

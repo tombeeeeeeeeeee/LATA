@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 
+
 struct Enemy;
 class Transform;
 class RigidBody;
@@ -40,7 +41,10 @@ public:
 
 	EnemySystem() {};
 	EnemySystem(toml::table table);
-	void Start();
+	void Start(
+		std::unordered_map<unsigned long long, Transform> transforms,
+		std::unordered_map<unsigned long long, RigidBody> rigidbodies
+	);
 
 	float perceptionRadius = 500.0f;
 	float separationRadius = 300.0f;
@@ -82,7 +86,6 @@ public:
 	void OnHealthZeroMelee(HealthPacket healthPacket);
 	void OnHealthZeroRanged(HealthPacket healthPacket);
 
-	//TODO: ADD AI PATHFINDING, and general AI STUFF IN HERE
 	void Update(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
@@ -101,13 +104,27 @@ public:
 
 	toml::table Serialise() const;
 
+	void LoadLevelParametres(toml::table table);
+	toml::table SerialiseForLevel() const;
+
 	void OnMeleeCollision(Collision collision);
 
+	glm::vec2 mapMinCorner = { 0.0f, 0.0f };
+	glm::vec2 mapDimensions = { 0.0f, 0.0f };
+
+	std::vector<glm::vec2> normalFlowMap;
+
+	void UpdateNormalFlowMap(
+		std::unordered_map<unsigned long long, Transform> transforms,
+		std::unordered_map<unsigned long long, RigidBody> rigidBodies);
+	void LoadNormalFlowMapFromImage(unsigned char* image, int width, int height);
+	void PopulateNormalFlowMapFromRigidBodies(
+		std::unordered_map<unsigned long long, Transform> transforms,
+		std::unordered_map<unsigned long long, RigidBody> rigidbodies
+	);
+
+
 private:
-	//TODO: DELETE
-	std::vector<Node*> AStarSearch(Node* startNode, Node* endNode);
-	float Hueristic(Node* pos, Node* end);
-	bool CompareNodes(Node* a, Node* b);
 
 	void LineOfSightAndTargetCheck(
 		std::unordered_map<unsigned long long, Enemy>& enemies,

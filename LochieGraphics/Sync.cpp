@@ -237,7 +237,7 @@ void Sync::ShootMisfire(glm::vec3 pos)
 void Sync::ShootSniper(glm::vec3 pos)
 {
 	std::vector<Hit> hits;
-	if (PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::ecco | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast)))
+	if (PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::ecco | Collider::transparentLayers)))
 	{
 		Hit hit = hits[0];
 		blasts.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
@@ -256,7 +256,7 @@ void Sync::ShootOverClocked(glm::vec3 pos)
 void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour)
 {
 	std::vector<Hit> hits;
-	if (PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::eccoProjectile | (int)CollisionLayers::ecco | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::ignoreRaycast)))
+	if (PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::ecco | (int)CollisionLayers::ecco | Collider::transparentLayers)))
 	{
 		Hit hit = hits[0];
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
@@ -322,7 +322,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 void Sync::OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour)
 {
 	std::vector<Hit> hits;
-	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::ecco | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::syncProjectile | (int)CollisionLayers::reflectiveSurface | (int)CollisionLayers::ignoreRaycast));
+	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::ecco | (int)CollisionLayers::reflectiveSurface | Collider::transparentLayers));
 	Hit hit = hits[0];
 
 	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)

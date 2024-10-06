@@ -18,8 +18,10 @@ enum class CollisionLayers
 	ecco = 1 << 4,
 	syncProjectile = 1 << 5,
 	eccoProjectile = 1 << 6,
-	ignoreRaycast = 1 << 7,
-	count = 1 << 8
+	enemyProjectile = 1 << 7,
+	softCover = 1 << 8,
+	halfCover = 1 << 9,
+	count = 1 << 10
 };
 
 enum class ColliderType
@@ -43,6 +45,9 @@ struct Collider
 	static Collider* Load(toml::table table);
 	Collider() = default;
 	virtual void GUI();
+
+	static const int transparentLayers = (int)CollisionLayers::syncProjectile | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::enemyProjectile | (int)CollisionLayers::softCover | (int)CollisionLayers::halfCover;
+
 protected:
 	Collider(toml::table table);
 };
