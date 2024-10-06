@@ -99,8 +99,12 @@ void LevelEditor::Brush(glm::vec2 targetCell)
 	// other setup here
 	gridMinX = (int)fminf(targetCell.x, (float)gridMinX);
 	gridMinZ = (int)fminf(targetCell.y, (float)gridMinZ);
+
+	enemySystem.mapMinCorner = { gridMinX, gridMinZ };
+
 	gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
 	gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
+	enemySystem.mapMinCorner = { gridMaxX - gridMinX, gridMaxZ - gridMinZ };
 
 	if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
 }
@@ -192,7 +196,6 @@ void LevelEditor::Start()
 
 	sync->Start(&shaders);
 
-	enemySystem.Start();
 	healthSystem.Start(healths);
 
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
@@ -486,10 +489,12 @@ void LevelEditor::LoadPrompt()
 
 void LevelEditor::SaveLevel()
 {
+	enemySystem.PopulateNormalFlowMapFromRigidBodies(transforms, rigidBodies);
+
 	std::ofstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
 	file << SaveSceneObjectsAndParts();
-
+	file << enemySystem.SerialiseForLevel();
 	file.close();
 }
 
@@ -518,8 +523,9 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
 
+	enemySystem.LoadLevelParametres(data);
 
-	enemySystem.Start();
+	enemySystem.Start(transforms, rigidBodies);
 
 	// Refresh the tiles collection
 	tiles.clear();

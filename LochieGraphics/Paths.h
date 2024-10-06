@@ -18,5 +18,6 @@ namespace Paths {
 	const std::string textureExtension = ".texture";
 	const std::string modelExtension = ".model";
 	const std::string levelExtension = ".level";
+	const std::string imageExtension = ".png";
 
 }

@@ -23,6 +23,9 @@
 #include "RenderSystem.h"
 #include "Hit.h"
 #include "Node.h"
+#include "Paths.h"
+#include "stb_image.h"
+#include "stb_image_write.h"
 
 
 EnemySystem::EnemySystem(toml::table table)
@@ -44,7 +47,10 @@ EnemySystem::EnemySystem(toml::table table)
     glm::vec3 offscreenSpawnPosition = Serialisation::LoadAsVec3(table["offscreenSpawnPosition"]);
 }
 
-void EnemySystem::Start()
+void EnemySystem::Start(
+    std::unordered_map<unsigned long long, Transform> transforms,
+    std::unordered_map<unsigned long long, RigidBody> rigidbodies
+)
 {
     if (!meleeEnemyRenderer)
     {
@@ -65,6 +71,8 @@ void EnemySystem::Start()
             rangedEnemyMaterial
         );
     }
+
+    UpdateNormalFlowMap(transforms, rigidbodies);
 }
 
 void EnemySystem::SpawnExplosive(glm::vec3 pos)
@@ -353,83 +361,6 @@ void EnemySystem::SpawnEnemiesInScene(
     }
 }
 
-std::vector<Node*> EnemySystem::AStarSearch(Node* startNode, Node* endNode)
-{
-    std::vector<Node*> open;
-    std::vector<Node*> closed;
-    std::vector<Node*> path;
-
-    Node* currNode = nullptr;
-    int gScore = 0;
-
-    if (startNode == nullptr || endNode == nullptr)
-    {
-        return std::vector<Node*>();
-    }
-    else if (startNode == endNode)
-    {
-        return std::vector<Node*>();
-    }
-
-    startNode->gScore = 0;
-    startNode->previous = nullptr;
-
-    open.push_back(startNode);
-
-    do
-    {
-        //sort(open.begin(), open.end(), CompareNodes);
-        currNode = open.back();
-        open.pop_back();
-        if (currNode == endNode)  break;
-        closed.push_back(currNode);
-
-        for (auto con : currNode->connections)
-        {
-            if (find(closed.begin(), closed.end(), con.target) == closed.end())
-            {
-                gScore = currNode->gScore + con.cost;
-                float hScore = Hueristic(con.target, endNode);
-                float fScore = gScore + hScore;
-                if (find(open.begin(), open.end(), con.target) == open.end())
-                {
-                    con.target->gScore = gScore;
-                    con.target->fScore = fScore;
-                    con.target->previous = currNode;
-                    open.push_back(con.target);
-                }
-                else if (fScore < con.target->fScore)
-                {
-                    con.target->gScore = gScore;
-                    con.target->fScore = fScore;
-                    con.target->previous = currNode;
-                }
-            }
-        }
-
-    } while (open.size() != 0);
-
-    if (open.empty()) return std::vector<Node*>();
-
-    currNode = endNode;
-    do
-    {
-        path.insert(path.begin(), currNode);
-        currNode = currNode->previous;
-    } while (currNode != nullptr);
-
-    return path;
-}
-
-float EnemySystem::Hueristic(Node* pos, Node* end)
-{
-    return 0.0f;
-}
-
-bool EnemySystem::CompareNodes(Node* a, Node* b)
-{
-    return a->fScore > b->fScore;
-}
 
 void EnemySystem::GUI()
 {
@@ -488,11 +419,169 @@ toml::table EnemySystem::Serialise() const
     };
 }
 
+void EnemySystem::LoadLevelParametres(toml::table table)
+{
+    mapMinCorner = Serialisation::LoadAsVec2(table["mapMinCorner"]);
+    mapDimensions = Serialisation::LoadAsVec2(table["mapDimensions"]);
+}
+
+toml::table EnemySystem::SerialiseForLevel() const
+{
+    return toml::table
+    {
+        { "mapMinCorner", Serialisation::SaveAsVec2(mapMinCorner)},
+        { "mapDimensions", Serialisation::SaveAsVec2(mapDimensions)},
+    }; 
+}
+
 void EnemySystem::OnMeleeCollision(Collision collision)
 {
     if (collision.collisionMask & (int)CollisionLayers::sync || collision.collisionMask & (int)CollisionLayers::ecco)
     {
         collision.sceneObject->health()->subtractHealth(meleeEnemyDamage);
     }
+}
+
+void EnemySystem::UpdateNormalFlowMap(
+    std::unordered_map<unsigned long long, Transform> transforms,
+    std::unordered_map<unsigned long long, RigidBody> rigidBodies
+)
+{
+    int w, h, channels;
+    unsigned char* nfmImage = stbi_load(
+        (Paths::levelsPath + SceneManager::scene->windowName + Paths::imageExtension).c_str(),
+        &w, &h, &channels, STBI_rgb_alpha
+        );
+
+    if (nfmImage)
+    {
+        LoadNormalFlowMapFromImage(nfmImage, w, h);
+    }
+    else
+    {
+        PopulateNormalFlowMapFromRigidBodies(transforms, rigidBodies);
+    }
+}
+
+void EnemySystem::LoadNormalFlowMapFromImage(unsigned char* image, int width, int height)
+{
+    normalFlowMap.clear();
+    normalFlowMap.reserve(width * height);
+    for (int i = 0; i < width * height; i++)
+    {
+        glm::vec2 colour = glm::vec2(
+            image[4 * i + 0], image[4 * i + 1]
+        );
+        colour -= 0.5f;
+        colour *= 2.0f;
+        normalFlowMap.push_back(colour);
+    }
+
+}
+
+void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsigned long long, Transform> transforms, std::unordered_map<unsigned long long, RigidBody> rigidbodies)
+{
+    /*
+    * For each rigidbody
+    *   for each collider
+    *     if poly
+    *        for each normal
+    *           for each pixel
+    *               calculate influence
+    *     if circle
+    *        for distance from centre
+    *           for each pixel
+    *               calculate influence
+    * 
+    * save as image
+    */
+    return;
+
+    std::vector<glm::vec4> mapColours;
+    mapColours.reserve(mapDimensions.x * mapDimensions.y);
+    normalFlowMap.clear();
+    normalFlowMap.reserve(mapDimensions.x * mapDimensions.y);
+    for (int i = 0; i < mapDimensions.x * mapDimensions.y; i++)
+    {
+        normalFlowMap.push_back({0.0f, 0.0f});
+        mapColours.push_back({0.0f, 0.0f, 0.75f, 1.0f});
+    }
+    
+    for (auto& rigidBodyPair : rigidbodies)
+    {
+        for (auto& collider : rigidBodyPair.second.colliders)
+        {
+            if (collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::halfCover | (int)CollisionLayers::softCover))
+            {
+                if (collider->getType() == ColliderType::polygon)
+                {
+                    PolygonCollider* poly = (PolygonCollider*)collider;
+                    
+                    if (poly->verts.size() == 1)
+                    {
+                        glm::vec2 pos = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[0]);
+                        float radius = poly->radius;
+                        for (int x = 0; x < mapDimensions.x; x++)
+                        {
+                            for (int z = 0; z < mapDimensions.y; z++)
+                            {
+                                glm::vec2 tilePos = {x + mapMinCorner.x, z + mapMinCorner.y};
+                                glm::vec2 delta = tilePos - pos;
+                                float distance = glm::dot(delta, delta);
+                                if (distance >= radius)
+                                {
+                                    glm::vec2 normal = glm::normalize(delta);
+                                    glm::vec2 influence = normal / distance;
+                                    normalFlowMap[x + z * mapDimensions.y] += influence;
+                                    influence /= 2.0f;
+                                    influence += 0.5f;
+                                    mapColours[x + z * (int)mapDimensions.y] += glm::vec4(influence.x, influence.y, 0.0f, 0.0f);
+                                }
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        for (int i = 0; i < poly->verts.size(); i++)
+                        {
+                            glm::vec2 vertA = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[i]);
+                            glm::vec2 vertB = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[(i + 1) % poly->verts.size()]);
+
+                            glm::vec2 tangent = vertB - vertA;
+                            float distanceBetween = glm::dot(vertB, tangent);
+                            tangent = glm::normalize(tangent);
+                            glm::vec2 normal = {tangent.y, -tangent.x};
+                            float comparisonNormal = glm::dot(vertB, normal);
+                            float comparisonTangentA = glm::dot(vertA, tangent);
+                            float comparisonTangentB = glm::dot(vertB, tangent);
+
+                            for (int x = 0; x < mapDimensions.x; x++)
+                            {
+                                for (int z = 0; z < mapDimensions.y; z++)
+                                {
+                                    glm::vec2 tilePos = { x + mapMinCorner.x, z + mapMinCorner.y };
+                                    float normalDot = glm::dot(tilePos, normal);
+                                    if (normalDot >= comparisonNormal)
+                                    {
+                                        float tanDot = glm::dot(tilePos, tangent);
+                                        if ( tanDot > comparisonTangentA && tanDot < comparisonTangentB)
+                                        {
+                                            glm::vec2 influence = normal / (normalDot - comparisonNormal);
+                                            normalFlowMap[x + z * mapDimensions.y] += influence;
+                                            influence /= 2.0f;
+                                            influence += 0.5f;
+                                            mapColours[x + z * (int)mapDimensions.y] += glm::vec4(influence.x, influence.y, 0.0f, 0.0f);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
 
