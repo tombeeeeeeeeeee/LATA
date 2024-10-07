@@ -44,10 +44,10 @@ void LevelEditor::RefreshWalls()
 		glm::vec2 tileCell = glm::vec2{ pos.x, pos.z } / gridSize;
 		tileCell = { roundf(tileCell.x), roundf(tileCell.y) };
 
-		if (pos.x - gridSize < minX) minX = pos.x;
-		if (pos.z - gridSize < minZ) minZ = pos.z;
-		if (pos.x + gridSize > maxX) maxX = pos.x;
-		if (pos.z + gridSize > maxZ) maxZ = pos.z;
+		if (pos.x - gridSize < minX) minX = pos.x - gridSize;
+		if (pos.z - gridSize < minZ) minZ = pos.z - gridSize;
+		if (pos.x + gridSize > maxX) maxX = pos.x + gridSize;
+		if (pos.z + gridSize > maxZ) maxZ = pos.z + gridSize;
 
 		if (!CellAt(tileCell.x - 1, tileCell.y)) {
 			PlaceWallAt(pos.x - offset, pos.z, 0.0f);

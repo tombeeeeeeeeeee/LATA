@@ -132,9 +132,6 @@ void Sync::Update(
 	{
 		chargingShot = false;
 
-		
-
-
 		if (chargedDuration >= overclockChargeTime)
 		{
 			ShootOverClocked(globalBarrelOffset);

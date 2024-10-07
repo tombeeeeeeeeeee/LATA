@@ -36,6 +36,7 @@ private:
 	int meleeEnemyCount = 0;
 	int rangedEnemyCount = 0;
 
+	const int nfmDensity = 20;
 public:
 	bool aiUpdating = false;
 
@@ -107,8 +108,8 @@ public:
 
 	void OnMeleeCollision(Collision collision);
 
-	glm::vec2 mapMinCorner = { 0.0f, 0.0f };
-	glm::vec2 mapDimensions = { 0.0f, 0.0f };
+	glm::ivec2 mapMinCorner = { 0.0f, 0.0f };
+	glm::ivec2 mapDimensions = { 0.0f, 0.0f };
 
 	std::vector<glm::vec2> normalFlowMap;
 
