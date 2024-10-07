@@ -22,7 +22,5 @@ int main()
 	while (!sceneManager.ShouldClose())
 	{
 		sceneManager.Update();
-
 	}
-
 }
