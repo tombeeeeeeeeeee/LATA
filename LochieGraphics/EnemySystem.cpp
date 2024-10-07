@@ -48,8 +48,8 @@ EnemySystem::EnemySystem(toml::table table)
 }
 
 void EnemySystem::Start(
-    std::unordered_map<unsigned long long, Transform> transforms,
-    std::unordered_map<unsigned long long, RigidBody> rigidbodies
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    std::unordered_map<unsigned long long, RigidBody>& rigidbodies
 )
 {
     if (!meleeEnemyRenderer)

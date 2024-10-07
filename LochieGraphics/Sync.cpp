@@ -96,6 +96,10 @@ void Sync::Update(
 	eulers.y = angle;
 	transform.setEulerRotation(eulers);
 
+	globalBarrelOffset = barrelOffset;
+	glm::vec2 barrelOffset2D = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), { barrelOffset.x, barrelOffset.z });
+	globalBarrelOffset = { barrelOffset2D.x, barrelOffset.y, barrelOffset2D.y };
+
 	if (inputDevice.getRightTrigger())
 	{
 		//Begin Chagrging Shot
@@ -104,6 +108,7 @@ void Sync::Update(
 			chargingShot = true;
 			chargedDuration = 0.0f;
 		}
+
 		else
 		{
 			if (chargedDuration + delta >= sniperChargeTime && chargedDuration < sniperChargeTime)
@@ -117,15 +122,18 @@ void Sync::Update(
 			chargedDuration += delta;
 		}
 		//TODO: add rumble
+		glm::vec2 pos2D = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), { 0,0 });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.1f, pos2D.y), 100.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
+		glm::vec2 lineOfShoot = barrelOffset2D + fireDirection * 20.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f);
+		lines->DrawLineSegment(glm::vec3(barrelOffset2D.x, barrelOffset.y, barrelOffset2D.y), glm::vec3(lineOfShoot.x, barrelOffset.y, lineOfShoot.y), {sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z});
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.2f, pos2D.y), 100.0f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
 	}
 	else if (chargingShot)
 	{
 		chargingShot = false;
 
-		globalBarrelOffset = barrelOffset;
-		glm::vec2 barrelOffset2D = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), {barrelOffset.x, barrelOffset.z});
-		globalBarrelOffset = { barrelOffset2D.x, barrelOffset.y, barrelOffset2D.y };
 		
+
 
 		if (chargedDuration >= overclockChargeTime)
 		{
@@ -137,7 +145,7 @@ void Sync::Update(
 		}
 		else
 		{
-			ShootMisfire(globalBarrelOffset);
+			//DO NOT FIRING STUFF
 		}
 		chargedDuration = 0;
 	}
