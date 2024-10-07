@@ -11,10 +11,18 @@
 
 int main()
 {
+#if defined ART_TOOL
+	ArtScene scene;
+#elif defined LEVEL_EDITOR
 	LevelEditor scene;
+#else
+	TestScene scene;
+#endif
 	SceneManager sceneManager(&scene);
 	while (!sceneManager.ShouldClose())
 	{
 		sceneManager.Update();
+
 	}
+
 }
