@@ -6,6 +6,7 @@
 #include "ShaderEnum.h"
 #include "SceneObject.h"
 #include "Lights.h"
+#include "UserPreferences.h"
 
 // This includes imgui differently then other files as it is managed here
 #include "imgui.h"
@@ -181,6 +182,8 @@ SceneManager::SceneManager(Scene* _scene)
 	{
 		(*i).second.UpdateGlobalMatrixCascading();
 	}
+
+	UserPreferences::Initialise();
 
 	std::cout << "Start finished\n";
 }
@@ -434,8 +437,7 @@ void SceneManager::ProcessKeyboardInput(GLFWwindow* window)
 {
 	if (ImGui::GetIO().WantCaptureKeyboard) { return; }
 
-	// TODO: Remove this, maybe make a modal pop up window
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+	if (UserPreferences::escapeCloses && glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
 
