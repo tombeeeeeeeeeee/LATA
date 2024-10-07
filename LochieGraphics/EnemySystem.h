@@ -42,8 +42,8 @@ public:
 	EnemySystem() {};
 	EnemySystem(toml::table table);
 	void Start(
-		std::unordered_map<unsigned long long, Transform> transforms,
-		std::unordered_map<unsigned long long, RigidBody> rigidbodies
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, RigidBody>& rigidbodies
 	);
 
 	float perceptionRadius = 500.0f;
@@ -52,6 +52,7 @@ public:
 	float alignmentCoef = 0.5f;
 	float cohesionCoef = 0.5f;
 	float seperationCoef = 0.5f;
+	float normalCoef = 0.5f;
 
 	int explosiveEnemyHealth = 0;
 	float explosiveEnemyMoveSpeed = 0;
@@ -104,9 +105,6 @@ public:
 
 	toml::table Serialise() const;
 
-	void LoadLevelParametres(toml::table table);
-	toml::table SerialiseForLevel() const;
-
 	void OnMeleeCollision(Collision collision);
 
 	glm::vec2 mapMinCorner = { 0.0f, 0.0f };
@@ -115,12 +113,12 @@ public:
 	std::vector<glm::vec2> normalFlowMap;
 
 	void UpdateNormalFlowMap(
-		std::unordered_map<unsigned long long, Transform> transforms,
-		std::unordered_map<unsigned long long, RigidBody> rigidBodies);
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, RigidBody>& rigidBodies);
 	void LoadNormalFlowMapFromImage(unsigned char* image, int width, int height);
 	void PopulateNormalFlowMapFromRigidBodies(
-		std::unordered_map<unsigned long long, Transform> transforms,
-		std::unordered_map<unsigned long long, RigidBody> rigidbodies
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, RigidBody>& rigidbodies
 	);
 
 

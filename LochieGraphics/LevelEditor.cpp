@@ -25,18 +25,30 @@ void LevelEditor::RefreshWalls()
 	{
 		// TODO: Should be using a delete sceneobject function
 		unsigned long long GUID = walls.front()->getSceneObject()->GUID;
+		
 		delete sceneObjects[GUID];
 		sceneObjects.erase(GUID);
+		
 		walls.erase(walls.begin());
 	}
 	wallCount = 0;
 
 	float offset = (gridSize + wallThickness) / 2;
+	float minX = FLT_MAX;
+	float minZ = FLT_MAX;
+	float maxX = -FLT_MAX;
+	float maxZ = -FLT_MAX;
 	for (auto& i : tiles)
 	{
 		glm::vec3 pos = i.second->transform()->getGlobalPosition();
 		glm::vec2 tileCell = glm::vec2{ pos.x, pos.z } / gridSize;
 		tileCell = { roundf(tileCell.x), roundf(tileCell.y) };
+
+		if (pos.x - gridSize < minX) minX = pos.x;
+		if (pos.z - gridSize < minZ) minZ = pos.z;
+		if (pos.x + gridSize > maxX) maxX = pos.x;
+		if (pos.z + gridSize > maxZ) maxZ = pos.z;
+
 		if (!CellAt(tileCell.x - 1, tileCell.y)) {
 			PlaceWallAt(pos.x - offset, pos.z, 0.0f);
 		}
@@ -50,6 +62,9 @@ void LevelEditor::RefreshWalls()
 			PlaceWallAt(pos.x, pos.z + offset, 90.0f);
 		}
 	}
+
+	enemySystem.mapMinCorner = {minX, minZ};
+	enemySystem.mapDimensions = {maxX - minX, maxZ - minZ};
 }
 
 SceneObject* LevelEditor::CellAt(float x, float z)
@@ -100,11 +115,8 @@ void LevelEditor::Brush(glm::vec2 targetCell)
 	gridMinX = (int)fminf(targetCell.x, (float)gridMinX);
 	gridMinZ = (int)fminf(targetCell.y, (float)gridMinZ);
 
-	enemySystem.mapMinCorner = { gridMinX, gridMinZ };
-
 	gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
 	gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
-	enemySystem.mapMinCorner = { gridMaxX - gridMinX, gridMaxZ - gridMinZ };
 
 	if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
 }
@@ -222,7 +234,6 @@ void LevelEditor::Update(float delta)
 		enemySystem.SpawnEnemiesInScene(enemies, transforms);
 
 		camera->state = Camera::targetingPlayers;
-		gameCamSystem.cameraPositionDelta = { 550.0f, 1000.0f, 750.0f };
 	}
 	else if(lastFramePlayState && !inPlay) //On Play exit
 	{
@@ -234,6 +245,8 @@ void LevelEditor::Update(float delta)
 
 		camera->state = Camera::editorMode;
 	}
+
+	lastFramePlayState = inPlay;
 	LineRenderer& lines = renderSystem.lines;
 	input.Update();
 
@@ -495,7 +508,6 @@ void LevelEditor::SaveLevel()
 	std::ofstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
 	file << SaveSceneObjectsAndParts();
-	file << enemySystem.SerialiseForLevel();
 	file.close();
 }
 
@@ -524,9 +536,6 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
 
-	enemySystem.LoadLevelParametres(data);
-
-	enemySystem.Start(transforms, rigidBodies);
 
 	// Refresh the tiles collection
 	tiles.clear();
@@ -536,10 +545,12 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 		glm::vec3 adjustedPos = children[i]->getPosition() / gridSize;
 		tiles[{(int)adjustedPos.x, (int)adjustedPos.z}] = children[i]->getSceneObject();
 	}
-
 	file.close();
+
+	RefreshWalls();
 	InitialisePlayers();
 
+	enemySystem.Start(transforms, rigidBodies);
 	previouslySaved = true;
 }
 

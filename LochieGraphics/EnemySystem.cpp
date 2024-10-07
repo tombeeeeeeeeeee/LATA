@@ -48,8 +48,8 @@ EnemySystem::EnemySystem(toml::table table)
 }
 
 void EnemySystem::Start(
-    std::unordered_map<unsigned long long, Transform> transforms,
-    std::unordered_map<unsigned long long, RigidBody> rigidbodies
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    std::unordered_map<unsigned long long, RigidBody>& rigidbodies
 )
 {
     if (!meleeEnemyRenderer)
@@ -371,6 +371,10 @@ void EnemySystem::GUI()
     ImGui::DragFloat("Alignment Coef", &alignmentCoef);
     ImGui::DragFloat("Cohesion Coef", &cohesionCoef);
     ImGui::DragFloat("Seperation Coef", &seperationCoef);
+    ImGui::DragFloat("Normal Coef", &normalCoef);
+
+    ImGui::DragFloat("Perception Radius", &perceptionRadius);
+    ImGui::DragFloat("Separation Radius", &separationRadius);
 
     ImGui::Text("MELEE ENEMY STATS");
     ImGui::DragInt("Melee Enemy Health", &meleeEnemyHealth);
@@ -394,10 +398,6 @@ void EnemySystem::GUI()
     }
     ImGui::InputText("Ranged Enemy Material", &rangedEnemyMaterialPath);
 
-    ImGui::Text("BOID TESTING");
-    ImGui::DragFloat("Perception Radius", &perceptionRadius);
-    ImGui::DragFloat("Separation Radius", &separationRadius);
-
     ImGui::End();
 }
 
@@ -419,21 +419,6 @@ toml::table EnemySystem::Serialise() const
     };
 }
 
-void EnemySystem::LoadLevelParametres(toml::table table)
-{
-    mapMinCorner = Serialisation::LoadAsVec2(table["mapMinCorner"]);
-    mapDimensions = Serialisation::LoadAsVec2(table["mapDimensions"]);
-}
-
-toml::table EnemySystem::SerialiseForLevel() const
-{
-    return toml::table
-    {
-        { "mapMinCorner", Serialisation::SaveAsVec2(mapMinCorner)},
-        { "mapDimensions", Serialisation::SaveAsVec2(mapDimensions)},
-    }; 
-}
-
 void EnemySystem::OnMeleeCollision(Collision collision)
 {
     if (collision.collisionMask & (int)CollisionLayers::sync || collision.collisionMask & (int)CollisionLayers::ecco)
@@ -443,8 +428,8 @@ void EnemySystem::OnMeleeCollision(Collision collision)
 }
 
 void EnemySystem::UpdateNormalFlowMap(
-    std::unordered_map<unsigned long long, Transform> transforms,
-    std::unordered_map<unsigned long long, RigidBody> rigidBodies
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    std::unordered_map<unsigned long long, RigidBody>& rigidBodies
 )
 {
     int w, h, channels;
@@ -479,7 +464,7 @@ void EnemySystem::LoadNormalFlowMapFromImage(unsigned char* image, int width, in
 
 }
 
-void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsigned long long, Transform> transforms, std::unordered_map<unsigned long long, RigidBody> rigidbodies)
+void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidbodies)
 {
     /*
     * For each rigidbody
@@ -495,7 +480,9 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
     * 
     * save as image
     */
+
     return;
+
 
     std::vector<glm::vec4> mapColours;
     mapColours.reserve(mapDimensions.x * mapDimensions.y);

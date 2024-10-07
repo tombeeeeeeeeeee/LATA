@@ -47,7 +47,7 @@ void LineRenderer::DrawCircle(glm::vec3 centre, float size)
 
 void LineRenderer::DrawCircle(glm::vec3 centre, float size, Colour colour)
 {
-	DrawCircle(centre, size, GetCircleSegmentCount(size));
+	DrawCircle(centre, size, colour, GetCircleSegmentCount(size));
 }
 
 void LineRenderer::FinishLineStrip()
