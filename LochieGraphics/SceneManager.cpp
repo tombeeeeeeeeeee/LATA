@@ -403,10 +403,10 @@ void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int ac
 		ToggleFullscreen();
 	}
 
-	if (key == GLFW_KEY_GRAVE_ACCENT && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_S && action == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
 		scene->Save();
 	}
-	if (key == GLFW_KEY_SLASH && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_L && action == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
 		scene->Load();
 	}
 
