@@ -15,6 +15,7 @@
 #include "PhysicsSystem.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
+#include "Utilities.h"
 
 #include "EditorGUI.h"
 
@@ -70,7 +71,8 @@ void Sync::Update(
 			move.x * c - move.y * s,
 			move.x * s + move.y * c
 		};
-		rigidBody.vel = moveSpeed * move;
+		float currentMoveSpeed = Utilities::Lerp(moveSpeed, 0.0f, glm::min(chargedDuration, sniperChargeTime) / sniperChargeTime);
+		rigidBody.vel = currentMoveSpeed * move;
 		fireDirection = move;
 	}
 	else
@@ -137,6 +139,7 @@ void Sync::Update(
 		{
 			ShootMisfire(globalBarrelOffset);
 		}
+		chargedDuration = 0;
 	}
 
 	for (auto i = blasts.begin(); i != blasts.end();)
@@ -231,7 +234,7 @@ void Sync::ShootMisfire(glm::vec3 pos)
 	shot->rigidbody()->vel += fireDirection * misfireShotSpeed;
 	shot->rigidbody()->onTrigger.push_back([this](Collision collision) {misfireShotOnCollision(collision); });
 	shot->transform()->setPosition(pos);
-	shot->transform()->setScale(0.001f);
+	shot->transform()->setScale(0.1f);
 }
 
 void Sync::ShootSniper(glm::vec3 pos)
