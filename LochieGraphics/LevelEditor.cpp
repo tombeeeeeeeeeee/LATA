@@ -350,8 +350,9 @@ void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
 
-		if (ImGui::Button("PLAY"))
+		if (ImGui::Button("PLAY")) {
 			inPlay = !inPlay;
+		}
 
 		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0Asset Placer\0View Select\0\0")) {
 			switch (state)
@@ -377,6 +378,7 @@ void LevelEditor::GUI()
 			ResourceManager::ModelAssetSelector("Asset To Place", &assetPlacer);
 			ImGui::DragFloat("Asset Placement Height", &assetPlacerHeight);
 			ImGui::DragFloat("Asset Placement Rotation", &assetPlacerRotation);
+			ImGui::ColorEdit3("Asset Placement Colour", &assetPlacerColour.x);
 		}
 
 		ImGui::Checkbox("Always refresh walls", &alwaysRefreshWallsOnPlace);
@@ -560,6 +562,7 @@ void LevelEditor::AssetPlacer(glm::vec2 targetPos)
 
 	SceneObject* newSceneObject = new SceneObject(this, Utilities::FilenameFromPath(assetPlacer->path, false));
 	newSceneObject->setRenderer(new ModelRenderer(assetPlacer, 0ull));
+	newSceneObject->renderer()->materialTint = assetPlacerColour;
 	newSceneObject->transform()->setPosition(pos);
 	newSceneObject->transform()->setEulerRotation({ 0.0f, assetPlacerRotation, 0.0f });
 	newSceneObject->setCollider(new PolygonCollider({
