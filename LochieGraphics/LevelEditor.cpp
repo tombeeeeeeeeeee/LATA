@@ -363,6 +363,7 @@ void LevelEditor::GUI()
 		if (state == BrushState::assetPlacer) {
 			ResourceManager::ModelAssetSelector("Asset To Place", &assetPlacer);
 			ImGui::DragFloat("Asset Placement Height", &assetPlacerHeight);
+			ImGui::DragFloat("Asset Placement Rotation", &assetPlacerRotation);
 		}
 
 		ImGui::Checkbox("Always refresh walls", &alwaysRefreshWallsOnPlace);
@@ -549,6 +550,7 @@ void LevelEditor::AssetPlacer(glm::vec2 targetPos)
 	SceneObject* newSceneObject = new SceneObject(this, Utilities::FilenameFromPath(assetPlacer->path, false));
 	newSceneObject->setRenderer(new ModelRenderer(assetPlacer, 0ull));
 	newSceneObject->transform()->setPosition(pos);
+	newSceneObject->transform()->setEulerRotation({ 0.0f, assetPlacerRotation, 0.0f });
 	newSceneObject->setCollider(new PolygonCollider({
 		{ +defaultColliderLength, +defaultColliderLength},
 		{ +defaultColliderLength, -defaultColliderLength},
