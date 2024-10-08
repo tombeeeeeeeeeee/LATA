@@ -12,7 +12,8 @@ struct BoneInfo;
 // TODO: Needs a GUID
 class Animation
 {
-private:
+public:
+	// TODO: This comment might be wrong, unit might be ticks
 	// The duration of the animation, how long the animation goes for in seconds.
 	float duration = 0;
 
@@ -21,8 +22,6 @@ private:
 
 	// The bones apart of the model for this animation
 	std::vector<Bone> bones = {};
-
-public:
 
 	Model* model = nullptr;
 	unsigned long long modelGUID = 0;
@@ -48,8 +47,6 @@ public:
 	float getDuration() const;
 
 	const ModelHierarchyInfo* getRootNode() const;
-
-	const std::unordered_map<std::string, BoneInfo>& getBoneIDMap() const;
 
 	void GUI();
 

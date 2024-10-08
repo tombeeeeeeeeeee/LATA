@@ -61,10 +61,10 @@ void LocWorkshop::Start()
 	Model* aniTestModel = ResourceManager::LoadModel(path);
 	aniTest->setRenderer(new ModelRenderer(aniTestModel, ResourceManager::defaultMaterial));
 
-	//animation = Animation(path, aniTestModel);
+	animation = Animation(path, aniTestModel);
 
-	//animator = new Animator(&animation);
-	//aniTest->setAnimator(animator);
+	animator = new Animator(&animation);
+	aniTest->setAnimator(animator);
 
 	gui.showHierarchy = true;
 	gui.showSceneObject = true;

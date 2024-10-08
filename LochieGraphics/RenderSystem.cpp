@@ -404,8 +404,6 @@ void RenderSystem::Update(
     (*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
 
     DrawAllRenderers(animators, transforms, renders, animatedRenderered);
-    //DrawRenderers(renders, transforms, animatedRenderered);
-    //DrawAnimation(animators, transforms, renders);
 
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Draw();

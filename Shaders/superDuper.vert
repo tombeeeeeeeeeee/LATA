@@ -97,8 +97,8 @@ void main()
         }
 		vec4 transformed = model * (totalPosition * vec4(aPos, 1.0));
 		vec4 untransformed = model * vec4(aPos, 1.0);
-		//pos = mix(transformed, untransformed, material.tempValue);
-        pos = model * (totalPosition * vec4(aPos, 1.0));
+		pos = mix(transformed, untransformed, material.tempValue);
+        //pos = model * (totalPosition * vec4(aPos, 1.0));
     }
 
     else 
@@ -122,5 +122,5 @@ void main()
     gl_Position = vp * pos;
     ndc = gl_Position;
     fragmentColour = materialColour;
-	//fragmentColour = vec3(0.01 * aBoneIDs[0], 1.0 - (0.01 * aBoneIDs[0]), 0.0);
+	fragmentColour = vec3(0.01 * aBoneIDs[0], 1.0 - (0.01 * aBoneIDs[0]), 0.0);
 }
