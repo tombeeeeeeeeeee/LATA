@@ -303,7 +303,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UserPreferences.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -583,7 +583,6 @@
     <ClInclude Include="LocWorkshop.h">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="DistanceAndLOSCondition.h">
       <Filter>Source Files\AI\Conditions</Filter>
     </ClInclude>
@@ -593,8 +592,15 @@
     <ClInclude Include="Node.h">
       <Filter>Source Files\AI</Filter>
     </ClInclude>
-    <ClInclude Include="SpawnManager.h" />
-    <ClInclude Include="UserPreferences.h" />
+    <ClInclude Include="UserPreferences.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">

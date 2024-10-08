@@ -94,7 +94,12 @@ void GUI::Update()
 	if (showEnemyMenu) { EnemyMenu(); }
 	if (showImguiExampleMenu) { ImGui::ShowDemoWindow(); }
 	if (showRenderSystemMenu) { scene->renderSystem.GUI(); }
-	if (showUserPrefsMenu) { UserPreferences::GUI(); }
+	if (showUserPrefsMenu) { 
+		if (ImGui::Begin("User Preferences Menu", &showUserPrefsMenu, defaultWindowFlags)) {
+			UserPreferences::GUI();
+		}
+		ImGui::End();
+	}
 	scene->BaseGUI();
 	scene->GUI();
 

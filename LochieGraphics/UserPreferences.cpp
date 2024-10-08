@@ -13,10 +13,6 @@ std::string UserPreferences::filename = "";
 
 void UserPreferences::GUI()
 {
-	if (!ImGui::Begin("User Preferences Menu", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::End();
-		return;
-	}
 	// TODO: Selector for user prefs
 	// TODO: Option to create new one
 
@@ -25,14 +21,13 @@ void UserPreferences::GUI()
 		Save();
 		RefreshPreferenceFile();
 	}
+	ImGui::SameLine();
 	if (ImGui::Button("Load##User Prefrences")) {
 		Load();
 		RefreshPreferenceFile();
 	}
 
 	ImGui::Checkbox("Pressing Escape Quits", &escapeCloses);
-
-	ImGui::End();
 }
 
 void UserPreferences::Initialise()
