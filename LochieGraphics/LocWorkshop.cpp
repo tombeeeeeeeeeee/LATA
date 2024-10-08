@@ -56,14 +56,19 @@ void LocWorkshop::Start()
 	//sceneObject->renderer()->materials.front()->texturePointers["material.albedo"] = texture;
 
 	aniTest = new SceneObject(this, "Animation Test");
-	std::string path = "models/Anim_Sync_RunTEST03.fbx";
+	std::string path = "models/Anim_Sync_RunTEST.fbx";
+	//std::string path = "models/Anim_Sync_RunTEST.fbx";
 	Model* aniTestModel = ResourceManager::LoadModel(path);
 	aniTest->setRenderer(new ModelRenderer(aniTestModel, ResourceManager::defaultMaterial));
 
-	animation = Animation(path, aniTestModel);
+	//animation = Animation(path, aniTestModel);
 
-	animator = new Animator(&animation);
-	aniTest->setAnimator(animator);
+	//animator = new Animator(&animation);
+	//aniTest->setAnimator(animator);
+
+	gui.showHierarchy = true;
+	gui.showSceneObject = true;
+	gui.showResourceMenu = true;
 }
 
 void LocWorkshop::Update(float delta)

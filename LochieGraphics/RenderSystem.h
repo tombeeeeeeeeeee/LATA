@@ -113,21 +113,13 @@ private:
     /// </summary>
     std::vector<Shader*>* shaders = {};
 
-
-    void DrawAnimation(
+    void DrawAllRenderers(
         std::unordered_map<unsigned long long, Animator>& animators,
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-        Shader* shader = nullptr
-    );
-
-    void DrawRenderers(
-        std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-        std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_set<unsigned long long> animatedRenderered,
         Shader* shader = nullptr
     );
-
 
     void ActivateFlaggedVariables(
         Shader* shader,

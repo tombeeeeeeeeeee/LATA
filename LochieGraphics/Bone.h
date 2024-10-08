@@ -15,6 +15,9 @@ struct Key {
 	float timeStamp;
 };
 
+/// <summary>
+/// Stores the animation data and transform for a specific bone and the current bone transform
+/// </summary>
 class Bone {
 private:
 	// The keys
