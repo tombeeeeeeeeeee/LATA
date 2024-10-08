@@ -36,9 +36,9 @@ private:
 	int meleeEnemyCount = 0;
 	int rangedEnemyCount = 0;
 
-	const int nfmDensity = 20;
 public:
 	bool aiUpdating = false;
+	const int nfmDensity = 20;
 
 	EnemySystem() {};
 	EnemySystem(toml::table table);

@@ -451,8 +451,10 @@ void EnemySystem::UpdateNormalFlowMap(
 void EnemySystem::LoadNormalFlowMapFromImage(unsigned char* image, int width, int height)
 {
     normalFlowMap.clear();
-    normalFlowMap.reserve(width * height / (nfmDensity * nfmDensity));
-    for (int i = 0; i < width * height / (nfmDensity * nfmDensity); i++)
+    normalFlowMap.reserve(width * height);
+    mapDimensions.x = width;
+    mapDimensions.y = height;
+    for (int i = 0; i < width * height; i++)
     {
         glm::vec2 colour = glm::vec2(
             image[4 * i + 0], image[4 * i + 1]
@@ -483,10 +485,10 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
 
 
     std::vector<unsigned char> mapColours;
-    mapColours.reserve(mapDimensions.x * mapDimensions.y * 4 / (nfmDensity * nfmDensity));
+    mapColours.reserve(mapDimensions.x * mapDimensions.y * 4);
     normalFlowMap.clear();
-    normalFlowMap.reserve(mapDimensions.x * mapDimensions.y / (nfmDensity * nfmDensity));
-    for (int i = 0; i < mapDimensions.x * mapDimensions.y / (nfmDensity * nfmDensity); i++)
+    normalFlowMap.reserve(mapDimensions.x * mapDimensions.y);
+    for (int i = 0; i < mapDimensions.x * mapDimensions.y; i++)
     {
         normalFlowMap.push_back({0.0f, 0.0f});
         mapColours.push_back(0.0f);
@@ -511,9 +513,9 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                         float radius = poly->radius;
 
                         //Check every "tile" on colourMap
-                        for (int x = 0; x < mapDimensions.x / nfmDensity; x++)
+                        for (int x = 0; x < mapDimensions.x; x++)
                         {
-                            for (int z = 0; z < mapDimensions.y / nfmDensity; z++)
+                            for (int z = 0; z < mapDimensions.y; z++)
                             {
                                 glm::vec2 tilePos = {x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y};
                                 glm::vec2 delta = tilePos - pos;
@@ -522,11 +524,7 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                                 {
                                     glm::vec2 normal = -glm::normalize(delta);
                                     glm::vec2 influence = normal / distance;
-                                    normalFlowMap[x + z * mapDimensions.x / nfmDensity] += influence;
-                                    influence /= 2.0f;
-                                    influence += 0.5f;
-                                    mapColours[(x + z * mapDimensions.x / nfmDensity) * 4 + 0] += influence.x * 255 * 5;
-                                    mapColours[(x + z * mapDimensions.x / nfmDensity) * 4 + 1] += influence.y * 255 * 5;
+                                    normalFlowMap[x + z * mapDimensions.x] += influence;
                                 }
                             }
                         }
@@ -547,9 +545,9 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                             float comparisonTangentA = glm::dot(vertA, tangent);
                             float comparisonTangentB = glm::dot(vertB, tangent);
 
-                            for (int x = 0; x < mapDimensions.x / nfmDensity; x++)
+                            for (int x = 0; x < mapDimensions.x; x++)
                             {
-                                for (int z = 0; z < mapDimensions.y / nfmDensity; z++)
+                                for (int z = 0; z < mapDimensions.y; z++)
                                 {
                                     glm::vec2 tilePos = { x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y };
                                     float normalDot = glm::dot(tilePos, normal);
@@ -559,17 +557,7 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                                         if ( tanDot > comparisonTangentA && tanDot < comparisonTangentB)
                                         {
                                             glm::vec2 influence = normal / (normalDot - comparisonNormal);
-                                            normalFlowMap[x + z * (mapDimensions.x / nfmDensity)] += influence;
-                                            //influence = Utilities::ClampMag(influence, 0.0f, 1.0f);
-                                            //This clamp should happen once at the end, not per influencer (per shape)
-                                            influence.x = fmin(influence.x, 1.0f);
-                                            influence.x = fmax(influence.x, -1.0f);
-                                            influence.y = fmin(influence.y, 1.0f);
-                                            influence.y = fmax(influence.y, -1.0f);
-                                            influence /= 2.0f;
-                                            influence += 0.5f;
-                                            mapColours[(x + z * mapDimensions.x / nfmDensity) * 4 + 0] += influence.x * 255;
-                                            mapColours[(x + z * mapDimensions.x / nfmDensity) * 4 + 1] += influence.y * 255;
+                                            normalFlowMap[x + z * (mapDimensions.x)] += influence;
                                         }
                                     }
                                 }
@@ -581,6 +569,32 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
         }
     }
 
-    stbi_write_png((Paths::levelsPath + SceneManager::scene->windowName + Paths::imageExtension).c_str(), mapDimensions.x / nfmDensity, mapDimensions.y / nfmDensity, 4, mapColours.data(), 0);
+    for (int x = 0; x < mapDimensions.x; x++)
+    {
+
+        for (int z = 0; z < mapDimensions.y; z++)
+        {
+            float r, g, b = 0.0f;
+            glm::vec2 influence = normalFlowMap[x + z * mapDimensions.x];
+
+            b = fmin(glm::length(influence) * 255, 255);
+
+            influence.x = fmin(influence.x, 1.0f);
+            influence.x = fmax(influence.x, -1.0f);
+            influence.y = fmin(influence.y, 1.0f);
+            influence.y = fmax(influence.y, -1.0f);
+            influence /= 2.0f;
+            influence += 0.5f;
+            influence *= 255;
+            r = influence.x;
+            g = influence.y;
+
+            mapColours[(x + z * mapDimensions.x) * 4 + 0] = r;
+            mapColours[(x + z * mapDimensions.x) * 4 + 1] = g;
+            mapColours[(x + z * mapDimensions.x) * 4 + 2] = b;
+
+        }
+    }
+    stbi_write_png((Paths::levelsPath + SceneManager::scene->windowName + Paths::imageExtension).c_str(), mapDimensions.x, mapDimensions.y, 4, mapColours.data(),0);
 }
 

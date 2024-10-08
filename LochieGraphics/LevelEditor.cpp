@@ -65,6 +65,7 @@ void LevelEditor::RefreshWalls()
 
 	enemySystem.mapMinCorner = {minX, minZ};
 	enemySystem.mapDimensions = {maxX - minX, maxZ - minZ};
+	enemySystem.mapDimensions /= enemySystem.nfmDensity;
 }
 
 SceneObject* LevelEditor::CellAt(float x, float z)
