@@ -522,6 +522,7 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                                 float distance = glm::dot(delta, delta);
                                 if (distance >= radius * radius)
                                 {
+                                    distance = sqrt(distance)/4;
                                     glm::vec2 normal = -glm::normalize(delta);
                                     glm::vec2 influence = normal / distance;
                                     normalFlowMap[x + z * mapDimensions.x] += influence;
@@ -556,7 +557,8 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                                         float tanDot = glm::dot(tilePos, tangent);
                                         if ( tanDot > comparisonTangentA && tanDot < comparisonTangentB)
                                         {
-                                            glm::vec2 influence = normal / (normalDot - comparisonNormal);
+                                            float distance = sqrt(normalDot - comparisonNormal)/4;
+                                            glm::vec2 influence = normal / distance;
                                             normalFlowMap[x + z * (mapDimensions.x)] += influence;
                                         }
                                     }
