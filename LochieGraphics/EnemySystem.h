@@ -39,6 +39,7 @@ private:
 public:
 	bool aiUpdating = false;
 	const int nfmDensity = 20;
+	const int maxNormalInfluence = 250;
 
 	EnemySystem() {};
 	EnemySystem(toml::table table);
@@ -138,5 +139,7 @@ private:
 		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
 		float delta
 		);
+	
+	glm::vec2 GetNormalFlowInfluence(glm::vec2 pos);
 };
 

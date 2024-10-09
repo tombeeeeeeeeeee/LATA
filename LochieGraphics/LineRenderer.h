@@ -8,10 +8,14 @@
 
 class LineRenderer
 {
+public:
 	struct Colour {
 		float r;
 		float g;
 		float b;
+		Colour(float _r, float _g, float _b) {
+			r = _r; b = _b; g = _g;
+		}
 	};
 
 private:
@@ -47,6 +51,8 @@ public:
 
 	void DrawLineSegment(glm::vec3 start, glm::vec3 end);
 	void DrawLineSegment(glm::vec3 start, glm::vec3 end, Colour colour);
+	void DrawLineSegement2D(glm::vec2 start, glm::vec2 end, float yOffset = 0.1f);
+	void DrawLineSegement2D(glm::vec2 start, glm::vec2 end, Colour colour, float yOffset = 0.1f);
 
 	void DrawCircle(glm::vec3 centre, float size);
 	void DrawCircle(glm::vec3 centre, float size, int segmentCount);
