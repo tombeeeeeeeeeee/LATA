@@ -72,9 +72,6 @@
     <Filter Include="Source Files\Third-Party\imguizmo">
       <UniqueIdentifier>{88879a22-0acc-4dea-ae36-98856c989c42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Scene Management\Scenes\Dev">
-      <UniqueIdentifier>{8082ed72-48d6-4656-906e-10874141fd51}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -301,6 +298,12 @@
     </ClCompile>
     <ClCompile Include="WanderState.cpp">
       <Filter>Source Files\AI\States</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserPreferences.cpp">
+      <Filter>Source Files\Misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -580,7 +583,6 @@
     <ClInclude Include="LocWorkshop.h">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="DistanceAndLOSCondition.h">
       <Filter>Source Files\AI\Conditions</Filter>
     </ClInclude>
@@ -589,6 +591,15 @@
     </ClInclude>
     <ClInclude Include="Node.h">
       <Filter>Source Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="UserPreferences.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

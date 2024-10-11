@@ -61,6 +61,8 @@ private:
 	float assetPlacerHeight = 0.0f;
 	// TODO: Implement
 	float assetPlacerRotation = 0.0f;
+	glm::vec3 assetPlacerColour = { 1.0f, 1.0f, 1.0f };
+
 	float defaultColliderLength = 50.0f;
 
 	float selectSize = 50.0f;

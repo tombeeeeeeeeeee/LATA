@@ -7,6 +7,7 @@
 #include "Lights.h"
 // Needed for the physics menu
 #include "Collider.h"
+#include "UserPreferences.h"
 
 #include "Utilities.h"
 
@@ -68,6 +69,7 @@ void GUI::Update()
 			ImGui::MenuItem("Enemy System", NULL, &showEnemyMenu);
 			ImGui::MenuItem("Imgui Demo", NULL, &showImguiExampleMenu);
 			ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
+			ImGui::MenuItem("User Prefs", NULL, &showUserPrefsMenu);
 
 			ImGui::EndMenu();
 		}
@@ -92,6 +94,12 @@ void GUI::Update()
 	if (showEnemyMenu) { EnemyMenu(); }
 	if (showImguiExampleMenu) { ImGui::ShowDemoWindow(); }
 	if (showRenderSystemMenu) { scene->renderSystem.GUI(); }
+	if (showUserPrefsMenu) { 
+		if (ImGui::Begin("User Preferences Menu", &showUserPrefsMenu, defaultWindowFlags)) {
+			UserPreferences::GUI();
+		}
+		ImGui::End();
+	}
 	scene->BaseGUI();
 	scene->GUI();
 

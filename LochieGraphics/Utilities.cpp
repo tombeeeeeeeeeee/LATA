@@ -9,21 +9,18 @@ std::string Utilities::FileToString(std::string path)
 	std::stringstream output;
 	std::ifstream file(path);
 
-	if (file.is_open())
-	{
-		while (!file.eof())
-		{
-			std::string thisLine;
-			std::getline(file, thisLine);
-			output << thisLine << "\n";
-		}
-		return output.str();
-	}
-	else
+	if (!file.is_open())
 	{
 		std::cout << "Error loading file: " << path << std::endl;
 		return "";
 	}
+	while (!file.eof())
+	{
+		std::string thisLine;
+		std::getline(file, thisLine);
+		output << thisLine << "\n";
+	}
+	return output.str().substr(0, output.str().size() - 1);
 }
 
 std::string Utilities::PointerToString(void* pointer)

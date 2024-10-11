@@ -23,6 +23,7 @@ public:
 	bool showLightMenu = false;
 	bool showImguiExampleMenu = false;
 	bool showRenderSystemMenu = false;
+	bool showUserPrefsMenu = false;
 private:
 
 	// ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize

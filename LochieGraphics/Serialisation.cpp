@@ -105,8 +105,10 @@ glm::quat Serialisation::LoadAsQuaternion(toml::node_view<toml::node> table)
 
 bool Serialisation::LoadAsBool(toml::node_view<toml::node> toml)
 {
-    // TODO: Show error message
-    if (!toml) { return false; }
+    if (!toml) { 
+        std::cout << "Failed to load bool\n";
+        return false; 
+    }
     return toml.as_boolean()->value_or<bool>(false);
 }
 
