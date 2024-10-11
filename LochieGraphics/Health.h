@@ -22,6 +22,7 @@ class Health
 public:
 	int currHealth = 0;
 	float timeSinceLastChange = 1.0f;
+	int lastChangeAmount = 0.0f;
 	Health();
 
 	void addHealth(int addition, SceneObject* so = nullptr);

@@ -4,6 +4,7 @@
 #include "ModelRenderer.h"
 #include "SceneObject.h"
 #include "Material.h"
+#include "imgui.h"
 
 #include "Utilities.h"
 
@@ -23,23 +24,48 @@ void HealthSystem::Update(
 {
 	for (auto& healthPair : healths)
 	{
-		float timeSinceDamage = healthPair.second.timeSinceLastChange;
-		timeSinceDamage /= colourTime;
+		float timeSinceChange = healthPair.second.timeSinceLastChange;
+		timeSinceChange /= colourTime;
 
-		timeSinceDamage = glm::clamp(timeSinceDamage, 0.0f, 1.0f);
-		renderers[healthPair.first].materialTint = Utilities::Lerp(damageColour, {1.0f,1.0f,1.0f}, timeSinceDamage);
+		if (healthPair.second.lastChangeAmount > 0.0f)
+		{
+			if (timeSinceChange > 0.0f && timeSinceChange < 1.0f)
+			{
+				renderers[healthPair.first].tintDelta = 1.0f - timeSinceChange;
+				renderers[healthPair.first].alternativeMaterialTint = healColour;
+			}
+		}
+		else
+		{
+			if (timeSinceChange > 0.0f && timeSinceChange < 1.0f)
+			{
+				renderers[healthPair.first].tintDelta = 1.0f - timeSinceChange;
+				renderers[healthPair.first].alternativeMaterialTint = damageColour;
+			}
+		}
+		
 		healthPair.second.timeSinceLastChange += delta;
 	}
 }
 
+void HealthSystem::PlayerHealing(Health* eccoHealth, Health* syncHealth, glm::vec2 eccoPos, glm::vec2 syncPos, float delta)
+{
+	
+}
+
+void HealthSystem::GUI()
+{
+	ImGui::ColorEdit3("Health Colour", &healColour[0]);
+	ImGui::ColorEdit3("Damage Colour", &damageColour[0]);
+	ImGui::DragFloat("Health Colour Time", &colourTime, 1, 0);
+	ImGui::DragInt("Heals Per Pulse", &healPerPulse, 1, 0);
+	ImGui::DragFloat("CoolDown To On Heal Ability", &cooldown, 1, 0);
+	ImGui::DragFloat("TimeBetweenPulses", &timeBetweenPulses, 1, 0);
+	ImGui::DragFloat("Time Since Last Heal Ability", &timeSinceLastHealingAbility, 1, 0);
+	ImGui::End();
+}
+
 void HealthSystem::OnHealthDown(HealthPacket healthPacket)
 {
-	if (healthPacket.so)
-	{
-		std::vector<Material*>& mats = healthPacket.so->renderer()->materials;
-		for (int i = 0; i < mats.size(); i++)
-		{
-			mats[i]->colour = damageColour;
-		}
-	}
+
 }

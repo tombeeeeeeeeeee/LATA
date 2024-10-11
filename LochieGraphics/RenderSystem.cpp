@@ -663,12 +663,13 @@ void RenderSystem::DrawRenderers(
                 shader->setMat4("view", viewMatrix);
                 shader->setMat4("model", transforms[i->first].getGlobalMatrix());
                 ActivateFlaggedVariables(shader, i->second.materials[materialID]);
-                glm::vec3 overallColour = i->second.materials[materialID]->colour * i->second.materialTint;
+                glm::vec3 overallColour = i->second.materials[materialID]->colour * i->second.GetMaterialOverlayColour();
                 shader->setVec3("materialColour", overallColour);
             }
             (*mesh)->Draw();
         }
     }
+   
 }
 
 void RenderSystem::ActivateFlaggedVariables(

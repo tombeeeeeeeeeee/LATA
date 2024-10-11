@@ -565,7 +565,7 @@ void LevelEditor::AssetPlacer(glm::vec2 targetPos)
 
 	SceneObject* newSceneObject = new SceneObject(this, Utilities::FilenameFromPath(assetPlacer->path, false));
 	newSceneObject->setRenderer(new ModelRenderer(assetPlacer, 0ull));
-	newSceneObject->renderer()->materialTint = assetPlacerColour;
+	newSceneObject->renderer()->setMaterialTint(assetPlacerColour);
 	newSceneObject->transform()->setPosition(pos);
 	newSceneObject->transform()->setEulerRotation({ 0.0f, assetPlacerRotation, 0.0f });
 	newSceneObject->setCollider(new PolygonCollider({

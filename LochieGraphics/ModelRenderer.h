@@ -13,6 +13,7 @@ namespace toml {
 
 class ModelRenderer
 {
+
 public:
 	Model* model;
 	unsigned long long modelGUID;
@@ -21,6 +22,8 @@ public:
 
 	std::vector<Material*> materials = {};
 	glm::vec3 materialTint = { 1.0f,1.0f,1.0f };
+	glm::vec3 alternativeMaterialTint = {1.0f, 1.0f, 1.0f};
+	float tintDelta = 0.0f;
 
 	std::vector<unsigned long long> materialGUIDs = {};
 
@@ -34,6 +37,9 @@ public:
 
 	toml::table Serialise(unsigned long long GUID) const;
 	ModelRenderer(toml::table table);
+
+	glm::vec3 GetMaterialOverlayColour();
+	void setMaterialTint(glm::vec3 colour);
 
 	void Refresh();
 };

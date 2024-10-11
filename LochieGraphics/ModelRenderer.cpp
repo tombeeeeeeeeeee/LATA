@@ -103,6 +103,18 @@ ModelRenderer::ModelRenderer(toml::table table)
 	Refresh();
 }
 
+glm::vec3 ModelRenderer::GetMaterialOverlayColour()
+{
+	return Utilities::Lerp(materialTint, alternativeMaterialTint, tintDelta);
+}
+
+void ModelRenderer::setMaterialTint(glm::vec3 colour)
+{
+	materialTint = colour;
+	if (materialTint.x > 1.0f || materialTint.y > 1.0f || materialTint.z > 1.0f)
+		materialTint /= 255.0f;
+}
+
 // TODO: Make sure to call this
 void ModelRenderer::Refresh()
 {

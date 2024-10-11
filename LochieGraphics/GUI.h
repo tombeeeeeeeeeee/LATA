@@ -23,6 +23,7 @@ public:
 	bool showLightMenu = false;
 	bool showImguiExampleMenu = false;
 	bool showRenderSystemMenu = false;
+	bool showHealthSystemMenu = false;
 	bool showUserPrefsMenu = false;
 private:
 
@@ -54,6 +55,7 @@ private:
 
 	void PhysicsMenu();
 	void EnemyMenu();
+	void HealthMenu();
 	bool disableGUIHeld = false;
 };
 
