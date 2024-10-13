@@ -3,6 +3,7 @@
 #include "Animation.h"
 #include "ModelHierarchyInfo.h"
 #include "BoneInfo.h"
+#include "Model.h"
 
 BlendedAnimator::BlendedAnimator(Animation* one, Animation* two) : Animator(one),
     otherCurrentAnimation(two)
@@ -69,7 +70,7 @@ void BlendedAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm
         globalTransformation = parentTransform * node->transform.getLocalMatrix();
     }
 
-    auto& boneInfoMap = currentAnimation->getBoneIDMap();
+    auto& boneInfoMap = currentAnimation->model->boneInfoMap;
     auto boneInfo = boneInfoMap.find(nodeName);
     if (boneInfo != boneInfoMap.end())
     {

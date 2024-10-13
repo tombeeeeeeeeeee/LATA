@@ -71,11 +71,6 @@ const ModelHierarchyInfo* Animation::getRootNode() const
 	return &model->root;
 }
 
-const std::unordered_map<std::string, BoneInfo>& Animation::getBoneIDMap() const
-{
-	return model->boneInfoMap;
-}
-
 void Animation::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
