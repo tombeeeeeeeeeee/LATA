@@ -60,6 +60,7 @@ public:
 	float explosiveEnemyMoveSpeed = 0;
 	int explosiveEnemyDamage = 0;
 	float explosiveEnemyColliderRadius = 120.0f;
+	float timeToExplode = 2.0f;
 	ModelRenderer* explosiveEnemyRenderer = nullptr;
 	std::string explosiveEnemyModel = "SM_Sphere";
 	std::string explosiveEnemyMaterialPath = "images/otherskybox/nx.png";
@@ -68,6 +69,7 @@ public:
 	float meleeEnemyMoveSpeed = 0;
 	int meleeEnemyDamage = 0;
 	float meleeEnemyColliderRadius = 120.0f;
+	float timeToPunch = 0.8f;
 	ModelRenderer* meleeEnemyRenderer = nullptr;
 	std::string meleeEnemyModel = "SM_Sphere";
 	std::string meleeEnemyMaterialPath = "images/otherskybox/nx.png";
@@ -76,6 +78,7 @@ public:
 	float rangedEnemyMoveSpeed = 0;
 	int rangedEnemyDamage = 0;
 	float rangedEnemyColliderRadius = 120.0f;
+	float timeToShoot = 0.5f;
 	ModelRenderer* rangedEnemyRenderer = nullptr;
 	std::string rangedEnemyModel = "SM_Sphere";
 	std::string rangedEnemyMaterialPath = "images/otherskybox/nx.png";

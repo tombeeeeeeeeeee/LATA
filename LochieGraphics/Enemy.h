@@ -38,7 +38,6 @@ struct Enemy
 	glm::vec2 boidVelocity = { 0.0f, 0.0f };
 
 	float timeInAbility = 0.0f;
-	float durationOfAbility = 0.0f;
 	bool inAbility = 0.0f;
 
 	void GUI();
