@@ -175,51 +175,46 @@ void EnemySystem::OnHealthZeroRanged(HealthPacket healthpacket)
 }
 
 void EnemySystem::LineOfSightAndTargetCheck(
-    std::unordered_map<unsigned long long, Enemy>& enemies,
-    std::unordered_map<unsigned long long, Transform>& transforms,
-    std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+    Enemy enemy, Transform transform, RigidBody rigidBody,
     SceneObject* ecco, SceneObject* sync)
 {
 
     glm::vec2 syncPos2D = { sync->transform()->getGlobalPosition().x, sync->transform()->getGlobalPosition().z };
     glm::vec2 eccoPos2D = { ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
-    for (auto& enemyPair : enemies)
+    enemy.hasLOS = false;
+    glm::vec2 enemyPos2D = transform.get2DGlobalPosition();
+
+    float distanceToSync = FLT_MAX;
+
+    std::vector<Hit> syncHits;
+    std::vector<Hit> eccoHits;
+    if (PhysicsSystem::RayCast(
+        enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
+        syncHits, FLT_MAX,
+        (int)CollisionLayers::sync | (int)CollisionLayers::base )
+    ) 
     {
-        enemyPair.second.hasLOS = false;
-        glm::vec2 enemyPos2D = { transforms[enemyPair.first].getGlobalPosition().x, transforms[enemyPair.first].getGlobalPosition().z };
-
-        float distanceToSync = FLT_MAX;
-
-        std::vector<Hit> syncHits;
-        std::vector<Hit> eccoHits;
-        if (PhysicsSystem::RayCast(
-            enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
-            syncHits, FLT_MAX,
-            (int)CollisionLayers::sync | (int)CollisionLayers::base )
-        ) 
+        Hit hit = syncHits[0];
+        if (hit.sceneObject->parts & Parts::sync)
         {
-            Hit hit = syncHits[0];
-            if (hit.sceneObject->parts & Parts::sync)
-            {
-                distanceToSync = hit.distance;
-                enemyPair.second.lastTargetPos = syncPos2D;
-                enemyPair.second.hasLOS = true;
-            }
+            distanceToSync = hit.distance;
+            enemy.lastTargetPos = syncPos2D;
+            enemy.hasLOS = true;
         }
-        if (PhysicsSystem::RayCast(
-            enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
-            eccoHits, FLT_MAX,
-            (int)CollisionLayers::ecco | (int)CollisionLayers::base )
-            )
+    }
+    if (PhysicsSystem::RayCast(
+        enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
+        eccoHits, FLT_MAX,
+        (int)CollisionLayers::ecco | (int)CollisionLayers::base )
+        )
+    {
+        Hit hit = eccoHits[0];
+        if (hit.sceneObject->parts & Parts::ecco)
         {
-            Hit hit = eccoHits[0];
-            if (hit.sceneObject->parts & Parts::ecco)
+            if (hit.distance < distanceToSync)
             {
-                if (hit.distance < distanceToSync)
-                {
-                    enemyPair.second.lastTargetPos = eccoPos2D;
-                    enemyPair.second.hasLOS = true;
-                }
+                enemy.lastTargetPos = eccoPos2D;
+                enemy.hasLOS = true;
             }
         }
     }
@@ -318,48 +313,13 @@ void EnemySystem::Update   (
 {
     if (aiUpdating)
     {
-        LineOfSightAndTargetCheck(
-            enemies,
-            transforms,
-            rigidbodies,
-            ecco, sync
-        );
-
         Steering(
             enemies, 
             transforms, 
             rigidbodies, 
             delta
         );
-
-        //TODO ADD States and Transitions
-        //for (auto& enemyPair : enemies)
-        //{
-        //    Enemy& enemy = enemyPair.second;
-        //    SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
-        //    State* newState = nullptr;
-        //
-        //    // check the current state's transitions
-        //    for (auto& t : enemy.state->transitions)
-        //    {
-        //        if (t.condition->IsTrue(agent))
-        //        {
-        //            newState = t.targetState;
-        //            break;
-        //        }
-        //    }
-        //
-        //
-        //    if (newState != nullptr && newState != enemy.state)
-        //    {
-        //        enemy.state->Exit(agent);
-        //        enemy.state = newState;
-        //        enemy.state->Enter(agent);
-        //    }
-        //
-        //    enemy.state->Update(agent);
-        //}
-    }   //
+    }  
 }
 
 void EnemySystem::SpawnEnemiesInScene(

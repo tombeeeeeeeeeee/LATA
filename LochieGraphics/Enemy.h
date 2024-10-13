@@ -27,13 +27,10 @@ struct Enemy
 	Enemy(toml::table table);
 
 	int type = (int)EnemyType::spawnSpot;
-	State* state = nullptr;
 
 	glm::vec2 lastTargetPos = { 0.0f, 0.0f };
 	glm::vec2 influenceThisFrame = { 0.0f, 0.0f };
 	bool hasLOS = false;
-	int nodeIndex = 0;
-	std::vector<Node*> path = {};
 
 	glm::vec2 boidVelocity = { 0.0f, 0.0f };
 
