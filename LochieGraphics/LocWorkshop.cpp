@@ -7,6 +7,8 @@
 #include "ComputeShader.h"
 #include "Animation.h"
 
+#include "EditorGUI.h"
+
 #include <iostream>
 
 LocWorkshop::LocWorkshop()
@@ -22,9 +24,6 @@ void LocWorkshop::Start()
 	camera->nearPlane = 1.0f;
 	camera->transform.setPosition({ 0.0f, 400.0f, 0.0f });
 	camera->transform.setEulerRotation({ 0.0f, 0.0f, -90.0f });
-
-	sceneObject = new SceneObject(this, "Testing!");
-	//sceneObject->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension), ResourceManager::defaultMaterial));
 
 
 	int max_compute_work_group_count[3] = {};
@@ -48,44 +47,101 @@ void LocWorkshop::Start()
 
 	std::cout << "Number of invocations in a single local work group that may be dispatched to a compute shader " << max_compute_work_group_invocations << "\n\n";
 
-	//ComputeShader computeShader = ComputeShader("shaders/LocsComputeShader.comp");
+	computeShader = new ComputeShader("shaders/LocsComputeShader.comp");
+
+	texture = ResourceManager::LoadTexture(1024u, 1024u);
+	texture->type = Texture::Type::albedo;
+	texture->Bind(0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1024u, 1024u, 0, GL_RGBA, GL_FLOAT, NULL);
 
 
-	Texture* texture = ResourceManager::LoadTexture(1024u, 1024u);
+	shader = ResourceManager::LoadShader("particle", Shader::Flags::VPmatrix);
+	shaders.push_back(shader);
+	Material* material = ResourceManager::LoadMaterial("Testing", shader);
+	material->AddTextures({ texture });
 
-	//sceneObject->renderer()->materials.front()->texturePointers["material.albedo"] = texture;
 
-	aniTest = new SceneObject(this, "Animation Test");
-	std::string path = "models/Anim_Sync_RunTEST.fbx";
-	//std::string path = "models/Anim_Sync_RunTEST.fbx";
-	Model* aniTestModel = ResourceManager::LoadModel(path);
-	aniTest->setRenderer(new ModelRenderer(aniTestModel, ResourceManager::defaultMaterial));
+	sceneObject = new SceneObject(this, "Testing!");
+	model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
+	//sceneObject->setRenderer(new ModelRenderer(model, material));
 
-	animation = Animation(path, aniTestModel);
 
-	animator = new Animator(&animation);
-	aniTest->setAnimator(animator);
+	texture->Bind(0);
+	glBindImageTexture(0, texture->GLID, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
-	gui.showHierarchy = true;
-	gui.showSceneObject = true;
-	gui.showResourceMenu = true;
+	quad = new Mesh();
+	quad->InitialiseQuad(1);
+
+	particle.shader = shader;
+	particle.Initialise();
+
+	camera->nearPlane = 10.0f;
+	camera->farPlane = 50000.0f;
 }
 
 void LocWorkshop::Update(float delta)
 {
+	particle.Update(delta);
 }
 
 void LocWorkshop::Draw()
 {
+	
+
+
 	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
 		animators,
-		camera
+		camera,
+		{ &particle }
 	);
+
+	//texture->Bind(0);
+	//glBindImageTexture(0, texture->GLID, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
+
+	//computeShader->Use();
+	//glDispatchCompute((unsigned int)texture->width, (unsigned int)texture->height, 1);
+
+	//// make sure writing to image has finished before read
+	//glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+
+
+	////glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//shader->Use();
+	//shader->setInt("material.albedo", 0);
+	//texture->Bind(0);
+
+	//glDisable(GL_DEPTH_TEST);
+
+	//glDisable(GL_CULL_FACE);
+
+	//shader->setMat4("model", glm::identity<glm::mat4>());
+	//quad->Draw();
+
+	////model->Draw();
 }
 
 void LocWorkshop::GUI()
 {
+	if (!ImGui::Begin("Particle stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::End();
+		return;
+	}
+	
+	ImGui::DragFloat("Explode Strength", &particle.explodeStrength);
+
+	if (ImGui::Button("Reset##Particles")) {
+		particle.Reset();
+	}
+
+	if (ImGui::Button("Explode##Particles")) {
+		particle.Explode();
+	}
+
+
+	ImGui::End();
 }

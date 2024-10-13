@@ -305,6 +305,9 @@
     <ClCompile Include="UserPreferences.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
@@ -601,6 +604,7 @@
     <ClInclude Include="ComputeShader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Particle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -684,12 +688,6 @@
     <None Include="..\Shaders\shadowDebug.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\superShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\superShader.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\ui.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -756,7 +754,13 @@
     <None Include="cpp.hint">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="LocsComputeShader.comp">
+    <None Include="..\Shaders\LocsComputeShader.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\particle.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\particle.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

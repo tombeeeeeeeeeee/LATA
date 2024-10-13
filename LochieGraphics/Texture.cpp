@@ -136,7 +136,7 @@ void Texture::Bind(int indexToBindTo)
 {
 	int bindTo = indexToBindTo + GL_TEXTURE0;
 	if (bindTo == GL_TEXTURE0) {
-		std::cout << "Warning! Please don't bind to 0\n";
+		//std::cout << "Warning! Please don't bind to 0\n";
 	}
 	else if (bindTo > GL_TEXTURE31 || bindTo < GL_TEXTURE0) {
 		std::cout << "Error! Trying to bind to invalid index of: " << indexToBindTo << "\nIndex must be within 0-31\n";

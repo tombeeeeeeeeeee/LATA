@@ -16,6 +16,7 @@ class ModelRenderer;
 class Shader;
 class Transform;
 class Texture;
+class Particle;
 
 struct bloomMip
 {
@@ -55,7 +56,8 @@ public:
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
         std::unordered_map<unsigned long long, Animator>& animators,
-        Camera* camera
+        Camera* camera,
+        std::vector<Particle*> particles = {}
     );
 
     void ScreenResize(int width, int height);
@@ -64,7 +66,6 @@ public:
 
     int SCREEN_WIDTH, SCREEN_HEIGHT = 0;
 
-    bool showShadowDebug = false;
     unsigned int skyboxTexture = 0;
     glm::mat4 projection = glm::zero<glm::mat4>();
     int kernelSize = 64;
@@ -81,9 +82,7 @@ public:
 
 private:
 
-    Mesh* shadowDebugQuad = nullptr;
     Mesh* screenQuad = nullptr;
-    Mesh* buttonQuad = nullptr;
 
     Texture* screenColourBuffer = nullptr;
 

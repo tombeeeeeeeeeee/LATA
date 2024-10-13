@@ -34,8 +34,6 @@ private:
 	friend class ResourceManager;
 	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices);
 	Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);
-	Mesh(presets preset);
-	Mesh();
 
 public:
 	
@@ -48,6 +46,8 @@ public:
 
 	void Draw();
 
+	Mesh();
+	Mesh(presets preset);
 	~Mesh();
 
 	//Mesh(const Mesh& other) = delete;

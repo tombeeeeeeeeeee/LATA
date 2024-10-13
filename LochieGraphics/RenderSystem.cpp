@@ -9,6 +9,7 @@
 #include "Animator.h"
 #include "FrameBuffer.h"
 #include "ShaderEnum.h"
+#include "Particle.h"
 
 #include "Utilities.h"
 #include "EditorGUI.h"
@@ -55,11 +56,8 @@ void RenderSystem::Start(
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-    shadowDebugQuad = ResourceManager::LoadMesh();
     screenQuad = ResourceManager::LoadMesh();
-    shadowDebugQuad->InitialiseQuad(0.5f, 0.5f);
     screenQuad->InitialiseQuad(1.f, 0.0f);
-
 
     // Create colour attachment texture for fullscreen framebuffer
     screenColourBuffer = ResourceManager::LoadTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
@@ -314,7 +312,8 @@ void RenderSystem::Update(
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
     std::unordered_map<unsigned long long, Animator>& animators,
-    Camera* camera
+    Camera* camera,
+    std::vector<Particle*> particles
 )
 {
     std::unordered_set<unsigned long long> animatedRenderered = {};
@@ -346,10 +345,7 @@ void RenderSystem::Update(
 	shadowCaster->shadowFrameBuffer->Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    DrawAllRenderers(animators, transforms, renders, animatedRenderered, (*shaders)[shadowMapDepth]);
-
-    //DrawAnimation(animators, transforms, shadowCasters, (*shaders)[shadowMapDepth]);
-    
+    DrawAllRenderers(animators, transforms, renders, animatedRenderered, (*shaders)[shadowMapDepth]);    
 
     // Render scene with shadow map, to the screen framebuffer
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -365,8 +361,6 @@ void RenderSystem::Update(
     glDrawBuffers(2, forwardAttachments);
     
     DrawAllRenderers(animators, transforms, renders, animatedRenderered, (*shaders)[forward]);
-    //DrawAnimation(animators, transforms, renders, (*shaders)[forward]);
-    //DrawRenderers(renders, transforms, animatedRenderered, (*shaders)[forward]);
 
     RenderSSAO();
     glDisable(GL_DEPTH_TEST);
@@ -398,7 +392,6 @@ void RenderSystem::Update(
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Draw animated stuff
     (*shaders)[ShaderIndex::super]->Use();
     glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, camera->nearPlane, camera->farPlane);
     (*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
@@ -407,6 +400,16 @@ void RenderSystem::Update(
 
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Draw();
+
+    //(*shaders)[ShaderIndex::super]->Use();
+    //(*shaders)[ShaderIndex::super]->setMat4("model", glm::identity<glm::mat4>());
+    //cube->Draw();
+    glDisable(GL_CULL_FACE);
+    for (auto i : particles)
+    {
+        i->Draw();
+    }
+    glEnable(GL_CULL_FACE);
 
     glDepthFunc(GL_LEQUAL); // Change depth function
     Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);
@@ -447,18 +450,6 @@ void RenderSystem::Update(
     (*shaders)[screen]->setFloat("exposure", exposure);
 
     RenderQuad();
-
-    if (showShadowDebug) {
-        // Debug render the light depth map
-        (*shaders)[ShaderIndex::shadowDebug]->Use();
-        (*shaders)[ShaderIndex::shadowDebug]->setFloat("near_plane", shadowCaster->shadowNearPlane);
-        (*shaders)[ShaderIndex::shadowDebug]->setFloat("far_plane", shadowCaster->shadowFarPlane);
-        shadowCaster->depthMap->Bind(1);
-
-        //TODO: Make Shadow Debug Quad
-        shadowDebugQuad->Draw();
-    }
-
 
     screenFrameBuffer->Unbind();
 
@@ -520,7 +511,7 @@ void RenderSystem::DrawAllRenderers(
         ModelRenderer& renderer = i.second;
         unsigned long long GUID = i.first;
         bool animated = animatedRenderered.find(GUID) != animatedRenderered.end();
-        Animator* animator;
+        Animator* animator = nullptr;
         if (animated) {
             animator = &animators.at(GUID);
         }
