@@ -56,29 +56,31 @@ public:
 	float seperationCoef = 0.5f;
 	float normalCoef = 0.5f;
 
-	int explosiveEnemyHealth = 0;
-	float explosiveEnemyMoveSpeed = 0;
-	int explosiveEnemyDamage = 0;
+	int explosiveEnemyHealth = 2;
 	float explosiveEnemyColliderRadius = 120.0f;
 	float timeToExplode = 2.0f;
+	float explosionRadius = 350.0f;
+	int explosionDamage = 2;
+	float distanceToExplode = 150.0f;
 	ModelRenderer* explosiveEnemyRenderer = nullptr;
 	std::string explosiveEnemyModel = "SM_Sphere";
 	std::string explosiveEnemyMaterialPath = "images/otherskybox/nx.png";
 
-	int meleeEnemyHealth = 0;
-	float meleeEnemyMoveSpeed = 0;
+	int meleeEnemyHealth = 3;
 	int meleeEnemyDamage = 0;
 	float meleeEnemyColliderRadius = 120.0f;
 	float timeToPunch = 0.8f;
+	float distanceToPunch = 150.0f;
 	ModelRenderer* meleeEnemyRenderer = nullptr;
 	std::string meleeEnemyModel = "SM_Sphere";
 	std::string meleeEnemyMaterialPath = "images/otherskybox/nx.png";
 
-	int rangedEnemyHealth = 0;
-	float rangedEnemyMoveSpeed = 0;
+	int rangedEnemyHealth = 3;
 	int rangedEnemyDamage = 0;
 	float rangedEnemyColliderRadius = 120.0f;
 	float timeToShoot = 0.5f;
+	float distanceToShoot = 500.0f;
+	float distanceToFlee = 400.0f;
 	ModelRenderer* rangedEnemyRenderer = nullptr;
 	std::string rangedEnemyModel = "SM_Sphere";
 	std::string rangedEnemyMaterialPath = "images/otherskybox/nx.png";
@@ -134,6 +136,14 @@ private:
 		SceneObject* ecco, SceneObject* sync
 	);
 
+	void AbilityCheck(
+		std::unordered_map<unsigned long long, Enemy>& enemies,
+		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		SceneObject* ecco, SceneObject* sync,
+		float delta
+	);
+
 	void Steering(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
@@ -142,5 +152,8 @@ private:
 		);
 	
 	glm::vec2 GetNormalFlowInfluence(glm::vec2 pos);
+
+	void OnExplosion(Collision collision);
+	void OnPunch(Collision collision);
 };
 

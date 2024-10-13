@@ -34,7 +34,7 @@ public:
 
 	glm::vec3 damageColour = { 0.8f,0.0f,0.0f };
 	glm::vec3 healColour = { 0.0f,0.8f,0.0f };
-	float colourTime = 0.1f;
+	float colourTime = 0.4f;
 	
 	int healPerPulse = 2;
 	int pulses = 5;

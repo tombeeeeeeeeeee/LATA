@@ -31,14 +31,12 @@
 EnemySystem::EnemySystem(toml::table table)
 {
     meleeEnemyHealth = Serialisation::LoadAsInt(table["meleeEnemyHealth"]);
-    meleeEnemyMoveSpeed = Serialisation::LoadAsFloat(table["meleeEnemyMoveSpeed"]);
     meleeEnemyDamage = Serialisation::LoadAsInt(table["meleeEnemyDamage"]);
     meleeEnemyColliderRadius = Serialisation::LoadAsFloat(table["meleeEnemyColliderRadius"]);
     meleeEnemyModel = Serialisation::LoadAsString(table["meleeEnemyModel"]);
     meleeEnemyMaterialPath = Serialisation::LoadAsString(table["meleeEnemyMaterialPath"]);
 
     rangedEnemyHealth = Serialisation::LoadAsInt(table["rangedEnemyHealth"]);
-    rangedEnemyMoveSpeed = Serialisation::LoadAsFloat(table["rangedEnemyMoveSpeed"]);
     rangedEnemyDamage = Serialisation::LoadAsInt(table["rangedEnemyDamage"]);
     rangedEnemyColliderRadius = Serialisation::LoadAsFloat(table["rangedEnemyColliderRadius"]);
     rangedEnemyModel = Serialisation::LoadAsString(table["rangedEnemyModel"]);
@@ -52,6 +50,16 @@ void EnemySystem::Start(
     std::unordered_map<unsigned long long, RigidBody>& rigidbodies
 )
 {
+    if (!explosiveEnemyRenderer)
+    {
+        Material* explosiveEnemyMaterial = ResourceManager::defaultMaterial;
+
+        explosiveEnemyRenderer = new ModelRenderer(
+            ResourceManager::LoadModelAsset(Paths::modelSaveLocation + explosiveEnemyModel + Paths::modelExtension),
+            explosiveEnemyMaterial
+        );
+    }
+
     if (!meleeEnemyRenderer)
     {
         Material* meleeEnemyMaterial = ResourceManager::defaultMaterial;
@@ -80,7 +88,7 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos)
     Scene* scene = SceneManager::scene;
 
     SceneObject* enemy = new SceneObject(scene, "ExplosiveEnemy" + std::to_string(explosiveEnemyCount++));
-    enemy->setEnemy(new Enemy());
+    enemy->setEnemy(new Enemy((int)EnemyType::explosive));
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(explosiveEnemyHealth);
     enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroExplosive(hp); });
@@ -176,7 +184,8 @@ void EnemySystem::OnHealthZeroRanged(HealthPacket healthpacket)
 
 void EnemySystem::LineOfSightAndTargetCheck(
     Enemy enemy, Transform transform, RigidBody rigidBody,
-    SceneObject* ecco, SceneObject* sync)
+    SceneObject* ecco, SceneObject* sync
+)
 {
 
     glm::vec2 syncPos2D = { sync->transform()->getGlobalPosition().x, sync->transform()->getGlobalPosition().z };
@@ -220,11 +229,89 @@ void EnemySystem::LineOfSightAndTargetCheck(
     }
 }
 
+void EnemySystem::AbilityCheck(
+    std::unordered_map<unsigned long long, Enemy>& enemies,
+    std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    SceneObject* ecco, SceneObject* sync,
+    float delta
+)
+{
+    glm::vec2 eccoPos = ecco->transform()->get2DGlobalPosition();
+    glm::vec2 syncPos = sync->transform()->get2DGlobalPosition();
+
+    for (auto& enemyPair : enemies)
+    {
+        glm::vec2 enemyPos = transforms[enemyPair.first].get2DGlobalPosition();
+        glm::vec2 eccoDelta = eccoPos - enemyPos;
+        glm::vec2 syncDelta = syncPos - enemyPos;
+
+        if (enemyPair.second.inAbility)
+        {
+            int type = enemyPair.second.type;
+            switch (type)
+            {
+            case (int)EnemyType::explosive:
+                if (enemyPair.second.timeInAbility < timeToExplode)
+                {
+                    enemyPair.second.timeInAbility += delta;
+                }
+                else
+                {
+                    enemyPair.second.inAbility = false;
+                    PolygonCollider* poly = new PolygonCollider(
+                        { {0.0f, 0.0f} }, explosionRadius, CollisionLayers::enemyProjectile
+                    );
+                    poly->isTrigger = true;
+                    rigidBodies[enemyPair.first].colliders.push_back(poly);
+                    rigidBodies[enemyPair.first].onTrigger.push_back([this](Collision collision) { OnExplosion(collision); });
+                }
+                break;
+            case (int)EnemyType::melee:
+                break;
+            case (int)EnemyType::ranged:
+                break;
+            }
+        }
+        else
+        {
+            int type = enemyPair.second.type;
+            switch (type)
+            {
+            case (int)EnemyType::explosive:
+                if (glm::dot(eccoDelta, eccoDelta) < distanceToExplode * distanceToExplode || glm::dot(syncDelta, syncDelta) < distanceToExplode * distanceToExplode)
+                {
+                    enemyPair.second.inAbility = true;
+                }
+                break;
+            case (int)EnemyType::melee:
+                if (glm::dot(eccoDelta, eccoDelta) < distanceToPunch * distanceToPunch || glm::dot(syncDelta, syncDelta) < distanceToPunch * distanceToPunch)
+                {
+                    enemyPair.second.inAbility = true;
+                }
+                break;
+            case (int)EnemyType::ranged:
+                if (glm::dot(eccoDelta, eccoDelta) < distanceToFlee * distanceToFlee || glm::dot(syncDelta, syncDelta) < distanceToFlee * distanceToFlee)
+                {
+                    enemyPair.second.fleeing = true;
+                } 
+                else if (glm::dot(eccoDelta, eccoDelta) < distanceToShoot * distanceToShoot || glm::dot(syncDelta, syncDelta) < distanceToShoot * distanceToShoot)
+                {
+                    enemyPair.second.inAbility = true;
+                    enemyPair.second.fleeing = false;
+                }
+                else enemyPair.second.fleeing = false;
+                break;
+            }
+        }
+    }
+}
+
 void EnemySystem::Steering(std::unordered_map<unsigned long long, Enemy>& enemies, std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidBodies, float delta)
 {
     for (auto& enemyPair : enemies)
     {
-
+        if (enemyPair.second.type & (int)EnemyType::spawnSpot) continue;
         glm::vec2 avgPos = { 0.0f, 0.0f };
         glm::vec2 avgVel = { 0.0f, 0.0f };
 
@@ -234,6 +321,7 @@ void EnemySystem::Steering(std::unordered_map<unsigned long long, Enemy>& enemie
 
         for (auto& otherEnemyPair : enemies)
         {
+            if (otherEnemyPair.second.type & (int)EnemyType::spawnSpot) continue;
             glm::vec2 otherEnemyPos = transforms[otherEnemyPair.first].get2DGlobalPosition();
             if (enemyPair.first == otherEnemyPair.first) continue;
             glm::vec2 displacement = otherEnemyPos - enemyPos;
@@ -303,6 +391,23 @@ glm::vec2 EnemySystem::GetNormalFlowInfluence(glm::vec2 pos)
     return { normalInfluence.x, normalInfluence.y };
 }
 
+void EnemySystem::OnExplosion(Collision collision)
+{
+    if (collision.collisionMask & ((int)CollisionLayers::enemy | (int)CollisionLayers::ecco | (int)CollisionLayers::sync))
+    {
+        collision.sceneObject->health()->subtractHealth(explosionDamage);
+    }
+    SceneManager::scene->DeleteSceneObject(collision.self->GUID);
+}
+
+void EnemySystem::OnPunch(Collision collision)
+{
+    if (collision.collisionMask & ((int)CollisionLayers::ecco | (int)CollisionLayers::sync))
+    {
+        collision.sceneObject->health()->subtractHealth(meleeEnemyDamage);
+    }
+}
+
 //TODO: Add AI Pathfinding and attacking in here.
 void EnemySystem::Update   (
     std::unordered_map<unsigned long long, Enemy>& enemies,
@@ -330,7 +435,7 @@ void EnemySystem::SpawnEnemiesInScene(
 {
     for (auto& enemyPair : enemies)
     {
-        if ((enemyPair.second.type & (int)EnemyType::spawnSpot) == (int)spawner)
+        if ((enemyPair.second.type & (int)EnemyType::spawnSpot))
         {
             if (enemyPair.second.type & (int)EnemyType::melee)
                 SpawnMelee(transforms[enemyPair.first].getGlobalPosition());
@@ -357,11 +462,20 @@ void EnemySystem::GUI()
     ImGui::DragFloat("Perception Radius", &perceptionRadius);
     ImGui::DragFloat("Separation Radius", &separationRadius);
 
+    ImGui::Text("EXPLODING ENEMY STATS");
+    ImGui::DragInt("Explosive Enemy Health", &explosiveEnemyHealth);
+    ImGui::DragFloat("Time To Explode", &timeToExplode, 0.02f, 0);
+    ImGui::DragInt("Explosion Damage", &explosionDamage);
+    ImGui::DragFloat("Explosion Radius", &explosionRadius, 25.0f, 0);
+    ImGui::DragFloat("Distance To Start Exploding", &distanceToExplode, 25.0f, 0);
+    ImGui::DragFloat("Explosive Enemy Collider Radius", &explosiveEnemyColliderRadius);
+
+
     ImGui::Text("MELEE ENEMY STATS");
     ImGui::DragInt("Melee Enemy Health", &meleeEnemyHealth);
-    ImGui::DragFloat("Melee Enemy Move Speed", &meleeEnemyMoveSpeed);
     ImGui::DragInt("Melee Enemy Damage", &meleeEnemyDamage);
     ImGui::DragFloat("Melee Enemy Collider Radius", &meleeEnemyColliderRadius);
+    ImGui::DragFloat("Distance To Start Punching", &distanceToPunch, 25.0f, 0);
     if (ResourceManager::ModelAssetSelector("Melee Enemy Model", &(meleeEnemyRenderer->model)))
     {
         meleeEnemyModel = meleeEnemyRenderer->model->path;
@@ -370,9 +484,10 @@ void EnemySystem::GUI()
     ImGui::Text("");
     ImGui::Text("RANGED ENEMY STATS");
     ImGui::DragInt("Ranged Enemy Health", &rangedEnemyHealth);
-    ImGui::DragFloat("Ranged Enemy Move Speed", &rangedEnemyMoveSpeed);
     ImGui::DragInt("Ranged Enemy Damage", &rangedEnemyDamage);
     ImGui::DragFloat("Ranged Enemy Collider Radius", &rangedEnemyColliderRadius);
+    ImGui::DragFloat("Distance To Start Shooting", &distanceToShoot, 25.0f, 0);
+    ImGui::DragFloat("Distance To Start Fleeing", &distanceToFlee, 25.0f, 0);
     if (ResourceManager::ModelAssetSelector("Ranged Enemy Model", &(rangedEnemyRenderer->model)))
     {
         rangedEnemyModel = rangedEnemyRenderer->model->path;
@@ -386,13 +501,11 @@ toml::table EnemySystem::Serialise() const
 {
     return toml::table{
         { "meleeEnemyHealth", meleeEnemyHealth },
-        { "meleeEnemyMoveSpeed", meleeEnemyMoveSpeed },
         { "meleeEnemyDamage", meleeEnemyDamage },
         { "meleeEnemyColliderRadius", meleeEnemyColliderRadius },
         { "meleeEnemyModel", meleeEnemyModel },
         { "meleeEnemyMaterialPath", meleeEnemyMaterialPath },
         { "rangedEnemyHealth", rangedEnemyHealth },
-        { "rangedEnemyMoveSpeed", rangedEnemyMoveSpeed },
         { "rangedEnemyDamage", rangedEnemyDamage }, 
         { "rangedEnemyColliderRadius", rangedEnemyColliderRadius },
         { "rangedEnemyModel", rangedEnemyModel },
@@ -537,24 +650,24 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                             glm::vec2 normal = {-tangent.y, tangent.x};
                             float comparisonNormal = glm::dot(vertB, normal);
 
-                            float minX = fmin(vertA.x, vertB.x);
-                            float minY = fmin(vertA.y, vertB.y);
+                            float minX = fminf(vertA.x, vertB.x);
+                            float minY = fminf(vertA.y, vertB.y);
                             minX -= maxNormalInfluence;
                             minY -= maxNormalInfluence;
-                            minX = fmax(mapMinCorner.x, minX);
-                            minY = fmax(mapMinCorner.y, minY);
+                            minX = fmaxf(mapMinCorner.x, minX);
+                            minY = fmaxf(mapMinCorner.y, minY);
 
                             minX -= mapMinCorner.x; 
                             minX /= nfmDensity;
                             minY -= mapMinCorner.y;
                             minY /= nfmDensity;
 
-                            float maxX = fmax(vertA.x, vertB.x);
-                            float maxY = fmax(vertA.y, vertB.y);
+                            float maxX = fmaxf(vertA.x, vertB.x);
+                            float maxY = fmaxf(vertA.y, vertB.y);
                             maxX += maxNormalInfluence;
                             maxY += maxNormalInfluence;
-                            maxX = fmin(mapMinCorner.x + mapDimensions.x * nfmDensity, maxX);
-                            maxY = fmin(mapMinCorner.y + mapDimensions.y * nfmDensity, maxY);
+                            maxX = fminf(mapMinCorner.x + mapDimensions.x * nfmDensity, maxX);
+                            maxY = fminf(mapMinCorner.y + mapDimensions.y * nfmDensity, maxY);
 
                             maxX -= mapMinCorner.x;
                             maxX /= nfmDensity;
