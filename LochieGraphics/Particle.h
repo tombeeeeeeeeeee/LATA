@@ -12,13 +12,18 @@ class Shader;
 class Particle
 {
 public:
+
 	float quadSize = 10.0f;
-	const unsigned int count = 1000;
+	const unsigned int count = 100;
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec3> velocities;
 
-	Mesh mesh;
-	Shader* shader;
+	//Mesh mesh;
+	unsigned int quadVAO = 0;
+	unsigned int quadVBO = 0;
+	Shader* shader = nullptr;
+
+	unsigned int instanceVBO;
 
 	std::random_device random;
 
