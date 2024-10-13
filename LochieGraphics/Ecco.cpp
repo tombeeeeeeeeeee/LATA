@@ -10,7 +10,7 @@
 #include "EditorGUI.h"
 #include "Serialisation.h"
 
-void Ecco::Update(
+bool Ecco::Update(
 	Input::InputDevice& inputDevice, 
 	Transform& transform, 
 	RigidBody& rigidBody, 
@@ -176,7 +176,14 @@ void Ecco::Update(
 	{
 		speedBoostUnactuated = true;
 	}
+
+	timeSinceHealButtonPressed += delta;
+	if (inputDevice.getButton2())
+	{
+		timeSinceHealButtonPressed = 0.0f;
+	}
 	//TODO add skidding.
+	return timeSinceHealButtonPressed <= windowForHealButtonPressed;
 }
 
 void Ecco::OnCollision(Collision collision)

@@ -266,6 +266,9 @@ void LevelEditor::Update(float delta)
 		for (auto& exitPair : exits) exitPair.second.Update();
 
 		gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
+
+		if (eccoHealPressed && syncHealPressed) healthSystem.PlayerHealing(eccoSo->health(), syncSo->health(), 
+			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
 	}
 
 	enemySystem.Update(
@@ -290,7 +293,7 @@ void LevelEditor::Update(float delta)
 			angle += 90.0f;
 		}
 
-		ecco->Update(
+		eccoHealPressed = ecco->Update(
 			*input.inputDevices[0],
 			*eccoSo->transform(),
 			*eccoSo->rigidbody(),
@@ -301,7 +304,7 @@ void LevelEditor::Update(float delta)
 
 		if (input.inputDevices.size() > 1)
 		{
-			sync->Update(
+			syncHealPressed = sync->Update(
 				*input.inputDevices[1],
 				*syncSo->transform(),
 				*syncSo->rigidbody(),
@@ -311,8 +314,6 @@ void LevelEditor::Update(float delta)
 			);
 		}
 	}
-
-
 
 
 	lines.SetColour({ 1, 1, 1 });

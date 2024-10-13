@@ -26,7 +26,7 @@ public:
 
 	void Start(std::vector<Shader*>* shaders);
 
-	void Update(
+	bool Update(
 		Input::InputDevice& inputDevice, Transform& transform,
 		RigidBody& rigidBody, LineRenderer* lines,
 		float delta, float cameraAngleOffset
@@ -82,5 +82,8 @@ private:
 	ModelRenderer* misfireModelRender = nullptr;
 	std::string misfireModelPath = "SM_Sphere";
 	std::string misfireMaterialPath;
+
+	float timeSinceHealButtonPressed = 0.0f;
+	float windowOFTimeForHealPressed = 0.2f;
 
 };

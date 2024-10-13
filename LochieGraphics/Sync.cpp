@@ -54,7 +54,7 @@ void Sync::Start(
 	misfireModelRender = new ModelRenderer(misfireModel, misfireMaterial);
 }
 
-void Sync::Update(
+bool Sync::Update(
 	Input::InputDevice& inputDevice, Transform& transform,
 	RigidBody& rigidBody, LineRenderer* lines, 
 	float delta, float cameraAngleOffset
@@ -95,6 +95,12 @@ void Sync::Update(
 	glm::vec3 eulers = transform.getEulerRotation();
 	eulers.y = angle;
 	transform.setEulerRotation(eulers);
+
+	timeSinceHealButtonPressed += delta;
+	if (inputDevice.getButton2())
+	{
+		timeSinceHealButtonPressed = 0.0f;
+	}
 
 	globalBarrelOffset = barrelOffset;
 	glm::vec2 barrelOffset2D = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), { barrelOffset.x, barrelOffset.z });
@@ -159,6 +165,7 @@ void Sync::Update(
 		else
 			++i;
 	}
+	return timeSinceHealButtonPressed <= windowOFTimeForHealPressed;
 }
 
 void Sync::GUI()

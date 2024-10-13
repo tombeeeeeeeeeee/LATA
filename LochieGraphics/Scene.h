@@ -58,6 +58,8 @@ public:
 
 	Ecco* ecco = nullptr;
 	Sync* sync = nullptr;
+	bool eccoHealPressed = false;
+	bool syncHealPressed = false;
 
 
 	std::vector<Shader*> shaders = {};
