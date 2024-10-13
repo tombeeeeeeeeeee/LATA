@@ -51,7 +51,7 @@ void HealthSystem::Update(
 	}
 }
 
-void HealthSystem::PlayerHealingActivate(Health* eccoHealth, Health* syncHealth, glm::vec2 eccoPos, glm::vec2 syncPos)
+void HealthSystem::PlayerHealingActivate(glm::vec2 eccoPos, glm::vec2 syncPos)
 {
 	if (!playerHealingAbility && timeSinceLastHealingAbility > healingAbilityCooldown)
 	{
@@ -69,6 +69,26 @@ void HealthSystem::PlayerHealingActivate(Health* eccoHealth, Health* syncHealth,
 
 void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, glm::vec2 eccoPos, glm::vec2 syncPos, float delta)
 {
+	if (playerHealingAbility)
+	{
+		if (timeSinceLastPulse >= timeBetweenPulses)
+		{
+			eccoHealth->addHealth(healPerPulse);
+			syncHealth->addHealth(healPerPulse);
+			currentPulseCount++;
+			timeSinceLastPulse = 0.0f;
+		}
+		else timeSinceLastPulse += delta;
+
+		//End case;
+		if (timeSinceLastLOS > losToleranceTime|| currentPulseCount > pulses)
+		{
+			playerHealingAbility = false;
+			currentPulseCount = 0;
+			timeSinceLastHealingAbility = 0.0f;
+		}
+	}
+	else timeSinceLastHealingAbility += delta;
 }
 
 void HealthSystem::GUI()
@@ -80,7 +100,8 @@ void HealthSystem::GUI()
 	ImGui::DragFloat("CoolDown To On Heal Ability", &healingAbilityCooldown, 0.1f, 0);
 	ImGui::DragFloat("TimeBetweenPulses", &timeBetweenPulses, 0.02f, 0);
 	ImGui::DragFloat("Time Since Last Heal Ability", &timeSinceLastHealingAbility, 0.02f, 0);
-	ImGui::DragFloat("DIstance For Healing Ability", &healDistance);
+	ImGui::DragFloat("DIstance For Healing Ability", &healDistance, 20.0f, 0);
+	ImGui::DragFloat("Tolerance for no Line of Sight", &losToleranceTime, 0.02f, 0);
 	ImGui::End();
 }
 

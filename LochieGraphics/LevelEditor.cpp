@@ -267,8 +267,12 @@ void LevelEditor::Update(float delta)
 
 		gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
 
-		if (eccoHealPressed && syncHealPressed) healthSystem.PlayerHealing(eccoSo->health(), syncSo->health(), 
+		if (eccoHealPressed && syncHealPressed) healthSystem.PlayerHealingActivate(
+			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition());
+
+		healthSystem.PlayerHealingUpdate(eccoSo->health(), syncSo->health(),
 			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
+
 	}
 
 	enemySystem.Update(
