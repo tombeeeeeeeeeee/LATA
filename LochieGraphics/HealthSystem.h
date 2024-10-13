@@ -20,7 +20,12 @@ public:
 		float delta
 	);
 
-	void PlayerHealing(
+	void PlayerHealingActivate(
+		Health* eccoHealth, Health* syncHealth,
+		glm::vec2 eccoPos, glm::vec2 syncPos
+	);
+
+	void PlayerHealingUpdate(
 		Health* eccoHealth, Health* syncHealth,
 		glm::vec2 eccoPos, glm::vec2 syncPos,
 		float delta
@@ -34,8 +39,9 @@ public:
 	
 	int healPerPulse = 2;
 	int pulses = 5;
-	float cooldown = 30.0f;
+	float healingAbilityCooldown = 30.0f;
 	float timeBetweenPulses = 0.2f;
+	float healDistance = 400.0f;
 
 private:
 	bool playerHealingAbility = false;

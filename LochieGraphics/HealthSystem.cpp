@@ -7,6 +7,9 @@
 #include "imgui.h"
 
 #include "Utilities.h"
+#include "PhysicsSystem.h"
+#include "Collider.h"
+#include "Hit.h"
 
 void HealthSystem::Start(std::unordered_map<unsigned long long, Health>& healths)
 {
@@ -48,20 +51,36 @@ void HealthSystem::Update(
 	}
 }
 
-void HealthSystem::PlayerHealing(Health* eccoHealth, Health* syncHealth, glm::vec2 eccoPos, glm::vec2 syncPos, float delta)
+void HealthSystem::PlayerHealingActivate(Health* eccoHealth, Health* syncHealth, glm::vec2 eccoPos, glm::vec2 syncPos)
 {
-	
+	if (!playerHealingAbility && timeSinceLastHealingAbility > healingAbilityCooldown)
+	{
+		std::vector<Hit> hits;
+		PhysicsSystem::RayCast(eccoPos, glm::normalize(syncPos - eccoPos), hits, healDistance, Collider::transparentLayers | (int)CollisionLayers::enemy);
+		if (hits.size() > 0 && hits[0].collider->collisionLayer & (int)CollisionLayers::sync)
+		{
+			playerHealingAbility = true;
+			timeSinceLastHealingAbility = 0.0f;
+			timeSinceLastLOS = 0.0f;
+			timeSinceLastPulse = FLT_MAX;
+		}
+	}
+}
+
+void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, glm::vec2 eccoPos, glm::vec2 syncPos, float delta)
+{
 }
 
 void HealthSystem::GUI()
 {
 	ImGui::ColorEdit3("Health Colour", &healColour[0]);
 	ImGui::ColorEdit3("Damage Colour", &damageColour[0]);
-	ImGui::DragFloat("Health Colour Time", &colourTime, 1, 0);
+	ImGui::DragFloat("Health Colour Time", &colourTime, 0.02f, 0);
 	ImGui::DragInt("Heals Per Pulse", &healPerPulse, 1, 0);
-	ImGui::DragFloat("CoolDown To On Heal Ability", &cooldown, 1, 0);
-	ImGui::DragFloat("TimeBetweenPulses", &timeBetweenPulses, 1, 0);
-	ImGui::DragFloat("Time Since Last Heal Ability", &timeSinceLastHealingAbility, 1, 0);
+	ImGui::DragFloat("CoolDown To On Heal Ability", &healingAbilityCooldown, 0.1f, 0);
+	ImGui::DragFloat("TimeBetweenPulses", &timeBetweenPulses, 0.02f, 0);
+	ImGui::DragFloat("Time Since Last Heal Ability", &timeSinceLastHealingAbility, 0.02f, 0);
+	ImGui::DragFloat("DIstance For Healing Ability", &healDistance);
 	ImGui::End();
 }
 
