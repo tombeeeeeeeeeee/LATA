@@ -7,6 +7,7 @@
 #include "imgui.h"
 
 #include "Utilities.h"
+#include "RenderSystem.h"
 #include "PhysicsSystem.h"
 #include "Collider.h"
 #include "Hit.h"
@@ -63,6 +64,7 @@ void HealthSystem::PlayerHealingActivate(glm::vec2 eccoPos, glm::vec2 syncPos)
 			timeSinceLastHealingAbility = 0.0f;
 			timeSinceLastLOS = 0.0f;
 			timeSinceLastPulse = FLT_MAX;
+			currentPulseCount = 0;
 		}
 	}
 }
@@ -79,6 +81,15 @@ void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, g
 			timeSinceLastPulse = 0.0f;
 		}
 		else timeSinceLastPulse += delta;
+
+		std::vector<Hit> hits;
+		PhysicsSystem::RayCast(eccoPos, glm::normalize(syncPos - eccoPos), hits, healDistance, Collider::transparentLayers | (int)CollisionLayers::enemy);
+		if (hits.size() > 0 && hits[0].collider->collisionLayer & (int)CollisionLayers::sync)
+			timeSinceLastLOS = 0.0f;
+
+		else timeSinceLastLOS += delta;
+
+		RenderSystem::lines.DrawLineSegement2D(eccoPos, syncPos, {0.0f, timeSinceLastPulse * 0.5f / timeBetweenPulses, 0.0f}, 100.0f);
 
 		//End case;
 		if (timeSinceLastLOS > losToleranceTime|| currentPulseCount > pulses)
