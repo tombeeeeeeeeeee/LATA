@@ -40,7 +40,7 @@ public:
 	int pulses = 5;
 	float healingAbilityCooldown = 30.0f;
 	float timeBetweenPulses = 0.2f;
-	float healDistance = 400.0f;
+	float healDistance = 4000.0f;
 	float losToleranceTime = 0.4f;
 
 private:
@@ -48,7 +48,7 @@ private:
 	int currentPulseCount = 0;
 	float timeSinceLastLOS = 0.0f;
 	float timeSinceLastPulse = 0.0f;
-	float timeSinceLastHealingAbility = 0.0f;
+	float timeSinceLastHealingAbility = FLT_MAX;
 
 	void OnHealthDown(HealthPacket healthPacket);
 };

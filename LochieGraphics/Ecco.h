@@ -41,6 +41,8 @@ public:
 	int currHealth = 10;
 	int maxHealth = 10;
 
+	float windowOfTimeForHealPressed = 0.2f;
+
 private:
 	float carMoveSpeed = 0.25f;
 	float carReverseMoveSpeed = 0.125f;
@@ -69,7 +71,6 @@ private:
 	float speedReductionAfterDamaging = 0.0f;
 
 	float timeSinceHealButtonPressed = 0.0f;
-	float windowForHealButtonPressed = 0.2f;
 
 	//TESTING VALUES
 	bool speedBoostInDirectionOfBody = true;

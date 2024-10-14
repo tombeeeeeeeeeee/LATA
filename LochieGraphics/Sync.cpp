@@ -16,6 +16,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Utilities.h"
+#include "Ecco.h"
 
 #include "EditorGUI.h"
 
@@ -165,7 +166,7 @@ bool Sync::Update(
 		else
 			++i;
 	}
-	return timeSinceHealButtonPressed <= windowOFTimeForHealPressed;
+	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
 
 void Sync::GUI()
@@ -177,6 +178,10 @@ void Sync::GUI()
 		ImGui::DragFloat("Move Speed", &moveSpeed);
 		ImGui::DragFloat("Look DeadZone", &lookDeadZone);
 		ImGui::DragFloat("Move DeadZone", &moveDeadZone);
+		if (ImGui::DragFloat("Heal Button Tolerance", &windowOfTimeForHealPressed))
+		{
+			SceneManager::scene->ecco->windowOfTimeForHealPressed = windowOfTimeForHealPressed;
+		}
 
 		ImGui::DragFloat3("Barrel Offset", &barrelOffset[0]);
 

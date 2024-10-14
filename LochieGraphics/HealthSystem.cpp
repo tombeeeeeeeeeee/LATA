@@ -57,7 +57,7 @@ void HealthSystem::PlayerHealingActivate(glm::vec2 eccoPos, glm::vec2 syncPos)
 	if (!playerHealingAbility && timeSinceLastHealingAbility > healingAbilityCooldown)
 	{
 		std::vector<Hit> hits;
-		PhysicsSystem::RayCast(eccoPos, glm::normalize(syncPos - eccoPos), hits, healDistance, Collider::transparentLayers | (int)CollisionLayers::enemy);
+		PhysicsSystem::RayCast(eccoPos, glm::normalize(syncPos - eccoPos), hits, healDistance, ~(Collider::transparentLayers | (int)CollisionLayers::enemy));
 		if (hits.size() > 0 && hits[0].collider->collisionLayer & (int)CollisionLayers::sync)
 		{
 			playerHealingAbility = true;
@@ -83,13 +83,13 @@ void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, g
 		else timeSinceLastPulse += delta;
 
 		std::vector<Hit> hits;
-		PhysicsSystem::RayCast(eccoPos, glm::normalize(syncPos - eccoPos), hits, healDistance, Collider::transparentLayers | (int)CollisionLayers::enemy);
+		PhysicsSystem::RayCast(eccoPos, glm::normalize(syncPos - eccoPos), hits, healDistance, ~(Collider::transparentLayers | (int)CollisionLayers::enemy));
 		if (hits.size() > 0 && hits[0].collider->collisionLayer & (int)CollisionLayers::sync)
 			timeSinceLastLOS = 0.0f;
 
-		else timeSinceLastLOS += delta;
+		else timeSinceLastLOS += delta; 
 
-		RenderSystem::lines.DrawLineSegement2D(eccoPos, syncPos, {0.0f, timeSinceLastPulse * 0.5f / timeBetweenPulses, 0.0f}, 100.0f);
+		RenderSystem::lines.DrawLineSegement2D(eccoPos, syncPos, {0.0f, 1.2f - timeSinceLastPulse / timeBetweenPulses, 0.0f}, 100.0f);
 
 		//End case;
 		if (timeSinceLastLOS > losToleranceTime|| currentPulseCount > pulses)
