@@ -135,17 +135,18 @@ bool Ecco::Update(
 		//Stop Speed exceeding speed limit (Could change to be drag)
 		if (glm::length(rigidBody.vel + rigidBody.invMass * (force + rigidBody.netForce)) > maxCarMoveSpeed && glm::dot(force, rigidBody.vel) > 0)
 		{
-			force = glm::normalize(force) * (maxCarMoveSpeed - glm::length(rigidBody.vel)) / rigidBody.invMass;
+			force = glm::normalize(force) * (maxCarMoveSpeed - glm::length(rigidBody.vel)) * 2.0f / rigidBody.invMass;
 		}
 	}
+
 	float wheelInDirectionOfForward = glm::dot(wheelDirection, { forward.x , forward.z });
 	wheelInDirectionOfForward = glm::clamp(wheelInDirectionOfForward, -1.0f, 1.0f);
 	//Sideways drag coefficent
 	if (glm::length(rigidBody.vel) > 0.00001f)
 	{
-		float sidewaysForceCoef = glm::dot({ wheelDirection.y, -wheelDirection.x }, glm::normalize(rigidBody.vel));
-		force += -glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * rigidBody.vel;
-		force += wheelDirection * glm::abs(sidewaysForceCoef * sidewaysForceCoef) * sidewaysFrictionCoef * glm::length(rigidBody.vel) * (portionOfSidewaysSpeedKept / 100.0f) * (inputDevice.getLeftTrigger() > 0.001f ? -1.0f : 1.0f);
+		float sidewaysMagnitude = glm::dot({ -wheelDirection.y, wheelDirection.x }, rigidBody.vel);
+		force += -sidewaysMagnitude * sidewaysFrictionCoef * glm::vec2(-wheelDirection.y, wheelDirection.x);
+		force += wheelDirection * sidewaysMagnitude * sidewaysFrictionCoef * (portionOfSidewaysSpeedKept / 100.0f) * (inputDevice.getLeftTrigger() > 0.001f ? -1.0f : 1.0f);
 	}
 
 	rigidBody.angularVel = -turningCircleScalar //scalar that represents wheel distance apart

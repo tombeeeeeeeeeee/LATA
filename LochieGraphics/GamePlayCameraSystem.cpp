@@ -13,6 +13,7 @@ GameplayCameraSystem::GameplayCameraSystem(toml::table table)
 	cameraZoomSpeed = Serialisation::LoadAsFloat(table["cameraZoomSpeed"]);
 	cameraZoomScale = Serialisation::LoadAsFloat(table["cameraZoomScale"]);
 	cameraZoomMinimum = Serialisation::LoadAsFloat(table["cameraZoomMinimum"]);
+	cameraZoomMaximum = Serialisation::LoadAsFloat(table["cameraZoomMaximum"]);
 	cameraPositionDelta = Serialisation::LoadAsVec3(table["cameraPositionDelta"]);
 	viewAngle = Serialisation::LoadAsVec3(table["viewAngle"]);
 }
@@ -49,6 +50,7 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 void GameplayCameraSystem::GUI()
 {
 	ImGui::DragFloat("Minimum Camera Zoom", &cameraZoomMinimum);
+	ImGui::DragFloat("Maximum Camera Zoom", &cameraZoomMaximum);
 	ImGui::DragFloat("Zoom Intensity While targetting", &cameraZoomScale);
 	ImGui::DragFloat("Zoom Speed", &cameraZoomSpeed);
 	ImGui::DragFloat("Camera Move Speed While targetting", &cameraMoveSpeed);
@@ -75,6 +77,7 @@ toml::table GameplayCameraSystem::Serialise()
 	{ "cameraZoomSpeed", cameraZoomSpeed },
 	{ "cameraZoomScale", cameraZoomScale },
 	{ "cameraZoomMinimum" , cameraZoomMinimum },
+	{ "cameraZoomMaximum" , cameraZoomMaximum },
 	{ "cameraPositionDelta", Serialisation::SaveAsVec3(cameraPositionDelta) },
 	{ "viewAngle", Serialisation::SaveAsVec3(viewAngle)},
 	};
