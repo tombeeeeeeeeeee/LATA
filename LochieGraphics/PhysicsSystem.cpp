@@ -192,7 +192,7 @@ void PhysicsSystem::GetCollisions(
 	}
 }
 
-void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transformA, Transform* transformB, std::vector<CollisionPacket> collisions)
+void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transformA, Transform* transformB, std::vector<CollisionPacket>& collisions)
 {
 	std::vector<Collider*> aCols = (*a->getColliders());
 	Collider* colliderB = b;

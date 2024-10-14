@@ -37,7 +37,7 @@ public:
 	void GetCollisions(
 		RigidBody* a, Collider* b,
 		Transform* transformA, Transform* transformB,
-		std::vector<CollisionPacket> collisions
+		std::vector<CollisionPacket>& collisions
 	);
 
 	void CollisisonResolution(CollisionPacket collision);
