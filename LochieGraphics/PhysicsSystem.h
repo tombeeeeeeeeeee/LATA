@@ -75,6 +75,7 @@ private:
 
 public:
 	static bool RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>& hits, float length = FLT_MAX, int layerMask = INT32_MAX, bool ignoreTriggers = true);
+	static std::vector<Collider*> CircleCast(glm::vec2 pos, float radius, int layerMask = INT32_MAX, bool ignoreTriggers = true);
 
 private:
 	static std::unordered_map<unsigned long long, Transform>* transformsInScene;
@@ -85,4 +86,5 @@ private:
 		glm::vec2 pos, glm::vec2 direction,
 		Transform& transform, Collider* collider
 		);
+
 };

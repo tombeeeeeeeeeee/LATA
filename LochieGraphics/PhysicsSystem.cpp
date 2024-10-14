@@ -543,6 +543,54 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 	return hits.size() != 0;
 }
 
+std::vector<Collider*> PhysicsSystem::CircleCast(glm::vec2 pos, float radius, int layerMask, bool ignoreTriggers)
+{
+	std::vector<Collider*> colliders;
+
+	for (auto& rigidBodyPair : *rigidBodiesInScene)
+	{
+		for (auto& collider : rigidBodyPair.second.colliders)
+		{
+			bool triggerPassing = true;
+			if (collider->isTrigger && ignoreTriggers)
+			{
+				triggerPassing = false;
+			}
+
+			if (triggerPassing && (collider->collisionLayer & layerMask))
+			{
+				int type = (int)collider->getType();
+				switch (type)
+				{
+				case (int)ColliderType::polygon:
+					PolygonCollider* poly = (PolygonCollider*)collider;
+
+					//Circle on Circle
+					if (poly->verts.size() == 1)
+					{
+						glm::vec2 posB = RigidBody::Transform2Din3DSpace((*transformsInScene)[rigidBodyPair.first].getGlobalMatrix(), poly->verts[0]);
+						float centreDistance = glm::length(posB - pos);
+						float overlap = radius + poly->radius - centreDistance;
+
+						if (overlap >= 0)
+						{
+							colliders.push_back(collider);
+						}
+					}
+					else
+					{
+
+					}
+
+					break;
+				}
+			}
+		}
+	}
+
+	return colliders;
+}
+
 CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 direction, Transform& transform, Collider* collider)
 {
 	// COLLISION BODY A is the target COLLISION BODY B SHOULD BE NULL
