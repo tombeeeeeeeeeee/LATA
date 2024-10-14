@@ -64,8 +64,14 @@ bool Ecco::Update(
 			turnAmount = glm::clamp(turnAmount, 0.0f, 1.0f);
 			float sign = glm::dot({ right.x, right.z }, moveInput) < 0.0f ? -1.0f : 1.0f;
 			float desiredAngle = (glm::acos(turnAmount)) * sign;
+			float maxWheelAngleAfterSpeed;
+			if (glm::dot(rigidBody.vel, rigidBody.vel) > maxCarMoveSpeed * maxCarMoveSpeed)
+			{
+				maxWheelAngleAfterSpeed = 10.0f;
+			}
+			else 
+				maxWheelAngleAfterSpeed = speedWheelTurnInfluence / 100.0f * (glm::length(rigidBody.vel)) / (maxCarMoveSpeed)*maxWheelAngle;
 
-			float maxWheelAngleAfterSpeed = maxWheelAngle - speedWheelTurnInfluence / 100.0f * (glm::length(rigidBody.vel)) / (maxCarMoveSpeed)*maxWheelAngle;
 			desiredAngle = glm::clamp(desiredAngle, -maxWheelAngleAfterSpeed * PI / 180.0f, maxWheelAngleAfterSpeed * PI / 180.0f);
 			//rotate forward by that angle
 			c = cosf(desiredAngle);
@@ -144,14 +150,15 @@ bool Ecco::Update(
 	//Sideways drag coefficent
 	if (glm::length(rigidBody.vel) > 0.00001f)
 	{
-		float sidewaysMagnitude = glm::dot({ -wheelDirection.y, wheelDirection.x }, rigidBody.vel);
-		force += -sidewaysMagnitude * sidewaysFrictionCoef * glm::vec2(-wheelDirection.y, wheelDirection.x);
-		force += wheelDirection * sidewaysMagnitude * sidewaysFrictionCoef * (portionOfSidewaysSpeedKept / 100.0f) * (inputDevice.getLeftTrigger() > 0.001f ? -1.0f : 1.0f);
+		float sidewaysMagnitude = glm::dot({ wheelDirection.y, -wheelDirection.x }, rigidBody.vel);
+		force += -sidewaysMagnitude * sidewaysFrictionCoef * glm::vec2(wheelDirection.y, -wheelDirection.x);
+		if(inputDevice.getLeftTrigger())
+			force += wheelDirection * abs(sidewaysMagnitude) * sidewaysFrictionCoef * (portionOfSidewaysSpeedKept / 100.0f) * (inputDevice.getLeftTrigger() > 0.001f ? -1.0f : 1.0f);
 	}
 
-	rigidBody.angularVel = -turningCircleScalar //scalar that represents wheel distance apart
-		* acos(wheelInDirectionOfForward) //angle wheel makes with forward vector
-		* abs(glm::length(rigidBody.vel)) //units per second
+	rigidBody.angularVel = -turningCircleScalar						 //scalar that represents wheel distance apart
+		* acos(wheelInDirectionOfForward)							 //angle wheel makes with forward vector
+		* (glm::length(rigidBody.vel))								 //units per second
 		* glm::sign(glm::dot({ right.x, right.z }, wheelDirection)); //reflects based off of left or right
 
 	//Update rigidBody

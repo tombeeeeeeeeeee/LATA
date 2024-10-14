@@ -371,7 +371,8 @@ void Scene::InitialisePlayers()
 	gameCamSystem.cameraZoomMinimum = 125.0f;
 	gameCamSystem.cameraZoomMaximum = 205.0f;
 	gameCamSystem.cameraZoomScale = 0.130f;
-	gameCamSystem.cameraZoomSpeed = 0.330f;
+	gameCamSystem.cameraZoomOutSpeed = 0.330f;
+	gameCamSystem.cameraZoomInSpeed = 0.01f;
 	gameCamSystem.cameraMoveSpeed = 0.330f;
 	gameCamSystem.viewAngle = {-135, 35, -120};
 	gameCamSystem.setCameraPositionDelta({700, 1000, 700});

@@ -14,6 +14,7 @@ class SceneObject;
 class ModelRenderer;
 struct HealthPacket;
 struct Collision;
+struct Collider;
 struct Node;
 struct Edge;
 
@@ -45,7 +46,8 @@ public:
 	EnemySystem(toml::table table);
 	void Start(
 		std::unordered_map<unsigned long long, Transform>& transforms,
-		std::unordered_map<unsigned long long, RigidBody>& rigidbodies
+		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+		std::unordered_map<unsigned long long, Collider*>& colliders
 	);
 
 	float perceptionRadius = 500.0f;
@@ -55,6 +57,9 @@ public:
 	float cohesionCoef = 0.5f;
 	float seperationCoef = 0.5f;
 	float normalCoef = 0.5f;
+	float playerCoef = 0.5f;
+
+	float slowedPercentage = 75.0f;
 
 	int explosiveEnemyHealth = 2;
 	float explosiveEnemyColliderRadius = 120.0f;
@@ -98,7 +103,7 @@ public:
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
-		SceneObject* ecco, SceneObject* sync,
+		glm::vec2 eccoPos, glm::vec2 syncPos,
 		float delta
 	);
 
@@ -121,11 +126,14 @@ public:
 
 	void UpdateNormalFlowMap(
 		std::unordered_map<unsigned long long, Transform>& transforms,
-		std::unordered_map<unsigned long long, RigidBody>& rigidBodies);
+		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
+		std::unordered_map<unsigned long long, Collider*>& colliders
+	);
 	void LoadNormalFlowMapFromImage(unsigned char* image, int width, int height);
 	void PopulateNormalFlowMapFromRigidBodies(
 		std::unordered_map<unsigned long long, Transform>& transforms,
-		std::unordered_map<unsigned long long, RigidBody>& rigidbodies
+		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+		std::unordered_map<unsigned long long, Collider*>& colliders
 	);
 
 
@@ -148,6 +156,7 @@ private:
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+		glm::vec2 eccoPos, glm::vec2 syncPos,
 		float delta
 		);
 	
