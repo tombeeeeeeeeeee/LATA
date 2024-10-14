@@ -8,6 +8,7 @@
 #include "Animation.h"
 
 #include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
 
 #include <iostream>
 
@@ -66,6 +67,8 @@ void LocWorkshop::Start()
 	//sceneObject->setRenderer(new ModelRenderer(model, material));
 
 
+
+
 	texture->Bind(0);
 	glBindImageTexture(0, texture->GLID, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
@@ -77,6 +80,10 @@ void LocWorkshop::Start()
 
 	camera->nearPlane = 10.0f;
 	camera->farPlane = 50000.0f;
+
+	Texture* particleTexture = ResourceManager::LoadTexture("images/brodie.jpg", Texture::Type::albedo);
+
+	particle.texture = particleTexture;
 }
 
 void LocWorkshop::Update(float delta)
@@ -149,6 +156,12 @@ void LocWorkshop::GUI()
 	if (ImGui::Button("Spread##Particles")) {
 		particle.Spread();
 	}
+
+	if (ImGui::Button("Stop##Particle")) {
+		particle.Stop();
+	}
+
+	ExtraEditorGUI::Mat4Input("Model Matrix##Particle", &particle.model);
 
 
 	ImGui::End();

@@ -401,21 +401,44 @@ void RenderSystem::Update(
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Draw();
 
-    //(*shaders)[ShaderIndex::super]->Use();
-    //(*shaders)[ShaderIndex::super]->setMat4("model", glm::identity<glm::mat4>());
-    //cube->Draw();
-    glDisable(GL_CULL_FACE);
-    for (auto i : particles)
-    {
-        i->Draw();
-    }
-    glEnable(GL_CULL_FACE);
 
     glDepthFunc(GL_LEQUAL); // Change depth function
     Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);
     
     RenderQuad();
     glDepthFunc(GL_LESS);
+
+
+    //(*shaders)[ShaderIndex::super]->Use();
+    //(*shaders)[ShaderIndex::super]->setMat4("model", glm::identity<glm::mat4>());
+    //cube->Draw();
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    //glDisable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glBlendEquation(GL_FUNC_ADD);
+
+    for (auto i : particles)
+    {
+        glm::mat4 tempView = camera->GetViewMatrix();
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (i == j) {
+                    tempView[i][j] = 1.0;
+                }
+                else {
+                    tempView[i][j] = 0.0;
+                }
+            }
+        }
+        i->shader->Use();
+        i->shader->setMat4("vp", projection * tempView);
+        i->Draw();
+    }
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
 
     RenderBloom(bloomBuffer);
 

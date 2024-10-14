@@ -8,13 +8,15 @@
 #include <random>
 
 class Shader;
+class ComputeShader;
+class Texture;
 
 class Particle
 {
 public:
 
 	float quadSize = 10.0f; //  
-	const unsigned int count = 1000000;
+	const unsigned int count = 100000;
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec3> velocities;
 
@@ -22,6 +24,9 @@ public:
 	unsigned int quadVAO = 0;
 	unsigned int quadVBO = 0;
 	Shader* shader = nullptr;
+	ComputeShader* compute = nullptr;
+
+	Texture* texture;
 
 	unsigned int instanceVBO;
 
@@ -33,11 +38,16 @@ public:
 
 	void Spread();
 	void Explode();
+	void Stop();
 
 	void Reset();
+
 
 	void Initialise();
 	void Update(float delta);
 	void Draw();
+
+	// TODO Rule of 
+	~Particle();
 };
 

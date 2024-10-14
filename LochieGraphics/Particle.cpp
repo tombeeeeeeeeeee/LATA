@@ -1,6 +1,7 @@
 #include "Particle.h"
 
-#include "Shader.h"
+#include "ComputeShader.h"
+#include "Texture.h"
 
 void Particle::Spread()
 {
@@ -21,6 +22,14 @@ void Particle::Explode()
 			//
 			i = { 1.0f, 0.0f, 0.0f };
 		}
+	}
+}
+
+void Particle::Stop()
+{
+	for (size_t i = 0; i < count; i++)
+	{
+		velocities.at(i) = glm::vec3{ 0.0f, 0.0f, 0.0f };
 	}
 }
 
@@ -49,12 +58,12 @@ void Particle::Initialise()
 	//mesh.InitialiseQuad(quadSize);
 	float size = quadSize;
 	float quadVerts[] = {
-		 size ,  size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   1.0f, 1.0f,
-		- size,  size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   0.0f, 1.0f,
-		- size, -size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   0.0f, 0.0f,
-		 size ,  size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   1.0f, 1.0f,
-		- size, -size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   0.0f, 0.0f,
-		 size , -size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   1.0f, 0.0f
+		 size,  size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   1.0f, 1.0f,
+		-size,  size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   0.0f, 1.0f,
+		-size, -size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   0.0f, 0.0f,
+		 size,  size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   1.0f, 1.0f,
+		-size, -size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   0.0f, 0.0f,
+		 size, -size, 0.0f  ,   0.0f, 0.0f,  1.0f  ,   1.0f, 0.0f
 	};
 
 	glGenVertexArrays(1, &quadVAO);
@@ -85,7 +94,8 @@ void Particle::Initialise()
 
 	glVertexAttribDivisor(3, 1);
 
-
+	// TODO: use Paths.h
+	//compute = new ComputeShader("")
 
 }
 
@@ -102,11 +112,18 @@ void Particle::Draw()
 {
 	shader->Use();
 	shader->setMat4("model", model);
+	texture->Bind(1);
+	shader->setSampler("material.albedo", 1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * count, &positions[0]);
 
 	glBindVertexArray(quadVAO);
-	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count); // 100 triangles of 6 vertices each
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count);
+
+}
+
+Particle::~Particle()
+{
 
 }

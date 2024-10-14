@@ -12,7 +12,8 @@ uniform mat4 model;
 uniform mat4 vp;
 
 void main()
-{
+{	
 	TexCoord = aTexCoord;
-	gl_Position = vp * vec4(vec3(model * vec4(aPos + aOffset, 1.0)), 1.0);
+	gl_Position = vp * vec4(vec3(model * vec4(aPos, 1.0)) + aOffset, 1.0);
+	
 }
