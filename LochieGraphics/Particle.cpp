@@ -2,13 +2,21 @@
 
 #include "Shader.h"
 
+void Particle::Spread()
+{
+	for (size_t i = 0; i < count; i++)
+	{
+		positions.at(i) += glm::vec3{ i, i, i };
+	}
+}
+
 void Particle::Explode()
 {
 	for (auto& i : velocities)
 	{
-		std::uniform_real_distribution<float> distribution(-10, 10);
+		std::uniform_real_distribution<float> distribution(-10.0f, 10.0f);
 
-		i += explodeStrength * (glm::normalize(glm::vec3{ distribution(random), distribution(random), distribution(random) }) * 2.0f - 1.0f);
+		i += explodeStrength * glm::normalize(glm::vec3{ distribution(random), distribution(random), distribution(random) });
 		if (glm::isnan(i.x)) {
 			//
 			i = { 1.0f, 0.0f, 0.0f };
@@ -33,10 +41,9 @@ void Particle::Initialise()
 	positions.resize(count);
 	velocities.resize(count);
 
-	unsigned int instanceVBO;
 	glGenBuffers(1, &instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * count, &positions[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * count, &positions[0], GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	//mesh.InitialiseQuad(quadSize);
@@ -70,6 +77,9 @@ void Particle::Initialise()
 
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO); // this attribute comes from a different vertex buffer
 
+	// TODO: GL_DYNAMIC_DRAW or GL_STREAM_DRAW?
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * count, &positions[0], GL_DYNAMIC_DRAW);
+
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
@@ -81,10 +91,6 @@ void Particle::Initialise()
 
 void Particle::Update(float delta)
 {
-	//for (size_t i = 0; i < count; i++)
-	//{
-	//	positions.at(i) += glm::vec3(i * delta, i * 2 * delta, i * 3 * delta);
-	//}
 	for (size_t i = 0; i < count; i++)
 	{
 		positions.at(i) += velocities.at(i);
@@ -97,27 +103,10 @@ void Particle::Draw()
 	shader->Use();
 	shader->setMat4("model", model);
 
-	//glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * count, &positions[0]);
 
-	//glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBindVertexArray(quadVAO);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count); // 100 triangles of 6 vertices each
 
-	//glBufferSubData(GL_ARRAY_BUFFER, 8 * sizeof(float), sizeof(positions), &positions[0]);
-
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(positions), &positions[0], GL_STATIC_DRAW);
-
-
-	for (size_t i = 0; i < count; i++)
-	{
-
-		//shader->setVec3("positions[" + std::to_string(i) + "]", positions[i]);
-	}
-	
-	for (size_t i = 0; i < count; i++)
-	{
-		//shader->setVec3("position", positions.at(i));
-		glBindVertexArray(quadVAO);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count); // 100 triangles of 6 vertices each
-
-		//mesh.Draw();
-	}
 }

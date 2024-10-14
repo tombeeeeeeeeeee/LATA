@@ -13,8 +13,8 @@ class Particle
 {
 public:
 
-	float quadSize = 10.0f;
-	const unsigned int count = 100;
+	float quadSize = 10.0f; //  
+	const unsigned int count = 1000000;
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec3> velocities;
 
@@ -31,6 +31,7 @@ public:
 
 	glm::mat4 model = glm::identity<glm::mat4>();
 
+	void Spread();
 	void Explode();
 
 	void Reset();

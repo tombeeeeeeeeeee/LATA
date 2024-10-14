@@ -142,6 +142,14 @@ void LocWorkshop::GUI()
 		particle.Explode();
 	}
 
+	if (ImGui::Button("Initialise##Particles")) {
+		particle.Initialise();
+	}
+
+	if (ImGui::Button("Spread##Particles")) {
+		particle.Spread();
+	}
+
 
 	ImGui::End();
 }
