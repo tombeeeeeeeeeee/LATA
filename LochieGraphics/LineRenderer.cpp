@@ -40,6 +40,20 @@ void LineRenderer::DrawLineSegment(glm::vec3 start, glm::vec3 end, Colour colour
 	colours.push_back(colour);
 }
 
+void LineRenderer::DrawLineSegement2D(glm::vec2 start, glm::vec2 end, float yOffset)
+{
+	glm::vec3 start3D = { start.x, yOffset, start.y };
+	glm::vec3 end3D = { end.x, yOffset, end.y };
+	DrawLineSegment(start3D, end3D);
+}
+
+void LineRenderer::DrawLineSegement2D(glm::vec2 start, glm::vec2 end, Colour colour, float yOffset)
+{
+	glm::vec3 start3D = { start.x, yOffset, start.y };
+	glm::vec3 end3D = { end.x, yOffset, end.y };
+	DrawLineSegment(start3D, end3D, colour);
+}
+
 void LineRenderer::DrawCircle(glm::vec3 centre, float size)
 {
 	DrawCircle(centre, size, currentColour);

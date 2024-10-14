@@ -5,12 +5,15 @@
 #include "Collider.h"
 #include "Collision.h"
 #include "SceneObject.h"
+#include "SceneManager.h"
+#include "Scene.h"
+#include "Sync.h"
 #include "Health.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
 
-void Ecco::Update(
+bool Ecco::Update(
 	Input::InputDevice& inputDevice, 
 	Transform& transform, 
 	RigidBody& rigidBody, 
@@ -176,7 +179,14 @@ void Ecco::Update(
 	{
 		speedBoostUnactuated = true;
 	}
+
+	timeSinceHealButtonPressed += delta;
+	if (inputDevice.getButton2())
+	{
+		timeSinceHealButtonPressed = 0.0f;
+	}
 	//TODO add skidding.
+	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
 
 void Ecco::OnCollision(Collision collision)
@@ -224,6 +234,10 @@ void Ecco::GUI()
 		ImGui::DragInt("On Collision Heal", &healingFromDamage);
 		ImGui::DragFloat("Speed reduction after damage", &speedReductionAfterDamaging);
 		ImGui::DragInt("Max Health", &maxHealth);
+		if (ImGui::DragFloat("Heal Button Tolerance", &windowOfTimeForHealPressed))
+		{
+			SceneManager::scene->sync->windowOfTimeForHealPressed = windowOfTimeForHealPressed;
+		}
 		ImGui::BeginDisabled();
 		ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
 		ImGui::EndDisabled();

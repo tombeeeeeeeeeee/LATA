@@ -44,10 +44,10 @@ void LevelEditor::RefreshWalls()
 		glm::vec2 tileCell = glm::vec2{ pos.x, pos.z } / gridSize;
 		tileCell = { roundf(tileCell.x), roundf(tileCell.y) };
 
-		if (pos.x - gridSize < minX) minX = pos.x;
-		if (pos.z - gridSize < minZ) minZ = pos.z;
-		if (pos.x + gridSize > maxX) maxX = pos.x;
-		if (pos.z + gridSize > maxZ) maxZ = pos.z;
+		if (pos.x - gridSize < minX) minX = pos.x - gridSize;
+		if (pos.z - gridSize < minZ) minZ = pos.z - gridSize;
+		if (pos.x + gridSize > maxX) maxX = pos.x + gridSize;
+		if (pos.z + gridSize > maxZ) maxZ = pos.z + gridSize;
 
 		if (!CellAt(tileCell.x - 1, tileCell.y)) {
 			PlaceWallAt(pos.x - offset, pos.z, 0.0f);
@@ -65,6 +65,7 @@ void LevelEditor::RefreshWalls()
 
 	enemySystem.mapMinCorner = {minX, minZ};
 	enemySystem.mapDimensions = {maxX - minX, maxZ - minZ};
+	enemySystem.mapDimensions /= enemySystem.nfmDensity;
 }
 
 SceneObject* LevelEditor::CellAt(float x, float z)
@@ -265,6 +266,13 @@ void LevelEditor::Update(float delta)
 		for (auto& exitPair : exits) exitPair.second.Update();
 
 		gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
+
+		if (eccoHealPressed && syncHealPressed) healthSystem.PlayerHealingActivate(
+			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition());
+
+		healthSystem.PlayerHealingUpdate(eccoSo->health(), syncSo->health(),
+			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
+
 	}
 
 	enemySystem.Update(
@@ -289,7 +297,7 @@ void LevelEditor::Update(float delta)
 			angle += 90.0f;
 		}
 
-		ecco->Update(
+		eccoHealPressed = ecco->Update(
 			*input.inputDevices[0],
 			*eccoSo->transform(),
 			*eccoSo->rigidbody(),
@@ -300,7 +308,7 @@ void LevelEditor::Update(float delta)
 
 		if (input.inputDevices.size() > 1)
 		{
-			sync->Update(
+			syncHealPressed = sync->Update(
 				*input.inputDevices[1],
 				*syncSo->transform(),
 				*syncSo->rigidbody(),
@@ -310,8 +318,6 @@ void LevelEditor::Update(float delta)
 			);
 		}
 	}
-
-
 
 
 	lines.SetColour({ 1, 1, 1 });
@@ -564,7 +570,7 @@ void LevelEditor::AssetPlacer(glm::vec2 targetPos)
 
 	SceneObject* newSceneObject = new SceneObject(this, Utilities::FilenameFromPath(assetPlacer->path, false));
 	newSceneObject->setRenderer(new ModelRenderer(assetPlacer, 0ull));
-	newSceneObject->renderer()->materialTint = assetPlacerColour;
+	newSceneObject->renderer()->setMaterialTint(assetPlacerColour);
 	newSceneObject->transform()->setPosition(pos);
 	newSceneObject->transform()->setEulerRotation({ 0.0f, assetPlacerRotation, 0.0f });
 	newSceneObject->setCollider(new PolygonCollider({

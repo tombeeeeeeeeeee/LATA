@@ -16,6 +16,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Utilities.h"
+#include "Ecco.h"
 
 #include "EditorGUI.h"
 
@@ -54,7 +55,7 @@ void Sync::Start(
 	misfireModelRender = new ModelRenderer(misfireModel, misfireMaterial);
 }
 
-void Sync::Update(
+bool Sync::Update(
 	Input::InputDevice& inputDevice, Transform& transform,
 	RigidBody& rigidBody, LineRenderer* lines, 
 	float delta, float cameraAngleOffset
@@ -96,6 +97,12 @@ void Sync::Update(
 	eulers.y = angle;
 	transform.setEulerRotation(eulers);
 
+	timeSinceHealButtonPressed += delta;
+	if (inputDevice.getButton2())
+	{
+		timeSinceHealButtonPressed = 0.0f;
+	}
+
 	globalBarrelOffset = barrelOffset;
 	glm::vec2 barrelOffset2D = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), { barrelOffset.x, barrelOffset.z });
 	globalBarrelOffset = { barrelOffset2D.x, barrelOffset.y, barrelOffset2D.y };
@@ -132,9 +139,6 @@ void Sync::Update(
 	{
 		chargingShot = false;
 
-		
-
-
 		if (chargedDuration >= overclockChargeTime)
 		{
 			ShootOverClocked(globalBarrelOffset);
@@ -162,6 +166,7 @@ void Sync::Update(
 		else
 			++i;
 	}
+	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
 
 void Sync::GUI()
@@ -173,6 +178,10 @@ void Sync::GUI()
 		ImGui::DragFloat("Move Speed", &moveSpeed);
 		ImGui::DragFloat("Look DeadZone", &lookDeadZone);
 		ImGui::DragFloat("Move DeadZone", &moveDeadZone);
+		if (ImGui::DragFloat("Heal Button Tolerance", &windowOfTimeForHealPressed))
+		{
+			SceneManager::scene->ecco->windowOfTimeForHealPressed = windowOfTimeForHealPressed;
+		}
 
 		ImGui::DragFloat3("Barrel Offset", &barrelOffset[0]);
 

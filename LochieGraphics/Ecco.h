@@ -21,7 +21,7 @@ public:
 	Ecco() {};
 	Ecco(toml::table table);
 	
-	void Update(
+	bool Update(
 		Input::InputDevice& inputDevice,
 		Transform& transform,
 		RigidBody& rigidBody,
@@ -40,6 +40,8 @@ public:
 
 	int currHealth = 10;
 	int maxHealth = 10;
+
+	float windowOfTimeForHealPressed = 0.2f;
 
 private:
 	float carMoveSpeed = 0.25f;
@@ -67,6 +69,8 @@ private:
 	int speedDamage = 0;
 	int healingFromDamage = 0;
 	float speedReductionAfterDamaging = 0.0f;
+
+	float timeSinceHealButtonPressed = 0.0f;
 
 	//TESTING VALUES
 	bool speedBoostInDirectionOfBody = true;

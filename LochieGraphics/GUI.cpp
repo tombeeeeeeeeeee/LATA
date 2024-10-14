@@ -67,6 +67,7 @@ void GUI::Update()
 			}
 			ImGui::MenuItem("Physics System", NULL, &showPhysicsMenu);
 			ImGui::MenuItem("Enemy System", NULL, &showEnemyMenu);
+			ImGui::MenuItem("Health System", NULL, &showHealthSystemMenu);
 			ImGui::MenuItem("Imgui Demo", NULL, &showImguiExampleMenu);
 			ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
 			ImGui::MenuItem("User Prefs", NULL, &showUserPrefsMenu);
@@ -92,6 +93,7 @@ void GUI::Update()
 	if (showHierarchy) { HierarchyMenu(); }
 	if (showPhysicsMenu) { PhysicsMenu(); }
 	if (showEnemyMenu) { EnemyMenu(); }
+	if (showHealthSystemMenu) { HealthMenu(); }
 	if (showImguiExampleMenu) { ImGui::ShowDemoWindow(); }
 	if (showRenderSystemMenu) { scene->renderSystem.GUI(); }
 	if (showUserPrefsMenu) { 
@@ -425,4 +427,13 @@ void GUI::EnemyMenu()
 	}
 
 	es.GUI();
+}
+
+void GUI::HealthMenu()
+{
+	if(!ImGui::Begin("Health Menu", &showHealthSystemMenu, defaultWindowFlags)) {
+		ImGui::End();
+		return;
+	}
+	scene->healthSystem.GUI();
 }

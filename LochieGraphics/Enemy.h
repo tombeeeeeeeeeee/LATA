@@ -25,17 +25,19 @@ struct Enemy
 {
 	Enemy() {};
 	Enemy(toml::table table);
+	Enemy(int _type) { type = _type; };
 
 	int type = (int)EnemyType::spawnSpot;
-	State* state = nullptr;
 
 	glm::vec2 lastTargetPos = { 0.0f, 0.0f };
 	glm::vec2 influenceThisFrame = { 0.0f, 0.0f };
 	bool hasLOS = false;
-	int nodeIndex = 0;
-	std::vector<Node*> path = {};
 
 	glm::vec2 boidVelocity = { 0.0f, 0.0f };
+
+	float timeInAbility = 0.0f;
+	bool inAbility = false;
+	bool fleeing = false;
 
 	void GUI();
 	toml::table Serialise(unsigned long long GUID);

@@ -31,14 +31,12 @@
 EnemySystem::EnemySystem(toml::table table)
 {
     meleeEnemyHealth = Serialisation::LoadAsInt(table["meleeEnemyHealth"]);
-    meleeEnemyMoveSpeed = Serialisation::LoadAsFloat(table["meleeEnemyMoveSpeed"]);
     meleeEnemyDamage = Serialisation::LoadAsInt(table["meleeEnemyDamage"]);
     meleeEnemyColliderRadius = Serialisation::LoadAsFloat(table["meleeEnemyColliderRadius"]);
     meleeEnemyModel = Serialisation::LoadAsString(table["meleeEnemyModel"]);
     meleeEnemyMaterialPath = Serialisation::LoadAsString(table["meleeEnemyMaterialPath"]);
 
     rangedEnemyHealth = Serialisation::LoadAsInt(table["rangedEnemyHealth"]);
-    rangedEnemyMoveSpeed = Serialisation::LoadAsFloat(table["rangedEnemyMoveSpeed"]);
     rangedEnemyDamage = Serialisation::LoadAsInt(table["rangedEnemyDamage"]);
     rangedEnemyColliderRadius = Serialisation::LoadAsFloat(table["rangedEnemyColliderRadius"]);
     rangedEnemyModel = Serialisation::LoadAsString(table["rangedEnemyModel"]);
@@ -52,6 +50,16 @@ void EnemySystem::Start(
     std::unordered_map<unsigned long long, RigidBody>& rigidbodies
 )
 {
+    if (!explosiveEnemyRenderer)
+    {
+        Material* explosiveEnemyMaterial = ResourceManager::defaultMaterial;
+
+        explosiveEnemyRenderer = new ModelRenderer(
+            ResourceManager::LoadModelAsset(Paths::modelSaveLocation + explosiveEnemyModel + Paths::modelExtension),
+            explosiveEnemyMaterial
+        );
+    }
+
     if (!meleeEnemyRenderer)
     {
         Material* meleeEnemyMaterial = ResourceManager::defaultMaterial;
@@ -80,7 +88,7 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos)
     Scene* scene = SceneManager::scene;
 
     SceneObject* enemy = new SceneObject(scene, "ExplosiveEnemy" + std::to_string(explosiveEnemyCount++));
-    enemy->setEnemy(new Enemy());
+    enemy->setEnemy(new Enemy((int)EnemyType::explosive));
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(explosiveEnemyHealth);
     enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroExplosive(hp); });
@@ -175,51 +183,125 @@ void EnemySystem::OnHealthZeroRanged(HealthPacket healthpacket)
 }
 
 void EnemySystem::LineOfSightAndTargetCheck(
-    std::unordered_map<unsigned long long, Enemy>& enemies,
-    std::unordered_map<unsigned long long, Transform>& transforms,
-    std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
-    SceneObject* ecco, SceneObject* sync)
+    Enemy enemy, Transform transform, RigidBody rigidBody,
+    SceneObject* ecco, SceneObject* sync
+)
 {
 
     glm::vec2 syncPos2D = { sync->transform()->getGlobalPosition().x, sync->transform()->getGlobalPosition().z };
     glm::vec2 eccoPos2D = { ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
-    for (auto& enemyPair : enemies)
+    enemy.hasLOS = false;
+    glm::vec2 enemyPos2D = transform.get2DGlobalPosition();
+
+    float distanceToSync = FLT_MAX;
+
+    std::vector<Hit> syncHits;
+    std::vector<Hit> eccoHits;
+    if (PhysicsSystem::RayCast(
+        enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
+        syncHits, FLT_MAX,
+        (int)CollisionLayers::sync | (int)CollisionLayers::base )
+    ) 
     {
-        enemyPair.second.hasLOS = false;
-        glm::vec2 enemyPos2D = { transforms[enemyPair.first].getGlobalPosition().x, transforms[enemyPair.first].getGlobalPosition().z };
-
-        float distanceToSync = FLT_MAX;
-
-        std::vector<Hit> syncHits;
-        std::vector<Hit> eccoHits;
-        if (PhysicsSystem::RayCast(
-            enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
-            syncHits, FLT_MAX,
-            (int)CollisionLayers::sync | (int)CollisionLayers::base )
-        ) 
+        Hit hit = syncHits[0];
+        if (hit.sceneObject->parts & Parts::sync)
         {
-            Hit hit = syncHits[0];
-            if (hit.sceneObject->parts & Parts::sync)
+            distanceToSync = hit.distance;
+            enemy.lastTargetPos = syncPos2D;
+            enemy.hasLOS = true;
+        }
+    }
+    if (PhysicsSystem::RayCast(
+        enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
+        eccoHits, FLT_MAX,
+        (int)CollisionLayers::ecco | (int)CollisionLayers::base )
+        )
+    {
+        Hit hit = eccoHits[0];
+        if (hit.sceneObject->parts & Parts::ecco)
+        {
+            if (hit.distance < distanceToSync)
             {
-                distanceToSync = hit.distance;
-                enemyPair.second.lastTargetPos = syncPos2D;
-                enemyPair.second.hasLOS = true;
+                enemy.lastTargetPos = eccoPos2D;
+                enemy.hasLOS = true;
             }
         }
-        if (PhysicsSystem::RayCast(
-            enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
-            eccoHits, FLT_MAX,
-            (int)CollisionLayers::ecco | (int)CollisionLayers::base )
-            )
+    }
+}
+
+void EnemySystem::AbilityCheck(
+    std::unordered_map<unsigned long long, Enemy>& enemies,
+    std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    SceneObject* ecco, SceneObject* sync,
+    float delta
+)
+{
+    glm::vec2 eccoPos = ecco->transform()->get2DGlobalPosition();
+    glm::vec2 syncPos = sync->transform()->get2DGlobalPosition();
+
+    for (auto& enemyPair : enemies)
+    {
+        glm::vec2 enemyPos = transforms[enemyPair.first].get2DGlobalPosition();
+        glm::vec2 eccoDelta = eccoPos - enemyPos;
+        glm::vec2 syncDelta = syncPos - enemyPos;
+
+        if (enemyPair.second.inAbility)
         {
-            Hit hit = eccoHits[0];
-            if (hit.sceneObject->parts & Parts::ecco)
+            int type = enemyPair.second.type;
+            switch (type)
             {
-                if (hit.distance < distanceToSync)
+            case (int)EnemyType::explosive:
+                if (enemyPair.second.timeInAbility < timeToExplode)
                 {
-                    enemyPair.second.lastTargetPos = eccoPos2D;
-                    enemyPair.second.hasLOS = true;
+                    enemyPair.second.timeInAbility += delta;
                 }
+                else
+                {
+                    enemyPair.second.inAbility = false;
+                    PolygonCollider* poly = new PolygonCollider(
+                        { {0.0f, 0.0f} }, explosionRadius, CollisionLayers::enemyProjectile
+                    );
+                    poly->isTrigger = true;
+                    rigidBodies[enemyPair.first].colliders.push_back(poly);
+                    rigidBodies[enemyPair.first].onTrigger.push_back([this](Collision collision) { OnExplosion(collision); });
+                }
+                break;
+            case (int)EnemyType::melee:
+                break;
+            case (int)EnemyType::ranged:
+                break;
+            }
+        }
+        else
+        {
+            int type = enemyPair.second.type;
+            switch (type)
+            {
+            case (int)EnemyType::explosive:
+                if (glm::dot(eccoDelta, eccoDelta) < distanceToExplode * distanceToExplode || glm::dot(syncDelta, syncDelta) < distanceToExplode * distanceToExplode)
+                {
+                    enemyPair.second.inAbility = true;
+                }
+                break;
+            case (int)EnemyType::melee:
+                if (glm::dot(eccoDelta, eccoDelta) < distanceToPunch * distanceToPunch || glm::dot(syncDelta, syncDelta) < distanceToPunch * distanceToPunch)
+                {
+                    enemyPair.second.inAbility = true;
+                }
+                break;
+            case (int)EnemyType::ranged:
+                if (glm::dot(eccoDelta, eccoDelta) < distanceToFlee * distanceToFlee || glm::dot(syncDelta, syncDelta) < distanceToFlee * distanceToFlee)
+                {
+                    enemyPair.second.fleeing = true;
+                } 
+                else if (glm::dot(eccoDelta, eccoDelta) < distanceToShoot * distanceToShoot || glm::dot(syncDelta, syncDelta) < distanceToShoot * distanceToShoot)
+                {
+                    enemyPair.second.inAbility = true;
+                    enemyPair.second.fleeing = false;
+                }
+                else enemyPair.second.fleeing = false;
+                break;
             }
         }
     }
@@ -229,6 +311,7 @@ void EnemySystem::Steering(std::unordered_map<unsigned long long, Enemy>& enemie
 {
     for (auto& enemyPair : enemies)
     {
+        if (enemyPair.second.type & (int)EnemyType::spawnSpot) continue;
         glm::vec2 avgPos = { 0.0f, 0.0f };
         glm::vec2 avgVel = { 0.0f, 0.0f };
 
@@ -238,6 +321,7 @@ void EnemySystem::Steering(std::unordered_map<unsigned long long, Enemy>& enemie
 
         for (auto& otherEnemyPair : enemies)
         {
+            if (otherEnemyPair.second.type & (int)EnemyType::spawnSpot) continue;
             glm::vec2 otherEnemyPos = transforms[otherEnemyPair.first].get2DGlobalPosition();
             if (enemyPair.first == otherEnemyPair.first) continue;
             glm::vec2 displacement = otherEnemyPos - enemyPos;
@@ -260,16 +344,21 @@ void EnemySystem::Steering(std::unordered_map<unsigned long long, Enemy>& enemie
                 }
             }
         }
+
         if (totalNeighbours == 0) continue;
+
+        glm::vec2 normalForce = GetNormalFlowInfluence(enemyPos) * normalCoef;
+        //RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + normalForce, {1,0,0}, 100);
+        //RenderSystem::lines.DrawCircle({ enemyPos.x, 100, enemyPos.y }, 20, { 1,0,0 });
 
         avgPos /= totalNeighbours;
         avgVel /= totalNeighbours;
         //Todo: enemyPair.second.lastTargetPos
+
         glm::vec2 alignmentForce = avgVel * alignmentCoef;
         glm::vec2 cohesionForce = (avgPos - enemyPos) * cohesionCoef;
-        enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce;
+        enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce + normalForce;
     }
-
     for (auto& enemyPair : enemies)
     {
         enemyPair.second.boidVelocity += enemyPair.second.influenceThisFrame;
@@ -287,6 +376,38 @@ void EnemySystem::Steering(std::unordered_map<unsigned long long, Enemy>& enemie
 
 }
 
+glm::vec2 EnemySystem::GetNormalFlowInfluence(glm::vec2 pos)
+{
+    if (pos.x < mapMinCorner.x) return { 0.0f, 0.0f };
+    if (pos.y < mapMinCorner.y) return { 0.0f, 0.0f };
+
+    glm::vec2 actualDimensions = mapDimensions * nfmDensity;
+    if (pos.x > mapMinCorner.x + actualDimensions.x) return { 0.0f, 0.0f };
+    if (pos.y > mapMinCorner.y + actualDimensions.y) return { 0.0f, 0.0f };
+    pos -= mapMinCorner;
+    pos /= nfmDensity;
+
+    glm::vec2 normalInfluence = normalFlowMap[(int)pos.x + (int)mapDimensions.x * (int)(mapDimensions.y - pos.y - 1)];
+    return { normalInfluence.x, normalInfluence.y };
+}
+
+void EnemySystem::OnExplosion(Collision collision)
+{
+    if (collision.collisionMask & ((int)CollisionLayers::enemy | (int)CollisionLayers::ecco | (int)CollisionLayers::sync))
+    {
+        collision.sceneObject->health()->subtractHealth(explosionDamage);
+    }
+    SceneManager::scene->DeleteSceneObject(collision.self->GUID);
+}
+
+void EnemySystem::OnPunch(Collision collision)
+{
+    if (collision.collisionMask & ((int)CollisionLayers::ecco | (int)CollisionLayers::sync))
+    {
+        collision.sceneObject->health()->subtractHealth(meleeEnemyDamage);
+    }
+}
+
 //TODO: Add AI Pathfinding and attacking in here.
 void EnemySystem::Update   (
     std::unordered_map<unsigned long long, Enemy>& enemies,
@@ -297,48 +418,13 @@ void EnemySystem::Update   (
 {
     if (aiUpdating)
     {
-        LineOfSightAndTargetCheck(
-            enemies,
-            transforms,
-            rigidbodies,
-            ecco, sync
-        );
-
         Steering(
             enemies, 
             transforms, 
             rigidbodies, 
             delta
         );
-
-        //TODO ADD States and Transitions
-        //for (auto& enemyPair : enemies)
-        //{
-        //    Enemy& enemy = enemyPair.second;
-        //    SceneObject* agent = SceneManager::scene->sceneObjects[enemyPair.first];
-        //    State* newState = nullptr;
-        //
-        //    // check the current state's transitions
-        //    for (auto& t : enemy.state->transitions)
-        //    {
-        //        if (t.condition->IsTrue(agent))
-        //        {
-        //            newState = t.targetState;
-        //            break;
-        //        }
-        //    }
-        //
-        //
-        //    if (newState != nullptr && newState != enemy.state)
-        //    {
-        //        enemy.state->Exit(agent);
-        //        enemy.state = newState;
-        //        enemy.state->Enter(agent);
-        //    }
-        //
-        //    enemy.state->Update(agent);
-        //}
-    }   //
+    }  
 }
 
 void EnemySystem::SpawnEnemiesInScene(
@@ -349,7 +435,7 @@ void EnemySystem::SpawnEnemiesInScene(
 {
     for (auto& enemyPair : enemies)
     {
-        if ((enemyPair.second.type & (int)EnemyType::spawnSpot) == (int)spawner)
+        if ((enemyPair.second.type & (int)EnemyType::spawnSpot))
         {
             if (enemyPair.second.type & (int)EnemyType::melee)
                 SpawnMelee(transforms[enemyPair.first].getGlobalPosition());
@@ -376,11 +462,20 @@ void EnemySystem::GUI()
     ImGui::DragFloat("Perception Radius", &perceptionRadius);
     ImGui::DragFloat("Separation Radius", &separationRadius);
 
+    ImGui::Text("EXPLODING ENEMY STATS");
+    ImGui::DragInt("Explosive Enemy Health", &explosiveEnemyHealth);
+    ImGui::DragFloat("Time To Explode", &timeToExplode, 0.02f, 0);
+    ImGui::DragInt("Explosion Damage", &explosionDamage);
+    ImGui::DragFloat("Explosion Radius", &explosionRadius, 25.0f, 0);
+    ImGui::DragFloat("Distance To Start Exploding", &distanceToExplode, 25.0f, 0);
+    ImGui::DragFloat("Explosive Enemy Collider Radius", &explosiveEnemyColliderRadius);
+
+
     ImGui::Text("MELEE ENEMY STATS");
     ImGui::DragInt("Melee Enemy Health", &meleeEnemyHealth);
-    ImGui::DragFloat("Melee Enemy Move Speed", &meleeEnemyMoveSpeed);
     ImGui::DragInt("Melee Enemy Damage", &meleeEnemyDamage);
     ImGui::DragFloat("Melee Enemy Collider Radius", &meleeEnemyColliderRadius);
+    ImGui::DragFloat("Distance To Start Punching", &distanceToPunch, 25.0f, 0);
     if (ResourceManager::ModelAssetSelector("Melee Enemy Model", &(meleeEnemyRenderer->model)))
     {
         meleeEnemyModel = meleeEnemyRenderer->model->path;
@@ -389,9 +484,10 @@ void EnemySystem::GUI()
     ImGui::Text("");
     ImGui::Text("RANGED ENEMY STATS");
     ImGui::DragInt("Ranged Enemy Health", &rangedEnemyHealth);
-    ImGui::DragFloat("Ranged Enemy Move Speed", &rangedEnemyMoveSpeed);
     ImGui::DragInt("Ranged Enemy Damage", &rangedEnemyDamage);
     ImGui::DragFloat("Ranged Enemy Collider Radius", &rangedEnemyColliderRadius);
+    ImGui::DragFloat("Distance To Start Shooting", &distanceToShoot, 25.0f, 0);
+    ImGui::DragFloat("Distance To Start Fleeing", &distanceToFlee, 25.0f, 0);
     if (ResourceManager::ModelAssetSelector("Ranged Enemy Model", &(rangedEnemyRenderer->model)))
     {
         rangedEnemyModel = rangedEnemyRenderer->model->path;
@@ -405,13 +501,11 @@ toml::table EnemySystem::Serialise() const
 {
     return toml::table{
         { "meleeEnemyHealth", meleeEnemyHealth },
-        { "meleeEnemyMoveSpeed", meleeEnemyMoveSpeed },
         { "meleeEnemyDamage", meleeEnemyDamage },
         { "meleeEnemyColliderRadius", meleeEnemyColliderRadius },
         { "meleeEnemyModel", meleeEnemyModel },
         { "meleeEnemyMaterialPath", meleeEnemyMaterialPath },
         { "rangedEnemyHealth", rangedEnemyHealth },
-        { "rangedEnemyMoveSpeed", rangedEnemyMoveSpeed },
         { "rangedEnemyDamage", rangedEnemyDamage }, 
         { "rangedEnemyColliderRadius", rangedEnemyColliderRadius },
         { "rangedEnemyModel", rangedEnemyModel },
@@ -452,13 +546,16 @@ void EnemySystem::LoadNormalFlowMapFromImage(unsigned char* image, int width, in
 {
     normalFlowMap.clear();
     normalFlowMap.reserve(width * height);
+    mapDimensions.x = width;
+    mapDimensions.y = height;
     for (int i = 0; i < width * height; i++)
     {
         glm::vec2 colour = glm::vec2(
-            image[4 * i + 0], image[4 * i + 1]
+            image[4 * i + 0]/255.0f, image[4 * i + 1]/255.0f
         );
         colour -= 0.5f;
         colour *= 2.0f;
+        colour *= image[4 * i + 2];
         normalFlowMap.push_back(colour);
     }
 
@@ -481,24 +578,26 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
     * save as image
     */
 
-    return;
 
+    std::vector<unsigned char> mapColours;
+    mapColours.reserve(mapDimensions.x * mapDimensions.y * 4);
+    std::vector<glm::vec3> normalFlowMapVec3;
+    normalFlowMapVec3.reserve(mapDimensions.x * mapDimensions.y);
 
-    std::vector<glm::vec4> mapColours;
-    mapColours.reserve(mapDimensions.x * mapDimensions.y);
-    normalFlowMap.clear();
-    normalFlowMap.reserve(mapDimensions.x * mapDimensions.y);
     for (int i = 0; i < mapDimensions.x * mapDimensions.y; i++)
     {
-        normalFlowMap.push_back({0.0f, 0.0f});
-        mapColours.push_back({0.0f, 0.0f, 0.75f, 1.0f});
+        normalFlowMapVec3.push_back({0.0f, 0.0f, FLT_MAX});
+        mapColours.push_back(0);
+        mapColours.push_back(0);
+        mapColours.push_back(0);
+        mapColours.push_back(255);
     }
     
     for (auto& rigidBodyPair : rigidbodies)
     {
         for (auto& collider : rigidBodyPair.second.colliders)
         {
-            if (collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::halfCover | (int)CollisionLayers::softCover))
+            if (collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::softCover))
             {
                 if (collider->getType() == ColliderType::polygon)
                 {
@@ -508,21 +607,26 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                     {
                         glm::vec2 pos = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[0]);
                         float radius = poly->radius;
+
+                        //Check every "tile" on colourMap
                         for (int x = 0; x < mapDimensions.x; x++)
                         {
                             for (int z = 0; z < mapDimensions.y; z++)
                             {
-                                glm::vec2 tilePos = {x + mapMinCorner.x, z + mapMinCorner.y};
+                                glm::vec2 tilePos = {x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y};
                                 glm::vec2 delta = tilePos - pos;
                                 float distance = glm::dot(delta, delta);
-                                if (distance >= radius)
+                                if (distance >= radius * radius)
                                 {
-                                    glm::vec2 normal = glm::normalize(delta);
-                                    glm::vec2 influence = normal / distance;
-                                    normalFlowMap[x + z * mapDimensions.y] += influence;
-                                    influence /= 2.0f;
-                                    influence += 0.5f;
-                                    mapColours[x + z * (int)mapDimensions.y] += glm::vec4(influence.x, influence.y, 0.0f, 0.0f);
+                                    distance = sqrtf(distance);
+                                    if (distance <= maxNormalInfluence * 3)
+                                    {
+                                        glm::vec2 normal = glm::normalize(delta);
+                                        glm::vec2 influence = normal * Utilities::Lerp(1.0f, 0.0f, distance / (3 * maxNormalInfluence));
+                                        normalFlowMapVec3[x + z * mapDimensions.x] += glm::vec3(influence.x, influence.y, 0.0f);
+                                        if (distance > 0 && distance < normalFlowMapVec3[x + z * mapDimensions.x].z)
+                                            normalFlowMapVec3[x + z * mapDimensions.x].z = distance;
+                                    }
                                 }
                             }
                         }
@@ -535,30 +639,60 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                             glm::vec2 vertA = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[i]);
                             glm::vec2 vertB = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[(i + 1) % poly->verts.size()]);
 
-                            glm::vec2 tangent = vertB - vertA;
-                            float distanceBetween = glm::dot(vertB, tangent);
-                            tangent = glm::normalize(tangent);
-                            glm::vec2 normal = {tangent.y, -tangent.x};
-                            float comparisonNormal = glm::dot(vertB, normal);
-                            float comparisonTangentA = glm::dot(vertA, tangent);
-                            float comparisonTangentB = glm::dot(vertB, tangent);
+                            glm::vec2 seperation = vertB - vertA;
+                            if (glm::dot(seperation, seperation) < 1000)
+                                continue;
+                            glm::vec2 tangent = glm::normalize(seperation);
 
-                            for (int x = 0; x < mapDimensions.x; x++)
+                            float tanVertA = glm::dot(vertA, tangent);
+                            float tanVertB = glm::dot(vertB, tangent);
+
+                            glm::vec2 normal = {-tangent.y, tangent.x};
+                            float comparisonNormal = glm::dot(vertB, normal);
+
+                            float minX = fminf(vertA.x, vertB.x);
+                            float minY = fminf(vertA.y, vertB.y);
+                            minX -= maxNormalInfluence;
+                            minY -= maxNormalInfluence;
+                            minX = fmaxf(mapMinCorner.x, minX);
+                            minY = fmaxf(mapMinCorner.y, minY);
+
+                            minX -= mapMinCorner.x; 
+                            minX /= nfmDensity;
+                            minY -= mapMinCorner.y;
+                            minY /= nfmDensity;
+
+                            float maxX = fmaxf(vertA.x, vertB.x);
+                            float maxY = fmaxf(vertA.y, vertB.y);
+                            maxX += maxNormalInfluence;
+                            maxY += maxNormalInfluence;
+                            maxX = fminf(mapMinCorner.x + mapDimensions.x * nfmDensity, maxX);
+                            maxY = fminf(mapMinCorner.y + mapDimensions.y * nfmDensity, maxY);
+
+                            maxX -= mapMinCorner.x;
+                            maxX /= nfmDensity;
+                            maxY -= mapMinCorner.y;
+                            maxY /= nfmDensity;
+
+                            for (int x = minX; x < maxX; x++)
                             {
-                                for (int z = 0; z < mapDimensions.y; z++)
+                                for (int z = minY; z < maxY; z++)
                                 {
-                                    glm::vec2 tilePos = { x + mapMinCorner.x, z + mapMinCorner.y };
+                                    glm::vec2 tilePos = { x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y };
                                     float normalDot = glm::dot(tilePos, normal);
                                     if (normalDot >= comparisonNormal)
                                     {
-                                        float tanDot = glm::dot(tilePos, tangent);
-                                        if ( tanDot > comparisonTangentA && tanDot < comparisonTangentB)
+                                        float tileSeperationDot = glm::dot(tilePos, tangent);
+                                        if (tileSeperationDot > tanVertA && tileSeperationDot < tanVertB)
                                         {
-                                            glm::vec2 influence = normal / (normalDot - comparisonNormal);
-                                            normalFlowMap[x + z * mapDimensions.y] += influence;
-                                            influence /= 2.0f;
-                                            influence += 0.5f;
-                                            mapColours[x + z * (int)mapDimensions.y] += glm::vec4(influence.x, influence.y, 0.0f, 0.0f);
+                                            float distance = normalDot - comparisonNormal;
+                                            glm::vec2 influence = normal * Utilities::Lerp(1.0f, 0.0f, distance / maxNormalInfluence);
+                                            normalFlowMapVec3[x + z * mapDimensions.x] += glm::vec3(influence.x, influence.y, 0.0f );
+
+                                            if ( distance < normalFlowMapVec3[x + z * mapDimensions.x].z)
+                                            {
+                                                normalFlowMapVec3[x + z * mapDimensions.x].z = distance;
+                                            }
                                         }
                                     }
                                 }
@@ -570,5 +704,37 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
         }
     }
 
+    for (int x = 0; x < mapDimensions.x; x++)
+    {
+
+        for (int z = 0; z < mapDimensions.y; z++)
+        {
+            float r, g, b = 0.0f;
+            glm::vec3 direction = normalFlowMapVec3[x + z * mapDimensions.x];
+
+            b = Utilities::Lerp(1.0f, 0.0f, direction.z / (maxNormalInfluence));
+            b = glm::clamp(b, 0.0f, 1.0f);
+            glm::vec2 influence = glm::vec2(direction.x, direction.y);
+
+            influence.x = fmin(influence.x, 1.0f);
+            influence.x = fmax(influence.x, -1.0f);
+            influence.y = fmin(influence.y, 1.0f);
+            influence.y = fmax(influence.y, -1.0f);
+            influence /= 2.0f;
+            influence *= b;
+            influence += 0.5f;
+            influence *= 255;
+            r = influence.x;
+            g = influence.y;
+            b *= 255.0f;
+
+            mapColours[(x + z * mapDimensions.x) * 4 + 0] = r;
+            mapColours[(x + z * mapDimensions.x) * 4 + 1] = g;
+            mapColours[(x + z * mapDimensions.x) * 4 + 2] = b;
+        }
+    }
+
+    stbi_write_png((Paths::levelsPath + SceneManager::scene->windowName + Paths::imageExtension).c_str(), mapDimensions.x, mapDimensions.y, 4, mapColours.data(),0);
+    UpdateNormalFlowMap(transforms, rigidbodies);
 }
 

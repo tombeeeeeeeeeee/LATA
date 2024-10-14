@@ -4,8 +4,13 @@
 #include "ModelRenderer.h"
 #include "SceneObject.h"
 #include "Material.h"
+#include "imgui.h"
 
 #include "Utilities.h"
+#include "RenderSystem.h"
+#include "PhysicsSystem.h"
+#include "Collider.h"
+#include "Hit.h"
 
 void HealthSystem::Start(std::unordered_map<unsigned long long, Health>& healths)
 {
@@ -23,23 +28,95 @@ void HealthSystem::Update(
 {
 	for (auto& healthPair : healths)
 	{
-		float timeSinceDamage = healthPair.second.timeSinceLastChange;
-		timeSinceDamage /= colourTime;
+		float timeSinceChange = healthPair.second.timeSinceLastChange;
+		timeSinceChange /= colourTime;
 
-		timeSinceDamage = glm::clamp(timeSinceDamage, 0.0f, 1.0f);
-		renderers[healthPair.first].materialTint = Utilities::Lerp(damageColour, {1.0f,1.0f,1.0f}, timeSinceDamage);
+		if (healthPair.second.lastChangeAmount > 0.0f)
+		{
+			if (timeSinceChange > 0.0f && timeSinceChange < 1.0f)
+			{
+				renderers[healthPair.first].tintDelta = 1.0f - timeSinceChange;
+				renderers[healthPair.first].alternativeMaterialTint = healColour;
+			}
+		}
+		else
+		{
+			if (timeSinceChange > 0.0f && timeSinceChange < 1.0f)
+			{
+				renderers[healthPair.first].tintDelta = 1.0f - timeSinceChange;
+				renderers[healthPair.first].alternativeMaterialTint = damageColour;
+			}
+		}
+		
 		healthPair.second.timeSinceLastChange += delta;
 	}
 }
 
-void HealthSystem::OnHealthDown(HealthPacket healthPacket)
+void HealthSystem::PlayerHealingActivate(glm::vec2 eccoPos, glm::vec2 syncPos)
 {
-	if (healthPacket.so)
+	if (!playerHealingAbility && timeSinceLastHealingAbility > healingAbilityCooldown)
 	{
-		std::vector<Material*>& mats = healthPacket.so->renderer()->materials;
-		for (int i = 0; i < mats.size(); i++)
+		std::vector<Hit> hits;
+		PhysicsSystem::RayCast(eccoPos, glm::normalize(syncPos - eccoPos), hits, healDistance, ~(Collider::transparentLayers | (int)CollisionLayers::enemy));
+		if (hits.size() > 0 && hits[0].collider->collisionLayer & (int)CollisionLayers::sync)
 		{
-			mats[i]->colour = damageColour;
+			playerHealingAbility = true;
+			timeSinceLastHealingAbility = 0.0f;
+			timeSinceLastLOS = 0.0f;
+			timeSinceLastPulse = FLT_MAX;
+			currentPulseCount = 0;
 		}
 	}
+}
+
+void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, glm::vec2 eccoPos, glm::vec2 syncPos, float delta)
+{
+	if (playerHealingAbility)
+	{
+		if (timeSinceLastPulse >= timeBetweenPulses)
+		{
+			eccoHealth->addHealth(healPerPulse);
+			syncHealth->addHealth(healPerPulse);
+			currentPulseCount++;
+			timeSinceLastPulse = 0.0f;
+		}
+		else timeSinceLastPulse += delta;
+
+		std::vector<Hit> hits;
+		PhysicsSystem::RayCast(eccoPos, glm::normalize(syncPos - eccoPos), hits, healDistance, ~(Collider::transparentLayers | (int)CollisionLayers::enemy));
+		if (hits.size() > 0 && hits[0].collider->collisionLayer & (int)CollisionLayers::sync)
+			timeSinceLastLOS = 0.0f;
+
+		else timeSinceLastLOS += delta; 
+
+		RenderSystem::lines.DrawLineSegement2D(eccoPos, syncPos, {0.0f, 1.2f - timeSinceLastPulse / timeBetweenPulses, 0.0f}, 100.0f);
+
+		//End case;
+		if (timeSinceLastLOS > losToleranceTime|| currentPulseCount > pulses)
+		{
+			playerHealingAbility = false;
+			currentPulseCount = 0;
+			timeSinceLastHealingAbility = 0.0f;
+		}
+	}
+	else timeSinceLastHealingAbility += delta;
+}
+
+void HealthSystem::GUI()
+{
+	ImGui::ColorEdit3("Health Colour", &healColour[0]);
+	ImGui::ColorEdit3("Damage Colour", &damageColour[0]);
+	ImGui::DragFloat("Health Colour Time", &colourTime, 0.02f, 0);
+	ImGui::DragInt("Heals Per Pulse", &healPerPulse, 1, 0);
+	ImGui::DragFloat("CoolDown To On Heal Ability", &healingAbilityCooldown, 0.1f, 0);
+	ImGui::DragFloat("TimeBetweenPulses", &timeBetweenPulses, 0.02f, 0);
+	ImGui::DragFloat("Time Since Last Heal Ability", &timeSinceLastHealingAbility, 0.02f, 0);
+	ImGui::DragFloat("DIstance For Healing Ability", &healDistance, 20.0f, 0);
+	ImGui::DragFloat("Tolerance for no Line of Sight", &losToleranceTime, 0.02f, 0);
+	ImGui::End();
+}
+
+void HealthSystem::OnHealthDown(HealthPacket healthPacket)
+{
+
 }
