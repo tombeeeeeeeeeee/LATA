@@ -10,7 +10,8 @@
 GameplayCameraSystem::GameplayCameraSystem(toml::table table)
 {
 	cameraMoveSpeed = Serialisation::LoadAsFloat(table["cameraMoveSpeed"]);
-	cameraZoomSpeed = Serialisation::LoadAsFloat(table["cameraZoomSpeed"]);
+	cameraZoomInSpeed = Serialisation::LoadAsFloat(table["cameraZoomInSpeed"]);
+	cameraZoomOutSpeed = Serialisation::LoadAsFloat(table["cameraZoomOutSpeed"]);
 	cameraZoomScale = Serialisation::LoadAsFloat(table["cameraZoomScale"]);
 	cameraZoomMinimum = Serialisation::LoadAsFloat(table["cameraZoomMinimum"]);
 	cameraZoomMaximum = Serialisation::LoadAsFloat(table["cameraZoomMaximum"]);
@@ -33,7 +34,11 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 
 	case Camera::targetingPosition: 
 
-		camera.orthoScale = Utilities::Lerp(camera.orthoScale, zoomScale, cameraZoomSpeed);
+		if(camera.orthoScale < zoomScale)
+			camera.orthoScale = Utilities::Lerp(camera.orthoScale, zoomScale, cameraZoomOutSpeed);
+		else
+			camera.orthoScale = Utilities::Lerp(camera.orthoScale, zoomScale, cameraZoomInSpeed);
+
 		glm::vec3 pos = Utilities::Lerp(cameraPositionDelta + target, camera.transform.getPosition(), cameraMoveSpeed);
 		camera.transform.setPosition(pos);
 		break;
@@ -52,7 +57,8 @@ void GameplayCameraSystem::GUI()
 	ImGui::DragFloat("Minimum Camera Zoom", &cameraZoomMinimum);
 	ImGui::DragFloat("Maximum Camera Zoom", &cameraZoomMaximum);
 	ImGui::DragFloat("Zoom Intensity While targetting", &cameraZoomScale);
-	ImGui::DragFloat("Zoom Speed", &cameraZoomSpeed);
+	ImGui::DragFloat("Zoom In Speed", &cameraZoomInSpeed);
+	ImGui::DragFloat("Zoom Out Speed", &cameraZoomOutSpeed);
 	ImGui::DragFloat("Camera Move Speed While targetting", &cameraMoveSpeed);
 
 	if (cam)
@@ -74,7 +80,8 @@ toml::table GameplayCameraSystem::Serialise()
 {
 	return toml::table{
 	{ "cameraMoveSpeed", cameraMoveSpeed },
-	{ "cameraZoomSpeed", cameraZoomSpeed },
+	{ "cameraZoomInSpeed", cameraZoomInSpeed },
+	{ "cameraZoomOutSpeed", cameraZoomOutSpeed },
 	{ "cameraZoomScale", cameraZoomScale },
 	{ "cameraZoomMinimum" , cameraZoomMinimum },
 	{ "cameraZoomMaximum" , cameraZoomMaximum },

@@ -128,7 +128,7 @@ void GameTest::Start()
 			}
 		}
 	}
-	enemySystem.Start(transforms, rigidBodies);
+	enemySystem.Start(transforms, rigidBodies, colliders);
 
 	healthSystem.Start(healths);
 

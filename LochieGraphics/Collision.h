@@ -1,5 +1,6 @@
 #pragma once
 #include "Maths.h"
+#include "CollisionPacket.h"
 
 class RigidBody;
 class SceneObject;
@@ -11,4 +12,6 @@ struct Collision
 	glm::vec2 normal;
 	int collisionMask;
 	SceneObject* self;
+
+
 };

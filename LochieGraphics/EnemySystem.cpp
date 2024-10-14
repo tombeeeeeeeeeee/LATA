@@ -47,7 +47,8 @@ EnemySystem::EnemySystem(toml::table table)
 
 void EnemySystem::Start(
     std::unordered_map<unsigned long long, Transform>& transforms,
-    std::unordered_map<unsigned long long, RigidBody>& rigidbodies
+    std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+    std::unordered_map<unsigned long long, Collider*>& colliders
 )
 {
     if (!explosiveEnemyRenderer)
@@ -80,7 +81,7 @@ void EnemySystem::Start(
         );
     }
 
-    UpdateNormalFlowMap(transforms, rigidbodies);
+    UpdateNormalFlowMap(transforms, rigidbodies, colliders);
 }
 
 void EnemySystem::SpawnExplosive(glm::vec3 pos)
@@ -307,58 +308,94 @@ void EnemySystem::AbilityCheck(
     }
 }
 
-void EnemySystem::Steering(std::unordered_map<unsigned long long, Enemy>& enemies, std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidBodies, float delta)
+void EnemySystem::Steering(
+    std::unordered_map<unsigned long long, Enemy>& enemies,
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
+    glm::vec2 eccoPos, glm::vec2 syncPos,
+    float delta
+)
 {
     for (auto& enemyPair : enemies)
     {
-        if (enemyPair.second.type & (int)EnemyType::spawnSpot) continue;
-        glm::vec2 avgPos = { 0.0f, 0.0f };
-        glm::vec2 avgVel = { 0.0f, 0.0f };
 
-        int totalNeighbours = 0;
-
-        glm::vec2 enemyPos = transforms[enemyPair.first].get2DGlobalPosition();
-
-        for (auto& otherEnemyPair : enemies)
+        if (enemyPair.second.inAbility)
         {
-            if (otherEnemyPair.second.type & (int)EnemyType::spawnSpot) continue;
-            glm::vec2 otherEnemyPos = transforms[otherEnemyPair.first].get2DGlobalPosition();
-            if (enemyPair.first == otherEnemyPair.first) continue;
-            glm::vec2 displacement = otherEnemyPos - enemyPos;
-            float distanceSq = glm::dot(displacement, displacement);
+            float length = glm::length(rigidBodies[enemyPair.first].vel);
+            float slowedLength = length * slowedPercentage / 100;
 
-            if (distanceSq <= perceptionRadius * perceptionRadius)
+            enemyPair.second.influenceThisFrame = glm::normalize(rigidBodies[enemyPair.first].vel) * fminf(length, slowedLength);
+        }
+        else
+        {
+            if (enemyPair.second.type & (int)EnemyType::spawnSpot) continue;
+            glm::vec2 avgPos = { 0.0f, 0.0f };
+            glm::vec2 avgVel = { 0.0f, 0.0f };
+
+            int totalNeighbours = 0;
+
+            glm::vec2 enemyPos = transforms[enemyPair.first].get2DGlobalPosition();
+
+            for (auto& otherEnemyPair : enemies)
             {
-                avgPos += otherEnemyPos;
-                avgVel += otherEnemyPair.second.boidVelocity;
+                if (otherEnemyPair.second.type & (int)EnemyType::spawnSpot) continue;
+                if (otherEnemyPair.second.inAbility) continue;
 
-                totalNeighbours++;
+                glm::vec2 otherEnemyPos = transforms[otherEnemyPair.first].get2DGlobalPosition();
+                if (enemyPair.first == otherEnemyPair.first) continue;
+                glm::vec2 displacement = otherEnemyPos - enemyPos;
+                float distanceSq = glm::dot(displacement, displacement);
 
-                if (distanceSq <= separationRadius * separationRadius)
+                if (distanceSq <= perceptionRadius * perceptionRadius)
                 {
-                    glm::vec2 otherToSelf = enemyPos - otherEnemyPos;
-                    float distance =  glm::length(otherToSelf);
-                    float strength = 1.0f - (distance / separationRadius);
-                
-                    enemyPair.second.influenceThisFrame += (otherToSelf / distance) * strength * seperationCoef;
+                    avgPos += otherEnemyPos;
+                    avgVel += otherEnemyPair.second.boidVelocity;
+
+                    totalNeighbours++;
+
+                    if (distanceSq <= separationRadius * separationRadius)
+                    {
+                        glm::vec2 otherToSelf = enemyPos - otherEnemyPos;
+                        float distance = glm::length(otherToSelf);
+                        float strength = 1.0f - (distance / separationRadius);
+
+                        enemyPair.second.influenceThisFrame += (otherToSelf / distance) * strength * seperationCoef;
+                    }
                 }
             }
+
+
+
+            float sqrDistanceToEcco = glm::dot(eccoPos - enemyPos, eccoPos - enemyPos);
+            float sqrDistanceToSync = glm::dot(syncPos - enemyPos, syncPos - enemyPos);
+            glm::vec2 playerForce;
+            if (sqrDistanceToEcco < sqrDistanceToSync)
+            {
+                playerForce = glm::normalize(eccoPos - enemyPos);
+            }
+            else
+            {
+                playerForce = glm::normalize(syncPos - enemyPos);
+            }
+            playerForce *= 100 * playerCoef;
+
+            glm::vec2 normalForce = GetNormalFlowInfluence(enemyPos) * normalCoef;
+            enemyPair.second.influenceThisFrame += normalForce + playerForce;
+
+            //RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + normalForce, {1,0,0}, 100);
+            //RenderSystem::lines.DrawCircle({ enemyPos.x, 100, enemyPos.y }, 20, { 1,0,0 });
+            if (totalNeighbours == 0) continue;
+
+            avgPos /= totalNeighbours;
+            avgVel /= totalNeighbours;
+            //Todo: enemyPair.second.lastTargetPos
+
+            glm::vec2 alignmentForce = avgVel * alignmentCoef;
+            glm::vec2 cohesionForce = (avgPos - enemyPos) * cohesionCoef;
+            enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce;
         }
-
-        if (totalNeighbours == 0) continue;
-
-        glm::vec2 normalForce = GetNormalFlowInfluence(enemyPos) * normalCoef;
-        //RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + normalForce, {1,0,0}, 100);
-        //RenderSystem::lines.DrawCircle({ enemyPos.x, 100, enemyPos.y }, 20, { 1,0,0 });
-
-        avgPos /= totalNeighbours;
-        avgVel /= totalNeighbours;
-        //Todo: enemyPair.second.lastTargetPos
-
-        glm::vec2 alignmentForce = avgVel * alignmentCoef;
-        glm::vec2 cohesionForce = (avgPos - enemyPos) * cohesionCoef;
-        enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce + normalForce;
     }
+
     for (auto& enemyPair : enemies)
     {
         enemyPair.second.boidVelocity += enemyPair.second.influenceThisFrame;
@@ -413,7 +450,7 @@ void EnemySystem::Update   (
     std::unordered_map<unsigned long long, Enemy>& enemies,
     std::unordered_map<unsigned long long, Transform>& transforms, 
     std::unordered_map<unsigned long long, RigidBody>& rigidbodies, 
-    SceneObject* ecco, SceneObject* sync, float delta
+    glm::vec2 eccoPos, glm::vec2 syncPos, float delta
 )
 {
     if (aiUpdating)
@@ -422,6 +459,7 @@ void EnemySystem::Update   (
             enemies, 
             transforms, 
             rigidbodies, 
+            eccoPos, syncPos,
             delta
         );
     }  
@@ -458,6 +496,8 @@ void EnemySystem::GUI()
     ImGui::DragFloat("Cohesion Coef", &cohesionCoef);
     ImGui::DragFloat("Seperation Coef", &seperationCoef);
     ImGui::DragFloat("Normal Coef", &normalCoef);
+    ImGui::DragFloat("Player Coef", &playerCoef);
+    ImGui::DragFloat("Slow Down When Not Boiding Percentage", &slowedPercentage);
 
     ImGui::DragFloat("Perception Radius", &perceptionRadius);
     ImGui::DragFloat("Separation Radius", &separationRadius);
@@ -523,7 +563,8 @@ void EnemySystem::OnMeleeCollision(Collision collision)
 
 void EnemySystem::UpdateNormalFlowMap(
     std::unordered_map<unsigned long long, Transform>& transforms,
-    std::unordered_map<unsigned long long, RigidBody>& rigidBodies
+    std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
+    std::unordered_map<unsigned long long, Collider*>& colliders
 )
 {
     int w, h, channels;
@@ -538,7 +579,7 @@ void EnemySystem::UpdateNormalFlowMap(
     }
     else
     {
-        PopulateNormalFlowMapFromRigidBodies(transforms, rigidBodies);
+        PopulateNormalFlowMapFromRigidBodies(transforms, rigidBodies, colliders);
     }
 }
 
@@ -561,7 +602,11 @@ void EnemySystem::LoadNormalFlowMapFromImage(unsigned char* image, int width, in
 
 }
 
-void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidbodies)
+void EnemySystem::PopulateNormalFlowMapFromRigidBodies(
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+    std::unordered_map<unsigned long long, Collider*>& colliders
+)
 {
     /*
     * For each rigidbody
@@ -654,8 +699,8 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                             float minY = fminf(vertA.y, vertB.y);
                             minX -= maxNormalInfluence;
                             minY -= maxNormalInfluence;
-                            minX = fmaxf(mapMinCorner.x, minX);
-                            minY = fmaxf(mapMinCorner.y, minY);
+                            minX = fmaxf((float)mapMinCorner.x, minX);
+                            minY = fmaxf((float)mapMinCorner.y, minY);
 
                             minX -= mapMinCorner.x; 
                             minX /= nfmDensity;
@@ -666,17 +711,17 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                             float maxY = fmaxf(vertA.y, vertB.y);
                             maxX += maxNormalInfluence;
                             maxY += maxNormalInfluence;
-                            maxX = fminf(mapMinCorner.x + mapDimensions.x * nfmDensity, maxX);
-                            maxY = fminf(mapMinCorner.y + mapDimensions.y * nfmDensity, maxY);
+                            maxX = fminf((float)(mapMinCorner.x + mapDimensions.x * nfmDensity), maxX);
+                            maxY = fminf((float)(mapMinCorner.y + mapDimensions.y * nfmDensity), maxY);
 
                             maxX -= mapMinCorner.x;
                             maxX /= nfmDensity;
                             maxY -= mapMinCorner.y;
                             maxY /= nfmDensity;
 
-                            for (int x = minX; x < maxX; x++)
+                            for (int x = (int)minX; x < maxX; x++)
                             {
-                                for (int z = minY; z < maxY; z++)
+                                for (int z = (int)minY; z < maxY; z++)
                                 {
                                     glm::vec2 tilePos = { x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y };
                                     float normalDot = glm::dot(tilePos, normal);
@@ -693,6 +738,115 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
                                             {
                                                 normalFlowMapVec3[x + z * mapDimensions.x].z = distance;
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for (auto& colliderPair : colliders)
+    {
+        Collider* collider = colliderPair.second;
+        if (collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::softCover))
+        {
+            if (collider->getType() == ColliderType::polygon)
+            {
+                PolygonCollider* poly = (PolygonCollider*)collider;
+
+                if (poly->verts.size() == 1)
+                {
+                    glm::vec2 pos = RigidBody::Transform2Din3DSpace(transforms[colliderPair.first].getGlobalMatrix(), poly->verts[0]);
+                    float radius = poly->radius;
+
+                    //Check every "tile" on colourMap
+                    for (int x = 0; x < mapDimensions.x; x++)
+                    {
+                        for (int z = 0; z < mapDimensions.y; z++)
+                        {
+                            glm::vec2 tilePos = { x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y };
+                            glm::vec2 delta = tilePos - pos;
+                            float distance = glm::dot(delta, delta);
+                            if (distance >= radius * radius)
+                            {
+                                distance = sqrtf(distance);
+                                if (distance <= maxNormalInfluence * 3)
+                                {
+                                    glm::vec2 normal = glm::normalize(delta);
+                                    glm::vec2 influence = normal * Utilities::Lerp(1.0f, 0.0f, distance / (3 * maxNormalInfluence));
+                                    normalFlowMapVec3[x + z * mapDimensions.x] += glm::vec3(influence.x, influence.y, 0.0f);
+                                    if (distance > 0 && distance < normalFlowMapVec3[x + z * mapDimensions.x].z)
+                                        normalFlowMapVec3[x + z * mapDimensions.x].z = distance;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                else
+                {
+                    for (int i = 0; i < poly->verts.size(); i++)
+                    {
+                        glm::vec2 vertA = RigidBody::Transform2Din3DSpace(transforms[colliderPair.first].getGlobalMatrix(), poly->verts[i]);
+                        glm::vec2 vertB = RigidBody::Transform2Din3DSpace(transforms[colliderPair.first].getGlobalMatrix(), poly->verts[(i + 1) % poly->verts.size()]);
+
+                        glm::vec2 seperation = vertB - vertA;
+                        if (glm::dot(seperation, seperation) < 1000)
+                            continue;
+                        glm::vec2 tangent = glm::normalize(seperation);
+
+                        float tanVertA = glm::dot(vertA, tangent);
+                        float tanVertB = glm::dot(vertB, tangent);
+
+                        glm::vec2 normal = { -tangent.y, tangent.x };
+                        float comparisonNormal = glm::dot(vertB, normal);
+
+                        float minX = fminf(vertA.x, vertB.x);
+                        float minY = fminf(vertA.y, vertB.y);
+                        minX -= maxNormalInfluence;
+                        minY -= maxNormalInfluence;
+                        minX = fmaxf((float)mapMinCorner.x, minX);
+                        minY = fmaxf((float)mapMinCorner.y, minY);
+
+                        minX -= mapMinCorner.x;
+                        minX /= nfmDensity;
+                        minY -= mapMinCorner.y;
+                        minY /= nfmDensity;
+
+                        float maxX = fmaxf(vertA.x, vertB.x);
+                        float maxY = fmaxf(vertA.y, vertB.y);
+                        maxX += maxNormalInfluence;
+                        maxY += maxNormalInfluence;
+                        maxX = fminf((float)(mapMinCorner.x + mapDimensions.x * nfmDensity), maxX);
+                        maxY = fminf((float)(mapMinCorner.y + mapDimensions.y * nfmDensity), maxY);
+
+                        maxX -= mapMinCorner.x;
+                        maxX /= nfmDensity;
+                        maxY -= mapMinCorner.y;
+                        maxY /= nfmDensity;
+
+                        for (int x = (int)minX; x < maxX; x++)
+                        {
+                            for (int z = (int)minY; z < maxY; z++)
+                            {
+                                glm::vec2 tilePos = { x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y };
+                                float normalDot = glm::dot(tilePos, normal);
+                                if (normalDot >= comparisonNormal)
+                                {
+                                    float tileSeperationDot = glm::dot(tilePos, tangent);
+                                    if (tileSeperationDot > tanVertA && tileSeperationDot < tanVertB)
+                                    {
+                                        float distance = normalDot - comparisonNormal;
+                                        glm::vec2 influence = normal * Utilities::Lerp(1.0f, 0.0f, distance / maxNormalInfluence);
+                                        normalFlowMapVec3[x + z * mapDimensions.x] += glm::vec3(influence.x, influence.y, 0.0f);
+
+                                        if (distance < normalFlowMapVec3[x + z * mapDimensions.x].z)
+                                        {
+                                            normalFlowMapVec3[x + z * mapDimensions.x].z = distance;
                                         }
                                     }
                                 }
@@ -735,6 +889,6 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(std::unordered_map<unsign
     }
 
     stbi_write_png((Paths::levelsPath + SceneManager::scene->windowName + Paths::imageExtension).c_str(), mapDimensions.x, mapDimensions.y, 4, mapColours.data(),0);
-    UpdateNormalFlowMap(transforms, rigidbodies);
+    UpdateNormalFlowMap(transforms, rigidbodies, colliders);
 }
 

@@ -279,8 +279,8 @@ void LevelEditor::Update(float delta)
 		enemies,
 		transforms,
 		rigidBodies,
-		eccoSo,
-		syncSo,
+		eccoSo->transform()->get2DGlobalPosition(),
+		syncSo->transform()->get2DGlobalPosition(),
 		delta
 	);
 
@@ -513,7 +513,7 @@ void LevelEditor::LoadPrompt()
 
 void LevelEditor::SaveLevel()
 {
-	enemySystem.PopulateNormalFlowMapFromRigidBodies(transforms, rigidBodies);
+	enemySystem.PopulateNormalFlowMapFromRigidBodies(transforms, rigidBodies, colliders);
 
 	std::ofstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
@@ -560,7 +560,7 @@ void LevelEditor::LoadLevel(std::string levelToLoad)
 	RefreshWalls();
 	InitialisePlayers();
 
-	enemySystem.Start(transforms, rigidBodies);
+	enemySystem.Start(transforms, rigidBodies, colliders);
 	previouslySaved = true;
 }
 

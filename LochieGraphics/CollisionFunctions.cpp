@@ -31,22 +31,19 @@ CollisionPacket CollisionFunctions::CircleOnCircleCollision(
     collision.rigidBodyB = rigidBodyB;
 	collision.colliderA = circleA;
 	collision.colliderB = circleB;
-    glm::vec2 posA = RigidBody::Transform2Din3DSpace(transformA->getGlobalMatrix(), {0,0});
-    glm::vec2 posB = RigidBody::Transform2Din3DSpace(transformB->getGlobalMatrix(), {0,0});
 
-    float centreDistance = glm::length((posB + circleB->verts[0]) - (posA + circleA->verts[0]));
+    glm::vec2 posA = RigidBody::Transform2Din3DSpace(transformA->getGlobalMatrix(), circleA->verts[0]);
+    glm::vec2 posB = RigidBody::Transform2Din3DSpace(transformB->getGlobalMatrix(), circleB->verts[0]);
+
+    float centreDistance = glm::length(posB - posA);
     float overlap = circleA->radius + circleB->radius - centreDistance;
 
     collision.depth = overlap;
-    collision.normal = (centreDistance != 0) ? (posA + circleA->verts[0]) - (posB + circleB->verts[0]) / centreDistance : glm::vec2(1, 0);
-	collision.normal = glm::normalize(collision.normal);
-    collision.contactPoint = circleB->verts[0] + posB + collision.normal * circleB->radius;
+	collision.normal = (centreDistance != 0) ? glm::normalize(posA - posB) : glm::vec2(1, 0);
+    collision.contactPoint = posB + collision.normal * circleB->radius;
 
     collision.soA = transformA->getSceneObject();
     collision.soB = transformB->getSceneObject();
-
-	collision.tangentA = collision.contactPoint - posA;
-	collision.tangentA = { -collision.tangentA.y, collision.tangentA.x };
 
     return collision;
 }
