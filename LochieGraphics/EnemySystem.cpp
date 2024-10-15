@@ -383,7 +383,7 @@ void EnemySystem::Steering(
     {
         for (auto& enemyPair : enemies)
         {
-            if (enemyPair.second.type != (int)EnemyType::spawnSpot) continue;
+            if (enemyPair.second.type & (int)EnemyType::spawnSpot) continue;
 
             auto health = healths.find(enemyPair.first);
             if (health != healths.end() && healths[enemyPair.first].currHealth <= 0)
@@ -395,6 +395,7 @@ void EnemySystem::Steering(
 
 glm::vec2 EnemySystem::GetNormalFlowInfluence(glm::vec2 pos)
 {
+    if (isnan(pos.x) || isnan(pos.y)) return { 0.0f, 0.0f };
     if (pos.x < mapMinCorner.x) return { 0.0f, 0.0f };
     if (pos.y < mapMinCorner.y) return { 0.0f, 0.0f };
 
