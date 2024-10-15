@@ -16,6 +16,8 @@
 #include "EnemySystem.h"
 #include "GUI.h"
 
+#include <map>
+
 class SceneObject;
 class Ecco;
 class Sync;
@@ -40,7 +42,7 @@ public:
 	// TODO: Pretty sure these no longer need to be stored on the heap
 	//std::vector<SceneObject*> sceneObjects = {};
 
-	std::unordered_map<unsigned long long, SceneObject*> sceneObjects = {};
+	std::map<unsigned long long, SceneObject*> sceneObjects = {};
 	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};
 	std::unordered_map<unsigned long long, Transform> transforms = {};
 	// TODO: There is types of animators, don't think its safe to store them like this

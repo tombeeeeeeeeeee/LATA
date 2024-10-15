@@ -178,14 +178,14 @@ SceneObject* Scene::FindSceneObjectOfName(std::string name)
 toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 {
 	auto savedSceneObjects = toml::array();
-	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+	for (auto& i : sceneObjects)
 	{
 		if (shouldSave) {
-			if (!shouldSave(i->second)) {
+			if (!shouldSave(i.second)) {
 				continue;
 			}
 		}
-		savedSceneObjects.push_back((*i).second->Serialise());
+		savedSceneObjects.push_back(i.second->Serialise());
 	}
 	SavePart(renderers);
 	SavePart(transforms);

@@ -280,15 +280,15 @@ void GUI::HierarchyMenu()
 		}
 		ImGui::EndDragDropTarget();
 	}
-	for (auto i = scene->sceneObjects.begin(); i != scene->sceneObjects.end(); i++)
+	for (auto& i : scene->sceneObjects)
 	{
-		if (!(*i).second) 
+		if (!i.second) 
 		{
-			scene->DeleteSceneObject((*i).first); continue;
+			scene->DeleteSceneObject(i.first); continue;
 		}
-		if ((*i).second->transform()->getParent()) { continue; }
+		if (i.second->transform()->getParent()) { continue; }
 
-		TransformTree((*i).second);
+		TransformTree(i.second);
 	}
 
 	ImGui::Unindent();
