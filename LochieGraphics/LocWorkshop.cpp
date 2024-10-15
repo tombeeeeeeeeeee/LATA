@@ -23,7 +23,7 @@ void LocWorkshop::Start()
 	camera->editorSpeed.move = 250.0f;
 	camera->farPlane = 500.0f;
 	camera->nearPlane = 1.0f;
-	camera->transform.setPosition({ 0.0f, 0.0f, 300.0f });
+	camera->transform.setPosition({ 0.0f, 0.0f, 150.0f });
 	camera->transform.setEulerRotation({ 0.0f, 90.0f, 0.0f });
 
 
@@ -162,7 +162,7 @@ void LocWorkshop::GUI()
 
 	ImGui::Checkbox("Facing Camera##Particle", &renderSystem.particleFacingCamera);
 
-	ImGui::DragScalar("Count##Particle", ImGuiDataType_U32, reinterpret_cast<void*>(&particle.count));
+	//ImGui::DragScalar("Count##Particle", ImGuiDataType_U32, reinterpret_cast<void*>(&particle.count));
 
 	ExtraEditorGUI::Mat4Input("Model Matrix##Particle", &particle.model);
 

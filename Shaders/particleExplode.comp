@@ -15,5 +15,8 @@ layout(std430, binding = 3) buffer Particles
 };
 
 void main() {
-	data[gl_GlobalInvocationID.x].vel += vec3(sin(gl_GlobalInvocationID.x), cos(gl_GlobalInvocationID.x), -sin(gl_GlobalInvocationID.x));
+	uint daLength = 100;
+	uint index = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y * daLength + gl_GlobalInvocationID.z * daLength * daLength;
+	//uint index = gl_GlobalInvocationID.x;
+	data[index].vel += vec3(sin(gl_GlobalInvocationID.x), cos(gl_GlobalInvocationID.x), -sin(gl_GlobalInvocationID.x));
 }

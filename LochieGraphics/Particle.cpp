@@ -8,26 +8,32 @@
 
 void Particle::Spread()
 {
-	spreadCompute->Run(count, 1u, 1u);
+	spreadCompute->Run(cX, cY, cZ);
 }
 
 void Particle::Explode()
 {
-	explodeCompute->Run(count, 1u, 1u);
+	explodeCompute->Run(cX, cY, cZ);
 }
 
 void Particle::Stop()
 {
-	stopCompute->Run(count, 1u, 1u);
+	stopCompute->Run(cX, cY, cZ);
 }
 
 void Particle::Reset()
 {
-	resetCompute->Run(count, 1u, 1u);
+	resetCompute->Run(cX, cY, cZ);
+}
+
+unsigned int Particle::getCount() const
+{
+	return cX * cY * cZ;
 }
 
 void Particle::Initialise()
 {
+	
 	//mesh.InitialiseQuad(quadSize);
 	float size = quadSize;
 	float quadVerts[] = {
@@ -69,14 +75,14 @@ void Particle::Initialise()
 	};
 
 	std::vector<p> ps;
-	ps.resize(count);
-	for (size_t i = 0; i < count; i++)
+	ps.resize(getCount());
+	for (size_t i = 0; i < getCount(); i++)
 	{
 		ps.at(i).pos = glm::vec4();
 		ps.at(i).vel = glm::vec4();
 	}
 
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::vec4) * count * 2, &ps[0], GL_DYNAMIC_COPY);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::vec4) * getCount() * 2, &ps[0], GL_DYNAMIC_COPY);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
@@ -85,14 +91,9 @@ void Particle::Update(float delta)
 {
 
 	auto start = std::chrono::system_clock::now();
-	
-	moveCompute->Run(count, 1u, 1u);
 
+	moveCompute->Run(cX, cY, cZ);
 
-	//for (size_t i = 0; i < count; i++)
-	//{
-	//	positions.at(i) += velocities.at(i);
-	//}
 	auto end = std::chrono::system_clock::now();
 
 	std::chrono::duration<double> duration = end - start;
@@ -110,7 +111,7 @@ void Particle::Draw()
 	shader->setSampler("material.albedo", 1);
 
 	glBindVertexArray(quadVAO);
-	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, getCount());
 
 	auto end = std::chrono::system_clock::now();
 	std::chrono::duration<double> duration = end - start;

@@ -15,7 +15,10 @@ class Particle
 public:
 
 	float quadSize = 10.0f; //  
-	unsigned int count = 1000000;
+
+	unsigned int cX = 1000000;
+	unsigned int cY = 1;
+	unsigned int cZ = 1;
 
 	//Mesh mesh;
 	unsigned int quadVAO = 0;
@@ -41,6 +44,7 @@ public:
 
 	void Reset();
 
+	unsigned int getCount() const;
 
 	void Initialise();
 	void Update(float delta);
