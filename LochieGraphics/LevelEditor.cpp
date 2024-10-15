@@ -425,7 +425,7 @@ void LevelEditor::OnMouseDown()
 		AssetPlacer(mouseWorld);
 	}
 
-	if (camera->state == Camera::State::tilePlacing) {
+	if (camera->state == Camera::State::tilePlacing && state == BrushState::viewSelect) {
 		glm::vec2 mouseWorld = EditorCamMouseToWorld();
 		Selector(mouseWorld);
 	}
