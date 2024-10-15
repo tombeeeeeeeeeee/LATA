@@ -50,6 +50,7 @@ private:
 	float deadZone = 0.6f;
 	float turningCircleScalar = 6.0f;
 	float speedWheelTurnInfluence = 50.0f;
+	float boostWheelTurnInfluence = 50.0f;
 	float maxWheelAngle = 60.0f;
 	float wheelTurnSpeed = 4.0f;
 	float sidewaysFrictionCoef = 0.65f;

@@ -67,10 +67,12 @@ bool Ecco::Update(
 			float maxWheelAngleAfterSpeed;
 			if (glm::dot(rigidBody.vel, rigidBody.vel) > maxCarMoveSpeed * maxCarMoveSpeed)
 			{
-				maxWheelAngleAfterSpeed = 10.0f;
+				maxWheelAngleAfterSpeed = boostWheelTurnInfluence;
 			}
-			else 
-				maxWheelAngleAfterSpeed = speedWheelTurnInfluence / 100.0f * (glm::length(rigidBody.vel)) / (maxCarMoveSpeed)*maxWheelAngle;
+			else
+			{
+				maxWheelAngleAfterSpeed = maxWheelAngle - speedWheelTurnInfluence / 100.0f * (glm::length(rigidBody.vel)) / (maxCarMoveSpeed)*maxWheelAngle;
+			}
 
 			desiredAngle = glm::clamp(desiredAngle, -maxWheelAngleAfterSpeed * PI / 180.0f, maxWheelAngleAfterSpeed * PI / 180.0f);
 			//rotate forward by that angle
@@ -229,6 +231,7 @@ void Ecco::GUI()
 		ImGui::DragFloat("Turning circle scalar", &turningCircleScalar);
 		ImGui::DragFloat("Max wheel angle", &maxWheelAngle);
 		ImGui::DragFloat("Speed wheel turn influence", &speedWheelTurnInfluence, 1.0f, 0.0f, 100.0f);
+		ImGui::DragFloat("boost wheel turn influence", &boostWheelTurnInfluence, 1.0f, 0.0f, 100.0f);
 		ImGui::DragFloat("Wheel Turn Speed", &wheelTurnSpeed);
 		ImGui::DragFloat("Sideways Wheel Drag", &sidewaysFrictionCoef, 0.01f, 0.0f);
 		ImGui::DragFloat("Portion of Sideways Speed Kept", &portionOfSidewaysSpeedKept, 1.0f, 0.0f, 100.0f);
@@ -249,9 +252,6 @@ void Ecco::GUI()
 		ImGui::BeginDisabled();
 		ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
 		ImGui::EndDisabled();
-
-		ImGui::Text("");
-		ImGui::Text("TESTING PARTS");
 		ImGui::Checkbox("Boost Not In Wheel Direction", &speedBoostInDirectionOfBody);
 		ImGui::DragFloat("Speed Boost Duration", &speedBoostDuration );
 		ImGui::Unindent();
@@ -269,6 +269,7 @@ toml::table Ecco::Serialise()
 		{ "deadZone", deadZone },
 		{ "turningCircleScalar", turningCircleScalar },
 		{ "speedWheelTurnInfluence", speedWheelTurnInfluence },
+		{ "boostWheelTurnInfluence", boostWheelTurnInfluence },
 		{ "maxWheelAngle", maxWheelAngle },
 		{ "wheelTurnSpeed", wheelTurnSpeed },
 		{ "sidewaysFrictionCoef", sidewaysFrictionCoef },
@@ -296,6 +297,7 @@ Ecco::Ecco(toml::table table)
 	deadZone = Serialisation::LoadAsFloat(table["deadZone"]);
 	turningCircleScalar = Serialisation::LoadAsFloat(table["turningCircleScalar"]);
 	speedWheelTurnInfluence = Serialisation::LoadAsFloat(table["speedWheelTurnInfluence"]);
+	boostWheelTurnInfluence = Serialisation::LoadAsFloat(table["boostWheelTurnInfluence"]);
 	maxWheelAngle = Serialisation::LoadAsFloat(table["maxWheelAngle"]);
 	wheelTurnSpeed = Serialisation::LoadAsFloat(table["wheelTurnSpeed"]);
 	sidewaysFrictionCoef = Serialisation::LoadAsFloat(table["sidewaysFrictionCoef"]);

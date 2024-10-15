@@ -1,5 +1,7 @@
 #pragma once
 #include "CollisionPacket.h"
+#include <vector>
+#include "Maths.h"
 
 class RigidBody;
 class Transform;
@@ -59,4 +61,6 @@ namespace CollisionFunctions
 		RigidBody* rigidBodyA, RigidBody* rigidBodyB,
 		Transform* transformA, Transform* transformB
 	);
+
+	glm::vec2 SATMinMax(glm::vec2 axis, std::vector<glm::vec2> verts);
 };
