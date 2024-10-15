@@ -282,6 +282,10 @@ void GUI::HierarchyMenu()
 	}
 	for (auto i = scene->sceneObjects.begin(); i != scene->sceneObjects.end(); i++)
 	{
+		if (!(*i).second) 
+		{
+			scene->DeleteSceneObject((*i).first); continue;
+		}
 		if ((*i).second->transform()->getParent()) { continue; }
 
 		TransformTree((*i).second);

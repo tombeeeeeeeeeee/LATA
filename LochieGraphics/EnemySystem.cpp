@@ -290,7 +290,7 @@ void EnemySystem::Steering(
             float length = glm::length(rigidBodies[enemyPair.first].vel);
             float slowedLength = length * slowedPercentage / 100;
 
-            enemyPair.second.influenceThisFrame = glm::normalize(rigidBodies[enemyPair.first].vel) * fminf(length, slowedLength);
+            enemyPair.second.influenceThisFrame = -glm::normalize(rigidBodies[enemyPair.first].vel) * fminf(length, slowedLength);
         }
         else
         {
