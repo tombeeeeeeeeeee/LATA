@@ -431,7 +431,8 @@ void EnemySystem::Update   (
             eccoPos, syncPos,
             delta
         );
-
+        
+        HealthCheck(enemies, healths);
         
     }  
 }
