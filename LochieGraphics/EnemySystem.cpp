@@ -383,7 +383,10 @@ void EnemySystem::Steering(
     {
         for (auto& enemyPair : enemies)
         {
-            if (healths[enemyPair.first].currHealth <= 0)
+            if (enemyPair.second.type != (int)EnemyType::spawnSpot) continue;
+
+            auto health = healths.find(enemyPair.first);
+            if (health != healths.end() && healths[enemyPair.first].currHealth <= 0)
             {
                 SceneManager::scene->DeleteSceneObject(enemyPair.first);
             }
