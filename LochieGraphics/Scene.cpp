@@ -148,6 +148,10 @@ void Scene::Load()
 
 void Scene::DeleteSceneObject(unsigned long long GUID)
 {
+	for (std::vector<unsigned long long>::iterator marks = markedForDeletion.begin(); marks != markedForDeletion.end(); marks++)
+	{
+		if (*marks == GUID) return;
+	}
 	markedForDeletion.push_back(GUID);
 }
 

@@ -14,7 +14,6 @@
 #include "GamePlayCameraSystem.h"
 #include "HealthSystem.h"
 #include "EnemySystem.h"
-
 #include "GUI.h"
 
 class SceneObject;

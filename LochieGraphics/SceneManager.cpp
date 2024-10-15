@@ -226,6 +226,7 @@ void SceneManager::Update()
 	viewProjection = projection * view;
 
 	// Delete sceneobjects marked for deletion
+	
 	while (!scene->markedForDeletion.empty())
 	{
 		if (scene->gui.sceneObjectSelected) {
