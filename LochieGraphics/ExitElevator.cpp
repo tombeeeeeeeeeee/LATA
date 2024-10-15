@@ -30,7 +30,7 @@ void ExitElevator::Update()
 	if (syncInExit && eccoInExit)
 	{
 		syncInExit = eccoInExit = false;
-		((LevelEditor*)SceneManager::scene)->LoadLevel(levelToLoad);
+		((LevelEditor*)SceneManager::scene)->LoadLevel(true, levelToLoad);
 	}
 	else
 	{

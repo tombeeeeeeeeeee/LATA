@@ -110,6 +110,6 @@ public:
 	~LevelEditor() override;
 	void Save() override;
 	void Load() override;
-	void LoadLevel(std::string levelToLoad = "");
+	void LoadLevel( bool inPlayMaintained = false, std::string levelToLoad = "" );
 };
 

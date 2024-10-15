@@ -238,7 +238,7 @@ void LevelEditor::Update(float delta)
 	}
 	else if(lastFramePlayState && !inPlay) //On Play exit
 	{
-		LoadLevel();
+		LoadLevel(false);
 
 		lastFramePlayState = inPlay;
 		displayGUI = true;
@@ -522,14 +522,14 @@ void LevelEditor::SaveLevel()
 	file.close();
 }
 
-void LevelEditor::LoadLevel(std::string levelToLoad)
+void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 {
 	if (levelToLoad != "") windowName = levelToLoad;
 	std::ifstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
 	ecco->currHealth = healths[ecco->GUID].currHealth;
 	sync->currHealth = healths[sync->GUID].currHealth;
-
+	if (inPlay) inPlay = inPlayMaintained;
 	if (!file) {
 		std::cout << "Level File not found\n";
 		return;
