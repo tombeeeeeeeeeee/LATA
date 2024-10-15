@@ -252,12 +252,14 @@ void SceneManager::Update()
 	ImGuizmo::BeginFrame();
 	
 	scene->renderSystem.lines.Clear();
+	scene->renderSystem.debugLines.Clear();
 	scene->Update(deltaTime);
 	for (auto& i : scene->animators)
 	{
 		i.second.UpdateAnimation(deltaTime);
 	}
 	scene->renderSystem.lines.Compile();
+	scene->renderSystem.debugLines.Compile();
 
 	scene->skybox->Update(&camera, (float)windowWidth / (float)windowHeight);
 

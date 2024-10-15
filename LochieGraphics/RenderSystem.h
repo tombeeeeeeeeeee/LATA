@@ -31,6 +31,7 @@ class RenderSystem
 public:
 
     static LineRenderer lines;
+    static LineRenderer debugLines;
 
     void Start(
         unsigned int _skyboxTexture,
