@@ -58,6 +58,7 @@ struct PolygonCollider : public Collider
 	float radius = 0.0f;
 	virtual const ColliderType getType() const { return ColliderType::polygon; };
 	PolygonCollider(std::vector<glm::vec2> _verts, float _radius, CollisionLayers layer = CollisionLayers::base) : verts(_verts), radius(_radius) { collisionLayer = (int)layer; };
+	PolygonCollider(float _radius) { radius = _radius; };
 	PolygonCollider() {};
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	PolygonCollider(toml::table table);

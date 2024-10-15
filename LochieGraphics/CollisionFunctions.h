@@ -23,6 +23,11 @@ namespace CollisionFunctions
 		Transform* transformA, Transform* transformB
 	);
 
+	bool CircleOnPolyCheck(
+		glm::vec2 circlePos, float radius,
+		PolygonCollider* poly, Transform transformB
+	);
+
 	//TODO
 	CollisionPacket CircleOnDirectionalPolyCollision(
 		PolygonCollider* circle, DirectionalCollider directionalPoly,

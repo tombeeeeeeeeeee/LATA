@@ -92,7 +92,6 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos)
     enemy->setEnemy(new Enemy((int)EnemyType::explosive));
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(explosiveEnemyHealth);
-    enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroExplosive(hp); });
     enemy->setRigidBody(new RigidBody());
     enemy->rigidbody()->invMass = 1.0f;
     enemy->setRenderer(
@@ -100,6 +99,7 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos)
     );
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
+    enemy->transform()->setScale(6.0f);
     enemy->health()->currHealth = explosiveEnemyHealth;
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
@@ -113,7 +113,6 @@ void EnemySystem::SpawnMelee(glm::vec3 pos)
     enemy->setEnemy(new Enemy());
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(meleeEnemyHealth);
-    enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroMelee(hp); });
     enemy->setRigidBody(new RigidBody());
     enemy->rigidbody()->invMass = 1.0f;
     enemy->setRenderer(
@@ -134,7 +133,6 @@ void EnemySystem::SpawnRanged(glm::vec3 pos)
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(rangedEnemyHealth);
     enemy->health()->currHealth = rangedEnemyHealth;
-    enemy->health()->onHealthZero.push_back([this](HealthPacket hp) { OnHealthZeroRanged(hp); });
     enemy->setRigidBody(new RigidBody());
     enemy->rigidbody()->invMass = 1.0f;
     enemy->setRenderer(
@@ -146,42 +144,7 @@ void EnemySystem::SpawnRanged(glm::vec3 pos)
     enemy->rigidbody()->isStatic = false;
 }
 
-bool EnemySystem::Despawn(SceneObject* sceneObject)
-{
 
-    if (sceneObject->parts & Parts::enemy)
-    {
-        SceneManager::scene->DeleteSceneObject(sceneObject->GUID);
-        return true;
-    }
-
-    return false;
-}
-
-
-void EnemySystem::OnHealthZeroExplosive(HealthPacket healthpacket)
-{
-    if (healthpacket.so)
-    {
-        Despawn(healthpacket.so);
-    }
-}
-
-void EnemySystem::OnHealthZeroMelee(HealthPacket healthpacket)
-{
-    if (healthpacket.so)
-    {
-        Despawn(healthpacket.so);
-    }
-}
-
-void EnemySystem::OnHealthZeroRanged(HealthPacket healthpacket)
-{
-    if (healthpacket.so)
-    {
-        Despawn(healthpacket.so);
-    }
-}
 
 void EnemySystem::LineOfSightAndTargetCheck(
     Enemy enemy, Transform transform, RigidBody rigidBody,
@@ -234,12 +197,10 @@ void EnemySystem::AbilityCheck(
     std::unordered_map<unsigned long long, Enemy>& enemies,
     std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
     std::unordered_map<unsigned long long, Transform>& transforms,
-    SceneObject* ecco, SceneObject* sync,
+    glm::vec2 eccoPos, glm::vec2 syncPos,
     float delta
 )
 {
-    glm::vec2 eccoPos = ecco->transform()->get2DGlobalPosition();
-    glm::vec2 syncPos = sync->transform()->get2DGlobalPosition();
 
     for (auto& enemyPair : enemies)
     {
@@ -260,12 +221,17 @@ void EnemySystem::AbilityCheck(
                 else
                 {
                     enemyPair.second.inAbility = false;
-                    PolygonCollider* poly = new PolygonCollider(
-                        { {0.0f, 0.0f} }, explosionRadius, CollisionLayers::enemyProjectile
-                    );
-                    poly->isTrigger = true;
-                    rigidBodies[enemyPair.first].colliders.push_back(poly);
-                    rigidBodies[enemyPair.first].onTrigger.push_back([this](Collision collision) { OnExplosion(collision); });
+
+                    std::vector<Hit> hits = PhysicsSystem::CircleCast(enemyPos, explosionRadius, ~(Collider::transparentLayers | (int)CollisionLayers::base | (int)CollisionLayers::reflectiveSurface));
+                    for (auto& hit : hits)
+                    {
+                        Health* health = hit.sceneObject->health();
+                        if (health)
+                        {
+                            health->subtractHealth(explosionDamage);
+                        }
+                    }
+                    SceneManager::scene->DeleteSceneObject(enemyPair.first);
                 }
                 break;
             case (int)EnemyType::melee:
@@ -413,6 +379,17 @@ void EnemySystem::Steering(
 
 }
 
+    void EnemySystem::HealthCheck(std::unordered_map<unsigned long long, Enemy>& enemies, std::unordered_map<unsigned long long, Health>& healths)
+    {
+        for (auto& enemyPair : enemies)
+        {
+            if (healths[enemyPair.first].currHealth <= 0)
+            {
+                SceneManager::scene->DeleteSceneObject(enemyPair.first);
+            }
+        }
+    }
+
 glm::vec2 EnemySystem::GetNormalFlowInfluence(glm::vec2 pos)
 {
     if (pos.x < mapMinCorner.x) return { 0.0f, 0.0f };
@@ -428,33 +405,25 @@ glm::vec2 EnemySystem::GetNormalFlowInfluence(glm::vec2 pos)
     return { normalInfluence.x, normalInfluence.y };
 }
 
-void EnemySystem::OnExplosion(Collision collision)
-{
-    if (collision.collisionMask & ((int)CollisionLayers::enemy | (int)CollisionLayers::ecco | (int)CollisionLayers::sync))
-    {
-        collision.sceneObject->health()->subtractHealth(explosionDamage);
-    }
-    SceneManager::scene->DeleteSceneObject(collision.self->GUID);
-}
-
-void EnemySystem::OnPunch(Collision collision)
-{
-    if (collision.collisionMask & ((int)CollisionLayers::ecco | (int)CollisionLayers::sync))
-    {
-        collision.sceneObject->health()->subtractHealth(meleeEnemyDamage);
-    }
-}
 
 //TODO: Add AI Pathfinding and attacking in here.
 void EnemySystem::Update   (
     std::unordered_map<unsigned long long, Enemy>& enemies,
     std::unordered_map<unsigned long long, Transform>& transforms, 
-    std::unordered_map<unsigned long long, RigidBody>& rigidbodies, 
+    std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+    std::unordered_map<unsigned long long, Health>& healths,
     glm::vec2 eccoPos, glm::vec2 syncPos, float delta
 )
 {
     if (aiUpdating)
     {
+        AbilityCheck(
+            enemies,
+            rigidbodies,
+            transforms,
+            eccoPos, syncPos, delta
+        );
+
         Steering(
             enemies, 
             transforms, 
@@ -462,6 +431,8 @@ void EnemySystem::Update   (
             eccoPos, syncPos,
             delta
         );
+
+        
     }  
 }
 
@@ -481,6 +452,8 @@ void EnemySystem::SpawnEnemiesInScene(
                 SpawnRanged(transforms[enemyPair.first].getGlobalPosition());
             else if (enemyPair.second.type & (int)EnemyType::explosive)
                 SpawnExplosive(transforms[enemyPair.first].getGlobalPosition());
+
+            SceneManager::scene->DeleteSceneObject(enemyPair.first);
         }
     }
 }
@@ -551,14 +524,6 @@ toml::table EnemySystem::Serialise() const
         { "rangedEnemyModel", rangedEnemyModel },
         { "rangedEnemyMaterialPath", rangedEnemyMaterialPath },
     };
-}
-
-void EnemySystem::OnMeleeCollision(Collision collision)
-{
-    if (collision.collisionMask & (int)CollisionLayers::sync || collision.collisionMask & (int)CollisionLayers::ecco)
-    {
-        collision.sceneObject->health()->subtractHealth(meleeEnemyDamage);
-    }
 }
 
 void EnemySystem::UpdateNormalFlowMap(

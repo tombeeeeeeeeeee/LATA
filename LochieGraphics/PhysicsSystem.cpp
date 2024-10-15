@@ -543,9 +543,9 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 	return hits.size() != 0;
 }
 
-std::vector<Collider*> PhysicsSystem::CircleCast(glm::vec2 pos, float radius, int layerMask, bool ignoreTriggers)
+std::vector<Hit> PhysicsSystem::CircleCast(glm::vec2 pos, float radius, int layerMask, bool ignoreTriggers)
 {
-	std::vector<Collider*> colliders;
+	std::vector<Hit> hits;
 
 	for (auto& rigidBodyPair : *rigidBodiesInScene)
 	{
@@ -574,22 +574,85 @@ std::vector<Collider*> PhysicsSystem::CircleCast(glm::vec2 pos, float radius, in
 
 						if (overlap >= 0)
 						{
-							colliders.push_back(collider);
+							Hit hit;
+							hit.collider = collider;
+							hit.sceneObject = (*transformsInScene)[rigidBodyPair.first].getSceneObject();
+							hits.push_back(hit);
 						}
 					}
 
 					else
 					{
-
+						bool overLap = CollisionFunctions::CircleOnPolyCheck(
+							pos, radius, poly, (*transformsInScene)[rigidBodyPair.first]
+						);
+						if (overLap)
+						{
+							Hit hit;
+							hit.collider = poly;
+							hit.sceneObject = (*transformsInScene)[rigidBodyPair.first].getSceneObject();
+							hits.push_back(hit);
+						}
 					}
 
 					break;
 				}
 			}
 		}
-	}
 
-	return colliders;
+	}
+	
+	for (auto& colliderPair : *collidersInScene)
+	{
+		bool triggerPassing = true;
+		if (colliderPair.second->isTrigger && ignoreTriggers)
+		{
+			triggerPassing = false;
+		}
+
+		if (triggerPassing && (colliderPair.second->collisionLayer & layerMask))
+		{
+			int type = (int)colliderPair.second->getType();
+			switch (type)
+			{
+			case (int)ColliderType::polygon:
+				PolygonCollider* poly = (PolygonCollider*)colliderPair.second;
+
+				//Circle on Circle
+				if (poly->verts.size() == 1)
+				{
+					glm::vec2 posB = RigidBody::Transform2Din3DSpace((*transformsInScene)[colliderPair.first].getGlobalMatrix(), poly->verts[0]);
+					float centreDistance = glm::length(posB - pos);
+					float overlap = radius + poly->radius - centreDistance;
+
+					if (overlap >= 0)
+					{
+						Hit hit;
+						hit.collider = colliderPair.second;
+						hit.sceneObject = (*transformsInScene)[colliderPair.first].getSceneObject();
+						hits.push_back(hit);
+					}
+				}
+
+				else
+				{
+					bool overLap = CollisionFunctions::CircleOnPolyCheck(
+						pos, radius, poly, (*transformsInScene)[colliderPair.first]
+					);
+					if (overLap)
+					{
+						Hit hit;
+						hit.collider = poly;
+						hit.sceneObject = (*transformsInScene)[colliderPair.first].getSceneObject();
+						hits.push_back(hit);
+					}
+				}
+
+				break;
+			}
+		}
+	}
+	return hits;
 }
 
 CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 direction, Transform& transform, Collider* collider)

@@ -12,6 +12,7 @@ class Transform;
 class RigidBody;
 class SceneObject;
 class ModelRenderer;
+class Health;
 struct HealthPacket;
 struct Collision;
 struct Collider;
@@ -68,7 +69,7 @@ public:
 	int explosionDamage = 2;
 	float distanceToExplode = 150.0f;
 	ModelRenderer* explosiveEnemyRenderer = nullptr;
-	std::string explosiveEnemyModel = "SM_Sphere";
+	std::string explosiveEnemyModel = "SM_Enemy_TPose";
 	std::string explosiveEnemyMaterialPath = "images/otherskybox/nx.png";
 
 	int meleeEnemyHealth = 3;
@@ -77,7 +78,7 @@ public:
 	float timeToPunch = 0.8f;
 	float distanceToPunch = 150.0f;
 	ModelRenderer* meleeEnemyRenderer = nullptr;
-	std::string meleeEnemyModel = "SM_Sphere";
+	std::string meleeEnemyModel = "SM_Enemy_TPose";
 	std::string meleeEnemyMaterialPath = "images/otherskybox/nx.png";
 
 	int rangedEnemyHealth = 3;
@@ -93,16 +94,13 @@ public:
 	void SpawnExplosive(glm::vec3 pos);
 	void SpawnMelee(glm::vec3 pos);
 	void SpawnRanged(glm::vec3 pos);
-	bool Despawn(SceneObject* sceneObject);
 
-	void OnHealthZeroExplosive(HealthPacket healthPacket);
-	void OnHealthZeroMelee(HealthPacket healthPacket);
-	void OnHealthZeroRanged(HealthPacket healthPacket);
 
 	void Update(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
+		std::unordered_map<unsigned long long, Health>& healths,
 		glm::vec2 eccoPos, glm::vec2 syncPos,
 		float delta
 	);
@@ -117,7 +115,6 @@ public:
 
 	toml::table Serialise() const;
 
-	void OnMeleeCollision(Collision collision);
 
 	glm::ivec2 mapMinCorner = { 0.0f, 0.0f };
 	glm::ivec2 mapDimensions = { 0.0f, 0.0f };
@@ -148,7 +145,7 @@ private:
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
-		SceneObject* ecco, SceneObject* sync,
+		glm::vec2 eccoPos, glm::vec2 syncPos,
 		float delta
 	);
 
@@ -160,9 +157,12 @@ private:
 		float delta
 		);
 	
+	void HealthCheck(
+		std::unordered_map<unsigned long long, Enemy>& enemies,
+		std::unordered_map<unsigned long long, Health>& healths
+	);
+
 	glm::vec2 GetNormalFlowInfluence(glm::vec2 pos);
 
-	void OnExplosion(Collision collision);
-	void OnPunch(Collision collision);
 };
 
