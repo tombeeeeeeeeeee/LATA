@@ -56,6 +56,7 @@ private:
 	float sidewaysFrictionCoef = 0.65f;
 	float portionOfSidewaysSpeedKept = 100.0f;
 	float stoppingFrictionCoef = 0.8f;
+	float exceedingSlowIntensity = 2.5f;
 	bool controlState = false;
 	float speedBoost = 1.0f;
 	float speedBoostCooldown = 0.1f;

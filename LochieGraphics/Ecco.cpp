@@ -143,7 +143,7 @@ bool Ecco::Update(
 		//Stop Speed exceeding speed limit (Could change to be drag)
 		if (glm::length(rigidBody.vel + rigidBody.invMass * (force + rigidBody.netForce)) > maxCarMoveSpeed && glm::dot(force, rigidBody.vel) > 0)
 		{
-			force = glm::normalize(force) * (maxCarMoveSpeed - glm::length(rigidBody.vel)) * 2.0f / rigidBody.invMass;
+			force = glm::normalize(force) * (maxCarMoveSpeed - glm::length(rigidBody.vel)) * exceedingSlowIntensity / rigidBody.invMass;
 		}
 	}
 
@@ -236,6 +236,7 @@ void Ecco::GUI()
 		ImGui::DragFloat("Sideways Wheel Drag", &sidewaysFrictionCoef, 0.01f, 0.0f);
 		ImGui::DragFloat("Portion of Sideways Speed Kept", &portionOfSidewaysSpeedKept, 1.0f, 0.0f, 100.0f);
 		ImGui::DragFloat("Stopping Wheel Drag", &stoppingFrictionCoef, 0.01f, 0.0f);
+		ImGui::DragFloat("Exceeding Max Slowing Force", &exceedingSlowIntensity, 0.1f, 0.0f);
 		ImGui::Checkbox("Local Steering", &controlState);
 		ImGui::DragFloat("Speed Boost", &speedBoost);
 		ImGui::DragInt("Speed boost self damage", &speedBoostHPCost);
@@ -275,6 +276,7 @@ toml::table Ecco::Serialise()
 		{ "sidewaysFrictionCoef", sidewaysFrictionCoef },
 		{ "portionOfSidewaysSpeedKept", portionOfSidewaysSpeedKept },
 		{ "stoppingFrictionCoef", stoppingFrictionCoef },
+		{ "exceedingSlowIntensity", exceedingSlowIntensity },
 		{ "controlState", controlState},
 		{ "speedBoost", speedBoost},
 		{ "speedBoostCooldown", speedBoostCooldown},
@@ -303,6 +305,7 @@ Ecco::Ecco(toml::table table)
 	sidewaysFrictionCoef = Serialisation::LoadAsFloat(table["sidewaysFrictionCoef"]);
 	portionOfSidewaysSpeedKept = Serialisation::LoadAsFloat(table["portionOfSidewaysSpeedKept"]);
 	stoppingFrictionCoef = Serialisation::LoadAsFloat(table["stoppingFrictionCoef"]);
+	exceedingSlowIntensity = Serialisation::LoadAsFloat(table["exceedingSlowIntensity"]);
 	controlState = Serialisation::LoadAsBool(table["controlState"]);
 	speedBoost = Serialisation::LoadAsFloat(table["speedBoost"]);
 	speedBoostCooldown = Serialisation::LoadAsFloat(table["speedBoostCooldown"]);
