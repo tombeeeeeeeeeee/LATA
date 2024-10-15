@@ -3,58 +3,31 @@
 #include "ComputeShader.h"
 #include "Texture.h"
 
+#include <chrono>
+#include <iostream>
+
 void Particle::Spread()
 {
-	for (size_t i = 0; i < count; i++)
-	{
-		positions.at(i) += glm::vec3{ i, i, i };
-	}
+	spreadCompute->Run(count, 1u, 1u);
 }
 
 void Particle::Explode()
 {
-	for (auto& i : velocities)
-	{
-		std::uniform_real_distribution<float> distribution(-10.0f, 10.0f);
-
-		i += explodeStrength * glm::normalize(glm::vec3{ distribution(random), distribution(random), distribution(random) });
-		if (glm::isnan(i.x)) {
-			//
-			i = { 1.0f, 0.0f, 0.0f };
-		}
-	}
+	explodeCompute->Run(count, 1u, 1u);
 }
 
 void Particle::Stop()
 {
-	for (size_t i = 0; i < count; i++)
-	{
-		velocities.at(i) = glm::vec3{ 0.0f, 0.0f, 0.0f };
-	}
+	stopCompute->Run(count, 1u, 1u);
 }
 
 void Particle::Reset()
 {
-	for (auto& i : positions)
-	{
-		i = glm::vec3(0.0f, 0.0f, 0.0f);
-	}
-	for (auto& i : velocities)
-	{
-		i = glm::vec3(0.0f, 0.0f, 0.0f);
-	}
+	resetCompute->Run(count, 1u, 1u);
 }
 
 void Particle::Initialise()
 {
-	positions.resize(count);
-	velocities.resize(count);
-
-	glGenBuffers(1, &instanceVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * count, &positions[0], GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	//mesh.InitialiseQuad(quadSize);
 	float size = quadSize;
 	float quadVerts[] = {
@@ -84,42 +57,65 @@ void Particle::Initialise()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
 
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO); // this attribute comes from a different vertex buffer
-
-	// TODO: GL_DYNAMIC_DRAW or GL_STREAM_DRAW?
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * count, &positions[0], GL_DYNAMIC_DRAW);
-
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	glVertexAttribDivisor(3, 1);
-
 	// TODO: use Paths.h
+	// TODO:
 	//compute = new ComputeShader("")
+	glGenBuffers(1, &ssbo);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
 
+	struct p {
+		glm::vec4 pos;
+		glm::vec4 vel;
+	};
+
+	std::vector<p> ps;
+	ps.resize(count);
+	for (size_t i = 0; i < count; i++)
+	{
+		ps.at(i).pos = glm::vec4();
+		ps.at(i).vel = glm::vec4();
+	}
+
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::vec4) * count * 2, &ps[0], GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ssbo);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 void Particle::Update(float delta)
 {
-	for (size_t i = 0; i < count; i++)
-	{
-		positions.at(i) += velocities.at(i);
-	}
 
+	auto start = std::chrono::system_clock::now();
+	
+	moveCompute->Run(count, 1u, 1u);
+
+
+	//for (size_t i = 0; i < count; i++)
+	//{
+	//	positions.at(i) += velocities.at(i);
+	//}
+	auto end = std::chrono::system_clock::now();
+
+	std::chrono::duration<double> duration = end - start;
+	std::cout << "Compute: " << duration.count() << '\n';
 }
 
 void Particle::Draw()
 {
+	auto start = std::chrono::system_clock::now();
+
+
 	shader->Use();
 	shader->setMat4("model", model);
 	texture->Bind(1);
 	shader->setSampler("material.albedo", 1);
 
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * count, &positions[0]);
-
 	glBindVertexArray(quadVAO);
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count);
+
+	auto end = std::chrono::system_clock::now();
+	std::chrono::duration<double> duration = end - start;
+	std::cout << "Draw: " << duration.count() << '\n';
+
 
 }
 

@@ -5,7 +5,6 @@
 #include "Maths.h"
 
 #include <vector>
-#include <random>
 
 class Shader;
 class ComputeShader;
@@ -16,21 +15,21 @@ class Particle
 public:
 
 	float quadSize = 10.0f; //  
-	const unsigned int count = 100000;
-	std::vector<glm::vec3> positions;
-	std::vector<glm::vec3> velocities;
+	unsigned int count = 1000000;
 
 	//Mesh mesh;
 	unsigned int quadVAO = 0;
 	unsigned int quadVBO = 0;
 	Shader* shader = nullptr;
-	ComputeShader* compute = nullptr;
+	ComputeShader* moveCompute = nullptr;
+	ComputeShader* stopCompute = nullptr;
+	ComputeShader* spreadCompute = nullptr;
+	ComputeShader* resetCompute = nullptr;
+	ComputeShader* explodeCompute = nullptr;
 
 	Texture* texture;
 
-	unsigned int instanceVBO;
-
-	std::random_device random;
+	unsigned int ssbo;
 
 	float explodeStrength = 1.0f;
 

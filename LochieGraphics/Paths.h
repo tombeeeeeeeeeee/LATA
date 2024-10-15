@@ -13,6 +13,8 @@ namespace Paths {
 	const std::string textureSaveLocation = "Assets/Textures/";
 	const std::string modelSaveLocation = "Assets/Models/";
 
+	const std::string shadersSaveLocation = "Shaders/";
+
 	const std::string userPrefsSaveLocation = "UserPrefs/";
 
 	const std::string rendererExtension = ".renderer";
@@ -22,6 +24,9 @@ namespace Paths {
 	const std::string levelExtension = ".level";
 	const std::string imageExtension = ".png";
 	const std::string userPrefsExtension = ".prefs";
+	const std::string fragmentExtension = ".frag";
+	const std::string vertexExtension = ".vert";
+	const std::string computeExtension = ".comp";
 
 	const std::string lastUsedUserPrefsFilePath = "CurrentUserPrefs.info";
 

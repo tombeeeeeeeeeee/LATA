@@ -59,7 +59,7 @@ public:
 	Ecco* ecco = nullptr;
 	Sync* sync = nullptr;
 
-
+	// TODO: Should probably be apart of the resource manager tbh
 	std::vector<Shader*> shaders = {};
 
 	std::vector<int> inputKeyWatch{};

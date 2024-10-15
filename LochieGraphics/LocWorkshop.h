@@ -26,7 +26,6 @@ private:
 	Model* model;
 
 	Shader* shader;
-	ComputeShader* computeShader;
 	Texture* texture;
 
 public:

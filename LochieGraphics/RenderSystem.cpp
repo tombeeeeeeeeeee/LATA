@@ -421,19 +421,22 @@ void RenderSystem::Update(
 
     for (auto i : particles)
     {
-        glm::mat4 tempView = camera->GetViewMatrix();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (i == j) {
-                    tempView[i][j] = 1.0;
-                }
-                else {
-                    tempView[i][j] = 0.0;
+        glm::mat4 view = camera->GetViewMatrix();
+        if (particleFacingCamera) {
+            view = camera->GetViewMatrix();
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (i == j) {
+                        view[i][j] = 1.0;
+                    }
+                    else {
+                        view[i][j] = 0.0;
+                    }
                 }
             }
         }
         i->shader->Use();
-        i->shader->setMat4("vp", projection * tempView);
+        i->shader->setMat4("vp", projection * view);
         i->Draw();
     }
     glDisable(GL_BLEND);
@@ -689,7 +692,6 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
 void RenderSystem::GUI()
 {
     if (ImGui::Begin("Render System", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-
         if (ImGui::CollapsingHeader("SSAO")) {
             ImGui::DragInt("Kernal Size", &kernelSize);
             ImGui::DragFloat("Radius", &ssaoRadius);
@@ -901,6 +903,7 @@ void RenderSystem::SSAOSetup()
 
 void RenderSystem::RenderSSAO()
 {
+    return;
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
     glClear(GL_COLOR_BUFFER_BIT);
 

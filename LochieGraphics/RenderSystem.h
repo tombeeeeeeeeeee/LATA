@@ -33,6 +33,8 @@ public:
 
     static LineRenderer lines;
 
+    bool particleFacingCamera;
+
     void Start(
         unsigned int _skyboxTexture,
         std::vector<Shader*>* _shaders,

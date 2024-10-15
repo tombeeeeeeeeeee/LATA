@@ -23,8 +23,8 @@ void LocWorkshop::Start()
 	camera->editorSpeed.move = 250.0f;
 	camera->farPlane = 500.0f;
 	camera->nearPlane = 1.0f;
-	camera->transform.setPosition({ 0.0f, 400.0f, 0.0f });
-	camera->transform.setEulerRotation({ 0.0f, 0.0f, -90.0f });
+	camera->transform.setPosition({ 0.0f, 0.0f, 300.0f });
+	camera->transform.setEulerRotation({ 0.0f, 90.0f, 0.0f });
 
 
 	int max_compute_work_group_count[3] = {};
@@ -48,8 +48,6 @@ void LocWorkshop::Start()
 
 	std::cout << "Number of invocations in a single local work group that may be dispatched to a compute shader " << max_compute_work_group_invocations << "\n\n";
 
-	computeShader = new ComputeShader("shaders/LocsComputeShader.comp");
-
 	texture = ResourceManager::LoadTexture(1024u, 1024u);
 	texture->type = Texture::Type::albedo;
 	texture->Bind(0);
@@ -61,13 +59,9 @@ void LocWorkshop::Start()
 	Material* material = ResourceManager::LoadMaterial("Testing", shader);
 	material->AddTextures({ texture });
 
-
 	sceneObject = new SceneObject(this, "Testing!");
 	model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
 	//sceneObject->setRenderer(new ModelRenderer(model, material));
-
-
-
 
 	texture->Bind(0);
 	glBindImageTexture(0, texture->GLID, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
@@ -84,6 +78,11 @@ void LocWorkshop::Start()
 	Texture* particleTexture = ResourceManager::LoadTexture("images/brodie.jpg", Texture::Type::albedo);
 
 	particle.texture = particleTexture;
+	particle.moveCompute =    new ComputeShader(Paths::shadersSaveLocation + "particleMove"    + Paths::computeExtension);
+	particle.resetCompute =   new ComputeShader(Paths::shadersSaveLocation + "particleReset"   + Paths::computeExtension);
+	particle.explodeCompute = new ComputeShader(Paths::shadersSaveLocation + "particleExplode" + Paths::computeExtension);
+	particle.stopCompute =    new ComputeShader(Paths::shadersSaveLocation + "particleStop"    + Paths::computeExtension);
+	particle.spreadCompute =  new ComputeShader(Paths::shadersSaveLocation + "particleSpread"  + Paths::computeExtension);
 }
 
 void LocWorkshop::Update(float delta)
@@ -160,6 +159,10 @@ void LocWorkshop::GUI()
 	if (ImGui::Button("Stop##Particle")) {
 		particle.Stop();
 	}
+
+	ImGui::Checkbox("Facing Camera##Particle", &renderSystem.particleFacingCamera);
+
+	ImGui::DragScalar("Count##Particle", ImGuiDataType_U32, reinterpret_cast<void*>(&particle.count));
 
 	ExtraEditorGUI::Mat4Input("Model Matrix##Particle", &particle.model);
 
