@@ -60,7 +60,7 @@ void ModelRenderer::GUI()
 		}
 		ImGui::Unindent();
 
-		if (ResourceManager::ModelAssetSelector("Model", &model)) {
+		if (ResourceManager::ModelSelector("Model", &model)) {
 			if (model) {
 				modelGUID = model->GUID;
 			}

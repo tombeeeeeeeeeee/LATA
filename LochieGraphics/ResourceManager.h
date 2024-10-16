@@ -47,7 +47,6 @@ public:
 	static bool ShaderSelector(std::string label, Shader** shader, bool showNull = false);
 	static bool MaterialSelector(std::string label, Material** material, Shader* newMaterialShader = nullptr, bool showNull = true);
 	static bool ModelSelector(std::string label, Model** model, bool showNull = true);
-	static bool ModelAssetSelector(std::string label, Model** model);
 
 	static unsigned long long guidCounter;
 	static std::random_device guidRandomiser;

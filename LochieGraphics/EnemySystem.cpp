@@ -494,7 +494,7 @@ void EnemySystem::GUI()
     ImGui::DragInt("Melee Enemy Damage", &meleeEnemyDamage);
     ImGui::DragFloat("Melee Enemy Collider Radius", &meleeEnemyColliderRadius);
     ImGui::DragFloat("Distance To Start Punching", &distanceToPunch, 25.0f, 0);
-    if (ResourceManager::ModelAssetSelector("Melee Enemy Model", &(meleeEnemyRenderer->model)))
+    if (ResourceManager::ModelSelector("Melee Enemy Model", &(meleeEnemyRenderer->model)))
     {
         meleeEnemyModel = meleeEnemyRenderer->model->path;
     }
@@ -506,7 +506,7 @@ void EnemySystem::GUI()
     ImGui::DragFloat("Ranged Enemy Collider Radius", &rangedEnemyColliderRadius);
     ImGui::DragFloat("Distance To Start Shooting", &distanceToShoot, 25.0f, 0);
     ImGui::DragFloat("Distance To Start Fleeing", &distanceToFlee, 25.0f, 0);
-    if (ResourceManager::ModelAssetSelector("Ranged Enemy Model", &(rangedEnemyRenderer->model)))
+    if (ResourceManager::ModelSelector("Ranged Enemy Model", &(rangedEnemyRenderer->model)))
     {
         rangedEnemyModel = rangedEnemyRenderer->model->path;
     }

@@ -10,6 +10,7 @@
 
 bool UserPreferences::escapeCloses = false;
 std::string UserPreferences::filename = "";
+UserPreferences::ModelSelectMode UserPreferences::modelSelectMode = UserPreferences::ModelSelectMode::assets;
 
 void UserPreferences::GUI()
 {
@@ -28,6 +29,8 @@ void UserPreferences::GUI()
 	}
 
 	ImGui::Checkbox("Pressing Escape Quits", &escapeCloses);
+
+	ImGui::Combo("Model Chooser Mode", (int*)&modelSelectMode, "Loaded\0Assets\0\0");
 }
 
 void UserPreferences::Initialise()
