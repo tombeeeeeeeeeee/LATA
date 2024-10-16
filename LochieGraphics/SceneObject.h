@@ -14,6 +14,7 @@ class Animator;
 class RigidBody;
 class ExitElevator;
 class SpawnManager;
+class LineRenderer;
 struct Enemy;
 namespace toml {
 	inline namespace v3 {
@@ -59,6 +60,7 @@ public:
 	//SceneObject& operator=(const SceneObject& other) = delete;
 
 	void GUI();
+	void DebugDraw();
 
 	toml::table Serialise() const;
 
