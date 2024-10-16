@@ -46,11 +46,20 @@ class Scene;
 class SceneObject
 {
 public:
+	enum class PrefabStatus {
+		none,
+		prefabOrigin,
+		prefabInstance
+	};
 
 	std::string name = "Unnamed Scene Object";
-	unsigned long long GUID = 0;
-	unsigned int parts = 0;
+	unsigned long long GUID = 0ull;
+	unsigned int parts = 0u;
 	Scene* scene = nullptr;
+
+	PrefabStatus prefabStatus = PrefabStatus::none;
+	unsigned long long prefabBase = 0ull;
+
 	SceneObject(Scene* _scene, std::string name = "Unnamed Scene Object");
 	SceneObject(Scene* _scene, toml::table* table);
 
@@ -60,9 +69,13 @@ public:
 	//SceneObject& operator=(const SceneObject& other) = delete;
 
 	void GUI();
+	void MenuGUI();
+
 	void DebugDraw();
 
 	toml::table Serialise() const;
+
+	void SaveAsPrefab();
 
 
 #pragma region Part Get and Set

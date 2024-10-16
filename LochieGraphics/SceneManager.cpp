@@ -167,6 +167,8 @@ SceneManager::SceneManager(Scene* _scene)
 		});
 	ResourceManager::defaultShader = scene->shaders[super];
 
+	UserPreferences::Initialise();
+
 	scene->Start();
 
 	scene->renderSystem.Start(
@@ -183,7 +185,6 @@ SceneManager::SceneManager(Scene* _scene)
 		(*i).second.UpdateGlobalMatrixCascading();
 	}
 
-	UserPreferences::Initialise();
 
 	std::cout << "Start finished\n";
 }
@@ -254,6 +255,9 @@ void SceneManager::Update()
 	scene->renderSystem.lines.Clear();
 	scene->renderSystem.debugLines.Clear();
 	scene->Update(deltaTime);
+	if (scene->gui.sceneObjectSelected) {
+		scene->gui.sceneObjectSelected->DebugDraw();
+	}
 	for (auto& i : scene->animators)
 	{
 		i.second.UpdateAnimation(deltaTime);

@@ -9,6 +9,7 @@
 #include "Sync.h"
 #include "Ecco.h"
 #include "RenderSystem.h"
+#include "UserPreferences.h"
 
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
@@ -220,6 +221,10 @@ void LevelEditor::Start()
 
 	renderSystem.ssaoRadius = 64.0f;
 	renderSystem.ssaoBias = 32.0f;
+
+	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
+		LoadLevel(false, UserPreferences::defaultLevelLoad);
+	}
 }
 
 void LevelEditor::Update(float delta)
@@ -515,6 +520,10 @@ void LevelEditor::LoadPrompt()
 void LevelEditor::SaveLevel()
 {
 	enemySystem.PopulateNormalFlowMapFromRigidBodies(transforms, rigidBodies, colliders);
+	
+	if (UserPreferences::rememberLastLevel) {
+		UserPreferences::defaultLevelLoad = windowName;
+	}
 
 	std::ofstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
@@ -534,6 +543,11 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 		std::cout << "Level File not found\n";
 		return;
 	}
+
+	if (UserPreferences::rememberLastLevel) {
+		UserPreferences::defaultLevelLoad = windowName;
+	}
+
 	toml::table data = toml::parse(file);
 
 	DeleteAllSceneObjects();

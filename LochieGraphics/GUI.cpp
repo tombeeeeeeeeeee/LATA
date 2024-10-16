@@ -231,7 +231,6 @@ void GUI::SceneObjectMenu()
 
 	if (sceneObjectSelected) {
 		sceneObjectSelected->GUI();
-		sceneObjectSelected->DebugDraw();
 	}
 	else {
 		ImGui::Text("Select a Scene Object in the Hierarchy Menu");
@@ -313,19 +312,28 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	if (!hasChildren) {
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
+	
+	glm::vec4 textColour = { 1, 1, 1, 1 };
+	if (sceneObject->prefabStatus == SceneObject::PrefabStatus::prefabOrigin) {
+		textColour = { 0.66f, 0.0f, 1.0f, 1.0f };
+	}
+	else if (sceneObject->prefabStatus == SceneObject::PrefabStatus::prefabInstance) {
+		textColour = { 0.0f, 0.1f, 1.0f, 1.0f };
+	}
+
+	ImGui::PushStyleColor(0, { textColour.x, textColour.y, textColour.z, textColour.w });
 	bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + tag).c_str(), nodeFlags);
+	ImGui::PopStyleColor();
+	
+
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsItemToggledOpen()) {
 		sceneObjectSelected = sceneObject;
-		std::cout << "Changed gui select!\n";
 	}
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 		ImGui::OpenPopup(("SceneObjectRightClickPopUp##" + tag).c_str());
 	}
 	if (ImGui::BeginPopup(("SceneObjectRightClickPopUp##" + tag).c_str())) {
-		if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
-			scene->DeleteSceneObject(sceneObject->GUID);
-		}
-		ImGui::EndPopup();
+		sceneObject->MenuGUI();
 	}
 
 

@@ -11,6 +11,9 @@
 bool UserPreferences::escapeCloses = false;
 std::string UserPreferences::filename = "";
 UserPreferences::ModelSelectMode UserPreferences::modelSelectMode = UserPreferences::ModelSelectMode::assets;
+std::string UserPreferences::defaultLevelLoad = "";
+bool UserPreferences::rememberLastLevel = true;
+bool UserPreferences::loadDefaultLevel = true;
 
 void UserPreferences::GUI()
 {
@@ -31,6 +34,10 @@ void UserPreferences::GUI()
 	ImGui::Checkbox("Pressing Escape Quits", &escapeCloses);
 
 	ImGui::Combo("Model Chooser Mode", (int*)&modelSelectMode, "Loaded\0Assets\0\0");
+
+	ImGui::Checkbox("Load Default Level", &loadDefaultLevel);
+	ImGui::InputText("Default Level Load", &defaultLevelLoad);
+	ImGui::Checkbox("Rememeber Last Level", &rememberLastLevel);
 }
 
 void UserPreferences::Initialise()
@@ -71,6 +78,10 @@ void UserPreferences::Save()
 
 	toml::table table{
 		{ "escapeCloses", escapeCloses },
+		{ "modelSelectMode", (int)modelSelectMode },
+		{ "loadDefaultLevel", loadDefaultLevel },
+		{ "defaultLevelLoad", defaultLevelLoad },
+		{ "rememberLastLevel", rememberLastLevel},
 	};
 
 	file << table << '\n';
@@ -85,6 +96,10 @@ void UserPreferences::Load()
 	toml::table data = toml::parse(file);
 
 	escapeCloses = Serialisation::LoadAsBool(data["escapeCloses"]);
+	modelSelectMode = (ModelSelectMode)Serialisation::LoadAsInt(data["modelSelectMode"]);
+	loadDefaultLevel = Serialisation::LoadAsBool(data["loadDefaultLevel"]);
+	defaultLevelLoad = Serialisation::LoadAsString(data["defaultLevelLoad"]);
+	rememberLastLevel = Serialisation::LoadAsBool(data["rememberLastLevel"]);
 
 	file.close();
 }
