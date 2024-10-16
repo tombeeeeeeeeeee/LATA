@@ -57,6 +57,7 @@ public:
 	bool GetCollisionLayerIndexed(int layerA, int layerB);
 	toml::table Serialise() const;
 
+	bool displayAllColliders = false;
 	unsigned int layerMasks[32] = {
 		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
 		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,

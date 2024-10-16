@@ -71,6 +71,7 @@ void PhysicsSystem::CollisionCheckPhase(
 		std::vector<CollisionPacket> collisions;
 		for (auto i = rigidBodies.begin(); i != rigidBodies.end(); i++)
 		{
+
 			for (auto j = std::next(i); j != rigidBodies.end(); j++)
 			{
 				if (i->second.isStatic && j->second.isStatic) continue;
@@ -84,7 +85,6 @@ void PhysicsSystem::CollisionCheckPhase(
 			{
 				for (auto k = colliders.begin(); k != colliders.end(); k++)
 				{
-					
 					GetCollisions(
 						&i->second, k->second,
 						&transforms[i->first], &transforms[k->first],
@@ -96,6 +96,18 @@ void PhysicsSystem::CollisionCheckPhase(
 		for (int i = 0; i < collisions.size(); i++)
 		{
 			CollisisonResolution(collisions[i]);
+		}
+	}
+
+	if (displayAllColliders)
+	{
+		for (auto i = rigidBodies.begin(); i != rigidBodies.end(); i++)
+		{
+			i->second.DebugDraw(&transforms[i->first]);
+		}
+		for (auto k = colliders.begin(); k != colliders.end(); k++)
+		{
+			k->second->DebugDraw(&transforms[k->first]);
 		}
 	}
 }

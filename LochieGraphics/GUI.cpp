@@ -377,6 +377,7 @@ void GUI::PhysicsMenu()
 	}
 
 	//TODO SAVE AND LOAD
+	ImGui::Checkbox("Display All Colliders", &scene->physicsSystem.displayAllColliders);
 
 	int flagCount = (int)log2((int)CollisionLayers::count);
 
