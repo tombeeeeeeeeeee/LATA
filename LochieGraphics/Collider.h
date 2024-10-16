@@ -3,6 +3,8 @@
 
 #include <vector>
 
+class Transform;
+
 namespace toml {
 	inline namespace v3 {
 		class table;
@@ -45,7 +47,7 @@ struct Collider
 	static Collider* Load(toml::table table);
 	Collider() = default;
 	virtual void GUI();
-
+	virtual void DebugDraw(Transform* transform) = 0;
 	static const int transparentLayers = (int)CollisionLayers::syncProjectile | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::enemyProjectile | (int)CollisionLayers::softCover | (int)CollisionLayers::halfCover;
 
 protected:
@@ -63,6 +65,7 @@ struct PolygonCollider : public Collider
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	PolygonCollider(toml::table table);
 	void GUI() override;
+	void DebugDraw(Transform* transform) override;
 };
 
 struct PlaneCollider : public Collider
@@ -73,6 +76,7 @@ struct PlaneCollider : public Collider
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	PlaneCollider(toml::table table);
 	void GUI() override;
+	void DebugDraw(Transform* transform) override {};
 };
 
 struct DirectionalCollider : public PolygonCollider
@@ -82,4 +86,5 @@ struct DirectionalCollider : public PolygonCollider
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	DirectionalCollider(toml::table table);
 	void GUI() override;
+	void DebugDraw(Transform* transform) override {};
 };

@@ -231,6 +231,7 @@ void GUI::SceneObjectMenu()
 
 	if (sceneObjectSelected) {
 		sceneObjectSelected->GUI();
+		sceneObjectSelected->DebugDraw();
 	}
 	else {
 		ImGui::Text("Select a Scene Object in the Hierarchy Menu");

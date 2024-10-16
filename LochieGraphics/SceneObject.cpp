@@ -12,6 +12,7 @@
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
+#include "LineRenderer.h"
 
 SceneObject::SceneObject(Scene* _scene, std::string _name) :
 	scene(_scene),
@@ -133,6 +134,18 @@ void SceneObject::GUI()
 		}
 		RemovePartGUI(exitElevator, setExitElevator, "Exit##Remove part");
 		ImGui::EndPopup();
+	}
+}
+
+void SceneObject::DebugDraw()
+{
+	if (parts & Parts::rigidBody)
+	{
+		scene->rigidBodies[GUID].DebugDraw(&scene->transforms[GUID]);
+	}
+	if (parts & Parts::collider)
+	{
+		scene->colliders[GUID]->DebugDraw(&scene->transforms[GUID]);
 	}
 }
 
