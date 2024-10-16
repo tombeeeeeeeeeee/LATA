@@ -211,6 +211,7 @@ void EnemySystem::AbilityCheck(
         if (enemyPair.second.inAbility)
         {
             int type = enemyPair.second.type;
+            std::vector<Hit> hits;
             switch (type)
             {
             case (int)EnemyType::explosive:
@@ -222,7 +223,7 @@ void EnemySystem::AbilityCheck(
                 {
                     enemyPair.second.inAbility = false;
 
-                    std::vector<Hit> hits = PhysicsSystem::CircleCast(enemyPos, explosionRadius, ~(Collider::transparentLayers | (int)CollisionLayers::base | (int)CollisionLayers::reflectiveSurface));
+                    hits = PhysicsSystem::CircleCast(enemyPos, explosionRadius, ~(Collider::transparentLayers | (int)CollisionLayers::base | (int)CollisionLayers::reflectiveSurface));
                     for (auto& hit : hits)
                     {
                         Health* health = hit.sceneObject->health();
@@ -235,6 +236,18 @@ void EnemySystem::AbilityCheck(
                 }
                 break;
             case (int)EnemyType::melee:
+                enemyPair.second.inAbility = false;
+                glm::vec3 f = transforms[enemyPair.first].forward();
+
+                hits = PhysicsSystem::CircleCast(enemyPos + glm::vec2(f.x * meleeEnemyColliderRadius, f.z * meleeEnemyColliderRadius), punchRadius, ~(Collider::transparentLayers | (int)CollisionLayers::base | (int)CollisionLayers::reflectiveSurface));
+                for (auto& hit : hits)
+                {
+                    Health* health = hit.sceneObject->health();
+                    if (health)
+                    {
+                        health->subtractHealth(meleeEnemyDamage);
+                    }
+                }
                 break;
             case (int)EnemyType::ranged:
                 break;
@@ -371,10 +384,17 @@ void EnemySystem::Steering(
         }
         enemyPair.second.influenceThisFrame = {0.0f, 0.0f};
 
+
         glm::vec2 curVel = rigidBodies[enemyPair.first].vel;
         glm::vec2 velocityDelta = enemyPair.second.boidVelocity - curVel;
         glm::vec2 forceThisFrame = velocityDelta / delta;
         rigidBodies[enemyPair.first].netForce += forceThisFrame;
+
+        float angle = atan2f(rigidBodies[enemyPair.first].vel.x, rigidBodies[enemyPair.first].vel.y) * 180.0f / PI;
+        if (isnan(angle)) continue;
+        glm::vec3 eulers = transforms[enemyPair.first].getEulerRotation();
+        eulers.y = angle;
+        transforms[enemyPair.first].setEulerRotation(eulers);
     }
 
 }

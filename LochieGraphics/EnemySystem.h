@@ -77,6 +77,7 @@ public:
 	float meleeEnemyColliderRadius = 120.0f;
 	float timeToPunch = 0.8f;
 	float distanceToPunch = 150.0f;
+	float punchRadius = 150.0f;
 	ModelRenderer* meleeEnemyRenderer = nullptr;
 	std::string meleeEnemyModel = "SM_Enemy_TPose";
 	std::string meleeEnemyMaterialPath = "images/otherskybox/nx.png";
