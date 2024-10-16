@@ -49,6 +49,8 @@ unsigned long long Serialisation::LoadAsUnsignedLongLong(toml::node& toml)
 
 std::string Serialisation::LoadAsString(toml::node_view<toml::node> toml)
 {
+    // TODO: Error message
+    if (!toml) { return ""; }
     return toml.as_string()->value_or<std::string>("");
 }
 

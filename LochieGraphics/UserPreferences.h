@@ -16,6 +16,10 @@ public:
 	};
 	static ModelSelectMode modelSelectMode;
 
+	static bool loadDefaultLevel;
+	static std::string defaultLevelLoad;
+	static bool rememberLastLevel;
+
 	static void GUI();
 
 	static void Initialise();

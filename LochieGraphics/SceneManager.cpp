@@ -167,6 +167,8 @@ SceneManager::SceneManager(Scene* _scene)
 		});
 	ResourceManager::defaultShader = scene->shaders[super];
 
+	UserPreferences::Initialise();
+
 	scene->Start();
 
 	scene->renderSystem.Start(
@@ -183,7 +185,6 @@ SceneManager::SceneManager(Scene* _scene)
 		(*i).second.UpdateGlobalMatrixCascading();
 	}
 
-	UserPreferences::Initialise();
 
 	std::cout << "Start finished\n";
 }
