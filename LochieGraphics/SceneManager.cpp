@@ -255,6 +255,9 @@ void SceneManager::Update()
 	scene->renderSystem.lines.Clear();
 	scene->renderSystem.debugLines.Clear();
 	scene->Update(deltaTime);
+	if (scene->gui.sceneObjectSelected) {
+		scene->gui.sceneObjectSelected->DebugDraw();
+	}
 	for (auto& i : scene->animators)
 	{
 		i.second.UpdateAnimation(deltaTime);

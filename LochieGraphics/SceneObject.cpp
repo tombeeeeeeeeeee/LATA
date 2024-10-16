@@ -7,12 +7,15 @@
 #include "Sync.h"
 #include "Ecco.h"
 #include "Scene.h"
+#include "Paths.h"
 
 #include "Utilities.h"
 
 #include "EditorGUI.h"
-#include "Serialisation.h"
 #include "LineRenderer.h"
+#include "Serialisation.h"
+
+#include <fstream>
 
 SceneObject::SceneObject(Scene* _scene, std::string _name) :
 	scene(_scene),
@@ -135,6 +138,28 @@ void SceneObject::GUI()
 		RemovePartGUI(exitElevator, setExitElevator, "Exit##Remove part");
 		ImGui::EndPopup();
 	}
+}
+
+void SceneObject::MenuGUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+
+	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
+		scene->DeleteSceneObject(GUID);
+	}
+	if (ImGui::MenuItem((("Duplicate##RightClick") + tag).c_str())) {
+		// TODO:
+	}
+	if (ImGui::MenuItem(("Save As Prefab##RightClick" + tag).c_str())) {
+		// TODO:
+		SaveAsPrefab();
+
+	}
+	if (ImGui::MenuItem(("Replace with Prefab##RightClick" + tag).c_str())) {
+		// TODO:
+	}
+	ImGui::EndPopup();
+
 }
 
 void SceneObject::DebugDraw()
@@ -320,4 +345,55 @@ void SceneObject::ClearParts()
 	if (parts & Parts::spawnManager)  { scene->spawnManagers.erase(GUID); parts &= ~(Parts::spawnManager);}
 
 	assert(parts == 0);
+}
+
+
+#define SaveAsPrefabPart(saveName, partsName, container)                      \
+	if (Parts::##partsName & parts) {                                         \
+		table.emplace(saveName, scene->##container.at(GUID).Serialise(GUID)); \
+		safetyCheck &= ~Parts::##partsName;                                    \
+	}                                                                         \
+
+
+void SceneObject::SaveAsPrefab()
+{
+	auto safetyCheck = parts;
+	std::ofstream file(Paths::prefabsSaveLocation + name + Paths::prefabExtension);
+
+	toml::table table;
+
+	table.emplace("sceneObject", Serialise());
+
+	SaveAsPrefabPart("modelRenderer", modelRenderer, renderers);
+	SaveAsPrefabPart("animator", animator, animators);
+	SaveAsPrefabPart("rigidBody", rigidBody, rigidBodies);
+	SaveAsPrefabPart("health", health, healths);
+	SaveAsPrefabPart("enemy", enemy, enemies);
+	SaveAsPrefabPart("exitElevator", exitElevator, exits);
+	
+	if (Parts::collider & parts) {
+		table.emplace("collider", scene->colliders.at(GUID)->Serialise(GUID));
+		safetyCheck &= ~Parts::collider;
+	}
+
+	if (Parts::ecco & parts) {
+		table.emplace("ecco", scene->ecco->Serialise());
+		safetyCheck &= ~Parts::ecco;
+	}
+
+	if (Parts::sync & parts) {
+		table.emplace("sync", scene->sync->Serialise());
+		safetyCheck &= ~Parts::sync;
+	}
+
+	// TODO: Probably don't need a whole assert here, could just print a error and continue on
+	assert(safetyCheck == 0);
+
+	// TODO: Give a warning incase the object has children as they won't be saved along with the prefab just yet
+
+	file << table << '\n';
+
+	file.close();
+
+	prefabStatus = PrefabStatus::prefabOrigin;
 }
