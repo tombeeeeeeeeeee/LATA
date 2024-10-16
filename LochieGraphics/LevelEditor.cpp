@@ -383,7 +383,7 @@ void LevelEditor::GUI()
 
 		if (state == BrushState::assetPlacer) {
 			ImGui::Indent();
-			ResourceManager::ModelAssetSelector("Asset To Place", &assetPlacer);
+			ResourceManager::ModelSelector("Asset To Place", &assetPlacer);
 			ImGui::DragFloat("Asset Placement Height", &assetPlacerHeight);
 			ImGui::DragFloat("Asset Placement Rotation", &assetPlacerRotation);
 			ImGui::ColorEdit3("Asset Placement Colour", &assetPlacerColour.x);

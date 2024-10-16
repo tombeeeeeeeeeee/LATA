@@ -114,14 +114,14 @@ CollisionPacket CollisionFunctions::CircleOnPolyCollision(PolygonCollider* circl
 	{
 		minDepth = circleMax - polyMin;
 		collision.contactPoint = closestPoint;
-		collision.normal = curNormal;
+		collision.normal = -curNormal;
 	}
 
 	if (polyMax - circleMin < minDepth)
 	{
 		minDepth = polyMax - circleMin;
 		collision.contactPoint = closestPoint;
-		collision.normal = -curNormal;
+		collision.normal = curNormal;
 	}
 
 	glm::vec2 tangent = glm::normalize(polyPoints[(closestPointIndex + 1) % polyPoints.size()] - closestPoint);

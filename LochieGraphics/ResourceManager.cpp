@@ -3,6 +3,7 @@
 #include "Paths.h"
 #include "ShaderEnum.h"
 #include "Vertex.h"
+#include "UserPreferences.h"
 
 #include "Utilities.h"
 
@@ -177,31 +178,33 @@ bool ResourceManager::MaterialSelector(std::string label, Material** material, S
 
 bool ResourceManager::ModelSelector(std::string label, Model** model, bool showNull)
 {
-	ResourceSelector(Model, model, label, (Model * (*)())nullptr);
-}
-
-bool ResourceManager::ModelAssetSelector(std::string label, Model** model)
-{
-	std::string tag = Utilities::PointerToString(model);
-	std::vector<std::string> paths;
-	std::vector<std::string*> pointers;
-	std::string* modelPath = nullptr;
-	for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation)) {
-		paths.push_back(Utilities::FilenameFromPath(i.path().string(), false));
+	if (UserPreferences::modelSelectMode == UserPreferences::ModelSelectMode::loaded) {
+		ResourceSelector(Model, model, label, (Model * (*)())nullptr);
 	}
-	for (size_t i = 0; i < paths.size(); i++)
-	{
-		pointers.push_back(&paths.at(i));
-		if (*model) {
-			if (Utilities::FilenameFromPath((*model)->path, false) == paths.at(i)) {
-				modelPath = pointers.back();
+	else if (UserPreferences::modelSelectMode == UserPreferences::ModelSelectMode::assets) {
+		std::string tag = Utilities::PointerToString(model);
+		std::vector<std::string> paths;
+		std::vector<std::string*> pointers;
+		std::string* modelPath = nullptr;
+		for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation)) {
+			paths.push_back(Utilities::FilenameFromPath(i.path().string(), false));
+		}
+		for (size_t i = 0; i < paths.size(); i++)
+		{
+			pointers.push_back(&paths.at(i));
+			if (*model) {
+				if (Utilities::FilenameFromPath((*model)->path, false) == paths.at(i)) {
+					modelPath = pointers.back();
+				}
 			}
 		}
+		if (ExtraEditorGUI::InputSearchBox(pointers.begin(), pointers.end(), &modelPath, "Model", tag, false)) {
+			*model = LoadModelAsset(Paths::modelSaveLocation + *modelPath + Paths::modelExtension);
+			return true;
+		}
+		return false;
 	}
-	if (ExtraEditorGUI::InputSearchBox(pointers.begin(), pointers.end(), &modelPath, "Model", tag, false)) {
-		*model = LoadModelAsset(Paths::modelSaveLocation + *modelPath + Paths::modelExtension);
-		return true;
-	}
+	std::cout << "Unknown Model Selector Type\n";
 	return false;
 }
 
