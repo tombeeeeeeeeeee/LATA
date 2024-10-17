@@ -1,5 +1,6 @@
 #include "UserPreferences.h"
 
+#include "SceneManager.h"
 #include "Paths.h"
 
 #include "EditorGUI.h"
@@ -15,6 +16,7 @@ std::string UserPreferences::defaultLevelLoad = "";
 bool UserPreferences::rememberLastLevel = true;
 bool UserPreferences::loadDefaultLevel = true;
 bool UserPreferences::enterPlayModeOnStart = false;
+WindowModes UserPreferences::windowedStartMode = WindowModes::maximised;
 
 void UserPreferences::GUI()
 {
@@ -35,6 +37,8 @@ void UserPreferences::GUI()
 	ImGui::Checkbox("Pressing Escape Quits", &escapeCloses);
 
 	ImGui::Combo("Model Chooser Mode", (int*)&modelSelectMode, "Loaded\0Assets\0\0");
+
+	ImGui::Combo("Default Windowed Mode", (int*)&windowedStartMode, "Windowed\0Borderless Fullscreen\0Maximised\0\0");
 
 	if (ImGui::CollapsingHeader("Level Editor")) {
 		ImGui::Indent();
@@ -61,6 +65,8 @@ void UserPreferences::Initialise()
 		filename = newFilename;
 		Load();
 	}
+
+	// Switching to Preferenced windowed mode is done in SceneManager Start
 
 	lastUsed.close();
 }
@@ -90,6 +96,7 @@ void UserPreferences::Save()
 		{ "defaultLevelLoad", defaultLevelLoad },
 		{ "rememberLastLevel", rememberLastLevel },
 		{ "enterPlayModeOnStart", enterPlayModeOnStart },
+		{ "windowedStartMode", (int)windowedStartMode }
 	};
 
 	file << table << '\n';
@@ -109,6 +116,7 @@ void UserPreferences::Load()
 	defaultLevelLoad = Serialisation::LoadAsString(data["defaultLevelLoad"]);
 	rememberLastLevel = Serialisation::LoadAsBool(data["rememberLastLevel"]);
 	enterPlayModeOnStart = Serialisation::LoadAsBool(data["enterPlayModeOnStart"]);
+	windowedStartMode = (WindowModes)Serialisation::LoadAsInt(data["windowedStartMode"]);
 
 	file.close();
 }

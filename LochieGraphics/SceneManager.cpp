@@ -180,6 +180,8 @@ SceneManager::SceneManager(Scene* _scene)
 		""
 	);
 
+	SwitchToWindowMode(UserPreferences::windowedStartMode);
+
 
 
 	for (auto i = scene->transforms.begin(); i != scene->transforms.end(); i++)
@@ -494,17 +496,39 @@ void SceneManager::ProcessMouseInput(GLFWwindow* window)
 
 void SceneManager::ToggleFullscreen()
 {
-	auto temp = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	firstMouse = true;
 	switch (windowMode)
 	{
 	case WindowModes::windowed:
-		windowMode = WindowModes::fullscreenWindowed;
+		SwitchToWindowMode(WindowModes::maximised);
+		break;
+	case WindowModes::maximised:
+		SwitchToWindowMode(WindowModes::borderlessFullscreen);
+		break;
+	case WindowModes::borderlessFullscreen:
+		SwitchToWindowMode(WindowModes::windowed);
+		break;
+	default:
+		break;
+	}
+}
+
+void SceneManager::SwitchToWindowMode(WindowModes mode)
+{
+	windowMode = mode;
+	auto temp = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	firstMouse = true;
+	switch (mode)
+	{
+	case WindowModes::windowed:
+		glfwRestoreWindow(window);
+		glfwSetWindowMonitor(window, nullptr, windowWidth / 4, windowHeight / 4, windowWidth / 2, windowHeight / 2, temp->refreshRate);
+		break;
+	case WindowModes::borderlessFullscreen:
+		glfwRestoreWindow(window);
 		glfwSetWindowMonitor(SceneManager::window, glfwGetPrimaryMonitor(), 0, 0, temp->width, temp->height, temp->refreshRate);
 		break;
-	case WindowModes::fullscreenWindowed:
-		windowMode = WindowModes::windowed;
-		glfwSetWindowMonitor(window, nullptr, windowWidth / 4, windowHeight / 4, windowWidth / 2, windowHeight / 2, temp->refreshRate);
+	case WindowModes::maximised:
+		glfwMaximizeWindow(window);
 		break;
 	default:
 		break;

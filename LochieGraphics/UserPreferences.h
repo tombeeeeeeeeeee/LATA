@@ -1,5 +1,8 @@
 #pragma once
 
+// TODO: This is only here for the window mode, would be nice to remove
+#include "SceneManager.h"
+
 #include <string>
 
 class UserPreferences
@@ -20,6 +23,7 @@ public:
 	static std::string defaultLevelLoad;
 	static bool rememberLastLevel;
 	static bool enterPlayModeOnStart;
+	static WindowModes windowedStartMode;
 
 	static void GUI();
 
@@ -29,6 +33,5 @@ public:
 
 	static void Save();
 	static void Load();
-
 };
 
