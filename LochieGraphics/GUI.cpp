@@ -292,6 +292,8 @@ void GUI::HierarchyMenu()
 	{
 		if (!i.second) 
 		{
+			// TODO: Maybe error here
+			// TODO: Maybe shouldn't be here, there is something similar near the end of load all sceneObjects in scene
 			scene->DeleteSceneObject(i.first); continue;
 		}
 		if (i.second->transform()->getParent()) { continue; }

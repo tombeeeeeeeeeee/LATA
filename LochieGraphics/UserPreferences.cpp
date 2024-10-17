@@ -14,6 +14,7 @@ UserPreferences::ModelSelectMode UserPreferences::modelSelectMode = UserPreferen
 std::string UserPreferences::defaultLevelLoad = "";
 bool UserPreferences::rememberLastLevel = true;
 bool UserPreferences::loadDefaultLevel = true;
+bool UserPreferences::enterPlayModeOnStart = false;
 
 void UserPreferences::GUI()
 {
@@ -35,9 +36,15 @@ void UserPreferences::GUI()
 
 	ImGui::Combo("Model Chooser Mode", (int*)&modelSelectMode, "Loaded\0Assets\0\0");
 
-	ImGui::Checkbox("Load Default Level", &loadDefaultLevel);
-	ImGui::InputText("Default Level Load", &defaultLevelLoad);
-	ImGui::Checkbox("Rememeber Last Level", &rememberLastLevel);
+	if (ImGui::CollapsingHeader("Level Editor")) {
+		ImGui::Indent();
+		ImGui::Checkbox("Load Default Level", &loadDefaultLevel);
+		ImGui::InputText("Default Level Load", &defaultLevelLoad);
+		ImGui::Checkbox("Rememeber Last Level", &rememberLastLevel);
+		ImGui::Checkbox("Enter Play Mode On Launch", &enterPlayModeOnStart);
+		ImGui::Unindent();
+	}
+
 }
 
 void UserPreferences::Initialise()
@@ -81,7 +88,8 @@ void UserPreferences::Save()
 		{ "modelSelectMode", (int)modelSelectMode },
 		{ "loadDefaultLevel", loadDefaultLevel },
 		{ "defaultLevelLoad", defaultLevelLoad },
-		{ "rememberLastLevel", rememberLastLevel},
+		{ "rememberLastLevel", rememberLastLevel },
+		{ "enterPlayModeOnStart", enterPlayModeOnStart },
 	};
 
 	file << table << '\n';
@@ -100,6 +108,7 @@ void UserPreferences::Load()
 	loadDefaultLevel = Serialisation::LoadAsBool(data["loadDefaultLevel"]);
 	defaultLevelLoad = Serialisation::LoadAsString(data["defaultLevelLoad"]);
 	rememberLastLevel = Serialisation::LoadAsBool(data["rememberLastLevel"]);
+	enterPlayModeOnStart = Serialisation::LoadAsBool(data["enterPlayModeOnStart"]);
 
 	file.close();
 }

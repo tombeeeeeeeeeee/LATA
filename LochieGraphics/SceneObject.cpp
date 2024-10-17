@@ -173,7 +173,12 @@ void SceneObject::MenuGUI()
 		SaveAsPrefab();
 	}
 	if (ImGui::MenuItem(("Replace with Prefab##RightClick" + tag).c_str())) {
-		LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(PrefabManager::selectedPrefab));
+		auto prefab = PrefabManager::loadedPrefabOriginals.find(PrefabManager::selectedPrefab);
+		if (prefab != PrefabManager::loadedPrefabOriginals.end()) {
+			LoadFromPrefab(prefab->second);
+		}
+		// Else // TODO: Warning
+
 	}
 	if (ImGui::MenuItem(("Copy GUID##RightClick" + tag).c_str())) {
 		ImGui::SetClipboardText(std::to_string(GUID).c_str());

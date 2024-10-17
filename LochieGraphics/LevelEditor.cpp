@@ -225,6 +225,8 @@ void LevelEditor::Start()
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);
 	}
+
+	inPlay = UserPreferences::enterPlayModeOnStart;
 }
 
 void LevelEditor::Update(float delta)

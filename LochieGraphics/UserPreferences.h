@@ -19,6 +19,7 @@ public:
 	static bool loadDefaultLevel;
 	static std::string defaultLevelLoad;
 	static bool rememberLastLevel;
+	static bool enterPlayModeOnStart;
 
 	static void GUI();
 
