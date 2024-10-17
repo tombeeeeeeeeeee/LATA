@@ -284,7 +284,7 @@ toml::table Texture::Serialise()
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
 		{ "path", path},
 		{ "type", (int)type},
-		{ "wrappingMode", Serialisation::SaveAsUnsignedInt(wrappingMode)},
+		{ "wrappingMode", wrappingMode},
 		{ "mipMapped", mipMapped },
 		{ "minFilter", minFilter},
 		{ "maxFilter", maxFilter},

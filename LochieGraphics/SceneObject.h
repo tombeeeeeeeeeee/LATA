@@ -69,6 +69,7 @@ public:
 	//SceneObject& operator=(const SceneObject& other) = delete;
 
 	void GUI();
+	// This is the right click menu
 	void MenuGUI();
 
 	void DebugDraw();
@@ -76,7 +77,7 @@ public:
 	toml::table Serialise() const;
 
 	void SaveAsPrefab();
-
+	void LoadFromPrefab(toml::table table);
 
 #pragma region Part Get and Set
 
@@ -119,11 +120,11 @@ public:
 
 	void setSpawnManager(SpawnManager* spawnManager);
 	SpawnManager* spawnManager();
-	// Make this take a mask for stuff to delete
-	void ClearParts();
 
 #pragma endregion
 
+	// Make this take a mask for stuff to delete
+	void ClearParts();
 };
 
 

@@ -7,6 +7,7 @@
 #include "SceneObject.h"
 #include "Lights.h"
 #include "UserPreferences.h"
+#include "PrefabManager.h"
 
 // This includes imgui differently then other files as it is managed here
 #include "imgui.h"
@@ -168,6 +169,7 @@ SceneManager::SceneManager(Scene* _scene)
 	ResourceManager::defaultShader = scene->shaders[super];
 
 	UserPreferences::Initialise();
+	PrefabManager::Initialise();
 
 	scene->Start();
 

@@ -26,12 +26,12 @@ public:
 	static glm::quat LoadAsQuaternion(toml::node_view<toml::node> toml);
 	static bool LoadAsBool(toml::node_view<toml::node> toml);
 
+	static unsigned int LoadAsUnsignedInt(toml::node* toml);
+	static unsigned int LoadAsUnsignedInt(toml::node_view<toml::node> toml);
 
 	static toml::array SaveAsVec2(glm::vec2 vec);
 	static toml::array SaveAsVec3(glm::vec3 vec);
 	static std::string SaveAsUnsignedLongLong(unsigned long long n);
-
-	static std::string SaveAsUnsignedInt(unsigned int n);
 
 	static toml::array SaveAsQuaternion(glm::quat quaternion);
 };

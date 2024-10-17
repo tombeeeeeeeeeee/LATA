@@ -8,6 +8,7 @@
 #include "Ecco.h"
 #include "Scene.h"
 #include "Paths.h"
+#include "PrefabManager.h"
 
 #include "Utilities.h"
 
@@ -53,6 +54,13 @@ void SceneObject::GUI()
 {
 	ImGui::InputText("Name", &name);
 	scene->transforms[GUID].GUI();
+
+	if (prefabStatus == PrefabStatus::prefabOrigin) {
+		// TODO: GUI for prefab origin
+	}
+	if (prefabStatus == PrefabStatus::prefabInstance) {
+
+	}
 
 	if (parts & Parts::modelRenderer) { scene->renderers[GUID].GUI(); }
 	if (parts & Parts::rigidBody) { scene->rigidBodies[GUID].GUI(); }
@@ -151,12 +159,13 @@ void SceneObject::MenuGUI()
 		// TODO:
 	}
 	if (ImGui::MenuItem(("Save As Prefab##RightClick" + tag).c_str())) {
-		// TODO:
 		SaveAsPrefab();
-
 	}
 	if (ImGui::MenuItem(("Replace with Prefab##RightClick" + tag).c_str())) {
-		// TODO:
+		LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(PrefabManager::selectedPrefab));
+	}
+	if (ImGui::MenuItem(("Copy GUID##RightClick" + tag).c_str())) {
+		ImGui::SetClipboardText(std::to_string(GUID).c_str());
 	}
 	ImGui::EndPopup();
 
@@ -188,10 +197,12 @@ toml::table SceneObject::Serialise() const
 	}
 	return toml::table{
 		{ "name", name},
-		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
-		{ "parts", parts},
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
+		{ "parts", parts },
 		{ "parent", Serialisation::SaveAsUnsignedLongLong(parentGUID)},
-		{ "children", childrenGUIDs }
+		{ "children", childrenGUIDs },
+		{ "prefabStatus", (int)prefabStatus },
+		{ "prefabBase", Serialisation::SaveAsUnsignedLongLong(prefabBase) }
 	};
 }
 
@@ -200,9 +211,11 @@ SceneObject::SceneObject(Scene* _scene, toml::table* table) :
 {
 	name = Serialisation::LoadAsString((*table)["name"]);
 	GUID = Serialisation::LoadAsUnsignedLongLong((*table)["guid"]);
-	parts = Serialisation::LoadAsInt((*table)["parts"]);
+	parts = Serialisation::LoadAsUnsignedInt((*table)["parts"]);
 	scene->transforms[GUID] = Transform(this);
 	scene->sceneObjects[GUID] = this;
+	prefabStatus = (PrefabStatus)Serialisation::LoadAsInt((*table)["prefabStatus"]);
+	prefabBase = Serialisation::LoadAsUnsignedLongLong((*table)["prefabBase"]);
 }
 
 void SceneObject::setTransform(Transform* transform)
@@ -347,11 +360,10 @@ void SceneObject::ClearParts()
 	assert(parts == 0);
 }
 
-
 #define SaveAsPrefabPart(saveName, partsName, container)                      \
 	if (Parts::##partsName & parts) {                                         \
 		table.emplace(saveName, scene->##container.at(GUID).Serialise(GUID)); \
-		safetyCheck &= ~Parts::##partsName;                                    \
+		safetyCheck &= ~Parts::##partsName;                                   \
 	}                                                                         \
 
 
@@ -375,12 +387,10 @@ void SceneObject::SaveAsPrefab()
 		table.emplace("collider", scene->colliders.at(GUID)->Serialise(GUID));
 		safetyCheck &= ~Parts::collider;
 	}
-
 	if (Parts::ecco & parts) {
 		table.emplace("ecco", scene->ecco->Serialise());
 		safetyCheck &= ~Parts::ecco;
 	}
-
 	if (Parts::sync & parts) {
 		table.emplace("sync", scene->sync->Serialise());
 		safetyCheck &= ~Parts::sync;
@@ -396,4 +406,47 @@ void SceneObject::SaveAsPrefab()
 	file.close();
 
 	prefabStatus = PrefabStatus::prefabOrigin;
+	PrefabManager::loadedPrefabOriginals[GUID] = table;
+}
+
+#define LoadAsPrefabPart(saveName, partsName, setter, type) \
+	if (intendedParts & Parts::##partsName) {               \
+		/* TODO: likely leakig here, fix */                 \
+		setter(new type(*table[saveName].as_table()));      \
+	}                                                       \
+
+
+void SceneObject::LoadFromPrefab(toml::table table)
+{
+	ClearParts();
+	
+	unsigned long long originalGUID = GUID;
+
+	prefabStatus = PrefabStatus::prefabInstance;
+
+	toml::table sceneObjectTable = *table["sceneObject"].as_table();
+
+	unsigned long long intendedParts = Serialisation::LoadAsUnsignedInt(sceneObjectTable["parts"]);
+
+	LoadAsPrefabPart("modelRenderer", modelRenderer, setRenderer, ModelRenderer);
+	LoadAsPrefabPart("animator", animator, setAnimator, Animator);
+	LoadAsPrefabPart("rigidBody", rigidBody, setRigidBody, RigidBody);
+	LoadAsPrefabPart("health", health, setHealth, Health);
+	LoadAsPrefabPart("enemy", enemy, setEnemy, Enemy);
+	LoadAsPrefabPart("exitElevator", exitElevator, setExitElevator, ExitElevator);
+
+	if (intendedParts & Parts::collider) {
+		setCollider(Collider::Load(*table["collider"].as_table()));
+	}
+	if (intendedParts & Parts::ecco) {
+		// TODO: This should load prefab data
+		setEcco(scene->ecco);
+	}
+	if (intendedParts & Parts::sync) {
+		// TODO: This should load prefab data
+		setSync(scene->sync);
+	}
+
+	// TODO: Don't need a whole assert here
+	assert(intendedParts == parts);
 }
