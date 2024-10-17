@@ -7,12 +7,6 @@
 
 class SceneObject;
 
-//namespace toml {
-//	inline namespace v3 {
-//		class table;
-//	}
-//};
-
 class PrefabManager
 {
 public:
@@ -24,8 +18,10 @@ public:
 
 	static void AddSceneObjectAsPrefabOrigins();
 
+	static void RefreshPrefabInstancesOf(unsigned long long GUID);
+	static void RefreshAllPrefabInstances();
+
 	static void GUI();
 
-	//void RefreshAllPrefabInstances();
 };
 

@@ -23,7 +23,8 @@ namespace toml {
 }
 // TODO: Look into how instancing should be handled
 
-//TODO: Add GetPart Functions
+// TODO: There might be issues later due to the parts being saved as an signed int, not unsigned
+// Changing how they are saved can affect other saves and isn't worth it at the moment of writing
 enum Parts
 {
 	modelRenderer = 1 << 1,

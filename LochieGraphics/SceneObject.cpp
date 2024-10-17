@@ -52,22 +52,33 @@ if (parts & Parts::partsType) {                 \
 
 void SceneObject::GUI()
 {
-	ImGui::InputText("Name", &name);
-	scene->transforms[GUID].GUI();
+	std::string tag = Utilities::PointerToString(this);
+	ImGui::InputText(("Name##" + tag).c_str(), &name);
 
 	if (prefabStatus == PrefabStatus::prefabOrigin) {
-		// TODO: GUI for prefab origin
+		if (ImGui::Button(("Save Prefab##" + tag).c_str())) {
+			SaveAsPrefab();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button(("Refresh Prefab Instances##" + tag).c_str())) {
+			PrefabManager::RefreshPrefabInstancesOf(GUID);
+		}
 	}
 	if (prefabStatus == PrefabStatus::prefabInstance) {
-
+		if (ImGui::Button(("Refresh This Instance##" + tag).c_str())) {
+			LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(prefabBase));
+		}
+		// TODO: Button to 'overwrite' the prefab, like apply changes to prefab
 	}
+
+	scene->transforms[GUID].GUI();
 
 	if (parts & Parts::modelRenderer) { scene->renderers[GUID].GUI(); }
 	if (parts & Parts::rigidBody) { scene->rigidBodies[GUID].GUI(); }
 
 	if (parts & Parts::collider) { 
 		// Collapsing Header is not apart of the collider GUI as it can be apart of the rigidbody too
-		if (ImGui::CollapsingHeader(("Collider##" + Utilities::PointerToString(this)).c_str())) {
+		if (ImGui::CollapsingHeader(("Collider##" + tag).c_str())) {
 			scene->colliders[GUID]->GUI();
 		}
 	}
@@ -96,54 +107,54 @@ void SceneObject::GUI()
 		scene->animators[GUID].GUI();
 	}
 
-	const char addPopup[] = "SceneObject Add Part";
-	const char removePopup[] = "SceneObject Remove Part";
+	std::string addPopup = "SceneObject Add Part" + tag;
+	std::string removePopup = "SceneObject Remove Part" + tag;
 
-	if (ImGui::Button("Add Part")) {
-		ImGui::OpenPopup(addPopup);
+	if (ImGui::Button(("Add Part##" + tag).c_str())) {
+		ImGui::OpenPopup(addPopup.c_str());
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Remove Part")) {
-		ImGui::OpenPopup(removePopup);
+	if (ImGui::Button(("Remove Part##" + tag).c_str())) {
+		ImGui::OpenPopup(removePopup.c_str());
 	}
 
-	if (ImGui::BeginPopup(addPopup)) {
-		AddPartGUI(renderer, setRenderer, ModelRenderer, "Model Renderer##Add part");
-		AddPartGUI(rigidbody, setRigidBody, RigidBody, "Rigid Body##Add part");
+	if (ImGui::BeginPopup(addPopup.c_str())) {
+		AddPartGUI(renderer, setRenderer, ModelRenderer, ("Model Renderer##Add part" + tag).c_str());
+		AddPartGUI(rigidbody, setRigidBody, RigidBody, ("Rigid Body##Add part" + tag).c_str());
 
 		if (ecco() == nullptr && scene->ecco->GUID == 0) {
-			if (ImGui::MenuItem("Ecco##Add part")) {
+			if (ImGui::MenuItem(("Ecco##Add part" + tag).c_str())) {
 				setEcco();
 			}
 		}
 		if (sync() == nullptr && scene->sync->GUID == 0) {
-			if (ImGui::MenuItem("Sync##Add part")) {
+			if (ImGui::MenuItem(("Sync##Add part" + tag).c_str())) {
 				setSync();
 			}
 		}
 		
-		AddPartGUI(health, setHealth, Health, "Health##Add part");
-		AddPartGUI(enemy, setEnemy, Enemy, "Enemy##Add part");
-		AddPartGUI(exitElevator, setExitElevator, ExitElevator, "Exit Elevator##Add part");
+		AddPartGUI(health, setHealth, Health, ("Health##Add part" + tag).c_str());
+		AddPartGUI(enemy, setEnemy, Enemy, ("Enemy##Add part" + tag).c_str());
+		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
 		
 		ImGui::EndPopup();
 	}
 
-	if (ImGui::BeginPopup(removePopup)) {
-		RemovePartGUI(modelRenderer, setRenderer, "Model Renderer##Remove part");
-		RemovePartGUI(rigidBody, setRigidBody, "Rigid Body##Remove part");
+	if (ImGui::BeginPopup(removePopup.c_str())) {
+		RemovePartGUI(modelRenderer, setRenderer, ("Model Renderer##Remove part" + tag).c_str());
+		RemovePartGUI(rigidBody, setRigidBody, ("Rigid Body##Remove part" + tag).c_str());
 
 		if (parts & Parts::ecco) {
-			if (ImGui::MenuItem("Ecco##Remove part")) {
+			if (ImGui::MenuItem(("Ecco##Remove part" + tag).c_str())) {
 				setEcco(nullptr);
 			}
 		}
 		if (parts & Parts::sync) {
-			if (ImGui::MenuItem("Sync##Remove part")) {
+			if (ImGui::MenuItem(("Sync##Remove part" + tag).c_str())) {
 				setSync(nullptr);
 			}
 		}
-		RemovePartGUI(exitElevator, setExitElevator, "Exit##Remove part");
+		RemovePartGUI(exitElevator, setExitElevator, ("Exit##Remove part" + tag).c_str());
 		ImGui::EndPopup();
 	}
 }
@@ -425,6 +436,7 @@ void SceneObject::LoadFromPrefab(toml::table table)
 	prefabStatus = PrefabStatus::prefabInstance;
 
 	toml::table sceneObjectTable = *table["sceneObject"].as_table();
+	prefabBase = Serialisation::LoadAsUnsignedLongLong(sceneObjectTable["guid"]);
 
 	unsigned long long intendedParts = Serialisation::LoadAsUnsignedInt(sceneObjectTable["parts"]);
 

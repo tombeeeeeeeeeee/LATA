@@ -290,9 +290,6 @@
     <ClCompile Include="LocWorkshop.cpp">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="ComputeShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DistanceAndLOSCondition.cpp">
       <Filter>Source Files\AI\Conditions</Filter>
     </ClCompile>
@@ -305,8 +302,11 @@
     <ClCompile Include="UserPreferences.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="PrefabManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Scene Management</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -602,9 +602,11 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="ComputeShader.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="PrefabManager.h" />
+    <ClInclude Include="PrefabManager.h">
+      <Filter>Source Files\Scene Management</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">

@@ -1,6 +1,9 @@
 #include "PrefabManager.h"
 
 #include "Paths.h"
+#include "SceneManager.h"
+#include "Scene.h"
+#include "SceneObject.h"
 
 #include "EditorGUI.h"
 
@@ -26,10 +29,37 @@ void PrefabManager::AddSceneObjectAsPrefabOrigins()
 {
 }
 
+void PrefabManager::RefreshPrefabInstancesOf(unsigned long long GUID)
+{
+	toml::table& table = loadedPrefabOriginals.at(GUID);
+	for (auto& i : SceneManager::scene->sceneObjects)
+	{
+		if (i.second->prefabBase != GUID) {
+			continue;
+		}
+		i.second->LoadFromPrefab(table);
+	}
+}
+
+void PrefabManager::RefreshAllPrefabInstances()
+{
+	for (auto& i : SceneManager::scene->sceneObjects)
+	{
+		if (i.second->prefabStatus != SceneObject::PrefabStatus::prefabInstance) {
+			continue;
+		}
+		i.second->LoadFromPrefab(loadedPrefabOriginals.at(i.second->prefabBase));
+	}
+}
+
 void PrefabManager::GUI()
 {
 	ImGui::InputScalar("Prefab Selected GUID", ImGuiDataType_U64, &selectedPrefab);
 	
-	
-	
+	if (ImGui::Button("Refresh Instances of Selected")) {
+		RefreshPrefabInstancesOf(selectedPrefab);
+	}
+	if (ImGui::Button("Refresh All Prefab Instances")) {
+		RefreshAllPrefabInstances();
+	}
 }
