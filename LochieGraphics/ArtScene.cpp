@@ -72,7 +72,7 @@ void ArtScene::RefreshPBR()
 	{
 		if (!i.second->loaded) { continue; }
 		if (foundImage) {
-			if (width != i.second->width || height != i.second->height || name != MaterialNameFromTexturePath(i.second->path)) {
+			if (width != i.second->width || height != i.second->height || name != Texture::getTypelessFilename(i.second->path)) {
 				std::cout << "Mismatched PBR texture images " << i.second->path << " does not match with the other last given texture (in terms of either size or name)\n"
 					<< "this can be ignored if in process of inputting a new batch of textures\n";
 				return;
@@ -81,7 +81,7 @@ void ArtScene::RefreshPBR()
 		width = i.second->width;
 		height = i.second->height;
 		foundImage = true;
-		name = MaterialNameFromTexturePath(i.second->path);
+		name = Texture::getTypelessFilename(i.second->path);
 	}
 
 
@@ -550,22 +550,15 @@ void ArtScene::SaveModal()
 	ImGui::EndPopup();
 }
 
-std::string ArtScene::MaterialNameFromTexturePath(std::string& path)
-{
-	std::string filename = Utilities::FilenameFromPath(path);
-	unsigned long long start = filename.find_first_of('_') + 1;
-	unsigned long long end = filename.find_last_of('_');
-	return filename.substr(start, end - start);
-}
-
 ArtScene::~ArtScene()
 {
 
 }
 
-void ArtScene::SaveArtAsset()
+void ArtScene::SaveArtAsset() const
 {
 	if (saveRenderer) {
+		// TODO: Makes more sense to save as a prefab
 		std::ofstream file(Paths::rendererSaveLocation + sceneObject->name + Paths::rendererExtension);
 		// The renderer itself does not need to save its GUID
 		file << sceneObject->renderer()->Serialise(0);
@@ -575,23 +568,17 @@ void ArtScene::SaveArtAsset()
 	for (auto& i : materialsToSave)
 	{
 		if (!i.second) { continue; }
-		std::ofstream file(Paths::materialSaveLocation + i.first->name + Paths::materialExtension);
-		file << i.first->Serialise();
-		file.close();
+		i.first->SaveAsAsset();
 	}
 
 	for (auto& i : texturesToSave)
 	{
 		if (!i.second) { continue; }
-		std::ofstream file(Paths::textureSaveLocation + MaterialNameFromTexturePath(i.first.second->path) + '_' + Texture::TypeNames.at(i.first.second->type) + Paths::textureExtension);
-		file << i.first.second->Serialise();
-		file.close();
+		i.first.second->SaveAsAsset();
 	}
 
 	if (saveModel) {
-		std::ofstream file(Paths::modelSaveLocation + Utilities::FilenameFromPath(model->path, false) + Paths::modelExtension);
-		file << model->Serialise();
-		file.close();
+		model->SaveAsAsset();
 	}
 }
 

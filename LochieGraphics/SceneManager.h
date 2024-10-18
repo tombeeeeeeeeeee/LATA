@@ -12,7 +12,8 @@ class Scene;
 // TODO: fullscreen window with border, exclusive fullscreen
 enum class WindowModes {
 	windowed,
-	fullscreenWindowed
+	borderlessFullscreen,
+	maximised,
 };
 
 class SceneManager
@@ -80,5 +81,6 @@ public:
 	void Update();
 	bool ShouldClose() const;
 
+	static void SwitchToWindowMode(WindowModes mode);
 };
 

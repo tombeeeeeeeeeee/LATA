@@ -17,17 +17,16 @@ private:
 		{ "Diffuse",    Texture::Type::albedo },
 		{ "Albedo",     Texture::Type::albedo},
 		{ "Normal",     Texture::Type::normal },
-		{ "Roughness",  Texture::Type::roughness},
-		{ "Metallic",   Texture::Type::metallic},
-		{ "Emissive",   Texture::Type::emission},
-		{ "AO",         Texture::Type::ao},
-		{ "PBR",        Texture::Type::PBR},
+		{ "Roughness",  Texture::Type::roughness },
+		{ "Metallic",   Texture::Type::metallic },
+		{ "Emissive",   Texture::Type::emission },
+		{ "AO",         Texture::Type::ao },
+		{ "PBR",        Texture::Type::PBR },
 	};
 
 	// Read these from a file or something
-	std::string texturePrefix = "T_";
-	std::string meshPrefix = "SM_";
-
+	const std::string texturePrefix = "T_";
+	const std::string meshPrefix = "SM_";
 
 	std::string EnsureCorrectFileLocation(const std::string& path, const std::string& expected) const;
 
@@ -82,8 +81,6 @@ private:
 	float resetCamObjectViewSpace = PI / 8;
 	void ResetCamera();
 
-	static std::string MaterialNameFromTexturePath(std::string& path);
-
 	void SaveModal();
 	bool openSave = false;
 
@@ -104,7 +101,7 @@ private:
 	// TODO: Doesn't need to save the slot (string), the texture type on the pointer should be enough
 	std::vector<std::pair<std::pair<std::string, Texture*>, bool>> texturesToSave;
 
-	void SaveArtAsset();
+	void SaveArtAsset() const;
 
 public:
 

@@ -25,6 +25,7 @@ public:
 	bool showRenderSystemMenu = false;
 	bool showHealthSystemMenu = false;
 	bool showUserPrefsMenu = false;
+	bool showPrefabMenu = false;
 private:
 
 	// ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize

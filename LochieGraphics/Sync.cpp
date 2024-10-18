@@ -263,7 +263,7 @@ void Sync::ShootSniper(glm::vec3 pos)
 		blasts.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 		{
-			hit.sceneObject->health()->subtractHealth(sniperDamage, hit.sceneObject);
+			hit.sceneObject->health()->subtractHealth(sniperDamage);
 		}
 	}
 }
@@ -281,14 +281,14 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 		Hit hit = hits[0];
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 		{
-			hit.sceneObject->health()->subtractHealth(overclockDamage, hit.sceneObject);
+			hit.sceneObject->health()->subtractHealth(overclockDamage);
 			for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
 			{
 				hit = hits[i];
 				if (i == enemyPierceCount - 1) return;
 				if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 				{
-					hit.sceneObject->health()->subtractHealth(overclockDamage, hit.sceneObject);
+					hit.sceneObject->health()->subtractHealth(overclockDamage);
 				}
 				else break;
 			}
@@ -347,7 +347,7 @@ void Sync::OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour
 
 	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 	{
-		hit.sceneObject->health()->subtractHealth(overclockDamage, hit.sceneObject);
+		hit.sceneObject->health()->subtractHealth(overclockDamage);
 	}
 	if((hit.collider->collisionLayer & (int)CollisionLayers::enemy))
 	{
@@ -357,7 +357,7 @@ void Sync::OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour
 			if (i == enemyPierceCount - 1) return;
 			if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 			{
-				hit.sceneObject->health()->subtractHealth(overclockDamage, hit.sceneObject);
+				hit.sceneObject->health()->subtractHealth(overclockDamage);
 			}
 			else break;
 		}
@@ -371,7 +371,7 @@ void Sync::misfireShotOnCollision(Collision collision)
 {
 	if (collision.collisionMask & (unsigned int)CollisionLayers::enemy)
 	{
-		collision.sceneObject->health()->subtractHealth(misfireDamage, collision.sceneObject);
+		collision.sceneObject->health()->subtractHealth(misfireDamage);
 	}
 	//TODO DELETE IN SCENE
 	unsigned long long GUID = collision.self->GUID;

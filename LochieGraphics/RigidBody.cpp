@@ -6,7 +6,9 @@
 
 #include "Serialisation.h"
 #include "EditorGUI.h"
-
+#include "LineRenderer.h"
+#include "RenderSystem.h"
+#include "Transform.h"
 #include <iostream>
 
 RigidBody::RigidBody()
@@ -125,6 +127,35 @@ void RigidBody::GUI()
 		}
 
 		ImGui::Unindent();
+	}
+}
+
+void RigidBody::DebugDraw(Transform* transform)
+{
+	for (Collider* collider : colliders)
+	{
+		ColliderType type = collider->getType();
+		switch (type) 
+		{
+		case(ColliderType::polygon):
+			PolygonCollider* poly = (PolygonCollider*)collider;
+			if (poly->verts.size() == 1)
+			{
+				glm::vec2 pos = RigidBody::Transform2Din3DSpace(transform->getGlobalMatrix(), poly->verts[0]);
+				RenderSystem::debugLines.DrawCircle({ pos.x, 0.1f, pos.y}, poly->radius, { 0.0f,1.0f,0.0f });
+			}
+			else
+			{
+				glm::vec2 prevVert = RigidBody::Transform2Din3DSpace(transform->getGlobalMatrix(), poly->verts[poly->verts.size()-1]);
+				for (int i = 0; i < poly->verts.size(); i++)
+				{
+					glm::vec2 curVert = RigidBody::Transform2Din3DSpace(transform->getGlobalMatrix(), poly->verts[i]);
+					RenderSystem::debugLines.DrawLineSegement2D(prevVert, curVert, {0.0f,1.0f,0.0f});
+					prevVert = curVert;
+				}
+			}
+			break;
+		}
 	}
 }
 

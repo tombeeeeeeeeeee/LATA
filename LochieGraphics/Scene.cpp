@@ -56,96 +56,6 @@ if(loading##type##s){																				       \
 	}																								       \
 }
 
-
-
-void Scene::Save()
-{
-	// TODO: Name is user selected, perhaps have a file opening dialog, see https://github.com/mlabbe/nativefiledialog
-	// Or could just use an imgui pop up for the name alone and don't give the user a choice on the location / some limited explorer
-	std::ofstream file("TestScene.toml");
-
-	auto savedShaders = toml::array();
-	for (auto i = shaders.begin(); i != shaders.end(); i++)
-	{
-		savedShaders.push_back((*i)->Serialise());
-	}
-
-	auto savedLights = toml::array();
-	for (auto i = lights.begin(); i != lights.end(); i++)
-	{
-		savedLights.push_back((*i)->Serialise());
-	}
-
-	
-	file << toml::table{
-		{ "WindowName", windowName},
-		{ "Shaders", savedShaders},
-		{ "Camera", camera->Serialise() },
-		{ "Lights", savedLights},
-	};
-	file << "\n\n";
-
-	file << SaveSceneObjectsAndParts();
-
-	// TODO: Save RenderSystem stuff
-
-	file.close();
-}
-
-void Scene::Load()
-{
-	std::ifstream file("TestScene.toml");
-
-	// TODO: Should be a function
-	//toml::parse_result parsed = toml::parse(file);
-	//if (!parsed) {
-	//	// TODO: Error
-	//	std::cout << "Failed to load scene\n";
-	//	file.close();
-	//	return;
-	//}
-	//toml::table data = std::move(parsed).table();
-	toml::table data = toml::parse(file);
-
-
-	// TODO: Move most of this camera stuff to the camera class
-	auto cam = data["Camera"];
-	auto camPos = cam["position"].as_array();
-	//camera->transform. = Serialisation::LoadAsVec3(camPos);
-	//camera->position = { camPos->at(0).value_or<float>(0.0f), camPos->at(1).value_or<float>(0.f), camPos->at(2).value<float>().value()};
-	auto camRot = cam["rotation"].as_array();
-
-
-	auto loadingShaders = data["Shaders"].as_array();
-
-	// TODO: Dont need to unload the like special shaders
-
-	ResourceManager::UnloadShaders();
-
-	for (int i = 0; i < loadingShaders->size(); i++)
-	{
-		shaders[i] = ResourceManager::LoadShader((loadingShaders->at(i)).as_table());
-
-	}
-
-	ResourceManager::RefreshAllMaterials();
-	skybox->Refresh();
-	ResourceManager::BindFlaggedVariables();
-
-	DeleteAllSceneObjects();
-	LoadSceneObjectsAndParts(data);
-
-	// TODO: Consider moving this
-	gui.sceneObjectSelected = nullptr;
-
-
-	if (!file.is_open()) {
-		std::cout << "Error, save file to load not found\n";
-	}
-
-	file.close();
-}
-
 void Scene::DeleteSceneObject(unsigned long long GUID)
 {
 	for (std::vector<unsigned long long>::iterator marks = markedForDeletion.begin(); marks != markedForDeletion.end(); marks++)
@@ -155,13 +65,57 @@ void Scene::DeleteSceneObject(unsigned long long GUID)
 	markedForDeletion.push_back(GUID);
 }
 
-void Scene::DeleteAllSceneObjects()
+void Scene::DeleteAllSceneObjectsAndParts()
 {
 	while (!sceneObjects.empty())
 	{
 		delete sceneObjects.begin()->second;
 		sceneObjects.erase(sceneObjects.begin());
 	}
+	markedForDeletion.clear();
+
+	unsigned int partsChecker = Parts::ALL;
+
+	transforms.clear();
+
+	renderers.clear();
+	partsChecker &= ~Parts::modelRenderer;
+
+	animators.clear();
+	partsChecker &= ~Parts::animator;
+
+	rigidBodies.clear();
+	partsChecker &= ~Parts::rigidBody;
+
+	colliders.clear();
+	partsChecker &= ~Parts::collider;
+
+	healths.clear();
+	partsChecker &= ~Parts::health;
+
+	enemies.clear();
+	partsChecker &= ~Parts::enemy;
+
+	exits.clear();
+	partsChecker &= ~Parts::exitElevator;
+
+	spawnManagers.clear();
+	partsChecker &= ~Parts::spawnManager;
+
+
+	// TODO: Don't like how just setting these flags here but no containers atm
+	partsChecker &= ~Parts::spikes;
+	partsChecker &= ~Parts::plate;
+
+	//lights.clear();
+	partsChecker &= ~Parts::light;
+
+	partsChecker &= ~Parts::ecco;
+	partsChecker &= ~Parts::sync;
+	
+
+	// TODO: Don't need a whole assert
+	assert(partsChecker = ~Parts::ALL);
 }
 
 SceneObject* Scene::FindSceneObjectOfName(std::string name)
@@ -177,15 +131,18 @@ SceneObject* Scene::FindSceneObjectOfName(std::string name)
 
 toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 {
+	// TODO: Maybe force delete the marked for delete here
+
 	auto savedSceneObjects = toml::array();
-	for (auto i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+	for (auto& i : sceneObjects)
 	{
 		if (shouldSave) {
-			if (!shouldSave(i->second)) {
+			if (!shouldSave(i.second)) {
 				continue;
 			}
 		}
-		savedSceneObjects.push_back((*i).second->Serialise());
+		if (!i.second) continue;
+		savedSceneObjects.push_back(i.second->Serialise());
 	}
 	SavePart(renderers);
 	SavePart(transforms);
@@ -215,6 +172,8 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 
 void Scene::LoadSceneObjectsAndParts(toml::table& data)
 {
+	DeleteAllSceneObjectsAndParts();
+
 	toml::array* loadingSceneObjects = data["SceneObjects"].as_array();
 	int loadingSceneObjectsSize = (int)loadingSceneObjects->size();
 	for (int i = 0; i < loadingSceneObjectsSize; i++)
@@ -268,6 +227,15 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 			sceneObject->transform()->AddChild(sceneObjects[childGUID]->transform());
 		}
 	}
+
+	for (auto& i : sceneObjects)
+	{
+		if (!i.second)
+		{
+			// TODO: Error here
+			DeleteSceneObject(i.first);
+		}	
+	}
 }
 
 void Scene::InitialisePlayers()
@@ -291,15 +259,13 @@ void Scene::InitialisePlayers()
 
 	eccoSO->rigidbody()->colliders[0]->collisionLayer = (int)CollisionLayers::ecco;
 	((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->verts = {
-			{75.0f,   75.0f},
-			{75.0f,  -75.0f},
-			{-75.0f, -75.0f},
-			{-75.0f,  75.0f},
+		{33.0f, 0.0f}
 	};
+	((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->radius = 75.0f;
 
 	eccoSO->rigidbody()->colliders[1]->collisionLayer = (int)CollisionLayers::reflectiveSurface;
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->verts = { {0.0f, 0.0f} };
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 15.0f;
+	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->verts = { {37.0f, 0.0f} };
+	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 44.0f;
 
 	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { ecco->OnCollision(collision); });
 

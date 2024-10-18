@@ -4,7 +4,9 @@
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
-
+#include "Transform.h"
+#include "RigidBody.h"
+#include "RenderSystem.h"
 #include <iostream>
 
 void Collider::setCollisionLayer(int layer)
@@ -66,6 +68,7 @@ void Collider::GUI()
 	ImGui::Unindent();
 }
 
+
 Collider::Collider(toml::table table)
 {
 	isTrigger = Serialisation::LoadAsBool(table["isTrigger"]);
@@ -109,6 +112,24 @@ void PolygonCollider::GUI()
 	}
 	ImGui::DragFloat(("Radius##" + tag).c_str(), &radius);
 	ImGui::Unindent();
+}
+
+void PolygonCollider::DebugDraw(Transform* transform)
+{
+	if (verts.size() == 1)
+	{
+		RenderSystem::debugLines.DrawCircle(transform->getGlobalPosition(), radius, { 0.0f,1.0f,0.0f });
+	}
+	else
+	{
+		glm::vec2 prevVert = RigidBody::Transform2Din3DSpace(transform->getGlobalMatrix(), verts[verts.size() - 1]);
+		for (int i = 0; i < verts.size(); i++)
+		{
+			glm::vec2 curVert = RigidBody::Transform2Din3DSpace(transform->getGlobalMatrix(), verts[i]);
+			RenderSystem::debugLines.DrawLineSegement2D(prevVert, curVert, { 0.0f,1.0f,0.0f });
+			prevVert = curVert;
+		}
+	}
 }
 
 toml::table PlaneCollider::Serialise(unsigned long long GUID) const

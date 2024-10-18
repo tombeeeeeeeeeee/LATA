@@ -16,6 +16,8 @@
 #include "EnemySystem.h"
 #include "GUI.h"
 
+#include <map>
+
 class SceneObject;
 class Ecco;
 class Sync;
@@ -40,7 +42,7 @@ public:
 	// TODO: Pretty sure these no longer need to be stored on the heap
 	//std::vector<SceneObject*> sceneObjects = {};
 
-	std::unordered_map<unsigned long long, SceneObject*> sceneObjects = {};
+	std::map<unsigned long long, SceneObject*> sceneObjects = {};
 	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};
 	std::unordered_map<unsigned long long, Transform> transforms = {};
 	// TODO: There is types of animators, don't think its safe to store them like this
@@ -94,13 +96,13 @@ public:
 	Scene& operator=(const Scene& other) = delete;
 
 	// These get called when the menu button gets pressed, do not have to be directly responsible for saving
-	virtual void Save();
-	virtual void Load();
+	virtual void Save() {};
+	virtual void Load() {};
 
 	void DeleteSceneObject(unsigned long long GUID);
 protected:
 
-	void DeleteAllSceneObjects();
+	void DeleteAllSceneObjectsAndParts();
 
 	SceneObject* FindSceneObjectOfName(std::string name);
 

@@ -16,6 +16,7 @@
 #include <iostream>
 
 LineRenderer RenderSystem::lines;
+LineRenderer RenderSystem::debugLines;
 
 void RenderSystem::Start(
     unsigned int _skyboxTexture,
@@ -74,6 +75,7 @@ void RenderSystem::Start(
 
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Initialise();
+    debugLines.Initialise();
 
     shadowCaster = _shadowCaster;
     shadowCaster->Initialise();
@@ -429,6 +431,9 @@ void RenderSystem::Update(
 
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Draw();
+    // TODO: these need to be drawn ontop of everything
+    glDepthFunc(GL_ALWAYS);
+    debugLines.Draw();
 
     glDepthFunc(GL_LEQUAL); // Change depth function
     Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);

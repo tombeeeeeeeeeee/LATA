@@ -19,6 +19,8 @@ private:
 	bool spawning = false;
 	int currSpawnCount = 0;
 	int indexInSpawnLoop = 0;
+	
+	bool triggeredOnce = false;
 
 public:
 

@@ -1,5 +1,6 @@
 #include "UserPreferences.h"
 
+#include "SceneManager.h"
 #include "Paths.h"
 
 #include "EditorGUI.h"
@@ -10,6 +11,12 @@
 
 bool UserPreferences::escapeCloses = false;
 std::string UserPreferences::filename = "";
+UserPreferences::ModelSelectMode UserPreferences::modelSelectMode = UserPreferences::ModelSelectMode::assets;
+std::string UserPreferences::defaultLevelLoad = "";
+bool UserPreferences::rememberLastLevel = true;
+bool UserPreferences::loadDefaultLevel = true;
+bool UserPreferences::enterPlayModeOnStart = false;
+WindowModes UserPreferences::windowedStartMode = WindowModes::maximised;
 
 void UserPreferences::GUI()
 {
@@ -28,6 +35,28 @@ void UserPreferences::GUI()
 	}
 
 	ImGui::Checkbox("Pressing Escape Quits", &escapeCloses);
+
+	ImGui::Combo("Model Chooser Mode", (int*)&modelSelectMode, "Loaded\0Assets\0\0");
+
+	ImGui::Combo("Default Windowed Mode", (int*)&windowedStartMode, "Windowed\0Borderless Fullscreen\0Maximised\0\0");
+
+	if (ImGui::CollapsingHeader("Level Editor")) {
+		ImGui::Indent();
+		ImGui::Checkbox("Load Default Level", &loadDefaultLevel);
+		if (!loadDefaultLevel) { 
+			ImGui::BeginDisabled();
+			ImGui::Indent();
+		}
+		ImGui::InputText("Default Level Load", &defaultLevelLoad);
+		ImGui::Checkbox("Rememeber Last Level", &rememberLastLevel);
+		ImGui::Checkbox("Enter Play Mode On Launch", &enterPlayModeOnStart);
+		if (!loadDefaultLevel) { 
+			ImGui::EndDisabled();
+			ImGui::Unindent();
+		}
+		ImGui::Unindent();
+	}
+
 }
 
 void UserPreferences::Initialise()
@@ -44,6 +73,8 @@ void UserPreferences::Initialise()
 		filename = newFilename;
 		Load();
 	}
+
+	// Switching to Preferenced windowed mode is done in SceneManager Start
 
 	lastUsed.close();
 }
@@ -68,6 +99,12 @@ void UserPreferences::Save()
 
 	toml::table table{
 		{ "escapeCloses", escapeCloses },
+		{ "modelSelectMode", (int)modelSelectMode },
+		{ "loadDefaultLevel", loadDefaultLevel },
+		{ "defaultLevelLoad", defaultLevelLoad },
+		{ "rememberLastLevel", rememberLastLevel },
+		{ "enterPlayModeOnStart", enterPlayModeOnStart },
+		{ "windowedStartMode", (int)windowedStartMode }
 	};
 
 	file << table << '\n';
@@ -82,6 +119,12 @@ void UserPreferences::Load()
 	toml::table data = toml::parse(file);
 
 	escapeCloses = Serialisation::LoadAsBool(data["escapeCloses"]);
+	modelSelectMode = (ModelSelectMode)Serialisation::LoadAsInt(data["modelSelectMode"]);
+	loadDefaultLevel = Serialisation::LoadAsBool(data["loadDefaultLevel"]);
+	defaultLevelLoad = Serialisation::LoadAsString(data["defaultLevelLoad"]);
+	rememberLastLevel = Serialisation::LoadAsBool(data["rememberLastLevel"]);
+	enterPlayModeOnStart = Serialisation::LoadAsBool(data["enterPlayModeOnStart"]);
+	windowedStartMode = (WindowModes)Serialisation::LoadAsInt(data["windowedStartMode"]);
 
 	file.close();
 }

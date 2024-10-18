@@ -59,99 +59,69 @@ CollisionPacket CollisionFunctions::CircleOnPolyCollision(PolygonCollider* circl
 	collision.soA = transformA->getSceneObject();
 	collision.soB = transformB->getSceneObject();
 
-	glm::vec2 circleTransformCentre = RigidBody::Transform2Din3DSpace(transformA->getGlobalMatrix(), { 0,0 });
-	glm::vec2 polyTransformCentre = RigidBody::Transform2Din3DSpace(transformB->getGlobalMatrix(), { 0,0 });
-
-
-	glm::mat4 globalB = transformB->getGlobalMatrix();
 	std::vector<glm::vec2> polyPoints;
-	polyPoints.reserve(poly->verts.size());
 	for (int i = 0; i < poly->verts.size(); i++)
 	{
-		polyPoints.push_back(RigidBody::Transform2Din3DSpace(globalB, poly->verts[i]));
+		polyPoints.push_back(RigidBody::Transform2Din3DSpace(transformB->getGlobalMatrix() , poly->verts[i]));
 	}
 
 	float shortestDistance = FLT_MAX;
-	glm::vec2 closestPoint;
-	int closestPointIndex = 0;
 	glm::vec2 circlePos = RigidBody::Transform2Din3DSpace(transformA->getGlobalMatrix(), circle->verts[0]);
 
+	glm::vec2 prevVert = polyPoints[polyPoints.size() - 1];
 	for (int i = 0; i < polyPoints.size(); i++)
 	{
-		glm::vec2 pointToCircle = circlePos - polyPoints[i];
-		float distance = glm::dot(pointToCircle, pointToCircle);
-		if (distance < shortestDistance)
+		glm::vec2 currVert = polyPoints[i];
+		glm::vec2 delta = glm::normalize(circlePos - currVert);
+		float polyMax = -FLT_MAX;
+		float polyMin = FLT_MAX;
+		float circleProj = glm::dot(circlePos, delta);
+		for (int j = 0; j < polyPoints.size(); j++)
 		{
-			shortestDistance = distance;
-			closestPoint = polyPoints[i];
-			closestPointIndex = i;
+			float vertProj = glm::dot(polyPoints[j], delta);
+			if (vertProj > polyMax) polyMax = vertProj;
+			if (vertProj < polyMin) polyMin = vertProj;
 		}
+		if (polyMax - (circleProj - circle->radius) < shortestDistance)
+		{
+			shortestDistance = polyMax - (circleProj - circle->radius);
+			collision.normal = delta;
+		}
+		if ((circleProj + circle->radius) - polyMin < shortestDistance)
+		{
+			shortestDistance = (circleProj + circle->radius) - polyMin;
+			collision.normal = -delta;
+		}
+
+		glm::vec2 tangent = currVert - prevVert;
+		glm::vec2 normal = glm::normalize(glm::vec2(-tangent.y, tangent.x));
+		polyMax = -FLT_MAX;
+		polyMin = FLT_MAX;
+		circleProj = glm::dot(circlePos, normal);
+		for (int j = 0; j < polyPoints.size(); j++)
+		{
+			float vertProj = glm::dot(polyPoints[j], normal);
+			if (vertProj > polyMax) polyMax = vertProj;
+			if (vertProj < polyMin) polyMin = vertProj;
+		}
+		if (polyMax - (circleProj - circle->radius) < shortestDistance)
+		{
+			shortestDistance = polyMax - (circleProj - circle->radius);
+			collision.normal = normal;
+		}
+		if ((circleProj + circle->radius) - polyMin < shortestDistance)
+		{
+			shortestDistance = (circleProj + circle->radius) - polyMin;
+			collision.normal = -normal;
+		}
+		prevVert = currVert;
 	}
 
-	float minDepth = FLT_MAX;
-
-	glm::vec2 curNormal = glm::normalize(circlePos - (closestPoint));
-	//glm::vec2 curNormal = glm::vec2(-tangent.y, tangent.x);
-
-	float circleDot = glm::dot(circlePos, curNormal);
-
-	float circleMin = circleDot - circle->radius;
-	float circleMax = circleDot + circle->radius;
-
-	float polyMin = FLT_MAX;
-	float polyMax = -FLT_MAX;
-
-	for (int j = 0; j < polyPoints.size(); j++)
+	collision.depth = shortestDistance;
+	if (shortestDistance  > 0)
 	{
-		float curPolyDot = glm::dot(curNormal, polyPoints[j]);
-		if (curPolyDot < polyMin)
-			polyMin = curPolyDot;
-		if (curPolyDot > polyMax)
-			polyMax = curPolyDot;
+		float i = circle->radius;
 	}
-
-	if (circleMax - polyMin < minDepth)
-	{
-		minDepth = circleMax - polyMin;
-		collision.contactPoint = closestPoint;
-		collision.normal = curNormal;
-	}
-
-	if (polyMax - circleMin < minDepth)
-	{
-		minDepth = polyMax - circleMin;
-		collision.contactPoint = closestPoint;
-		collision.normal = -curNormal;
-	}
-
-	glm::vec2 tangent = glm::normalize(polyPoints[(closestPointIndex + 1) % polyPoints.size()] - closestPoint);
-	curNormal = glm::vec2(-tangent.y, tangent.x);
-
-	float pointDepth = circle->radius - glm::dot(circlePos, curNormal);
-	pointDepth += glm::dot(polyPoints[closestPointIndex], curNormal);
-
-	if (pointDepth < minDepth)
-	{
-		minDepth = pointDepth;
-		collision.normal = curNormal;
-	}
-
-	tangent = glm::normalize(closestPoint - polyPoints[Utilities::WrapIndex(closestPointIndex - 1, (int)polyPoints.size())]);
-	curNormal = glm::vec2(-tangent.y, tangent.x);
-
-	pointDepth = circle->radius - glm::dot(circlePos, curNormal);
-	pointDepth += glm::dot(polyPoints[closestPointIndex], curNormal);
-
-	if (pointDepth < minDepth)
-	{
-		minDepth = pointDepth;
-		collision.normal = curNormal;
-
-		collision.contactPoint = curNormal * -circle->radius;
-		collision.contactPoint += circlePos;
-	}
-
-	collision.depth = minDepth;
 
 	return collision;
 }

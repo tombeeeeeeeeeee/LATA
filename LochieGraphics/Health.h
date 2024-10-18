@@ -9,13 +9,6 @@ namespace toml { inline namespace v3 {
 	class table; 
 } }
 
-struct HealthPacket
-{
-	int healthChange;
-	SceneObject* so;
-
-	HealthPacket(int _healthChange, SceneObject* _so = nullptr) : healthChange(_healthChange), so(_so) {};
-};
 
 class Health
 {
@@ -25,18 +18,14 @@ public:
 	int lastChangeAmount = 0;
 	Health();
 
-	void addHealth(int addition, SceneObject* so = nullptr);
-	void subtractHealth(int subtraction, SceneObject* so = nullptr);
+	void addHealth(int addition);
+	void subtractHealth(int subtraction);
 
 	void setMaxHealth(int max);
 	int getMaxHealth();
 
 	toml::table Serialise(unsigned long long GUID) const;
 	Health(toml::table table);
-
-	std::vector<std::function<void(HealthPacket)>> onHealthUp = {};
-	std::vector<std::function<void(HealthPacket)>> onHealthDown = {};
-	std::vector<std::function<void(HealthPacket)>> onHealthZero = {};
 
 	void GUI();
 

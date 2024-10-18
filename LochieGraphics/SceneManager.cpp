@@ -7,6 +7,8 @@
 #include "SceneObject.h"
 #include "Lights.h"
 #include "UserPreferences.h"
+#include "PrefabManager.h"
+#include "Paths.h"
 
 // This includes imgui differently then other files as it is managed here
 #include "imgui.h"
@@ -137,20 +139,20 @@ SceneManager::SceneManager(Scene* _scene)
 	scene->cursorPos = &cursorPos;
 
 	scene->shaders.insert(scene->shaders.end(), {
-		ResourceManager::LoadShader("shaders/cubemap.vert", "shaders/cubemap.frag"),
-		ResourceManager::LoadShader("shaders/simpleDepthShader.vert", "shaders/simpleDepthShader.frag"),
-		ResourceManager::LoadShader("shaders/shadowDebug.vert", "shaders/shadowDebug.frag"),
-		ResourceManager::LoadShaderDefaultVert("HDRBloom"),
-		ResourceManager::LoadShaderDefaultVert("brdf"),
-		ResourceManager::LoadShader("prefilter"),
-		ResourceManager::LoadShaderDefaultVert("downSample"),
-		ResourceManager::LoadShaderDefaultVert("upSample"),
-		ResourceManager::LoadShader("irradiance"),
-		ResourceManager::LoadShader("lineRenderer", Shader::Flags::VPmatrix),
-		ResourceManager::LoadShaderDefaultVert("ssao"),
-		ResourceManager::LoadShaderDefaultVert("ssaoBlur"),
-		ResourceManager::LoadShader("forward", Shader::Flags::VPmatrix),
-		ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/superDuper.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "cubemap" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "simpleDepthShader" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "shadowDebug" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "HDRBloom" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "brdf" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prefilter" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "downSample" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "upSample" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "irradiance" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "lineRenderer" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssao" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssaoBlur" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "forward" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "superDuper" + Paths::shaderExtension),
 	});
 
 	std::array<std::string, 6> skyboxFaces = { "images/SkyBox Volume 2/Stars01/leftImage.png", "images/SkyBox Volume 2/Stars01/rightImage.png", "images/SkyBox Volume 2/Stars01/upImage.png", "images/SkyBox Volume 2/Stars01/downImage.png", "images/SkyBox Volume 2/Stars01/frontImage.png", "images/SkyBox Volume 2/Stars01/backImage.png" };
@@ -167,6 +169,9 @@ SceneManager::SceneManager(Scene* _scene)
 		});
 	ResourceManager::defaultShader = scene->shaders[super];
 
+	UserPreferences::Initialise();
+	PrefabManager::Initialise();
+
 	scene->Start();
 
 	scene->renderSystem.Start(
@@ -176,6 +181,8 @@ SceneManager::SceneManager(Scene* _scene)
 		""
 	);
 
+	SwitchToWindowMode(UserPreferences::windowedStartMode);
+
 
 
 	for (auto i = scene->transforms.begin(); i != scene->transforms.end(); i++)
@@ -183,7 +190,6 @@ SceneManager::SceneManager(Scene* _scene)
 		(*i).second.UpdateGlobalMatrixCascading();
 	}
 
-	UserPreferences::Initialise();
 
 	std::cout << "Start finished\n";
 }
@@ -252,12 +258,17 @@ void SceneManager::Update()
 	ImGuizmo::BeginFrame();
 	
 	scene->renderSystem.lines.Clear();
+	scene->renderSystem.debugLines.Clear();
 	scene->Update(deltaTime);
+	if (scene->gui.sceneObjectSelected) {
+		scene->gui.sceneObjectSelected->DebugDraw();
+	}
 	for (auto& i : scene->animators)
 	{
 		i.second.UpdateAnimation(deltaTime);
 	}
 	scene->renderSystem.lines.Compile();
+	scene->renderSystem.debugLines.Compile();
 
 	scene->skybox->Update(&camera, (float)windowWidth / (float)windowHeight);
 
@@ -486,17 +497,39 @@ void SceneManager::ProcessMouseInput(GLFWwindow* window)
 
 void SceneManager::ToggleFullscreen()
 {
-	auto temp = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	firstMouse = true;
 	switch (windowMode)
 	{
 	case WindowModes::windowed:
-		windowMode = WindowModes::fullscreenWindowed;
+		SwitchToWindowMode(WindowModes::maximised);
+		break;
+	case WindowModes::maximised:
+		SwitchToWindowMode(WindowModes::borderlessFullscreen);
+		break;
+	case WindowModes::borderlessFullscreen:
+		SwitchToWindowMode(WindowModes::windowed);
+		break;
+	default:
+		break;
+	}
+}
+
+void SceneManager::SwitchToWindowMode(WindowModes mode)
+{
+	windowMode = mode;
+	auto temp = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	firstMouse = true;
+	switch (mode)
+	{
+	case WindowModes::windowed:
+		glfwRestoreWindow(window);
+		glfwSetWindowMonitor(window, nullptr, windowWidth / 4, windowHeight / 4, windowWidth / 2, windowHeight / 2, temp->refreshRate);
+		break;
+	case WindowModes::borderlessFullscreen:
+		glfwRestoreWindow(window);
 		glfwSetWindowMonitor(SceneManager::window, glfwGetPrimaryMonitor(), 0, 0, temp->width, temp->height, temp->refreshRate);
 		break;
-	case WindowModes::fullscreenWindowed:
-		windowMode = WindowModes::windowed;
-		glfwSetWindowMonitor(window, nullptr, windowWidth / 4, windowHeight / 4, windowWidth / 2, windowHeight / 2, temp->refreshRate);
+	case WindowModes::maximised:
+		glfwMaximizeWindow(window);
 		break;
 	default:
 		break;

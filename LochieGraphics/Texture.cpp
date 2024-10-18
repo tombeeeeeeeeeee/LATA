@@ -3,6 +3,7 @@
 // TODO: This is only included for the cubemap
 // Cubemap stuff should be seperated
 #include "Shader.h"
+#include "Paths.h"
 
 #include "Utilities.h"
 
@@ -13,6 +14,7 @@
 #include "stb_image.h"
 
 #include <iostream>
+#include <fstream>
 
 using Utilities::PointerToString;
 
@@ -278,16 +280,36 @@ std::string Texture::getDisplayName() const
 	return path + " " + std::to_string(GUID);
 }
 
-toml::table Texture::Serialise()
+std::string Texture::getTypelessFilename(std::string path)
+{
+	std::string filename = Utilities::FilenameFromPath(path, false);
+	unsigned long long start = filename.find_first_of('_') + 1;
+	unsigned long long end = filename.find_last_of('_');
+	return filename.substr(start, end - start);
+}
+
+std::string Texture::getTypelessFilename() const
+{
+	return getTypelessFilename(path);
+}
+
+toml::table Texture::Serialise() const
 {
 	return toml::table{
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
 		{ "path", path},
 		{ "type", (int)type},
-		{ "wrappingMode", Serialisation::SaveAsUnsignedInt(wrappingMode)},
+		{ "wrappingMode", wrappingMode},
 		{ "mipMapped", mipMapped },
 		{ "minFilter", minFilter},
 		{ "maxFilter", maxFilter},
 		{ "flipped", flipped}
 	};
+}
+
+void Texture::SaveAsAsset() const
+{
+	std::ofstream file(Paths::textureSaveLocation + getTypelessFilename() + '_' + Texture::TypeNames.at(type) + Paths::textureExtension);
+	file << Serialise();
+	file.close();
 }

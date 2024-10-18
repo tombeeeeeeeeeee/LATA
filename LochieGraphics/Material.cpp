@@ -2,13 +2,14 @@
 
 // TODO: Don't like how the resource manager is included here
 #include "ResourceManager.h"
-
+#include "Paths.h"
 #include "Utilities.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
 
 #include <iostream>
+#include <fstream>
 
 using Utilities::PointerToString;
 
@@ -167,7 +168,7 @@ void Material::GUI()
 		shaderGUID = shader->GUID;
 		setShader(shader);
 	}
-	
+
 	ImGui::ColorEdit3(("Colour Picker##" + tag).c_str(), &colour[0]);
 
 	for (auto i = texturePointers.begin(); i != texturePointers.end(); i++)
@@ -251,10 +252,17 @@ toml::table Material::Serialise() const
 
 	return toml::table{
 		{ "name", name },
-		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
 		{ "shader", Serialisation::SaveAsUnsignedLongLong(shaderGUID) },
-		{ "colour", Serialisation::SaveAsVec3(colour)},
-		{ "textures", savedTextures},
-		{ "floats", savedFloats}
+		{ "colour", Serialisation::SaveAsVec3(colour) },
+		{ "textures", savedTextures },
+		{ "floats", savedFloats }
 	};
+}
+
+void Material::SaveAsAsset() const
+{
+	std::ofstream file(Paths::materialSaveLocation + name + Paths::materialExtension);
+	file << Serialise();
+	file.close();
 }

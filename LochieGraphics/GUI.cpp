@@ -5,9 +5,12 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Lights.h"
+#include "Ecco.h"
+#include "Sync.h"
 // Needed for the physics menu
 #include "Collider.h"
 #include "UserPreferences.h"
+#include "PrefabManager.h"
 
 #include "Utilities.h"
 
@@ -34,6 +37,19 @@ void GUI::Update()
 	else disableGUIHeld = false;
 
 	if (!scene->displayGUI) {
+		ImGui::SetNextWindowPos({15.0f, 50.0f});
+		ImGui::Begin("Ecco");
+		ImGui::BeginDisabled();
+		ImGui::SliderInt("Health", &scene->healths[scene->ecco->GUID].currHealth, 0, scene->ecco->maxHealth);
+		ImGui::EndDisabled();
+		ImGui::End();
+
+		ImGui::SetNextWindowPos({(float)*(scene->windowWidth) - 400.0f, 50.0f});
+		ImGui::Begin("Sync");
+		ImGui::BeginDisabled();
+		ImGui::SliderInt("Health", &scene->healths[scene->sync->GUID].currHealth, 0, scene->sync->maxHealth);
+		ImGui::EndDisabled();
+		ImGui::End();
 		return;
 	}
 
@@ -71,6 +87,7 @@ void GUI::Update()
 			ImGui::MenuItem("Imgui Demo", NULL, &showImguiExampleMenu);
 			ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
 			ImGui::MenuItem("User Prefs", NULL, &showUserPrefsMenu);
+			ImGui::MenuItem("Prefabs Menu", NULL, &showPrefabMenu);
 
 			ImGui::EndMenu();
 		}
@@ -96,6 +113,12 @@ void GUI::Update()
 	if (showHealthSystemMenu) { HealthMenu(); }
 	if (showImguiExampleMenu) { ImGui::ShowDemoWindow(); }
 	if (showRenderSystemMenu) { scene->renderSystem.GUI(); }
+	if (showPrefabMenu) {
+		if (ImGui::Begin("Prefab Manager", &showPrefabMenu, defaultWindowFlags)) {
+			PrefabManager::GUI();
+		}
+		ImGui::End();
+	}
 	if (showUserPrefsMenu) { 
 		if (ImGui::Begin("User Preferences Menu", &showUserPrefsMenu, defaultWindowFlags)) {
 			UserPreferences::GUI();
@@ -280,15 +303,17 @@ void GUI::HierarchyMenu()
 		}
 		ImGui::EndDragDropTarget();
 	}
-	for (auto i = scene->sceneObjects.begin(); i != scene->sceneObjects.end(); i++)
+	for (auto& i : scene->sceneObjects)
 	{
-		if (!(*i).second) 
+		if (!i.second) 
 		{
-			scene->DeleteSceneObject((*i).first); continue;
+			// TODO: Maybe error here
+			// TODO: Maybe shouldn't be here, there is something similar near the end of load all sceneObjects in scene
+			scene->DeleteSceneObject(i.first); continue;
 		}
-		if ((*i).second->transform()->getParent()) { continue; }
+		if (i.second->transform()->getParent()) { continue; }
 
-		TransformTree((*i).second);
+		TransformTree(i.second);
 	}
 
 	ImGui::Unindent();
@@ -312,19 +337,28 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	if (!hasChildren) {
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
+	
+	glm::vec4 textColour = { 1, 1, 1, 1 };
+	if (sceneObject->prefabStatus == SceneObject::PrefabStatus::prefabOrigin) {
+		textColour = { 0.66f, 0.0f, 1.0f, 1.0f };
+	}
+	else if (sceneObject->prefabStatus == SceneObject::PrefabStatus::prefabInstance) {
+		textColour = { 0.0f, 0.1f, 1.0f, 1.0f };
+	}
+
+	ImGui::PushStyleColor(0, { textColour.x, textColour.y, textColour.z, textColour.w });
 	bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + tag).c_str(), nodeFlags);
+	ImGui::PopStyleColor();
+	
+
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsItemToggledOpen()) {
 		sceneObjectSelected = sceneObject;
-		std::cout << "Changed gui select!\n";
 	}
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 		ImGui::OpenPopup(("SceneObjectRightClickPopUp##" + tag).c_str());
 	}
 	if (ImGui::BeginPopup(("SceneObjectRightClickPopUp##" + tag).c_str())) {
-		if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
-			scene->DeleteSceneObject(sceneObject->GUID);
-		}
-		ImGui::EndPopup();
+		sceneObject->MenuGUI();
 	}
 
 
@@ -368,6 +402,7 @@ void GUI::PhysicsMenu()
 	}
 
 	//TODO SAVE AND LOAD
+	ImGui::Checkbox("Display All Colliders", &scene->physicsSystem.displayAllColliders);
 
 	int flagCount = (int)log2((int)CollisionLayers::count);
 

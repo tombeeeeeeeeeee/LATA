@@ -211,6 +211,7 @@ void EnemySystem::AbilityCheck(
         if (enemyPair.second.inAbility)
         {
             int type = enemyPair.second.type;
+            std::vector<Hit> hits;
             switch (type)
             {
             case (int)EnemyType::explosive:
@@ -222,7 +223,7 @@ void EnemySystem::AbilityCheck(
                 {
                     enemyPair.second.inAbility = false;
 
-                    std::vector<Hit> hits = PhysicsSystem::CircleCast(enemyPos, explosionRadius, ~(Collider::transparentLayers | (int)CollisionLayers::base | (int)CollisionLayers::reflectiveSurface));
+                    hits = PhysicsSystem::CircleCast(enemyPos, explosionRadius, (int)CollisionLayers::sync | (int)CollisionLayers::ecco);
                     for (auto& hit : hits)
                     {
                         Health* health = hit.sceneObject->health();
@@ -235,6 +236,18 @@ void EnemySystem::AbilityCheck(
                 }
                 break;
             case (int)EnemyType::melee:
+                enemyPair.second.inAbility = false;
+                glm::vec3 f = transforms[enemyPair.first].forward();
+
+                hits = PhysicsSystem::CircleCast(enemyPos + glm::vec2(f.x * meleeEnemyColliderRadius, f.z * meleeEnemyColliderRadius), punchRadius, (int)CollisionLayers::sync | (int)CollisionLayers::ecco);
+                for (auto& hit : hits)
+                {
+                    Health* health = hit.sceneObject->health();
+                    if (health)
+                    {
+                        health->subtractHealth(meleeEnemyDamage);
+                    }
+                }
                 break;
             case (int)EnemyType::ranged:
                 break;
@@ -371,10 +384,17 @@ void EnemySystem::Steering(
         }
         enemyPair.second.influenceThisFrame = {0.0f, 0.0f};
 
+
         glm::vec2 curVel = rigidBodies[enemyPair.first].vel;
         glm::vec2 velocityDelta = enemyPair.second.boidVelocity - curVel;
         glm::vec2 forceThisFrame = velocityDelta / delta;
         rigidBodies[enemyPair.first].netForce += forceThisFrame;
+
+        float angle = atan2f(rigidBodies[enemyPair.first].vel.x, rigidBodies[enemyPair.first].vel.y) * 180.0f / PI;
+        if (isnan(angle)) continue;
+        glm::vec3 eulers = transforms[enemyPair.first].getEulerRotation();
+        eulers.y = angle;
+        transforms[enemyPair.first].setEulerRotation(eulers);
     }
 
 }
@@ -494,7 +514,7 @@ void EnemySystem::GUI()
     ImGui::DragInt("Melee Enemy Damage", &meleeEnemyDamage);
     ImGui::DragFloat("Melee Enemy Collider Radius", &meleeEnemyColliderRadius);
     ImGui::DragFloat("Distance To Start Punching", &distanceToPunch, 25.0f, 0);
-    if (ResourceManager::ModelAssetSelector("Melee Enemy Model", &(meleeEnemyRenderer->model)))
+    if (ResourceManager::ModelSelector("Melee Enemy Model", &(meleeEnemyRenderer->model)))
     {
         meleeEnemyModel = meleeEnemyRenderer->model->path;
     }
@@ -506,7 +526,7 @@ void EnemySystem::GUI()
     ImGui::DragFloat("Ranged Enemy Collider Radius", &rangedEnemyColliderRadius);
     ImGui::DragFloat("Distance To Start Shooting", &distanceToShoot, 25.0f, 0);
     ImGui::DragFloat("Distance To Start Fleeing", &distanceToFlee, 25.0f, 0);
-    if (ResourceManager::ModelAssetSelector("Ranged Enemy Model", &(rangedEnemyRenderer->model)))
+    if (ResourceManager::ModelSelector("Ranged Enemy Model", &(rangedEnemyRenderer->model)))
     {
         rangedEnemyModel = rangedEnemyRenderer->model->path;
     }
@@ -549,7 +569,7 @@ void EnemySystem::UpdateNormalFlowMap(
     }
     else
     {
-        PopulateNormalFlowMapFromRigidBodies(transforms, rigidBodies, colliders);
+        PopulateNormalFlowMap(transforms, rigidBodies, colliders);
     }
 }
 
@@ -572,7 +592,7 @@ void EnemySystem::LoadNormalFlowMapFromImage(unsigned char* image, int width, in
 
 }
 
-void EnemySystem::PopulateNormalFlowMapFromRigidBodies(
+void EnemySystem::PopulateNormalFlowMap(
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
     std::unordered_map<unsigned long long, Collider*>& colliders
@@ -612,7 +632,7 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(
     {
         for (auto& collider : rigidBodyPair.second.colliders)
         {
-            if (collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::softCover))
+            if ((collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::softCover)) && !collider->isTrigger)
             {
                 if (collider->getType() == ColliderType::polygon)
                 {
@@ -620,99 +640,12 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(
                     
                     if (poly->verts.size() == 1)
                     {
-                        glm::vec2 pos = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[0]);
-                        float radius = poly->radius;
-
-                        //Check every "tile" on colourMap
-                        for (int x = 0; x < mapDimensions.x; x++)
-                        {
-                            for (int z = 0; z < mapDimensions.y; z++)
-                            {
-                                glm::vec2 tilePos = {x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y};
-                                glm::vec2 delta = tilePos - pos;
-                                float distance = glm::dot(delta, delta);
-                                if (distance >= radius * radius)
-                                {
-                                    distance = sqrtf(distance);
-                                    if (distance <= maxNormalInfluence * 3)
-                                    {
-                                        glm::vec2 normal = glm::normalize(delta);
-                                        glm::vec2 influence = normal * Utilities::Lerp(1.0f, 0.0f, distance / (3 * maxNormalInfluence));
-                                        normalFlowMapVec3[x + z * mapDimensions.x] += glm::vec3(influence.x, influence.y, 0.0f);
-                                        if (distance > 0 && distance < normalFlowMapVec3[x + z * mapDimensions.x].z)
-                                            normalFlowMapVec3[x + z * mapDimensions.x].z = distance;
-                                    }
-                                }
-                            }
-                        }
+                        PopulateNormalFlowMapFromCircle(poly, transforms[rigidBodyPair.first], normalFlowMapVec3);
                     }
 
                     else
                     {
-                        for (int i = 0; i < poly->verts.size(); i++)
-                        {
-                            glm::vec2 vertA = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[i]);
-                            glm::vec2 vertB = RigidBody::Transform2Din3DSpace(transforms[rigidBodyPair.first].getGlobalMatrix(), poly->verts[(i + 1) % poly->verts.size()]);
-
-                            glm::vec2 seperation = vertB - vertA;
-                            if (glm::dot(seperation, seperation) < 1000)
-                                continue;
-                            glm::vec2 tangent = glm::normalize(seperation);
-
-                            float tanVertA = glm::dot(vertA, tangent);
-                            float tanVertB = glm::dot(vertB, tangent);
-
-                            glm::vec2 normal = {-tangent.y, tangent.x};
-                            float comparisonNormal = glm::dot(vertB, normal);
-
-                            float minX = fminf(vertA.x, vertB.x);
-                            float minY = fminf(vertA.y, vertB.y);
-                            minX -= maxNormalInfluence;
-                            minY -= maxNormalInfluence;
-                            minX = fmaxf((float)mapMinCorner.x, minX);
-                            minY = fmaxf((float)mapMinCorner.y, minY);
-
-                            minX -= mapMinCorner.x; 
-                            minX /= nfmDensity;
-                            minY -= mapMinCorner.y;
-                            minY /= nfmDensity;
-
-                            float maxX = fmaxf(vertA.x, vertB.x);
-                            float maxY = fmaxf(vertA.y, vertB.y);
-                            maxX += maxNormalInfluence;
-                            maxY += maxNormalInfluence;
-                            maxX = fminf((float)(mapMinCorner.x + mapDimensions.x * nfmDensity), maxX);
-                            maxY = fminf((float)(mapMinCorner.y + mapDimensions.y * nfmDensity), maxY);
-
-                            maxX -= mapMinCorner.x;
-                            maxX /= nfmDensity;
-                            maxY -= mapMinCorner.y;
-                            maxY /= nfmDensity;
-
-                            for (int x = (int)minX; x < maxX; x++)
-                            {
-                                for (int z = (int)minY; z < maxY; z++)
-                                {
-                                    glm::vec2 tilePos = { x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y };
-                                    float normalDot = glm::dot(tilePos, normal);
-                                    if (normalDot >= comparisonNormal)
-                                    {
-                                        float tileSeperationDot = glm::dot(tilePos, tangent);
-                                        if (tileSeperationDot > tanVertA && tileSeperationDot < tanVertB)
-                                        {
-                                            float distance = normalDot - comparisonNormal;
-                                            glm::vec2 influence = normal * Utilities::Lerp(1.0f, 0.0f, distance / maxNormalInfluence);
-                                            normalFlowMapVec3[x + z * mapDimensions.x] += glm::vec3(influence.x, influence.y, 0.0f );
-
-                                            if ( distance < normalFlowMapVec3[x + z * mapDimensions.x].z)
-                                            {
-                                                normalFlowMapVec3[x + z * mapDimensions.x].z = distance;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        PopulateNormalFlowMapFromPoly(poly, transforms[rigidBodyPair.first], normalFlowMapVec3);
                     }
                 }
             }
@@ -722,7 +655,7 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(
     for (auto& colliderPair : colliders)
     {
         Collider* collider = colliderPair.second;
-        if (collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::softCover))
+        if ((collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::softCover)) && !collider->isTrigger)
         {
             if (collider->getType() == ColliderType::polygon)
             {
@@ -730,99 +663,12 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(
 
                 if (poly->verts.size() == 1)
                 {
-                    glm::vec2 pos = RigidBody::Transform2Din3DSpace(transforms[colliderPair.first].getGlobalMatrix(), poly->verts[0]);
-                    float radius = poly->radius;
-
-                    //Check every "tile" on colourMap
-                    for (int x = 0; x < mapDimensions.x; x++)
-                    {
-                        for (int z = 0; z < mapDimensions.y; z++)
-                        {
-                            glm::vec2 tilePos = { x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y };
-                            glm::vec2 delta = tilePos - pos;
-                            float distance = glm::dot(delta, delta);
-                            if (distance >= radius * radius)
-                            {
-                                distance = sqrtf(distance);
-                                if (distance <= maxNormalInfluence * 3)
-                                {
-                                    glm::vec2 normal = glm::normalize(delta);
-                                    glm::vec2 influence = normal * Utilities::Lerp(1.0f, 0.0f, distance / (3 * maxNormalInfluence));
-                                    normalFlowMapVec3[x + z * mapDimensions.x] += glm::vec3(influence.x, influence.y, 0.0f);
-                                    if (distance > 0 && distance < normalFlowMapVec3[x + z * mapDimensions.x].z)
-                                        normalFlowMapVec3[x + z * mapDimensions.x].z = distance;
-                                }
-                            }
-                        }
-                    }
+                    PopulateNormalFlowMapFromCircle(poly, transforms[colliderPair.first], normalFlowMapVec3);
                 }
 
                 else
                 {
-                    for (int i = 0; i < poly->verts.size(); i++)
-                    {
-                        glm::vec2 vertA = RigidBody::Transform2Din3DSpace(transforms[colliderPair.first].getGlobalMatrix(), poly->verts[i]);
-                        glm::vec2 vertB = RigidBody::Transform2Din3DSpace(transforms[colliderPair.first].getGlobalMatrix(), poly->verts[(i + 1) % poly->verts.size()]);
-
-                        glm::vec2 seperation = vertB - vertA;
-                        if (glm::dot(seperation, seperation) < 1000)
-                            continue;
-                        glm::vec2 tangent = glm::normalize(seperation);
-
-                        float tanVertA = glm::dot(vertA, tangent);
-                        float tanVertB = glm::dot(vertB, tangent);
-
-                        glm::vec2 normal = { -tangent.y, tangent.x };
-                        float comparisonNormal = glm::dot(vertB, normal);
-
-                        float minX = fminf(vertA.x, vertB.x);
-                        float minY = fminf(vertA.y, vertB.y);
-                        minX -= maxNormalInfluence;
-                        minY -= maxNormalInfluence;
-                        minX = fmaxf((float)mapMinCorner.x, minX);
-                        minY = fmaxf((float)mapMinCorner.y, minY);
-
-                        minX -= mapMinCorner.x;
-                        minX /= nfmDensity;
-                        minY -= mapMinCorner.y;
-                        minY /= nfmDensity;
-
-                        float maxX = fmaxf(vertA.x, vertB.x);
-                        float maxY = fmaxf(vertA.y, vertB.y);
-                        maxX += maxNormalInfluence;
-                        maxY += maxNormalInfluence;
-                        maxX = fminf((float)(mapMinCorner.x + mapDimensions.x * nfmDensity), maxX);
-                        maxY = fminf((float)(mapMinCorner.y + mapDimensions.y * nfmDensity), maxY);
-
-                        maxX -= mapMinCorner.x;
-                        maxX /= nfmDensity;
-                        maxY -= mapMinCorner.y;
-                        maxY /= nfmDensity;
-
-                        for (int x = (int)minX; x < maxX; x++)
-                        {
-                            for (int z = (int)minY; z < maxY; z++)
-                            {
-                                glm::vec2 tilePos = { x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y };
-                                float normalDot = glm::dot(tilePos, normal);
-                                if (normalDot >= comparisonNormal)
-                                {
-                                    float tileSeperationDot = glm::dot(tilePos, tangent);
-                                    if (tileSeperationDot > tanVertA && tileSeperationDot < tanVertB)
-                                    {
-                                        float distance = normalDot - comparisonNormal;
-                                        glm::vec2 influence = normal * Utilities::Lerp(1.0f, 0.0f, distance / maxNormalInfluence);
-                                        normalFlowMapVec3[x + z * mapDimensions.x] += glm::vec3(influence.x, influence.y, 0.0f);
-
-                                        if (distance < normalFlowMapVec3[x + z * mapDimensions.x].z)
-                                        {
-                                            normalFlowMapVec3[x + z * mapDimensions.x].z = distance;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    PopulateNormalFlowMapFromPoly(poly, transforms[colliderPair.first], normalFlowMapVec3);
                 }
             }
         }
@@ -845,7 +691,6 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(
             influence.y = fmin(influence.y, 1.0f);
             influence.y = fmax(influence.y, -1.0f);
             influence /= 2.0f;
-            influence *= b;
             influence += 0.5f;
             influence *= 255;
             r = influence.x;
@@ -860,5 +705,125 @@ void EnemySystem::PopulateNormalFlowMapFromRigidBodies(
 
     stbi_write_png((Paths::levelsPath + SceneManager::scene->windowName + Paths::imageExtension).c_str(), mapDimensions.x, mapDimensions.y, 4, mapColours.data(),0);
     UpdateNormalFlowMap(transforms, rigidbodies, colliders);
+}
+
+void EnemySystem::PopulateNormalFlowMapFromCircle(PolygonCollider* circle, Transform& transform, std::vector<glm::vec3>& normalFlowMapVec3)
+{
+    glm::vec2 pos = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), circle->verts[0]);
+    float radius = circle->radius;
+
+    float minX = pos.x - radius;
+    float minY = pos.y - radius;
+    minX -= maxNormalInfluence;
+    minY -= maxNormalInfluence;
+    minX = fmaxf((float)mapMinCorner.x, minX);
+    minY = fmaxf((float)mapMinCorner.y, minY);
+
+    minX -= mapMinCorner.x;
+    minX /= nfmDensity;
+    minY -= mapMinCorner.y;
+    minY /= nfmDensity;
+
+    float maxX = pos.x + radius;
+    float maxY = pos.y + radius;
+    maxX += maxNormalInfluence;
+    maxY += maxNormalInfluence;
+    maxX = fminf((float)(mapMinCorner.x + mapDimensions.x * nfmDensity), maxX);
+    maxY = fminf((float)(mapMinCorner.y + mapDimensions.y * nfmDensity), maxY);
+
+    maxX -= mapMinCorner.x;
+    maxX /= nfmDensity;
+    maxY -= mapMinCorner.y;
+    maxY /= nfmDensity;
+
+    //Check every "tile" on colourMap
+    for (int x = minX; x < maxX; x++)
+    {
+        for (int z = minY; z < maxY; z++)
+        {
+            glm::vec2 tilePos = { x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y };
+            glm::vec2 delta = tilePos - pos;
+            float distance = glm::dot(delta, delta);
+            if (distance >= radius * radius)
+            {
+                distance = sqrtf(distance);
+                if (distance < normalFlowMapVec3[x + z * mapDimensions.x].z)
+                {
+                    glm::vec2 normal = glm::normalize(delta);
+                    normalFlowMapVec3[x + z * mapDimensions.x] = glm::vec3(normal.x, normal.y, distance);
+                }
+            }
+        }
+    }
+}
+
+void EnemySystem::PopulateNormalFlowMapFromPoly(PolygonCollider* poly, Transform& transform, std::vector<glm::vec3>& normalFlowMapVec3)
+{
+    for (int i = 0; i < poly->verts.size(); i++)
+    {
+        glm::vec2 vertA = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), poly->verts[i]);
+        glm::vec2 vertB = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), poly->verts[(i + 1) % poly->verts.size()]);
+
+        glm::vec2 seperation = vertB - vertA;
+        if (glm::dot(seperation, seperation) < 1000)
+            continue;
+        glm::vec2 tangent = glm::normalize(seperation);
+
+        float tanVertA = glm::dot(vertA, tangent);
+        float tanVertB = glm::dot(vertB, tangent);
+
+        glm::vec2 normal = { -tangent.y, tangent.x };
+        float comparisonNormal = glm::dot(vertB, normal);
+
+        float minX = fminf(vertA.x, vertB.x);
+        float minY = fminf(vertA.y, vertB.y);
+        minX -= maxNormalInfluence;
+        minY -= maxNormalInfluence;
+        minX = fmaxf((float)mapMinCorner.x, minX);
+        minY = fmaxf((float)mapMinCorner.y, minY);
+
+        minX -= mapMinCorner.x;
+        minX /= nfmDensity;
+        minY -= mapMinCorner.y;
+        minY /= nfmDensity;
+
+        float maxX = fmaxf(vertA.x, vertB.x);
+        float maxY = fmaxf(vertA.y, vertB.y);
+        maxX += maxNormalInfluence;
+        maxY += maxNormalInfluence;
+        maxX = fminf((float)(mapMinCorner.x + mapDimensions.x * nfmDensity), maxX);
+        maxY = fminf((float)(mapMinCorner.y + mapDimensions.y * nfmDensity), maxY);
+
+        maxX -= mapMinCorner.x;
+        maxX /= nfmDensity;
+        maxY -= mapMinCorner.y;
+        maxY /= nfmDensity;
+
+        for (int x = (int)minX; x < maxX; x++)
+        {
+            for (int z = (int)minY; z < maxY; z++)
+            {
+                glm::vec2 tilePos = { x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y };
+                float normalDot = glm::dot(tilePos, normal);
+                if (normalDot >= comparisonNormal)
+                {
+                    float tileSeperationDot = glm::dot(tilePos, tangent);
+                    float distance = normalDot - comparisonNormal;
+                    if (tileSeperationDot > tanVertA && tileSeperationDot < tanVertB)
+                    {
+                        if (distance <= normalFlowMapVec3[x + z * mapDimensions.x].z)
+                            normalFlowMapVec3[x + z * mapDimensions.x] = glm::vec3(normal.x, normal.y, distance);
+                    }
+
+                    else if (tileSeperationDot > tanVertA - distance && tileSeperationDot < tanVertB + distance)
+                    {
+                        distance = distance * 1.414f;
+                        if (distance <= normalFlowMapVec3[x + z * mapDimensions.x].z)
+                            normalFlowMapVec3[x + z * mapDimensions.x] = glm::vec3(normal.x, normal.y, distance);
+                    }
+                }
+            }
+        }
+    }
 }
 

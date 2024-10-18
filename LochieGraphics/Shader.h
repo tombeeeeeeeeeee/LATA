@@ -87,8 +87,11 @@ public:
 	operator std::string() const;
 	std::string getDisplayName() const;
 
-	toml::table Serialise();
+	toml::table Serialise() const;
+	Shader(toml::table toml);
 	Shader(toml::table* toml);
+
+	void SaveAsAsset() const;
 
 	void OpenModal() {};
 

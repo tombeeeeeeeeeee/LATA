@@ -7,11 +7,16 @@
 #include "Sync.h"
 #include "Ecco.h"
 #include "Scene.h"
+#include "Paths.h"
+#include "PrefabManager.h"
 
 #include "Utilities.h"
 
 #include "EditorGUI.h"
+#include "LineRenderer.h"
 #include "Serialisation.h"
+
+#include <fstream>
 
 SceneObject::SceneObject(Scene* _scene, std::string _name) :
 	scene(_scene),
@@ -47,7 +52,25 @@ if (parts & Parts::partsType) {                 \
 
 void SceneObject::GUI()
 {
-	ImGui::InputText("Name", &name);
+	std::string tag = Utilities::PointerToString(this);
+	ImGui::InputText(("Name##" + tag).c_str(), &name);
+
+	if (prefabStatus == PrefabStatus::prefabOrigin) {
+		if (ImGui::Button(("Save Prefab##" + tag).c_str())) {
+			SaveAsPrefab();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button(("Refresh Prefab Instances##" + tag).c_str())) {
+			PrefabManager::RefreshPrefabInstancesOf(GUID);
+		}
+	}
+	if (prefabStatus == PrefabStatus::prefabInstance) {
+		if (ImGui::Button(("Refresh This Instance##" + tag).c_str())) {
+			LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(prefabBase));
+		}
+		// TODO: Button to 'overwrite' the prefab, like apply changes to prefab
+	}
+
 	scene->transforms[GUID].GUI();
 
 	if (parts & Parts::modelRenderer) { scene->renderers[GUID].GUI(); }
@@ -55,7 +78,7 @@ void SceneObject::GUI()
 
 	if (parts & Parts::collider) { 
 		// Collapsing Header is not apart of the collider GUI as it can be apart of the rigidbody too
-		if (ImGui::CollapsingHeader(("Collider##" + Utilities::PointerToString(this)).c_str())) {
+		if (ImGui::CollapsingHeader(("Collider##" + tag).c_str())) {
 			scene->colliders[GUID]->GUI();
 		}
 	}
@@ -84,55 +107,95 @@ void SceneObject::GUI()
 		scene->animators[GUID].GUI();
 	}
 
-	const char addPopup[] = "SceneObject Add Part";
-	const char removePopup[] = "SceneObject Remove Part";
+	std::string addPopup = "SceneObject Add Part" + tag;
+	std::string removePopup = "SceneObject Remove Part" + tag;
 
-	if (ImGui::Button("Add Part")) {
-		ImGui::OpenPopup(addPopup);
+	if (ImGui::Button(("Add Part##" + tag).c_str())) {
+		ImGui::OpenPopup(addPopup.c_str());
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Remove Part")) {
-		ImGui::OpenPopup(removePopup);
+	if (ImGui::Button(("Remove Part##" + tag).c_str())) {
+		ImGui::OpenPopup(removePopup.c_str());
 	}
 
-	if (ImGui::BeginPopup(addPopup)) {
-		AddPartGUI(renderer, setRenderer, ModelRenderer, "Model Renderer##Add part");
-		AddPartGUI(rigidbody, setRigidBody, RigidBody, "Rigid Body##Add part");
+	if (ImGui::BeginPopup(addPopup.c_str())) {
+		AddPartGUI(renderer, setRenderer, ModelRenderer, ("Model Renderer##Add part" + tag).c_str());
+		AddPartGUI(rigidbody, setRigidBody, RigidBody, ("Rigid Body##Add part" + tag).c_str());
 
 		if (ecco() == nullptr && scene->ecco->GUID == 0) {
-			if (ImGui::MenuItem("Ecco##Add part")) {
+			if (ImGui::MenuItem(("Ecco##Add part" + tag).c_str())) {
 				setEcco();
 			}
 		}
 		if (sync() == nullptr && scene->sync->GUID == 0) {
-			if (ImGui::MenuItem("Sync##Add part")) {
+			if (ImGui::MenuItem(("Sync##Add part" + tag).c_str())) {
 				setSync();
 			}
 		}
 		
-		AddPartGUI(health, setHealth, Health, "Health##Add part");
-		AddPartGUI(enemy, setEnemy, Enemy, "Enemy##Add part");
-		AddPartGUI(exitElevator, setExitElevator, ExitElevator, "Exit Elevator##Add part");
+		AddPartGUI(health, setHealth, Health, ("Health##Add part" + tag).c_str());
+		AddPartGUI(enemy, setEnemy, Enemy, ("Enemy##Add part" + tag).c_str());
+		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
 		
 		ImGui::EndPopup();
 	}
 
-	if (ImGui::BeginPopup(removePopup)) {
-		RemovePartGUI(modelRenderer, setRenderer, "Model Renderer##Remove part");
-		RemovePartGUI(rigidBody, setRigidBody, "Rigid Body##Remove part");
+	if (ImGui::BeginPopup(removePopup.c_str())) {
+		RemovePartGUI(modelRenderer, setRenderer, ("Model Renderer##Remove part" + tag).c_str());
+		RemovePartGUI(rigidBody, setRigidBody, ("Rigid Body##Remove part" + tag).c_str());
 
 		if (parts & Parts::ecco) {
-			if (ImGui::MenuItem("Ecco##Remove part")) {
+			if (ImGui::MenuItem(("Ecco##Remove part" + tag).c_str())) {
 				setEcco(nullptr);
 			}
 		}
 		if (parts & Parts::sync) {
-			if (ImGui::MenuItem("Sync##Remove part")) {
+			if (ImGui::MenuItem(("Sync##Remove part" + tag).c_str())) {
 				setSync(nullptr);
 			}
 		}
-		RemovePartGUI(exitElevator, setExitElevator, "Exit##Remove part");
+		RemovePartGUI(exitElevator, setExitElevator, ("Exit##Remove part" + tag).c_str());
 		ImGui::EndPopup();
+	}
+}
+
+void SceneObject::MenuGUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+
+	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
+		scene->DeleteSceneObject(GUID);
+	}
+	if (ImGui::MenuItem((("Duplicate##RightClick") + tag).c_str())) {
+		// TODO:
+	}
+	if (ImGui::MenuItem(("Save As Prefab##RightClick" + tag).c_str())) {
+		SaveAsPrefab();
+	}
+	if (ImGui::MenuItem(("Replace with Prefab##RightClick" + tag).c_str())) {
+		auto prefab = PrefabManager::loadedPrefabOriginals.find(PrefabManager::selectedPrefab);
+		if (prefab != PrefabManager::loadedPrefabOriginals.end()) {
+			LoadFromPrefab(prefab->second);
+		}
+		// Else // TODO: Warning
+
+	}
+	if (ImGui::MenuItem(("Copy GUID##RightClick" + tag).c_str())) {
+		ImGui::SetClipboardText(std::to_string(GUID).c_str());
+	}
+	ImGui::EndPopup();
+
+}
+
+void SceneObject::DebugDraw()
+{
+	if (parts & Parts::rigidBody)
+	{
+		scene->rigidBodies[GUID].DebugDraw(&scene->transforms[GUID]);
+	}
+	if (parts & Parts::collider)
+	{
+		scene->colliders[GUID]->DebugDraw(&scene->transforms[GUID]);
 	}
 }
 
@@ -150,10 +213,12 @@ toml::table SceneObject::Serialise() const
 	}
 	return toml::table{
 		{ "name", name},
-		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
-		{ "parts", parts},
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
+		{ "parts", parts },
 		{ "parent", Serialisation::SaveAsUnsignedLongLong(parentGUID)},
-		{ "children", childrenGUIDs }
+		{ "children", childrenGUIDs },
+		{ "prefabStatus", (int)prefabStatus },
+		{ "prefabBase", Serialisation::SaveAsUnsignedLongLong(prefabBase) }
 	};
 }
 
@@ -162,9 +227,11 @@ SceneObject::SceneObject(Scene* _scene, toml::table* table) :
 {
 	name = Serialisation::LoadAsString((*table)["name"]);
 	GUID = Serialisation::LoadAsUnsignedLongLong((*table)["guid"]);
-	parts = Serialisation::LoadAsInt((*table)["parts"]);
+	parts = Serialisation::LoadAsUnsignedInt((*table)["parts"]);
 	scene->transforms[GUID] = Transform(this);
 	scene->sceneObjects[GUID] = this;
+	prefabStatus = (PrefabStatus)Serialisation::LoadAsInt((*table)["prefabStatus"]);
+	prefabBase = Serialisation::LoadAsUnsignedLongLong((*table)["prefabBase"]);
 }
 
 void SceneObject::setTransform(Transform* transform)
@@ -307,4 +374,96 @@ void SceneObject::ClearParts()
 	if (parts & Parts::spawnManager)  { scene->spawnManagers.erase(GUID); parts &= ~(Parts::spawnManager);}
 
 	assert(parts == 0);
+}
+
+#define SaveAsPrefabPart(saveName, partsName, container)                      \
+	if (Parts::##partsName & parts) {                                         \
+		table.emplace(saveName, scene->##container.at(GUID).Serialise(GUID)); \
+		safetyCheck &= ~Parts::##partsName;                                   \
+	}                                                                         \
+
+
+void SceneObject::SaveAsPrefab()
+{
+	auto safetyCheck = parts;
+	std::ofstream file(Paths::prefabsSaveLocation + name + Paths::prefabExtension);
+
+	toml::table table;
+
+	table.emplace("sceneObject", Serialise());
+
+	SaveAsPrefabPart("modelRenderer", modelRenderer, renderers);
+	SaveAsPrefabPart("animator", animator, animators);
+	SaveAsPrefabPart("rigidBody", rigidBody, rigidBodies);
+	SaveAsPrefabPart("health", health, healths);
+	SaveAsPrefabPart("enemy", enemy, enemies);
+	SaveAsPrefabPart("exitElevator", exitElevator, exits);
+	
+	if (Parts::collider & parts) {
+		table.emplace("collider", scene->colliders.at(GUID)->Serialise(GUID));
+		safetyCheck &= ~Parts::collider;
+	}
+	if (Parts::ecco & parts) {
+		table.emplace("ecco", scene->ecco->Serialise());
+		safetyCheck &= ~Parts::ecco;
+	}
+	if (Parts::sync & parts) {
+		table.emplace("sync", scene->sync->Serialise());
+		safetyCheck &= ~Parts::sync;
+	}
+
+	// TODO: Probably don't need a whole assert here, could just print a error and continue on
+	assert(safetyCheck == 0);
+
+	// TODO: Give a warning incase the object has children as they won't be saved along with the prefab just yet
+
+	file << table << '\n';
+
+	file.close();
+
+	prefabStatus = PrefabStatus::prefabOrigin;
+	PrefabManager::loadedPrefabOriginals[GUID] = table;
+}
+
+#define LoadAsPrefabPart(saveName, partsName, setter, type) \
+	if (intendedParts & Parts::##partsName) {               \
+		/* TODO: likely leakig here, fix */                 \
+		setter(new type(*table[saveName].as_table()));      \
+	}                                                       \
+
+
+void SceneObject::LoadFromPrefab(toml::table table)
+{
+	ClearParts();
+	
+	unsigned long long originalGUID = GUID;
+
+	prefabStatus = PrefabStatus::prefabInstance;
+
+	toml::table sceneObjectTable = *table["sceneObject"].as_table();
+	prefabBase = Serialisation::LoadAsUnsignedLongLong(sceneObjectTable["guid"]);
+
+	unsigned long long intendedParts = Serialisation::LoadAsUnsignedInt(sceneObjectTable["parts"]);
+
+	LoadAsPrefabPart("modelRenderer", modelRenderer, setRenderer, ModelRenderer);
+	LoadAsPrefabPart("animator", animator, setAnimator, Animator);
+	LoadAsPrefabPart("rigidBody", rigidBody, setRigidBody, RigidBody);
+	LoadAsPrefabPart("health", health, setHealth, Health);
+	LoadAsPrefabPart("enemy", enemy, setEnemy, Enemy);
+	LoadAsPrefabPart("exitElevator", exitElevator, setExitElevator, ExitElevator);
+
+	if (intendedParts & Parts::collider) {
+		setCollider(Collider::Load(*table["collider"].as_table()));
+	}
+	if (intendedParts & Parts::ecco) {
+		// TODO: This should load prefab data
+		setEcco(scene->ecco);
+	}
+	if (intendedParts & Parts::sync) {
+		// TODO: This should load prefab data
+		setSync(scene->sync);
+	}
+
+	// TODO: Don't need a whole assert here
+	assert(intendedParts == parts);
 }

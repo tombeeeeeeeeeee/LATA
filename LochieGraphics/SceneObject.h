@@ -14,6 +14,7 @@ class Animator;
 class RigidBody;
 class ExitElevator;
 class SpawnManager;
+class LineRenderer;
 struct Enemy;
 namespace toml {
 	inline namespace v3 {
@@ -22,8 +23,9 @@ namespace toml {
 }
 // TODO: Look into how instancing should be handled
 
-//TODO: Add GetPart Functions
-enum Parts
+// TODO: There might be issues later due to the parts being saved as an signed int, not unsigned
+// Changing how they are saved can affect other saves and isn't worth it at the moment of writing
+enum Parts : unsigned int
 {
 	modelRenderer = 1 << 1,
 	animator =      1 << 2,
@@ -38,6 +40,7 @@ enum Parts
 	spikes =		1 << 11,
 	plate = 		1 << 12,
 	spawnManager =	1 << 13,
+	ALL = 0b1111111111110,
 };
 
 class Scene;
@@ -45,11 +48,20 @@ class Scene;
 class SceneObject
 {
 public:
+	enum class PrefabStatus {
+		none,
+		prefabOrigin,
+		prefabInstance
+	};
 
 	std::string name = "Unnamed Scene Object";
-	unsigned long long GUID = 0;
-	unsigned int parts = 0;
+	unsigned long long GUID = 0ull;
+	unsigned int parts = 0u;
 	Scene* scene = nullptr;
+
+	PrefabStatus prefabStatus = PrefabStatus::none;
+	unsigned long long prefabBase = 0ull;
+
 	SceneObject(Scene* _scene, std::string name = "Unnamed Scene Object");
 	SceneObject(Scene* _scene, toml::table* table);
 
@@ -59,9 +71,15 @@ public:
 	//SceneObject& operator=(const SceneObject& other) = delete;
 
 	void GUI();
+	// This is the right click menu
+	void MenuGUI();
+
+	void DebugDraw();
 
 	toml::table Serialise() const;
 
+	void SaveAsPrefab();
+	void LoadFromPrefab(toml::table table);
 
 #pragma region Part Get and Set
 
@@ -104,11 +122,11 @@ public:
 
 	void setSpawnManager(SpawnManager* spawnManager);
 	SpawnManager* spawnManager();
-	// Make this take a mask for stuff to delete
-	void ClearParts();
 
 #pragma endregion
 
+	// Make this take a mask for stuff to delete
+	void ClearParts();
 };
 
 

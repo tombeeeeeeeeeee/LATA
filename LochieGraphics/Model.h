@@ -61,6 +61,7 @@ public:
 
 	static void ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src);
 
-	toml::table Serialise();
+	toml::table Serialise() const;
+	void SaveAsAsset() const;
 };
 
