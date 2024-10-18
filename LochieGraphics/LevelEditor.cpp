@@ -10,6 +10,7 @@
 #include "Ecco.h"
 #include "RenderSystem.h"
 #include "UserPreferences.h"
+#include "PrefabManager.h"
 
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
@@ -156,12 +157,12 @@ void LevelEditor::Start()
 	gui.showSceneObject = true;
 	gui.showCameraMenu = true;
 
-	camera->transform.setPosition({ 0, 50, 0 });
-	camera->orthoScale = 300;
+	camera->transform.setPosition({ 0.0f, 50.0f, 0.0f });
+	camera->orthoScale = 300.0f;
 
-	camera->editorSpeed.move = 300;
-	camera->farPlane = 100000;
-	camera->nearPlane = 10;
+	camera->editorSpeed.move = 300.0f;
+	camera->farPlane = 100000.0f;
+	camera->nearPlane = 10.0f;
 
 	ground = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
 	wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_adjustedOriginLocWall" + Paths::modelExtension);
@@ -225,6 +226,8 @@ void LevelEditor::Start()
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);
 	}
+
+	inPlay = UserPreferences::enterPlayModeOnStart;
 }
 
 void LevelEditor::Update(float delta)
@@ -366,14 +369,15 @@ void LevelEditor::GUI()
 			inPlay = !inPlay;
 		}
 
-		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0Asset Placer\0View Select\0\0")) {
+		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0Model Placer\0Prefab Placer\0View Select\0\0")) {
 			switch (state)
 			{
 			case LevelEditor::BrushState::none:
 				camera->state = Camera::State::editorMode;
 				break;
 			case LevelEditor::BrushState::brush: [[fallthrough]];
-			case LevelEditor::BrushState::assetPlacer: [[fallthrough]];
+			case LevelEditor::BrushState::modelPlacer: [[fallthrough]];
+			case LevelEditor::BrushState::prefabPlacer: [[fallthrough]];
 			case LevelEditor::BrushState::viewSelect:
 				camera->state = Camera::State::tilePlacing;
 				camera->transform.setEulerRotation({ -90.0f, 0.0f, -90.0f });
@@ -386,14 +390,19 @@ void LevelEditor::GUI()
 			}
 		}
 
-		if (state == BrushState::assetPlacer) {
-			ImGui::Indent();
+		ImGui::Indent();
+		if (state == BrushState::modelPlacer) {
 			ResourceManager::ModelSelector("Asset To Place", &assetPlacer);
-			ImGui::DragFloat("Asset Placement Height", &assetPlacerHeight);
-			ImGui::DragFloat("Asset Placement Rotation", &assetPlacerRotation);
 			ImGui::ColorEdit3("Asset Placement Colour", &assetPlacerColour.x);
-			ImGui::Unindent();
 		}
+		if (state == BrushState::prefabPlacer) {
+			PrefabManager::PrefabSelector();
+		}
+		if (state == BrushState::modelPlacer || state == BrushState::prefabPlacer) {
+			ImGui::DragFloat("Placement Height", &assetPlacerHeight);
+			ImGui::DragFloat("Placement Rotation", &assetPlacerRotation);
+		}
+		ImGui::Unindent();
 
 		ImGui::Checkbox("Always refresh walls", &alwaysRefreshWallsOnPlace);
 		if (!alwaysRefreshWallsOnPlace) {
@@ -425,9 +434,14 @@ void LevelEditor::GUI()
 
 void LevelEditor::OnMouseDown()
 {
-	if (state == BrushState::assetPlacer && assetPlacer != nullptr) {
+	if (state == BrushState::modelPlacer && assetPlacer != nullptr) {
 		glm::vec2 mouseWorld = EditorCamMouseToWorld();
-		AssetPlacer(mouseWorld);
+		ModelPlacer(mouseWorld);
+	}
+
+	if (state == BrushState::prefabPlacer) {
+		glm::vec2 mouseWorld = EditorCamMouseToWorld();
+		PrefabPlacer(mouseWorld);
 	}
 
 	if (camera->state == Camera::State::tilePlacing && state == BrushState::viewSelect) {
@@ -579,7 +593,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	previouslySaved = true;
 }
 
-void LevelEditor::AssetPlacer(glm::vec2 targetPos)
+void LevelEditor::ModelPlacer(glm::vec2 targetPos)
 {
 	glm::vec3 pos = { targetPos.x, assetPlacerHeight, targetPos.y };
 
@@ -594,6 +608,24 @@ void LevelEditor::AssetPlacer(glm::vec2 targetPos)
 		{ -defaultColliderLength, -defaultColliderLength},
 		{ -defaultColliderLength, +defaultColliderLength}
 		}, 0.0f));
+
+	gui.sceneObjectSelected = newSceneObject;
+}
+
+void LevelEditor::PrefabPlacer(glm::vec2 targetPos)
+{
+	if (PrefabManager::loadedPrefabOriginals.find(PrefabManager::selectedPrefab) == PrefabManager::loadedPrefabOriginals.end()) {
+		// No prefab selected
+		return;
+	}
+	glm::vec3 pos = { targetPos.x, assetPlacerHeight, targetPos.y };
+
+	SceneObject* newSceneObject = new SceneObject(this);
+
+	newSceneObject->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(PrefabManager::selectedPrefab));
+
+	newSceneObject->transform()->setPosition(pos);
+	newSceneObject->transform()->setEulerRotation({ 0.0f, assetPlacerRotation, 0.0f });
 
 	gui.sceneObjectSelected = newSceneObject;
 }

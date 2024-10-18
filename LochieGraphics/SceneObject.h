@@ -23,7 +23,8 @@ namespace toml {
 }
 // TODO: Look into how instancing should be handled
 
-//TODO: Add GetPart Functions
+// TODO: There might be issues later due to the parts being saved as an signed int, not unsigned
+// Changing how they are saved can affect other saves and isn't worth it at the moment of writing
 enum Parts
 {
 	modelRenderer = 1 << 1,
@@ -69,6 +70,7 @@ public:
 	//SceneObject& operator=(const SceneObject& other) = delete;
 
 	void GUI();
+	// This is the right click menu
 	void MenuGUI();
 
 	void DebugDraw();
@@ -76,7 +78,7 @@ public:
 	toml::table Serialise() const;
 
 	void SaveAsPrefab();
-
+	void LoadFromPrefab(toml::table table);
 
 #pragma region Part Get and Set
 
@@ -119,11 +121,11 @@ public:
 
 	void setSpawnManager(SpawnManager* spawnManager);
 	SpawnManager* spawnManager();
-	// Make this take a mask for stuff to delete
-	void ClearParts();
 
 #pragma endregion
 
+	// Make this take a mask for stuff to delete
+	void ClearParts();
 };
 
 

@@ -269,6 +269,15 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 			sceneObject->transform()->AddChild(sceneObjects[childGUID]->transform());
 		}
 	}
+
+	for (auto& i : sceneObjects)
+	{
+		if (!i.second)
+		{
+			// Error here
+			DeleteSceneObject(i.first);
+		}
+	}
 }
 
 void Scene::InitialisePlayers()

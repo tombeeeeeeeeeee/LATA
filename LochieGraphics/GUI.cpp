@@ -8,6 +8,7 @@
 // Needed for the physics menu
 #include "Collider.h"
 #include "UserPreferences.h"
+#include "PrefabManager.h"
 
 #include "Utilities.h"
 
@@ -71,6 +72,7 @@ void GUI::Update()
 			ImGui::MenuItem("Imgui Demo", NULL, &showImguiExampleMenu);
 			ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
 			ImGui::MenuItem("User Prefs", NULL, &showUserPrefsMenu);
+			ImGui::MenuItem("Prefabs Menu", NULL, &showPrefabMenu);
 
 			ImGui::EndMenu();
 		}
@@ -96,6 +98,12 @@ void GUI::Update()
 	if (showHealthSystemMenu) { HealthMenu(); }
 	if (showImguiExampleMenu) { ImGui::ShowDemoWindow(); }
 	if (showRenderSystemMenu) { scene->renderSystem.GUI(); }
+	if (showPrefabMenu) {
+		if (ImGui::Begin("Prefab Manager", &showPrefabMenu, defaultWindowFlags)) {
+			PrefabManager::GUI();
+		}
+		ImGui::End();
+	}
 	if (showUserPrefsMenu) { 
 		if (ImGui::Begin("User Preferences Menu", &showUserPrefsMenu, defaultWindowFlags)) {
 			UserPreferences::GUI();
@@ -284,6 +292,8 @@ void GUI::HierarchyMenu()
 	{
 		if (!i.second) 
 		{
+			// TODO: Maybe error here
+			// TODO: Maybe shouldn't be here, there is something similar near the end of load all sceneObjects in scene
 			scene->DeleteSceneObject(i.first); continue;
 		}
 		if (i.second->transform()->getParent()) { continue; }
