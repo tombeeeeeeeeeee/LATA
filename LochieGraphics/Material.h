@@ -25,6 +25,7 @@ private:
 public:
 	std::unordered_map<std::string, Texture*> texturePointers;
 	Material(std::string _name, Shader* _shader);
+
 	void setShader(Shader* _shader);
 	Shader* getShader();
 	unsigned long long GUID;
@@ -52,6 +53,7 @@ public:
 	std::string getDisplayName() const;
 
 	toml::table Serialise() const;
+	Material(toml::table table);
 	void SaveAsAsset() const;
 };
 

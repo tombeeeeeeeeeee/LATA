@@ -19,6 +19,8 @@
 
 #include <iostream>
 #include <array>
+#include <filesystem>
+#include <fstream>
 
 unsigned int SceneManager::windowWidth = 1920 / 2;
 unsigned int SceneManager::windowHeight = 1080 / 2;
@@ -154,6 +156,15 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "forward" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "superDuper" + Paths::shaderExtension),
 	});
+
+	for (auto& i : std::filesystem::directory_iterator(Paths::textureSaveLocation)) {
+		ResourceManager::LoadTextureAsset(i.path().string());
+	}
+
+	for (auto& i : std::filesystem::directory_iterator(Paths::materialSaveLocation)) {
+		ResourceManager::LoadMaterialAsset(i.path().string());
+	}
+
 
 	std::array<std::string, 6> skyboxFaces = { "images/SkyBox Volume 2/Stars01/leftImage.png", "images/SkyBox Volume 2/Stars01/rightImage.png", "images/SkyBox Volume 2/Stars01/upImage.png", "images/SkyBox Volume 2/Stars01/downImage.png", "images/SkyBox Volume 2/Stars01/frontImage.png", "images/SkyBox Volume 2/Stars01/backImage.png" };
 	defaultSkybox = new Skybox(scene->shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data()));

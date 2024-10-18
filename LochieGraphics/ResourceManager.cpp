@@ -139,6 +139,11 @@ Texture* ResourceManager::LoadTexture(unsigned int width, unsigned int height, G
 	LoadResource(Texture, textures, width, height, format, data, wrappingMode, dataType, mipMaps, minFilter, magFilter);
 }
 
+Texture* ResourceManager::LoadTextureAsset(std::string path)
+{
+	LoadResourceAsset(Texture, textures);
+}
+
 Material* ResourceManager::LoadMaterial(std::string name, Shader* shader)
 {
 	LoadResource(Material, materials, name, shader);
@@ -147,6 +152,11 @@ Material* ResourceManager::LoadMaterial(std::string name, Shader* shader)
 Material* ResourceManager::LoadDefaultMaterial()
 {
 	LoadResource(Material, materials, "New Material", defaultShader);
+}
+
+Material* ResourceManager::LoadMaterialAsset(std::string path)
+{
+	LoadResourceAsset(Material, materials);
 }
 
 std::unordered_map<unsigned long long, Material, hashFNV1A>& ResourceManager::getMaterials()

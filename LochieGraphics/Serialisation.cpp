@@ -114,17 +114,16 @@ bool Serialisation::LoadAsBool(toml::node_view<toml::node> toml)
     return toml.as_boolean()->value_or<bool>(false);
 }
 
-unsigned int Serialisation::LoadAsUnsignedInt(toml::node* toml)
+unsigned int Serialisation::LoadAsUnsignedInt(toml::node_view<toml::node> toml)
 {
-    if (!toml) { 
+    if (!toml) {
         std::cout << "Failed to load unsigned int\n";
         return 0;
     }
-    return toml->as_integer()->value_or<int>(0);
-    //return std::strtoul(LoadAsString(*toml).c_str(), 0, 10);
+    return std::strtoul(LoadAsString(toml).c_str(), 0, 10);
 }
 
-unsigned int Serialisation::LoadAsUnsignedInt(toml::node_view<toml::node> toml)
+unsigned int Serialisation::LoadAsUnsignedIntOLD(toml::node_view<toml::node> toml)
 {
     if (!toml) {
         std::cout << "Failed to load unsigned int\n";
@@ -132,6 +131,11 @@ unsigned int Serialisation::LoadAsUnsignedInt(toml::node_view<toml::node> toml)
     }
     return toml.as_integer()->value_or<int>(0);
     //return std::strtoul(LoadAsString(toml).c_str(), 0, 10);
+}
+
+unsigned int Serialisation::SaveAsUnsignedIntOLD(unsigned int n)
+{
+    return n;
 }
 
 toml::array Serialisation::SaveAsVec2(glm::vec2 vec)
@@ -145,6 +149,11 @@ toml::array Serialisation::SaveAsVec3(glm::vec3 vec)
 }
 
 std::string Serialisation::SaveAsUnsignedLongLong(unsigned long long n)
+{
+    return std::to_string(n);
+}
+
+std::string Serialisation::SaveAsUnsignedInt(unsigned int n)
 {
     return std::to_string(n);
 }

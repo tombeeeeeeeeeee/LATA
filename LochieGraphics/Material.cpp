@@ -239,14 +239,16 @@ toml::table Material::Serialise() const
 	for (auto& i : textureGUIDs)
 	{
 		savedTextures.push_back(toml::table{
-			{i.first, Serialisation::SaveAsUnsignedLongLong(i.second)}
+			{ "slot", i.first },
+			{ "value", Serialisation::SaveAsUnsignedLongLong(i.second) }
 			});
 	}
 	toml::array savedFloats;
 	for (auto& i : floats)
 	{
 		savedFloats.push_back(toml::table{
-			{i.first, i.second}
+			{ "slot", i.first },
+			{ "value", i.second }
 			});
 	}
 
@@ -258,6 +260,36 @@ toml::table Material::Serialise() const
 		{ "textures", savedTextures },
 		{ "floats", savedFloats }
 	};
+}
+
+Material::Material(toml::table table) :
+	name(Serialisation::LoadAsString(table["name"])),
+	GUID(Serialisation::LoadAsUnsignedLongLong(table["guid"])),
+	shaderGUID(Serialisation::LoadAsUnsignedLongLong(table["shader"])),
+	colour(Serialisation::LoadAsVec3(table["colour"]))
+{
+	auto loadingTextures = table["textures"].as_array();
+
+	textureGUIDs.reserve(loadingTextures->size());
+	texturePointers.reserve(loadingTextures->size());
+	for (size_t i = 0; i < loadingTextures->size(); i++)
+	{
+		toml::table* loadingTexture = loadingTextures->at(i).as_table();
+		std::string slot = Serialisation::LoadAsString((*loadingTexture)["slot"]);
+		textureGUIDs[slot] = Serialisation::LoadAsUnsignedLongLong((*loadingTexture)["value"]);
+		texturePointers[slot] = nullptr;
+	}
+
+	auto loadingFloats = table["floats"].as_array();
+	floats.reserve(loadingFloats->size());
+	for (size_t i = 0; i < loadingFloats->size(); i++)
+	{
+		toml::table* loadingFloat = loadingFloats->at(i).as_table();
+		std::string slot = Serialisation::LoadAsString((*loadingFloat)["slot"]);
+		floats[slot] = Serialisation::LoadAsUnsignedLongLong((*loadingFloat)["value"]);
+	}
+
+	Refresh();
 }
 
 void Material::SaveAsAsset() const

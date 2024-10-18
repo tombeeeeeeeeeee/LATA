@@ -214,7 +214,7 @@ toml::table SceneObject::Serialise() const
 	return toml::table{
 		{ "name", name},
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
-		{ "parts", parts },
+		{ "parts", Serialisation::SaveAsUnsignedIntOLD(parts) },
 		{ "parent", Serialisation::SaveAsUnsignedLongLong(parentGUID)},
 		{ "children", childrenGUIDs },
 		{ "prefabStatus", (int)prefabStatus },
@@ -227,7 +227,7 @@ SceneObject::SceneObject(Scene* _scene, toml::table* table) :
 {
 	name = Serialisation::LoadAsString((*table)["name"]);
 	GUID = Serialisation::LoadAsUnsignedLongLong((*table)["guid"]);
-	parts = Serialisation::LoadAsUnsignedInt((*table)["parts"]);
+	parts = Serialisation::LoadAsUnsignedIntOLD((*table)["parts"]);
 	scene->transforms[GUID] = Transform(this);
 	scene->sceneObjects[GUID] = this;
 	prefabStatus = (PrefabStatus)Serialisation::LoadAsInt((*table)["prefabStatus"]);
@@ -443,7 +443,7 @@ void SceneObject::LoadFromPrefab(toml::table table)
 	toml::table sceneObjectTable = *table["sceneObject"].as_table();
 	prefabBase = Serialisation::LoadAsUnsignedLongLong(sceneObjectTable["guid"]);
 
-	unsigned long long intendedParts = Serialisation::LoadAsUnsignedInt(sceneObjectTable["parts"]);
+	unsigned long long intendedParts = Serialisation::LoadAsUnsignedIntOLD(sceneObjectTable["parts"]);
 
 	LoadAsPrefabPart("modelRenderer", modelRenderer, setRenderer, ModelRenderer);
 	LoadAsPrefabPart("animator", animator, setAnimator, Animator);

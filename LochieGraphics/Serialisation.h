@@ -8,6 +8,9 @@
 //#define TOML_COMPILER_HAS_EXCEPTIONS 0
 #include "toml.hpp"
 
+
+// TODO: Consider template stuff
+
 class Serialisation {
 public:
 	static glm::vec2 LoadAsVec2(toml::array* toml);
@@ -25,13 +28,19 @@ public:
 	static float LoadAsFloat(toml::node& toml);
 	static glm::quat LoadAsQuaternion(toml::node_view<toml::node> toml);
 	static bool LoadAsBool(toml::node_view<toml::node> toml);
-
-	static unsigned int LoadAsUnsignedInt(toml::node* toml);
 	static unsigned int LoadAsUnsignedInt(toml::node_view<toml::node> toml);
+
+	// TODO: Made a mistake with the unsigned int, but removing this will break certain saves
+	static unsigned int LoadAsUnsignedIntOLD(toml::node_view<toml::node> toml);
+	// TODO: Made a mistake with the unsigned int, but removing this will break certain saves
+	static unsigned int SaveAsUnsignedIntOLD(unsigned int n);
+
+
 
 	static toml::array SaveAsVec2(glm::vec2 vec);
 	static toml::array SaveAsVec3(glm::vec3 vec);
 	static std::string SaveAsUnsignedLongLong(unsigned long long n);
+	static std::string SaveAsUnsignedInt(unsigned int n);
 
 	static toml::array SaveAsQuaternion(glm::quat quaternion);
 };

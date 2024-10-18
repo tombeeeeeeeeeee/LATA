@@ -84,10 +84,13 @@ public:
 	std::string getDisplayName() const;
 	static std::string getTypelessFilename(std::string path);
 	std::string getTypelessFilename() const;
+	std::string getSaveName() const;
+	static std::string getSaveName(std::string path, Type type);
 
 	void OpenModal() {};
 
 	toml::table Serialise() const;
+	Texture(toml::table table);
 	void SaveAsAsset() const;
 
 private:

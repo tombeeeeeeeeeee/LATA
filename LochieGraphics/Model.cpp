@@ -53,6 +53,14 @@ void Model::LoadModel(std::string _path)
 	meshes.resize(scene->mNumMeshes);
 	meshGUIDs.resize(scene->mNumMeshes);
 	//meshes.reserve(scene->mNumMeshes);
+
+	min.x = FLT_MAX;
+	min.y = FLT_MAX;
+	min.z = FLT_MAX;
+	max.x = -FLT_MAX;
+	max.y = -FLT_MAX;
+	max.z = -FLT_MAX;
+
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[i];
@@ -61,8 +69,10 @@ void Model::LoadModel(std::string _path)
 		meshes[i]->InitialiseFromAiMesh(path, scene, &boneInfoMap, mesh);
 		min.x = std::min(meshes[i]->min.x, min.x);
 		min.y = std::min(meshes[i]->min.y, min.y);
+		min.z = std::min(meshes[i]->min.z, min.z);
 		max.x = std::max(meshes[i]->max.x, max.x);
 		max.y = std::max(meshes[i]->max.y, max.y);
+		max.z = std::max(meshes[i]->max.z, max.z);
 	}
 	materialIDs = scene->mNumMaterials;
 
@@ -109,8 +119,8 @@ void Model::GUI()
 		int meshCount = (int)meshes.size();
 		ImGui::DragInt(("Mesh Count##" + tag).c_str(), &meshCount);
 
-		ImGui::DragFloat2(("Min##" + tag).c_str(), &min.x);
-		ImGui::DragFloat2(("Max##" + tag).c_str(), &max.x);
+		ImGui::DragFloat3(("Min##" + tag).c_str(), &min.x);
+		ImGui::DragFloat3(("Max##" + tag).c_str(), &max.x);
 
 		ImGui::DragInt("Material IDs", &materialIDs);
 		

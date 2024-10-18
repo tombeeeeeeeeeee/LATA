@@ -65,6 +65,7 @@ void ArtScene::RefreshPBR()
 	int width = 0;
 	int height = 0;
 	std::string name;
+	std::string path;
 
 	bool foundImage = false;
 
@@ -81,6 +82,7 @@ void ArtScene::RefreshPBR()
 		width = i.second->width;
 		height = i.second->height;
 		foundImage = true;
+		path = i.second->path;
 		name = Texture::getTypelessFilename(i.second->path);
 	}
 
@@ -118,20 +120,34 @@ void ArtScene::RefreshPBR()
 		data[i * pbrC + 3] = UCHAR_MAX;
 	}
 
-	//pbr = ResourceManager::LoadTexture(width, height, GL_SRGB_ALPHA, data.data(), GL_REPEAT, GL_UNSIGNED_BYTE, true);
-
 	// TODO: Get name from base image
 	std::string filename = Paths::importTextureLocation + texturePrefix + name + "_PBR.tga"; // 
 	int result = stbi_write_tga(("./" + filename).c_str(), width, height, STBI_rgb_alpha, data.data());
-	Texture* pbr = ResourceManager::LoadTexture(filename, Texture::Type::PBR);
-	material->AddTextures({ pbr });
 
-	//int tW, tH, tC;
-	
-	//unsigned char* test = stbi_load("./newPBR.tga", &tW, &tH, &tC, STBI_rgb_alpha);
+	// Check to see if PBR texture of the same name exists, if so, use their GUID
+	Texture* pbr;
+	bool alreadyExists = false;
+	std::string existingPath = "";
+
+	for (auto& i : std::filesystem::directory_iterator(Paths::textureSaveLocation)) {
+		existingPath = Texture::getSaveName(Utilities::FilenameFromPath(path, false), Texture::Type::PBR);
+		if (Utilities::FilenameFromPath(i.path().string(), false) == existingPath) {
+			alreadyExists = true;
+			break;
+		}
+	}
+	if (alreadyExists) {
+		pbr = ResourceManager::LoadTextureAsset(Paths::textureSaveLocation + existingPath + Paths::textureExtension);
+	}
+	else {
+		pbr = ResourceManager::LoadTexture(filename, Texture::Type::PBR);
+	}
+
+	material->AddTextures({ pbr });
 
 	std::cout << "Wrote PBR image, with result of " << result << '\n';
 
+	// TODO: Maybe make a like function to refresh the texturePreviewScale, as this likely (should) exist else where
 	texturePreviewScale = 128.0f / width;
 }
 
@@ -229,33 +245,50 @@ void ArtScene::ImportTexture(std::string& path, std::string& filename)
 	}
 
 	// Load texture
-	Texture* newTexture;
-	switch (type)
-	{
-	case Texture::Type::albedo: case Texture::Type::normal: case Texture::Type::emission:
-		newTexture = ResourceManager::LoadTexture(EnsureCorrectFileLocation(path, Paths::importTextureLocation), type, GL_REPEAT, defaultFlip);
+	if (type == Texture::Type::albedo ||
+		type == Texture::Type::normal ||
+		type == Texture::Type::emission) {
+
+		Texture* newTexture;
+		bool alreadyExists = false;
+		std::string existingPath = "";
+
+		// Check if the asset file already exists to use their GUID
+		for (auto& i : std::filesystem::directory_iterator(Paths::textureSaveLocation)) {
+			existingPath = Texture::getSaveName(Utilities::FilenameFromPath(path, false), type);
+			std::string checkingFilename = Utilities::FilenameFromPath(i.path().string(), false);
+			if (checkingFilename == existingPath) {
+				alreadyExists = true;
+				break;
+			}
+		}
+		if (alreadyExists) {
+			newTexture = ResourceManager::LoadTextureAsset(Paths::textureSaveLocation + existingPath + Paths::textureExtension);
+			newTexture->path = EnsureCorrectFileLocation(path, Paths::importTextureLocation);
+			newTexture->Load();
+		}
+		else {
+			newTexture = ResourceManager::LoadTexture(EnsureCorrectFileLocation(path, Paths::importTextureLocation), type, GL_REPEAT, defaultFlip);
+		}
+
 		material->AddTextures(std::vector<Texture*>{ newTexture });
 		// Refresh texture preview size
 		texturePreviewScale = std::min((loadTargetPreviewSize / std::max(newTexture->width, newTexture->height)), texturePreviewScale);
-		break;
-
-	case Texture::Type::roughness:
+	}
+	else if (type == Texture::Type::roughness) {
 		roughnessImage.Load(path);
 		RefreshPBRComponents();
-		break;
-	case Texture::Type::metallic:
+	}
+	else if (type == Texture::Type::metallic) {
 		metallicImage.Load(path);
 		RefreshPBRComponents();
-		break;
-	case Texture::Type::ao:
+	}
+	else if (type == Texture::Type::ao) {
 		aoImage.Load(path);
 		RefreshPBRComponents();
-		break;
-	// TODO:
-	case Texture::Type::PBR: //
-		break;
-	case Texture::Type::paint: default:
-		break;
+	}
+	else {
+		// TODO:
 	}
 }
 
@@ -264,7 +297,25 @@ void ArtScene::ImportMesh(std::string& path, std::string& filename)
 	// TODO: delete old model
 	//model->meshes.clear();
 
-	model = ResourceManager::LoadModel(EnsureCorrectFileLocation(path, Paths::importModelLocation));
+	std::string existingPath = "";
+	bool alreadyExists = false;
+
+	for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation)) {
+		existingPath = Utilities::FilenameFromPath(path, false);
+		std::string checkingFilename = Utilities::FilenameFromPath(i.path().string(), false);
+		if (checkingFilename == existingPath) {
+			alreadyExists = true;
+			break;
+		}
+	}
+	if (alreadyExists) {
+		// Will overrwrite existing model file
+		EnsureCorrectFileLocation(path, Paths::importModelLocation);
+		model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + existingPath + Paths::modelExtension);
+	}
+	else {
+		model = ResourceManager::LoadModel(EnsureCorrectFileLocation(path, Paths::importModelLocation));
+	}
 
 	sceneObject->renderer()->modelGUID = model->GUID;
 	sceneObject->renderer()->Refresh();

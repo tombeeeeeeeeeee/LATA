@@ -32,6 +32,7 @@ public:
 	static Texture* LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	// TODO: See if this function can be cleaned up
 	static Texture* LoadTexture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_SRGB, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
+	static Texture* LoadTextureAsset(std::string path);
 	// TODO: Should I be using hint file?
 	static Material* GetMaterial(unsigned long long GUID);
 	static Shader* GetShader(unsigned long long GUID);
@@ -42,6 +43,7 @@ public:
 	// TODO: Should really be called create instead of load
 	static Material* LoadMaterial(std::string name, Shader* shader = nullptr);
 	static Material* LoadDefaultMaterial();
+	static Material* LoadMaterialAsset(std::string path);
 
 	static std::unordered_map<unsigned long long, Material, hashFNV1A>& getMaterials();
 

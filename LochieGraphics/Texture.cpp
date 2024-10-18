@@ -293,13 +293,23 @@ std::string Texture::getTypelessFilename() const
 	return getTypelessFilename(path);
 }
 
+std::string Texture::getSaveName() const
+{
+	return getSaveName(path, type);
+}
+
+std::string Texture::getSaveName(std::string path, Type type)
+{
+	return getTypelessFilename(path) + '_' + Texture::TypeNames.at(type);
+}
+
 toml::table Texture::Serialise() const
 {
 	return toml::table{
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
 		{ "path", path},
 		{ "type", (int)type},
-		{ "wrappingMode", wrappingMode},
+		{ "wrappingMode", Serialisation::SaveAsUnsignedInt(wrappingMode)},
 		{ "mipMapped", mipMapped },
 		{ "minFilter", minFilter},
 		{ "maxFilter", maxFilter},
@@ -307,9 +317,22 @@ toml::table Texture::Serialise() const
 	};
 }
 
+Texture::Texture(toml::table table) :
+	GUID(Serialisation::LoadAsUnsignedLongLong(table["guid"])),
+	path(Serialisation::LoadAsString(table["path"])),
+	type((Type)Serialisation::LoadAsInt(table["type"])),
+	wrappingMode(Serialisation::LoadAsUnsignedInt(table["wrappingMode"])),
+	mipMapped(Serialisation::LoadAsBool(table["mipMapped"])),
+	minFilter(Serialisation::LoadAsInt(table["minFilter"])),
+	maxFilter(Serialisation::LoadAsInt(table["maxFilter"])),
+	flipped(Serialisation::LoadAsBool(table["flipped"]))
+{
+	Load();
+}
+
 void Texture::SaveAsAsset() const
 {
-	std::ofstream file(Paths::textureSaveLocation + getTypelessFilename() + '_' + Texture::TypeNames.at(type) + Paths::textureExtension);
+	std::ofstream file(Paths::textureSaveLocation + getSaveName() + Paths::textureExtension);
 	file << Serialise();
 	file.close();
 }
