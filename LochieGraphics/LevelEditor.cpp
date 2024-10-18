@@ -211,8 +211,6 @@ void LevelEditor::Start()
 
 	sync->Start(&shaders);
 
-	healthSystem.Start(healths);
-
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 
 	for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation))
@@ -533,7 +531,7 @@ void LevelEditor::LoadPrompt()
 
 void LevelEditor::SaveLevel()
 {
-	enemySystem.PopulateNormalFlowMapFromRigidBodies(transforms, rigidBodies, colliders);
+	enemySystem.PopulateNormalFlowMap(transforms, rigidBodies, colliders);
 	
 	if (UserPreferences::rememberLastLevel) {
 		UserPreferences::defaultLevelLoad = windowName;

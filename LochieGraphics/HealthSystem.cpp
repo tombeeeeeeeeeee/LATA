@@ -12,13 +12,6 @@
 #include "Collider.h"
 #include "Hit.h"
 
-void HealthSystem::Start(std::unordered_map<unsigned long long, Health>& healths)
-{
-	for (auto& healthPair : healths)
-	{
-		healthPair.second.onHealthDown.push_back([this](HealthPacket hp) {OnHealthDown(hp); });
-	}
-}
 
 void HealthSystem::Update(
 	std::unordered_map<unsigned long long, Health>& healths,
@@ -114,9 +107,4 @@ void HealthSystem::GUI()
 	ImGui::DragFloat("DIstance For Healing Ability", &healDistance, 20.0f, 0);
 	ImGui::DragFloat("Tolerance for no Line of Sight", &losToleranceTime, 0.02f, 0);
 	ImGui::End();
-}
-
-void HealthSystem::OnHealthDown(HealthPacket healthPacket)
-{
-
 }

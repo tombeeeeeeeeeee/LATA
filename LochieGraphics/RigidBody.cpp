@@ -141,7 +141,8 @@ void RigidBody::DebugDraw(Transform* transform)
 			PolygonCollider* poly = (PolygonCollider*)collider;
 			if (poly->verts.size() == 1)
 			{
-				RenderSystem::debugLines.DrawCircle(transform->getGlobalPosition(), poly->radius, { 0.0f,1.0f,0.0f });
+				glm::vec2 pos = RigidBody::Transform2Din3DSpace(transform->getGlobalMatrix(), poly->verts[0]);
+				RenderSystem::debugLines.DrawCircle({ pos.x, 0.1f, pos.y}, poly->radius, { 0.0f,1.0f,0.0f });
 			}
 			else
 			{

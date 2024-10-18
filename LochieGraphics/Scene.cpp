@@ -274,7 +274,6 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	{
 		if (!i.second)
 		{
-			// Error here
 			DeleteSceneObject(i.first);
 		}
 	}
@@ -301,13 +300,13 @@ void Scene::InitialisePlayers()
 
 	eccoSO->rigidbody()->colliders[0]->collisionLayer = (int)CollisionLayers::ecco;
 	((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->verts = {
-		{0.0f, 0.0f}
+		{33.0f, 0.0f}
 	};
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 75.0f;
+	((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->radius = 75.0f;
 
 	eccoSO->rigidbody()->colliders[1]->collisionLayer = (int)CollisionLayers::reflectiveSurface;
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->verts = { {0.0f, 0.0f} };
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 15.0f;
+	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->verts = { {37.0f, 0.0f} };
+	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 44.0f;
 
 	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { ecco->OnCollision(collision); });
 

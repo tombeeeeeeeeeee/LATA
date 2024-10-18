@@ -130,8 +130,6 @@ void GameTest::Start()
 	}
 	enemySystem.Start(transforms, rigidBodies, colliders);
 
-	healthSystem.Start(healths);
-
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 }
 

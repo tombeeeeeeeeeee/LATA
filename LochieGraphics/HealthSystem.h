@@ -10,9 +10,6 @@ struct HealthPacket;
 class HealthSystem
 {
 public:
-	void Start(
-		std::unordered_map<unsigned long long, Health>& healths
-	);
 
 	void Update(
 		std::unordered_map<unsigned long long, Health>& healths,
@@ -49,7 +46,5 @@ private:
 	float timeSinceLastLOS = 0.0f;
 	float timeSinceLastPulse = 0.0f;
 	float timeSinceLastHealingAbility = FLT_MAX;
-
-	void OnHealthDown(HealthPacket healthPacket);
 };
 

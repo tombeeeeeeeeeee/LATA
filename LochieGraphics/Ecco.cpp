@@ -204,19 +204,16 @@ void Ecco::OnCollision(Collision collision)
 	if (collision.sceneObject->parts & Parts::enemy)
 	{
 		RigidBody* rb = collision.self->rigidbody();
-		if (glm::length(rb->vel) > minSpeedDamageThreshold)
+		if (glm::dot(rb->vel, collision.normal) > 0.2f)
 		{
-			collision.sceneObject->health()->subtractHealth( speedDamage, collision.sceneObject);
-			rb->AddImpulse(glm::normalize(rb->vel) * -speedReductionAfterDamaging);
-			collision.self->health()->addHealth(healingFromDamage, collision.self);
-			rb->ignoreThisCollision = true;
+			if (glm::length(rb->vel) > minSpeedDamageThreshold)
+			{
+				collision.sceneObject->health()->subtractHealth(speedDamage);
+				collision.self->health()->addHealth(healingFromDamage);
+				rb->ignoreThisCollision = true;
+			}
 		}
 	}
-}
-
-void Ecco::OnHealthDown(HealthPacket healthPacket)
-{
-	//TODO: Lose Condition.
 }
 
 void Ecco::GUI()
