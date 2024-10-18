@@ -185,6 +185,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 				continue;
 			}
 		}
+		if (!i.second) continue;
 		savedSceneObjects.push_back(i.second->Serialise());
 	}
 	SavePart(renderers);
@@ -291,11 +292,9 @@ void Scene::InitialisePlayers()
 
 	eccoSO->rigidbody()->colliders[0]->collisionLayer = (int)CollisionLayers::ecco;
 	((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->verts = {
-			{75.0f,   75.0f},
-			{75.0f,  -75.0f},
-			{-75.0f, -75.0f},
-			{-75.0f,  75.0f},
+		{0.0f, 0.0f}
 	};
+	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 75.0f;
 
 	eccoSO->rigidbody()->colliders[1]->collisionLayer = (int)CollisionLayers::reflectiveSurface;
 	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->verts = { {0.0f, 0.0f} };

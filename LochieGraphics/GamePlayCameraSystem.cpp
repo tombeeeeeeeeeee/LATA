@@ -4,6 +4,7 @@
 
 #include "Utilities.h"
 
+#include <iostream>
 #include "Serialisation.h"
 #include "EditorGUI.h"
 
@@ -22,6 +23,12 @@ GameplayCameraSystem::GameplayCameraSystem(toml::table table)
 void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Transform& syncTransform, float zoomScale)
 {
 	cam = &camera;
+
+	if (isnan(syncTransform.getGlobalPosition().x) || isnan(eccoTransform.getGlobalPosition().x))
+	{
+		std::cout << "Is Nan On Camera";
+	}
+
 	switch (camera.state)
 	{
 	case Camera::targetingPlayers:
