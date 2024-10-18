@@ -3,6 +3,7 @@
 #include "Animation.h"
 #include "Mesh.h"
 #include "ResourceManager.h"
+#include "Paths.h"
 
 #include "Utilities.h"
 
@@ -14,6 +15,7 @@
 #include "assimp/postprocess.h"
 
 #include <iostream>
+#include <fstream>
 
 Model::Model()
 {
@@ -190,13 +192,20 @@ void Model::ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src)
 	}
 }
 
-toml::table Model::Serialise()
+toml::table Model::Serialise() const
 {
 	// The rest of model data can be reloaded with the path
 	return toml::table{
 		{ "path", path },
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
 	};
+}
+
+void Model::SaveAsAsset() const
+{
+	std::ofstream file(Paths::modelSaveLocation + Utilities::FilenameFromPath(path, false) + Paths::modelExtension);
+	file << Serialise();
+	file.close();
 }
 
 Model::Model(toml::table table)

@@ -157,7 +157,7 @@ void LevelEditor::Start()
 	gui.showSceneObject = true;
 	gui.showCameraMenu = true;
 
-	camera->transform.setPosition({ 0.0f, 50.0f, 0.0f });
+	camera->transform.setPosition({ 0.0f, 1000.0f, 0.0f });
 	camera->orthoScale = 300.0f;
 
 	camera->editorSpeed.move = 300.0f;
@@ -535,6 +535,7 @@ void LevelEditor::SaveLevel()
 	
 	if (UserPreferences::rememberLastLevel) {
 		UserPreferences::defaultLevelLoad = windowName;
+		UserPreferences::Save();
 	}
 
 	std::ofstream file(Paths::levelsPath + windowName + Paths::levelExtension);
@@ -558,11 +559,12 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 
 	if (UserPreferences::rememberLastLevel) {
 		UserPreferences::defaultLevelLoad = windowName;
+		UserPreferences::Save();
 	}
 
 	toml::table data = toml::parse(file);
 
-	DeleteAllSceneObjects();
+	tiles.clear();
 
 	LoadSceneObjectsAndParts(data);
 
@@ -575,7 +577,6 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 
 
 	// Refresh the tiles collection
-	tiles.clear();
 	auto children = groundTileParent->transform()->getChildren();
 	for (size_t i = 0; i < children.size(); i++)
 	{

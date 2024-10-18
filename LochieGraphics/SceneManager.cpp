@@ -8,6 +8,7 @@
 #include "Lights.h"
 #include "UserPreferences.h"
 #include "PrefabManager.h"
+#include "Paths.h"
 
 // This includes imgui differently then other files as it is managed here
 #include "imgui.h"
@@ -138,20 +139,20 @@ SceneManager::SceneManager(Scene* _scene)
 	scene->cursorPos = &cursorPos;
 
 	scene->shaders.insert(scene->shaders.end(), {
-		ResourceManager::LoadShader("shaders/cubemap.vert", "shaders/cubemap.frag"),
-		ResourceManager::LoadShader("shaders/simpleDepthShader.vert", "shaders/simpleDepthShader.frag"),
-		ResourceManager::LoadShader("shaders/shadowDebug.vert", "shaders/shadowDebug.frag"),
-		ResourceManager::LoadShaderDefaultVert("HDRBloom"),
-		ResourceManager::LoadShaderDefaultVert("brdf"),
-		ResourceManager::LoadShader("prefilter"),
-		ResourceManager::LoadShaderDefaultVert("downSample"),
-		ResourceManager::LoadShaderDefaultVert("upSample"),
-		ResourceManager::LoadShader("irradiance"),
-		ResourceManager::LoadShader("lineRenderer", Shader::Flags::VPmatrix),
-		ResourceManager::LoadShaderDefaultVert("ssao"),
-		ResourceManager::LoadShaderDefaultVert("ssaoBlur"),
-		ResourceManager::LoadShader("forward", Shader::Flags::VPmatrix),
-		ResourceManager::LoadShader("shaders/superDuper.vert", "shaders/superDuper.frag", Shader::Flags::Lit | Shader::Flags::VPmatrix | Shader::Flags::Spec),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "cubemap" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "simpleDepthShader" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "shadowDebug" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "HDRBloom" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "brdf" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prefilter" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "downSample" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "upSample" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "irradiance" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "lineRenderer" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssao" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssaoBlur" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "forward" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "superDuper" + Paths::shaderExtension),
 	});
 
 	std::array<std::string, 6> skyboxFaces = { "images/SkyBox Volume 2/Stars01/leftImage.png", "images/SkyBox Volume 2/Stars01/rightImage.png", "images/SkyBox Volume 2/Stars01/upImage.png", "images/SkyBox Volume 2/Stars01/downImage.png", "images/SkyBox Volume 2/Stars01/frontImage.png", "images/SkyBox Volume 2/Stars01/backImage.png" };

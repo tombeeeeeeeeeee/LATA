@@ -29,7 +29,7 @@ public:
 	Shader* getShader();
 	unsigned long long GUID;
 	std::string name;
-	glm::vec3 colour = {1.0f,1.0f,1.0f};
+	glm::vec3 colour = { 1.0f ,1.0f ,1.0f };
 	
 	// TODO: Think about better ways to have this rather than having a map for each type
 	std::unordered_map<std::string, float> floats;
@@ -52,5 +52,6 @@ public:
 	std::string getDisplayName() const;
 
 	toml::table Serialise() const;
+	void SaveAsAsset() const;
 };
 
