@@ -63,6 +63,31 @@ Shader* ResourceManager::LoadShader(toml::v3::table* toml)
 	return &shaders.emplace(newShader.GUID, newShader).first->second;
 }
 
+Shader* ResourceManager::LoadShader(toml::v3::table toml)
+{
+	return LoadShader(&toml);
+}
+
+#define LoadResourceAsset(type, container)                                                \
+	std::ifstream file(path);                                                             \
+	if (!file) {                                                                          \
+		std::cout << "Failed to load ##type asset, attempted at path: " << path << '\n';  \
+		return nullptr;                                                                   \
+	}                                                                                     \
+	toml::table data = toml::parse(file);                                                 \
+	unsigned long long loadingGUID = Serialisation::LoadAsUnsignedLongLong(data["guid"]); \
+	auto search = container.find(loadingGUID);                                            \
+	if (search != container.end()) {                                                      \
+		return &search->second;                                                           \
+	}                                                                                     \
+	file.close();                                                                         \
+	return &container.emplace(loadingGUID, type(data)).first->second;
+
+Shader* ResourceManager::LoadShaderAsset(std::string path)
+{
+	LoadResourceAsset(Shader, shaders);
+}
+
 Model* ResourceManager::LoadModel(std::string path)
 {
 	LoadResource(Model, models, path);
@@ -70,29 +95,7 @@ Model* ResourceManager::LoadModel(std::string path)
 
 Model* ResourceManager::LoadModelAsset(std::string path)
 {
-	std::ifstream file(path);
-	if (!file) {
-		std::cout << "Failed to find model, attempted at path: " << path << '\n';
-		return nullptr;
-	}
-	// TODO: Should be a function
-	//toml::parse_result parsed = toml::parse(file);
-	//if (!parsed) {
-	//	// TODO: Error
-	//	file.close();
-	//	std::cout << "Failed to load model asset\n";
-	//	return ResourceManager::defaultModel;
-	//}
-	//toml::table data = std::move(parsed).table();
-	toml::table data = toml::parse(file);
-	unsigned long long loadingGUID = Serialisation::LoadAsUnsignedLongLong(data["guid"]);
-	auto search = models.find(loadingGUID);
-	if (search != models.end()) {
-		return &search->second;
-	}
-	Model newResource = Model(data);
-	file.close();
-	return &models.emplace(newResource.GUID, newResource).first->second;
+	LoadResourceAsset(Model, models);
 }
 
 // TODO: Clean
@@ -258,7 +261,7 @@ void ResourceManager::GUI()
 
 	// TODO: GUI for shader flags, there is a built in imgui thing
 	if (ImGui::CollapsingHeader("Shaders")) {
-		if (ImGui::BeginTable("Shader list", 7)) {
+		if (ImGui::BeginTable("Shader list", 8)) {
 			ImGui::TableNextRow();
 
 			ImGui::TableSetColumnIndex(0);
@@ -281,9 +284,13 @@ void ResourceManager::GUI()
 
 			ImGui::TableSetColumnIndex(6);
 			ImGui::Text("Reload");
+		
+			ImGui::TableSetColumnIndex(7);
+			ImGui::Text("Save");
 		}
 		for (auto i = shaders.begin(); i != shaders.end(); i++)
 		{
+			std::string tag = Utilities::PointerToString(&i->second);
 			ImGui::TableNextRow();
 
 			ImGui::TableSetColumnIndex(0);
@@ -313,9 +320,14 @@ void ResourceManager::GUI()
 			ImGui::Text(std::to_string(i->second.GLID).c_str());
 
 			ImGui::TableSetColumnIndex(6);
-			if (ImGui::Button(("R##" + std::to_string(i->second.GLID)).c_str())) {
+			if (ImGui::Button(("R##" + tag).c_str())) {
 				i->second.Load(); //TODO: When a shader reloads the materials need to also reload
 				BindFlaggedVariables();
+			}
+
+			ImGui::TableSetColumnIndex(7);
+			if (ImGui::Button(("S##" + tag).c_str())) {
+				i->second.SaveAsAsset();
 			}
 		}
 

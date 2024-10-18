@@ -96,8 +96,8 @@ public:
 	Scene& operator=(const Scene& other) = delete;
 
 	// These get called when the menu button gets pressed, do not have to be directly responsible for saving
-	virtual void Save();
-	virtual void Load();
+	virtual void Save() {};
+	virtual void Load() {};
 
 	void DeleteSceneObject(unsigned long long GUID);
 protected:

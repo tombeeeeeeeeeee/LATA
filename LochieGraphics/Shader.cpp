@@ -1,5 +1,7 @@
 #include "Shader.h"
 
+#include "Paths.h"
+
 #include "Utilities.h"
 
 #include "Serialisation.h"
@@ -215,7 +217,7 @@ std::string Shader::getDisplayName() const
 	return fragmentPath + " " + std::to_string(GUID);
 }
 
-toml::table Shader::Serialise()
+toml::table Shader::Serialise() const
 {
 	return toml::table{
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
@@ -223,6 +225,11 @@ toml::table Shader::Serialise()
 		{ "fragment", fragmentPath },
 		{ "flags", updateFlag }
 	};
+}
+
+Shader::Shader(toml::table toml) : Shader(&toml)
+{
+	// This isn't empty, uses other constructor ^
 }
 
 Shader::Shader(toml::table* toml)
@@ -234,4 +241,12 @@ Shader::Shader(toml::table* toml)
 	updateFlag = Serialisation::LoadAsInt((*toml)["flags"]);
 	
 	Load();
+}
+
+void Shader::SaveAsAsset() const
+{
+	std::ofstream file(Paths::shadersSaveLocation + Utilities::FilenameFromPath(fragmentPath, false) + Paths::shaderExtension);
+	file << Serialise();
+	file.close();
+
 }

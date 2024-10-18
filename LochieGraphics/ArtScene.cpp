@@ -558,6 +558,7 @@ ArtScene::~ArtScene()
 void ArtScene::SaveArtAsset() const
 {
 	if (saveRenderer) {
+		// TODO: Makes more sense to save as a prefab
 		std::ofstream file(Paths::rendererSaveLocation + sceneObject->name + Paths::rendererExtension);
 		// The renderer itself does not need to save its GUID
 		file << sceneObject->renderer()->Serialise(0);
