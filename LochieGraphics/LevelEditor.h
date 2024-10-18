@@ -15,7 +15,8 @@ private:
 	enum class BrushState {
 		none,
 		brush,
-		assetPlacer,
+		modelPlacer,
+		prefabPlacer,
 		viewSelect,
 	};
 	BrushState state = BrushState::none;
@@ -59,7 +60,6 @@ private:
 
 	Model* assetPlacer = nullptr;
 	float assetPlacerHeight = 0.0f;
-	// TODO: Implement
 	float assetPlacerRotation = 0.0f;
 	glm::vec3 assetPlacerColour = { 1.0f, 1.0f, 1.0f };
 
@@ -77,7 +77,8 @@ private:
 
 	void Brush(glm::vec2 targetCell);
 	void Eraser(glm::vec2 targetCell);
-	void AssetPlacer(glm::vec2 targetPos);
+	void ModelPlacer(glm::vec2 targetPos);
+	void PrefabPlacer(glm::vec2 targetPos);
 	void Selector(glm::vec2 targetPos);
 
 	void SaveAsPrompt();

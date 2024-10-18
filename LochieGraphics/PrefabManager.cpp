@@ -52,10 +52,16 @@ void PrefabManager::RefreshAllPrefabInstances()
 	}
 }
 
+void PrefabManager::PrefabSelector()
+{
+	// TODO: Make better, search bar, name instead
+	ImGui::InputScalar("Selected Prefab", ImGuiDataType_U64, &selectedPrefab);
+}
+
 void PrefabManager::GUI()
 {
-	ImGui::InputScalar("Prefab Selected GUID", ImGuiDataType_U64, &selectedPrefab);
-	
+	PrefabSelector();
+
 	if (ImGui::Button("Refresh Instances of Selected")) {
 		RefreshPrefabInstancesOf(selectedPrefab);
 	}
