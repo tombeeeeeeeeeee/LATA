@@ -162,6 +162,7 @@ void Scene::DeleteAllSceneObjects()
 		delete sceneObjects.begin()->second;
 		sceneObjects.erase(sceneObjects.begin());
 	}
+	markedForDeletion.clear();
 }
 
 SceneObject* Scene::FindSceneObjectOfName(std::string name)
@@ -177,6 +178,8 @@ SceneObject* Scene::FindSceneObjectOfName(std::string name)
 
 toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 {
+	// TODO: Maybe force delete the marked for delete here
+
 	auto savedSceneObjects = toml::array();
 	for (auto& i : sceneObjects)
 	{
@@ -273,9 +276,9 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	{
 		if (!i.second)
 		{
-			// Error here
+			// TODO: Error here
 			DeleteSceneObject(i.first);
-		}
+		}	
 	}
 }
 

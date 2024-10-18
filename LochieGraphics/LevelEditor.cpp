@@ -564,6 +564,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 
 	toml::table data = toml::parse(file);
 
+	tiles.clear();
 	DeleteAllSceneObjects();
 
 	LoadSceneObjectsAndParts(data);
@@ -577,7 +578,6 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 
 
 	// Refresh the tiles collection
-	tiles.clear();
 	auto children = groundTileParent->transform()->getChildren();
 	for (size_t i = 0; i < children.size(); i++)
 	{

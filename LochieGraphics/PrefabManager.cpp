@@ -25,10 +25,6 @@ void PrefabManager::Initialise()
 	}
 }
 
-void PrefabManager::AddSceneObjectAsPrefabOrigins()
-{
-}
-
 void PrefabManager::RefreshPrefabInstancesOf(unsigned long long GUID)
 {
 	toml::table& table = loadedPrefabOriginals.at(GUID);

@@ -82,10 +82,13 @@ public:
 
 	operator std::string() const;
 	std::string getDisplayName() const;
+	static std::string getTypelessFilename(std::string path);
+	std::string getTypelessFilename() const;
 
 	void OpenModal() {};
 
-	toml::table Serialise();
+	toml::table Serialise() const;
+	void SaveAsAsset() const;
 
 private:
 

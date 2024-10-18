@@ -16,13 +16,10 @@ public:
 
 	static void Initialise();
 
-	static void AddSceneObjectAsPrefabOrigins();
-
 	static void RefreshPrefabInstancesOf(unsigned long long GUID);
 	static void RefreshAllPrefabInstances();
 
 	static void PrefabSelector();
 	static void GUI();
-
 };
 
