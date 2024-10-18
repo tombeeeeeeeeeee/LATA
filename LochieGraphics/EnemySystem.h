@@ -18,6 +18,7 @@ struct Collision;
 struct Collider;
 struct Node;
 struct Edge;
+struct PolygonCollider;
 
 namespace toml {
 	inline namespace v3 {
@@ -128,10 +129,21 @@ public:
 		std::unordered_map<unsigned long long, Collider*>& colliders
 	);
 	void LoadNormalFlowMapFromImage(unsigned char* image, int width, int height);
-	void PopulateNormalFlowMapFromRigidBodies(
+	void PopulateNormalFlowMap(
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
 		std::unordered_map<unsigned long long, Collider*>& colliders
+	);
+
+	void PopulateNormalFlowMapFromCircle(
+		PolygonCollider* circle,
+		Transform& transform,
+		std::vector<glm::vec3>& normalFlowMapVec3
+	);
+	void PopulateNormalFlowMapFromPoly(
+		PolygonCollider* poly,
+		Transform& transform, 
+		std::vector<glm::vec3>& normalFlowMapVec3
 	);
 
 
