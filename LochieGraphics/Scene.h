@@ -102,7 +102,7 @@ public:
 	void DeleteSceneObject(unsigned long long GUID);
 protected:
 
-	void DeleteAllSceneObjects();
+	void DeleteAllSceneObjectsAndParts();
 
 	SceneObject* FindSceneObjectOfName(std::string name);
 

@@ -132,7 +132,7 @@ void Scene::Load()
 	skybox->Refresh();
 	ResourceManager::BindFlaggedVariables();
 
-	DeleteAllSceneObjects();
+	DeleteAllSceneObjectsAndParts();
 	LoadSceneObjectsAndParts(data);
 
 	// TODO: Consider moving this
@@ -155,7 +155,7 @@ void Scene::DeleteSceneObject(unsigned long long GUID)
 	markedForDeletion.push_back(GUID);
 }
 
-void Scene::DeleteAllSceneObjects()
+void Scene::DeleteAllSceneObjectsAndParts()
 {
 	while (!sceneObjects.empty())
 	{
@@ -163,6 +163,50 @@ void Scene::DeleteAllSceneObjects()
 		sceneObjects.erase(sceneObjects.begin());
 	}
 	markedForDeletion.clear();
+
+	unsigned int partsChecker = Parts::ALL;
+
+	transforms.clear();
+
+	renderers.clear();
+	partsChecker &= ~Parts::modelRenderer;
+
+	animators.clear();
+	partsChecker &= ~Parts::animator;
+
+	rigidBodies.clear();
+	partsChecker &= ~Parts::rigidBody;
+
+	colliders.clear();
+	partsChecker &= ~Parts::collider;
+
+	healths.clear();
+	partsChecker &= ~Parts::health;
+
+	enemies.clear();
+	partsChecker &= ~Parts::enemy;
+
+	exits.clear();
+	partsChecker &= ~Parts::exitElevator;
+
+	spawnManagers.clear();
+	partsChecker &= ~Parts::spawnManager;
+
+
+	// TODO: Don't like how just setting these flags here but no containers atm
+	partsChecker &= ~Parts::spikes;
+	partsChecker &= ~Parts::plate;
+
+	//lights.clear();
+	partsChecker &= ~Parts::light;
+
+
+	partsChecker &= ~Parts::ecco;
+	partsChecker &= ~Parts::sync;
+	
+
+	// TODO: Don't need a whole assert
+	assert(partsChecker = ~Parts::ALL);
 }
 
 SceneObject* Scene::FindSceneObjectOfName(std::string name)
@@ -219,6 +263,8 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 
 void Scene::LoadSceneObjectsAndParts(toml::table& data)
 {
+	DeleteAllSceneObjectsAndParts();
+
 	toml::array* loadingSceneObjects = data["SceneObjects"].as_array();
 	int loadingSceneObjectsSize = (int)loadingSceneObjects->size();
 	for (int i = 0; i < loadingSceneObjectsSize; i++)

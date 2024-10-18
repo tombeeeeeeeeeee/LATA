@@ -565,7 +565,6 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	toml::table data = toml::parse(file);
 
 	tiles.clear();
-	DeleteAllSceneObjects();
 
 	LoadSceneObjectsAndParts(data);
 

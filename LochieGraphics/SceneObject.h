@@ -25,7 +25,7 @@ namespace toml {
 
 // TODO: There might be issues later due to the parts being saved as an signed int, not unsigned
 // Changing how they are saved can affect other saves and isn't worth it at the moment of writing
-enum Parts
+enum Parts : unsigned int
 {
 	modelRenderer = 1 << 1,
 	animator =      1 << 2,
@@ -40,6 +40,7 @@ enum Parts
 	spikes =		1 << 11,
 	plate = 		1 << 12,
 	spawnManager =	1 << 13,
+	ALL = 0b1111111111110,
 };
 
 class Scene;
