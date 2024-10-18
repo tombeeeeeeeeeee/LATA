@@ -43,9 +43,17 @@ void UserPreferences::GUI()
 	if (ImGui::CollapsingHeader("Level Editor")) {
 		ImGui::Indent();
 		ImGui::Checkbox("Load Default Level", &loadDefaultLevel);
+		if (!loadDefaultLevel) { 
+			ImGui::BeginDisabled();
+			ImGui::Indent();
+		}
 		ImGui::InputText("Default Level Load", &defaultLevelLoad);
 		ImGui::Checkbox("Rememeber Last Level", &rememberLastLevel);
 		ImGui::Checkbox("Enter Play Mode On Launch", &enterPlayModeOnStart);
+		if (!loadDefaultLevel) { 
+			ImGui::EndDisabled();
+			ImGui::Unindent();
+		}
 		ImGui::Unindent();
 	}
 
