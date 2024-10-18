@@ -286,7 +286,7 @@ Material::Material(toml::table table) :
 	{
 		toml::table* loadingFloat = loadingFloats->at(i).as_table();
 		std::string slot = Serialisation::LoadAsString((*loadingFloat)["slot"]);
-		floats[slot] = Serialisation::LoadAsUnsignedLongLong((*loadingFloat)["value"]);
+		floats[slot] = Serialisation::LoadAsFloat((*loadingFloat)["value"]);
 	}
 
 	Refresh();
