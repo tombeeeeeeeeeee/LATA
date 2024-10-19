@@ -16,6 +16,8 @@ namespace Paths {
 	const std::string prefabsSaveLocation = "Assets/Prefabs/";
 	const std::string shadersSaveLocation = "Assets/Shaders/";
 
+	const std::string shadersSaveLocation = "Shaders/";
+
 	const std::string userPrefsSaveLocation = "UserPrefs/";
 
 	const std::string rendererExtension = ".renderer";
@@ -27,6 +29,9 @@ namespace Paths {
 	const std::string imageExtension = ".png";
 	const std::string userPrefsExtension = ".prefs";
 	const std::string shaderExtension = ".shader";
+	const std::string fragmentExtension = ".frag";
+	const std::string vertexExtension = ".vert";
+	const std::string computeExtension = ".comp";
 
 	const std::string lastUsedUserPrefsFilePath = "CurrentUserPrefs.info";
 

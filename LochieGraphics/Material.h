@@ -22,6 +22,9 @@ private:
 	Shader* shader;
 	unsigned long long shaderGUID;
 	std::unordered_map<std::string, unsigned long long> textureGUIDs;
+
+	float defaultFloat = 1.0f;
+
 public:
 	std::unordered_map<std::string, Texture*> texturePointers;
 	Material(std::string _name, Shader* _shader);

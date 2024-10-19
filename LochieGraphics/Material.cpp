@@ -48,7 +48,7 @@ void Material::GetShaderUniforms()
 			textureGUIDs.emplace(name, 0);
 			break;
 		case GL_FLOAT:
-			floats.emplace(name, 32.f);
+			floats.emplace(name, defaultFloat);
 			break;
 		default:
 			std::cout << "Error: Shader uniform type not yet supported for material! Type: " << type << "\n";
@@ -185,7 +185,7 @@ void Material::GUI()
 	}
 	for (auto i = floats.begin(); i != floats.end(); i++)
 	{
-		ImGui::DragFloat((i->first + "##" + tag).c_str(), &i->second);
+		ImGui::SliderFloat((i->first + "##" + tag).c_str(), &i->second, 0.0f, 1.0f);
 	}
 
 	if (ImGui::Button(("Open modal##" + tag).c_str())) {

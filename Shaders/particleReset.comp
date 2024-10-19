@@ -1,0 +1,20 @@
+#version 460 core
+
+layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+layout (location = 0) uniform float t;
+
+struct Particle {
+	vec3 pos;
+	vec3 vel;
+};
+
+layout(std430, binding = 3) buffer Particles
+{
+    Particle data[];
+};
+
+void main() {
+	data[gl_GlobalInvocationID.x].pos = vec3(0, 0, 0);
+	data[gl_GlobalInvocationID.x].vel = vec3(0, 0, 0);
+}

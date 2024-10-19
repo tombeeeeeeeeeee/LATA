@@ -270,7 +270,6 @@ void TestScene::GUI()
 	else {
 		ImGui::DragFloat("Ortho Camera Zoom", &camera->orthoScale, 0.1f, 0, 100.0f);
 		ImGui::SliderFloat("Animation trans", &xbotBlendedAnimator.lerpAmount, 0.f, 1.0f);
-		ImGui::Checkbox("Show shadow debug", &renderSystem.showShadowDebug);
 		ImGui::DragFloat("Exposure", &renderSystem.exposure, 0.01f, 0.0f, 5.0f);
 		if (ImGui::DragInt("Skybox Index", &skyboxIndex, 0.01f, 0, (unsigned int)(skyboxes.size() - 1))) {
 			skybox = skyboxes[skyboxIndex];
