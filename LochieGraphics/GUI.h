@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <set>
+#include <string>
 
 class Scene;
 class SceneObject;
@@ -18,6 +19,8 @@ private:
 	std::set<SceneObject*> multiSelectedSceneObjects = {};
 
 	bool openMultiSelectRightClickMenu = false;
+
+	std::string hierarchyMenuSearch = "";
 
 public:
 	Scene* scene = nullptr;

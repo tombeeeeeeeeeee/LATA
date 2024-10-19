@@ -379,6 +379,8 @@ void GUI::HierarchyMenu()
 
 	hierarchySceneObjects.clear();
 
+	ImGui::InputText("Search", &hierarchyMenuSearch);
+
 	ImGui::Unindent();
 	ImGui::TreeNodeEx(("Root##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
 	if (ImGui::IsItemClicked()) {
@@ -426,6 +428,11 @@ void GUI::HierarchyMenu()
 
 void GUI::TransformTree(SceneObject* sceneObject)
 {
+	if (hierarchyMenuSearch != "") {
+		if (Utilities::ToLower(sceneObject->name).find(Utilities::ToLower(hierarchyMenuSearch)) == std::string::npos) {
+			return;
+		}
+	}
 	std::string tag = std::to_string(sceneObject->GUID);
 	ImGuiTreeNodeFlags nodeFlags = baseNodeFlags;
 	if (sceneObjectSelected == sceneObject || std::find(multiSelectedSceneObjects.begin(), multiSelectedSceneObjects.end(), sceneObject) != multiSelectedSceneObjects.end()) {
