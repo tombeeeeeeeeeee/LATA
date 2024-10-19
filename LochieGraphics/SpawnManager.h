@@ -15,8 +15,7 @@ public:
 
 	std::vector<int> spawnPattern;
 
-	float timeBetweenSpawns = 0.1f;
-	float circleSpawnRadius = 0.0f;
+	float timeBetweenSpawns = 0.15f;
 	bool spawning = false;
 	int currSpawnCount = 0;
 	

@@ -32,6 +32,7 @@ void SpawnManager::TriggerCall(std::string tag, bool toggle)
 			if (!triggeredOnce)
 			{
 				spawning = true;
+				timeSinceLastSpawn = FLT_MAX;
 			}
 		}
 
