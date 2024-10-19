@@ -308,6 +308,12 @@
     <ClCompile Include="PrefabManager.cpp">
       <Filter>Source Files\Scene Management</Filter>
     </ClCompile>
+    <ClCompile Include="TriggerSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
@@ -607,6 +613,8 @@
     <ClInclude Include="PrefabManager.h">
       <Filter>Source Files\Scene Management</Filter>
     </ClInclude>
+    <ClInclude Include="TriggerSystem.h" />
+    <ClInclude Include="Particle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -690,12 +698,6 @@
     <None Include="..\Shaders\shadowDebug.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\superShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\superShader.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\ui.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -761,9 +763,6 @@
     </None>
     <None Include="cpp.hint">
       <Filter>Resource Files</Filter>
-    </None>
-    <None Include="LocsComputeShader.comp">
-      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

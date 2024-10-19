@@ -309,12 +309,14 @@
     <ClCompile Include="..\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="..\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="PrefabManager.cpp" />
     <ClCompile Include="SpawnManager.cpp" />
     <ClCompile Include="TriggerSystem.cpp" />
     <ClCompile Include="UserPreferences.cpp" />
     <ClCompile Include="WanderState.cpp" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="PrefabManager.h" />
     <ClInclude Include="SpawnManager.h" />
     <ClInclude Include="TriggerSystem.h" />
@@ -408,7 +410,6 @@
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <None Include="cpp.hint" />
-    <None Include="LocsComputeShader.comp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\imgui\imconfig.h" />
@@ -531,8 +532,6 @@
     <None Include="..\Shaders\solidColour.frag" />
     <None Include="..\Shaders\ssao.frag" />
     <None Include="..\Shaders\ssaoBlur.frag" />
-    <None Include="..\Shaders\superShader.frag" />
-    <None Include="..\Shaders\superShader.vert" />
     <None Include="..\Shaders\superDuper.frag" />
     <None Include="..\Shaders\superDuper.vert" />
     <None Include="..\Shaders\ui.frag" />

@@ -78,11 +78,11 @@ void LocWorkshop::Start()
 	Texture* particleTexture = ResourceManager::LoadTexture("images/brodie.jpg", Texture::Type::albedo);
 
 	particle.texture = particleTexture;
-	particle.moveCompute =    new ComputeShader(Paths::shadersSaveLocation + "particleMove"    + Paths::computeExtension);
-	particle.resetCompute =   new ComputeShader(Paths::shadersSaveLocation + "particleReset"   + Paths::computeExtension);
-	particle.explodeCompute = new ComputeShader(Paths::shadersSaveLocation + "particleExplode" + Paths::computeExtension);
-	particle.stopCompute =    new ComputeShader(Paths::shadersSaveLocation + "particleStop"    + Paths::computeExtension);
-	particle.spreadCompute =  new ComputeShader(Paths::shadersSaveLocation + "particleSpread"  + Paths::computeExtension);
+	particle.moveCompute =    new ComputeShader(Paths::importShaderLocation + "particleMove"    + Paths::computeExtension);
+	particle.resetCompute =   new ComputeShader(Paths::importShaderLocation + "particleReset"   + Paths::computeExtension);
+	particle.explodeCompute = new ComputeShader(Paths::importShaderLocation + "particleExplode" + Paths::computeExtension);
+	particle.stopCompute =    new ComputeShader(Paths::importShaderLocation + "particleStop"    + Paths::computeExtension);
+	particle.spreadCompute =  new ComputeShader(Paths::importShaderLocation + "particleSpread"  + Paths::computeExtension);
 }
 
 void LocWorkshop::Update(float delta)
@@ -95,14 +95,14 @@ void LocWorkshop::Draw()
 	
 
 
-	renderSystem.Update(
-		renderers,
-		transforms,
-		renderers,
-		animators,
-		camera,
-		{ &particle }
-	);
+	//renderSystem.Update(
+	//	renderers,
+	//	transforms,
+	//	renderers,
+	//	animators,
+	//	camera,
+	//	{ &particle }
+	//);
 
 	//texture->Bind(0);
 	//glBindImageTexture(0, texture->GLID, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
@@ -160,7 +160,7 @@ void LocWorkshop::GUI()
 		particle.Stop();
 	}
 
-	ImGui::Checkbox("Facing Camera##Particle", &renderSystem.particleFacingCamera);
+	//ImGui::Checkbox("Facing Camera##Particle", &renderSystem.particleFacingCamera);
 
 	//ImGui::DragScalar("Count##Particle", ImGuiDataType_U32, reinterpret_cast<void*>(&particle.count));
 

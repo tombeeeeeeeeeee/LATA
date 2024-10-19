@@ -9,7 +9,6 @@
 #include "Animator.h"
 #include "FrameBuffer.h"
 #include "ShaderEnum.h"
-#include "Particle.h"
 
 #include "Utilities.h"
 #include "EditorGUI.h"
@@ -30,7 +29,7 @@ void RenderSystem::Start(
     {
         int scrWidth, scrHeight;
         glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
-        SCREEN_WIDTH  = scrWidth;
+        SCREEN_WIDTH = scrWidth;
         SCREEN_HEIGHT = scrHeight;
     }
     shaders = _shaders;
@@ -57,8 +56,11 @@ void RenderSystem::Start(
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
+    shadowDebugQuad = ResourceManager::LoadMesh();
     screenQuad = ResourceManager::LoadMesh();
+    shadowDebugQuad->InitialiseQuad(0.5f, 0.5f);
     screenQuad->InitialiseQuad(1.f, 0.0f);
+
 
     // Create colour attachment texture for fullscreen framebuffer
     screenColourBuffer = ResourceManager::LoadTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
@@ -67,7 +69,7 @@ void RenderSystem::Start(
     screenFrameBuffer = new FrameBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, screenColourBuffer, nullptr, true);
 
     paintStrokeTexture = nullptr;//ResourceManager::LoadTexture(paintStrokeTexturePath, Texture::Type::paint);
-    
+
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
 
@@ -140,7 +142,7 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
         cube->Draw();
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    
+
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
@@ -314,8 +316,7 @@ void RenderSystem::Update(
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
     std::unordered_map<unsigned long long, Animator>& animators,
-    Camera* camera,
-    std::vector<Particle*> particles
+    Camera* camera
 )
 {
     std::unordered_set<unsigned long long> animatedRenderered = {};
@@ -336,18 +337,50 @@ void RenderSystem::Update(
     viewMatrix = camera->GetViewMatrix();
 
     //TODO: TO make more flexible?
-	// Render depth of scene to texture (from light's perspective)
-	glm::mat4 lightSpaceMatrix;
-	lightSpaceMatrix = shadowCaster->getShadowViewProjection();
-	
-	(*shaders)[shadowMapDepth]->Use();
+    // Render depth of scene to texture (from light's perspective)
+    glm::mat4 lightSpaceMatrix;
+    lightSpaceMatrix = shadowCaster->getShadowViewProjection();
+
+    (*shaders)[shadowMapDepth]->Use();
     (*shaders)[shadowMapDepth]->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-	glViewport(0, 0, shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight);
-	shadowCaster->shadowFrameBuffer->Bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(0, 0, shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight);
+    shadowCaster->shadowFrameBuffer->Bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    DrawAllRenderers(animators, transforms, renders, animatedRenderered, (*shaders)[shadowMapDepth]);    
+    //RENDER SCENE FOR SHADOWS
+    for (auto i = shadowCasters.begin(); i != shadowCasters.end(); i++)
+    {
+        // TODO: This is only using the first material found on the model, each mesh could potentially have a different material?
+        ModelRenderer currentRenderer = i->second;
+        if (currentRenderer.model == nullptr) { continue; }
+        if (currentRenderer.materials[0] == nullptr) { continue; }
+        Texture* alphaMap = currentRenderer.materials[0]->getFirstTextureOfType(Texture::Type::diffuse);
+        if (!alphaMap) {
+            alphaMap = currentRenderer.materials[0]->getFirstTextureOfType(Texture::Type::albedo);
+        }
+        if (alphaMap) {
+            alphaMap->Bind(1);
+            (*shaders)[shadowMapDepth]->setSampler("alphaDiscardMap", 1);
+        }
+        else {
+            // TODO:
+            (*shaders)[shadowMapDepth]->setSampler("alphaDiscardMap", 0);
+        }
+
+        (*shaders)[shadowMapDepth]->setMat4("model", transforms[i->first].getGlobalMatrix());
+
+        Model* model = currentRenderer.model;
+
+        //DRAW USING SHADOW MAP FOR CURRENT TRANSFORM
+        for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
+        {
+            (*mesh)->Draw();
+        }
+    }
+
+    DrawAnimation(animators, transforms, shadowCasters, (*shaders)[shadowMapDepth]);
+
 
     // Render scene with shadow map, to the screen framebuffer
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -361,8 +394,8 @@ void RenderSystem::Update(
     glDepthFunc(GL_LESS);
 
     glDrawBuffers(2, forwardAttachments);
-    
-    DrawAllRenderers(animators, transforms, renders, animatedRenderered, (*shaders)[forward]);
+    DrawAnimation(animators, transforms, renders, (*shaders)[forward]);
+    DrawRenderers(renders, transforms, animatedRenderered, (*shaders)[forward]);
 
     RenderSSAO();
     glDisable(GL_DEPTH_TEST);
@@ -389,16 +422,12 @@ void RenderSystem::Update(
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-    
+
     glDrawBuffers(2, attachments);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    (*shaders)[ShaderIndex::super]->Use();
-    glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, camera->nearPlane, camera->farPlane);
-    (*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
-
-    DrawAllRenderers(animators, transforms, renders, animatedRenderered);
+    DrawRenderers(renders, transforms, animatedRenderered);
 
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Draw();
@@ -406,47 +435,18 @@ void RenderSystem::Update(
     glDepthFunc(GL_ALWAYS);
     debugLines.Draw();
 
-
     glDepthFunc(GL_LEQUAL); // Change depth function
     Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);
-    
+
     RenderQuad();
     glDepthFunc(GL_LESS);
 
+    // Draw animated stuff
+    (*shaders)[ShaderIndex::super]->Use();
+    glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, camera->nearPlane, camera->farPlane);
+    (*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
 
-    //(*shaders)[ShaderIndex::super]->Use();
-    //(*shaders)[ShaderIndex::super]->setMat4("model", glm::identity<glm::mat4>());
-    //cube->Draw();
-    glDisable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE);
-    //glDisable(GL_DEPTH_TEST);
-    glDepthFunc(GL_ALWAYS);
-    glBlendEquation(GL_FUNC_ADD);
-
-    for (auto i : particles)
-    {
-        glm::mat4 view = camera->GetViewMatrix();
-        if (particleFacingCamera) {
-            view = camera->GetViewMatrix();
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    if (i == j) {
-                        view[i][j] = 1.0;
-                    }
-                    else {
-                        view[i][j] = 0.0;
-                    }
-                }
-            }
-        }
-        i->shader->Use();
-        i->shader->setMat4("vp", projection * view);
-        i->Draw();
-    }
-    glDisable(GL_BLEND);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
+    DrawAnimation(animators, transforms, renders);
 
     RenderBloom(bloomBuffer);
 
@@ -471,7 +471,7 @@ void RenderSystem::Update(
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, colorBuffer);
-    
+
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, bloomMips[0].texture);
 
@@ -481,6 +481,18 @@ void RenderSystem::Update(
     (*shaders)[screen]->setFloat("exposure", exposure);
 
     RenderQuad();
+
+    if (showShadowDebug) {
+        // Debug render the light depth map
+        (*shaders)[ShaderIndex::shadowDebug]->Use();
+        (*shaders)[ShaderIndex::shadowDebug]->setFloat("near_plane", shadowCaster->shadowNearPlane);
+        (*shaders)[ShaderIndex::shadowDebug]->setFloat("far_plane", shadowCaster->shadowFarPlane);
+        shadowCaster->depthMap->Bind(1);
+
+        //TODO: Make Shadow Debug Quad
+        shadowDebugQuad->Draw();
+    }
+
 
     screenFrameBuffer->Unbind();
 
@@ -527,40 +539,36 @@ void RenderSystem::ScreenResize(int width, int height)
     BloomUpdate();
 }
 
-
-void RenderSystem::DrawAllRenderers(
+// TODO: Should probably be called something more like DrawAnimators
+// TODO: This is quite similiar to DrawRenderers, would be nice to clean up together
+void RenderSystem::DrawAnimation(
     std::unordered_map<unsigned long long, Animator>& animators,
-    std::unordered_map<unsigned long long, Transform>& transforms, 
-    std::unordered_map<unsigned long long, ModelRenderer>& renderers, 
-    std::unordered_set<unsigned long long> animatedRenderered, 
-    Shader* givenShader)
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    std::unordered_map<unsigned long long, ModelRenderer>& renderers,
+    Shader* givenShader
+)
 {
     Material* previousMaterial = nullptr;
-
-    for (auto& i : renderers)
+    for (auto iter = animators.begin(); iter != animators.end(); iter++)
     {
-        ModelRenderer& renderer = i.second;
-        unsigned long long GUID = i.first;
-        bool animated = animatedRenderered.find(GUID) != animatedRenderered.end();
-        Animator* animator = nullptr;
-        if (animated) {
-            animator = &animators.at(GUID);
-        }
-        Model* model = renderer.model;
-        if (!model) { continue; }
-
+        ModelRenderer& animationRenderer = renderers[iter->first];
+        Model* model = animationRenderer.model;
+        if (model == nullptr) { continue; }
         Shader* previousShader = nullptr;
 
-        for (auto mesh : model->meshes)
-        {
-            int materialID = mesh->materialID;
-            Material* currentMaterial = nullptr;
 
-            if (materialID >= model->materialIDs || renderer.materials[materialID] == nullptr) {
+        // TODO: Foreach style loop
+        for (auto mesh = model->meshes.begin(); mesh != model->meshes.end(); mesh++)
+        {
+            int materialID = (*mesh)->materialID;
+
+            // Ensure that the materialID is valid
+            Material* currentMaterial = nullptr;
+            if (materialID >= model->materialIDs || renderers[iter->first].materials[materialID] == nullptr) {
                 materialID = 0;
-                std::cout << "Invalid model material ID\n";
+                // TODO: Should probably be a warning here
             }
-            currentMaterial = renderer.materials[materialID];
+            currentMaterial = renderers[iter->first].materials[materialID];
 
             // Only bind material if using a different material
             if (currentMaterial != previousMaterial) {
@@ -571,33 +579,28 @@ void RenderSystem::DrawAllRenderers(
             }
 
             Shader* shader;
-            if (!givenShader) {
-                Material* material = renderer.materials[materialID];
-                // TODO: Maybe an error / warning
-
+            if (givenShader == nullptr) {
+                Material* material = renderers[iter->first].materials[materialID];
+                // TODO: maybe a error / warning
                 if (!material) { continue; }
                 shader = material->getShader();
             }
             else {
                 shader = givenShader;
             }
-
             if (previousShader != shader) {
                 shader->Use();
                 previousShader = shader;
                 shader->setMat4("view", viewMatrix);
-                shader->setMat4("model", transforms[GUID].getGlobalMatrix());
-                ActivateFlaggedVariables(shader, renderer.materials[materialID]);
-                
-                glm::vec3 overallColour = renderer.materials[materialID]->colour * renderer.materialTint;
-                shader->setVec3("materialColour", overallColour);
+                shader->setMat4("model", transforms[iter->first].getGlobalMatrix());
+                ActivateFlaggedVariables(shader, renderers[iter->first].materials[materialID]);
+                shader->setVec3("materialColour", renderers[iter->first].materials[materialID]->colour);
 
-                if (animated) {
-                    std::vector<glm::mat4> boneMatrices = animator->getFinalBoneMatrices();
-                    for (int i = 0; i < boneMatrices.size(); i++)
-                    {
-                        shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
-                    }
+                // Set uniforms needed for animations
+                std::vector<glm::mat4> boneMatrices = iter->second.getFinalBoneMatrices();
+                for (int i = 0; i < boneMatrices.size(); i++)
+                {
+                    shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
                 }
             }
 
@@ -608,7 +611,7 @@ void RenderSystem::DrawAllRenderers(
 
 // TODO: Clean up
 void RenderSystem::DrawRenderers(
-    std::unordered_map<unsigned long long, ModelRenderer>& renderers, 
+    std::unordered_map<unsigned long long, ModelRenderer>& renderers,
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_set<unsigned long long> animatedRenderered,
     Shader* _shader
@@ -646,7 +649,7 @@ void RenderSystem::DrawRenderers(
                 currentMaterial->Use(_shader ? _shader : nullptr);
                 previousMaterial = currentMaterial;
             }
-           
+
             // Only need to set shader variables if using a different shader
             Shader* shader;
             if (_shader == nullptr) {
@@ -671,7 +674,7 @@ void RenderSystem::DrawRenderers(
             (*mesh)->Draw();
         }
     }
-   
+
 }
 
 void RenderSystem::ActivateFlaggedVariables(
@@ -705,19 +708,19 @@ void RenderSystem::ActivateFlaggedVariables(
 
 void RenderSystem::HDRBufferSetUp()
 {
-	glGenFramebuffers(1, &hdrFBO);
-	glGenTextures(1, &colorBuffer);
-	glGenRenderbuffers(1, &rboDepth);
+    glGenFramebuffers(1, &hdrFBO);
+    glGenTextures(1, &colorBuffer);
+    glGenRenderbuffers(1, &rboDepth);
 
-	HDRBufferUpdate();
+    HDRBufferUpdate();
 }
 
 void RenderSystem::OutputBufferSetUp()
 {
-	glGenFramebuffers(1, &outputFBO);
-	glGenTextures(1, &outputTexture);
+    glGenFramebuffers(1, &outputFBO);
+    glGenTextures(1, &outputTexture);
 
-	OutputBufferUpdate();
+    OutputBufferUpdate();
 }
 
 void RenderSystem::IBLBufferSetup(unsigned int skybox)
@@ -755,7 +758,7 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
     (*shaders)[ShaderIndex::super]->Use();
-    
+
     int scrWidth, scrHeight;
     glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
@@ -766,6 +769,7 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
 void RenderSystem::GUI()
 {
     if (ImGui::Begin("Render System", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+
         if (ImGui::CollapsingHeader("SSAO")) {
             ImGui::DragInt("Kernal Size", &kernelSize);
             ImGui::DragFloat("Radius", &ssaoRadius);
@@ -977,7 +981,6 @@ void RenderSystem::SSAOSetup()
 
 void RenderSystem::RenderSSAO()
 {
-    return;
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
     glClear(GL_COLOR_BUFFER_BIT);
 

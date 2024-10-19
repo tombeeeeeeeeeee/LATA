@@ -6,6 +6,7 @@ namespace Paths {
 
 	const std::string importTextureLocation = "images/";
 	const std::string importModelLocation = "models/";
+	const std::string importShaderLocation = "Shaders/";
 
 	// TODO: Names here aren't consistent, plurality
 	const std::string levelsPath = "Levels/";
@@ -16,7 +17,6 @@ namespace Paths {
 	const std::string prefabsSaveLocation = "Assets/Prefabs/";
 	const std::string shadersSaveLocation = "Assets/Shaders/";
 
-	const std::string shadersSaveLocation = "Shaders/";
 
 	const std::string userPrefsSaveLocation = "UserPrefs/";
 

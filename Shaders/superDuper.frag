@@ -5,7 +5,6 @@ struct Material {
     sampler2D normal;
     sampler2D PBR;
     sampler2D emission;
-	float tempValue;
 }; 
 
 struct DirectionalLight {
@@ -107,10 +106,7 @@ const float MAX_REFLECTION_LOD = 4.0;
 
 void main()
 {
-	screenColour = vec4(fragmentColour, 1.0);
-	return;
-    
-	vec3 PBR = texture(material.PBR, texCoords).rgb;
+    vec3 PBR = texture(material.PBR, texCoords).rgb;
     albedo = texture(material.albedo, texCoords).rgb * fragmentColour;
 
     //TODO: Add atlasing

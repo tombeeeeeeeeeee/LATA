@@ -7,17 +7,6 @@ layout (location = 4) in vec3 aBiTangent; // TODO: Actually use
 layout (location = 5) in ivec4 aBoneIDs;
 layout (location = 6) in vec4 aBoneWeights;
 
-// Remove
-struct Material {
-    sampler2D albedo;
-    sampler2D normal;
-    sampler2D PBR;
-    sampler2D emission;
-	float tempValue;
-}; 
-
-uniform Material material;
-
 struct DirectionalLight {
     vec3 direction;
     vec3 colour;
@@ -77,8 +66,6 @@ out vec3 fragmentNormal;
 out vec3 fragmentTangent;
 out vec3 fragmentBitangent;
 
-
-
 void main()
 {
     texCoords = aTexCoords;
@@ -95,10 +82,7 @@ void main()
             totalPosition += boneMatrices[aBoneIDs[i]] * aBoneWeights[i];
             vec3 localNormal = mat3(boneMatrices[aBoneIDs[i]]) * aNormal;
         }
-		vec4 transformed = model * (totalPosition * vec4(aPos, 1.0));
-		vec4 untransformed = model * vec4(aPos, 1.0);
-		pos = mix(transformed, untransformed, material.tempValue);
-        //pos = model * (totalPosition * vec4(aPos, 1.0));
+        pos = model * (totalPosition * vec4(aPos, 1.0));
     }
 
     else 
@@ -122,5 +106,4 @@ void main()
     gl_Position = vp * pos;
     ndc = gl_Position;
     fragmentColour = materialColour;
-	fragmentColour = vec3(0.01 * aBoneIDs[0], 1.0 - (0.01 * aBoneIDs[0]), 0.0);
 }

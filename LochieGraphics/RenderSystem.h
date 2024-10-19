@@ -16,7 +16,6 @@ class ModelRenderer;
 class Shader;
 class Transform;
 class Texture;
-class Particle;
 
 struct bloomMip
 {
@@ -33,8 +32,6 @@ public:
 
     static LineRenderer lines;
     static LineRenderer debugLines;
-
-    bool particleFacingCamera;
 
     void Start(
         unsigned int _skyboxTexture,
@@ -59,8 +56,7 @@ public:
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
         std::unordered_map<unsigned long long, Animator>& animators,
-        Camera* camera,
-        std::vector<Particle*> particles = {}
+        Camera* camera
     );
 
     void ScreenResize(int width, int height);
@@ -69,6 +65,7 @@ public:
 
     int SCREEN_WIDTH, SCREEN_HEIGHT = 0;
 
+    bool showShadowDebug = false;
     unsigned int skyboxTexture = 0;
     glm::mat4 projection = glm::zero<glm::mat4>();
     int kernelSize = 64;
@@ -85,7 +82,9 @@ public:
 
 private:
 
+    Mesh* shadowDebugQuad = nullptr;
     Mesh* screenQuad = nullptr;
+    Mesh* buttonQuad = nullptr;
 
     Texture* screenColourBuffer = nullptr;
 
@@ -115,13 +114,21 @@ private:
     /// </summary>
     std::vector<Shader*>* shaders = {};
 
-    void DrawAllRenderers(
+
+    void DrawAnimation(
         std::unordered_map<unsigned long long, Animator>& animators,
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
+        Shader* shader = nullptr
+    );
+
+    void DrawRenderers(
+        std::unordered_map<unsigned long long, ModelRenderer>& renderers,
+        std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_set<unsigned long long> animatedRenderered,
         Shader* shader = nullptr
     );
+
 
     void ActivateFlaggedVariables(
         Shader* shader,
@@ -194,4 +201,3 @@ private:
         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
     };
 };
-
