@@ -287,6 +287,7 @@ void LevelEditor::Update(float delta)
 		transforms,
 		rigidBodies,
 		healths,
+		spawnManagers,
 		eccoSo->transform()->get2DGlobalPosition(),
 		syncSo->transform()->get2DGlobalPosition(),
 		delta
