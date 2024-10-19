@@ -166,9 +166,9 @@ void SceneObject::MenuGUI()
 	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
 		scene->DeleteSceneObject(GUID);
 	}
-	if (ImGui::MenuItem((("Duplicate##RightClick") + tag).c_str())) {
-		// TODO:
-	}
+	// TODO:
+	//if (ImGui::MenuItem((("Duplicate##RightClick") + tag).c_str())) {
+	//}
 	if (ImGui::MenuItem(("Save As Prefab##RightClick" + tag).c_str())) {
 		SaveAsPrefab();
 	}

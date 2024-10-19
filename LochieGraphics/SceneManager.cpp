@@ -246,9 +246,9 @@ void SceneManager::Update()
 	
 	while (!scene->markedForDeletion.empty())
 	{
-		if (scene->gui.sceneObjectSelected) {
-			if (scene->gui.sceneObjectSelected->GUID == scene->markedForDeletion.front()) {
-				scene->gui.sceneObjectSelected = nullptr;
+		if (scene->gui.getSelected()) {
+			if (scene->gui.getSelected()->GUID == scene->markedForDeletion.front()) {
+				scene->gui.setSelected(nullptr);
 			}
 		}
 		delete scene->sceneObjects.at(scene->markedForDeletion.front());
@@ -271,8 +271,8 @@ void SceneManager::Update()
 	scene->renderSystem.lines.Clear();
 	scene->renderSystem.debugLines.Clear();
 	scene->Update(deltaTime);
-	if (scene->gui.sceneObjectSelected) {
-		scene->gui.sceneObjectSelected->DebugDraw();
+	if (scene->gui.getSelected()) {
+		scene->gui.getSelected()->DebugDraw();
 	}
 	for (auto& i : scene->animators)
 	{
@@ -465,19 +465,22 @@ void SceneManager::ProcessKeyboardInput(GLFWwindow* window)
 	}
 
 	// Camera movement
-	float cameraSpeed = 2.0f * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::FORWARD, deltaTime); }
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::BACKWARD, deltaTime); }
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::LEFT, deltaTime); }
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::RIGHT, deltaTime); }
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::UP, deltaTime); }
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::DOWN, deltaTime); }
+	if (!ImGui::GetIO().WantCaptureMouse) {
 
-	if ((glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) != camera.artKeyDown) {
-		camera.artKeyDown = !camera.artKeyDown;
-		if (camera.state == Camera::State::artEditorMode) {
-			lockedCamera = !camera.artKeyDown;
-			RefreshInputMode();
+		float cameraSpeed = 2.0f * deltaTime;
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::FORWARD, deltaTime); }
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::BACKWARD, deltaTime); }
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::LEFT, deltaTime); }
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::RIGHT, deltaTime); }
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::UP, deltaTime); }
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::DOWN, deltaTime); }
+
+		if ((glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) != camera.artKeyDown) {
+			camera.artKeyDown = !camera.artKeyDown;
+			if (camera.state == Camera::State::artEditorMode) {
+				lockedCamera = !camera.artKeyDown;
+				RefreshInputMode();
+			}
 		}
 	}
 

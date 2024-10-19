@@ -568,7 +568,8 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 
 	LoadSceneObjectsAndParts(data);
 
-	gui.sceneObjectSelected = nullptr;
+	// TODO: this shouldn't need to be here, deleting objects should unselect object
+	gui.setSelected(nullptr);
 
 	groundTileParent = FindSceneObjectOfName("Ground Tiles");
 	wallTileParent = FindSceneObjectOfName("Wall Tiles");
@@ -608,7 +609,7 @@ void LevelEditor::ModelPlacer(glm::vec2 targetPos)
 		{ -defaultColliderLength, +defaultColliderLength}
 		}, 0.0f));
 
-	gui.sceneObjectSelected = newSceneObject;
+	gui.setSelected(newSceneObject);
 }
 
 void LevelEditor::PrefabPlacer(glm::vec2 targetPos)
@@ -626,7 +627,7 @@ void LevelEditor::PrefabPlacer(glm::vec2 targetPos)
 	newSceneObject->transform()->setPosition(pos);
 	newSceneObject->transform()->setEulerRotation({ 0.0f, assetPlacerRotation, 0.0f });
 
-	gui.sceneObjectSelected = newSceneObject;
+	gui.setSelected(newSceneObject);
 }
 
 void LevelEditor::Selector(glm::vec2 targetPos)
@@ -639,11 +640,11 @@ void LevelEditor::Selector(glm::vec2 targetPos)
 				continue;
 			}
 		}
-		if (i.second.getSceneObject() == gui.sceneObjectSelected) { continue; }
+		if (i.second.getSceneObject() == gui.getSelected()) { continue; }
 		glm::vec3 temp = i.second.getPosition();
 		glm::vec2 pos = { temp.x, temp.z };
 		if (glm::length(pos - targetPos) < selectSize) {
-			gui.sceneObjectSelected = i.second.getSceneObject();
+			gui.setSelected(i.second.getSceneObject());
 		}
 	}
 }

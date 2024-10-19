@@ -195,6 +195,94 @@ void GUI::Update()
 	}
 }
 
+SceneObject* GUI::getSelected()
+{
+	return sceneObjectSelected;
+}
+
+void GUI::setSelected(SceneObject* so)
+{
+	sceneObjectSelected = so;
+	lastSelected = so;
+
+	multiSelectedSceneObjects.clear();
+}
+
+void GUI::AddFromToSelection(SceneObject* from, SceneObject* to)
+{
+	// Have to 'wait' for the hierarchy to finish drawing, gets called properly at the end of hierarchy menu
+	addRangeToSelection.push_back({ from, to });
+}
+
+void GUI::UpdateSelection()
+{
+	while (!addRangeToSelection.empty()) {
+		std::vector<SceneObject*>::iterator one = std::find(hierarchySceneObjects.begin(), hierarchySceneObjects.end(), addRangeToSelection.front().first);
+		std::vector<SceneObject*>::iterator two = std::find(hierarchySceneObjects.begin(), hierarchySceneObjects.end(), addRangeToSelection.front().second);
+		unsigned int oneIndex = std::distance(hierarchySceneObjects.begin(), one);
+		unsigned int twoIndex = std::distance(hierarchySceneObjects.begin(), two);
+		std::vector<SceneObject*>::iterator from = oneIndex < twoIndex ? one : two;
+		std::vector<SceneObject*>::iterator to = (twoIndex < oneIndex ? one : two) + 1;
+		for (auto& i = from; i != to; i++)
+		{
+			multiSelectedSceneObjects.insert(*i);
+		}
+		addRangeToSelection.erase(addRangeToSelection.begin());
+	}
+
+	if (!multiSelectedSceneObjects.empty()) {
+		if (sceneObjectSelected) {
+			multiSelectedSceneObjects.insert(sceneObjectSelected);
+			sceneObjectSelected = nullptr;
+		}
+	}
+}
+
+void GUI::MultiSceneObjectRightClickMenu()
+{
+	std::string multiRightClickPopupID = "multiRightClickPopup";
+	if (openMultiSelectRightClickMenu) {
+		ImGui::OpenPopup(multiRightClickPopupID.c_str());
+		openMultiSelectRightClickMenu = false;
+	}
+	if (!ImGui::BeginPopup(multiRightClickPopupID.c_str())) {
+		return;
+	}
+	std::string tag = Utilities::PointerToString(this);
+
+	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
+		for (auto i : multiSelectedSceneObjects)
+		{
+			scene->DeleteSceneObject(i->GUID);
+		}
+		setSelected(nullptr);
+	}
+	if (ImGui::MenuItem(("Save Prefab Origins##RightClick" + tag).c_str())) {
+		for (auto i : multiSelectedSceneObjects)
+		{
+			if (i->prefabStatus == SceneObject::PrefabStatus::prefabOrigin) {
+				i->SaveAsPrefab();
+			}
+		}
+	}
+	if (ImGui::MenuItem(("Refresh Prefab Instances##RightClick" + tag).c_str())) {
+		for (auto i : multiSelectedSceneObjects) {
+			if (i->prefabStatus == SceneObject::PrefabStatus::prefabInstance) {
+				i->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(i->prefabBase));
+			}
+		}
+	}
+	if (ImGui::MenuItem(("Replace with Prefab##RightClick" + tag).c_str())) {
+		auto prefab = PrefabManager::loadedPrefabOriginals.find(PrefabManager::selectedPrefab);
+		if (prefab != PrefabManager::loadedPrefabOriginals.end()) {
+			for (auto i : multiSelectedSceneObjects) {
+				i->LoadFromPrefab(prefab->second);
+			}
+		}
+	}
+	ImGui::EndPopup();
+}
+
 void GUI::ResourceMenu()
 {
 	if (!ImGui::Begin("Resource Menu", &showResourceMenu, defaultWindowFlags)) {
@@ -252,7 +340,10 @@ void GUI::SceneObjectMenu()
 		return;
 	}
 
-	if (sceneObjectSelected) {
+	if (multiSelectedSceneObjects.size() > 0) {
+		ImGui::Text("Multi Object Editing not yet supported");
+	}
+	else if (sceneObjectSelected) {
 		sceneObjectSelected->GUI();
 	}
 	else {
@@ -286,10 +377,12 @@ void GUI::HierarchyMenu()
 		return;
 	}
 
+	hierarchySceneObjects.clear();
+
 	ImGui::Unindent();
 	ImGui::TreeNodeEx(("Root##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
 	if (ImGui::IsItemClicked()) {
-		sceneObjectSelected = nullptr;
+		setSelected(nullptr);
 	}
 	ImGui::Indent();
 
@@ -319,9 +412,14 @@ void GUI::HierarchyMenu()
 	ImGui::Unindent();
 	ImGui::TreeNodeEx(("+ NEW SCENEOBJECT##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
 	if (ImGui::IsItemClicked()) {
-		sceneObjectSelected = new SceneObject(scene);
+		setSelected(new SceneObject(scene));
 	}
 	ImGui::Indent();
+
+	UpdateSelection();
+
+	MultiSceneObjectRightClickMenu();
+
 
 	ImGui::End();
 }
@@ -330,7 +428,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 {
 	std::string tag = std::to_string(sceneObject->GUID);
 	ImGuiTreeNodeFlags nodeFlags = baseNodeFlags;
-	if (sceneObjectSelected == sceneObject) {
+	if (sceneObjectSelected == sceneObject || std::find(multiSelectedSceneObjects.begin(), multiSelectedSceneObjects.end(), sceneObject) != multiSelectedSceneObjects.end()) {
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
 	bool hasChildren = sceneObject->transform()->HasChildren();
@@ -348,19 +446,47 @@ void GUI::TransformTree(SceneObject* sceneObject)
 
 	ImGui::PushStyleColor(0, { textColour.x, textColour.y, textColour.z, textColour.w });
 	bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + tag).c_str(), nodeFlags);
+	hierarchySceneObjects.push_back(sceneObject);
 	ImGui::PopStyleColor();
 	
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsItemToggledOpen()) {
-		sceneObjectSelected = sceneObject;
-	}
-	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-		ImGui::OpenPopup(("SceneObjectRightClickPopUp##" + tag).c_str());
-	}
-	if (ImGui::BeginPopup(("SceneObjectRightClickPopUp##" + tag).c_str())) {
-		sceneObject->MenuGUI();
+		bool shift = glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_SHIFT);
+		bool ctrl = glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_CONTROL);
+
+		if (shift && lastSelected) {
+			AddFromToSelection(lastSelected, sceneObject);
+			lastSelected = sceneObject;
+		}
+		else if (ctrl && (!multiSelectedSceneObjects.empty() || sceneObjectSelected)) {
+			if (multiSelectedSceneObjects.find(sceneObject) != multiSelectedSceneObjects.end()) {
+				multiSelectedSceneObjects.erase(sceneObject);
+			}
+			else {
+				multiSelectedSceneObjects.insert(sceneObject);
+				lastSelected = sceneObject;
+			}
+		}
+		else {
+			setSelected(sceneObject);
+		}
 	}
 
+	std::string sceneObjectPopUpID = "SceneObjectRightClickPopUp##" + tag;
+
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+		if (multiSelectedSceneObjects.find(sceneObject) == multiSelectedSceneObjects.end()) {
+			setSelected(sceneObject);
+			ImGui::OpenPopup(sceneObjectPopUpID.c_str());
+		}
+		else {
+			openMultiSelectRightClickMenu = true;
+		}
+	}
+
+	if (ImGui::BeginPopup(sceneObjectPopUpID.c_str())) {
+		sceneObject->MenuGUI();
+	}
 
 	TransformDragDrop(sceneObject);
 
