@@ -79,6 +79,20 @@ void RenderSystem::Start(
     
     postFrameTexture = ResourceManager::LoadTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
     postFrameBuffer = new FrameBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, postFrameTexture, nullptr, true);
+
+    // TODO: dont reload the texture just to not have it be mip mapped
+    baseColourKey = ResourceManager::LoadTexture("images/BlankColourKey.png", Texture::Type::count);
+    baseColourKey->mipMapped = false;
+    baseColourKey->Load();
+
+    colourKey1 = ResourceManager::LoadTexture("images/GreyScaleColourKey.png", Texture::Type::count);
+    colourKey1->mipMapped = false;
+    colourKey1->Load();
+
+    colourKey2 = ResourceManager::LoadTexture("images/HueShiftedColourKey.png", Texture::Type::count);
+    colourKey2->mipMapped = false;
+    colourKey2->Load();
+
 }
 
 void RenderSystem::SetIrradianceMap(unsigned int textureID)
@@ -471,18 +485,29 @@ void RenderSystem::Update(
 
     (*shaders)[screen]->setFloat("exposure", exposure);
 
-    postFrameBuffer->Bind();
+    if (postEffectOn) {
+        postFrameBuffer->Bind();
+    }
 
     RenderQuad();
 
-    FrameBuffer::Unbind();
+    if (postEffectOn) {
+        FrameBuffer::Unbind();
 
 
-    postProcess->Use();
-    postFrameTexture->Bind(1);
-    postProcess->setSampler("screenTexture", 1);
+        postProcess->Use();
+        postFrameTexture->Bind(1);
+        postProcess->setSampler("colourTexture", 1);
+        baseColourKey->Bind(2);
+        colourKey1->Bind(3);
+        postProcess->setSampler("colourGradeKey1", 3);
+        colourKey2->Bind(4);
+        postProcess->setSampler("colourGradeKey2", 4);
 
-    RenderQuad();
+        postProcess->setFloat("colourGradeInterpolation", postEffectPercent);
+
+        RenderQuad();
+    }
 
     // Re enable the depth test
     glEnable(GL_DEPTH_TEST);
@@ -705,6 +730,8 @@ void RenderSystem::GUI()
         ImGui::DragFloat("Radius", &ssaoRadius);
         ImGui::DragFloat("Bias", &ssaoBias);
     }
+    ImGui::SliderFloat("Post effect thing", &postEffectPercent, 0.0f, 1.0f);
+    ImGui::Checkbox("Post Effect on", &postEffectOn);
     ImGui::End();
 }
 

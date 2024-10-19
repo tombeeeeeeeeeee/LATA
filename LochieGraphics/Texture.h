@@ -48,7 +48,7 @@ public:
 	GLenum wrappingMode;
 	GLenum format;
 	GLenum dataType;
-	bool mipMapped;
+	bool mipMapped = false;
 	GLint minFilter;
 	GLint maxFilter;
 	bool flipped; //TODO: rename to flip?

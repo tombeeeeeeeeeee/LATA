@@ -33,6 +33,11 @@ public:
 
     Texture* postFrameTexture;
     FrameBuffer* postFrameBuffer;
+    Texture* baseColourKey = nullptr;
+    Texture* colourKey1 = nullptr;
+    Texture* colourKey2 = nullptr;
+    float postEffectPercent = 0;
+    bool postEffectOn = false;
 
     static LineRenderer lines;
     static LineRenderer debugLines;
