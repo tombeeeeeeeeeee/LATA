@@ -35,11 +35,11 @@ SceneObject::~SceneObject()
 	scene->transforms.erase(GUID);
 }
 
-#define AddPartGUI(getter, setter, type, label) \
-if (getter() == nullptr) {                      \
-if (ImGui::MenuItem(label)) {                   \
-		setter(new type());                     \
-	}                                           \
+#define AddPartGUI(getter, setter, constructor, label) \
+if (getter() == nullptr) {                             \
+if (ImGui::MenuItem(label)) {                          \
+		setter(new constructor);                       \
+	}                                                  \
 }
 
 #define RemovePartGUI(partsType, setter, label) \
@@ -119,8 +119,8 @@ void SceneObject::GUI()
 	}
 
 	if (ImGui::BeginPopup(addPopup.c_str())) {
-		AddPartGUI(renderer, setRenderer, ModelRenderer, ("Model Renderer##Add part" + tag).c_str());
-		AddPartGUI(rigidbody, setRigidBody, RigidBody, ("Rigid Body##Add part" + tag).c_str());
+		AddPartGUI(renderer, setRenderer, ModelRenderer(), ("Model Renderer##Add part" + tag).c_str());
+		AddPartGUI(rigidbody, setRigidBody, RigidBody(), ("Rigid Body##Add part" + tag).c_str());
 
 		if (ecco() == nullptr && scene->ecco->GUID == 0) {
 			if (ImGui::MenuItem(("Ecco##Add part" + tag).c_str())) {
@@ -133,9 +133,16 @@ void SceneObject::GUI()
 			}
 		}
 		
-		AddPartGUI(health, setHealth, Health, ("Health##Add part" + tag).c_str());
-		AddPartGUI(enemy, setEnemy, Enemy, ("Enemy##Add part" + tag).c_str());
-		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
+		AddPartGUI(health, setHealth, Health(), ("Health##Add part" + tag).c_str());
+		AddPartGUI(enemy, setEnemy, Enemy(), ("Enemy##Add part" + tag).c_str());
+		AddPartGUI(exitElevator, setExitElevator, ExitElevator(), ("Exit Elevator##Add part" + tag).c_str());
+
+		AddPartGUI(collider, setCollider, PolygonCollider({
+		{ +50, +50},
+		{ +50, -50},
+		{ -50, -50},
+		{ -50, +50}
+			}, 0.0f), ("Polygon Collider##Add part" + tag).c_str());
 		
 		ImGui::EndPopup();
 	}
@@ -155,6 +162,9 @@ void SceneObject::GUI()
 			}
 		}
 		RemovePartGUI(exitElevator, setExitElevator, ("Exit##Remove part" + tag).c_str());
+
+		RemovePartGUI(collider, setCollider, ("Collider##Remove part" + tag).c_str());
+
 		ImGui::EndPopup();
 	}
 }

@@ -89,10 +89,10 @@ glm::vec2 RigidBody::Transform2Din3DSpace(glm::mat4 global, glm::vec2 input)
 
 void RigidBody::GUI()
 {
-	if (ImGui::CollapsingHeader("Rigid Body"))
+	std::string tag = Utilities::PointerToString(this);
+	if (ImGui::CollapsingHeader(("Rigid Body##" + tag).c_str()))
 	{
 		ImGui::Indent();
-		std::string tag = Utilities::PointerToString(this);
 		float mass = getMass();
 		bool isKinematic = invMass == 0;
 
@@ -125,7 +125,47 @@ void RigidBody::GUI()
 				colliders.at(i)->GUI();
 			}
 		}
+		std::string addColliderPopupID = "RigidBodyAddCollider" + tag;
+		std::string removeColliderPopupID = "RigidBodyRemoveCollider" + tag;
+		if (ImGui::Button(("Add Collider##rigidbody" + tag).c_str())) {
+			ImGui::OpenPopup(addColliderPopupID.c_str());
+		}
+		ImGui::SameLine();
+		if (colliders.empty()) {
+			ImGui::BeginDisabled();
+		}
+		if (ImGui::Button(("Remove Collider##rigidbody" + tag).c_str())) {
+			ImGui::OpenPopup(removeColliderPopupID.c_str());
+		}
+		if (colliders.empty()) {
+			ImGui::EndDisabled();
+		}
 
+		if (ImGui::BeginPopup(addColliderPopupID.c_str())) {
+			if (ImGui::MenuItem(("Polygon Collider##" + tag).c_str())) {
+				colliders.push_back(new PolygonCollider({
+					{ +50, +50},
+					{ +50, -50},
+					{ -50, -50},
+					{ -50, +50}
+					}, 0.0f));
+			}
+			ImGui::EndPopup();
+		}
+
+		if (ImGui::BeginPopup(removeColliderPopupID.c_str())) {
+			auto c = colliders.begin();
+			for (size_t i = 0; i < colliders.size(); i++)
+			{
+				if (ImGui::MenuItem(("Collider " + std::to_string(i) + "##" + tag).c_str())) {
+					colliders.erase(c);
+					break;
+				}
+				c++;
+			}
+			ImGui::EndPopup();
+		}
+		
 		ImGui::Unindent();
 	}
 }
