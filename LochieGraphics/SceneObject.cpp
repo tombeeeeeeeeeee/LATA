@@ -136,7 +136,7 @@ void SceneObject::GUI()
 		AddPartGUI(health, setHealth, Health, ("Health##Add part" + tag).c_str());
 		AddPartGUI(enemy, setEnemy, Enemy, ("Enemy##Add part" + tag).c_str());
 		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
-		
+		AddPartGUI(spawnManager, setSpawnManager, SpawnManager, ("Spawn Manager ##Add part" + tag).c_str());
 		ImGui::EndPopup();
 	}
 
@@ -155,6 +155,7 @@ void SceneObject::GUI()
 			}
 		}
 		RemovePartGUI(exitElevator, setExitElevator, ("Exit##Remove part" + tag).c_str());
+		RemovePartGUI(spawnManager, setSpawnManager, ("Spawn Manager ##Remove part" + tag).c_str());
 		ImGui::EndPopup();
 	}
 }
@@ -197,6 +198,18 @@ void SceneObject::DebugDraw()
 	{
 		scene->colliders[GUID]->DebugDraw(&scene->transforms[GUID]);
 	}
+}
+
+void SceneObject::TriggerCall(std::string tag, bool toggle)
+{
+	if (parts & Parts::spawnManager)
+		scene->spawnManagers[GUID].TriggerCall(tag, toggle);
+	/*
+	if (parts & Parts::spike)
+		scene->spikes[GUID].TriggerCall(tag, toggle);
+	if (parts & Parts::door)
+		scene->doors[GUID].TriggerCall(tag, toggle);
+	*/ 
 }
 
 toml::table SceneObject::Serialise() const

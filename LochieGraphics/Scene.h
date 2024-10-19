@@ -14,6 +14,7 @@
 #include "GamePlayCameraSystem.h"
 #include "HealthSystem.h"
 #include "EnemySystem.h"
+#include "TriggerSystem.h"
 #include "GUI.h"
 
 #include <map>
@@ -75,6 +76,7 @@ public:
 	GameplayCameraSystem gameCamSystem;
 	HealthSystem healthSystem;
 	EnemySystem enemySystem;
+	TriggerSystem triggerSystem;
 
 	virtual void Start() {};
 	virtual void Update(float delta) {};

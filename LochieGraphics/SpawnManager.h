@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 
 struct Enemy;
 namespace toml {
@@ -10,26 +11,30 @@ namespace toml {
 
 class SpawnManager
 {
-private:
-	std::vector<unsigned long long> singleTimeSpawnLocations;
+public:
+
 	std::vector<int> spawnPattern;
 
 	float timeBetweenSpawns = 0.1f;
 	float circleSpawnRadius = 0.0f;
 	bool spawning = false;
 	int currSpawnCount = 0;
-	int indexInSpawnLoop = 0;
 	
 	bool triggeredOnce = false;
 
-public:
+	std::string triggerTag;
 
 	SpawnManager() {};
 	SpawnManager(toml::table);
 
+	void TriggerCall(std::string tag, bool toggle);
+
+	int indexInSpawnLoop = 0;
 	int numToSpawn = 0;
 
+	float timeSinceLastSpawn = 0.0f;
+
 	void GUI();
-	void Serialise(unsigned long long guid);
+	toml::table Serialise(unsigned long long guid);
 };
 

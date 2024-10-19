@@ -218,8 +218,9 @@ void LevelEditor::Start()
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 
-	renderSystem.ssaoRadius = 64.0f;
-	renderSystem.ssaoBias = 32.0f;
+	renderSystem.kernelSize = 128;
+	renderSystem.ssaoRadius = 32.0f;
+	renderSystem.ssaoBias = 6.0f;
 
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);
@@ -565,6 +566,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	toml::table data = toml::parse(file);
 
 	tiles.clear();
+	triggerSystem.Clear();
 
 	LoadSceneObjectsAndParts(data);
 
@@ -589,6 +591,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	InitialisePlayers();
 
 	enemySystem.Start(transforms, rigidBodies, colliders);
+	triggerSystem.Start(rigidBodies, spawnManagers);
 	previouslySaved = true;
 }
 
