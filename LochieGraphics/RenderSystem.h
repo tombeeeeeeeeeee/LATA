@@ -31,6 +31,9 @@ class RenderSystem
 {
 public:
 
+    Texture* postFrameTexture;
+    FrameBuffer* postFrameBuffer;
+
     static LineRenderer lines;
     static LineRenderer debugLines;
 
@@ -87,11 +90,9 @@ private:
 
     Mesh* screenQuad = nullptr;
 
-    Texture* screenColourBuffer = nullptr;
-
-    FrameBuffer* screenFrameBuffer = nullptr;
-
     Light* shadowCaster = nullptr;
+
+    Shader* postProcess = nullptr;
 
     /// <summary>
     /// Missing Texture VRAM location

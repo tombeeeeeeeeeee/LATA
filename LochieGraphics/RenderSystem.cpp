@@ -60,12 +60,6 @@ void RenderSystem::Start(
     screenQuad = ResourceManager::LoadMesh();
     screenQuad->InitialiseQuad(1.f, 0.0f);
 
-    // Create colour attachment texture for fullscreen framebuffer
-    screenColourBuffer = ResourceManager::LoadTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
-
-    // Make fullscreen framebuffer
-    screenFrameBuffer = new FrameBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, screenColourBuffer, nullptr, true);
-
     paintStrokeTexture = nullptr;//ResourceManager::LoadTexture(paintStrokeTexturePath, Texture::Type::paint);
 
     (*shaders)[ShaderIndex::shadowDebug]->Use();
@@ -80,6 +74,11 @@ void RenderSystem::Start(
 
 
     ResourceManager::BindFlaggedVariables();
+
+    postProcess = ResourceManager::LoadShader("Shaders/screenShader.vert", "Shaders/screenShader.frag");
+    
+    postFrameTexture = ResourceManager::LoadTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_LINEAR, GL_LINEAR);
+    postFrameBuffer = new FrameBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, postFrameTexture, nullptr, true);
 }
 
 void RenderSystem::SetIrradianceMap(unsigned int textureID)
@@ -366,13 +365,11 @@ void RenderSystem::Update(
 
     RenderSSAO();
     glDisable(GL_DEPTH_TEST);
-    screenFrameBuffer->Bind();
 
     // TODO: move viewport changing stuff into FrameBuffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glEnable(GL_DEPTH_TEST);
-
 
     (*shaders)[ShaderIndex::super]->Use();
 
@@ -413,36 +410,36 @@ void RenderSystem::Update(
     glDepthFunc(GL_LESS);
 
 
-    //glDisable(GL_CULL_FACE);
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_ONE, GL_ONE);
-    ////glDisable(GL_DEPTH_TEST);
-    //glDepthFunc(GL_ALWAYS);
-    //glBlendEquation(GL_FUNC_ADD);
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    //glDisable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glBlendEquation(GL_FUNC_ADD);
 
-    //for (auto i : particles)
-    //{
-    //    glm::mat4 view = camera->GetViewMatrix();
-    //    if (particleFacingCamera) {
-    //        view = camera->GetViewMatrix();
-    //        for (int i = 0; i < 3; i++) {
-    //            for (int j = 0; j < 3; j++) {
-    //                if (i == j) {
-    //                    view[i][j] = 1.0;
-    //                }
-    //                else {
-    //                    view[i][j] = 0.0;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    i->shader->Use();
-    //    i->shader->setMat4("vp", projection * view);
-    //    i->Draw();
-    //}
-    //glDisable(GL_BLEND);
-    //glEnable(GL_CULL_FACE);
-    //glEnable(GL_DEPTH_TEST);
+    for (auto i : particles)
+    {
+        glm::mat4 view = camera->GetViewMatrix();
+        if (particleFacingCamera) {
+            view = camera->GetViewMatrix();
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (i == j) {
+                        view[i][j] = 1.0;
+                    }
+                    else {
+                        view[i][j] = 0.0;
+                    }
+                }
+            }
+        }
+        i->shader->Use();
+        i->shader->setMat4("vp", projection * view);
+        i->Draw();
+    }
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
 
     RenderBloom(bloomBuffer);
 
@@ -452,8 +449,6 @@ void RenderSystem::Update(
     //FrameBuffer::Unbind();
     glDisable(GL_DEPTH_TEST); // Disable depth test for fullscreen quad
 
-
-    //screenFrameBuffer->Bind();
 
     //FrameBuffer Rendering
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -476,10 +471,18 @@ void RenderSystem::Update(
 
     (*shaders)[screen]->setFloat("exposure", exposure);
 
+    postFrameBuffer->Bind();
+
     RenderQuad();
 
-    screenFrameBuffer->Unbind();
+    FrameBuffer::Unbind();
 
+
+    postProcess->Use();
+    postFrameTexture->Bind(1);
+    postProcess->setSampler("screenTexture", 1);
+
+    RenderQuad();
 
     // Re enable the depth test
     glEnable(GL_DEPTH_TEST);
@@ -513,8 +516,9 @@ void RenderSystem::ScreenResize(int width, int height)
     SCREEN_HEIGHT = height;
     SCREEN_WIDTH = width;
 
-    screenColourBuffer->setWidthHeight((int)width, (int)height);
-    screenFrameBuffer->setWidthHeight(width, height);
+    postFrameBuffer->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
+    postFrameTexture->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
+    postFrameBuffer->Load();
 
     ForwardUpdate();
     SSAOUpdate();
