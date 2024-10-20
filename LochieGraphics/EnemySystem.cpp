@@ -303,6 +303,7 @@ void EnemySystem::Steering(
         if (enemyPair.second.inAbility)
         {
             float length = glm::length(rigidBodies[enemyPair.first].vel);
+            if (length == 0.0f) continue;
             float slowedLength = length * slowedPercentage / 100;
 
             enemyPair.second.influenceThisFrame = -glm::normalize(rigidBodies[enemyPair.first].vel) * fminf(length, slowedLength);
@@ -350,6 +351,7 @@ void EnemySystem::Steering(
             float sqrDistanceToEcco = glm::dot(eccoPos - enemyPos, eccoPos - enemyPos);
             float sqrDistanceToSync = glm::dot(syncPos - enemyPos, syncPos - enemyPos);
             glm::vec2 playerForce;
+            if (sqrDistanceToEcco == 0.0f || sqrDistanceToSync == 0.0f) playerForce = { 0.0f, 0.0f };
             if (sqrDistanceToEcco < sqrDistanceToSync)
             {
                 playerForce = glm::normalize(eccoPos - enemyPos);
