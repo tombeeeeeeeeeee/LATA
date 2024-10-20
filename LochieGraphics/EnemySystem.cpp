@@ -335,7 +335,7 @@ void EnemySystem::Steering(
 
                     totalNeighbours++;
 
-                    if (distanceSq <= separationRadius * separationRadius)
+                    if (distanceSq <= separationRadius * separationRadius && distanceSq != 0)
                     {
                         glm::vec2 otherToSelf = enemyPos - otherEnemyPos;
                         float distance = glm::length(otherToSelf);
