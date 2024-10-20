@@ -62,7 +62,7 @@ void SpawnManager::GUI()
 
 		ImGui::Text("Spawn Pattern: ");
 		ImGui::Indent();
-		if(ImGui::BeginTable("Spawn Order", 2));
+		if(ImGui::BeginTable("Spawn Order", 2))
 		{
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);

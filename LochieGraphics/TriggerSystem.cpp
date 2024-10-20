@@ -42,9 +42,25 @@ void TriggerSystem::Start(
 		{
 			SceneManager::scene->sceneObjects[platePair.first]->setRigidBody(new RigidBody());
 		}
-		rigidbodies[platePair.first].onTrigger.push_back([platePair](Collision collision)
-			{platePair.second.triggerTag(collision.collisionMask); });
 
+		rigidbodies[platePair.first].onTrigger.push_back(
+			[platePair](Collision collision) { SceneManager::scene->plates[platePair.first].OnTrigger(collision.collisionMask); });
+	}
+}
+
+void TriggerSystem::Update(std::unordered_map<unsigned long long, PressurePlate>& plates)
+{
+	for (auto& platePair : plates)
+	{
+		if (!platePair.second.eccoToggled)
+		{
+			if (platePair.second.triggeredLastFrame && !platePair.second.triggeredThisFrame)
+			{
+				TriggerSystem::TriggerTag(platePair.second.triggerTag, false);
+			}
+			platePair.second.triggeredLastFrame = platePair.second.triggeredThisFrame;
+			platePair.second.triggeredThisFrame = false;
+		}
 	}
 }
 

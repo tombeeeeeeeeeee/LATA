@@ -87,6 +87,7 @@ void SceneObject::GUI()
 	if (parts & Parts::health) { scene->healths[GUID].GUI(); }
 	if (parts & Parts::spawnManager) { scene->spawnManagers[GUID].GUI(); }
 	if (parts & Parts::plate) { scene->plates[GUID].GUI(); }
+	if (parts & Parts::door) { scene->doors[GUID].GUI(); }
 
 	if (parts & Parts::ecco)
 	{
@@ -140,6 +141,7 @@ void SceneObject::GUI()
 		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
 		AddPartGUI(spawnManager, setSpawnManager, SpawnManager, ("Spawn Manager ##Add part" + tag).c_str());
 		AddPartGUI(plate, setPressurePlate, PressurePlate, ("Pressure Plate ##Add part" + tag).c_str());
+		AddPartGUI(door, setPressurePlate, PressurePlate, ("Pressure Plate ##Add part" + tag).c_str());
 		AddPartGUI(collider, setCollider, PolygonCollider({
 		{ +50, +50},
 		{ +50, -50},
@@ -305,6 +307,18 @@ SetAndGetForPart(Enemy, enemies, Parts::enemy, Enemy, enemy)
 SetAndGetForPart(ExitElevator, exits, Parts::exitElevator, ExitElevator, exitElevator)
 SetAndGetForPart(SpawnManager, spawnManagers, Parts::spawnManager, SpawnManager, spawnManager)
 SetAndGetForPart(PressurePlate, plates, Parts::plate, PressurePlate, plate)
+void SceneObject::setDoor(Door* part) {
+	if (part) {
+		parts |= Parts::door; scene->doors[GUID] = *part;
+	}
+	else {
+		parts &= ~Parts::door; scene->doors.erase(GUID);
+	};
+} Door* SceneObject::door() {
+	if (parts & Parts::door) {
+		return &(scene->doors[GUID]);
+	} return nullptr;
+}
 
 void SceneObject::setCollider(Collider* collider)
 {

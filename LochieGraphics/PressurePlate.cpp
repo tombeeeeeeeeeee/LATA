@@ -9,7 +9,7 @@
 void PressurePlate::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
-	if (ImGui::CollapsingHeader(("Prerssure Plate##" + tag).c_str()))
+	if (ImGui::CollapsingHeader(("Pressure Plate##" + tag).c_str()))
 	{
 		ImGui::Indent();
 		const char* pressurePlateTypes[] = {"Large", "Small"};
@@ -51,12 +51,13 @@ toml::table PressurePlate::Serialise(unsigned long long guid)
 	};
 }
 
-void PressurePlate::OnTriggerEnter(int layerMask)
+void PressurePlate::OnTrigger(int layerMask)
 {
 	if (eccoToggled) return;
 	if (layerMask & ((int)CollisionLayers::ecco | (int)CollisionLayers::sync))
 	{
 		TriggerSystem::TriggerTag(triggerTag, true);
+		triggeredThisFrame = true;
 		if (smallType && layerMask & (int)CollisionLayers::sync)
 		{
 			eccoToggled = true;

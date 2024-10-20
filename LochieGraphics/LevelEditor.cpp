@@ -291,6 +291,8 @@ void LevelEditor::Update(float delta)
 		healthSystem.PlayerHealingUpdate(eccoSo->health(), syncSo->health(),
 			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
 
+		triggerSystem.Update(plates);
+
 	}
 
 	enemySystem.Update(

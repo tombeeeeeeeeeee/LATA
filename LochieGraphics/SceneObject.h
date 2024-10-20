@@ -41,7 +41,7 @@ enum Parts : unsigned int
 	spikes =		1 << 11,
 	plate = 		1 << 12,
 	spawnManager =	1 << 13,
-	Door		 =	1 << 14,
+	door		 =	1 << 14,
 	ALL = 0b1111111111110,
 };
 

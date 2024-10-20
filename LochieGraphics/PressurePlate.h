@@ -22,6 +22,6 @@ public:
 	PressurePlate(toml::table table);
 	toml::table Serialise(unsigned long long guid);
 
-	void OnTriggerEnter(int layerMask);
+	void OnTrigger(int layerMask);
 };
 

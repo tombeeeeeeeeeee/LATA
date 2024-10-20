@@ -22,6 +22,10 @@ public:
 		std::unordered_map<unsigned long long, SpawnManager>& spawnManagers
 	);
 
+	void Update(
+		std::unordered_map<unsigned long long, PressurePlate>& plates
+	);
+
 	void Clear();
 
 	//TODO:

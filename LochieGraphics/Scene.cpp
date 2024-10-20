@@ -105,6 +105,9 @@ void Scene::DeleteAllSceneObjectsAndParts()
 	plates.clear();
 	partsChecker &= ~Parts::plate;
 
+	doors.clear();
+	partsChecker &= ~Parts::door;
+
 	// TODO: Don't like how just setting these flags here but no containers atm
 	partsChecker &= ~Parts::spikes;
 
@@ -158,6 +161,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 	SavePart(exits);
 	SavePart(spawnManagers);
 	SavePart(plates);
+	SavePart(doors);
 
 	return toml::table{
 		{ "SceneObjects", savedSceneObjects },
@@ -171,6 +175,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 		{ "Exits", savedexits},
 		{ "SpawnManagers", savedspawnManagers},
 		{ "Plates", savedplates},
+		{ "Doors", saveddoors},
 		{ "Sync", sync->Serialise() },
 		{ "Ecco", ecco->Serialise() },
 	};
@@ -200,6 +205,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(enemies, "Enemies", Enemy);
 	LoadPart(spawnManagers, "SpawnManagers", SpawnManager);
 	LoadPart(plates, "Plates", PressurePlate);
+	LoadPart(doors, "Doors", Door);
 	// TODO: Fix for colliders
 	
 
