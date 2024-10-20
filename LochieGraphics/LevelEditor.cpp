@@ -226,8 +226,9 @@ void LevelEditor::Start()
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 
-	renderSystem.ssaoRadius = 64.0f;
-	renderSystem.ssaoBias = 32.0f;
+	renderSystem.kernelSize = 128;
+	renderSystem.ssaoRadius = 32.0f;
+	renderSystem.ssaoBias = 6.0f;
 
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);
@@ -249,6 +250,8 @@ void LevelEditor::Update(float delta)
 		enemySystem.SpawnEnemiesInScene(enemies, transforms);
 
 		camera->state = Camera::targetingPlayers;
+
+		triggerSystem.Start(rigidBodies, plates, spawnManagers);
 	}
 	else if(lastFramePlayState && !inPlay) //On Play exit
 	{
@@ -259,6 +262,7 @@ void LevelEditor::Update(float delta)
 		enemySystem.aiUpdating = false;
 
 		camera->state = Camera::editorMode;
+		triggerSystem.Clear();
 	}
 
 	lastFramePlayState = inPlay;
@@ -287,6 +291,8 @@ void LevelEditor::Update(float delta)
 		healthSystem.PlayerHealingUpdate(eccoSo->health(), syncSo->health(),
 			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
 
+		triggerSystem.Update(plates);
+		dabSystem.Update(transforms, doors, delta);
 	}
 
 	enemySystem.Update(
@@ -294,6 +300,7 @@ void LevelEditor::Update(float delta)
 		transforms,
 		rigidBodies,
 		healths,
+		spawnManagers,
 		eccoSo->transform()->get2DGlobalPosition(),
 		syncSo->transform()->get2DGlobalPosition(),
 		delta
@@ -573,6 +580,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	toml::table data = toml::parse(file);
 
 	tiles.clear();
+	triggerSystem.Clear();
 
 	LoadSceneObjectsAndParts(data);
 

@@ -8,12 +8,16 @@
 #include "Enemy.h"
 #include "ExitElevator.h"
 #include "SpawnManager.h"
+#include "PressurePlate.h"
+#include "Door.h"
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
 #include "GamePlayCameraSystem.h"
 #include "HealthSystem.h"
 #include "EnemySystem.h"
+#include "TriggerSystem.h"
+#include "DoorAndBollardSystem.h"
 #include "GUI.h"
 
 #include <map>
@@ -53,6 +57,8 @@ public:
 	std::unordered_map<unsigned long long, Enemy> enemies = {};
 	std::unordered_map<unsigned long long, ExitElevator> exits = {};
 	std::unordered_map<unsigned long long, SpawnManager> spawnManagers = {};
+	std::unordered_map<unsigned long long, PressurePlate> plates = {};
+	std::unordered_map<unsigned long long, Door> doors = {};
 	std::vector<Light*> lights = {};
 
 	std::vector<unsigned long long> markedForDeletion = {};
@@ -75,6 +81,8 @@ public:
 	GameplayCameraSystem gameCamSystem;
 	HealthSystem healthSystem;
 	EnemySystem enemySystem;
+	TriggerSystem triggerSystem;
+	DoorAndBollardSystem dabSystem;
 
 	virtual void Start() {};
 	virtual void Update(float delta) {};

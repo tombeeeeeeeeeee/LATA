@@ -12,6 +12,7 @@ class Transform;
 class RigidBody;
 class SceneObject;
 class ModelRenderer;
+class SpawnManager;
 class Health;
 struct HealthPacket;
 struct Collision;
@@ -38,11 +39,11 @@ private:
 	int explosiveEnemyCount = 0;
 	int meleeEnemyCount = 0;
 	int rangedEnemyCount = 0;
-
+	float timeForEnemiesToSpawnAgain = 60.0f;
 public:
 	bool aiUpdating = false;
 	const int nfmDensity = 20;
-	const int maxNormalInfluence = 250;
+	const int maxNormalInfluence = 100;
 
 	EnemySystem() {};
 	EnemySystem(toml::table table);
@@ -68,7 +69,7 @@ public:
 	float timeToExplode = 2.0f;
 	float explosionRadius = 350.0f;
 	int explosionDamage = 2;
-	float distanceToExplode = 150.0f;
+	float distanceToExplode = 250.0f;
 	ModelRenderer* explosiveEnemyRenderer = nullptr;
 	std::string explosiveEnemyModel = "SM_Enemy_TPose";
 	std::string explosiveEnemyMaterialPath = "images/otherskybox/nx.png";
@@ -97,12 +98,12 @@ public:
 	void SpawnMelee(glm::vec3 pos);
 	void SpawnRanged(glm::vec3 pos);
 
-
 	void Update(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
 		std::unordered_map<unsigned long long, Health>& healths,
+		std::unordered_map<unsigned long long, SpawnManager>& spawnManagers,
 		glm::vec2 eccoPos, glm::vec2 syncPos,
 		float delta
 	);
@@ -173,6 +174,12 @@ private:
 	void HealthCheck(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Health>& healths
+	);
+
+	void UpdateSpawnManagers(
+		std::unordered_map<unsigned long long, Transform>& transform,
+		std::unordered_map<unsigned long long, SpawnManager>& spawnManagers,
+		float delta
 	);
 
 	glm::vec2 GetNormalFlowInfluence(glm::vec2 pos);

@@ -544,11 +544,10 @@ void GUI::PhysicsMenu()
 	ImGui::Text("2 : reflectiveSurface");
 	ImGui::Text("3 : sync");
 	ImGui::Text("4 : ecco");
-	ImGui::Text("5 : syncProjectile");
-	ImGui::Text("6 : eccoProjectile");
-	ImGui::Text("7 : enemyProjectile");
-	ImGui::Text("8 : softCover");
-	ImGui::Text("9 : halfCover");
+	ImGui::Text("5 : trigger");
+	ImGui::Text("6 : enemyProjectile");
+	ImGui::Text("7 : softCover");
+	ImGui::Text("8 : halfCover");
 
 	ImGui::Text("");
 	ImGui::Text(" ");
