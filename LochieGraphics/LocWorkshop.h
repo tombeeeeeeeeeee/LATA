@@ -20,13 +20,14 @@ private:
 	Animation animation;
 	Animator* animator;
 	
-	Particle particle;
+	std::vector<Particle> particles = {};
 
 	Mesh* quad;
 	Model* model;
 
 	Shader* shader;
 	Texture* texture;
+	Texture* particleTexture;
 
 public:
 

@@ -143,6 +143,7 @@ void Shader::setBool(const std::string& name, bool value)
 
 void Shader::setSampler(const std::string& name, GLuint value)
 {
+	// TODO: This might should be glUniform1ui, u for unsigned, check
 	glUniform1i(getUniformLocation(name), value);
 }
 

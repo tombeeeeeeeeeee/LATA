@@ -11,7 +11,6 @@ uniform mat4 vp;
 
 struct Particle {
 	vec3 pos;
-	vec3 vel;
 };
 
 layout(std430, binding = 3) buffer Particles
