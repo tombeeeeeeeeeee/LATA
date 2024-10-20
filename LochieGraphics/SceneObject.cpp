@@ -141,7 +141,7 @@ void SceneObject::GUI()
 		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
 		AddPartGUI(spawnManager, setSpawnManager, SpawnManager, ("Spawn Manager ##Add part" + tag).c_str());
 		AddPartGUI(plate, setPressurePlate, PressurePlate, ("Pressure Plate ##Add part" + tag).c_str());
-		AddPartGUI(door, setPressurePlate, PressurePlate, ("Pressure Plate ##Add part" + tag).c_str());
+		AddPartGUI(door, setDoor, Door, ("Door ##Add part" + tag).c_str());
 		AddPartGUI(collider, setCollider, PolygonCollider({
 		{ +50, +50},
 		{ +50, -50},
@@ -170,6 +170,7 @@ void SceneObject::GUI()
 		RemovePartGUI(collider, setCollider, ("Collider##Remove part" + tag).c_str());
 		RemovePartGUI(enemy, setEnemy, ("Enemy##Remove part" + tag).c_str());
 		RemovePartGUI(plate, setPressurePlate, ("Pressure Plate##Remove part" + tag).c_str());
+		RemovePartGUI(door, setDoor, ("Door##Remove part" + tag).c_str());
 
 		ImGui::EndPopup();
 	}
@@ -219,9 +220,9 @@ void SceneObject::TriggerCall(std::string tag, bool toggle)
 {
 	if (parts & Parts::spawnManager)
 		scene->spawnManagers[GUID].TriggerCall(tag, toggle);
-	/*
 	if (parts & Parts::door)
 		scene->doors[GUID].TriggerCall(tag, toggle);
+	/*
 	if (parts & Parts::spike)
 		scene->spikes[GUID].TriggerCall(tag, toggle);
 	*/ 

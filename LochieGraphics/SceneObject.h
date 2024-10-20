@@ -16,6 +16,7 @@ class ExitElevator;
 class SpawnManager;
 class LineRenderer;
 class PressurePlate;
+class Door;
 struct Enemy;
 namespace toml {
 	inline namespace v3 {
@@ -129,6 +130,9 @@ public:
 
 	void setPressurePlate(PressurePlate* plate);
 	PressurePlate* plate();
+
+	void setDoor(Door* door);
+	Door* door();
 
 #pragma endregion
 
