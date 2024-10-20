@@ -12,6 +12,13 @@ class LevelEditor : public Scene
 {
 private:
 
+
+	Shader* groundShader = nullptr;
+	Material* groundMaterial = nullptr;
+	Texture* groundTexture = nullptr;
+
+
+
 	enum class BrushState {
 		none,
 		brush,

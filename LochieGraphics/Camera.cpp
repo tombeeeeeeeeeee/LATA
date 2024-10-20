@@ -126,6 +126,7 @@ void Camera::GUI()
     }
 
     if (ImGui::CollapsingHeader("Editor Move Speeds##Camera")) {
+        ImGui::Indent();
         if (state == editorMode) {
             ImGui::DragFloat("Movement##Camera", &editorSpeed.move, 0.1f, 0.0f, FLT_MAX);
             ImGui::DragFloat("Rotate##Camera", &editorSpeed.rotate, 0.01f, 0.0f, FLT_MAX);
@@ -139,6 +140,7 @@ void Camera::GUI()
             ImGui::DragFloat("Mouse Dolly##Camera", &artEditorSpeed.moveDolly, 0.01f, 0.0f, FLT_MAX);
             ImGui::DragFloat("Scroll Dolly##Camera", &artEditorSpeed.scrollDolly, 0.1f, 0.0f, FLT_MAX);
         }
+        ImGui::Unindent();
     }
 }
 

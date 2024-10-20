@@ -1,15 +1,33 @@
 #pragma once
 
+#include <vector>
+#include <set>
+#include <string>
+
 class Scene;
 class SceneObject;
 
 // TODO: Not all the menus need to have the word menu in their name
 class GUI
 {
+private:
+	SceneObject* sceneObjectSelected = nullptr;
+
+	std::vector<std::pair<SceneObject*, SceneObject*>> addRangeToSelection;
+
+	std::vector<SceneObject*> hierarchySceneObjects = {};
+	std::set<SceneObject*> multiSelectedSceneObjects = {};
+
+	bool openMultiSelectRightClickMenu = false;
+
+	std::string hierarchyMenuSearch = "";
+
 public:
 	Scene* scene = nullptr;
 
-	SceneObject* sceneObjectSelected = nullptr;
+	SceneObject* lastSelected = nullptr;
+
+	
 
 	void Update();
 
@@ -26,6 +44,10 @@ public:
 	bool showHealthSystemMenu = false;
 	bool showUserPrefsMenu = false;
 	bool showPrefabMenu = false;
+
+	SceneObject* getSelected();
+	void setSelected(SceneObject* so);
+
 private:
 
 	// ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize
@@ -58,5 +80,9 @@ private:
 	void EnemyMenu();
 	void HealthMenu();
 	bool disableGUIHeld = false;
+
+	void AddFromToSelection(SceneObject* from, SceneObject* to);
+	void UpdateSelection();
+	void MultiSceneObjectRightClickMenu();
 };
 

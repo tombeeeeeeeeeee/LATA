@@ -69,7 +69,7 @@ GLuint Shader::CompileShader(std::string path, int type)
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-		std::cout << "Shader error, compilation failed\n" << infoLog << "\n";
+		std::cout << "Shader error, compilation failed, path: " << path << "\n" << infoLog << "\n";
 	}
 	return shader;
 }

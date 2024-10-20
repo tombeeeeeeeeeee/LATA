@@ -15,8 +15,11 @@ struct Key {
 	float timeStamp;
 };
 
+/// <summary>
+/// Stores the animation data and transform for a specific bone and the current bone transform
+/// </summary>
 class Bone {
-private:
+public:
 	// The keys
 	std::vector<Key> keys;
 
@@ -30,7 +33,6 @@ private:
 	// The ID of the bone
 	int ID;
 
-public:
 	/// <summary>
 	/// Creates a bone and populates the positions, rotations and scales vectors using the aiNodeAnim.
 	/// </summary>
