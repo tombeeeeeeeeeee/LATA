@@ -17,6 +17,7 @@
 #include "HealthSystem.h"
 #include "EnemySystem.h"
 #include "TriggerSystem.h"
+#include "DoorAndBollardSystem.h"
 #include "GUI.h"
 
 #include <map>
@@ -81,6 +82,7 @@ public:
 	HealthSystem healthSystem;
 	EnemySystem enemySystem;
 	TriggerSystem triggerSystem;
+	DoorAndBollardSystem dabSystem;
 
 	virtual void Start() {};
 	virtual void Update(float delta) {};

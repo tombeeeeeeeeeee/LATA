@@ -292,7 +292,7 @@ void LevelEditor::Update(float delta)
 			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
 
 		triggerSystem.Update(plates);
-
+		dabSystem.Update(transforms, doors, delta);
 	}
 
 	enemySystem.Update(
