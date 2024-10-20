@@ -405,9 +405,9 @@ void RenderSystem::Update(
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    (*shaders)[ShaderIndex::super]->Use();
-    glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, camera->nearPlane, camera->farPlane);
-    (*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
+    //(*shaders)[ShaderIndex::super]->Use();
+    //glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, camera->nearPlane, camera->farPlane);
+    //(*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
 
     DrawAllRenderers(animators, transforms, renders, animatedRenderered);
 
