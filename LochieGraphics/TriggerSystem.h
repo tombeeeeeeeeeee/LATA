@@ -8,6 +8,7 @@ class RigidBody;
 class Door;
 class Plate;
 class SpawnManager;
+class PressurePlate;
 
 class TriggerSystem
 {
@@ -17,6 +18,7 @@ public:
 
 	void Start(
 		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
+		std::unordered_map<unsigned long long, PressurePlate>& plates,
 		std::unordered_map<unsigned long long, SpawnManager>& spawnManagers
 	);
 

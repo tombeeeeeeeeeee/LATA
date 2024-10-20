@@ -15,6 +15,7 @@ class RigidBody;
 class ExitElevator;
 class SpawnManager;
 class LineRenderer;
+class PressurePlate;
 struct Enemy;
 namespace toml {
 	inline namespace v3 {
@@ -125,6 +126,9 @@ public:
 
 	void setSpawnManager(SpawnManager* spawnManager);
 	SpawnManager* spawnManager();
+
+	void setPressurePlate(PressurePlate* plate);
+	PressurePlate* plate();
 
 #pragma endregion
 

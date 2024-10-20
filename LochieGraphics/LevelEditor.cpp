@@ -250,6 +250,8 @@ void LevelEditor::Update(float delta)
 		enemySystem.SpawnEnemiesInScene(enemies, transforms);
 
 		camera->state = Camera::targetingPlayers;
+
+		triggerSystem.Start(rigidBodies, plates, spawnManagers);
 	}
 	else if(lastFramePlayState && !inPlay) //On Play exit
 	{
@@ -260,6 +262,7 @@ void LevelEditor::Update(float delta)
 		enemySystem.aiUpdating = false;
 
 		camera->state = Camera::editorMode;
+		triggerSystem.Clear();
 	}
 
 	lastFramePlayState = inPlay;
@@ -619,7 +622,6 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	InitialisePlayers();
 
 	enemySystem.Start(transforms, rigidBodies, colliders);
-	triggerSystem.Start(rigidBodies, spawnManagers);
 	previouslySaved = true;
 
 

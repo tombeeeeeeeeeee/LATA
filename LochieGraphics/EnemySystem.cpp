@@ -27,6 +27,7 @@
 #include "Paths.h"
 #include "stb_image.h"
 #include "stb_image_write.h"
+#include <iostream>
 
 
 EnemySystem::EnemySystem(toml::table table)
@@ -373,6 +374,10 @@ void EnemySystem::Steering(
             glm::vec2 alignmentForce = avgVel * alignmentCoef;
             glm::vec2 cohesionForce = (avgPos - enemyPos) * cohesionCoef;
             enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce;
+            if (isnan(enemyPair.second.influenceThisFrame.x))
+            {
+                std::cout << "Error Here" << std::endl;
+            }
         }
     }
 

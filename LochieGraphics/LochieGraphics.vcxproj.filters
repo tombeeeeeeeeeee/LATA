@@ -269,9 +269,6 @@
     <ClCompile Include="WanderState.cpp">
       <Filter>Source Files\AI\States</Filter>
     </ClCompile>
-    <ClCompile Include="SpawnManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="UserPreferences.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
@@ -280,9 +277,6 @@
     </ClCompile>
     <ClCompile Include="PrefabManager.cpp">
       <Filter>Source Files\Scene Management</Filter>
-    </ClCompile>
-    <ClCompile Include="TriggerSystem.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Particle.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -313,6 +307,15 @@
     </ClCompile>
     <ClCompile Include="glad.c">
       <Filter>Source Files\Third-Party\GLAD</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnManager.cpp">
+      <Filter>Source Files\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="PressurePlate.cpp">
+      <Filter>Source Files\Parts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -568,16 +571,12 @@
     <ClInclude Include="UserPreferences.h">
       <Filter>Source Files\Misc</Filter>
     </ClInclude>
-    <ClInclude Include="SpawnManager.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="ComputeShader.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="PrefabManager.h">
       <Filter>Source Files\Scene Management</Filter>
     </ClInclude>
-    <ClInclude Include="TriggerSystem.h" />
     <ClInclude Include="Particle.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
@@ -616,6 +615,15 @@
     </ClInclude>
     <ClInclude Include="khrplatform.h">
       <Filter>Source Files\Third-Party\GLAD</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnManager.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerSystem.h">
+      <Filter>Source Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="PressurePlate.h">
+      <Filter>Source Files\Parts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

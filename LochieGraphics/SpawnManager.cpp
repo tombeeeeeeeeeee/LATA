@@ -48,9 +48,77 @@ void SpawnManager::TriggerCall(std::string tag, bool toggle)
 
 void SpawnManager::GUI()
 {
-	ImGui::DragInt("Number of enemies to spawn", &numToSpawn);
-	ImGui::DragFloat("Time Between Spawns", &timeBetweenSpawns);
-	ImGui::InputText("Trigger ID", &triggerTag);
+	std::string tag = Utilities::PointerToString(this);
+	if (ImGui::CollapsingHeader(("Spawn Manager##" + tag).c_str()))
+	{
+		ImGui::Indent();
+		ImGui::DragInt("Number of enemies to spawn", &numToSpawn);
+		ImGui::DragFloat("Time Between Spawns", &timeBetweenSpawns);
+		ImGui::InputText("Trigger ID", &triggerTag);
+
+		const char* enemyTypes[] = { "Explosive", "Melee", "Ranged" };
+
+
+
+		ImGui::Text("Spawn Pattern: ");
+		ImGui::Indent();
+		if(ImGui::BeginTable("Spawn Order", 2));
+		{
+			ImGui::TableNextRow();
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text("Enemy Type");
+
+			ImGui::TableSetColumnIndex(1);
+			ImGui::Text("Remove");
+			for (int i = 0; i < spawnPattern.size(); i++)
+			{
+				ImGui::TableNextRow();
+
+				const char* currType = enemyTypes[spawnPattern[i]];
+				ImGui::TableSetColumnIndex(0);
+				ImGui::PushItemWidth(180);
+				if (ImGui::BeginCombo(("##enemyInPattern" + std::to_string(i)).c_str(), currType))
+				{
+					for (int j = 0; j < 3; j++)
+					{
+						bool isSelected = j == spawnPattern[i];
+						if (ImGui::Selectable(enemyTypes[j], isSelected))
+						{
+							spawnPattern[i] = j;
+						}
+						if (isSelected) ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
+				ImGui::TableSetColumnIndex(1);
+				if (ImGui::Button(("X##" + std::to_string(i)).c_str()))
+				{
+					std::vector<int> temp = {};
+					for (int j = 0; j < spawnPattern.size(); j++)
+					{
+						if (j == i) continue;
+						temp.push_back(spawnPattern[j]);
+					}
+					spawnPattern = temp;
+				}
+			}
+			ImGui::TableNextRow();
+			ImGui::TableSetColumnIndex(1);
+			if (ImGui::Button("Remove Enemy"))
+			{
+				spawnPattern.pop_back();
+			}
+			ImGui::TableSetColumnIndex(0);
+			if (ImGui::Button("Add Enemy"))
+			{
+				spawnPattern.push_back(0);
+			}
+
+			ImGui::EndTable();
+			ImGui::Unindent();
+		}
+		ImGui::Unindent();
+	}
 }
 
 toml::table SpawnManager::Serialise(unsigned long long guid)

@@ -43,7 +43,7 @@ private:
 public:
 	bool aiUpdating = false;
 	const int nfmDensity = 20;
-	const int maxNormalInfluence = 250;
+	const int maxNormalInfluence = 100;
 
 	EnemySystem() {};
 	EnemySystem(toml::table table);
@@ -69,7 +69,7 @@ public:
 	float timeToExplode = 2.0f;
 	float explosionRadius = 350.0f;
 	int explosionDamage = 2;
-	float distanceToExplode = 150.0f;
+	float distanceToExplode = 250.0f;
 	ModelRenderer* explosiveEnemyRenderer = nullptr;
 	std::string explosiveEnemyModel = "SM_Enemy_TPose";
 	std::string explosiveEnemyMaterialPath = "images/otherskybox/nx.png";

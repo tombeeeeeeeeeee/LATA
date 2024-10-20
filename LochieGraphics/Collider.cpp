@@ -111,6 +111,15 @@ void PolygonCollider::GUI()
 		}
 	}
 	ImGui::DragFloat(("Radius##" + tag).c_str(), &radius);
+	if (ImGui::Button("Remove Vert"))
+	{
+		verts.pop_back();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Add Vert"))
+	{
+		verts.push_back({0.0f, 0.0f});
+	}
 	ImGui::Unindent();
 }
 
