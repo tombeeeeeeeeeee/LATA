@@ -42,8 +42,8 @@ void TriggerSystem::Start(
 		{
 			SceneManager::scene->sceneObjects[platePair.first]->setRigidBody(new RigidBody());
 		}
-		rigidbodies[platePair.first].onTrigger.push_back([this, platePair](Collision collision)
-			{if (collision.collisionMask & ((int)CollisionLayers::ecco | (int)CollisionLayers::sync)) TriggerSystem::TriggerTag(platePair.second.triggerTag, true); });
+		rigidbodies[platePair.first].onTrigger.push_back([platePair](Collision collision)
+			{platePair.second.triggerTag(collision.collisionMask); });
 
 	}
 }

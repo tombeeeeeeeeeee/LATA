@@ -2,7 +2,9 @@
 #include "Serialisation.h"
 #include "imgui.h"
 #include "Utilities.h"
+#include "Collider.h"
 #include "ExtraEditorGUI.h"
+#include "TriggerSystem.h"
 
 void PressurePlate::GUI()
 {
@@ -51,4 +53,13 @@ toml::table PressurePlate::Serialise(unsigned long long guid)
 
 void PressurePlate::OnTriggerEnter(int layerMask)
 {
+	if (eccoToggled) return;
+	if (layerMask & ((int)CollisionLayers::ecco | (int)CollisionLayers::sync))
+	{
+		TriggerSystem::TriggerTag(triggerTag, true);
+		if (smallType && layerMask & (int)CollisionLayers::sync)
+		{
+			eccoToggled = true;
+		}
+	}
 }
