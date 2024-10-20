@@ -1,0 +1,1 @@
+Copy "%~dp0..\x64\Art Tool\Art Tool.exe" "%~dp0..\"
