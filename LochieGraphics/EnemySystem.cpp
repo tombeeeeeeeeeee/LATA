@@ -8,6 +8,7 @@
 #include "SceneObject.h"
 #include "Health.h"
 #include "SceneManager.h"
+#include "SpawnManager.h"
 #include "ResourceManager.h"
 #include "Collider.h"
 #include "ModelRenderer.h"
@@ -26,6 +27,7 @@
 #include "Paths.h"
 #include "stb_image.h"
 #include "stb_image_write.h"
+#include <iostream>
 
 
 EnemySystem::EnemySystem(toml::table table)
@@ -301,6 +303,7 @@ void EnemySystem::Steering(
         if (enemyPair.second.inAbility)
         {
             float length = glm::length(rigidBodies[enemyPair.first].vel);
+            if (length == 0.0f) continue;
             float slowedLength = length * slowedPercentage / 100;
 
             enemyPair.second.influenceThisFrame = -glm::normalize(rigidBodies[enemyPair.first].vel) * fminf(length, slowedLength);
@@ -332,7 +335,7 @@ void EnemySystem::Steering(
 
                     totalNeighbours++;
 
-                    if (distanceSq <= separationRadius * separationRadius)
+                    if (distanceSq <= separationRadius * separationRadius && distanceSq != 0)
                     {
                         glm::vec2 otherToSelf = enemyPos - otherEnemyPos;
                         float distance = glm::length(otherToSelf);
@@ -348,6 +351,7 @@ void EnemySystem::Steering(
             float sqrDistanceToEcco = glm::dot(eccoPos - enemyPos, eccoPos - enemyPos);
             float sqrDistanceToSync = glm::dot(syncPos - enemyPos, syncPos - enemyPos);
             glm::vec2 playerForce;
+            if (sqrDistanceToEcco == 0.0f || sqrDistanceToSync == 0.0f) playerForce = { 0.0f, 0.0f };
             if (sqrDistanceToEcco < sqrDistanceToSync)
             {
                 playerForce = glm::normalize(eccoPos - enemyPos);
@@ -372,6 +376,10 @@ void EnemySystem::Steering(
             glm::vec2 alignmentForce = avgVel * alignmentCoef;
             glm::vec2 cohesionForce = (avgPos - enemyPos) * cohesionCoef;
             enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce;
+            if (isnan(enemyPair.second.influenceThisFrame.x))
+            {
+                std::cout << "Error Here" << std::endl;
+            }
         }
     }
 
@@ -413,6 +421,61 @@ void EnemySystem::Steering(
         }
     }
 
+    void EnemySystem::UpdateSpawnManagers(std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, SpawnManager>& spawnManagers, float delta)
+    {
+        for (auto& spawnPair : spawnManagers)
+        {
+            SpawnManager* spawner = &spawnPair.second;
+            if (spawner->spawning || spawner->triggeredOnce) spawner->timeSinceLastSpawn += delta;
+
+            if (spawnPair.second.spawning)
+            {
+                if (spawner->timeSinceLastSpawn >= spawner->timeBetweenSpawns)
+                {
+                    spawner->timeSinceLastSpawn = 0;
+                    spawner->currSpawnCount++;
+                    spawner->triggeredOnce = true;
+                    spawner->spawning = spawner->currSpawnCount < spawner->numToSpawn;
+                    int enemyType = spawner->spawnPattern[spawner->indexInSpawnLoop];
+                    spawner->indexInSpawnLoop = (spawner->indexInSpawnLoop + 1) % spawner->spawnPattern.size();
+                    
+                    switch (enemyType)
+                    {
+                    case 0:
+                        SpawnExplosive(transforms[spawnPair.first].getGlobalPosition());
+                        break;
+                    case 1:
+                        SpawnMelee(transforms[spawnPair.first].getGlobalPosition());
+                        break;
+                    case 2:
+                        SpawnRanged(transforms[spawnPair.first].getGlobalPosition());
+                        break;
+                    }
+                    for (auto& child : transforms[spawnPair.first].getChildren())
+                    {
+                        switch (enemyType)
+                        {
+                        case 0:
+                            SpawnExplosive(child->getGlobalPosition());
+                            break;
+                        case 1:
+                            SpawnMelee(child->getGlobalPosition());
+                            break;
+                        case 2:
+                            SpawnRanged(child->getGlobalPosition());
+                            break;
+                        }
+                    }
+                }
+
+                if (spawner->triggeredOnce && !spawner->spawning)
+                {
+                    spawner->spawning = spawner->timeSinceLastSpawn >= timeForEnemiesToSpawnAgain;
+                }
+            }
+        }
+    }
+
 glm::vec2 EnemySystem::GetNormalFlowInfluence(glm::vec2 pos)
 {
     if (isnan(pos.x) || isnan(pos.y)) return { 0.0f, 0.0f };
@@ -436,6 +499,7 @@ void EnemySystem::Update   (
     std::unordered_map<unsigned long long, Transform>& transforms, 
     std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
     std::unordered_map<unsigned long long, Health>& healths,
+    std::unordered_map<unsigned long long, SpawnManager>& spawnManagers,
     glm::vec2 eccoPos, glm::vec2 syncPos, float delta
 )
 {
@@ -458,6 +522,7 @@ void EnemySystem::Update   (
         
         HealthCheck(enemies, healths);
         
+        UpdateSpawnManagers(transforms, spawnManagers, delta);
     }  
 }
 
@@ -499,6 +564,8 @@ void EnemySystem::GUI()
 
     ImGui::DragFloat("Perception Radius", &perceptionRadius);
     ImGui::DragFloat("Separation Radius", &separationRadius);
+
+    ImGui::DragFloat("Time Till Enemies Spawn Again From Used Spawner", &timeForEnemiesToSpawnAgain);
 
     ImGui::Text("EXPLODING ENEMY STATS");
     ImGui::DragInt("Explosive Enemy Health", &explosiveEnemyHealth);

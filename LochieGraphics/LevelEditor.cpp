@@ -144,6 +144,14 @@ LevelEditor::LevelEditor() :
 
 void LevelEditor::Start()
 {
+	groundShader = ResourceManager::LoadShader("Shaders/floorWorld.vert", "Shaders/superDuper.frag", Shader::Flags::Spec | Shader::Flags::VPmatrix | Shader::Flags::Lit);
+	groundTexture = ResourceManager::LoadTexture("images/T_MissingTexture.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
+	groundTexture->mipMapped = false;
+	groundMaterial = ResourceManager::LoadMaterial("Ground", groundShader);
+	groundMaterial->AddTextures({ groundTexture });
+	shaders.push_back(groundShader);
+
+
 	lights.insert(lights.end(), {
 	&directionalLight,
 	&spotlight,
@@ -218,8 +226,9 @@ void LevelEditor::Start()
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 
-	renderSystem.ssaoRadius = 64.0f;
-	renderSystem.ssaoBias = 32.0f;
+	renderSystem.kernelSize = 128;
+	renderSystem.ssaoRadius = 32.0f;
+	renderSystem.ssaoBias = 6.0f;
 
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);
@@ -241,6 +250,8 @@ void LevelEditor::Update(float delta)
 		enemySystem.SpawnEnemiesInScene(enemies, transforms);
 
 		camera->state = Camera::targetingPlayers;
+
+		triggerSystem.Start(rigidBodies, plates, spawnManagers);
 	}
 	else if(lastFramePlayState && !inPlay) //On Play exit
 	{
@@ -251,6 +262,7 @@ void LevelEditor::Update(float delta)
 		enemySystem.aiUpdating = false;
 
 		camera->state = Camera::editorMode;
+		triggerSystem.Clear();
 	}
 
 	lastFramePlayState = inPlay;
@@ -279,6 +291,8 @@ void LevelEditor::Update(float delta)
 		healthSystem.PlayerHealingUpdate(eccoSo->health(), syncSo->health(),
 			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
 
+		triggerSystem.Update(plates);
+		dabSystem.Update(transforms, doors, delta);
 	}
 
 	enemySystem.Update(
@@ -286,6 +300,7 @@ void LevelEditor::Update(float delta)
 		transforms,
 		rigidBodies,
 		healths,
+		spawnManagers,
 		eccoSo->transform()->get2DGlobalPosition(),
 		syncSo->transform()->get2DGlobalPosition(),
 		delta
@@ -565,10 +580,12 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	toml::table data = toml::parse(file);
 
 	tiles.clear();
+	triggerSystem.Clear();
 
 	LoadSceneObjectsAndParts(data);
 
-	gui.sceneObjectSelected = nullptr;
+	// TODO: this shouldn't need to be here, deleting objects should unselect object
+	gui.setSelected(nullptr);
 
 	groundTileParent = FindSceneObjectOfName("Ground Tiles");
 	wallTileParent = FindSceneObjectOfName("Wall Tiles");
@@ -585,11 +602,33 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	}
 	file.close();
 
+	glm::vec2 min = { FLT_MAX, FLT_MAX };
+	glm::vec2 max = { -FLT_MAX, -FLT_MAX };
+	for (auto& i : tiles)
+	{
+		if (i.first.first < min.x) { min.x = i.first.first; };
+		if (i.first.second < min.y) { min.y = i.first.second; };
+
+		if (i.first.first > max.x) { max.x = i.first.first; };
+		if (i.first.second > max.y) { max.y = i.first.second; };
+
+
+		i.second->renderer()->materials[0] = groundMaterial;
+	}
+	groundShader->Use();
+	groundShader->setVec2("worldMin", (min - glm::vec2(1, 1)) * gridSize);
+	groundShader->setVec2("worldMax", (max + glm::vec2(1, 1)) * gridSize);
+
+
 	RefreshWalls();
 	InitialisePlayers();
 
 	enemySystem.Start(transforms, rigidBodies, colliders);
 	previouslySaved = true;
+
+
+	groundTexture->path = "Levels/" + windowName + ".png";
+	groundTexture->Load();
 }
 
 void LevelEditor::ModelPlacer(glm::vec2 targetPos)
@@ -608,7 +647,7 @@ void LevelEditor::ModelPlacer(glm::vec2 targetPos)
 		{ -defaultColliderLength, +defaultColliderLength}
 		}, 0.0f));
 
-	gui.sceneObjectSelected = newSceneObject;
+	gui.setSelected(newSceneObject);
 }
 
 void LevelEditor::PrefabPlacer(glm::vec2 targetPos)
@@ -626,7 +665,7 @@ void LevelEditor::PrefabPlacer(glm::vec2 targetPos)
 	newSceneObject->transform()->setPosition(pos);
 	newSceneObject->transform()->setEulerRotation({ 0.0f, assetPlacerRotation, 0.0f });
 
-	gui.sceneObjectSelected = newSceneObject;
+	gui.setSelected(newSceneObject);
 }
 
 void LevelEditor::Selector(glm::vec2 targetPos)
@@ -639,11 +678,11 @@ void LevelEditor::Selector(glm::vec2 targetPos)
 				continue;
 			}
 		}
-		if (i.second.getSceneObject() == gui.sceneObjectSelected) { continue; }
+		if (i.second.getSceneObject() == gui.getSelected()) { continue; }
 		glm::vec3 temp = i.second.getPosition();
 		glm::vec2 pos = { temp.x, temp.z };
 		if (glm::length(pos - targetPos) < selectSize) {
-			gui.sceneObjectSelected = i.second.getSceneObject();
+			gui.setSelected(i.second.getSceneObject());
 		}
 	}
 }

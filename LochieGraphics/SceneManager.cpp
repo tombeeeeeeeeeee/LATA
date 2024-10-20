@@ -246,9 +246,9 @@ void SceneManager::Update()
 	
 	while (!scene->markedForDeletion.empty())
 	{
-		if (scene->gui.sceneObjectSelected) {
-			if (scene->gui.sceneObjectSelected->GUID == scene->markedForDeletion.front()) {
-				scene->gui.sceneObjectSelected = nullptr;
+		if (scene->gui.getSelected()) {
+			if (scene->gui.getSelected()->GUID == scene->markedForDeletion.front()) {
+				scene->gui.setSelected(nullptr);
 			}
 		}
 		delete scene->sceneObjects.at(scene->markedForDeletion.front());
@@ -271,13 +271,40 @@ void SceneManager::Update()
 	scene->renderSystem.lines.Clear();
 	scene->renderSystem.debugLines.Clear();
 	scene->Update(deltaTime);
-	if (scene->gui.sceneObjectSelected) {
-		scene->gui.sceneObjectSelected->DebugDraw();
+	if (scene->gui.getSelected()) {
+		scene->gui.getSelected()->DebugDraw();
 	}
 	for (auto& i : scene->animators)
 	{
 		i.second.UpdateAnimation(deltaTime);
 	}
+
+
+	//for (auto& renderer : scene->renderers)
+	//{
+	//	if (!renderer.second.model) { continue; }
+	//	for (auto& boneMap : renderer.second.model->boneInfoMap)
+	//	{
+	//		glm::vec3 pos;
+	//		glm::quat rot;
+	//		glm::vec3 scl;
+
+	//		ImGuizmo::DecomposeMatrixToComponents(&boneMap.second.offset[0][0], &pos[0], &rot[0], &scl[0]);
+
+	//		glm::vec3 euler = glm::eulerAngles(rot);
+
+	//		glm::vec3 modelPos = scene->transforms[renderer.first].getGlobalPosition();
+	//		glm::vec3 modelScale = scene->transforms[renderer.first].getScale();
+
+	//		scene->renderSystem.lines.DrawLineSegment(modelPos + pos * modelScale, modelPos + pos * modelScale + glm::vec3(0.0f, 1.0f, 0.0f), {1, 0, 1});
+
+	//	}
+	//}
+	//scene->renderSystem.lines.DrawLineSegment({ -1, -2, -3 }, { 100, 200, 300 }, { 1, 0, 0 });
+
+
+
+
 	scene->renderSystem.lines.Compile();
 	scene->renderSystem.debugLines.Compile();
 
@@ -465,13 +492,15 @@ void SceneManager::ProcessKeyboardInput(GLFWwindow* window)
 	}
 
 	// Camera movement
-	float cameraSpeed = 2.0f * deltaTime;
+	if (!ImGui::GetIO().WantCaptureMouse) {
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::DOWN, deltaTime); }
+	}
+
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::FORWARD, deltaTime); }
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::BACKWARD, deltaTime); }
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::LEFT, deltaTime); }
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::RIGHT, deltaTime); }
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::UP, deltaTime); }
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::DOWN, deltaTime); }
 
 	if ((glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) != camera.artKeyDown) {
 		camera.artKeyDown = !camera.artKeyDown;

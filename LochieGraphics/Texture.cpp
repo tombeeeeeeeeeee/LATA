@@ -84,7 +84,7 @@ void Texture::Load(unsigned char* data)
 		return; // Return instead of break
 	}
 
-	GLID = CreateTexture(width, height, format, data, wrappingMode, GL_UNSIGNED_BYTE, true, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+	GLID = CreateTexture(width, height, format, data, wrappingMode, GL_UNSIGNED_BYTE, mipMapped, mipMapped ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR, GL_LINEAR);
 	stbi_image_free(data);
 	loaded = true;
 }
@@ -138,7 +138,7 @@ void Texture::Bind(int indexToBindTo)
 {
 	int bindTo = indexToBindTo + GL_TEXTURE0;
 	if (bindTo == GL_TEXTURE0) {
-		std::cout << "Warning! Please don't bind to 0\n";
+		//std::cout << "Warning! Please don't bind to 0\n";
 	}
 	else if (bindTo > GL_TEXTURE31 || bindTo < GL_TEXTURE0) {
 		std::cout << "Error! Trying to bind to invalid index of: " << indexToBindTo << "\nIndex must be within 0-31\n";

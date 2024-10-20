@@ -56,6 +56,7 @@ glm::vec3 Utilities::Lerp(glm::vec3 a, glm::vec3 b, float t)
 glm::vec2 Utilities::ClampMag(glm::vec2 v, float min, float max)
 {
 	float originalLength = glm::length(v);
+	if (originalLength == 0.0f) return glm::vec2(0.0f, 0.0f);
 	glm::vec2 normalized = glm::normalize(v);
 	if (originalLength < min) originalLength = min;
 	else if (originalLength > max) originalLength = max;

@@ -102,10 +102,15 @@ void Scene::DeleteAllSceneObjectsAndParts()
 	spawnManagers.clear();
 	partsChecker &= ~Parts::spawnManager;
 
+	plates.clear();
+	partsChecker &= ~Parts::plate;
+
+	doors.clear();
+	partsChecker &= ~Parts::door;
 
 	// TODO: Don't like how just setting these flags here but no containers atm
 	partsChecker &= ~Parts::spikes;
-	partsChecker &= ~Parts::plate;
+
 
 	//lights.clear();
 	partsChecker &= ~Parts::light;
@@ -154,6 +159,9 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 	};
 	SavePart(healths);
 	SavePart(exits);
+	SavePart(spawnManagers);
+	SavePart(plates);
+	SavePart(doors);
 
 	return toml::table{
 		{ "SceneObjects", savedSceneObjects },
@@ -165,6 +173,9 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 		{ "Enemies", savedenemies},
 		{ "Healths", savedhealths},
 		{ "Exits", savedexits},
+		{ "SpawnManagers", savedspawnManagers},
+		{ "Plates", savedplates},
+		{ "Doors", saveddoors},
 		{ "Sync", sync->Serialise() },
 		{ "Ecco", ecco->Serialise() },
 	};
@@ -192,6 +203,9 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(animators, "Animators", Animator);
 	LoadPart(rigidBodies, "RigidBodies", RigidBody);
 	LoadPart(enemies, "Enemies", Enemy);
+	LoadPart(spawnManagers, "SpawnManagers", SpawnManager);
+	LoadPart(plates, "Plates", PressurePlate);
+	LoadPart(doors, "Doors", Door);
 	// TODO: Fix for colliders
 	
 
@@ -310,21 +324,16 @@ void Scene::InitialisePlayers()
 		case (int)CollisionLayers::base:
 			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
 			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
-				break;
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::trigger, i, false);
+			break;
 		case (int)CollisionLayers::enemy:
 			physicsSystem.SetCollisionLayerMask(i, i, true);
 			break;
-		case (int)CollisionLayers::syncProjectile:
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::eccoProjectile, i, false);
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::enemyProjectile, i, false);
+		case (int)CollisionLayers::trigger:
 			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
 			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::enemyProjectile, i, false);
 			break;
-		case (int)CollisionLayers::eccoProjectile:
-				physicsSystem.SetCollisionLayerMask((int)CollisionLayers::enemyProjectile, i, false);
-				physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
-				physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
-				break;
 		case (int)CollisionLayers::enemyProjectile:
 			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
 			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);

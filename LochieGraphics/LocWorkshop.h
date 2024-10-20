@@ -3,6 +3,9 @@
 
 #include "DirectionalLight.h"
 #include "Animation.h"
+#include "ComputeShader.h"
+#include "Mesh.h"
+#include "Particle.h"
 
 class LocWorkshop : public Scene
 {
@@ -16,6 +19,15 @@ private:
 
 	Animation animation;
 	Animator* animator;
+	
+	std::vector<Particle> particles = {};
+
+	Mesh* quad;
+	Model* model;
+
+	Shader* shader;
+	Texture* texture;
+	Texture* particleTexture;
 
 public:
 

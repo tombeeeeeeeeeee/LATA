@@ -15,6 +15,8 @@ class RigidBody;
 class ExitElevator;
 class SpawnManager;
 class LineRenderer;
+class PressurePlate;
+class Door;
 struct Enemy;
 namespace toml {
 	inline namespace v3 {
@@ -40,6 +42,7 @@ enum Parts : unsigned int
 	spikes =		1 << 11,
 	plate = 		1 << 12,
 	spawnManager =	1 << 13,
+	door		 =	1 << 14,
 	ALL = 0b1111111111110,
 };
 
@@ -75,6 +78,8 @@ public:
 	void MenuGUI();
 
 	void DebugDraw();
+
+	void TriggerCall(std::string tag, bool toggle);
 
 	toml::table Serialise() const;
 
@@ -122,6 +127,12 @@ public:
 
 	void setSpawnManager(SpawnManager* spawnManager);
 	SpawnManager* spawnManager();
+
+	void setPressurePlate(PressurePlate* plate);
+	PressurePlate* plate();
+
+	void setDoor(Door* door);
+	Door* door();
 
 #pragma endregion
 

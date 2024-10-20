@@ -406,7 +406,7 @@ void ArtScene::Start()
 	camera->state = Camera::State::artEditorMode;
 	camera->artState = Camera::ArtState::none;
 
-	gui.sceneObjectSelected = sceneObject;
+	gui.setSelected(sceneObject);
 	gui.showSceneObject = true;
 }
 

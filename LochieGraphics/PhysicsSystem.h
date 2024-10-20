@@ -69,7 +69,7 @@ public:
 		UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX,
 	};
 
-	int collisionItterations = 1;
+	int collisionItterations = 3;
 
 private: 
 	RigidBody dummyRigidBody = RigidBody(0.0f,0.0f);

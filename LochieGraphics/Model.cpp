@@ -91,15 +91,6 @@ void Model::AddMesh(Mesh* mesh)
 	meshGUIDs.push_back(mesh->GUID);
 }
 
-
-void Model::Draw()
-{
-	for (auto mesh = meshes.begin(); mesh != meshes.end(); mesh++)
-	{
-		(*mesh)->Draw();
-	}
-}
-
 const std::vector<Mesh*>& Model::getMeshes() const
 {
 	return meshes;

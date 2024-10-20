@@ -35,11 +35,11 @@ SceneObject::~SceneObject()
 	scene->transforms.erase(GUID);
 }
 
-#define AddPartGUI(getter, setter, type, label) \
-if (getter() == nullptr) {                      \
-if (ImGui::MenuItem(label)) {                   \
-		setter(new type());                     \
-	}                                           \
+#define AddPartGUI(getter, setter, constructor, label) \
+if (getter() == nullptr) {                             \
+if (ImGui::MenuItem(label)) {                          \
+		setter(new constructor);                       \
+	}                                                  \
 }
 
 #define RemovePartGUI(partsType, setter, label) \
@@ -85,6 +85,9 @@ void SceneObject::GUI()
 	
 	if (parts & Parts::enemy) { scene->enemies[GUID].GUI(); }
 	if (parts & Parts::health) { scene->healths[GUID].GUI(); }
+	if (parts & Parts::spawnManager) { scene->spawnManagers[GUID].GUI(); }
+	if (parts & Parts::plate) { scene->plates[GUID].GUI(); }
+	if (parts & Parts::door) { scene->doors[GUID].GUI(); }
 
 	if (parts & Parts::ecco)
 	{
@@ -119,8 +122,8 @@ void SceneObject::GUI()
 	}
 
 	if (ImGui::BeginPopup(addPopup.c_str())) {
-		AddPartGUI(renderer, setRenderer, ModelRenderer, ("Model Renderer##Add part" + tag).c_str());
-		AddPartGUI(rigidbody, setRigidBody, RigidBody, ("Rigid Body##Add part" + tag).c_str());
+		AddPartGUI(renderer, setRenderer, ModelRenderer(), ("Model Renderer##Add part" + tag).c_str());
+		AddPartGUI(rigidbody, setRigidBody, RigidBody(), ("Rigid Body##Add part" + tag).c_str());
 
 		if (ecco() == nullptr && scene->ecco->GUID == 0) {
 			if (ImGui::MenuItem(("Ecco##Add part" + tag).c_str())) {
@@ -136,7 +139,15 @@ void SceneObject::GUI()
 		AddPartGUI(health, setHealth, Health, ("Health##Add part" + tag).c_str());
 		AddPartGUI(enemy, setEnemy, Enemy, ("Enemy##Add part" + tag).c_str());
 		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
-		
+		AddPartGUI(spawnManager, setSpawnManager, SpawnManager, ("Spawn Manager ##Add part" + tag).c_str());
+		AddPartGUI(plate, setPressurePlate, PressurePlate, ("Pressure Plate ##Add part" + tag).c_str());
+		AddPartGUI(door, setDoor, Door, ("Door ##Add part" + tag).c_str());
+		AddPartGUI(collider, setCollider, PolygonCollider({
+		{ +50, +50},
+		{ +50, -50},
+		{ -50, -50},
+		{ -50, +50}
+			}, 0.0f), ("Polygon Collider##Add part" + tag).c_str());
 		ImGui::EndPopup();
 	}
 
@@ -155,6 +166,12 @@ void SceneObject::GUI()
 			}
 		}
 		RemovePartGUI(exitElevator, setExitElevator, ("Exit##Remove part" + tag).c_str());
+		RemovePartGUI(spawnManager, setSpawnManager, ("Spawn Manager ##Remove part" + tag).c_str());
+		RemovePartGUI(collider, setCollider, ("Collider##Remove part" + tag).c_str());
+		RemovePartGUI(enemy, setEnemy, ("Enemy##Remove part" + tag).c_str());
+		RemovePartGUI(plate, setPressurePlate, ("Pressure Plate##Remove part" + tag).c_str());
+		RemovePartGUI(door, setDoor, ("Door##Remove part" + tag).c_str());
+
 		ImGui::EndPopup();
 	}
 }
@@ -166,9 +183,9 @@ void SceneObject::MenuGUI()
 	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
 		scene->DeleteSceneObject(GUID);
 	}
-	if (ImGui::MenuItem((("Duplicate##RightClick") + tag).c_str())) {
-		// TODO:
-	}
+	// TODO:
+	//if (ImGui::MenuItem((("Duplicate##RightClick") + tag).c_str())) {
+	//}
 	if (ImGui::MenuItem(("Save As Prefab##RightClick" + tag).c_str())) {
 		SaveAsPrefab();
 	}
@@ -197,6 +214,18 @@ void SceneObject::DebugDraw()
 	{
 		scene->colliders[GUID]->DebugDraw(&scene->transforms[GUID]);
 	}
+}
+
+void SceneObject::TriggerCall(std::string tag, bool toggle)
+{
+	if (parts & Parts::spawnManager)
+		scene->spawnManagers[GUID].TriggerCall(tag, toggle);
+	if (parts & Parts::door)
+		scene->doors[GUID].TriggerCall(tag, toggle);
+	/*
+	if (parts & Parts::spike)
+		scene->spikes[GUID].TriggerCall(tag, toggle);
+	*/ 
 }
 
 toml::table SceneObject::Serialise() const
@@ -278,6 +307,19 @@ SetAndGetForPart(Health, healths, Parts::health, Health, health)
 SetAndGetForPart(Enemy, enemies, Parts::enemy, Enemy, enemy)
 SetAndGetForPart(ExitElevator, exits, Parts::exitElevator, ExitElevator, exitElevator)
 SetAndGetForPart(SpawnManager, spawnManagers, Parts::spawnManager, SpawnManager, spawnManager)
+SetAndGetForPart(PressurePlate, plates, Parts::plate, PressurePlate, plate)
+void SceneObject::setDoor(Door* part) {
+	if (part) {
+		parts |= Parts::door; scene->doors[GUID] = *part;
+	}
+	else {
+		parts &= ~Parts::door; scene->doors.erase(GUID);
+	};
+} Door* SceneObject::door() {
+	if (parts & Parts::door) {
+		return &(scene->doors[GUID]);
+	} return nullptr;
+}
 
 void SceneObject::setCollider(Collider* collider)
 {

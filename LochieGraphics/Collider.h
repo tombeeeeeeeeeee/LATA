@@ -18,12 +18,11 @@ enum class CollisionLayers
 	reflectiveSurface = 1 << 2,
 	sync = 1 << 3,
 	ecco = 1 << 4,
-	syncProjectile = 1 << 5,
-	eccoProjectile = 1 << 6,
-	enemyProjectile = 1 << 7,
-	softCover = 1 << 8,
-	halfCover = 1 << 9,
-	count = 1 << 10
+	trigger = 1 << 5,
+	enemyProjectile = 1 << 6,
+	softCover = 1 << 7,
+	halfCover = 1 << 8,
+	count = 1 << 9
 };
 
 enum class ColliderType
@@ -48,7 +47,7 @@ struct Collider
 	Collider() = default;
 	virtual void GUI();
 	virtual void DebugDraw(Transform* transform) = 0;
-	static const int transparentLayers = (int)CollisionLayers::syncProjectile | (int)CollisionLayers::eccoProjectile | (int)CollisionLayers::enemyProjectile | (int)CollisionLayers::softCover | (int)CollisionLayers::halfCover;
+	static const int transparentLayers = (int)CollisionLayers::trigger | (int)CollisionLayers::enemyProjectile | (int)CollisionLayers::softCover | (int)CollisionLayers::halfCover;
 
 protected:
 	Collider(toml::table table);

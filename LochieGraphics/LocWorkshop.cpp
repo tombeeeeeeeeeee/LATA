@@ -7,6 +7,9 @@
 #include "ComputeShader.h"
 #include "Animation.h"
 
+#include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
+
 #include <iostream>
 
 LocWorkshop::LocWorkshop()
@@ -20,11 +23,8 @@ void LocWorkshop::Start()
 	camera->editorSpeed.move = 250.0f;
 	camera->farPlane = 500.0f;
 	camera->nearPlane = 1.0f;
-	camera->transform.setPosition({ 0.0f, 400.0f, 0.0f });
-	camera->transform.setEulerRotation({ 0.0f, 0.0f, -90.0f });
-
-	sceneObject = new SceneObject(this, "Testing!");
-	//sceneObject->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension), ResourceManager::defaultMaterial));
+	camera->transform.setPosition({ 0.0f, 0.0f, 150.0f });
+	camera->transform.setEulerRotation({ 0.0f, 90.0f, 0.0f });
 
 
 	int max_compute_work_group_count[3] = {};
@@ -48,39 +48,122 @@ void LocWorkshop::Start()
 
 	std::cout << "Number of invocations in a single local work group that may be dispatched to a compute shader " << max_compute_work_group_invocations << "\n\n";
 
-	//ComputeShader computeShader = ComputeShader("shaders/LocsComputeShader.comp");
+	texture = ResourceManager::LoadTexture(1024u, 1024u);
+	texture->type = Texture::Type::albedo;
+	texture->Bind(0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1024u, 1024u, 0, GL_RGBA, GL_FLOAT, NULL);
 
 
-	Texture* texture = ResourceManager::LoadTexture(1024u, 1024u);
+	shader = ResourceManager::LoadShader("particle", Shader::Flags::VPmatrix);
+	shaders.push_back(shader);
+	Material* material = ResourceManager::LoadMaterial("Testing", shader);
+	material->AddTextures({ texture });
 
-	//sceneObject->renderer()->materials.front()->texturePointers["material.albedo"] = texture;
+	sceneObject = new SceneObject(this, "Testing!");
+	model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
+	//sceneObject->setRenderer(new ModelRenderer(model, material));
 
-	aniTest = new SceneObject(this, "Animation Test");
-	std::string path = "models/Anim_Sync_RunTEST03.fbx";
-	Model* aniTestModel = ResourceManager::LoadModel(path);
-	aniTest->setRenderer(new ModelRenderer(aniTestModel, ResourceManager::defaultMaterial));
+	texture->Bind(0);
+	glBindImageTexture(0, texture->GLID, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
-	animation = Animation(path, aniTestModel);
+	quad = new Mesh();
+	quad->InitialiseQuad(1);
 
-	animator = new Animator(&animation);
-	aniTest->setAnimator(animator);
+	particles.resize(2);
+	for (auto& i : particles)
+	{
+		i.shader = shader;
+		i.Initialise();
+	}
+
+	camera->nearPlane = 10.0f;
+	camera->farPlane = 50000.0f;
+
+	particleTexture = ResourceManager::LoadTexture("images/brodie.jpg", Texture::Type::albedo);
+
+	for (auto& i : particles)
+	{
+		i.texture = particleTexture;
+	}
 }
 
 void LocWorkshop::Update(float delta)
 {
+	for (auto& i : particles)
+	{
+		i.Update(delta);
+	}
 }
 
 void LocWorkshop::Draw()
 {
+	std::vector<Particle*> particlePointers;
+	particlePointers.resize(particles.size());
+	for (size_t i = 0; i < particles.size(); i++)
+	{
+		particlePointers[i] = &particles.at(i);
+	}
+
 	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
 		animators,
-		camera
+		camera,
+		particlePointers
 	);
+
+	//texture->Bind(0);
+	//glBindImageTexture(0, texture->GLID, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
+
+	//computeShader->Use();
+	//glDispatchCompute((unsigned int)texture->width, (unsigned int)texture->height, 1);
+
+	//// make sure writing to image has finished before read
+	//glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+
+
+	////glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//shader->Use();
+	//shader->setInt("material.albedo", 0);
+	//texture->Bind(0);
+
+	//glDisable(GL_DEPTH_TEST);
+
+	//glDisable(GL_CULL_FACE);
+
+	//shader->setMat4("model", glm::identity<glm::mat4>());
+	//quad->Draw();
+
+	////model->Draw();
 }
 
 void LocWorkshop::GUI()
 {
+	if (!ImGui::Begin("Particle stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::End();
+		return;
+	}
+
+	for (size_t i = 0; i < particles.size(); i++)
+	{
+		if (ImGui::CollapsingHeader(("P" + std::to_string(i)).c_str())) {
+			ImGui::Indent();
+			particles.at(i).GUI();
+			ImGui::Unindent();
+		}
+	}
+
+	if (ImGui::Button("Add Another Particles")) {
+		particles.emplace_back();
+		particles.back().shader = shader;
+		particles.back().texture = particleTexture;
+		particles.back().Initialise();
+	}
+
+
+
+	ImGui::End();
 }
