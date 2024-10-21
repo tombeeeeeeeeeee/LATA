@@ -6,6 +6,7 @@ Door::Door(toml::table table)
 {
 	left = Serialisation::LoadAsBool(table["left"]);
 	startClosed = Serialisation::LoadAsBool(table["closed"]);
+	amountToMove = Serialisation::LoadAsFloat(table["amountToMove"]);
 	timeToClose = Serialisation::LoadAsFloat(table["timeToClose"]);
 	timeToOpen = Serialisation::LoadAsFloat(table["timeToOpen"]);
 	triggerTag = Serialisation::LoadAsString(table["triggerTag"]);
@@ -17,6 +18,7 @@ toml::table Door::Serialise(unsigned long long guid)
 		{"guid", Serialisation::SaveAsUnsignedInt(guid)},
 		{"left", left},
 		{"closed", startClosed},
+		{"amountToMove", amountToMove},
 		{"timeToClose", timeToClose},
 		{"timeToOpen", timeToOpen},
 		{"triggerTag", triggerTag},
@@ -43,6 +45,7 @@ void Door::GUI()
 		bool right = !left;
 		if (ImGui::Checkbox("Moves Right", &right)) left = !right;
 		ImGui::InputText("Trigger Tag", &triggerTag);
+		ImGui::DragFloat("Amount To Move", &amountToMove, 2.0f, 0.0f);
 		ImGui::DragFloat("Time To Close", &timeToClose, 0.02f, 0.0f);
 		ImGui::DragFloat("Time To Open", &timeToClose, 0.02f, 0.0f);
 	}

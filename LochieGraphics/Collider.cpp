@@ -63,8 +63,26 @@ void Collider::GUI()
 	ImGui::EndDisabled();
 	ImGui::Checkbox(("Trigger##" + tag).c_str(), &isTrigger);
 
-	// TODO: Better gui to show what layer this is on
-	ImGui::DragInt(("Layers##" + tag).c_str(), &collisionLayer);
+	const char* layers[] = {
+		"Base", "Enemy", "Reflective", 
+		"Sync", "Ecco", "Trigger",
+		"Enemy Projectile", "Soft Cover", "Half Cover"
+	};
+	const char* currType = layers[(int)log2f(collisionLayer)];
+	ImGui::PushItemWidth(180);
+	if (ImGui::BeginCombo(("Collision Layer##" + tag).c_str(), currType))
+	{
+		for (int i = 0; i < (int)log2f((int)CollisionLayers::count); i++)
+		{
+			bool isSelected = pow(2, i) == collisionLayer;
+			if (ImGui::Selectable(layers[i], isSelected))
+			{
+				collisionLayer = (int)pow(2, i);
+			}
+			if (isSelected) ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
 	ImGui::Unindent();
 }
 
