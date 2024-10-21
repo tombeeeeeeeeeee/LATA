@@ -23,7 +23,9 @@ void TriggerSystem::TriggerTag(std::string tag, bool toggle)
 void TriggerSystem::Start(
 	std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
 	std::unordered_map<unsigned long long, PressurePlate>& plates,
-	std::unordered_map<unsigned long long, SpawnManager>& spawnManagers
+	std::unordered_map<unsigned long long, SpawnManager>& spawnManagers,
+	std::unordered_map<unsigned long long, Door>& doors,
+	std::unordered_map<unsigned long long, Bollard>& bollards
 )
 {
 	for (auto& spawnPair : spawnManagers)
@@ -37,7 +39,6 @@ void TriggerSystem::Start(
 	}
 	for (auto& platePair : plates)
 	{
-		TriggerSystem::triggerables.insert({ platePair.second.triggerTag, platePair.first });
 		if (!(SceneManager::scene->sceneObjects[platePair.first]->parts & Parts::rigidBody))
 		{
 			SceneManager::scene->sceneObjects[platePair.first]->setRigidBody(new RigidBody());
@@ -45,6 +46,14 @@ void TriggerSystem::Start(
 
 		rigidbodies[platePair.first].onTrigger.push_back(
 			[platePair](Collision collision) { SceneManager::scene->plates[platePair.first].OnTrigger(collision.collisionMask); });
+	}
+	for (auto& pair : doors)
+	{
+		TriggerSystem::triggerables.insert({ pair.second.triggerTag, pair.first });
+	}
+	for (auto& pair : bollards)
+	{
+		TriggerSystem::triggerables.insert({ pair.second.triggerTag, pair.first });
 	}
 }
 

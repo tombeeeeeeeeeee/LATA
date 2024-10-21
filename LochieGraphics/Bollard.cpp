@@ -10,6 +10,13 @@ Bollard::Bollard(toml::table table)
 	triggerTag = Serialisation::LoadAsString(table["triggerTag"]);
 }
 
+void Bollard::TriggerCall(std::string tag, bool toggle)
+{
+	if (tag == triggerTag)
+	{
+		state = toggle;
+	}
+}
 
 void Bollard::GUI()
 {

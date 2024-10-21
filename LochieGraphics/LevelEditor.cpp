@@ -251,7 +251,7 @@ void LevelEditor::Update(float delta)
 
 		camera->state = Camera::targetingPlayers;
 
-		triggerSystem.Start(rigidBodies, plates, spawnManagers);
+		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards);
 	}
 	else if(lastFramePlayState && !inPlay) //On Play exit
 	{
@@ -294,6 +294,7 @@ void LevelEditor::Update(float delta)
 		triggerSystem.Update(plates);
 		dabSystem.Update(transforms, doors, bollards, colliders, delta);
 	}
+
 
 	enemySystem.Update(
 		enemies,
@@ -438,7 +439,7 @@ void LevelEditor::GUI()
 				openSaveAs = true;
 			}
 			if (ImGui::MenuItem("Regenerate Enemy Flow Map")) {
-				enemySystem.UpdateNormalFlowMap(transforms, rigidBodies, colliders);
+				enemySystem.PopulateNormalFlowMap(transforms, rigidBodies, colliders);
 			}
 			ImGui::EndMenu();
 		}

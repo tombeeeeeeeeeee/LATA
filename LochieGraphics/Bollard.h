@@ -13,6 +13,8 @@ public:
 	Bollard() {};
 	Bollard(toml::table table);
 
+	void TriggerCall(std::string tag, bool toggle);
+
 	bool startsUp = false;
 	bool state = false;
 	float timeToRaise = 0.5f;

@@ -12,6 +12,13 @@ void PressurePlate::GUI()
 	if (ImGui::CollapsingHeader(("Pressure Plate##" + tag).c_str()))
 	{
 		ImGui::Indent();
+
+		if (ImGui::Button("Trigger"))
+		{
+			TriggerSystem::TriggerTag(triggerTag, true);
+			eccoToggled = true;
+		}
+
 		const char* pressurePlateTypes[] = {"Large", "Small"};
 		const char* currType = pressurePlateTypes[smallType ? 1 : 0];
 		if (ImGui::BeginCombo("Pressure Plate Type", currType))

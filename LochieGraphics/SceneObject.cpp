@@ -223,8 +223,12 @@ void SceneObject::TriggerCall(std::string tag, bool toggle)
 {
 	if (parts & Parts::spawnManager)
 		scene->spawnManagers[GUID].TriggerCall(tag, toggle);
+
 	if (parts & Parts::door)
 		scene->doors[GUID].TriggerCall(tag, toggle);
+
+	if (parts & Parts::bollard)
+		scene->bollards[GUID].TriggerCall(tag, toggle);
 	/*
 	if (parts & Parts::spike)
 		scene->spikes[GUID].TriggerCall(tag, toggle);
