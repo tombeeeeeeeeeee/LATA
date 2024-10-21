@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "Maths.h"
 
 namespace toml {
 	inline namespace v3 {
@@ -15,7 +16,9 @@ public:
 	float timeToClose = 0.5f;
 	float timeToOpen = 0.5f;
 	float timeInMovement = 0.0f;
+	float amountToMove = 0.0f;
 	std::string	triggerTag;
+	glm::vec3 pos = { 0.0f, 0.0f, 0.0f };
 	bool state = false;
 	Door() {};
 	Door(toml::table table);

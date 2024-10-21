@@ -12,6 +12,12 @@ public :
 	/*
 	* Move Doors and Bollards to correct state
 	*/
+
+	void Start(
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, Door>& doors
+	);
+
 	void Update(
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, Door>& doors,
