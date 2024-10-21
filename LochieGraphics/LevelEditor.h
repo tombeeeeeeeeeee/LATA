@@ -62,6 +62,8 @@ private:
 	SceneObject* syncSo = nullptr;
 	SceneObject* eccoSo = nullptr;
 
+	int singlePlayer = 0;
+
 	std::vector<std::string> loadPaths;
 	std::vector<std::string*> loadPathsPointers;
 

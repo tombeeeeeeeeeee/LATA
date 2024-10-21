@@ -29,7 +29,7 @@ struct Enemy
 
 	int type = (int)EnemyType::spawnSpot;
 
-	glm::vec2 lastTargetPos = { 0.0f, 0.0f };
+	glm::vec2 aim = { 0.0f, 0.0f };
 	glm::vec2 influenceThisFrame = { 0.0f, 0.0f };
 	bool hasLOS = false;
 
