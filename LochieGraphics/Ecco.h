@@ -5,7 +5,6 @@
 class Transform;
 class RigidBody;
 class Health;
-struct HealthPacket;
 struct Collision;
 namespace toml {
 	inline namespace v3 {
@@ -31,7 +30,6 @@ public:
 	);
 
 	void OnCollision(Collision collision);
-	void OnHealthDown(HealthPacket healthPacket);
 
 	void GUI();
 	toml::table Serialise();
@@ -47,6 +45,7 @@ private:
 	float carMoveSpeed = 0.25f;
 	float carReverseMoveSpeed = 0.125f;
 	float maxCarMoveSpeed = 6.0f;
+	float maxReverseSpeed = 100.0f;
 	float deadZone = 0.6f;
 	float turningCircleScalar = 6.0f;
 	float speedWheelTurnInfluence = 50.0f;

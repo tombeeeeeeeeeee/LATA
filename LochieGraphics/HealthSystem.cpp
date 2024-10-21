@@ -101,6 +101,7 @@ void HealthSystem::GUI()
 	ImGui::ColorEdit3("Damage Colour", &damageColour[0]);
 	ImGui::DragFloat("Health Colour Time", &colourTime, 0.02f, 0);
 	ImGui::DragInt("Heals Per Pulse", &healPerPulse, 1, 0);
+	ImGui::DragInt("Pulses", &pulses, 1, 0);
 	ImGui::DragFloat("CoolDown To On Heal Ability", &healingAbilityCooldown, 0.1f, 0);
 	ImGui::DragFloat("TimeBetweenPulses", &timeBetweenPulses, 0.02f, 0);
 	ImGui::DragFloat("Time Since Last Heal Ability", &timeSinceLastHealingAbility, 0.02f, 0);
