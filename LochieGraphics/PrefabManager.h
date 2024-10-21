@@ -10,6 +10,11 @@ class SceneObject;
 class PrefabManager
 {
 public:
+	struct PrefabHolder {
+		std::pair<const unsigned long long, toml::table>* loadedPrefab;
+		operator std::string();
+	};
+
 	static std::unordered_map<unsigned long long, toml::table> loadedPrefabOriginals;
 
 	static unsigned long long selectedPrefab;
@@ -21,5 +26,6 @@ public:
 
 	static void PrefabSelector();
 	static void GUI();
+
 };
 
