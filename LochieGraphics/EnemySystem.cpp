@@ -655,7 +655,7 @@ void EnemySystem::LoadNormalFlowMapFromImage(unsigned char* image, int width, in
         );
         colour -= 0.5f;
         colour *= 2.0f;
-        colour *= image[4 * i + 2];
+        //colour *= image[4 * i + 2];
         normalFlowMap.push_back(colour);
     }
 
@@ -762,8 +762,8 @@ void EnemySystem::PopulateNormalFlowMap(
             influence /= 2.0f;
             influence += 0.5f;
             influence *= 255;
-            r = influence.x;
-            g = influence.y;
+            r = influence.x * b;
+            g = influence.y * b;
             b *= 255.0f;
 
             mapColours[(x + z * mapDimensions.x) * 4 + 0] = r;
@@ -884,11 +884,23 @@ void EnemySystem::PopulateNormalFlowMapFromPoly(PolygonCollider* poly, Transform
                             normalFlowMapVec3[x + z * mapDimensions.x] = glm::vec3(normal.x, normal.y, distance);
                     }
 
-                    else if (tileSeperationDot > tanVertA - distance && tileSeperationDot < tanVertB + distance)
+                    else if (tileSeperationDot >= tanVertA - distance && tileSeperationDot <= tanVertB + distance)
                     {
-                        distance = distance * 1.414f;
+                        float distanceToA = glm::length(tilePos - vertA);
+                        float distanceToB = glm::length(tilePos - vertB);
+                        glm::vec2 thisNormal;
+                        if (distanceToA < distanceToB)
+                        {
+                            thisNormal = glm::normalize(tilePos - vertA);
+                            distance = distanceToA;
+                        }
+                        else
+                        {
+                            thisNormal = glm::normalize(tilePos - vertB);
+                            distance = distanceToB;
+                        }
                         if (distance <= normalFlowMapVec3[x + z * mapDimensions.x].z)
-                            normalFlowMapVec3[x + z * mapDimensions.x] = glm::vec3(normal.x, normal.y, distance);
+                            normalFlowMapVec3[x + z * mapDimensions.x] = glm::vec3(thisNormal.x, thisNormal.y, distance);
                     }
                 }
             }
