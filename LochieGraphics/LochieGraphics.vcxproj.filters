@@ -60,15 +60,6 @@
     <Filter Include="Source Files\Parts\Lights">
       <UniqueIdentifier>{fd18241c-97c2-4dcb-acee-9ffa49f6d7b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\AI">
-      <UniqueIdentifier>{f1c7519c-6d74-4601-b4cf-6bf05ffade8a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\AI\Conditions">
-      <UniqueIdentifier>{6f881f94-462e-461e-bc3d-c72adbbec98c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\AI\States">
-      <UniqueIdentifier>{f3f5f9a1-eb8b-4cb8-9721-7da3911d4912}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Third-Party\stb\imguizmo">
       <UniqueIdentifier>{88879a22-0acc-4dea-ae36-98856c989c42}</UniqueIdentifier>
     </Filter>
@@ -263,12 +254,6 @@
     <ClCompile Include="LocWorkshop.cpp">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="DistanceAndLOSCondition.cpp">
-      <Filter>Source Files\AI\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="WanderState.cpp">
-      <Filter>Source Files\AI\States</Filter>
-    </ClCompile>
     <ClCompile Include="UserPreferences.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
@@ -322,6 +307,9 @@
     </ClCompile>
     <ClCompile Include="DoorAndBollardSystem.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Bollard.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -532,12 +520,6 @@
     <ClInclude Include="Enemy.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="Condition.h">
-      <Filter>Source Files\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Source Files\AI</Filter>
-    </ClInclude>
     <ClInclude Include="hashFNV1A.h">
       <Filter>Source Files\Misc</Filter>
     </ClInclude>
@@ -564,15 +546,6 @@
     </ClInclude>
     <ClInclude Include="LocWorkshop.h">
       <Filter>Source Files\Scene Management\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="DistanceAndLOSCondition.h">
-      <Filter>Source Files\AI\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="WanderState.h">
-      <Filter>Source Files\AI\States</Filter>
-    </ClInclude>
-    <ClInclude Include="Node.h">
-      <Filter>Source Files\AI</Filter>
     </ClInclude>
     <ClInclude Include="UserPreferences.h">
       <Filter>Source Files\Misc</Filter>
@@ -637,6 +610,7 @@
     <ClInclude Include="DoorAndBollardSystem.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="Bollard.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">

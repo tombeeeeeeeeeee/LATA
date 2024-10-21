@@ -250,7 +250,7 @@ void LevelEditor::Update(float delta)
 		enemySystem.SpawnEnemiesInScene(enemies, transforms);
 
 		camera->state = Camera::targetingPlayers;
-
+		dabSystem.Start(transforms, doors);
 		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards);
 	}
 	else if(lastFramePlayState && !inPlay) //On Play exit
@@ -282,6 +282,12 @@ void LevelEditor::Update(float delta)
 		);
 
 		for (auto& exitPair : exits) exitPair.second.Update();
+
+		if(singlePlayer == 0) camera->state = Camera::targetingPlayers;
+		else camera->state = Camera::targetingPosition;
+
+		if		(singlePlayer == 1) gameCamSystem.target = syncSo->transform()->getGlobalPosition();
+		else if (singlePlayer == 2) gameCamSystem.target = eccoSo->transform()->getGlobalPosition();
 
 		gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
 
@@ -320,25 +326,41 @@ void LevelEditor::Update(float delta)
 			angle += 90.0f;
 		}
 
-		eccoHealPressed = ecco->Update(
-			*input.inputDevices[0],
-			*eccoSo->transform(),
-			*eccoSo->rigidbody(),
-			*eccoSo->health(),
-			delta,
-			angle
-		);
-
-		if (input.inputDevices.size() > 1)
+		if (singlePlayer == 1)
 		{
 			syncHealPressed = sync->Update(
-				*input.inputDevices[1],
+				*input.inputDevices[0],
 				*syncSo->transform(),
 				*syncSo->rigidbody(),
 				&renderSystem.lines,
 				delta,
 				angle
 			);
+		}
+		else
+		{
+			eccoHealPressed = ecco->Update(
+				*input.inputDevices[0],
+				*eccoSo->transform(),
+				*eccoSo->rigidbody(),
+				*eccoSo->health(),
+				delta,
+				angle
+			);
+		}
+		if (singlePlayer == 0)
+		{
+			if (input.inputDevices.size() > 1)
+			{
+				syncHealPressed = sync->Update(
+					*input.inputDevices[1],
+					*syncSo->transform(),
+					*syncSo->rigidbody(),
+					&renderSystem.lines,
+					delta,
+					angle
+				);
+			}
 		}
 	}
 
@@ -381,6 +403,28 @@ void LevelEditor::GUI()
 
 		if (ImGui::Button("PLAY")) {
 			inPlay = !inPlay;
+		}
+		bool multiplayer = singlePlayer == 0;
+		bool playAsSync = singlePlayer == 1;
+		bool playAsEcco = singlePlayer == 2;
+
+		if (ImGui::Checkbox("Play Multiplayer", &multiplayer))
+		{
+			singlePlayer = 0;
+		}
+		if (ImGui::Checkbox("Play As Sync", &playAsSync))
+		{
+			if (playAsSync)
+				singlePlayer = 1;
+			else
+				singlePlayer = 0;
+		}
+		if (ImGui::Checkbox("Play As Ecco", &playAsEcco))
+		{
+			if (playAsEcco)
+				singlePlayer = 2;
+			else
+				singlePlayer = 0;
 		}
 
 		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0Model Placer\0Prefab Placer\0View Select\0\0")) {

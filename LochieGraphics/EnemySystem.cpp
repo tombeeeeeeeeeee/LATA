@@ -1,8 +1,6 @@
 #include "EnemySystem.h"
 
 #include "Enemy.h"
-#include "State.h"
-#include "Condition.h"
 #include "Transform.h"
 #include "RigidBody.h"
 #include "SceneObject.h"
@@ -23,7 +21,6 @@
 #include "PhysicsSystem.h"
 #include "RenderSystem.h"
 #include "Hit.h"
-#include "Node.h"
 #include "Paths.h"
 #include "stb_image.h"
 #include "stb_image_write.h"
@@ -165,36 +162,36 @@ void EnemySystem::LineOfSightAndTargetCheck(
 
     std::vector<Hit> syncHits;
     std::vector<Hit> eccoHits;
-    if (PhysicsSystem::RayCast(
-        enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
-        syncHits, FLT_MAX,
-        (int)CollisionLayers::sync | (int)CollisionLayers::base )
-    ) 
-    {
-        Hit hit = syncHits[0];
-        if (hit.sceneObject->parts & Parts::sync)
-        {
-            distanceToSync = hit.distance;
-            enemy.lastTargetPos = syncPos2D;
-            enemy.hasLOS = true;
-        }
-    }
-    if (PhysicsSystem::RayCast(
-        enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
-        eccoHits, FLT_MAX,
-        (int)CollisionLayers::ecco | (int)CollisionLayers::base )
-        )
-    {
-        Hit hit = eccoHits[0];
-        if (hit.sceneObject->parts & Parts::ecco)
-        {
-            if (hit.distance < distanceToSync)
-            {
-                enemy.lastTargetPos = eccoPos2D;
-                enemy.hasLOS = true;
-            }
-        }
-    }
+    //if (PhysicsSystem::RayCast(
+    //    enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
+    //    syncHits, FLT_MAX,
+    //    (int)CollisionLayers::sync | (int)CollisionLayers::base )
+    //) 
+    //{
+    //    Hit hit = syncHits[0];
+    //    if (hit.sceneObject->parts & Parts::sync)
+    //    {
+    //        distanceToSync = hit.distance;
+    //        enemy.lastTargetPos = syncPos2D;
+    //        enemy.hasLOS = true;
+    //    }
+    //}
+    //if (PhysicsSystem::RayCast(
+    //    enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
+    //    eccoHits, FLT_MAX,
+    //    (int)CollisionLayers::ecco | (int)CollisionLayers::base )
+    //    )
+    //{
+    //    Hit hit = eccoHits[0];
+    //    if (hit.sceneObject->parts & Parts::ecco)
+    //    {
+    //        if (hit.distance < distanceToSync)
+    //        {
+    //            enemy.lastTargetPos = eccoPos2D;
+    //            enemy.hasLOS = true;
+    //        }
+    //    }
+    //}
 }
 
 void EnemySystem::AbilityCheck(
@@ -399,8 +396,9 @@ void EnemySystem::Steering(
         glm::vec2 velocityDelta = enemyPair.second.boidVelocity - curVel;
         glm::vec2 forceThisFrame = velocityDelta / delta;
         rigidBodies[enemyPair.first].netForce += forceThisFrame;
+        enemyPair.second.aim = Utilities::Lerp(enemyPair.second.aim, rigidBodies[enemyPair.first].vel, 0.3f);
 
-        float angle = atan2f(rigidBodies[enemyPair.first].vel.x, rigidBodies[enemyPair.first].vel.y) * 180.0f / PI;
+        float angle = atan2f(enemyPair.second.aim.x, enemyPair.second.aim.y) * 180.0f / PI;
         if (isnan(angle)) continue;
         glm::vec3 eulers = transforms[enemyPair.first].getEulerRotation();
         eulers.y = angle;
