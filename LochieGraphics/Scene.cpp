@@ -108,6 +108,9 @@ void Scene::DeleteAllSceneObjectsAndParts()
 	doors.clear();
 	partsChecker &= ~Parts::door;
 
+	bollards.clear();
+	partsChecker &= ~Parts::bollard;
+
 	// TODO: Don't like how just setting these flags here but no containers atm
 	partsChecker &= ~Parts::spikes;
 
@@ -162,6 +165,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 	SavePart(spawnManagers);
 	SavePart(plates);
 	SavePart(doors);
+	SavePart(bollards);
 
 	return toml::table{
 		{ "SceneObjects", savedSceneObjects },
@@ -176,6 +180,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 		{ "SpawnManagers", savedspawnManagers},
 		{ "Plates", savedplates},
 		{ "Doors", saveddoors},
+		{ "Bollards", savedbollards},
 		{ "Sync", sync->Serialise() },
 		{ "Ecco", ecco->Serialise() },
 	};
@@ -206,6 +211,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(spawnManagers, "SpawnManagers", SpawnManager);
 	LoadPart(plates, "Plates", PressurePlate);
 	LoadPart(doors, "Doors", Door);
+	LoadPart(bollards, "Bollards", Bollard);
 	// TODO: Fix for colliders
 	
 
@@ -319,6 +325,7 @@ void Scene::InitialisePlayers()
 	{
 
 		physicsSystem.SetCollisionLayerMask((int)CollisionLayers::reflectiveSurface, i, false);
+		physicsSystem.SetCollisionLayerMask((int)CollisionLayers::count, i, false);
 		physicsSystem.SetCollisionLayerMask(i, i, false);
 		switch (i)
 		{

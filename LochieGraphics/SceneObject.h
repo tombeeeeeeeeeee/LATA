@@ -17,6 +17,7 @@ class SpawnManager;
 class LineRenderer;
 class PressurePlate;
 class Door;
+class Bollard;
 struct Enemy;
 namespace toml {
 	inline namespace v3 {
@@ -43,6 +44,7 @@ enum Parts : unsigned int
 	plate = 		1 << 12,
 	spawnManager =	1 << 13,
 	door		 =	1 << 14,
+	bollard		 =	1 << 15,
 	ALL = 0b1111111111110,
 };
 
@@ -133,6 +135,9 @@ public:
 
 	void setDoor(Door* door);
 	Door* door();
+
+	void setBollard(Bollard* bollard);
+	Bollard* bollard();
 
 #pragma endregion
 

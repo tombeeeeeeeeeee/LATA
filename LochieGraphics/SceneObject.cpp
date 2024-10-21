@@ -88,6 +88,7 @@ void SceneObject::GUI()
 	if (parts & Parts::spawnManager) { scene->spawnManagers[GUID].GUI(); }
 	if (parts & Parts::plate) { scene->plates[GUID].GUI(); }
 	if (parts & Parts::door) { scene->doors[GUID].GUI(); }
+	if (parts & Parts::bollard) { scene->bollards[GUID].GUI(); }
 
 	if (parts & Parts::ecco)
 	{
@@ -142,6 +143,7 @@ void SceneObject::GUI()
 		AddPartGUI(spawnManager, setSpawnManager, SpawnManager, ("Spawn Manager ##Add part" + tag).c_str());
 		AddPartGUI(plate, setPressurePlate, PressurePlate, ("Pressure Plate ##Add part" + tag).c_str());
 		AddPartGUI(door, setDoor, Door, ("Door ##Add part" + tag).c_str());
+		AddPartGUI(bollard, setBollard, Bollard, ("Bollard ##Add part" + tag).c_str());
 		AddPartGUI(collider, setCollider, PolygonCollider({
 		{ +50, +50},
 		{ +50, -50},
@@ -171,6 +173,7 @@ void SceneObject::GUI()
 		RemovePartGUI(enemy, setEnemy, ("Enemy##Remove part" + tag).c_str());
 		RemovePartGUI(plate, setPressurePlate, ("Pressure Plate##Remove part" + tag).c_str());
 		RemovePartGUI(door, setDoor, ("Door##Remove part" + tag).c_str());
+		RemovePartGUI(bollard, setBollard, ("Bollard##Remove part" + tag).c_str());
 
 		ImGui::EndPopup();
 	}
@@ -308,18 +311,8 @@ SetAndGetForPart(Enemy, enemies, Parts::enemy, Enemy, enemy)
 SetAndGetForPart(ExitElevator, exits, Parts::exitElevator, ExitElevator, exitElevator)
 SetAndGetForPart(SpawnManager, spawnManagers, Parts::spawnManager, SpawnManager, spawnManager)
 SetAndGetForPart(PressurePlate, plates, Parts::plate, PressurePlate, plate)
-void SceneObject::setDoor(Door* part) {
-	if (part) {
-		parts |= Parts::door; scene->doors[GUID] = *part;
-	}
-	else {
-		parts &= ~Parts::door; scene->doors.erase(GUID);
-	};
-} Door* SceneObject::door() {
-	if (parts & Parts::door) {
-		return &(scene->doors[GUID]);
-	} return nullptr;
-}
+SetAndGetForPart(Door, doors, Parts::door, Door, door)
+SetAndGetForPart(Bollard, bollards, Parts::bollard, Bollard, bollard)
 
 void SceneObject::setCollider(Collider* collider)
 {
@@ -414,6 +407,9 @@ void SceneObject::ClearParts()
 	if (parts & Parts::enemy)         { scene->enemies.erase(GUID);       parts &= ~(Parts::enemy);}
 	if (parts & Parts::exitElevator)  { scene->exits.erase(GUID);         parts &= ~(Parts::exitElevator);}
 	if (parts & Parts::spawnManager)  { scene->spawnManagers.erase(GUID); parts &= ~(Parts::spawnManager);}
+	if (parts & Parts::plate)		  { scene->plates.erase(GUID);		  parts &= ~(Parts::plate);}
+	if (parts & Parts::door)		  { scene->doors.erase(GUID);	      parts &= ~(Parts::door);}	
+	if (parts & Parts::bollard)		  { scene->bollards.erase(GUID);	  parts &= ~(Parts::bollard);}	
 
 	assert(parts == 0);
 }
@@ -440,6 +436,10 @@ void SceneObject::SaveAsPrefab()
 	SaveAsPrefabPart("health", health, healths);
 	SaveAsPrefabPart("enemy", enemy, enemies);
 	SaveAsPrefabPart("exitElevator", exitElevator, exits);
+	SaveAsPrefabPart("spawnManager", spawnManager, spawnManagers);
+	SaveAsPrefabPart("plate", plate, plates);
+	SaveAsPrefabPart("door", door, doors);
+	SaveAsPrefabPart("bollard", bollard, bollards);
 	
 	if (Parts::collider & parts) {
 		table.emplace("collider", scene->colliders.at(GUID)->Serialise(GUID));
@@ -493,6 +493,10 @@ void SceneObject::LoadFromPrefab(toml::table table)
 	LoadAsPrefabPart("health", health, setHealth, Health);
 	LoadAsPrefabPart("enemy", enemy, setEnemy, Enemy);
 	LoadAsPrefabPart("exitElevator", exitElevator, setExitElevator, ExitElevator);
+	LoadAsPrefabPart("spawnManager", spawnManager, setSpawnManager, SpawnManager);
+	LoadAsPrefabPart("plate", plate, setPressurePlate, PressurePlate);
+	LoadAsPrefabPart("door", door, setDoor, Door);
+	LoadAsPrefabPart("bollard", bollard, setBollard, Bollard);
 
 	if (intendedParts & Parts::collider) {
 		setCollider(Collider::Load(*table["collider"].as_table()));

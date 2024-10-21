@@ -9,6 +9,7 @@ namespace toml {
 
 class Bollard
 {
+public:
 	Bollard() {};
 	Bollard(toml::table table);
 
@@ -16,6 +17,7 @@ class Bollard
 	bool state = false;
 	float timeToRaise = 0.5f;
 	float timeToLower = 0.2f;
+	float timeInProcess = 0.0f;
 	std::string triggerTag;
 
 	void GUI();
