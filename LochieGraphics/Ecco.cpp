@@ -51,6 +51,8 @@ bool Ecco::Update(
 		glm::vec2 desiredWheelDirection;
 		if (!controlState)
 		{
+			if(inputDevice.getLeftTrigger() && !inputDevice.getRightTrigger())
+				cameraRotationDelta += 180.0f;
 			float c = cosf(cameraRotationDelta * PI / 180.0f);
 			float s = sinf(cameraRotationDelta * PI / 180.0f);
 			moveInput =
@@ -141,9 +143,10 @@ bool Ecco::Update(
 		}
 
 		//Stop Speed exceeding speed limit (Could change to be drag)
-		if (glm::length(rigidBody.vel + rigidBody.invMass * (force + rigidBody.netForce)) > maxCarMoveSpeed && glm::dot(force, rigidBody.vel) > 0)
+		float maxRelativeSpeed = inputDevice.getLeftTrigger() ? maxReverseSpeed : maxCarMoveSpeed;
+		if (glm::length(rigidBody.vel + rigidBody.invMass * (force + rigidBody.netForce)) > maxRelativeSpeed && glm::dot(force, rigidBody.vel) > 0)
 		{
-			force = glm::normalize(force) * (maxCarMoveSpeed - glm::length(rigidBody.vel)) * exceedingSlowIntensity / rigidBody.invMass;
+			force = glm::normalize(force) * (maxRelativeSpeed - glm::length(rigidBody.vel)) * exceedingSlowIntensity / rigidBody.invMass;
 		}
 	}
 
@@ -210,7 +213,6 @@ void Ecco::OnCollision(Collision collision)
 			{
 				collision.sceneObject->health()->subtractHealth(speedDamage);
 				collision.self->health()->addHealth(healingFromDamage);
-				rb->ignoreThisCollision = true;
 			}
 		}
 	}
@@ -225,6 +227,7 @@ void Ecco::GUI()
 		ImGui::DragFloat("Car move speed", &carMoveSpeed);
 		ImGui::DragFloat("Car reverse move speed", &carReverseMoveSpeed);
 		ImGui::DragFloat("Max car move speed", &maxCarMoveSpeed);
+		ImGui::DragFloat("Max reverse speed", &maxReverseSpeed);
 		ImGui::DragFloat("Turning circle scalar", &turningCircleScalar);
 		ImGui::DragFloat("Max wheel angle", &maxWheelAngle);
 		ImGui::DragFloat("Speed wheel turn influence", &speedWheelTurnInfluence, 1.0f, 0.0f, 100.0f);
@@ -264,6 +267,7 @@ toml::table Ecco::Serialise()
 		{ "carMoveSpeed", carMoveSpeed },
 		{ "carReverseMoveSpeed", carReverseMoveSpeed},
 		{ "maxCarMoveSpeed", maxCarMoveSpeed },
+		{ "maxReverseSpeed", maxReverseSpeed },
 		{ "deadZone", deadZone },
 		{ "turningCircleScalar", turningCircleScalar },
 		{ "speedWheelTurnInfluence", speedWheelTurnInfluence },
@@ -293,6 +297,7 @@ Ecco::Ecco(toml::table table)
 	carMoveSpeed = Serialisation::LoadAsFloat(table["carMoveSpeed"]);
 	carReverseMoveSpeed = Serialisation::LoadAsFloat(table["carReverseMoveSpeed"]);
 	maxCarMoveSpeed = Serialisation::LoadAsFloat(table["maxCarMoveSpeed"]);
+	maxReverseSpeed = Serialisation::LoadAsFloat(table["maxReverseSpeed"]);
 	deadZone = Serialisation::LoadAsFloat(table["deadZone"]);
 	turningCircleScalar = Serialisation::LoadAsFloat(table["turningCircleScalar"]);
 	speedWheelTurnInfluence = Serialisation::LoadAsFloat(table["speedWheelTurnInfluence"]);
