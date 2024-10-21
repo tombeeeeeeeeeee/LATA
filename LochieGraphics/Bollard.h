@@ -17,6 +17,7 @@ public:
 	bool state = false;
 	float timeToRaise = 0.5f;
 	float timeToLower = 0.2f;
+	float timeInProcess = 0.0f;
 	std::string triggerTag;
 
 	void GUI();

@@ -325,6 +325,7 @@ void Scene::InitialisePlayers()
 	{
 
 		physicsSystem.SetCollisionLayerMask((int)CollisionLayers::reflectiveSurface, i, false);
+		physicsSystem.SetCollisionLayerMask((int)CollisionLayers::count, i, false);
 		physicsSystem.SetCollisionLayerMask(i, i, false);
 		switch (i)
 		{

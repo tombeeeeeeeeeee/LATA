@@ -314,19 +314,6 @@ SetAndGetForPart(PressurePlate, plates, Parts::plate, PressurePlate, plate)
 SetAndGetForPart(Door, doors, Parts::door, Door, door)
 SetAndGetForPart(Bollard, bollards, Parts::bollard, Bollard, bollard)
 
-void SceneObject::setDoor(Door* part) {
-	if (part) {
-		parts |= Parts::door; scene->doors[GUID] = *part;
-	}
-	else {
-		parts &= ~Parts::door; scene->doors.erase(GUID);
-	};
-} Door* SceneObject::door() {
-	if (parts & Parts::door) {
-		return &(scene->doors[GUID]);
-	} return nullptr;
-}
-
 void SceneObject::setCollider(Collider* collider)
 {
 	if (collider)

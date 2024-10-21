@@ -292,7 +292,7 @@ void LevelEditor::Update(float delta)
 			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
 
 		triggerSystem.Update(plates);
-		dabSystem.Update(transforms, doors, bollards, delta);
+		dabSystem.Update(transforms, doors, bollards, colliders, delta);
 	}
 
 	enemySystem.Update(
@@ -436,6 +436,9 @@ void LevelEditor::GUI()
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("Save As")) {
 				openSaveAs = true;
+			}
+			if (ImGui::MenuItem("Regenerate Enemy Flow Map")) {
+				enemySystem.UpdateNormalFlowMap(transforms, rigidBodies, colliders);
 			}
 			ImGui::EndMenu();
 		}
