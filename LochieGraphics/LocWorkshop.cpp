@@ -69,40 +69,49 @@ void LocWorkshop::Start()
 	quad = new Mesh();
 	quad->InitialiseQuad(1);
 
-	particle.shader = shader;
-	particle.Initialise();
+	particles.resize(2);
+	for (auto& i : particles)
+	{
+		i.shader = shader;
+		i.Initialise();
+	}
 
 	camera->nearPlane = 10.0f;
 	camera->farPlane = 50000.0f;
 
-	Texture* particleTexture = ResourceManager::LoadTexture("images/brodie.jpg", Texture::Type::albedo);
+	particleTexture = ResourceManager::LoadTexture("images/brodie.jpg", Texture::Type::albedo);
 
-	particle.texture = particleTexture;
-	particle.moveCompute =    new ComputeShader(Paths::importShaderLocation + "particleMove"    + Paths::computeExtension);
-	particle.resetCompute =   new ComputeShader(Paths::importShaderLocation + "particleReset"   + Paths::computeExtension);
-	particle.explodeCompute = new ComputeShader(Paths::importShaderLocation + "particleExplode" + Paths::computeExtension);
-	particle.stopCompute =    new ComputeShader(Paths::importShaderLocation + "particleStop"    + Paths::computeExtension);
-	particle.spreadCompute =  new ComputeShader(Paths::importShaderLocation + "particleSpread"  + Paths::computeExtension);
+	for (auto& i : particles)
+	{
+		i.texture = particleTexture;
+	}
 }
 
 void LocWorkshop::Update(float delta)
 {
-	particle.Update(delta);
+	for (auto& i : particles)
+	{
+		i.Update(delta);
+	}
 }
 
 void LocWorkshop::Draw()
 {
-	
+	std::vector<Particle*> particlePointers;
+	particlePointers.resize(particles.size());
+	for (size_t i = 0; i < particles.size(); i++)
+	{
+		particlePointers[i] = &particles.at(i);
+	}
 
-
-	//renderSystem.Update(
-	//	renderers,
-	//	transforms,
-	//	renderers,
-	//	animators,
-	//	camera,
-	//	{ &particle }
-	//);
+	renderSystem.Update(
+		renderers,
+		transforms,
+		renderers,
+		animators,
+		camera,
+		particlePointers
+	);
 
 	//texture->Bind(0);
 	//glBindImageTexture(0, texture->GLID, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
@@ -137,34 +146,23 @@ void LocWorkshop::GUI()
 		ImGui::End();
 		return;
 	}
-	
-	ImGui::DragFloat("Explode Strength", &particle.explodeStrength);
 
-	if (ImGui::Button("Reset##Particles")) {
-		particle.Reset();
+	for (size_t i = 0; i < particles.size(); i++)
+	{
+		if (ImGui::CollapsingHeader(("P" + std::to_string(i)).c_str())) {
+			ImGui::Indent();
+			particles.at(i).GUI();
+			ImGui::Unindent();
+		}
 	}
 
-	if (ImGui::Button("Explode##Particles")) {
-		particle.Explode();
+	if (ImGui::Button("Add Another Particles")) {
+		particles.emplace_back();
+		particles.back().shader = shader;
+		particles.back().texture = particleTexture;
+		particles.back().Initialise();
 	}
 
-	if (ImGui::Button("Initialise##Particles")) {
-		particle.Initialise();
-	}
-
-	if (ImGui::Button("Spread##Particles")) {
-		particle.Spread();
-	}
-
-	if (ImGui::Button("Stop##Particle")) {
-		particle.Stop();
-	}
-
-	//ImGui::Checkbox("Facing Camera##Particle", &renderSystem.particleFacingCamera);
-
-	//ImGui::DragScalar("Count##Particle", ImGuiDataType_U32, reinterpret_cast<void*>(&particle.count));
-
-	ExtraEditorGUI::Mat4Input("Model Matrix##Particle", &particle.model);
 
 
 	ImGui::End();

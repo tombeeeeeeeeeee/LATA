@@ -4,6 +4,7 @@
 
 #include "Maths.h"
 
+#include <random>
 #include <vector>
 
 class Shader;
@@ -16,27 +17,26 @@ public:
 
 	float quadSize = 10.0f; //  
 
-	unsigned int cX = 1000000;
-	unsigned int cY = 1;
-	unsigned int cZ = 1;
+	const unsigned int count = 100000;
+	std::vector<glm::vec4> positions;
+	std::vector<glm::vec4> velocities;
 
 	//Mesh mesh;
 	unsigned int quadVAO = 0;
 	unsigned int quadVBO = 0;
 	Shader* shader = nullptr;
-	ComputeShader* moveCompute = nullptr;
-	ComputeShader* stopCompute = nullptr;
-	ComputeShader* spreadCompute = nullptr;
-	ComputeShader* resetCompute = nullptr;
-	ComputeShader* explodeCompute = nullptr;
 
 	Texture* texture;
+
+	static std::random_device random;
 
 	unsigned int ssbo;
 
 	float explodeStrength = 1.0f;
 
 	glm::mat4 model = glm::identity<glm::mat4>();
+
+	Particle() = default;
 
 	void Spread();
 	void Explode();
@@ -49,6 +49,8 @@ public:
 	void Initialise();
 	void Update(float delta);
 	void Draw();
+
+	void GUI();
 
 	// TODO Rule of 
 	~Particle();

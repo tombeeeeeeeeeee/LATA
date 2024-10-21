@@ -3,36 +3,64 @@
 #include "ComputeShader.h"
 #include "Texture.h"
 
+#include "ExtraEditorGUI.h"
+
 #include <chrono>
 #include <iostream>
 
+std::random_device Particle::random = {};
+
 void Particle::Spread()
 {
-	spreadCompute->Run(cX, cY, cZ);
+	for (size_t i = 0; i < count; i++)
+	{
+		positions.at(i) += glm::vec4{ i, i, i, 0 };
+	}
 }
 
 void Particle::Explode()
 {
-	explodeCompute->Run(cX, cY, cZ);
+	for (auto& i : velocities)
+	{
+		std::uniform_real_distribution<float> distribution(-10.0f, 10.0f);
+
+		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f });
+		if (glm::isnan(i.x)) {
+			//
+			i = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+		}
+	}
 }
 
 void Particle::Stop()
 {
-	stopCompute->Run(cX, cY, cZ);
+	for (size_t i = 0; i < count; i++)
+	{
+		velocities.at(i) = { 0.0f, 0.0f, 0.0f, 0.0f };
+	}
 }
 
 void Particle::Reset()
 {
-	resetCompute->Run(cX, cY, cZ);
+	for (auto& i : positions)
+	{
+		i = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+	for (auto& i : velocities)
+	{
+		i = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	}
 }
 
 unsigned int Particle::getCount() const
 {
-	return cX * cY * cZ;
+	return count;
 }
 
 void Particle::Initialise()
 {
+	positions.resize(count);
+	velocities.resize(count);
 	
 	//mesh.InitialiseQuad(quadSize);
 	float size = quadSize;
@@ -69,58 +97,73 @@ void Particle::Initialise()
 	glGenBuffers(1, &ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
 
-	struct p {
-		glm::vec4 pos;
-		glm::vec4 vel;
-	};
 
-	std::vector<p> ps;
-	ps.resize(getCount());
-	for (size_t i = 0; i < getCount(); i++)
-	{
-		ps.at(i).pos = glm::vec4();
-		ps.at(i).vel = glm::vec4();
-	}
-
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::vec4) * getCount() * 2, &ps[0], GL_DYNAMIC_COPY);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(float) * 4 * getCount(), &positions[0], GL_DYNAMIC_COPY);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 void Particle::Update(float delta)
 {
-
-	auto start = std::chrono::system_clock::now();
-
-	moveCompute->Run(cX, cY, cZ);
-
-	auto end = std::chrono::system_clock::now();
-
-	std::chrono::duration<double> duration = end - start;
-	std::cout << "Compute: " << duration.count() << '\n';
+	for (size_t i = 0; i < count; i++)
+	{
+		positions.at(i) += velocities.at(i);
+	}
 }
 
 void Particle::Draw()
 {
-	auto start = std::chrono::system_clock::now();
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ssbo);
 
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(float) * 4 * getCount(), &positions[0]);
 
 	shader->Use();
+	
 	shader->setMat4("model", model);
 	texture->Bind(1);
 	shader->setSampler("material.albedo", 1);
 
+
 	glBindVertexArray(quadVAO);
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, getCount());
 
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> duration = end - start;
-	std::cout << "Draw: " << duration.count() << '\n';
+}
 
+void Particle::GUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	ImGui::DragFloat(("Explode Strength##" + tag).c_str(), &explodeStrength);
 
+	if (ImGui::Button(("Reset##Particles" + tag).c_str())) {
+		Reset();
+	}
+
+	if (ImGui::Button(("Explode##Particles" + tag).c_str())) {
+		Explode();
+	}
+
+	if (ImGui::Button(("Initialise##Particles" + tag).c_str())) {
+		Initialise();
+	}
+
+	if (ImGui::Button(("Spread##Particles" + tag).c_str())) {
+		Spread();
+	}
+
+	if (ImGui::Button(("Stop##Particle" + tag).c_str())) {
+		Stop();
+	}
+
+	//ImGui::Checkbox("Facing Camera##Particle", &renderSystem.particleFacingCamera);
+
+	//ImGui::DragScalar("Count##Particle", ImGuiDataType_U32, reinterpret_cast<void*>(&particle.count));
+
+	ExtraEditorGUI::Mat4Input(("Model Matrix##Particle" + tag).c_str(), &model);
 }
 
 Particle::~Particle()
 {
+	// TODO:
 
 }
