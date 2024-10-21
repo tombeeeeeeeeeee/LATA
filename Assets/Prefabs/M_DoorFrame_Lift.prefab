@@ -1,0 +1,42 @@
+[modelRenderer]
+guid = '12472561450565224966'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '12471765937523797163'
+
+[rigidBody]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '12472561450565224966'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[rigidBody.colliders]]
+    collisionLayer = 1
+    guid = '12472561450565224966'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 15.0 ], [ 150.0, -15.0 ], [ 60.0, -15.0 ], [ 60.0, 15.0 ] ]
+
+    [[rigidBody.colliders]]
+    collisionLayer = 1
+    guid = '12472561450565224966'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ -150.0, 15.0 ], [ -150.0, -15.0 ], [ -60.0, -15.0 ], [ -60.0, 15.0 ] ]
+
+[sceneObject]
+children = []
+guid = '12472561450565224966'
+name = 'M_DoorFrame_Lift'
+parent = '0'
+parts = 10
+prefabBase = '0'
+prefabStatus = 0
