@@ -250,7 +250,7 @@ void LevelEditor::Update(float delta)
 		enemySystem.SpawnEnemiesInScene(enemies, transforms);
 
 		camera->state = Camera::targetingPlayers;
-
+		dabSystem.Start(transforms, doors);
 		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards);
 	}
 	else if(lastFramePlayState && !inPlay) //On Play exit
