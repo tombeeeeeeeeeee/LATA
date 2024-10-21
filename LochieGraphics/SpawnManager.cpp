@@ -17,7 +17,7 @@ SpawnManager::SpawnManager(toml::table table)
 		enemySpawn = (enemySpawnList / decimalSlot) % 10;
 		if (enemySpawn != 0)
 		{
-			spawnPattern.push_back(enemySpawn);
+			spawnPattern.push_back(enemySpawn - 1);
 		}
 		decimalSlot *= 10;
 	} while (enemySpawn != 0);
@@ -127,7 +127,7 @@ toml::table SpawnManager::Serialise(unsigned long long guid)
 	int decimalSlot = 1;
 	for (int i = 0; i < spawnPattern.size(); i++, decimalSlot *= 10)
 	{
-		enemySpawnList += spawnPattern[i] * decimalSlot;
+		enemySpawnList += (spawnPattern[i] + 1) * decimalSlot;
 	}
 
 	return toml::table{
