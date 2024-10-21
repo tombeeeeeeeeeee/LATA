@@ -5,7 +5,7 @@
 #include "Scene.h"
 #include "SceneObject.h"
 
-#include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
 
 #include <fstream>
 #include <iostream>
@@ -50,8 +50,25 @@ void PrefabManager::RefreshAllPrefabInstances()
 
 void PrefabManager::PrefabSelector()
 {
-	// TODO: Make better, search bar, name instead
-	ImGui::InputScalar("Selected Prefab", ImGuiDataType_U64, &selectedPrefab);
+	PrefabHolder* selected = nullptr;
+	std::vector<PrefabHolder> prefabHolders;
+	unsigned int index = 0;
+	for (auto& i : loadedPrefabOriginals)
+	{
+		prefabHolders.push_back(PrefabHolder{ &i });
+	}
+	std::vector<PrefabHolder*> prefabHoldersPointers;
+	for (auto i = 0; i < prefabHolders.size(); i++)
+	{
+		if (selectedPrefab == prefabHolders.at(i).loadedPrefab->first) { selected = &prefabHolders.at(i); }
+		prefabHoldersPointers.push_back(&prefabHolders[i]);
+	}
+
+	if (ExtraEditorGUI::InputSearchBox(prefabHoldersPointers.begin(), prefabHoldersPointers.end(), &selected, "Prefab Selected", "daTag", true)) {
+		if (selected) {
+			selectedPrefab = selected->loadedPrefab->first;
+		}
+	}
 }
 
 void PrefabManager::GUI()
@@ -64,4 +81,9 @@ void PrefabManager::GUI()
 	if (ImGui::Button("Refresh All Prefab Instances")) {
 		RefreshAllPrefabInstances();
 	}
+}
+
+PrefabManager::PrefabHolder::operator std::string()
+{
+	return Serialisation::LoadAsString((*loadedPrefab->second["sceneObject"].as_table())["name"]);
 }

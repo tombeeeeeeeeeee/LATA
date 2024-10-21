@@ -498,11 +498,13 @@ void SceneObject::LoadFromPrefab(toml::table table)
 		setCollider(Collider::Load(*table["collider"].as_table()));
 	}
 	if (intendedParts & Parts::ecco) {
-		// TODO: This should load prefab data
+		// TODO: stop leaking memory
+		scene->ecco = new Ecco(*table["ecco"].as_table());
 		setEcco(scene->ecco);
 	}
 	if (intendedParts & Parts::sync) {
-		// TODO: This should load prefab data
+		// TODO: Stop leaking
+		scene->sync = new Sync(*table["sync"].as_table());
 		setSync(scene->sync);
 	}
 

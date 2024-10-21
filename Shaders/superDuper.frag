@@ -114,7 +114,7 @@ void main()
     metallic = PBR.r;
     roughness = PBR.g;
     ao = PBR.b;
-    
+	
     screenPosition = ndc.xy/ndc.w;
     screenPosition = screenPosition * 0.5 + 0.5;
 
@@ -287,14 +287,9 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal)
 {
-    vec3 lightDir = normalize(-light.direction);
-    float SSAO = texture(ssao, screenPosition).r;
-    // Diffuse
-    float diff = max(dot(normal, lightDir), 0.0);
+	vec3 radiance = Radiance(-light.direction, 1, normal, 1, 0, 0, light.colour);
 
-    vec3 diffuse = light.colour * diff * albedo * SSAO * SSAO;
-      
-    return diffuse;
+    return radiance;
 }
 
 vec3 CalcPointLight(PointLight light, int i, vec3 normal)
