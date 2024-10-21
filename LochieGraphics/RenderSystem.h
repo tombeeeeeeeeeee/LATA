@@ -166,8 +166,12 @@ private:
     void RenderDownSamples(unsigned int srcTexture);
     void RenderUpSamples(float aspectRatio);
 
-    unsigned int positionBuffer = 0;
+    unsigned int screenPositionBuffer = 0;
     unsigned int normalBuffer = 0;
+    unsigned int colourBuffer = 0;
+    unsigned int pbrBuffer = 0;
+    unsigned int emissionBuffer = 0;
+    unsigned int worldPositionBuffer = 0;
     unsigned int forwardFBO = 0;
     void ForwardSetup();
 

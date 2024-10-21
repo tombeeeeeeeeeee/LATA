@@ -14,8 +14,12 @@ in vec3 fragmentPos;
 in vec3 fragmentColour;
 in vec3 fragmentPosInView;
 
-layout (location = 0) out vec4 positionColour;
+layout (location = 0) out vec4 screenPositionColour;
 layout (location = 1) out vec4 normalColour;
+layout (location = 2) out vec4 colourColour;
+layout (location = 3) out vec4 pbrColour;
+layout (location = 4) out vec4 emissionColour;
+layout (location = 5) out vec4 worldPositionColour;
 
 // Lighting
 #define PI 3.1415926535
@@ -41,7 +45,7 @@ void main()
 
     vec3 trueNormal = TBN * tangentNormal;
 
-    positionColour = vec4(fragmentPosInView, 1.0);
+    screenPositionColour = vec4(fragmentPosInView, 1.0);
     normalColour = vec4(trueNormal, 1.0);
 }
 
