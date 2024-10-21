@@ -113,6 +113,7 @@ void EnemySystem::SpawnMelee(glm::vec3 pos)
 
     SceneObject* enemy = new SceneObject(scene, "MeleeEnemy" + std::to_string(meleeEnemyCount++));
     enemy->setEnemy(new Enemy());
+    enemy->enemy()->type = (int)EnemyType::melee;
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(meleeEnemyHealth);
     enemy->setRigidBody(new RigidBody());
@@ -122,6 +123,7 @@ void EnemySystem::SpawnMelee(glm::vec3 pos)
     );
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
+    enemy->transform()->setScale(6.0f);
     enemy->health()->currHealth = meleeEnemyHealth;
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
