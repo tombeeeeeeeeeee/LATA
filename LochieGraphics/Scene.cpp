@@ -288,6 +288,7 @@ void Scene::InitialisePlayers()
 	if (!eccoSO->renderer()) eccoSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension),(unsigned long long) 0));
 	else eccoSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension);
 	eccoSO->renderer()->setMaterialTint({ 0.0f, 102.0f, 204.0f });
+	
 	//sync
 	SceneObject* syncSO = sceneObjects[sync->GUID];
 	if (!syncSO->health()) syncSO->setHealth(new Health());

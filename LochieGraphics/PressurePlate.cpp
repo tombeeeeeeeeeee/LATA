@@ -45,7 +45,7 @@ toml::table PressurePlate::Serialise(unsigned long long guid)
 {
 	return toml::table
 	{
-		{"guid", Serialisation::SaveAsUnsignedInt(guid)},
+		{"guid", Serialisation::SaveAsUnsignedLongLong(guid)},
 		{"triggerTag", triggerTag},
 		{"smallType", smallType},
 	};

@@ -15,7 +15,7 @@ Door::Door(toml::table table)
 toml::table Door::Serialise(unsigned long long guid)
 {
 	return toml::table{
-		{"guid", Serialisation::SaveAsUnsignedInt(guid)},
+		{"guid", Serialisation::SaveAsUnsignedLongLong(guid)},
 		{"left", left},
 		{"closed", startClosed},
 		{"amountToMove", amountToMove},

@@ -43,7 +43,7 @@ private:
 public:
 	bool aiUpdating = false;
 	const int nfmDensity = 20;
-	const int maxNormalInfluence = 100;
+	const int maxNormalInfluence = 300;
 
 	EnemySystem() {};
 	EnemySystem(toml::table table);
@@ -54,18 +54,18 @@ public:
 	);
 
 	float perceptionRadius = 500.0f;
-	float separationRadius = 300.0f;
+	float separationRadius = 500.0f;
 
-	float alignmentCoef = 0.5f;
-	float cohesionCoef = 0.5f;
-	float seperationCoef = 0.5f;
-	float normalCoef = 0.5f;
+	float alignmentCoef = 0.01f;
+	float cohesionCoef = 0.2f;
+	float seperationCoef = 50.0f;
+	float normalCoef = 0.1f;
 	float playerCoef = 0.5f;
 
-	float slowedPercentage = 75.0f;
+	float slowedPercentage = 95.0f;
 
 	int explosiveEnemyHealth = 2;
-	float explosiveEnemyColliderRadius = 120.0f;
+	float explosiveEnemyColliderRadius = 35.0f;
 	float timeToExplode = 2.0f;
 	float explosionRadius = 350.0f;
 	int explosionDamage = 2;
@@ -76,7 +76,7 @@ public:
 
 	int meleeEnemyHealth = 3;
 	int meleeEnemyDamage = 0;
-	float meleeEnemyColliderRadius = 120.0f;
+	float meleeEnemyColliderRadius = 35.0f;
 	float timeToPunch = 0.8f;
 	float distanceToPunch = 150.0f;
 	float punchRadius = 150.0f;
