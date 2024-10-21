@@ -287,28 +287,9 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal)
 {
-    vec3 lightDir = normalize(-light.direction);
-    vec3 H = normalize(viewDir + lightDir);
+	vec3 radiance = Radiance(-light.direction, 1, normal, 1, 0, 0, light.colour);
 
-    // Diffuse
-    float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = light.colour; //* diff * albedo;
-
-     // cook-torrance brdf
-    float NDF = DistributionGGX(normal, H, roughness);        
-    float G   = GeometrySmith(normal, viewDir, lightDir, roughness);      
-    vec3  F   = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);       
-        
-    vec3 numerator    = NDF * G * F;
-    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(dot(normal, lightDir), 0.0) + 0.0001;
-    vec3 specular     = numerator / denominator;  
-
-    vec3 kD = vec3(1.0) - F;
-    kD *= 1.0 - metallic;
-
-    // add to outgoing radiance Lo
-    float NdotL = max(dot(normal, lightDir), 0.0);         
-    return (kD * albedo / PI + specular) * diffuse * NdotL;
+    return radiance;
 }
 
 vec3 CalcPointLight(PointLight light, int i, vec3 normal)
