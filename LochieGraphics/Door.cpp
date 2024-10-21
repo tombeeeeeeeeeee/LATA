@@ -47,6 +47,7 @@ void Door::GUI()
 		ImGui::InputText("Trigger Tag", &triggerTag);
 		ImGui::DragFloat("Amount To Move", &amountToMove, 2.0f, 0.0f);
 		ImGui::DragFloat("Time To Close", &timeToClose, 0.02f, 0.0f);
-		ImGui::DragFloat("Time To Open", &timeToClose, 0.02f, 0.0f);
+		ImGui::DragFloat("Time To Open", &timeToOpen, 0.02f, 0.0f);
+		ImGui::Unindent();
 	}
 }

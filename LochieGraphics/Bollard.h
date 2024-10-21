@@ -9,6 +9,7 @@ namespace toml {
 
 class Bollard
 {
+public:
 	Bollard() {};
 	Bollard(toml::table table);
 
