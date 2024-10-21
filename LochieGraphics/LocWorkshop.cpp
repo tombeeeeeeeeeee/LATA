@@ -69,40 +69,48 @@ void LocWorkshop::Start()
 	quad = new Mesh();
 	quad->InitialiseQuad(1);
 
-	particles.resize(2);
-	for (auto& i : particles)
-	{
-		i.shader = shader;
-		i.Initialise();
-	}
+	//particles.resize(2);
+	//for (auto& i : particles)
+	//{
+	//	i.shader = shader;
+	//	i.Initialise();
+	//}
 
 	camera->nearPlane = 10.0f;
 	camera->farPlane = 50000.0f;
 
 	particleTexture = ResourceManager::LoadTexture("images/brodie.jpg", Texture::Type::albedo);
 
-	for (auto& i : particles)
-	{
-		i.texture = particleTexture;
-	}
+	//for (auto& i : particles)
+	//{
+	//	i.texture = particleTexture;
+	//}
 }
 
 void LocWorkshop::Update(float delta)
 {
-	for (auto& i : particles)
+	std::vector<std::vector<Particle*>::iterator> toDelete;
+	for (auto i = particles.begin(); i != particles.end(); i++)
 	{
-		i.Update(delta);
+		(*i)->Update(delta);
+		if ((*i)->lifetime < 0) {
+			toDelete.push_back(i);
+		}
+	}
+
+	
+	// TODO: There is prob a better way to do this
+	// Deleting backwards to avoid invaliding iterators
+	for (auto i = toDelete.rbegin(); i != toDelete.rend(); i++)
+	{
+		delete **i;
+		particles.erase(*i);
 	}
 }
 
 void LocWorkshop::Draw()
 {
-	std::vector<Particle*> particlePointers;
-	particlePointers.resize(particles.size());
-	for (size_t i = 0; i < particles.size(); i++)
-	{
-		particlePointers[i] = &particles.at(i);
-	}
+
 
 	renderSystem.Update(
 		renderers,
@@ -110,7 +118,7 @@ void LocWorkshop::Draw()
 		renderers,
 		animators,
 		camera,
-		particlePointers
+		particles
 	);
 
 	//texture->Bind(0);
@@ -151,16 +159,20 @@ void LocWorkshop::GUI()
 	{
 		if (ImGui::CollapsingHeader(("P" + std::to_string(i)).c_str())) {
 			ImGui::Indent();
-			particles.at(i).GUI();
+			particles.at(i)->GUI();
 			ImGui::Unindent();
 		}
 	}
 
+	ImGui::DragInt("Count", &nextParticleCount, 1.0f, 1, INT_MAX);
+
+	ImGui::DragFloat("Lifetime", &nextParticleLifetime);
+
+	ResourceManager::TextureSelector("Texture", &particleTexture, false);
+
 	if (ImGui::Button("Add Another Particles")) {
-		particles.emplace_back();
-		particles.back().shader = shader;
-		particles.back().texture = particleTexture;
-		particles.back().Initialise();
+		particles.emplace_back(new Particle( nextParticleCount, nextParticleLifetime, shader, particleTexture ));
+		particles.back()->Initialise();
 	}
 
 
