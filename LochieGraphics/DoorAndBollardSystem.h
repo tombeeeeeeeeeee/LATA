@@ -21,6 +21,7 @@ public :
 	void Update(
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, Door>& doors,
+		std::unordered_map<unsigned long long, Bollard>& bollards,
 		float delta
 	);
 

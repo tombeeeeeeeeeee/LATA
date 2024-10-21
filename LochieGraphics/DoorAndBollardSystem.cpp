@@ -1,5 +1,6 @@
 #include "DoorAndBollardSystem.h"
 #include "Door.h"
+#include "Bollard.h"
 #include "Transform.h"
 
 void DoorAndBollardSystem::Start(
@@ -16,6 +17,7 @@ void DoorAndBollardSystem::Start(
 void DoorAndBollardSystem::Update(
 	std::unordered_map<unsigned long long, Transform>& transforms,
 	std::unordered_map<unsigned long long, Door>& doors,
+	std::unordered_map<unsigned long long, Bollard>& bollards,
 	float delta
 )
 {

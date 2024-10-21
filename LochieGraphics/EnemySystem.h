@@ -43,7 +43,7 @@ private:
 public:
 	bool aiUpdating = false;
 	const int nfmDensity = 20;
-	const int maxNormalInfluence = 300;
+	const int maxNormalInfluence = 1024;
 
 	EnemySystem() {};
 	EnemySystem(toml::table table);
@@ -59,10 +59,10 @@ public:
 	float alignmentCoef = 0.01f;
 	float cohesionCoef = 0.2f;
 	float seperationCoef = 50.0f;
-	float normalCoef = 0.1f;
+	float normalCoef = 10.0f;
 	float playerCoef = 0.5f;
 
-	float slowedPercentage = 95.0f;
+	float slowedPercentage = 99.5f;
 
 	int explosiveEnemyHealth = 2;
 	float explosiveEnemyColliderRadius = 35.0f;
