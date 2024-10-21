@@ -1,0 +1,61 @@
+[health]
+currHealth = 5
+guid = '2091576977596946314'
+maxHealth = 5
+
+[modelRenderer]
+guid = '2091576977596946314'
+materialTint = [ 0.0, 0.800000011920929, 0.0 ]
+materials = [ '0' ]
+modelGuid = '18138382404370373262'
+
+[rigidBody]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2091576977596946314'
+invMass = 1.0
+invMomentOfInertia = 0.20000000298023224
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[rigidBody.colliders]]
+    collisionLayer = 8
+    guid = '2091576977596946314'
+    isTrigger = false
+    radius = 40.0
+    type = 1
+    verts = [ [ 0.0, 0.0 ] ]
+
+[sceneObject]
+children = []
+guid = '2091576977596946314'
+name = 'Sync'
+parent = '0'
+parts = 394
+prefabBase = '0'
+prefabStatus = 0
+
+[sync]
+barrelOffset = [ -75.0, 70.0, 5.0 ]
+eccoRefractionAngle = 70.0
+eccoRefractionCount = 5
+enemyPierceCount = 99
+guid = '2091576977596946314'
+lookDeadZone = 0.4000000059604645
+misfireColliderRadius = 0.10000000149011612
+misfireDamage = 0
+misfireShotSpeed = 0.10000000149011612
+moveDeadZone = 0.4000000059604645
+moveSpeed = 350.0
+overclockBeamColour = [ 0.06395351886749268, 1.0, 0.0 ]
+overclockBeamLifeSpan = 1.5
+overclockChargeTime = 2.200000047683716
+overclockDamage = 3
+overclockReboundCount = 1
+sniperBeamColour = [ 0.5641789436340332, 1.0, 0.5353982448577881 ]
+sniperBeamLifeSpan = 0.5
+sniperChargeTime = 0.20000000298023224
+sniperDamage = 1
