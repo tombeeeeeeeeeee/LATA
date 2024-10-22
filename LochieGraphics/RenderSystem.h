@@ -56,7 +56,7 @@ public:
 
     float exposure = 1.0f;
 
-    void ForwardUpdate();
+    void DeferredUpdate();
     void HDRBufferUpdate();
     void OutputBufferUpdate();
     void BloomUpdate();
@@ -166,14 +166,12 @@ private:
     void RenderDownSamples(unsigned int srcTexture);
     void RenderUpSamples(float aspectRatio);
 
-    unsigned int screenPositionBuffer = 0;
     unsigned int normalBuffer = 0;
-    unsigned int colourBuffer = 0;
-    unsigned int pbrBuffer = 0;
+    unsigned int albedoBuffer = 0;
     unsigned int emissionBuffer = 0;
-    unsigned int worldPositionBuffer = 0;
-    unsigned int forwardFBO = 0;
-    void ForwardSetup();
+    unsigned int depthBuffer = 0;
+    unsigned int deferredFBO = 0;
+    void DeferredSetup();
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;

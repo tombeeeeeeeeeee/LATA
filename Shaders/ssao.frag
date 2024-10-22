@@ -3,7 +3,7 @@ out float FragColor;
 
 in vec2 texCoords;
 
-uniform sampler2D positionColour;
+uniform sampler2D depth;
 uniform sampler2D normalColour;
 uniform sampler2D texNoise;
 
@@ -18,11 +18,13 @@ uniform float bias = 0.025;
 const vec2 noiseScale = vec2(1920.0/4.0, 1080.0/4.0); 
 
 uniform mat4 projection;
+uniform mat4 invP;
 
 void main()
 {
     // get input for SSAO algorithm
-    vec3 fragPos = texture(positionColour, texCoords).xyz;
+    vec4 NDC = vec4(gl_FragCoord.xy, texture(depth, gl_FragCoord.xy).r, 1.0);
+    vec3 fragPos = (invP * NDC).rgb;
     vec3 normal = normalize(texture(normalColour, texCoords).rgb);
     vec3 randomVec = normalize(texture(texNoise, texCoords * noiseScale).xyz);
 
@@ -46,7 +48,7 @@ void main()
         offset.xyz = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0
 
         // get sample depth
-        float sampleDepth = texture(positionColour, offset.xy).z; // get depth value of kernel sample
+        float sampleDepth = texture(depth, offset.xy).z; // get depth value of kernel sample
         
         // range check & accumulate
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));

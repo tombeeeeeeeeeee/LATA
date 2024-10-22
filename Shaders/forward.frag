@@ -37,10 +37,19 @@ void main()
     tangentNormal = normalize(tangentNormal * 2.0 - 1.0);
 
     vec3 trueNormal = TBN * tangentNormal;
-    vec3 albedo = 
-    colourColour =  texture(material.albedo, texCoords);
-    emissionColour =  texture(material.emission, texCoords);
-    normalColour = vec4(trueNormal, 1.0);
+
+    vec3 albedo3 = texture(material.albedo, texCoords).rgb;
+    vec3 PBR = texture(material.PBR, texCoords).rgb;
+    vec3 emission3 = texture(material.emission, texCoords).rgb;
+
+    //Albedo packed with PBR metallic
+    albedo = vec4(albedo3, PBR.r);
+
+    //Normal packed with PBR Roughness
+    normal = vec4(trueNormal, PBR.g);
+
+    //Emission packed with PBR AO
+    emission = vec4(emission3, PBR.b);
 }
 
     

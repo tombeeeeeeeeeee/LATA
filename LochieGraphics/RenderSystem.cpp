@@ -44,7 +44,7 @@ void RenderSystem::Start(
     OutputBufferSetUp();
     BloomSetup();
     SSAOSetup();
-    ForwardSetup();
+    DeferredSetup();
 
     shadowCaster = _shadowCaster;
     glEnable(GL_DEPTH_TEST);
@@ -212,17 +212,9 @@ void RenderSystem::SetPrefilteredMap(unsigned int textureID)
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-void RenderSystem::ForwardUpdate()
+void RenderSystem::DeferredUpdate()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, forwardFBO);
-
-    glBindTexture(GL_TEXTURE_2D, screenPositionBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    // normal colour buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO);
 
     glBindTexture(GL_TEXTURE_2D, normalBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
@@ -231,14 +223,7 @@ void RenderSystem::ForwardUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glBindTexture(GL_TEXTURE_2D, colourBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    glBindTexture(GL_TEXTURE_2D, pbrBuffer);
+    glBindTexture(GL_TEXTURE_2D, albedoBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -252,19 +237,18 @@ void RenderSystem::ForwardUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glBindTexture(GL_TEXTURE_2D, worldPositionBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindTexture(GL_TEXTURE_2D, depthBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_UNSIGNED_INT_24_8, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, forwardFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalBuffer, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, colourBuffer, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, pbrBuffer, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, emissionBuffer, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, albedoBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, emissionBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
 }
 
 void RenderSystem::HDRBufferUpdate()
@@ -396,7 +380,7 @@ void RenderSystem::Update(
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 
-    glBindFramebuffer(GL_FRAMEBUFFER, forwardFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -575,7 +559,7 @@ void RenderSystem::ScreenResize(int width, int height)
     postFrameTexture->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
     postFrameBuffer->Load();
 
-    ForwardUpdate();
+    DeferredUpdate();
     SSAOUpdate();
     HDRBufferUpdate();
     OutputBufferUpdate();
@@ -880,16 +864,14 @@ void RenderSystem::RenderUpSamples(float aspectRatio)
     glDisable(GL_BLEND);
 }
 
-void RenderSystem::ForwardSetup()
+void RenderSystem::DeferredSetup()
 {
-    glGenTextures(1, &screenPositionBuffer);
     glGenTextures(1, &normalBuffer);
-    glGenTextures(1, &colourBuffer);
-    glGenTextures(1, &pbrBuffer);
+    glGenTextures(1, &albedoBuffer);
     glGenTextures(1, &emissionBuffer);
-    glGenTextures(1, &worldPositionBuffer);
-    glGenFramebuffers(1, &forwardFBO);
-    ForwardUpdate();
+    glGenTextures(1, &depthBuffer);
+    glGenFramebuffers(1, &deferredFBO);
+    DeferredUpdate();
 }
 
 void RenderSystem::RenderQuad()
@@ -981,6 +963,7 @@ void RenderSystem::RenderSSAO()
     for (unsigned int i = 0; i < 64; ++i)
         ssaoShader->setVec3("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
     ssaoShader->setMat4("projection", projection);
+    ssaoShader->setMat4("invP", glm::inverse(projection));
 
     ssaoShader->setInt("kernelSize", kernelSize);
     ssaoShader->setFloat("radius", ssaoRadius);
@@ -989,7 +972,7 @@ void RenderSystem::RenderSSAO()
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, normalBuffer);
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, screenPositionBuffer);
+    glBindTexture(GL_TEXTURE_2D, depthBuffer);
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, noiseTexture);
 
