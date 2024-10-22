@@ -78,6 +78,11 @@ uniform sampler2D ssao;
 in vec4 ndc;
 vec2 screenPosition;
 
+uniform sampler2D screenAbledo;
+uniform sampler2D screenNormal;
+uniform sampler2D screenPBR;
+uniform sampler2D screenEmission;
+
 in vec4 directionalLightSpaceFragPos;
 
 float ShadowCalculation(vec4 fragPosLightSpace);
@@ -106,7 +111,10 @@ const float MAX_REFLECTION_LOD = 4.0;
 
 void main()
 {
-    vec3 PBR = texture(material.PBR, texCoords).rgb;
+    screenPosition = ndc.xy/ndc.w;
+    screenPosition = screenPosition * 0.5 + 0.5;
+
+    vec3 PBR = texture(screenPBR, screenPosition).rgb;
     albedo = texture(material.albedo, texCoords).rgb * fragmentColour;
 
     //TODO: Add atlasing
@@ -115,8 +123,6 @@ void main()
     roughness = PBR.g;
     ao = PBR.b;
 	
-    screenPosition = ndc.xy/ndc.w;
-    screenPosition = screenPosition * 0.5 + 0.5;
 
     TBN = mat3(normalize(fragmentTangent), normalize(fragmentBitangent), normalize(fragmentNormal));
     vec3 tangentNormal = texture(material.normal, texCoords).rgb;
