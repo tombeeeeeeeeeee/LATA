@@ -55,6 +55,7 @@ public:
     void SetPrefilteredMap(unsigned int skybox);
 
     float exposure = 1.0f;
+    int bufferIndex = 0;
 
     void DeferredUpdate();
     void HDRBufferUpdate();

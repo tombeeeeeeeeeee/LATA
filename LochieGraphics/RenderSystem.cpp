@@ -356,7 +356,7 @@ void RenderSystem::Update(
 
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
     shadowCaster->shadowFrameBuffer->Load();
-    unsigned int forwardAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    unsigned int forwardAttachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
     unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -387,7 +387,7 @@ void RenderSystem::Update(
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    glDrawBuffers(2, forwardAttachments);
+    glDrawBuffers(4, forwardAttachments);
 
     DrawAllRenderers(animators, transforms, renders, animatedRenderered, (*shaders)[forward]);
 
@@ -423,7 +423,7 @@ void RenderSystem::Update(
     //glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, camera->nearPlane, camera->farPlane);
     //(*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
 
-    DrawAllRenderers(animators, transforms, renders, animatedRenderered);
+    //DrawAllRenderers(animators, transforms, renders, animatedRenderered);
 
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Draw();
@@ -485,19 +485,34 @@ void RenderSystem::Update(
 
     (*shaders)[screen]->Use();
 
-    (*shaders)[screen]->setInt("scene", 1);
-    (*shaders)[screen]->setInt("bloomBlur", 2);
+    (*shaders)[screen]->setInt("depth", 1);
+    (*shaders)[screen]->setInt("albedo", 2);
+    (*shaders)[screen]->setInt("normal", 3);
+    (*shaders)[screen]->setInt("emission", 4);
+    (*shaders)[screen]->setInt("SSAO", 5);
+    (*shaders)[screen]->setInt("bloomBlur", 6);
 
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, colorBuffer);
+    glBindTexture(GL_TEXTURE_2D, depthBuffer);
 
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, bloomMips[0].texture);
+    glBindTexture(GL_TEXTURE_2D, albedoBuffer);
 
     glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, normalBuffer);
+
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, emissionBuffer);
+
+    glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
 
+    glActiveTexture(GL_TEXTURE6);
+    glBindTexture(GL_TEXTURE_2D, bloomMips[0].texture);
+
+
     (*shaders)[screen]->setFloat("exposure", exposure);
+    (*shaders)[screen]->setInt("buffer", bufferIndex);
 
     if (postEffectOn) {
         postFrameBuffer->Bind();
@@ -744,6 +759,8 @@ void RenderSystem::GUI()
         ImGui::DragFloat("Radius", &ssaoRadius);
         ImGui::DragFloat("Bias", &ssaoBias);
     }
+    ImGui::DragInt("Buffer Index", &bufferIndex, 1, 0, 6);
+
     ImGui::SliderFloat("Post effect thing", &postEffectPercent, 0.0f, 1.0f);
     ImGui::Checkbox("Post Effect on", &postEffectOn);
     ImGui::End();

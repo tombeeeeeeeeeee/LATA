@@ -144,7 +144,7 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "cubemap" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "simpleDepthShader" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "shadowDebug" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "HDRBloom" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "Display" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "brdf" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prefilter" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "downSample" + Paths::shaderExtension),
