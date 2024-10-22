@@ -1,0 +1,35 @@
+[rigidBody]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '12776711100984642936'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[rigidBody.colliders]]
+    collisionLayer = 1
+    guid = '12776711100984642936'
+    isTrigger = true
+    radius = 0.0
+    type = 1
+    verts = [ [ 500.0, 500.0 ], [ 500.0, -500.0 ], [ -500.0, -500.0 ], [ -500.0, 500.0 ] ]
+
+[sceneObject]
+children = []
+guid = '12776711100984642936'
+name = 'Spawner Prefab'
+parent = '0'
+parts = 8200
+prefabBase = '0'
+prefabStatus = 1
+
+[spawnManager]
+enemySpawnList = 0
+guid = '12776711100984642936'
+numToSpawn = 0
+timeBetweenSpawns = 0.15000000596046448
+triggerTag = ''
