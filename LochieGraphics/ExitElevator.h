@@ -24,12 +24,12 @@ public:
 
 	toml::table Serialise(unsigned long long GUID) const;
 
+	std::string levelToLoad = "";
 private:
 	void Initialise(SceneObject* so);
 	bool hasBeenBound = false;
 	bool eccoInExit = false;
 	bool syncInExit = false;
-	std::string levelToLoad = "";
 
 };
 

@@ -52,18 +52,19 @@ void ExitElevator::OnTrigger(Collision collision)
 
 void ExitElevator::GUI(SceneObject* so)
 {
-	if (ImGui::CollapsingHeader("Model Renderer"))
+	std::string tag = Utilities::PointerToString(this);
+	if (ImGui::CollapsingHeader(("Exit Elevator##" + tag).c_str()))
 	{
 		if (hasBeenBound)ImGui::BeginDisabled();
-		if (ImGui::Button("Bind OnTrigger"))
+		if (ImGui::Button(("Bind OnTrigger##" + tag).c_str()))
 		{
 			Initialise(so);
 		}
 		if (hasBeenBound)ImGui::EndDisabled();
-		if (ImGui::Button("Finish Level")) eccoInExit = syncInExit = true;
+		if (ImGui::Button(("Finish Level##" + tag).c_str())) eccoInExit = syncInExit = true;
 
-		ImGui::Checkbox("Ecco In Exit", &eccoInExit);
-		ImGui::Checkbox("Sync In Exit", &syncInExit);
+		ImGui::Checkbox(("Ecco In Exit##" + tag).c_str(), &eccoInExit);
+		ImGui::Checkbox(("Sync In Exit##" + tag).c_str(), &syncInExit);
 
 		std::vector<std::string> loadPaths = {};
 		std::vector<std::string*> loadPathsPointers = {};
