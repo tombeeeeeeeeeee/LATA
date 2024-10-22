@@ -680,6 +680,7 @@ void LevelEditor::Selector(glm::vec2 targetPos)
 				continue;
 			}
 		}
+		if (i.second.getSceneObject() == wallTileParent || i.second.getSceneObject() == groundTileParent)
 		if (i.second.getSceneObject() == gui.getSelected()) { continue; }
 		glm::vec3 temp = i.second.getPosition();
 		glm::vec2 pos = { temp.x, temp.z };
