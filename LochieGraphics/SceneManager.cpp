@@ -108,7 +108,7 @@ SceneManager::SceneManager(Scene* _scene)
 
 	// ImGui style
 	ImGuiStyles::SetLocStyle();
-
+	
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init(); // TODO: Theres an overload for this that takes a version, see if should be using
 

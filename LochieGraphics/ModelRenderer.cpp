@@ -1,6 +1,9 @@
 #include "ModelRenderer.h"
 
 #include "ResourceManager.h"
+#include "SceneManager.h"
+#include "Scene.h"
+#include "SceneObject.h"
 
 #include "Utilities.h"
 
@@ -30,6 +33,71 @@ ModelRenderer::ModelRenderer(Model* _model, Material* _material) :
 	materials.push_back(_material);
 
 	Refresh();
+}
+
+void ModelRenderer::Draw()
+{
+	bool animated = scenema;
+	Animator* animator = nullptr;
+	if (animated) {
+		animator = &animators.at(GUID);
+	}
+	Model* model = renderer.model;
+	if (!model) { return; }
+
+	Shader* previousShader = nullptr;
+
+	for (auto mesh : model->meshes)
+	{
+		int materialID = mesh->materialID;
+		Material* currentMaterial = nullptr;
+
+		if (materialID >= model->materialIDs || renderer.materials[materialID] == nullptr) {
+			materialID = 0;
+			std::cout << "Invalid model material ID\n";
+		}
+		currentMaterial = renderer.materials[materialID];
+
+		// Only bind material if using a different material
+		if (currentMaterial != previousMaterial) {
+			// Skip if no material is set
+			if (currentMaterial == nullptr) { continue; }
+			currentMaterial->Use(givenShader ? givenShader : nullptr);
+			previousMaterial = currentMaterial;
+		}
+
+		Shader* shader;
+		if (!givenShader) {
+			Material* material = renderer.materials[materialID];
+			// TODO: Maybe an error / warning
+
+			if (!material) { continue; }
+			shader = material->getShader();
+		}
+		else {
+			shader = givenShader;
+		}
+
+		if (previousShader != shader) {
+			shader->Use();
+			previousShader = shader;
+			shader->setMat4("view", viewMatrix);
+			shader->setMat4("model", transforms[GUID].getGlobalMatrix());
+			ActivateFlaggedVariables(shader, renderer.materials[materialID]);
+
+			glm::vec3 overallColour = renderer.materials[materialID]->colour * renderer.GetMaterialOverlayColour();
+			shader->setVec3("materialColour", overallColour);
+
+			if (animated) {
+				std::vector<glm::mat4> boneMatrices = animator->getFinalBoneMatrices();
+				for (int i = 0; i < boneMatrices.size(); i++)
+				{
+					shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
+				}
+			}
+		}
+		mesh->Draw();
+	}
 }
 
 void ModelRenderer::GUI()

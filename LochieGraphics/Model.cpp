@@ -54,12 +54,16 @@ void Model::LoadModel(std::string _path)
 	meshGUIDs.resize(scene->mNumMeshes);
 	//meshes.reserve(scene->mNumMeshes);
 
+	ReadHierarchyData(&root, scene->mRootNode);
+
 	min.x = FLT_MAX;
 	min.y = FLT_MAX;
 	min.z = FLT_MAX;
 	max.x = -FLT_MAX;
 	max.y = -FLT_MAX;
 	max.z = -FLT_MAX;
+
+	auto temp = AssimpMatrixToGLM(scene->mRootNode->mTransformation);
 
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 	{
@@ -76,7 +80,6 @@ void Model::LoadModel(std::string _path)
 	}
 	materialIDs = scene->mNumMaterials;
 
-	ReadHierarchyData(&root, scene->mRootNode);
 	// TODO: Do I need to do this, check exactly what should be done
 	//aiReleaseImport(scene);
 }

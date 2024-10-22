@@ -33,6 +33,8 @@ public:
 	ModelRenderer(Model* _model, unsigned long long _materialGUID);
 	ModelRenderer(Model* _model, Material* _material);
 
+	void Draw();
+
 	void GUI();
 
 	toml::table Serialise(unsigned long long GUID) const;
