@@ -47,7 +47,7 @@ struct Collider
 	Collider() = default;
 	virtual void GUI();
 	virtual void DebugDraw(Transform* transform) = 0;
-	static const int transparentLayers = (int)CollisionLayers::trigger | (int)CollisionLayers::enemyProjectile | (int)CollisionLayers::softCover | (int)CollisionLayers::halfCover;
+	static const int transparentLayers = (int)CollisionLayers::trigger | (int)CollisionLayers::enemyProjectile | (int)CollisionLayers::softCover | (int)CollisionLayers::halfCover | (int)CollisionLayers::count;
 
 protected:
 	Collider(toml::table table);

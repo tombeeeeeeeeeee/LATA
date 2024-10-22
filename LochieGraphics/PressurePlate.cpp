@@ -61,13 +61,24 @@ toml::table PressurePlate::Serialise(unsigned long long guid)
 void PressurePlate::OnTrigger(int layerMask)
 {
 	if (eccoToggled) return;
-	if (layerMask & ((int)CollisionLayers::ecco | (int)CollisionLayers::sync))
+	if (smallType)
 	{
-		TriggerSystem::TriggerTag(triggerTag, true);
-		triggeredThisFrame = true;
-		if (smallType && layerMask & (int)CollisionLayers::sync)
+		if (layerMask & ((int)CollisionLayers::ecco | (int)CollisionLayers::sync))
 		{
-			eccoToggled = true;
+			TriggerSystem::TriggerTag(triggerTag, true);
+			triggeredThisFrame = true;
+			if (layerMask & (int)CollisionLayers::ecco)
+			{
+				eccoToggled = true;
+			}
+		}
+	}
+	else
+	{
+		if (layerMask & (int)CollisionLayers::ecco)
+		{
+			TriggerSystem::TriggerTag(triggerTag, true);
+			triggeredThisFrame = true;
 		}
 	}
 }
