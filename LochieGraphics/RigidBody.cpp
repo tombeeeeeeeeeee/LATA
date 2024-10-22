@@ -182,7 +182,9 @@ void RigidBody::DebugDraw(Transform* transform)
 			if (poly->verts.size() == 1)
 			{
 				glm::vec2 pos = RigidBody::Transform2Din3DSpace(transform->getGlobalMatrix(), poly->verts[0]);
-				RenderSystem::debugLines.DrawCircle({ pos.x, 0.1f, pos.y}, poly->radius, { 0.0f,1.0f,0.0f });
+				float height = 0.1f;
+				if (collider->collisionLayer & (int)CollisionLayers::reflectiveSurface) height = 70.0f;
+				RenderSystem::debugLines.DrawCircle({ pos.x, height, pos.y}, poly->radius, { 0.0f,1.0f,0.0f });
 			}
 			else
 			{
