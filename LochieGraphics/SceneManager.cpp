@@ -174,9 +174,11 @@ SceneManager::SceneManager(Scene* _scene)
 	}
 
 	ResourceManager::defaultTexture = ResourceManager::LoadTexture("images/T_DefaultTexture.png", Texture::Type::albedo);
+	ResourceManager::defaultNormal = ResourceManager::LoadTexture("images/T_Normal.png", Texture::Type::normal);
 	ResourceManager::defaultMaterial = ResourceManager::LoadMaterial("Default Material", scene->shaders[super]);
 	ResourceManager::defaultMaterial->AddTextures({
-		ResourceManager::defaultTexture
+		ResourceManager::defaultTexture,
+		ResourceManager::defaultNormal
 		});
 	ResourceManager::defaultShader = scene->shaders[super];
 

@@ -81,6 +81,7 @@ public:
 	static std::unordered_map<unsigned long long, Mesh, hashFNV1A> meshes;
 
 	static Texture* defaultTexture;
+	static Texture* defaultNormal;
 	static Shader* defaultShader;
 	static Material* defaultMaterial;
 	static Model* defaultModel;
