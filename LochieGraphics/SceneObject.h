@@ -45,7 +45,7 @@ enum Parts : unsigned int
 	spawnManager =	1 << 13,
 	door		 =	1 << 14,
 	bollard		 =	1 << 15,
-	ALL = 0b1111111111110,
+	ALL = (1 << 16) - 1 - 1,
 };
 
 class Scene;
@@ -143,6 +143,7 @@ public:
 
 	// Make this take a mask for stuff to delete
 	void ClearParts();
+	void ClearParts(unsigned int toDelete);
 };
 
 
