@@ -512,6 +512,8 @@ void SceneObject::LoadFromPrefab(toml::table table)
 	toml::table sceneObjectTable = *table["sceneObject"].as_table();
 	prefabBase = Serialisation::LoadAsUnsignedLongLong(sceneObjectTable["guid"]);
 
+	name = Serialisation::LoadAsString(sceneObjectTable["name"]);
+
 	unsigned long long intendedParts = Serialisation::LoadAsUnsignedIntOLD(sceneObjectTable["parts"]);
 
 	LoadAsPrefabPart("modelRenderer", modelRenderer, setRenderer, ModelRenderer);
