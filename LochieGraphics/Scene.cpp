@@ -123,7 +123,7 @@ void Scene::DeleteAllSceneObjectsAndParts()
 	
 
 	// TODO: Don't need a whole assert
-	assert(partsChecker = ~Parts::ALL);
+	assert(partsChecker == 0);
 }
 
 SceneObject* Scene::FindSceneObjectOfName(std::string name)

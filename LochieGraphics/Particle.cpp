@@ -10,6 +10,14 @@
 
 std::random_device Particle::random = {};
 
+Particle::Particle(unsigned int _count, float _lifetime, Shader* _shader, Texture* _texture) :
+	count(_count),
+	lifetime(_lifetime),
+	shader(_shader),
+	texture(_texture)
+{
+}
+
 void Particle::Spread()
 {
 	for (size_t i = 0; i < count; i++)
@@ -90,10 +98,6 @@ void Particle::Initialise()
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
-
-	// TODO: use Paths.h
-	// TODO:
-	//compute = new ComputeShader("")
 	glGenBuffers(1, &ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
 
@@ -101,6 +105,8 @@ void Particle::Initialise()
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(float) * 4 * getCount(), &positions[0], GL_DYNAMIC_COPY);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+	initialised = true;
 }
 
 void Particle::Update(float delta)
@@ -109,6 +115,7 @@ void Particle::Update(float delta)
 	{
 		positions.at(i) += velocities.at(i);
 	}
+	lifetime -= delta;
 }
 
 void Particle::Draw()
@@ -165,5 +172,7 @@ void Particle::GUI()
 Particle::~Particle()
 {
 	// TODO:
-
+	glDeleteVertexArrays(1, &quadVAO);
+	glDeleteBuffers(1, &quadVBO);
+	glDeleteBuffers(1, &ssbo);
 }

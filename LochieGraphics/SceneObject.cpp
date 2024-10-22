@@ -399,22 +399,26 @@ Sync* SceneObject::sync() const
 	else return nullptr;
 }
 
+void SceneObject::ClearParts(unsigned int toDelete)
+{
+	if (toDelete & parts & Parts::modelRenderer) { scene->renderers.erase(GUID);     parts &= ~(Parts::modelRenderer); }
+	if (toDelete & parts & Parts::animator)      { scene->animators.erase(GUID);     parts &= ~(Parts::animator);}
+	if (toDelete & parts & Parts::rigidBody)     { scene->rigidBodies.erase(GUID);   parts &= ~(Parts::rigidBody);}
+	if (toDelete & parts & Parts::collider)      { scene->colliders.erase(GUID);     parts &= ~(Parts::collider);}
+	if (toDelete & parts & Parts::ecco)          { scene->ecco->GUID = 0;            parts &= ~(Parts::ecco);}
+	if (toDelete & parts & Parts::sync)          { scene->sync->GUID = 0;            parts &= ~(Parts::sync);}
+	if (toDelete & parts & Parts::health)        { scene->healths.erase(GUID);       parts &= ~(Parts::health);}
+	if (toDelete & parts & Parts::enemy)         { scene->enemies.erase(GUID);       parts &= ~(Parts::enemy);}
+	if (toDelete & parts & Parts::exitElevator)  { scene->exits.erase(GUID);         parts &= ~(Parts::exitElevator);}
+	if (toDelete & parts & Parts::spawnManager)  { scene->spawnManagers.erase(GUID); parts &= ~(Parts::spawnManager);}
+	if (toDelete & parts & Parts::plate)		 { scene->plates.erase(GUID);		 parts &= ~(Parts::plate);}
+	if (toDelete & parts & Parts::door)		     { scene->doors.erase(GUID);	     parts &= ~(Parts::door);}	
+	if (toDelete & parts & Parts::bollard)		 { scene->bollards.erase(GUID);	     parts &= ~(Parts::bollard);}	
+}
+
 void SceneObject::ClearParts()
 {
-	if (parts & Parts::modelRenderer) { scene->renderers.erase(GUID);     parts &= ~(Parts::modelRenderer); }
-	if (parts & Parts::animator)      { scene->animators.erase(GUID);     parts &= ~(Parts::animator);}
-	if (parts & Parts::rigidBody)     { scene->rigidBodies.erase(GUID);   parts &= ~(Parts::rigidBody);}
-	if (parts & Parts::collider)      { scene->colliders.erase(GUID);     parts &= ~(Parts::collider);}
-	if (parts & Parts::ecco)          { scene->ecco->GUID = 0;            parts &= ~(Parts::ecco);}
-	if (parts & Parts::sync)          { scene->sync->GUID = 0;            parts &= ~(Parts::sync);}
-	if (parts & Parts::health)        { scene->healths.erase(GUID);       parts &= ~(Parts::health);}
-	if (parts & Parts::enemy)         { scene->enemies.erase(GUID);       parts &= ~(Parts::enemy);}
-	if (parts & Parts::exitElevator)  { scene->exits.erase(GUID);         parts &= ~(Parts::exitElevator);}
-	if (parts & Parts::spawnManager)  { scene->spawnManagers.erase(GUID); parts &= ~(Parts::spawnManager);}
-	if (parts & Parts::plate)		  { scene->plates.erase(GUID);		  parts &= ~(Parts::plate);}
-	if (parts & Parts::door)		  { scene->doors.erase(GUID);	      parts &= ~(Parts::door);}	
-	if (parts & Parts::bollard)		  { scene->bollards.erase(GUID);	  parts &= ~(Parts::bollard);}	
-
+	ClearParts(Parts::ALL);
 	assert(parts == 0);
 }
 
@@ -480,7 +484,26 @@ void SceneObject::SaveAsPrefab()
 
 void SceneObject::LoadFromPrefab(toml::table table)
 {
-	ClearParts();
+	// Information that shouldn't be loaded from prefab
+	std::string exitLevel = "";
+	if (parts & Parts::exitElevator) {
+		exitLevel = exitElevator()->levelToLoad;
+	}
+	bool hadSpawnManager = parts & Parts::spawnManager;
+	std::string pressurePlateTag = "";
+	if (parts & Parts::plate) {
+		pressurePlateTag = plate()->triggerTag;
+	}
+	std::string doorTag = "";
+	if (parts & Parts::door) {
+		doorTag = door()->triggerTag;
+	}
+	std::string bollardTag = "";
+	if (parts & Parts::bollard) {
+		bollardTag = bollard()->triggerTag;
+	}
+
+	ClearParts(~Parts::spawnManager);
 	
 	unsigned long long originalGUID = GUID;
 
@@ -489,6 +512,8 @@ void SceneObject::LoadFromPrefab(toml::table table)
 	toml::table sceneObjectTable = *table["sceneObject"].as_table();
 	prefabBase = Serialisation::LoadAsUnsignedLongLong(sceneObjectTable["guid"]);
 
+	name = Serialisation::LoadAsString(sceneObjectTable["name"]);
+
 	unsigned long long intendedParts = Serialisation::LoadAsUnsignedIntOLD(sceneObjectTable["parts"]);
 
 	LoadAsPrefabPart("modelRenderer", modelRenderer, setRenderer, ModelRenderer);
@@ -496,11 +521,36 @@ void SceneObject::LoadFromPrefab(toml::table table)
 	LoadAsPrefabPart("rigidBody", rigidBody, setRigidBody, RigidBody);
 	LoadAsPrefabPart("health", health, setHealth, Health);
 	LoadAsPrefabPart("enemy", enemy, setEnemy, Enemy);
-	LoadAsPrefabPart("exitElevator", exitElevator, setExitElevator, ExitElevator);
-	LoadAsPrefabPart("spawnManager", spawnManager, setSpawnManager, SpawnManager);
-	LoadAsPrefabPart("plate", plate, setPressurePlate, PressurePlate);
-	LoadAsPrefabPart("door", door, setDoor, Door);
-	LoadAsPrefabPart("bollard", bollard, setBollard, Bollard);
+	if (intendedParts & Parts::exitElevator) {
+		setExitElevator(new ExitElevator(*table["exitElevator"].as_table()));
+		if (exitLevel != "") {
+			exitElevator()->levelToLoad = exitLevel;
+		}
+	};
+	if (intendedParts & Parts::spawnManager) {
+		if (!hadSpawnManager) {
+			setSpawnManager(new SpawnManager(*table["spawnManager"].as_table()));
+		}
+	};
+	
+	if (intendedParts & Parts::plate) {
+		setPressurePlate(new PressurePlate(*table["plate"].as_table()));
+		if (pressurePlateTag != "") {
+			plate()->triggerTag = pressurePlateTag;
+		}
+	};
+	if (intendedParts & Parts::door) {
+		setDoor(new Door(*table["door"].as_table()));
+		if (doorTag != "") {
+			door()->triggerTag = doorTag;
+		}
+	};
+	if (intendedParts & Parts::bollard) {
+		setBollard(new Bollard(*table["bollard"].as_table()));
+		if (bollardTag != "") {
+			bollard()->triggerTag = bollardTag;
+		}
+	};
 
 	if (intendedParts & Parts::collider) {
 		setCollider(Collider::Load(*table["collider"].as_table()));

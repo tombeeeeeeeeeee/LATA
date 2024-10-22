@@ -14,14 +14,17 @@ class Texture;
 class Particle
 {
 public:
+	bool initialised = false;
 
 	float quadSize = 10.0f; //  
 
-	const unsigned int count = 100000;
+	unsigned int count;
+	float lifetime;
+
 	std::vector<glm::vec4> positions;
 	std::vector<glm::vec4> velocities;
 
-	//Mesh mesh;
+	// TODO: Switch with a proper mesh
 	unsigned int quadVAO = 0;
 	unsigned int quadVBO = 0;
 	Shader* shader = nullptr;
@@ -36,7 +39,7 @@ public:
 
 	glm::mat4 model = glm::identity<glm::mat4>();
 
-	Particle() = default;
+	Particle(unsigned int _count, float _lifetime, Shader* _shader, Texture* _texture);
 
 	void Spread();
 	void Explode();
