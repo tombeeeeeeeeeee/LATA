@@ -43,7 +43,6 @@ void TriggerSystem::Start(
 		{
 			SceneManager::scene->sceneObjects[platePair.first]->setRigidBody(new RigidBody());
 		}
-
 		rigidbodies[platePair.first].onTrigger.push_back(
 			[platePair](Collision collision) { SceneManager::scene->plates[platePair.first].OnTrigger(collision.collisionMask); });
 	}

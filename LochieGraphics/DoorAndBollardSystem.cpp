@@ -27,7 +27,7 @@ void DoorAndBollardSystem::Update(
 	for (auto& doorPair : doors)
 	{
 		int flip = doorPair.second.left ? -1 : 1;
-		float moveAmount = flip * doorPair.second.timeInMovement;
+		float moveAmount = doorPair.second.timeInMovement;
 		if (doorPair.second.startClosed && doorPair.second.state)
 		{
 			doorPair.second.timeInMovement = glm::clamp(doorPair.second.timeInMovement, 0.0f, doorPair.second.timeToOpen);
@@ -56,10 +56,10 @@ void DoorAndBollardSystem::Update(
 			doorPair.second.timeInMovement -= delta;
 			glm::clamp(doorPair.second.timeInMovement, 0.0f, doorPair.second.timeToOpen);
 		}
-		moveAmount = glm::clamp(moveAmount, 0.0f, 1.0f);
+		moveAmount = glm::clamp(moveAmount, 0.0f, 1.0f) * flip;
 		moveAmount *= doorPair.second.amountToMove;
 		transforms[doorPair.first].setPosition(
-			doorPair.second.pos + transforms[doorPair.first].right() * moveAmount
+			doorPair.second.pos + transforms[doorPair.first].forward() * moveAmount
 		);
 	}
 	for (auto& bolPair : bollards)
