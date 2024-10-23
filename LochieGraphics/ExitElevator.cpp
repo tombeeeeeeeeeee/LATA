@@ -5,7 +5,7 @@
 #include "Collision.h"
 #include "SceneObject.h"
 #include "Paths.h"
-
+#include "Collider.h"
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
 
@@ -13,10 +13,12 @@
 
 void ExitElevator::Initialise(SceneObject* so)
 {
-	if (so->parts & Parts::rigidBody && !hasBeenBound)
+	if (so)
 	{
-		hasBeenBound = true;
-		so->rigidbody()->onTrigger.push_back([this](Collision collision) { OnTrigger(collision); });
+		if (so->parts & Parts::rigidBody)
+		{
+			so->rigidbody()->onTrigger.push_back([this](Collision collision) { OnTrigger(collision); });
+		}
 	}
 }
 
@@ -25,26 +27,28 @@ ExitElevator::ExitElevator(toml::table table)
 	levelToLoad = Serialisation::LoadAsString(table["levelToLoad"]);
 }
 
-void ExitElevator::Update()
+bool ExitElevator::Update()
 {
 	if (syncInExit && eccoInExit)
 	{
 		syncInExit = eccoInExit = false;
 		((LevelEditor*)SceneManager::scene)->LoadLevel(true, levelToLoad);
+		return true;
 	}
 	else
 	{
 		syncInExit = eccoInExit = false;
+		return false;
 	}
 }
 
 void ExitElevator::OnTrigger(Collision collision)
 {
-	if (collision.collisionMask & Parts::ecco)
+	if (collision.collisionMask & (int)CollisionLayers::ecco)
 	{
 		eccoInExit = true;
 	}
-	else if (collision.collisionMask & Parts::sync)
+	else if (collision.collisionMask & (int)CollisionLayers::sync)
 	{
 		syncInExit = true;
 	}
@@ -55,12 +59,6 @@ void ExitElevator::GUI(SceneObject* so)
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Exit Elevator##" + tag).c_str()))
 	{
-		if (hasBeenBound)ImGui::BeginDisabled();
-		if (ImGui::Button(("Bind OnTrigger##" + tag).c_str()))
-		{
-			Initialise(so);
-		}
-		if (hasBeenBound)ImGui::EndDisabled();
 		if (ImGui::Button(("Finish Level##" + tag).c_str())) eccoInExit = syncInExit = true;
 
 		ImGui::Checkbox(("Ecco In Exit##" + tag).c_str(), &eccoInExit);

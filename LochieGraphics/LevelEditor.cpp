@@ -250,7 +250,9 @@ void LevelEditor::Update(float delta)
 		camera->state = Camera::targetingPlayers;
 		dabSystem.Start(transforms, doors);
 		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards);
+		for (auto& pair : exits) pair.second.Initialise(sceneObjects[pair.first]);
 	}
+
 	else if(lastFramePlayState && !inPlay) //On Play exit
 	{
 		LoadLevel(false);
@@ -279,7 +281,11 @@ void LevelEditor::Update(float delta)
 			delta
 		);
 
-		for (auto& exitPair : exits) exitPair.second.Update();
+		for (auto& exitPair : exits)
+		{
+			if (exitPair.second.Update())
+				return;
+		}
 
 		if(singlePlayer == 0) camera->state = Camera::targetingPlayers;
 		else camera->state = Camera::targetingPosition;
@@ -628,7 +634,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	triggerSystem.Clear();
 
 	LoadSceneObjectsAndParts(data);
-
+	lastFramePlayState = false;
 	// TODO: this shouldn't need to be here, deleting objects should unselect object
 	gui.setSelected(nullptr);
 
@@ -670,7 +676,6 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 
 	enemySystem.Start(transforms, rigidBodies, colliders);
 	previouslySaved = true;
-
 
 	groundTexture->path = "Levels/" + windowName + ".png";
 	groundTexture->Load();

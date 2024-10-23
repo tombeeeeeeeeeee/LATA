@@ -17,7 +17,7 @@ public:
 	ExitElevator() {};
 	ExitElevator(toml::table table);
 
-	void Update();
+	bool Update();
 	void OnTrigger(Collision collision);
 
 	void GUI(SceneObject* so);
@@ -25,8 +25,8 @@ public:
 	toml::table Serialise(unsigned long long GUID) const;
 
 	std::string levelToLoad = "";
-private:
 	void Initialise(SceneObject* so);
+private:
 	bool hasBeenBound = false;
 	bool eccoInExit = false;
 	bool syncInExit = false;
