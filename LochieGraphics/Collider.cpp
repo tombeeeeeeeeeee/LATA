@@ -146,7 +146,9 @@ void PolygonCollider::DebugDraw(Transform* transform)
 	if (verts.size() == 1)
 	{
 		glm::vec2 p = RigidBody::Transform2Din3DSpace(transform->getGlobalMatrix(), verts[0]);
-		RenderSystem::debugLines.DrawCircle({p.x, 0.1f, p.y}, radius, { 0.0f,1.0f,0.0f });
+		float height = 0.1f;
+		if (collisionLayer & (int)CollisionLayers::reflectiveSurface) height = 70.0f;
+		RenderSystem::debugLines.DrawCircle({p.x, height, p.y}, radius, { 0.0f,1.0f,0.0f });
 	}
 	else
 	{

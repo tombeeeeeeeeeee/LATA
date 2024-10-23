@@ -85,15 +85,13 @@ SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
 	newWall->transform()->setParent(wallTileParent->transform());
 	newWall->setRenderer(new ModelRenderer(wall, (unsigned long long)0));
 	// TODO: Make sure there isn't memory leaks
-	RigidBody* newRigidBody = new RigidBody(0.0f, 0.25f, {}, true);
-	newWall->setRigidBody(newRigidBody);
-	newRigidBody = newWall->rigidbody();
+
 	float wallLength = 150.f;
 	float wallThickness = 12.5f;
-	newRigidBody->addCollider(new PolygonCollider({
-		{ +wallThickness,  +wallLength}, { +wallThickness,  -wallLength}, {  -wallThickness,  -wallLength }, { -wallThickness,  +wallLength}
-		}, 0.0f));
-
+	PolygonCollider* newCollider = new PolygonCollider({
+	{ +wallThickness,  +wallLength}, { +wallThickness,  -wallLength}, {  -wallThickness,  -wallLength }, { -wallThickness,  +wallLength}
+		}, 0.0f);
+	newWall->setCollider(newCollider);
 	return newWall;
 }
 

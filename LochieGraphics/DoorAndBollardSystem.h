@@ -14,7 +14,7 @@ public :
 	* Move Doors and Bollards to correct state
 	*/
 
-	float HeightToLower = 100.0f;
+	float HeightToLower = 146.0f;
 
 	void Start(
 		std::unordered_map<unsigned long long, Transform>& transforms,

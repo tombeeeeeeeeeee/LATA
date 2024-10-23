@@ -263,8 +263,6 @@ void Scene::InitialisePlayers()
 	//ecco
 	SceneObject* eccoSO = sceneObjects[ecco->GUID];
 	if (!eccoSO->health()) eccoSO->setHealth(new Health());
-	eccoSO->health()->currHealth = ecco->currHealth;
-	eccoSO->health()->setMaxHealth(ecco->maxHealth);
 
 	if (!eccoSO->rigidbody()) eccoSO->setRigidBody(new RigidBody(1.0f, 1.0f));
 	if (eccoSO->rigidbody()->colliders.size() < 1)
@@ -284,8 +282,7 @@ void Scene::InitialisePlayers()
 	((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->radius = 75.0f;
 
 	eccoSO->rigidbody()->colliders[1]->collisionLayer = (int)CollisionLayers::reflectiveSurface;
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->verts = { {37.0f, 0.0f} };
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[1])->radius = 44.0f;
+
 
 	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { ecco->OnCollision(collision); });
 

@@ -1,15 +1,15 @@
 [ecco]
 boostWheelTurnInfluence = 25.0
-carMoveSpeed = 300.0
+carMoveSpeed = 250.0
 carReverseMoveSpeed = 100.0
 controlState = false
 deadZone = 0.6000000238418579
 exceedingSlowIntensity = 3.5
 guid = '2091576976424546894'
-healingFromDamage = 1
+healingFromDamage = 2
 maxCarMoveSpeed = 550.0
 maxHealth = 10
-maxReverseSpeed = 150.0
+maxReverseSpeed = 250.0
 maxWheelAngle = 55.0
 minSpeedDamageThreshold = 1.0
 portionOfSidewaysSpeedKept = 80.0
@@ -17,12 +17,12 @@ sidewaysFrictionCoef = 0.6499999761581421
 speedBoost = 125.0
 speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
-speedDamage = 2
-speedReductionAfterDamaging = 0.0
+speedDamage = 25
+speedReductionAfterDamaging = 200.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 0.800000011920929
 turningCircleScalar = 0.05999999865889549
-wheelDirection = [ 0.9654886722564697, 0.26044487953186035 ]
+wheelDirection = [ 0.9999847412109375, 0.005524641368538141 ]
 wheelTurnSpeed = 4.0
 
 [health]
@@ -71,4 +71,4 @@ name = 'Ecco'
 parent = '0'
 parts = 330
 prefabBase = '0'
-prefabStatus = 0
+prefabStatus = 1
