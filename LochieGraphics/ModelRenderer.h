@@ -5,6 +5,8 @@
 
 class Model;
 class Material;
+class Shader;
+class Animator;
 namespace toml {
 	inline namespace v3 {
 		class table;
@@ -13,7 +15,6 @@ namespace toml {
 
 class ModelRenderer
 {
-
 public:
 	Model* model;
 	unsigned long long modelGUID;
@@ -25,6 +26,8 @@ public:
 	glm::vec3 alternativeMaterialTint = {1.0f, 1.0f, 1.0f};
 	float tintDelta = 0.0f;
 
+	Animator* animator = nullptr;
+
 	std::vector<unsigned long long> materialGUIDs = {};
 
 	//ASK: Made to ease errors with unordered maps
@@ -33,7 +36,7 @@ public:
 	ModelRenderer(Model* _model, unsigned long long _materialGUID);
 	ModelRenderer(Model* _model, Material* _material);
 
-	void Draw();
+	void Draw(glm::mat4 modelMatrix, Shader* givenShader = nullptr);
 
 	void GUI();
 

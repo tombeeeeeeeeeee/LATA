@@ -91,6 +91,13 @@ public:
 
     void GUI();
 
+    glm::mat4 viewMatrix = glm::zero<glm::mat4>();
+
+    void ActivateFlaggedVariables(
+        Shader* shader,
+        Material* mat
+    );
+
 private:
 
     Mesh* screenQuad = nullptr;
@@ -109,7 +116,6 @@ private:
     /// </summary>
     unsigned int modelLocation = 0;
 
-    glm::mat4 viewMatrix = glm::zero<glm::mat4>();
 
     /// <summary>
     /// List of entities in order of the shader they use.
@@ -127,11 +133,6 @@ private:
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
         std::unordered_set<unsigned long long> animatedRenderered,
         Shader* shader = nullptr
-    );
-
-    void ActivateFlaggedVariables(
-        Shader* shader,
-        Material* mat
     );
 
     //void BindLightUniform(unsigned int shaderProgram,

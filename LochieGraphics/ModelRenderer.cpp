@@ -10,6 +10,8 @@
 #include "EditorGUI.h"
 #include "Serialisation.h"
 
+#include <iostream>
+
 ModelRenderer::ModelRenderer()
 {
 	Refresh();
@@ -35,28 +37,23 @@ ModelRenderer::ModelRenderer(Model* _model, Material* _material) :
 	Refresh();
 }
 
-void ModelRenderer::Draw()
+void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 {
-	bool animated = scenema;
-	Animator* animator = nullptr;
-	if (animated) {
-		animator = &animators.at(GUID);
-	}
-	Model* model = renderer.model;
 	if (!model) { return; }
 
 	Shader* previousShader = nullptr;
+	Material* previousMaterial = nullptr;
 
 	for (auto mesh : model->meshes)
 	{
 		int materialID = mesh->materialID;
 		Material* currentMaterial = nullptr;
 
-		if (materialID >= model->materialIDs || renderer.materials[materialID] == nullptr) {
+		if (materialID >= model->materialIDs || materials[materialID] == nullptr) {
 			materialID = 0;
 			std::cout << "Invalid model material ID\n";
 		}
-		currentMaterial = renderer.materials[materialID];
+		currentMaterial = materials[materialID];
 
 		// Only bind material if using a different material
 		if (currentMaterial != previousMaterial) {
@@ -68,7 +65,7 @@ void ModelRenderer::Draw()
 
 		Shader* shader;
 		if (!givenShader) {
-			Material* material = renderer.materials[materialID];
+			Material* material = materials[materialID];
 			// TODO: Maybe an error / warning
 
 			if (!material) { continue; }
@@ -81,14 +78,14 @@ void ModelRenderer::Draw()
 		if (previousShader != shader) {
 			shader->Use();
 			previousShader = shader;
-			shader->setMat4("view", viewMatrix);
-			shader->setMat4("model", transforms[GUID].getGlobalMatrix());
-			ActivateFlaggedVariables(shader, renderer.materials[materialID]);
+			shader->setMat4("view", SceneManager::scene->renderSystem.viewMatrix);
+			shader->setMat4("model", modelMatrix);
+			SceneManager::scene->renderSystem.ActivateFlaggedVariables(shader, materials[materialID]);
 
-			glm::vec3 overallColour = renderer.materials[materialID]->colour * renderer.GetMaterialOverlayColour();
+			glm::vec3 overallColour = materials[materialID]->colour * GetMaterialOverlayColour();
 			shader->setVec3("materialColour", overallColour);
 
-			if (animated) {
+			if (animator) {
 				std::vector<glm::mat4> boneMatrices = animator->getFinalBoneMatrices();
 				for (int i = 0; i < boneMatrices.size(); i++)
 				{

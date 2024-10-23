@@ -308,7 +308,23 @@ Type * SceneObject::##nameInGet()                                          \
 }
 
 SetAndGetForPart(ModelRenderer, renderers, Parts::modelRenderer, Renderer, renderer)
-SetAndGetForPart(Animator, animators, Parts::animator, Animator, animator)
+void SceneObject::setAnimator(Animator* part) {
+	if (part) {
+		parts |= Parts::animator; scene->animators[GUID] = *part;
+		if (parts & Parts::modelRenderer) {
+			renderer()->animator = part;
+		}
+	}
+	else {
+		parts &= ~Parts::animator; scene->animators.erase(GUID);
+		if (parts & Parts::modelRenderer) {
+			renderer()->animator = nullptr;
+		}
+	};
+} 
+Animator* SceneObject::animator() {
+	getPart(animators, Parts::animator);
+}
 SetAndGetForPart(RigidBody, rigidBodies, Parts::rigidBody, RigidBody, rigidbody)
 SetAndGetForPart(Health, healths, Parts::health, Health, health)
 SetAndGetForPart(Enemy, enemies, Parts::enemy, Enemy, enemy)

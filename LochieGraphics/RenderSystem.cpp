@@ -560,11 +560,12 @@ void RenderSystem::DrawAllRenderers(
     std::unordered_set<unsigned long long> animatedRenderered,
     Shader* givenShader)
 {
-    Material* previousMaterial = nullptr;
+    //Material* previousMaterial = nullptr;
 
     for (auto& i : renderers)
     {
-        i.second.Draw();
+        Transform* transform = &transforms.at(i.first);
+        i.second.Draw(transform->getGlobalMatrix(), givenShader);
     }
 }
 
