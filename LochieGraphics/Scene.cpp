@@ -248,6 +248,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 		}
 	}
 
+	EnsureAllPartsHaveSceneObject();
 	for (auto& i : sceneObjects)
 	{
 		if (!i.second)
@@ -256,6 +257,31 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 			DeleteSceneObject(i.first);
 		}	
 	}
+}
+
+#define EnsurePartSafety(container, containerType)              \
+	std::vector<unsigned long long> toDeleteOf##container  \
+	for (auto& i : container)                                   \
+	{                                                           \
+		if (sceneObjects.find(i.first) == sceneObjects.end()) { \
+			toDeleteOf##container.push_back(i.first);           \
+		}                                                       \
+	}                                                           \
+	for (size_t i = 0; i < length; i++)
+	{
+
+	}
+
+void Scene::EnsureAllPartsHaveSceneObject()
+{
+	//for (auto& i : transforms) {
+//		if (sceneObjects.find(i.first) == sceneObjects.end()) {
+	//		transforms.erase(i.first);
+	//	}
+	//};
+
+
+	// TODO: Rest of parts
 }
 
 void Scene::InitialisePlayers()
