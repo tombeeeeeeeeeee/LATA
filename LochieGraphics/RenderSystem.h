@@ -62,6 +62,8 @@ public:
     void OutputBufferUpdate();
     void BloomUpdate();
     void SSAOUpdate();
+    void AmbientPassUpdate();
+
 
     void Update(
         std::unordered_map<unsigned long long, ModelRenderer>& renders,
@@ -173,6 +175,11 @@ private:
     unsigned int depthBuffer = 0;
     unsigned int deferredFBO = 0;
     void DeferredSetup();
+
+
+    unsigned int ambientPassBuffer = 0;
+    unsigned int ambientPassFBO = 0;
+    void AmibentPassSetup();
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;

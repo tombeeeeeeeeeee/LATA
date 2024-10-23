@@ -144,7 +144,7 @@ LevelEditor::LevelEditor() :
 
 void LevelEditor::Start()
 {
-	groundShader = ResourceManager::LoadShader("Shaders/floorWorld.vert", "Shaders/superDuper.frag", Shader::Flags::Spec | Shader::Flags::VPmatrix | Shader::Flags::Lit);
+	groundShader = ResourceManager::LoadShader("Shaders/floorWorld.vert", "Shaders/prepass.frag", Shader::Flags::Spec | Shader::Flags::VPmatrix | Shader::Flags::Lit);
 	groundTexture = ResourceManager::LoadTexture("images/T_MissingTexture.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
 	groundTexture->mipMapped = false;
 	groundMaterial = ResourceManager::LoadMaterial("Ground", groundShader);

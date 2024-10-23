@@ -16,21 +16,7 @@ uniform int bufferIndex;
 
 void main()
 {
-    // to bloom or not to bloom
-    //vec3 result = vec3(0.0);
-    //
-    ////vec3 hdrColor = texture(scene, texCoords).rgb;
-    //
-    //vec3 bloomColor = texture(bloomBlur, texCoords).rgb;
-    //result = mix(hdrColor, bloomColor, bloomStrength); // linear interpolation
-    //
-    //// tone mapping
-    //result = vec3(1.0) - exp(-result * exposure);
-    //
-    ////Gamma
-    //const float gamma = 2.2;
-    //result = pow(result, vec3(1.0 / gamma));
-    //FragColor = vec4(result, 1.0);
+
     switch(bufferIndex)
     {
         //Depth
@@ -64,7 +50,7 @@ void main()
 
         //SSAO
         case 5:
-        FragColor = vec4(texture(SSAO, texCoords).rgb, 1.0);
+        FragColor = vec4(texture(SSAO, texCoords).rrr, 1.0);
         break;
 
         //BLOOM

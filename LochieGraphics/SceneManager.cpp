@@ -153,7 +153,7 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "lineRenderer" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssao" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssaoBlur" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "forward" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prepass" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "superDuper" + Paths::shaderExtension),
 	});
 

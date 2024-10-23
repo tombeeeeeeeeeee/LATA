@@ -13,6 +13,6 @@ enum ShaderIndex
 	lines,
 	ssao,
 	ssaoBlur,
-	forward,
+	prepass,
 	super,
 };

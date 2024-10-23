@@ -256,6 +256,21 @@ void RenderSystem::DeferredUpdate()
     }
 }
 
+void RenderSystem::AmbientPassUpdate()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, ambientPassFBO);
+
+    glBindTexture(GL_TEXTURE_2D, ambientPassBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, ambientPassFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ambientPassBuffer, 0);
+}
+
 void RenderSystem::HDRBufferUpdate()
 {
     // create floating point color buffer
@@ -394,7 +409,7 @@ void RenderSystem::Update(
 
     glDrawBuffers(4, forwardAttachments);
 
-    DrawAllRenderers(animators, transforms, renders, animatedRenderered, (*shaders)[forward]);
+    DrawAllRenderers(animators, transforms, renders, animatedRenderered);
 
     RenderSSAO();
     glDisable(GL_DEPTH_TEST);
@@ -584,6 +599,7 @@ void RenderSystem::ScreenResize(int width, int height)
     HDRBufferUpdate();
     OutputBufferUpdate();
     BloomUpdate();
+    AmbientPassUpdate();
 }
 
 
@@ -764,7 +780,7 @@ void RenderSystem::GUI()
         ImGui::DragFloat("Radius", &ssaoRadius);
         ImGui::DragFloat("Bias", &ssaoBias);
     }
-    ImGui::DragInt("Buffer Index", &bufferIndex, 1, 0, 6);
+    ImGui::DragInt("Buffer Index", &bufferIndex, 0.2f, 0, 6);
 
     ImGui::SliderFloat("Post effect thing", &postEffectPercent, 0.0f, 1.0f);
     ImGui::Checkbox("Post Effect on", &postEffectOn);
@@ -894,6 +910,13 @@ void RenderSystem::DeferredSetup()
     glGenTextures(1, &depthBuffer);
     glGenFramebuffers(1, &deferredFBO);
     DeferredUpdate();
+}
+
+void RenderSystem::AmibentPassSetup()
+{
+    glGenTextures(1, &ambientPassBuffer);
+    glGenFramebuffers(1, &ambientPassFBO);
+    AmbientPassUpdate();
 }
 
 void RenderSystem::RenderQuad()
