@@ -38,7 +38,7 @@ void main()
 
     vec3 trueNormal = TBN * tangentNormal;
 
-    vec3 albedo3 = texture(material.albedo, texCoords).rgb;
+    vec3 albedo3 = texture(material.albedo, texCoords).rgb * fragmentColour;
     vec3 PBR = texture(material.PBR, texCoords).rgb;
     vec3 emission3 = texture(material.emission, texCoords).rgb;
 

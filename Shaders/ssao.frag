@@ -25,6 +25,7 @@ void main()
     // get input for SSAO algorithm
     vec4 NDC = vec4(gl_FragCoord.xy, texture(depth, gl_FragCoord.xy).r, 1.0);
     vec3 fragPos = (invP * NDC).rgb;
+
     vec3 normal = normalize(texture(normalColour, texCoords).rgb);
     vec3 randomVec = normalize(texture(texNoise, texCoords * noiseScale).xyz);
 

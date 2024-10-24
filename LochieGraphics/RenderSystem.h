@@ -179,7 +179,9 @@ private:
 
     unsigned int ambientPassBuffer = 0;
     unsigned int ambientPassFBO = 0;
+    int ambientPassShaderIndex = 0;
     void AmibentPassSetup();
+    void RenderAmbientPass();
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;

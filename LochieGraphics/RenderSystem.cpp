@@ -1,5 +1,10 @@
 #include "RenderSystem.h"
 
+#include "SceneManager.h"
+#include "Scene.h"
+#include "DirectionalLight.h"
+#include "SpotLight.h"
+#include "PointLight.h"
 #include "ResourceManager.h"
 #include "Light.h"
 #include "Transform.h"
@@ -44,7 +49,8 @@ void RenderSystem::Start(
     OutputBufferSetUp();
     BloomSetup();
     SSAOSetup();
-    DeferredSetup();
+    DeferredSetup(); 
+    AmibentPassSetup();
 
     shadowCaster = _shadowCaster;
     glEnable(GL_DEPTH_TEST);
@@ -377,6 +383,7 @@ void RenderSystem::Update(
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
     shadowCaster->shadowFrameBuffer->Load();
     unsigned int forwardAttachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+    unsigned int ambientAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -412,12 +419,15 @@ void RenderSystem::Update(
     DrawAllRenderers(animators, transforms, renders, animatedRenderered);
 
     RenderSSAO();
+
     glDisable(GL_DEPTH_TEST);
 
     // TODO: move viewport changing stuff into FrameBuffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+
 
     glEnable(GL_DEPTH_TEST);
+
 
     (*shaders)[ShaderIndex::super]->Use();
 
@@ -431,6 +441,7 @@ void RenderSystem::Update(
     //TODO:
     shadowCaster->depthMap->Bind(17);
     // RENDER SCENE
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
@@ -451,12 +462,12 @@ void RenderSystem::Update(
     glDepthFunc(GL_ALWAYS);
     debugLines.Draw();
 
-    glDepthFunc(GL_LEQUAL); // Change depth function
-    Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);
+    //glDepthFunc(GL_LEQUAL); // Change depth function
 
-    RenderQuad();
+    //Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);
+    //
+    //RenderQuad();
     glDepthFunc(GL_LESS);
-
 
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
@@ -491,11 +502,13 @@ void RenderSystem::Update(
 
     RenderBloom(bloomBuffer);
 
+    RenderAmbientPass();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Unbind framebuffer
     //FrameBuffer::Unbind();
     glDisable(GL_DEPTH_TEST); // Disable depth test for fullscreen quad
+
 
 
     //FrameBuffer Rendering
@@ -505,7 +518,7 @@ void RenderSystem::Update(
 
     (*shaders)[screen]->Use();
 
-    (*shaders)[screen]->setInt("depth", 1);
+    (*shaders)[screen]->setInt("ambientPass", 1);
     (*shaders)[screen]->setInt("albedo", 2);
     (*shaders)[screen]->setInt("normal", 3);
     (*shaders)[screen]->setInt("emission", 4);
@@ -513,7 +526,7 @@ void RenderSystem::Update(
     (*shaders)[screen]->setInt("bloomBlur", 6);
 
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, depthBuffer);
+    glBindTexture(GL_TEXTURE_2D, ambientPassBuffer);
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, albedoBuffer);
@@ -595,6 +608,7 @@ void RenderSystem::ScreenResize(int width, int height)
     postFrameBuffer->Load();
 
     DeferredUpdate();
+    AmbientPassUpdate();
     SSAOUpdate();
     HDRBufferUpdate();
     OutputBufferUpdate();
@@ -917,6 +931,8 @@ void RenderSystem::AmibentPassSetup()
     glGenTextures(1, &ambientPassBuffer);
     glGenFramebuffers(1, &ambientPassFBO);
     AmbientPassUpdate();
+    ambientPassShaderIndex = (*shaders).size();
+    (*shaders).push_back(ResourceManager::LoadShaderDefaultVert("ambient"));
 }
 
 void RenderSystem::RenderQuad()
@@ -993,6 +1009,63 @@ void RenderSystem::SSAOSetup()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
+
+void RenderSystem::RenderAmbientPass()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, ambientPassFBO);
+    
+    Shader* ambientShader = (*shaders)[ambientPassShaderIndex];
+
+    ambientShader->Use();
+    ambientShader->setInt("screenDepth", 1);
+    ambientShader->setInt("screenAlbedo", 2);
+    ambientShader->setInt("screenNormal", 3);
+    ambientShader->setInt("screenEmission", 4);
+    ambientShader->setInt("screenSSAO", 5);
+    ambientShader->setInt("skyBox", 6);
+    ambientShader->setInt("irradianceMap", 7);
+    ambientShader->setInt("prefilterMap", 8);
+    ambientShader->setInt("brdfLUT", 9);
+
+    ambientShader->setMat4("invP", glm::inverse(projection));
+    ambientShader->setMat4("invVP", glm::inverse(viewMatrix * projection));
+
+    DirectionalLight* dirLight = (DirectionalLight*)SceneManager::scene->lights[0];
+    ambientShader->setVec3("lightDirection", dirLight->direction);
+    ambientShader->setVec3("lightColour", dirLight->colour);
+    ambientShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, depthBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glBindTexture(GL_TEXTURE_2D, albedoBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 3);
+    glBindTexture(GL_TEXTURE_2D, normalBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 4);
+    glBindTexture(GL_TEXTURE_2D, emissionBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 5);
+    glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 6);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
+
+    glActiveTexture(GL_TEXTURE0 + 7);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+
+    glActiveTexture(GL_TEXTURE0 + 8);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+
+    glActiveTexture(GL_TEXTURE0 + 9);
+    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+
+    RenderQuad();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void RenderSystem::RenderSSAO()

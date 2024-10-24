@@ -3,7 +3,7 @@
 out vec4 FragColor;
 in vec2 texCoords;
 
-uniform sampler2D depth;
+uniform sampler2D ambientPass;
 uniform sampler2D albedo;
 uniform sampler2D normal;
 uniform sampler2D emission;
@@ -16,13 +16,27 @@ uniform int bufferIndex;
 
 void main()
 {
+    // to bloom or not to bloom
+    vec3 result = vec3(0.0);
+    //
+    result = texture(ambientPass, texCoords).rgb;
+    //
+    //vec3 bloomColor = texture(bloomBlur, texCoords).rgb;
+    //result = mix(hdrColor, bloomColor, bloomStrength); // linear interpolation
+    //
+    // tone mapping
+    result = vec3(1.0) - exp(-result * exposure);
+    //
+    ////Gamma
+    const float gamma = 2.2;
+    result = pow(result, vec3(1.0 / gamma));
+    FragColor = vec4(result, 1.0);
 
     switch(bufferIndex)
     {
         //Depth
         case 0:
-        float d = texture(depth, texCoords).r;
-        FragColor = vec4(d, d, d,1.0);
+        //FragColor = vec4(texture(ambientPass, texCoords).rgb ,1.0);
         break;
 
         //Albedo
