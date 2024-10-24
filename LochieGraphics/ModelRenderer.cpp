@@ -41,7 +41,6 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 {
 	if (!model) { return; }
 
-	Shader* previousShader = nullptr;
 	Material* previousMaterial = nullptr;
 
 	for (int i = 0; i < model->meshes.size(); i++)
@@ -57,12 +56,12 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 		currentMaterial = materials[materialID];
 
 		// Only bind material if using a different material
-		//if (currentMaterial != previousMaterial) {
+		if (currentMaterial != previousMaterial) {
 			// Skip if no material is set
 			if (currentMaterial == nullptr) { continue; }
 			currentMaterial->Use(givenShader ? givenShader : nullptr);
 			previousMaterial = currentMaterial;
-		//}
+		}
 
 		Shader* shader;
 		if (!givenShader) {
@@ -76,26 +75,23 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 			shader = givenShader;
 		}
 
-		//if (previousShader != shader) {
-			shader->Use();
-			previousShader = shader;
-			shader->setMat4("view", SceneManager::scene->renderSystem.viewMatrix);
-			glm::mat4 global = glm::identity<glm::mat4>();
-			model->root.ModelMatrixOfMesh(i, global);
-			shader->setMat4("model", modelMatrix * global);
-			SceneManager::scene->renderSystem.ActivateFlaggedVariables(shader, materials[materialID]);
+		shader->Use();
+		shader->setMat4("view", SceneManager::scene->renderSystem.viewMatrix);
+		glm::mat4 global = glm::identity<glm::mat4>();
+		model->root.ModelMatrixOfMesh(i, global);
+		shader->setMat4("model", modelMatrix * global);
+		SceneManager::scene->renderSystem.ActivateFlaggedVariables(shader, materials[materialID]);
 
-			glm::vec3 overallColour = materials[materialID]->colour * GetMaterialOverlayColour();
-			shader->setVec3("materialColour", overallColour);
+		glm::vec3 overallColour = materials[materialID]->colour * GetMaterialOverlayColour();
+		shader->setVec3("materialColour", overallColour);
 
-			if (animator) {
-				std::vector<glm::mat4> boneMatrices = animator->getFinalBoneMatrices();
-				for (int i = 0; i < boneMatrices.size(); i++)
-				{
-					shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
-				}
+		if (animator) {
+			std::vector<glm::mat4> boneMatrices = animator->getFinalBoneMatrices();
+			for (int i = 0; i < boneMatrices.size(); i++)
+			{
+				shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
 			}
-		//}
+		}
 		mesh->Draw();
 	}
 }

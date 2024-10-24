@@ -32,10 +32,28 @@ Mesh* ResourceManager::defaultMesh = nullptr;
 unsigned long long ResourceManager::guidCounter = 100;
 std::random_device ResourceManager::guidRandomiser = {};
 
-#define LoadResource(type, collection, ...)                             \
-type newResource = type(__VA_ARGS__ );                                  \
-newResource.GUID = GetNewGuid();                                        \
-return &collection.emplace(newResource.GUID, newResource).first->second \
+#define LoadResource(type, collection, ...)                                 \
+unsigned long long newGuid = GetNewGuid();                                  \
+type* newResource = &collection.try_emplace(newGuid, __VA_ARGS__).first->second; \
+newResource->GUID = newGuid;                                                 \
+return newResource;                                                        \
+
+
+#define LoadResourceAsset(type, container)                                                \
+	std::ifstream file(path);                                                             \
+	if (!file) {                                                                          \
+		std::cout << "Failed to load ##type asset, attempted at path: " << path << '\n';  \
+		return nullptr;                                                                   \
+	}                                                                                     \
+	toml::table data = toml::parse(file);                                                 \
+	unsigned long long loadingGUID = Serialisation::LoadAsUnsignedLongLong(data["guid"]); \
+	auto search = container.find(loadingGUID);                                            \
+	if (search != container.end()) {                                                      \
+		return &search->second;                                                           \
+	}                                                                                     \
+	file.close();                                                                         \
+	return &container.emplace(loadingGUID, data).first->second;
+
 
 Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragmentPath, int flags)
 {
@@ -67,21 +85,6 @@ Shader* ResourceManager::LoadShader(toml::v3::table toml)
 {
 	return LoadShader(&toml);
 }
-
-#define LoadResourceAsset(type, container)                                                \
-	std::ifstream file(path);                                                             \
-	if (!file) {                                                                          \
-		std::cout << "Failed to load ##type asset, attempted at path: " << path << '\n';  \
-		return nullptr;                                                                   \
-	}                                                                                     \
-	toml::table data = toml::parse(file);                                                 \
-	unsigned long long loadingGUID = Serialisation::LoadAsUnsignedLongLong(data["guid"]); \
-	auto search = container.find(loadingGUID);                                            \
-	if (search != container.end()) {                                                      \
-		return &search->second;                                                           \
-	}                                                                                     \
-	file.close();                                                                         \
-	return &container.emplace(loadingGUID, data).first->second;
 
 Shader* ResourceManager::LoadShaderAsset(std::string path)
 {

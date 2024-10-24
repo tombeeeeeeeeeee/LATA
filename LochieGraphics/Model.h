@@ -16,11 +16,11 @@ namespace toml {
 
 class Model
 {
-private:
+public:
 	friend class ResourceManager;
 	Model();
 	Model(std::string path);
-public:
+	static void PrintMetaData(aiMetadata* metaData);
 	Model(toml::table table);
 
 	glm::vec3 min;

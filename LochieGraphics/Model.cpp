@@ -27,65 +27,6 @@ Model::Model(std::string _path) :
 	LoadModel(path);
 }
 
-static void PrintMetaData(aiMetadata* metaData) {
-	if (!metaData) { return; }
-	for (size_t i = 0; i < metaData->mNumProperties; i++)
-	{
-		std::cout << "\nMeta data: " << metaData->mKeys[i].C_Str() << '\n';
-		std::cout << "Type: ";
-
-		aiString asString;
-		if (metaData->mValues[i].mType == AI_AISTRING) {
-			asString = ((aiString*)metaData->mValues[i].mData)->C_Str();
-		}
-
-		switch (metaData->mValues[i].mType)
-		{
-		case AI_BOOL:
-			std::cout << "Bool\n" << *(bool*)metaData->mValues[i].mData;
-			break;
-		case AI_INT32:
-			std::cout << "int 32\n" << *(int32_t*)metaData->mValues[i].mData;
-			break;
-		case AI_UINT64:
-			std::cout << "u long long\n" << *(uint64_t*)metaData->mValues[i].mData;
-			break;
-		case AI_FLOAT:
-			std::cout << "float\n" << *(float*)metaData->mValues[i].mData;
-			break;
-		case AI_DOUBLE:
-			std::cout << "Double\n" << *(double*)metaData->mValues[i].mData;
-			break;
-		case AI_AISTRING:
-			std::cout << "string\n" << (*(aiString*)metaData->mValues[i].mData).C_Str();
-			break;
-		case AI_AIVECTOR3D:
-			std::cout << "vec3\n" << ((float*)metaData->mValues[i].mData)[0] << ", " << ((float*)metaData->mValues[i].mData)[1] << ", " << ((float*)metaData->mValues[i].mData)[2];
-			break;
-		case AI_AIMETADATA:
-			std::cout << "meta meta data, idk how to read value";
-			break;
-		case AI_INT64:
-			std::cout << "int 64\n" << *(int64_t*)metaData->mValues[i].mData;
-			break;
-		case AI_UINT32:
-			std::cout << "u int\n" << *(uint32_t*)metaData->mValues[i].mData;
-			break;
-		case AI_META_MAX:
-			std::cout << "meta max data, idk how to read value";
-			break;
-		default:
-			break;
-		}
-		std::cout << "\n";
-	}
-}
-
-
-
-
-
-
 // TODO: Models can no longer flip textures on load as they are always loaded seperatly now
 void Model::LoadModel(std::string _path)
 {
@@ -110,9 +51,11 @@ void Model::LoadModel(std::string _path)
 		std::cout << "Loaded model at: " << path << "\n";
 	}
 
-	PrintMetaData(scene->mMetaData);
+	//PrintMetaData(scene->mMetaData);
+	float conversionScale = 1;
+	scene->mMetaData->Get<float>("UnitScaleFactor", conversionScale);
 	
-
+	//importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 100);
 	//importer.ApplyPostProcessing(aiProcess_GlobalScale);
 	//std::cout << "Scale factor: " << importer.GetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, AI_CONFIG_GLOBAL_SCALE_FACTOR_DEFAULT) << '\n';
 
@@ -123,7 +66,23 @@ void Model::LoadModel(std::string _path)
 
 	ReadHierarchyData(&root, scene->mRootNode);
 	
-	
+	float globalScale = 100.0f;
+	// TODO: See how to apply this properly, the flag doesn't work properly
+	if (root.children.size() == 1) {
+		root.children.at(0)->transform.setScale(root.children.at(0)->transform.getScale() * conversionScale);
+	}
+	else {
+		root.transform.setScale(root.transform.getScale() * conversionScale);
+	}
+
+	//if (root.children.empty()) {
+	//}
+	//else {
+	//	for (auto& i : root.children)
+	//	{
+	//		i->transform.setScale(i->transform.getScale() * conversionScale);
+	//	}
+	//}
 
 
 	min.x = FLT_MAX;
@@ -268,7 +227,8 @@ void Model::ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src)
 
 	for (unsigned int i = 0; i < src->mNumChildren; i++)
 	{
-		dest->children.emplace_back(new ModelHierarchyInfo())->transform.setParent(&dest->transform);
+		dest->children.emplace_back(new ModelHierarchyInfo());
+		dest->children.back()->transform.setParent(&dest->transform);
 		ReadHierarchyData(dest->children.back(), src->mChildren[i]);
 	}
 }
@@ -293,4 +253,53 @@ Model::Model(toml::table table)
 {
 	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
 	LoadModel(Serialisation::LoadAsString(table["path"]));
+}
+
+void Model::PrintMetaData(aiMetadata* metaData) {
+	if (!metaData) { return; }
+	for (size_t i = 0; i < metaData->mNumProperties; i++)
+	{
+		std::cout << "\nMeta data: " << metaData->mKeys[i].C_Str() << '\n';
+		std::cout << "Type: ";
+
+		switch (metaData->mValues[i].mType)
+		{
+		case AI_BOOL:
+			std::cout << "Bool\n" << *(bool*)metaData->mValues[i].mData;
+			break;
+		case AI_INT32:
+			std::cout << "int 32\n" << *(int32_t*)metaData->mValues[i].mData;
+			break;
+		case AI_UINT64:
+			std::cout << "u long long\n" << *(uint64_t*)metaData->mValues[i].mData;
+			break;
+		case AI_FLOAT:
+			std::cout << "float\n" << *(float*)metaData->mValues[i].mData;
+			break;
+		case AI_DOUBLE:
+			std::cout << "Double\n" << *(double*)metaData->mValues[i].mData;
+			break;
+		case AI_AISTRING:
+			std::cout << "string\n" << (*(aiString*)metaData->mValues[i].mData).C_Str();
+			break;
+		case AI_AIVECTOR3D:
+			std::cout << "vec3\n" << ((float*)metaData->mValues[i].mData)[0] << ", " << ((float*)metaData->mValues[i].mData)[1] << ", " << ((float*)metaData->mValues[i].mData)[2];
+			break;
+		case AI_AIMETADATA:
+			std::cout << "meta meta data, idk how to read value";
+			break;
+		case AI_INT64:
+			std::cout << "int 64\n" << *(int64_t*)metaData->mValues[i].mData;
+			break;
+		case AI_UINT32:
+			std::cout << "u int\n" << *(uint32_t*)metaData->mValues[i].mData;
+			break;
+		case AI_META_MAX:
+			std::cout << "meta max data, idk how to read value of even is one";
+			break;
+		default:
+			break;
+		}
+		std::cout << "\n";
+	}
 }
