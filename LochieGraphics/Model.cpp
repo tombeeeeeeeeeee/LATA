@@ -251,7 +251,7 @@ void Model::ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src)
 	aiVector3D scale;
 
 	src->mTransformation.Decompose(scale, rot, pos);
-	dest->transform.getPosition() = AssimpVecToGLM(pos);
+	dest->transform.setPosition(AssimpVecToGLM(pos));
 	dest->transform.setRotation(AssimpQuatToGLM(rot));
 	dest->transform.setScale(AssimpVecToGLM(scale));
 	if (dest->name == "RootNode") {
