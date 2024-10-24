@@ -81,7 +81,7 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 			previousShader = shader;
 			shader->setMat4("view", SceneManager::scene->renderSystem.viewMatrix);
 			glm::mat4 global = glm::identity<glm::mat4>();
-			model->root.GlobalMatrixOfMesh(i, model, global);
+			model->root.ModelMatrixOfMesh(i, global);
 			shader->setMat4("model", modelMatrix * global);
 			SceneManager::scene->renderSystem.ActivateFlaggedVariables(shader, materials[materialID]);
 

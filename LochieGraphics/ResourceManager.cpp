@@ -81,7 +81,7 @@ Shader* ResourceManager::LoadShader(toml::v3::table toml)
 		return &search->second;                                                           \
 	}                                                                                     \
 	file.close();                                                                         \
-	return &container.emplace(loadingGUID, type(data)).first->second;
+	return &container.emplace(loadingGUID, data).first->second;
 
 Shader* ResourceManager::LoadShaderAsset(std::string path)
 {

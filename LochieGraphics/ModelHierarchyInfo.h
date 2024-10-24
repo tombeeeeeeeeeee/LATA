@@ -3,8 +3,10 @@
 #include "Transform.h"
 
 #include <string>
+#include <unordered_map>
 
 class Model;
+struct BoneInfo;
 
 class ModelHierarchyInfo
 {
@@ -19,8 +21,7 @@ public:
 	// TODO: Actually delete them
 	std::vector<ModelHierarchyInfo*> children;
 
-	void GUI();
+	void GUI(bool header = true, std::unordered_map<std::string, BoneInfo>* boneInfoMap = nullptr);
 
-	// TODO: Rename, is model not global
-	bool GlobalMatrixOfMesh(unsigned int meshIndex, Model* model, glm::mat4& matrix);
+	bool ModelMatrixOfMesh(unsigned int meshIndex, glm::mat4& matrix);
 };

@@ -16,13 +16,13 @@ namespace toml {
 
 class Model
 {
-	friend class ResourceManager;
 private:
+	friend class ResourceManager;
 	Model();
 	Model(std::string path);
+public:
 	Model(toml::table table);
 
-public:
 	glm::vec3 min;
 	glm::vec3 max;
 

@@ -204,6 +204,9 @@ void GUI::setSelected(SceneObject* so)
 {
 	sceneObjectSelected = so;
 	lastSelected = so;
+	if (so) {
+		modelHierarchySelected = nullptr;
+	}
 
 	multiSelectedSceneObjects.clear();
 }
@@ -346,6 +349,20 @@ void GUI::SceneObjectMenu()
 	else if (sceneObjectSelected) {
 		sceneObjectSelected->GUI();
 	}
+	else if (modelHierarchySelected) {
+		if (lastSelected) {
+			if (lastSelected->parts & Parts::modelRenderer && lastSelected->renderer()->model) {
+				modelHierarchySelected->GUI(false, &lastSelected->renderer()->model->boneInfoMap);
+			}
+			else {
+				modelHierarchySelected->GUI(false);
+			}
+		}
+		else {
+			std::cout << "Hierarchy selected but no object, infomation might be missing\n";
+			modelHierarchySelected->GUI(false);
+		}
+	}
 	else {
 		ImGui::Text("Select a Scene Object in the Hierarchy Menu");
 	}
@@ -438,7 +455,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	if (sceneObjectSelected == sceneObject || std::find(multiSelectedSceneObjects.begin(), multiSelectedSceneObjects.end(), sceneObject) != multiSelectedSceneObjects.end()) {
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
-	bool hasChildren = sceneObject->transform()->HasChildren();
+	bool hasChildren = sceneObject->transform()->HasChildren() || (sceneObject->parts & Parts::modelRenderer && sceneObject->renderer()->model);
 	if (!hasChildren) {
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
@@ -504,6 +521,86 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	for (auto child : children)
 	{
 		TransformTree(child->getSceneObject());
+	}
+	if (sceneObject->parts & Parts::modelRenderer) {
+		auto model = sceneObject->renderer()->model;
+		if (model) {
+			TransformTree(sceneObject, &model->root);
+		}
+	}
+	ImGui::TreePop();
+}
+
+void GUI::TransformTree(SceneObject* so, ModelHierarchyInfo* info)
+{
+	if (hierarchyMenuSearch != "") {
+		if (Utilities::ToLower(info->name).find(Utilities::ToLower(hierarchyMenuSearch)) == std::string::npos) {
+			return;
+		}
+	}
+	std::string tag = Utilities::PointerToString(info);
+	ImGuiTreeNodeFlags nodeFlags = baseNodeFlags;
+	if (modelHierarchySelected == info /*|| std::find(multiSelectedSceneObjects.begin(), multiSelectedSceneObjects.end(), sceneObject) != multiSelectedSceneObjects.end()*/) {
+		nodeFlags |= ImGuiTreeNodeFlags_Selected;
+	}
+	bool hasChildren = !info->children.empty();
+	if (!hasChildren) {
+		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+	}
+
+	bool nodeOpen = ImGui::TreeNodeEx((info->name + "##" + tag).c_str(), nodeFlags);
+	//hierarchySceneObjects.push_back(sceneObject);
+
+
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsItemToggledOpen()) {
+	//	bool shift = glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_SHIFT);
+	//	bool ctrl = glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_CONTROL);
+	//
+	//	if (shift && lastSelected) {
+	//		AddFromToSelection(lastSelected, sceneObject);
+	//		lastSelected = sceneObject;
+	//	}
+	//	else if (ctrl && (!multiSelectedSceneObjects.empty() || sceneObjectSelected)) {
+	//		if (multiSelectedSceneObjects.find(sceneObject) != multiSelectedSceneObjects.end()) {
+	//			multiSelectedSceneObjects.erase(sceneObject);
+	//		}
+	//		else {
+	//			multiSelectedSceneObjects.insert(sceneObject);
+	//			lastSelected = sceneObject;
+	//		}
+	//	}
+	//	else {
+		modelHierarchySelected = info;
+		setSelected(nullptr);
+		lastSelected = so;
+	//	}
+	}
+
+	//std::string sceneObjectPopUpID = "SceneObjectRightClickPopUp##" + tag;
+
+	//if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+	//	if (multiSelectedSceneObjects.find(sceneObject) == multiSelectedSceneObjects.end()) {
+	//		setSelected(sceneObject);
+	//		ImGui::OpenPopup(sceneObjectPopUpID.c_str());
+	//	}
+	//	else {
+	//		openMultiSelectRightClickMenu = true;
+	//	}
+	//}
+
+	//if (ImGui::BeginPopup(sceneObjectPopUpID.c_str())) {
+	//	sceneObject->MenuGUI();
+	//}
+
+	//TransformDragDrop(sceneObject);
+
+	if (!hasChildren || !nodeOpen) {
+		return;
+	}
+	auto& children = info->children;
+	for (auto child : children)
+	{
+		TransformTree(so, child);
 	}
 	ImGui::TreePop();
 }
