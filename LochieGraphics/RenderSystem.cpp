@@ -1029,7 +1029,7 @@ void RenderSystem::RenderAmbientPass()
     ambientShader->setInt("brdfLUT", 9);
 
     ambientShader->setMat4("invP", glm::inverse(projection));
-    ambientShader->setMat4("invVP", glm::inverse(viewMatrix * projection));
+    ambientShader->setMat4("invVP", glm::inverse(projection* viewMatrix));
 
     DirectionalLight* dirLight = (DirectionalLight*)SceneManager::scene->lights[0];
     ambientShader->setVec3("lightDirection", dirLight->direction);

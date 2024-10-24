@@ -343,7 +343,7 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection)
     vec3 prefilteredColor = textureLod(prefilterMap, reflected,  roughness * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(trueNormal, viewDirection), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
-    vec3 ambient = (kD * diffuse) * 1.0;
+    vec3 ambient = (kD * diffuse + specular) * 1.0;
     ambient *= SSAOvalue;
 
     return ambient;
