@@ -31,6 +31,7 @@ const std::unordered_map<Texture::Type, std::string> Texture::TypeNames =
 	{ Type::ao, "ao" },
 	{ Type::PBR, "PBR" },
 	{ Type::paint, "Paint"},
+	{ Type::count, "Unknown"},
 };
 
 Texture::Texture(std::string _path, Type _type, int _wrappingMode, bool flip) :

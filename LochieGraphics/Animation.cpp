@@ -32,9 +32,8 @@ Animation::Animation(const std::string& animationPath, Model* _model) :
 	duration = (float)animation->mDuration;
 	ticksPerSecond = (float)animation->mTicksPerSecond;
 	
-	// TODO: use this
-	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
-	globalTransformation = globalTransformation.Inverse();
+	//aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
+	//globalTransformation = globalTransformation.Inverse();
 
 	//rootNode = &(new SceneObject())->transform;
 	//SceneManager::scene->sceneObjects.push_back(rootNode->getSceneObject());

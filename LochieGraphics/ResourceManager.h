@@ -47,9 +47,13 @@ public:
 
 	static std::unordered_map<unsigned long long, Material, hashFNV1A>& getMaterials();
 
+	// Selector doesn't need a tag for label, just label is fine
 	static bool TextureSelector(std::string label, Texture** texture, bool showNull = true);
+	// Selector doesn't need a tag for label, just label is fine
 	static bool ShaderSelector(std::string label, Shader** shader, bool showNull = false);
+	// Selector doesn't need a tag for label, just label is fine
 	static bool MaterialSelector(std::string label, Material** material, Shader* newMaterialShader = nullptr, bool showNull = true);
+	// Selector doesn't need a tag for label, just label is fine
 	static bool ModelSelector(std::string label, Model** model, bool showNull = true);
 
 	static unsigned long long guidCounter;

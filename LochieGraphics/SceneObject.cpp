@@ -312,7 +312,7 @@ void SceneObject::setAnimator(Animator* part) {
 	if (part) {
 		parts |= Parts::animator; scene->animators[GUID] = *part;
 		if (parts & Parts::modelRenderer) {
-			renderer()->animator = part;
+			renderer()->animator = &scene->animators[GUID];
 		}
 	}
 	else {

@@ -44,8 +44,9 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 	Shader* previousShader = nullptr;
 	Material* previousMaterial = nullptr;
 
-	for (auto mesh : model->meshes)
+	for (int i = 0; i < model->meshes.size(); i++)
 	{
+		Mesh* mesh = model->meshes.at(i);
 		int materialID = mesh->materialID;
 		Material* currentMaterial = nullptr;
 
@@ -56,12 +57,12 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 		currentMaterial = materials[materialID];
 
 		// Only bind material if using a different material
-		if (currentMaterial != previousMaterial) {
+		//if (currentMaterial != previousMaterial) {
 			// Skip if no material is set
 			if (currentMaterial == nullptr) { continue; }
 			currentMaterial->Use(givenShader ? givenShader : nullptr);
 			previousMaterial = currentMaterial;
-		}
+		//}
 
 		Shader* shader;
 		if (!givenShader) {
@@ -75,11 +76,13 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 			shader = givenShader;
 		}
 
-		if (previousShader != shader) {
+		//if (previousShader != shader) {
 			shader->Use();
 			previousShader = shader;
 			shader->setMat4("view", SceneManager::scene->renderSystem.viewMatrix);
-			shader->setMat4("model", modelMatrix);
+			glm::mat4 global = glm::identity<glm::mat4>();
+			model->root.GlobalMatrixOfMesh(i, model, global);
+			shader->setMat4("model", modelMatrix * global);
 			SceneManager::scene->renderSystem.ActivateFlaggedVariables(shader, materials[materialID]);
 
 			glm::vec3 overallColour = materials[materialID]->colour * GetMaterialOverlayColour();
@@ -92,7 +95,7 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 					shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
 				}
 			}
-		}
+		//}
 		mesh->Draw();
 	}
 }
@@ -101,41 +104,44 @@ void ModelRenderer::GUI()
 {
 	//ImGui::Text("");
 	std::string tag = Utilities::PointerToString(this);
-	if (ImGui::CollapsingHeader("Model Renderer"))
+	if (!ImGui::CollapsingHeader("Model Renderer"))
 	{
-		ImGui::Indent();
-		ImGui::BeginDisabled();
-		int mats = (int)materialGUIDs.size();
-		ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
-		ImGui::EndDisabled();
+		return;
+	}
+	ImGui::Indent();
+	ImGui::BeginDisabled();
+	int mats = (int)materialGUIDs.size();
+	bool animated = animator;
+	ImGui::Checkbox(("Animated##" + tag).c_str(), &animated);
+	ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
+	ImGui::EndDisabled();
 
-		ImGui::ColorPicker3("Material Tint", &materialTint[0]);
+	ImGui::ColorPicker3(("Material Tint##" + tag).c_str(), &materialTint[0]);
 
-		ImGui::Indent();
-		for (size_t i = 0; i < materialGUIDs.size(); i++)
-		{
-			if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], ResourceManager::defaultShader, true)) {
-				if (materials[i] != nullptr) {
-					materialGUIDs[i] = materials[i]->GUID;
-				}
-				else {
-					materialGUIDs[i] = 0;
-				}
-			}
-		}
-		ImGui::Unindent();
-
-		if (ResourceManager::ModelSelector("Model", &model)) {
-			if (model) {
-				modelGUID = model->GUID;
+	ImGui::Indent();
+	for (size_t i = 0; i < materialGUIDs.size(); i++)
+	{
+		if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], ResourceManager::defaultShader, true)) {
+			if (materials[i] != nullptr) {
+				materialGUIDs[i] = materials[i]->GUID;
 			}
 			else {
-				modelGUID = 0;
+				materialGUIDs[i] = 0;
 			}
-			Refresh();
 		}
-		ImGui::Unindent();
 	}
+	ImGui::Unindent();
+
+	if (ResourceManager::ModelSelector("Model", &model)) {
+		if (model) {
+			modelGUID = model->GUID;
+		}
+		else {
+			modelGUID = 0;
+		}
+		Refresh();
+	}
+	ImGui::Unindent();
 }
 
 toml::table ModelRenderer::Serialise(unsigned long long GUID) const

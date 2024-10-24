@@ -171,7 +171,7 @@ void LevelEditor::Start()
 	camera->nearPlane = 10.0f;
 
 	ground = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
-	wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_adjustedOriginLocWall" + Paths::modelExtension);
+	wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Wall" + Paths::modelExtension);
 
 	syncSo = new SceneObject(this, "Sync");
 	eccoSo = new SceneObject(this, "Ecco");

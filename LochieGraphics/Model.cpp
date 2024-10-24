@@ -35,7 +35,7 @@ void Model::LoadModel(std::string _path)
 	//const aiScene* scene = aiImportFile(path.c_str(), Mesh::aiLoadFlag);
 
 
-
+	// TODO: Look into this
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 	const aiScene* scene = importer.ReadFile(path.c_str(), Mesh::aiLoadFlag);
 
@@ -53,6 +53,7 @@ void Model::LoadModel(std::string _path)
 	meshes.resize(scene->mNumMeshes);
 	meshGUIDs.resize(scene->mNumMeshes);
 	//meshes.reserve(scene->mNumMeshes);
+
 
 	ReadHierarchyData(&root, scene->mRootNode);
 
@@ -133,7 +134,7 @@ void Model::GUI()
 			ImGui::Unindent();
 		}
 
-		HierarchyGUI(&root);
+		root.GUI();
 		ImGui::BeginDisabled();
 
 
@@ -170,9 +171,6 @@ void Model::ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src)
 	}
 
 	dest->name = src->mName.data;
-	if (dest->name == "RootNode") {
-		std::cout << "t";
-	}
 
 	aiVector3D pos;
 	aiQuaternion rot;
@@ -182,6 +180,15 @@ void Model::ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src)
 	dest->transform.getPosition() = AssimpVecToGLM(pos);
 	dest->transform.setRotation(AssimpQuatToGLM(rot));
 	dest->transform.setScale(AssimpVecToGLM(scale));
+	if (dest->name == "RootNode") {
+		std::cout << "t";
+		//dest->transform.setScale(dest->transform.getScale() * 100.0f);
+	}
+	
+	for (size_t i = 0; i < src->mNumMeshes; i++)
+	{
+		dest->meshes.push_back(src->mMeshes[i]);
+	}
 
 	//dest.transform.chi children.reserve(src->mNumChildren);
 
@@ -217,19 +224,3 @@ Model::Model(toml::table table)
 	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
 	LoadModel(Serialisation::LoadAsString(table["path"]));
 }
-
-void Model::HierarchyGUI(ModelHierarchyInfo* info)
-{
-	std::string tag = Utilities::PointerToString(info);
-	if (ImGui::CollapsingHeader((info->name + "##" + tag).c_str())) {
-		ImGui::Indent();
-		info->transform.GUI();
-
-		for (auto i : info->children)
-		{
-			HierarchyGUI(i);
-		}
-		ImGui::Unindent();
-	}
-}
-
