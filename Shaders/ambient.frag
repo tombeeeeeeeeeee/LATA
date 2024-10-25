@@ -11,11 +11,9 @@ uniform sampler2D screenSSAO;
 
 uniform samplerCube skybox;
 uniform samplerCube irradianceMap;
-uniform samplerCube prefilterMap;	
-uniform sampler2D brdfLUT;
 
 uniform mat4 invP;
-uniform mat4 invVP;
+uniform mat4 invV;
 
 uniform vec3 lightDirection;
 uniform vec3 lightColour;
@@ -40,7 +38,7 @@ vec3 Radiance(
     float linear, float quadratic, vec3 diffuse
 );
 vec3 CalcDirectionalLight(vec3 lightDirection, vec3 normal);
-vec3 specularIBL(vec3 trueNormal, vec3 viewDirection);
+vec3 specularIBL(vec3 trueNormal);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight);
 #define PI 3.1415926535
@@ -49,9 +47,10 @@ const float MAX_REFLECTION_LOD = 4.0;
 void main()
 {
 	float depthValue = texture(screenDepth, texCoords).r;
-    vec4 NDC = vec4(gl_FragCoord.xy, depthValue, 1.0);
-    screenPos = (invP * NDC).rgb;
-    fragPos = (invVP * NDC).rgb;
+    vec4 NDC = vec4(texCoords * 2.0 - 1.0, depthValue, 1.0);
+    vec4 clipPos = invP * NDC;
+    screenPos = clipPos.xyz / clipPos.w;
+    fragPos = (invV * vec4(screenPos, 1.0)).xyz;
 
     viewDirection = normalize(fragPos - camPos);
 
@@ -69,13 +68,14 @@ void main()
         roughness = normal.a;
         metallic = albedo.a;
         ao = emission.a;
+        if(ao == 0) ao = 1.0;
 
         vec3 Lo = vec3(0.0);
 	    F0 = vec3(0.04); 
         F0 = mix(F0, trueAlbedo, metallic);
 
         Lo = max(CalcDirectionalLight(lightDirection, trueNormal), 0);
-        vec3 IBL = specularIBL(trueNormal, viewDirection);
+        vec3 IBL = specularIBL(trueNormal);
         vec3 result = Lo + IBL;
         FragColour = vec4(result, 1.0);
     }
@@ -122,11 +122,6 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
-vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
-{
-    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-}
-
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
     float a      = roughness*roughness;
@@ -162,22 +157,13 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
     return ggx1 * ggx2;
 }
 
-vec3 specularIBL(vec3 trueNormal, vec3 viewDirection)
+vec3 specularIBL(vec3 trueNormal)
 {
-    
-    vec3 reflected = reflect(-viewDirection, trueNormal); 
-	vec3 kS = fresnelSchlickRoughness(max(dot(trueNormal, viewDirection), 0.0), F0, roughness);
-	vec3 kD = vec3(1.0) - kS;
-	kD *= 1.0 - metallic;
     vec3 irradiance = texture(irradianceMap, trueNormal).rgb;
     float SSAOvalue = texture(screenSSAO, texCoords).r;
 
     vec3 diffuse = irradiance * trueAlbedo;
-	//vec3 additionalAmbient = (kD * ambientLightColour) * ao;
-    vec3 prefilteredColor = textureLod(prefilterMap, reflected,  roughness * MAX_REFLECTION_LOD).rgb;    
-    vec2 brdf  = texture(brdfLUT, vec2(max(dot(trueNormal, viewDirection), 0.0), roughness)).rg;
-    vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
-    vec3 ambient = (kD * diffuse + specular) * 1.0;
+    vec3 ambient = (diffuse) * 1.0;
     ambient *= SSAOvalue * ao;
 
     return ambient;

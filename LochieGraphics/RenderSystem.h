@@ -52,7 +52,6 @@ public:
     );
 
     void SetIrradianceMap(unsigned int skybox);
-    void SetPrefilteredMap(unsigned int skybox);
 
     float exposure = 1.0f;
     int bufferIndex = 0;
@@ -156,8 +155,6 @@ private:
     unsigned int captureRBO = 0;
 
     unsigned int irradianceMap = 0;
-    unsigned int brdfLUTTexture = 0;
-    unsigned int prefilterMap = 0;
     Texture* paintStrokeTexture = nullptr;
 
     void BloomSetup();
@@ -172,6 +169,7 @@ private:
     unsigned int normalBuffer = 0;
     unsigned int albedoBuffer = 0;
     unsigned int emissionBuffer = 0;
+    unsigned int viewBuffer = 0;
     unsigned int depthBuffer = 0;
     unsigned int deferredFBO = 0;
     void DeferredSetup();

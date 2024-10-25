@@ -22,7 +22,6 @@ const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 boneMatrices[MAX_BONES];
 
-out vec3 fragmentViewPos;
 out vec3 fragmentPosInView;
 out vec3 fragmentPos;
 out vec4 directionalLightSpaceFragPos;

@@ -21,14 +21,22 @@ void main()
     //
     result = texture(ambientPass, texCoords).rgb;
     //
-    //vec3 bloomColor = texture(bloomBlur, texCoords).rgb;
-    //result = mix(hdrColor, bloomColor, bloomStrength); // linear interpolation
-    //
+    vec3 bloomColor = texture(bloomBlur, texCoords).rgb;
+    result = mix(result, bloomColor, bloomStrength); // linear interpolation
+    vec3 em = texture(emission, texCoords).rgb;
+
+
     // tone mapping
     result = vec3(1.0) - exp(-result * exposure);
     //
+    if(em.x + em.y + em.z > 0)
+    {
+        result = em;
+    }
+
     ////Gamma
     const float gamma = 2.2;
+
     result = pow(result, vec3(1.0 / gamma));
     FragColor = vec4(result, 1.0);
 

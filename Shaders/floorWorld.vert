@@ -56,7 +56,7 @@ uniform vec3 viewPos;
 out vec3 spotlightPos;
 out vec3 pointLightsPos[MAX_POINT_LIGHTS];
 
-out vec3 fragmentViewPos;
+out vec3 fragmentPosInView;
 out vec3 fragmentPos;
 out vec4 directionalLightSpaceFragPos;
 
@@ -66,10 +66,6 @@ uniform mat4 directionalLightSpaceMatrix;
 out vec3 fragmentNormal;
 out vec3 fragmentTangent;
 out vec3 fragmentBitangent;
-
-
-
-
 
 
 uniform vec2 worldMin;
@@ -108,4 +104,6 @@ void main()
     //texCoords = (pos.xz - worldMin) / worldMax;
     texCoords = vec2((pos.xz - worldMin) / (worldMax - worldMin));
     texCoords.y = 1 - texCoords.y;
+
+    fragmentPosInView = (view * pos).xyz;
 }

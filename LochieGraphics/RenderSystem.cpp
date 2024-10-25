@@ -163,60 +163,6 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-void RenderSystem::SetPrefilteredMap(unsigned int textureID)
-{
-    glViewport(0, 0, 32, 32);
-    glGenTextures(1, &prefilterMap);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-    for (unsigned int i = 0; i < 6; ++i)
-    {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, nullptr);
-    }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // be sure to set minification filter to mip_linear 
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // generate mipmaps for the cubemap so OpenGL automatically allocates the required memory.
-    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-
-    (*shaders)[ShaderIndex::prefilter]->Use();
-
-    (*shaders)[ShaderIndex::prefilter]->setInt("environmentMap", 1);
-    (*shaders)[ShaderIndex::prefilter]->setMat4("projection", captureProjection);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-
-    unsigned int maxMipLevels = 5;
-    for (unsigned int mip = 0; mip < 5; ++mip)
-    {
-        // reisze framebuffer according to mip-level size.
-        unsigned int mipWidth = static_cast<unsigned int>(128 * std::pow(0.5, mip));
-        unsigned int mipHeight = static_cast<unsigned int>(128 * std::pow(0.5, mip));
-        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
-        glViewport(0, 0, mipWidth, mipHeight);
-
-        float roughness = (float)mip / (float)(maxMipLevels - 1);
-        (*shaders)[ShaderIndex::prefilter]->setFloat("roughness", roughness);
-        for (unsigned int i = 0; i < 6; ++i)
-        {
-            //ColouredOutput("view in prefilter is: ", Colour::green);
-            //ColouredOutput(glGetUniformLocation(currShader, "view") == -1, Colour::red, false);
-            (*shaders)[ShaderIndex::prefilter]->setMat4("view", captureViews[i]);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            cube->Draw();
-        }
-    }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-}
 
 void RenderSystem::DeferredUpdate()
 {
@@ -243,6 +189,23 @@ void RenderSystem::DeferredUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+    // create bloom buffer
+    glGenTextures(1, &bloomBuffer);
+    glBindTexture(GL_TEXTURE_2D, bloomBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glGenTextures(1, &viewBuffer);
+    glBindTexture(GL_TEXTURE_2D, viewBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
     glBindTexture(GL_TEXTURE_2D, depthBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -254,6 +217,8 @@ void RenderSystem::DeferredUpdate()
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, albedoBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, emissionBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, bloomBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, viewBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
 
     auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -281,15 +246,6 @@ void RenderSystem::HDRBufferUpdate()
 {
     // create floating point color buffer
     glBindTexture(GL_TEXTURE_2D, colorBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    // create bloom buffer
-    glGenTextures(1, &bloomBuffer);
-    glBindTexture(GL_TEXTURE_2D, bloomBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -382,7 +338,7 @@ void RenderSystem::Update(
 
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
     shadowCaster->shadowFrameBuffer->Load();
-    unsigned int forwardAttachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+    unsigned int deferredAttachments[5] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
     unsigned int ambientAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -401,7 +357,7 @@ void RenderSystem::Update(
     shadowCaster->shadowFrameBuffer->Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    DrawAllRenderers(animators, transforms, renders, animatedRenderered, (*shaders)[shadowMapDepth]);
+    //DrawAllRenderers(animators, transforms, renders, animatedRenderered, (*shaders)[shadowMapDepth]);
 
     // Render scene with shadow map, to the screen framebuffer
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -414,47 +370,9 @@ void RenderSystem::Update(
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    glDrawBuffers(4, forwardAttachments);
+    glDrawBuffers(5, deferredAttachments);
 
     DrawAllRenderers(animators, transforms, renders, animatedRenderered);
-
-    RenderSSAO();
-
-    glDisable(GL_DEPTH_TEST);
-
-    // TODO: move viewport changing stuff into FrameBuffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-
-
-    glEnable(GL_DEPTH_TEST);
-
-
-    (*shaders)[ShaderIndex::super]->Use();
-
-    // set light uniforms
-    // TODO: Shouldn't need to set light uniforms here, use the shader flags and make one for shadowed
-    (*shaders)[ShaderIndex::super]->setVec3("viewPos", camera->transform.getPosition());
-    (*shaders)[ShaderIndex::super]->setVec3("lightPos", shadowCaster->getPos());
-    (*shaders)[ShaderIndex::super]->setMat4("directionalLightSpaceMatrix", lightSpaceMatrix);
-
-    (*shaders)[ShaderIndex::super]->setSampler("shadowMap", 17);
-    //TODO:
-    shadowCaster->depthMap->Bind(17);
-    // RENDER SCENE
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-
-    glDrawBuffers(2, attachments);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //(*shaders)[ShaderIndex::super]->Use();
-    //glm::mat4 projection = glm::perspective(glm::radians(camera->fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, camera->nearPlane, camera->farPlane);
-    //(*shaders)[ShaderIndex::super]->setMat4("vp", projection * camera->GetViewMatrix());
-
-    //DrawAllRenderers(animators, transforms, renders, animatedRenderered);
 
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Draw();
@@ -462,12 +380,8 @@ void RenderSystem::Update(
     glDepthFunc(GL_ALWAYS);
     debugLines.Draw();
 
-    //glDepthFunc(GL_LEQUAL); // Change depth function
-
-    //Texture::UseCubeMap(skyboxTexture, (*shaders)[ShaderIndex::skyBoxShader]);
-    //
-    //RenderQuad();
     glDepthFunc(GL_LESS);
+    RenderSSAO();
 
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
@@ -510,11 +424,11 @@ void RenderSystem::Update(
     glDisable(GL_DEPTH_TEST); // Disable depth test for fullscreen quad
 
 
-
     //FrameBuffer Rendering
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //HDR
+    
 
     (*shaders)[screen]->Use();
 
@@ -707,12 +621,6 @@ void RenderSystem::ActivateFlaggedVariables(
         glActiveTexture(GL_TEXTURE0 + 7);
         glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
 
-        glActiveTexture(GL_TEXTURE0 + 8);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-
-        glActiveTexture(GL_TEXTURE0 + 9);
-        glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-
         glActiveTexture(GL_TEXTURE0 + 11);
         glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
     }
@@ -747,30 +655,17 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
 
     SetIrradianceMap(skybox);
 
-    SetPrefilteredMap(skybox);
-
-    glGenTextures(1, &brdfLUTTexture);
-    // pre-allocate enough memory for the LUT texture.
-    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
-    // be sure to set wrapping mode to GL_CLAMP_TO_EDGE
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
 
-    glViewport(0, 0, 512, 512);
+    //glViewport(0, 0, 512, 512);
 
-    (*shaders)[brdf]->Use();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    RenderQuad();
+    //(*shaders)[brdf]->Use();
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //
+    //RenderQuad();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
@@ -921,6 +816,8 @@ void RenderSystem::DeferredSetup()
     glGenTextures(1, &normalBuffer);
     glGenTextures(1, &albedoBuffer);
     glGenTextures(1, &emissionBuffer);
+    glGenTextures(1, &bloomBuffer);
+    glGenTextures(1, &viewBuffer);
     glGenTextures(1, &depthBuffer);
     glGenFramebuffers(1, &deferredFBO);
     DeferredUpdate();
@@ -976,7 +873,7 @@ void RenderSystem::SSAOSetup()
 
     Shader* ssaoShader = (*shaders)[ssao];
     ssaoShader->Use();
-    ssaoShader->setInt("positionColour", 1);
+    ssaoShader->setInt("viewPos", 1);
     ssaoShader->setInt("normalColour", 2);
     ssaoShader->setInt("texNoise", 3);
 
@@ -1023,17 +920,15 @@ void RenderSystem::RenderAmbientPass()
     ambientShader->setInt("screenNormal", 3);
     ambientShader->setInt("screenEmission", 4);
     ambientShader->setInt("screenSSAO", 5);
-    ambientShader->setInt("skyBox", 6);
+    ambientShader->setInt("skybox", 6);
     ambientShader->setInt("irradianceMap", 7);
-    ambientShader->setInt("prefilterMap", 8);
-    ambientShader->setInt("brdfLUT", 9);
 
     ambientShader->setMat4("invP", glm::inverse(projection));
-    ambientShader->setMat4("invVP", glm::inverse(projection* viewMatrix));
+    ambientShader->setMat4("invV", glm::inverse(viewMatrix));
 
     DirectionalLight* dirLight = (DirectionalLight*)SceneManager::scene->lights[0];
     ambientShader->setVec3("lightDirection", dirLight->direction);
-    ambientShader->setVec3("lightColour", dirLight->colour);
+    ambientShader->setVec3("lightColour", {0.0f,0.0f,0.0f});
     ambientShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
 
     glActiveTexture(GL_TEXTURE0 + 1);
@@ -1057,12 +952,6 @@ void RenderSystem::RenderAmbientPass()
     glActiveTexture(GL_TEXTURE0 + 7);
     glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
 
-    glActiveTexture(GL_TEXTURE0 + 8);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-
-    glActiveTexture(GL_TEXTURE0 + 9);
-    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-
     RenderQuad();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -1082,15 +971,23 @@ void RenderSystem::RenderSSAO()
         ssaoShader->setVec3("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
     ssaoShader->setMat4("projection", projection);
     ssaoShader->setMat4("invP", glm::inverse(projection));
+    ssaoShader->setMat4("invV", glm::inverse(viewMatrix));
 
     ssaoShader->setInt("kernelSize", kernelSize);
     ssaoShader->setFloat("radius", ssaoRadius);
     ssaoShader->setFloat("bias", ssaoBias);
 
+    ssaoShader->setFloat("near", SceneManager::camera.nearPlane);
+    ssaoShader->setFloat("far", SceneManager::camera.farPlane);
+
+    ssaoShader->setVec2("noiseScale", { SCREEN_WIDTH / 4.0, SCREEN_HEIGHT / 4.0 });
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, viewBuffer);
+
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, normalBuffer);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, depthBuffer);
+
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, noiseTexture);
 

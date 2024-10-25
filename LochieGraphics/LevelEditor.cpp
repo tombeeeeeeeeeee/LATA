@@ -226,9 +226,9 @@ void LevelEditor::Start()
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 
-	renderSystem.kernelSize = 128;
-	renderSystem.ssaoRadius = 32.0f;
-	renderSystem.ssaoBias = 6.0f;
+	renderSystem.kernelSize = 64;
+	renderSystem.ssaoRadius = 12.0f;
+	renderSystem.ssaoBias = 7.5f;
 
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);
