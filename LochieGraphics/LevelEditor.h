@@ -34,7 +34,9 @@ private:
 	std::unordered_map<std::pair<int, int>, SceneObject*, hashFNV1A> tiles = {};
 
 	Model* ground = nullptr;
-	Model* wall = nullptr;
+
+	unsigned long long wallSidePrefab = 12423318852501708145;
+	unsigned long long wallCornerPrefab = 12472608399756090578;
 
 	unsigned int wallCount = 0;
 	unsigned int tileCount = 0;
@@ -81,7 +83,7 @@ private:
 	SceneObject* CellAt(float x, float z);
 
 	// Worldspace placing issue
-	SceneObject* PlaceWallAt(float x, float z, float direction);
+	SceneObject* PlaceWallAt(float x, float z, float direction, unsigned long long prefab);
 	SceneObject* PlaceTileAt(float x, float z);
 
 	void Brush(glm::vec2 targetCell);
