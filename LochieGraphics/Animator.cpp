@@ -103,6 +103,7 @@ void Animator::GUI()
             ImGui::Indent();
             for (size_t i = 0; i < finalBoneMatrices.size(); i++)
             {
+                std::string tag = Utilities::PointerToString(&finalBoneMatrices[i]);
                 if (ImGui::CollapsingHeader(("Bone ID " + std::to_string(i) + "##" + tag).c_str())) {
                     ExtraEditorGUI::Mat4Input(tag, &finalBoneMatrices[i]);
                 }

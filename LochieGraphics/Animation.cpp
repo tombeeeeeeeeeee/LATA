@@ -16,8 +16,10 @@ Animation::Animation(const std::string& animationPath, Model* _model) :
 	model(_model),
 	modelGUID(_model->GUID)
 {
+	// TODO: Can I just reuse like 1 importer?
 	Assimp::Importer importer;
 	// TODO: what flags should be set here
+	// TODO: Properties like this are also set in Model, they should be ensured to match
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	

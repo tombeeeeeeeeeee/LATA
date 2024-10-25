@@ -68,7 +68,7 @@ void Model::LoadModel(std::string _path)
 	
 	float globalScale = 100.0f;
 	// TODO: See how to apply this properly, the flag doesn't work properly
-	if (root.children.size() == 1) {
+	if (root.children.size() == 1 && root.children.at(0)->children.empty()) {
 		root.children.at(0)->transform.setScale(root.children.at(0)->transform.getScale() * conversionScale);
 	}
 	else {

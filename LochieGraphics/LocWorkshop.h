@@ -20,7 +20,6 @@ private:
 	Animation animation;
 	Animator* animator;
 	
-	Mesh* quad;
 	Model* model;
 
 	Shader* shader;

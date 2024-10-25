@@ -25,6 +25,14 @@ void LocWorkshop::Start()
 	camera->farPlane = 50000.0f;
 	camera->transform.setPosition({ 0.0f, 0.0f, 150.0f });
 	camera->transform.setEulerRotation({ 0.0f, 90.0f, 0.0f });
+
+	aniTest = new SceneObject(this, "aniTest");
+	std::string path = Paths::importModelLocation + "Anim_Sync_RunTEST.fbx";
+	model = ResourceManager::LoadModel(path);
+	aniTest->setRenderer(new ModelRenderer(model, ResourceManager::defaultMaterial));
+	animation = Animation(path, model);
+	aniTest->setAnimator(new Animator(&animation));
+	animator = aniTest->animator();
 }
 
 void LocWorkshop::Update(float delta)
