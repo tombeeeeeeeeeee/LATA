@@ -174,7 +174,7 @@ void Mesh::InitialiseFromAiMesh(std::string path, const aiScene* scene, std::uno
 
 		auto boneInfo = boneInfos->find(boneName);
 		if (boneInfo == boneInfos->end()) {
-			BoneInfo newBoneInfo = {
+			BoneInfo newBoneInfo = BoneInfo{
 				(unsigned int)boneInfos->size(),
 				AssimpMatrixToGLM(bone->mOffsetMatrix)
 			};

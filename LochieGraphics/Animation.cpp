@@ -20,7 +20,7 @@ Animation::Animation(const std::string& animationPath, Model* _model) :
 	Assimp::Importer importer;
 	// TODO: what flags should be set here
 	// TODO: Properties like this are also set in Model, they should be ensured to match
-	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, true);
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	
 	// If either the scene or the root node is null, then the animation has failed to load

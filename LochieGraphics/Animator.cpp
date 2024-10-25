@@ -93,7 +93,7 @@ void Animator::GUI()
         if (ImGui::Button(("Set all scales to 1!##" + tag).c_str())) {
             for (auto& i : currentAnimation->bones)
             {
-                for (auto& k : i.keys)
+                for (auto& k : i.scaleKeys)
                 {
                     k.scale = glm::vec3(1.0f, 1.0f, 1.0f);
                 }
