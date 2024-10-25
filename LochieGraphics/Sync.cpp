@@ -43,7 +43,9 @@ Sync::Sync(toml::table table)
 	enemyPierceCount = Serialisation::LoadAsInt(table["enemyPierceCount"]);
 	eccoRefractionAngle = Serialisation::LoadAsFloat(table["eccoRefractionAngle"]);
 	eccoRefractionCount = Serialisation::LoadAsInt(table["eccoRefractionCount"]);
-	misfireColliderRadius = Serialisation::LoadAsFloat(table["misfireColliderRadius"]);                                                                                                                                                                                                                                                                                                                                                                          
+	misfireColliderRadius = Serialisation::LoadAsFloat(table["misfireColliderRadius"]);
+	maxMoveForce = Serialisation::LoadAsFloat(table["maxMoveForce"]);
+	maxStopForce = Serialisation::LoadAsFloat(table["maxStopForce"]);
 }
 
 void Sync::Start(
@@ -73,12 +75,25 @@ bool Sync::Update(
 			move.x * s + move.y * c
 		};
 		float currentMoveSpeed = Utilities::Lerp(moveSpeed, 0.0f, glm::min(chargedDuration, sniperChargeTime) / sniperChargeTime);
-		rigidBody.vel = currentMoveSpeed * move;
+		
+		glm::vec2 desiredVel = currentMoveSpeed * move;
+		glm::vec2 desiredVelChange = desiredVel - rigidBody.vel;
+		glm::vec2 force = desiredVelChange * rigidBody.getMass() / delta;
+		if (glm::length(force) > maxMoveForce) {
+			force = glm::normalize(force) * maxMoveForce;
+		}
+		rigidBody.netForce += force;
+
 		fireDirection = move;
 	}
 	else
 	{
-		rigidBody.vel = { 0.0f, 0.0f };
+		glm::vec2 desiredVelChange = -rigidBody.vel;
+		glm::vec2 force = desiredVelChange * rigidBody.getMass() / delta;
+		if (glm::length(force) > maxStopForce) {
+			force = glm::normalize(force) * maxStopForce;
+		}
+		rigidBody.netForce += force;
 	}
 
 	if (glm::length(look) > lookDeadZone)
@@ -171,46 +186,50 @@ bool Sync::Update(
 
 void Sync::GUI()
 {
-	//ImGui::Text(""); 
-	if (ImGui::CollapsingHeader("Sync Component"))
+	std::string tag = Utilities::PointerToString(this);
+	if (!ImGui::CollapsingHeader(("Sync Component##" + tag).c_str()))
 	{
-		ImGui::Indent();
-		ImGui::DragFloat("Move Speed", &moveSpeed);
-		ImGui::DragFloat("Look DeadZone", &lookDeadZone);
-		ImGui::DragFloat("Move DeadZone", &moveDeadZone);
-		if (ImGui::DragFloat("Heal Button Tolerance", &windowOfTimeForHealPressed))
-		{
-			SceneManager::scene->ecco->windowOfTimeForHealPressed = windowOfTimeForHealPressed;
-		}
-
-		ImGui::DragFloat3("Barrel Offset", &barrelOffset[0]);
-
-		if (ImGui::CollapsingHeader("Misfire Properties"))
-		{
-			ImGui::DragInt("Misfire Damage", &misfireDamage);
-			ImGui::DragFloat("Misfire Shot Speed", &misfireShotSpeed);
-		}
-		if (ImGui::CollapsingHeader("Sniper Shot Properties"))
-		{
-			ImGui::DragInt("Sniper Damage", &sniperDamage);
-			ImGui::DragFloat("Sniper Charge Time", &sniperChargeTime);
-			ImGui::DragFloat("Sniper Beam life span", &sniperBeamLifeSpan);
-			ImGui::ColorEdit3("Sniper Beam Colour", &sniperBeamColour[0]);
-		}
-		if (ImGui::CollapsingHeader("Overclock Shot Properties"))
-		{
-			ImGui::DragInt("Damage", &overclockDamage);
-			ImGui::DragFloat("Charge Time", &overclockChargeTime);
-			ImGui::DragFloat("Beam life span", &overclockBeamLifeSpan);
-			ImGui::ColorEdit3("Beam Colour", &overclockBeamColour[0]);
-			ImGui::DragInt("Max Enemy Pierce Count", &enemyPierceCount);
-			ImGui::DragInt("Rebound Count", &overclockReboundCount);
-			ImGui::DragInt("Refraction Beams Off Ecco", &eccoRefractionCount);
-			ImGui::DragFloat("Refraction Beams Angle", &eccoRefractionAngle);
-		}
-		
-		ImGui::Unindent();
+		return;
 	}
+	ImGui::Indent();
+	ImGui::DragFloat(("Move Speed##" + tag).c_str(), &moveSpeed);
+	ImGui::DragFloat(("Look DeadZone##" + tag).c_str(), &lookDeadZone);
+	ImGui::DragFloat(("Move DeadZone##" + tag).c_str(), &moveDeadZone);
+	if (ImGui::DragFloat(("Heal Button Tolerance##" + tag).c_str(), &windowOfTimeForHealPressed))
+	{
+		SceneManager::scene->ecco->windowOfTimeForHealPressed = windowOfTimeForHealPressed;
+	}
+
+	ImGui::DragFloat3(("Barrel Offset##" + tag).c_str(), &barrelOffset[0]);
+
+	if (ImGui::CollapsingHeader(("Misfire Properties##" + tag).c_str()))
+	{
+		ImGui::DragInt(("Misfire Damage##" + tag).c_str(), &misfireDamage);
+		ImGui::DragFloat(("Misfire Shot Speed##" + tag).c_str(), &misfireShotSpeed);
+	}
+	if (ImGui::CollapsingHeader(("Sniper Shot Properties##" + tag).c_str()))
+	{
+		ImGui::DragInt(("Sniper Damage##" + tag).c_str(), &sniperDamage);
+		ImGui::DragFloat(("Sniper Charge Time##" + tag).c_str(), &sniperChargeTime);
+		ImGui::DragFloat(("Sniper Beam life span##" + tag).c_str(), &sniperBeamLifeSpan);
+		ImGui::ColorEdit3(("Sniper Beam Colour##" + tag).c_str(), &sniperBeamColour[0]);
+	}
+	if (ImGui::CollapsingHeader(("Overclock Shot Properties##" + tag).c_str()))
+	{
+		ImGui::DragInt(("Damage##" + tag).c_str(), &overclockDamage);
+		ImGui::DragFloat(("Charge Time##" + tag).c_str(), &overclockChargeTime);
+		ImGui::DragFloat(("Beam life span##" + tag).c_str(), &overclockBeamLifeSpan);
+		ImGui::ColorEdit3(("Beam Colour##" + tag).c_str(), &overclockBeamColour[0]);
+		ImGui::DragInt(("Max Enemy Pierce Count##" + tag).c_str(), &enemyPierceCount);
+		ImGui::DragInt(("Rebound Count##" + tag).c_str(), &overclockReboundCount);
+		ImGui::DragInt(("Refraction Beams Off Ecco##" + tag).c_str(), &eccoRefractionCount);
+		ImGui::DragFloat(("Refraction Beams Angle##" + tag).c_str(), &eccoRefractionAngle);
+	}
+
+	ImGui::DragFloat(("Max Move Force##" + tag).c_str(), &maxMoveForce, 1.0f, 0.0f, FLT_MAX);
+	ImGui::DragFloat(("Stationary Stopping Force##" + tag).c_str(), &maxStopForce, 1.0f, 0.0f, FLT_MAX);
+
+	ImGui::Unindent();
 }
 
 toml::table Sync::Serialise() const
@@ -236,6 +255,8 @@ toml::table Sync::Serialise() const
 		{ "eccoRefractionAngle", eccoRefractionAngle },
 		{ "eccoRefractionCount", eccoRefractionCount },
 		{ "misfireColliderRadius", misfireColliderRadius },
+		{ "maxMoveForce", maxMoveForce },
+		{ "maxStopForce", maxStopForce },
 	};
 }
 
