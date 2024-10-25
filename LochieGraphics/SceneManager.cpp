@@ -183,6 +183,12 @@ SceneManager::SceneManager(Scene* _scene)
 	UserPreferences::Initialise();
 	PrefabManager::Initialise();
 
+	// TODO: Use a shader asset
+	Shader* particleShader = ResourceManager::LoadShader("particle", Shader::Flags::VPmatrix);
+	scene->shaders.push_back(particleShader);
+	scene->particleSystem.Initialise(particleShader);
+
+
 	scene->Start();
 
 	scene->renderSystem.Start(
@@ -278,32 +284,7 @@ void SceneManager::Update()
 	{
 		i.second.UpdateAnimation(deltaTime);
 	}
-
-
-	//for (auto& renderer : scene->renderers)
-	//{
-	//	if (!renderer.second.model) { continue; }
-	//	for (auto& boneMap : renderer.second.model->boneInfoMap)
-	//	{
-	//		glm::vec3 pos;
-	//		glm::quat rot;
-	//		glm::vec3 scl;
-
-	//		ImGuizmo::DecomposeMatrixToComponents(&boneMap.second.offset[0][0], &pos[0], &rot[0], &scl[0]);
-
-	//		glm::vec3 euler = glm::eulerAngles(rot);
-
-	//		glm::vec3 modelPos = scene->transforms[renderer.first].getGlobalPosition();
-	//		glm::vec3 modelScale = scene->transforms[renderer.first].getScale();
-
-	//		scene->renderSystem.lines.DrawLineSegment(modelPos + pos * modelScale, modelPos + pos * modelScale + glm::vec3(0.0f, 1.0f, 0.0f), {1, 0, 1});
-
-	//	}
-	//}
-	//scene->renderSystem.lines.DrawLineSegment({ -1, -2, -3 }, { 100, 200, 300 }, { 1, 0, 0 });
-
-
-
+	scene->particleSystem.Update(deltaTime);
 
 	scene->renderSystem.lines.Compile();
 	scene->renderSystem.debugLines.Compile();

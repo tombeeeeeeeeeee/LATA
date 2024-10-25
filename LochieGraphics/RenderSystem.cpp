@@ -9,7 +9,7 @@
 #include "Animator.h"
 #include "FrameBuffer.h"
 #include "ShaderEnum.h"
-#include "Particle.h"
+#include "ParticleSystem.h"
 
 #include "Utilities.h"
 #include "EditorGUI.h"
@@ -431,26 +431,8 @@ void RenderSystem::Update(
     glDepthFunc(GL_ALWAYS);
     glBlendEquation(GL_FUNC_ADD);
 
-    for (auto i : particles)
-    {
-        glm::mat4 view = camera->GetViewMatrix();
-        if (particleFacingCamera) {
-            view = camera->GetViewMatrix();
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    if (i == j) {
-                        view[i][j] = 1.0;
-                    }
-                    else {
-                        view[i][j] = 0.0;
-                    }
-                }
-            }
-        }
-        i->shader->Use();
-        i->shader->setMat4("vp", projection * view);
-        i->Draw();
-    }
+    ParticleSystem::Draw(particles);
+
     glDisable(GL_BLEND);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);

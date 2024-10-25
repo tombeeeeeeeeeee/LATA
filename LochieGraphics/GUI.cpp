@@ -88,6 +88,7 @@ void GUI::Update()
 			ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
 			ImGui::MenuItem("User Prefs", NULL, &showUserPrefsMenu);
 			ImGui::MenuItem("Prefabs Menu", NULL, &showPrefabMenu);
+			ImGui::MenuItem("Particle Menu", NULL, &showParticleMenu);
 
 			ImGui::EndMenu();
 		}
@@ -122,6 +123,12 @@ void GUI::Update()
 	if (showUserPrefsMenu) { 
 		if (ImGui::Begin("User Preferences Menu", &showUserPrefsMenu, defaultWindowFlags)) {
 			UserPreferences::GUI();
+		}
+		ImGui::End();
+	}
+	if (showParticleMenu) {
+		if (ImGui::Begin("Particle Menu", &showParticleMenu, defaultWindowFlags)) {
+			scene->particleSystem.GUI();
 		}
 		ImGui::End();
 	}

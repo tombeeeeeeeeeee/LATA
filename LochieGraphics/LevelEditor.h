@@ -57,6 +57,7 @@ private:
 	bool openSaveAs = false;
 	bool openLoad = false;
 
+	// TODO: Should be apart of base scene
 	Input input;
 
 	float syncRadius = 10.0f;

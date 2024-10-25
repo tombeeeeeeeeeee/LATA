@@ -33,13 +33,13 @@ public:
 
 	static std::random_device random;
 
-	unsigned int ssbo;
+	unsigned int ssbo = 0;
 
 	float explodeStrength = 1.0f;
 
 	glm::mat4 model = glm::identity<glm::mat4>();
 
-	Particle(unsigned int _count, float _lifetime, Shader* _shader, Texture* _texture);
+	Particle(unsigned int _count, float _lifetime, Shader* _shader, Texture* _texture, glm::vec3 startingPos);
 
 	void Spread();
 	void Explode();

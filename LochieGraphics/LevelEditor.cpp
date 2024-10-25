@@ -35,6 +35,7 @@ void LevelEditor::RefreshWalls()
 	}
 	wallCount = 0;
 
+	// TODO: prob don't need a seperate min and maxes and could use the other one
 	float offset = (gridSize + wallThickness) / 2;
 	float minX = FLT_MAX;
 	float minZ = FLT_MAX;
@@ -125,7 +126,6 @@ SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction, unsigne
 	newWall->transform()->setPosition({ x, 0.0f, z });
 	newWall->transform()->setEulerRotation({ 0.0f, direction, 0.0f });
 	newWall->transform()->setParent(wallTileParent->transform());
-	// TODO: Make sure there isn't memory leaks
 
 	return newWall;
 }
@@ -426,7 +426,8 @@ void LevelEditor::Draw()
 		transforms,
 		renderers,
 		animators,
-		camera
+		camera,
+		particleSystem.particles
 	);
 }
 

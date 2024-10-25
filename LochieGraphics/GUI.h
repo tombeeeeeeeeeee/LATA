@@ -46,6 +46,7 @@ public:
 	bool showHealthSystemMenu = false;
 	bool showUserPrefsMenu = false;
 	bool showPrefabMenu = false;
+	bool showParticleMenu = false;
 
 	SceneObject* getSelected();
 	void setSelected(SceneObject* so);

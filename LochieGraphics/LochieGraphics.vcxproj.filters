@@ -311,8 +311,11 @@
     <ClCompile Include="Bollard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
     <ClCompile Include="ModelHierarchyInfo.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -614,6 +617,9 @@
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Bollard.h" />
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Source Files\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">

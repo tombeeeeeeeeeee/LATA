@@ -19,6 +19,7 @@
 #include "EnemySystem.h"
 #include "TriggerSystem.h"
 #include "DoorAndBollardSystem.h"
+#include "ParticleSystem.h"
 #include "GUI.h"
 
 #include <map>
@@ -85,6 +86,7 @@ public:
 	EnemySystem enemySystem;
 	TriggerSystem triggerSystem;
 	DoorAndBollardSystem dabSystem;
+	ParticleSystem particleSystem;
 
 	virtual void Start() {};
 	virtual void Update(float delta) {};
