@@ -77,9 +77,6 @@ SceneManager::SceneManager(Scene* _scene)
 	glfwSetMouseButtonCallback(window, MouseButtonCallback);
 
 	glfwMakeContextCurrent(window);
-
-	RefreshInputMode();
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	
 	if (!gladLoadGL())
 	{
