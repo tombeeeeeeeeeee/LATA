@@ -54,7 +54,7 @@ void GUI::Update()
 	}
 
 	// TODO: Rebind-able key
-	if (glfwGetKey(SceneManager::window, GLFW_KEY_DELETE)) {
+	if (glfwGetKey(SceneManager::window, GLFW_KEY_DELETE) && !ImGui::GetIO().WantCaptureKeyboard) {
 		if (sceneObjectSelected) {
 			scene->DeleteSceneObject(sceneObjectSelected->GUID);
 		}
