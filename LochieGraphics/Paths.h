@@ -2,11 +2,13 @@
 
 #include <string>
 
+// TODO: These could actually be file system paths instead of strings
 namespace Paths {
 
 	const std::string importTextureLocation = "images/";
 	const std::string importModelLocation = "models/";
 	const std::string importShaderLocation = "Shaders/";
+	const std::string importAudioLocation = "audio/";
 
 	// TODO: Names here aren't consistent, plurality
 	const std::string levelsPath = "Levels/";

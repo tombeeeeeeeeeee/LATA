@@ -25,6 +25,8 @@ public:
 	static bool enterPlayModeOnStart;
 	static WindowModes windowedStartMode;
 
+	static float defaultGlobalVolume;
+
 	static void GUI();
 
 	static void Initialise();

@@ -24,8 +24,8 @@ public:
 	static int LoadAsInt(toml::node_view<toml::node> toml);
 	static int LoadAsInt(toml::node* toml);
 	static int LoadAsInt(toml::node& toml);
-	static float LoadAsFloat(toml::node_view<toml::node> toml);
-	static float LoadAsFloat(toml::node& toml);
+	static float LoadAsFloat(toml::node_view<toml::node> toml, float failedReadValue = 0.0f);
+	static float LoadAsFloat(toml::node& toml, float failedReadValue = 0.0f);
 	static glm::quat LoadAsQuaternion(toml::node_view<toml::node> toml);
 	static bool LoadAsBool(toml::node_view<toml::node> toml);
 	static unsigned int LoadAsUnsignedInt(toml::node_view<toml::node> toml);

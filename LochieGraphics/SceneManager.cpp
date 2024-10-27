@@ -185,6 +185,7 @@ SceneManager::SceneManager(Scene* _scene)
 	scene->shaders.push_back(particleShader);
 	scene->particleSystem.Initialise(particleShader);
 
+	scene->audio.Initialise();
 
 	scene->Start();
 
@@ -213,9 +214,11 @@ SceneManager::~SceneManager()
 	// TODO: Call unload scene or something in place of destructor
 	//delete scene;
 	
+	scene->audio.Deinitialise();
 
 	// Textures
 	ResourceManager::UnloadAll();
+
 
 	//TODO: unload meshes properly
 

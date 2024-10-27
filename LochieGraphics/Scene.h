@@ -21,6 +21,7 @@
 #include "DoorAndBollardSystem.h"
 #include "ParticleSystem.h"
 #include "GUI.h"
+#include "Audio.h"
 
 #include <map>
 
@@ -87,6 +88,7 @@ public:
 	TriggerSystem triggerSystem;
 	DoorAndBollardSystem dabSystem;
 	ParticleSystem particleSystem;
+	Audio audio;
 
 	virtual void Start() {};
 	virtual void Update(float delta) {};

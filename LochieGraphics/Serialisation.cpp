@@ -82,17 +82,17 @@ int Serialisation::LoadAsInt(toml::node& toml)
     return toml.as_integer()->value_or<int>(0);
 }
 
-float Serialisation::LoadAsFloat(toml::node_view<toml::node> toml)
+float Serialisation::LoadAsFloat(toml::node_view<toml::node> toml, float failedReadValue)
 {
     // TODO: Show error message
 
-    if (!toml) { return 0.0f; }
-    return toml.as_floating_point()->value_or<float>(0.0f);
+    if (!toml) { return failedReadValue; }
+    return toml.as_floating_point()->value_or<float>((double)failedReadValue);
 }
 
-float Serialisation::LoadAsFloat(toml::node& toml)
+float Serialisation::LoadAsFloat(toml::node& toml, float failedReadValue)
 {
-    return toml.as_floating_point()->value_or<float>(0.0f);
+    return toml.as_floating_point()->value_or<float>((double)failedReadValue);
 }
 
 glm::quat Serialisation::LoadAsQuaternion(toml::node_view<toml::node> table)

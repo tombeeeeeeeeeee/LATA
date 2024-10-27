@@ -89,6 +89,7 @@ void GUI::Update()
 			ImGui::MenuItem("User Prefs", NULL, &showUserPrefsMenu);
 			ImGui::MenuItem("Prefabs Menu", NULL, &showPrefabMenu);
 			ImGui::MenuItem("Particle Menu", NULL, &showParticleMenu);
+			ImGui::MenuItem("Audio Menu", NULL, &showAudioMenu);
 
 			ImGui::EndMenu();
 		}
@@ -129,6 +130,12 @@ void GUI::Update()
 	if (showParticleMenu) {
 		if (ImGui::Begin("Particle Menu", &showParticleMenu, defaultWindowFlags)) {
 			scene->particleSystem.GUI();
+		}
+		ImGui::End();
+	}
+	if (showAudioMenu) {
+		if (ImGui::Begin("Audio Menu", &showAudioMenu, defaultWindowFlags)) {
+			scene->audio.GUI();
 		}
 		ImGui::End();
 	}
