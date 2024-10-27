@@ -105,13 +105,13 @@ glm::quat Serialisation::LoadAsQuaternion(toml::node_view<toml::node> table)
         LoadAsFloat(toml->at(3)));
 }
 
-bool Serialisation::LoadAsBool(toml::node_view<toml::node> toml)
+bool Serialisation::LoadAsBool(toml::node_view<toml::node> toml, bool failedReadValue)
 {
     if (!toml) { 
         std::cout << "Failed to load bool\n";
-        return false; 
+        return failedReadValue;
     }
-    return toml.as_boolean()->value_or<bool>(false);
+    return toml.as_boolean()->value_or<bool>(failedReadValue ? true : false);
 }
 
 unsigned int Serialisation::LoadAsUnsignedInt(toml::node_view<toml::node> toml)

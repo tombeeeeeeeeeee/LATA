@@ -26,6 +26,7 @@ float UserPreferences::camBoomTruck;
 float UserPreferences::camMoveDolly;
 float UserPreferences::camScrollDolly;
 float UserPreferences::orthScrollSpeed;
+bool UserPreferences::immortal = true;
 
 void UserPreferences::GUI()
 {
@@ -93,6 +94,7 @@ void UserPreferences::GUI()
 			ImGui::EndDisabled();
 			ImGui::Unindent();
 		}
+		if (ImGui::Checkbox("Immortal", &immortal)) { shouldSave = true; }
 		ImGui::Unindent();
 	}
 	if (shouldSave) {
@@ -154,6 +156,7 @@ void UserPreferences::Save()
 		{ "camMoveDolly", camMoveDolly},
 		{ "camScrollDolly", camScrollDolly},
 		{ "orthScrollSpeed", orthScrollSpeed},
+		{ "immortal", immortal },
 	};
 
 	file << table << '\n';
@@ -182,6 +185,7 @@ void UserPreferences::Load()
 	camMoveDolly = Serialisation::LoadAsFloat(data["camMoveDolly"], 0.1f);
 	camScrollDolly = Serialisation::LoadAsFloat(data["camScrollDolly"], 0.1f);
 	orthScrollSpeed = Serialisation::LoadAsFloat(data["orthScrollSpeed"], 200.0f);
+	immortal = Serialisation::LoadAsBool(data["immortal"], true);
 
 	file.close();
 }

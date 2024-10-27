@@ -27,7 +27,7 @@ public:
 	static float LoadAsFloat(toml::node_view<toml::node> toml, float failedReadValue = 0.0f);
 	static float LoadAsFloat(toml::node& toml, float failedReadValue = 0.0f);
 	static glm::quat LoadAsQuaternion(toml::node_view<toml::node> toml);
-	static bool LoadAsBool(toml::node_view<toml::node> toml);
+	static bool LoadAsBool(toml::node_view<toml::node> toml, bool failedReadValue = false);
 	static unsigned int LoadAsUnsignedInt(toml::node_view<toml::node> toml);
 
 	// TODO: Made a mistake with the unsigned int, but removing this will break certain saves

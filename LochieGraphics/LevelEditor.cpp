@@ -271,6 +271,7 @@ void LevelEditor::Start()
 
 void LevelEditor::Update(float delta)
 {
+	bool playerDied = false;
 	if (showGrid) {
 		DrawGrid();
 	}
@@ -353,6 +354,12 @@ void LevelEditor::Update(float delta)
 
 		triggerSystem.Update(plates);
 		dabSystem.Update(transforms, doors, bollards, colliders, delta);
+
+		if (!UserPreferences::immortal) {
+			if (syncSo->health()->currHealth <= 0 || eccoSo->health()->currHealth <= 0) {
+				playerDied = true;
+			}
+		}
 	}
 
 
@@ -416,6 +423,10 @@ void LevelEditor::Update(float delta)
 				);
 			}
 		}
+	}
+
+	if (playerDied) {
+		LoadLevel(true);
 	}
 
 
