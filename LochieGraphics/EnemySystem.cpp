@@ -25,23 +25,45 @@
 #include "stb_image.h"
 #include "stb_image_write.h"
 #include <iostream>
+#include <filesystem>
+#include <ostream>
+#include <fstream>
 
 
 EnemySystem::EnemySystem(toml::table table)
 {
+    maxSpeed = Serialisation::LoadAsFloat(table["maxSpeed"]);
+    alignmentCoef = Serialisation::LoadAsFloat(table["alignmentCoef"]);
+    cohesionCoef = Serialisation::LoadAsFloat(table["cohesionCoef"]);
+    seperationCoef = Serialisation::LoadAsFloat(table["seperationCoef"]);
+    normalCoef = Serialisation::LoadAsFloat(table["normalCoef"]);
+    playerCoef = Serialisation::LoadAsFloat(table["playerCoef"]);
+    slowedPercentage = Serialisation::LoadAsFloat(table["slowedPercentage"]);
+    perceptionRadius = Serialisation::LoadAsFloat(table["perceptionRadius"]);
+    separationRadius = Serialisation::LoadAsFloat(table["separationRadius"]);
+    timeForEnemiesToSpawnAgain = Serialisation::LoadAsFloat(table["timeForEnemiesToSpawnAgain"]);
+    explosiveEnemyHealth = Serialisation::LoadAsInt(table["explosiveEnemyHealth"]);
+    timeToExplode = Serialisation::LoadAsFloat(table["timeToExplode"]);
+    explosionDamage = Serialisation::LoadAsInt(table["explosionDamage"]);
+    explosionRadius = Serialisation::LoadAsFloat(table["explosionRadius"]);
+    distanceToExplode = Serialisation::LoadAsFloat(table["distanceToExplode"]);
+    explosiveEnemyColliderRadius = Serialisation::LoadAsFloat(table["explosiveEnemyColliderRadius"]);
+
     meleeEnemyHealth = Serialisation::LoadAsInt(table["meleeEnemyHealth"]);
     meleeEnemyDamage = Serialisation::LoadAsInt(table["meleeEnemyDamage"]);
     meleeEnemyColliderRadius = Serialisation::LoadAsFloat(table["meleeEnemyColliderRadius"]);
+    distanceToPunch = Serialisation::LoadAsFloat(table["distanceToPunch"]);
+    timeToPunch = Serialisation::LoadAsFloat(table["timeToPunch"]);
     meleeEnemyModel = Serialisation::LoadAsString(table["meleeEnemyModel"]);
     meleeEnemyMaterialPath = Serialisation::LoadAsString(table["meleeEnemyMaterialPath"]);
 
     rangedEnemyHealth = Serialisation::LoadAsInt(table["rangedEnemyHealth"]);
     rangedEnemyDamage = Serialisation::LoadAsInt(table["rangedEnemyDamage"]);
     rangedEnemyColliderRadius = Serialisation::LoadAsFloat(table["rangedEnemyColliderRadius"]);
+    distanceToShoot = Serialisation::LoadAsFloat(table["distanceToShoot"]);
+    distanceToFlee = Serialisation::LoadAsFloat(table["distanceToFlee"]);
     rangedEnemyModel = Serialisation::LoadAsString(table["rangedEnemyModel"]);
     rangedEnemyMaterialPath = Serialisation::LoadAsString(table["rangedEnemyMaterialPath"]);
-
-    glm::vec3 offscreenSpawnPosition = Serialisation::LoadAsVec3(table["offscreenSpawnPosition"]);
 }
 
 void EnemySystem::Start(
@@ -159,39 +181,6 @@ void EnemySystem::LineOfSightAndTargetCheck(
     glm::vec2 enemyPos2D = transform.get2DGlobalPosition();
 
     float distanceToSync = FLT_MAX;
-
-    std::vector<Hit> syncHits;
-    std::vector<Hit> eccoHits;
-    //if (PhysicsSystem::RayCast(
-    //    enemyPos2D, glm::normalize(syncPos2D - enemyPos2D), 
-    //    syncHits, FLT_MAX,
-    //    (int)CollisionLayers::sync | (int)CollisionLayers::base )
-    //) 
-    //{
-    //    Hit hit = syncHits[0];
-    //    if (hit.sceneObject->parts & Parts::sync)
-    //    {
-    //        distanceToSync = hit.distance;
-    //        enemy.lastTargetPos = syncPos2D;
-    //        enemy.hasLOS = true;
-    //    }
-    //}
-    //if (PhysicsSystem::RayCast(
-    //    enemyPos2D, glm::normalize(eccoPos2D - enemyPos2D),
-    //    eccoHits, FLT_MAX,
-    //    (int)CollisionLayers::ecco | (int)CollisionLayers::base )
-    //    )
-    //{
-    //    Hit hit = eccoHits[0];
-    //    if (hit.sceneObject->parts & Parts::ecco)
-    //    {
-    //        if (hit.distance < distanceToSync)
-    //        {
-    //            enemy.lastTargetPos = eccoPos2D;
-    //            enemy.hasLOS = true;
-    //        }
-    //    }
-    //}
 }
 
 void EnemySystem::AbilityCheck(
@@ -551,6 +540,85 @@ void EnemySystem::SpawnEnemiesInScene(
 
 void EnemySystem::GUI()
 {
+    std::vector<std::string> loadPaths = {};
+    std::vector<std::string*> loadPathsPointers = {};
+    loadPaths.clear();
+    loadPathsPointers.clear();
+
+    for (auto& i : std::filesystem::directory_iterator(Paths::systemPath))
+    {
+        loadPaths.push_back(i.path().generic_string().substr(Paths::systemPath.size()));
+        if (loadPaths.back().substr(loadPaths.back().size() - Paths::enemySystemExtension.size()) != Paths::enemySystemExtension) {
+            loadPaths.erase(--loadPaths.end());
+            continue;
+        }
+        loadPaths.back() = loadPaths.back().substr(0, loadPaths.back().size() - Paths::enemySystemExtension.size());
+    }
+    for (auto& i : loadPaths)
+    {
+        loadPathsPointers.push_back(&i);
+    }
+
+    std::string* selected = &filename; 
+
+    ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Filename", Utilities::PointerToString(&loadPathsPointers));
+    filename = *selected;
+    if (ImGui::Button("Save##EnemySystems")) {
+
+        std::ofstream file(Paths::systemPath + filename + Paths::enemySystemExtension);
+
+        toml::table table = Serialise();
+
+        file << table << '\n';
+
+        file.close();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Load##EnemySystems")) {
+        if (selected)
+        {
+            std::ifstream file(Paths::systemPath + filename + Paths::enemySystemExtension);
+
+            toml::table data = toml::parse(file);
+
+            *this = EnemySystem(data);
+ 
+            file.close();
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Save as"))
+    {
+        saveAs = true;
+
+        if (ImGui::Begin("Save Enemy System As", &saveAs)) {
+
+            std::string newFileName = "";
+
+            ImGui::InputText("File ", &newFileName);
+
+            if(ImGui::Button("Save"))
+            {
+                if (newFileName != "") {
+                    std::ofstream file(Paths::systemPath + filename + Paths::enemySystemExtension);
+
+                    toml::table table = Serialise();
+
+                    file << table << '\n';
+
+                    file.close();
+                }
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel"))
+            {
+                saveAs = false;
+            }
+        }
+    }
+
+
+
     ImGui::Checkbox("AI Updating",&aiUpdating);
 
     ImGui::Text("AI STATS");
@@ -581,10 +649,6 @@ void EnemySystem::GUI()
     ImGui::DragInt("Melee Enemy Damage", &meleeEnemyDamage);
     ImGui::DragFloat("Melee Enemy Collider Radius", &meleeEnemyColliderRadius);
     ImGui::DragFloat("Distance To Start Punching", &distanceToPunch, 25.0f, 0);
-    if (ResourceManager::ModelSelector("Melee Enemy Model", &(meleeEnemyRenderer->model)))
-    {
-        meleeEnemyModel = meleeEnemyRenderer->model->path;
-    }
     ImGui::InputText("Melee Enemy Material", &meleeEnemyMaterialPath);
     ImGui::Text("");
     ImGui::Text("RANGED ENEMY STATS");
@@ -593,10 +657,6 @@ void EnemySystem::GUI()
     ImGui::DragFloat("Ranged Enemy Collider Radius", &rangedEnemyColliderRadius);
     ImGui::DragFloat("Distance To Start Shooting", &distanceToShoot, 25.0f, 0);
     ImGui::DragFloat("Distance To Start Fleeing", &distanceToFlee, 25.0f, 0);
-    if (ResourceManager::ModelSelector("Ranged Enemy Model", &(rangedEnemyRenderer->model)))
-    {
-        rangedEnemyModel = rangedEnemyRenderer->model->path;
-    }
     ImGui::InputText("Ranged Enemy Material", &rangedEnemyMaterialPath);
 
     ImGui::End();
@@ -604,17 +664,38 @@ void EnemySystem::GUI()
 
 toml::table EnemySystem::Serialise() const
 {
-    return toml::table{
-        { "meleeEnemyHealth", meleeEnemyHealth },
-        { "meleeEnemyDamage", meleeEnemyDamage },
-        { "meleeEnemyColliderRadius", meleeEnemyColliderRadius },
-        { "meleeEnemyModel", meleeEnemyModel },
-        { "meleeEnemyMaterialPath", meleeEnemyMaterialPath },
-        { "rangedEnemyHealth", rangedEnemyHealth },
-        { "rangedEnemyDamage", rangedEnemyDamage }, 
-        { "rangedEnemyColliderRadius", rangedEnemyColliderRadius },
-        { "rangedEnemyModel", rangedEnemyModel },
-        { "rangedEnemyMaterialPath", rangedEnemyMaterialPath },
+    return 
+            toml::table{
+                { "maxSpeed", maxSpeed },
+                { "alignmentCoef", alignmentCoef },
+                { "cohesionCoef", cohesionCoef },
+                { "seperationCoef", seperationCoef },
+                { "normalCoef", normalCoef },
+                { "playerCoef", playerCoef },
+                { "slowedPercentage", slowedPercentage },
+                { "perceptionRadius", perceptionRadius },
+                { "separationRadius", separationRadius },
+                { "timeForEnemiesToSpawnAgain", timeForEnemiesToSpawnAgain },
+                { "explosiveEnemyHealth", explosiveEnemyHealth },
+                { "timeToExplode", timeToExplode },
+                { "explosionDamage", explosionDamage },
+                { "explosionRadius", explosionRadius },
+                { "distanceToExplode", distanceToExplode },
+                { "explosiveEnemyColliderRadius", explosiveEnemyColliderRadius },
+                { "meleeEnemyHealth", meleeEnemyHealth },
+                { "meleeEnemyDamage", meleeEnemyDamage },
+                { "meleeEnemyColliderRadius", meleeEnemyColliderRadius },
+                { "distanceToPunch", distanceToPunch },
+                { "timeToPunch", timeToPunch },
+                { "meleeEnemyModel", meleeEnemyModel },
+                { "meleeEnemyMaterialPath", meleeEnemyMaterialPath },
+                { "rangedEnemyHealth", rangedEnemyHealth },
+                { "rangedEnemyDamage", rangedEnemyDamage },
+                { "rangedEnemyColliderRadius", rangedEnemyColliderRadius },
+                { "distanceToShoot", distanceToShoot },
+                { "distanceToFlee", distanceToFlee },
+                { "rangedEnemyModel", rangedEnemyModel },
+                { "rangedEnemyMaterialPath", rangedEnemyMaterialPath },
     };
 }
 
