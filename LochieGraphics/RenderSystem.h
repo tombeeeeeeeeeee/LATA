@@ -52,15 +52,17 @@ public:
     );
 
     void SetIrradianceMap(unsigned int skybox);
-    void SetPrefilteredMap(unsigned int skybox);
 
     float exposure = 1.0f;
+    int bufferIndex = 0;
 
-    void ForwardUpdate();
+    void DeferredUpdate();
     void HDRBufferUpdate();
     void OutputBufferUpdate();
     void BloomUpdate();
     void SSAOUpdate();
+    void AmbientPassUpdate();
+
 
     void Update(
         std::unordered_map<unsigned long long, ModelRenderer>& renders,
@@ -154,8 +156,6 @@ private:
     unsigned int captureRBO = 0;
 
     unsigned int irradianceMap = 0;
-    unsigned int brdfLUTTexture = 0;
-    unsigned int prefilterMap = 0;
     Texture* paintStrokeTexture = nullptr;
 
     void BloomSetup();
@@ -167,10 +167,19 @@ private:
     void RenderDownSamples(unsigned int srcTexture);
     void RenderUpSamples(float aspectRatio);
 
-    unsigned int positionBuffer = 0;
     unsigned int normalBuffer = 0;
-    unsigned int forwardFBO = 0;
-    void ForwardSetup();
+    unsigned int albedoBuffer = 0;
+    unsigned int emissionBuffer = 0;
+    unsigned int depthBuffer = 0;
+    unsigned int deferredFBO = 0;
+    void DeferredSetup();
+
+
+    unsigned int ambientPassBuffer = 0;
+    unsigned int ambientPassFBO = 0;
+    int ambientPassShaderIndex = 0;
+    void AmibentPassSetup();
+    void RenderAmbientPass();
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;

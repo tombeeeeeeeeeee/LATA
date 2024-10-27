@@ -141,7 +141,7 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "cubemap" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "simpleDepthShader" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "shadowDebug" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "HDRBloom" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "Display" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "brdf" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prefilter" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "downSample" + Paths::shaderExtension),
@@ -150,7 +150,7 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "lineRenderer" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssao" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssaoBlur" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "forward" + Paths::shaderExtension),
+		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prepass" + Paths::shaderExtension),
 		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "superDuper" + Paths::shaderExtension),
 	});
 
@@ -163,7 +163,7 @@ SceneManager::SceneManager(Scene* _scene)
 	}
 
 
-	std::array<std::string, 6> skyboxFaces = { "images/SkyBox Volume 2/Stars01/leftImage.png", "images/SkyBox Volume 2/Stars01/rightImage.png", "images/SkyBox Volume 2/Stars01/upImage.png", "images/SkyBox Volume 2/Stars01/downImage.png", "images/SkyBox Volume 2/Stars01/frontImage.png", "images/SkyBox Volume 2/Stars01/backImage.png" };
+	std::array<std::string, 6> skyboxFaces = { "images/skybox/left.jpg", "images/skybox/right.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
 	defaultSkybox = new Skybox(scene->shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data()));
 
 	if (scene->skybox == nullptr) {
@@ -171,9 +171,11 @@ SceneManager::SceneManager(Scene* _scene)
 	}
 
 	ResourceManager::defaultTexture = ResourceManager::LoadTexture("images/T_DefaultTexture.png", Texture::Type::albedo);
+	ResourceManager::defaultNormal = ResourceManager::LoadTexture("images/T_Normal.png", Texture::Type::normal);
 	ResourceManager::defaultMaterial = ResourceManager::LoadMaterial("Default Material", scene->shaders[super]);
 	ResourceManager::defaultMaterial->AddTextures({
-		ResourceManager::defaultTexture
+		ResourceManager::defaultTexture,
+		ResourceManager::defaultNormal
 		});
 	ResourceManager::defaultShader = scene->shaders[super];
 
@@ -265,7 +267,7 @@ void SceneManager::Update()
 	//// TODO: Actual draw/update loop
 	scene->renderSystem.projection = projection;
 
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	ImGui_ImplOpenGL3_NewFrame();

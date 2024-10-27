@@ -177,7 +177,7 @@ LevelEditor::LevelEditor() :
 
 void LevelEditor::Start()
 {
-	groundShader = ResourceManager::LoadShader("Shaders/floorWorld.vert", "Shaders/superDuper.frag", Shader::Flags::Spec | Shader::Flags::VPmatrix | Shader::Flags::Lit);
+	groundShader = ResourceManager::LoadShader("Shaders/floorWorld.vert", "Shaders/prepass.frag", Shader::Flags::Spec | Shader::Flags::VPmatrix | Shader::Flags::Lit);
 	groundTexture = ResourceManager::LoadTexture("images/T_MissingTexture.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
 	groundTexture->mipMapped = false;
 	groundMaterial = ResourceManager::LoadMaterial("Ground", groundShader);
@@ -259,9 +259,9 @@ void LevelEditor::Start()
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 
-	renderSystem.kernelSize = 128;
+	renderSystem.kernelSize = 64;
 	renderSystem.ssaoRadius = 32.0f;
-	renderSystem.ssaoBias = 6.0f;
+	renderSystem.ssaoBias = 7.5f;
 
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);

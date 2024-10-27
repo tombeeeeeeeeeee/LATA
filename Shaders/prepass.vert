@@ -22,11 +22,6 @@ const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 boneMatrices[MAX_BONES];
 
-out vec3 fragmentViewPos;
-out vec3 fragmentPosInView;
-out vec3 fragmentPos;
-out vec4 directionalLightSpaceFragPos;
-
 out vec3 fragmentNormal;
 out vec3 fragmentTangent;
 out vec3 fragmentBitangent;
@@ -59,11 +54,8 @@ void main()
     fragmentTangent = normalize(fragmentTangent - dot(fragmentTangent, fragmentNormal) * fragmentNormal);
     fragmentBitangent = cross(fragmentNormal, fragmentTangent);
 
-    fragmentPos = pos.xyz;
-
     gl_Position = vp * vec4(pos);
     screenPosition = (gl_Position.xyz / gl_Position.w).xy;
     screenPosition = screenPosition * 0.5 + 0.5;
-    fragmentPosInView = (view * pos).xyz;
     fragmentColour = materialColour;
 }

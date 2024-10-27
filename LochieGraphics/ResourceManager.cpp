@@ -24,6 +24,7 @@ std::unordered_map<unsigned long long, Model, hashFNV1A> ResourceManager::models
 std::unordered_map<unsigned long long, Mesh, hashFNV1A> ResourceManager::meshes;
 
 Texture* ResourceManager::defaultTexture = nullptr;
+Texture* ResourceManager::defaultNormal = nullptr;
 Shader* ResourceManager::defaultShader = nullptr;
 Material* ResourceManager::defaultMaterial = nullptr;
 Model* ResourceManager::defaultModel = nullptr;

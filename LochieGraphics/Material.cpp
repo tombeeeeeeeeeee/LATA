@@ -120,6 +120,9 @@ void Material::Use(Shader* _shader)
 		if (i->second) {
 			i->second->Bind(count);
 		}
+		else if (i->first == "material.normal"){
+			ResourceManager::defaultNormal->Bind(count);
+		}
 		else {
 			Texture::ClearBind(count);
 		}
