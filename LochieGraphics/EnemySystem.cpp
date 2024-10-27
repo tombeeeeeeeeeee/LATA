@@ -30,7 +30,7 @@
 #include <fstream>
 
 
-EnemySystem::EnemySystem(toml::table table)
+void EnemySystem::Load(toml::table table)
 {
     maxSpeed = Serialisation::LoadAsFloat(table["maxSpeed"]);
     alignmentCoef = Serialisation::LoadAsFloat(table["alignmentCoef"]);
@@ -581,7 +581,7 @@ void EnemySystem::GUI()
 
             toml::table data = toml::parse(file);
 
-            *this = EnemySystem(data);
+            Load(data);
  
             file.close();
         }
@@ -590,34 +590,10 @@ void EnemySystem::GUI()
     if (ImGui::Button("Save as"))
     {
         saveAs = true;
-
-        if (ImGui::Begin("Save Enemy System As", &saveAs)) {
-
-            std::string newFileName = "";
-
-            ImGui::InputText("File ", &newFileName);
-
-            if(ImGui::Button("Save"))
-            {
-                if (newFileName != "") {
-                    std::ofstream file(Paths::systemPath + filename + Paths::enemySystemExtension);
-
-                    toml::table table = Serialise();
-
-                    file << table << '\n';
-
-                    file.close();
-                }
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel"))
-            {
-                saveAs = false;
-            }
-        }
     }
 
 
+    SaveAsGUI();
 
     ImGui::Checkbox("AI Updating",&aiUpdating);
 
@@ -698,7 +674,42 @@ toml::table EnemySystem::Serialise() const
                 { "rangedEnemyMaterialPath", rangedEnemyMaterialPath },
     };
 }
+void EnemySystem::SaveAsGUI()
+{
+    if (saveAs)
+    {
+        ImGui::OpenPopup("Save Enemy System As");
+        saveAs = false;
+    }
+    if (ImGui::BeginPopupModal("Save Enemy System As", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    {
 
+        ImGui::InputText("File ", &newFilename);
+
+        if (ImGui::Button("Save"))
+        {
+            if (newFilename != "") {
+                std::ofstream file(Paths::systemPath + newFilename + Paths::enemySystemExtension);
+                filename = newFilename;
+                toml::table table = Serialise();
+
+                file << table << '\n';
+
+                file.close();
+                ImGui::CloseCurrentPopup();
+                
+                newFilename = "";
+            }
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel"))
+        {
+            newFilename = "";
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+}
 void EnemySystem::UpdateNormalFlowMap(
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, RigidBody>& rigidBodies,

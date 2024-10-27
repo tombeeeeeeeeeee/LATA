@@ -49,7 +49,7 @@ public:
 	int maxNormalInfluence = 1024;
 
 	EnemySystem() {};
-	EnemySystem(toml::table table);
+	void Load(toml::table table);
 	void Start(
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
@@ -118,8 +118,9 @@ public:
 	);
 
 	void GUI();
-
+	void SaveAsGUI();
 	std::string filename = "";
+	std::string newFilename = "";
 	toml::table Serialise() const;
 
 
