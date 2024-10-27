@@ -12,6 +12,7 @@ namespace Paths {
 
 	// TODO: Names here aren't consistent, plurality
 	const std::string levelsPath = "Levels/";
+	const std::string systemPath = "Systems/";
 	const std::string rendererSaveLocation = "Assets/Renderers/";
 	const std::string materialSaveLocation = "Assets/Materials/";
 	const std::string textureSaveLocation = "Assets/Textures/";
@@ -27,6 +28,7 @@ namespace Paths {
 	const std::string textureExtension = ".texture";
 	const std::string modelExtension = ".model";
 	const std::string levelExtension = ".level";
+	const std::string enemySystemExtension = ".enemySystem";
 	const std::string prefabExtension = ".prefab";
 	const std::string imageExtension = ".png";
 	const std::string userPrefsExtension = ".prefs";

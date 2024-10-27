@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Maths.h"
+#include "ExtraEditorGUI.h"
 
 #include <vector>
 #include <string>
@@ -40,13 +41,15 @@ private:
 	int meleeEnemyCount = 0;
 	int rangedEnemyCount = 0;
 	float timeForEnemiesToSpawnAgain = 60.0f;
+
+	bool saveAs = false;
 public:
 	bool aiUpdating = false;
-	const int nfmDensity = 20;
-	const int maxNormalInfluence = 1024;
+	int nfmDensity = 20;
+	int maxNormalInfluence = 1024;
 
 	EnemySystem() {};
-	EnemySystem(toml::table table);
+	void Load(toml::table table);
 	void Start(
 		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
@@ -115,7 +118,9 @@ public:
 	);
 
 	void GUI();
-
+	void SaveAsGUI();
+	std::string filename = "";
+	std::string newFilename = "";
 	toml::table Serialise() const;
 
 

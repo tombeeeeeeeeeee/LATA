@@ -198,7 +198,11 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 		new SceneObject(this, loadingSceneObject);
 	}
 
-	LoadPart(renderers, "Renderers", ModelRenderer);
+	toml::array* loadingModelRenderers = data["Renderers"].as_array(); if (loadingModelRenderers) {
+		for (int i = 0; i < loadingModelRenderers->size(); i++) {
+			toml::table* loadingModelRenderer = loadingModelRenderers->at(i).as_table(); renderers[Serialisation::LoadAsUnsignedLongLong((*loadingModelRenderer)["guid"])] = ModelRenderer(*loadingModelRenderer);
+		}
+	};
 	LoadPart(transforms, "Transforms", Transform);
 	// Loading transforms doesn't keep the sceneobject pointer, they need to be refreshed
 	for (auto& i : transforms)
