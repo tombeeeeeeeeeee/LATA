@@ -47,7 +47,7 @@ const float MAX_REFLECTION_LOD = 4.0;
 void main()
 {
 	float depthValue = texture(screenDepth, texCoords).r;
-    vec4 NDC = vec4(texCoords * 2.0 - 1.0, depthValue, 1.0);
+    vec4 NDC = vec4(texCoords * 2.0 - 1.0, depthValue * 2.0 -1.0, 1.0);
     vec4 clipPos = invP * NDC;
     screenPos = clipPos.xyz / clipPos.w;
     fragPos = (invV * vec4(screenPos, 1.0)).xyz;

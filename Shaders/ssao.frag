@@ -3,7 +3,7 @@ out float FragColor;
 
 in vec2 texCoords;
 
-uniform sampler2D viewPos;
+uniform sampler2D depth;
 uniform sampler2D normalColour;
 uniform sampler2D texNoise;
 
@@ -18,12 +18,17 @@ uniform float bias = 0.025;
 uniform vec2 noiseScale = vec2(1.0/4.0, 1.0/4.0); 
 
 uniform mat4 projection;
+uniform mat4 invP;
 uniform mat4 invV;
 
 void main()
 {
     // get input for SSAO algorithm
-    vec3 fragPos = texture(viewPos, texCoords).xyz;
+    float depthValue = texture(depth, texCoords).r;
+    vec4 NDC = vec4(texCoords * 2.0 - 1.0, depthValue * 2.0 - 1.0, 1.0);
+    vec4 clipPos = invP * NDC;
+    vec3 fragPos = clipPos.xyz / clipPos.w;
+
     vec3 normal = normalize(texture(normalColour, texCoords).rgb);
     vec3 randomVec = normalize(texture(texNoise, texCoords * noiseScale).xyz);
     // create TBN change-of-basis matrix: from tangent-space to view-space
@@ -45,13 +50,16 @@ void main()
         offset.xyz = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0
         
         // get sample depth
-        float sampleDepth = texture(viewPos, offset.xy).z; // get depth value of kernel sample
-        
+        float sampleDepth = texture(depth, offset.xy).r; // get depth value of kernel sample
+        vec4 otherNDC = vec4(offset.xy * 2.0 - 1.0, sampleDepth * 2.0 -1.0, 1.0);
+        otherNDC = invP * otherNDC;
+        vec3 pos = otherNDC.xyz/otherNDC.w;
+
         // range check & accumulate
-        float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
-        occlusion += (sampleDepth >= samplePos.z + bias ? 1.0 : 0.0) * rangeCheck;           
+        float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - pos.z));
+        occlusion += (pos.z >= samplePos.z + bias ? 1.0 : 0.0) * rangeCheck;           
     }
     occlusion = 1.0 - (occlusion / kernelSize);
     
-    FragColor = occlusion * occlusion;
+    FragColor = occlusion;
  }

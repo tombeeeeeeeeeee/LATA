@@ -169,7 +169,6 @@ private:
     unsigned int normalBuffer = 0;
     unsigned int albedoBuffer = 0;
     unsigned int emissionBuffer = 0;
-    unsigned int viewBuffer = 0;
     unsigned int depthBuffer = 0;
     unsigned int deferredFBO = 0;
     void DeferredSetup();

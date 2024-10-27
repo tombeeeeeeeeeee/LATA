@@ -10,20 +10,12 @@ struct Material {
 uniform Material material;
 
 in vec2 texCoords;
-in vec3 fragmentPos;
 in vec3 fragmentColour;
-in vec3 fragmentPosInView;
 
 layout (location = 0) out vec4 normal;
 layout (location = 1) out vec4 albedo;
 layout (location = 2) out vec4 emission;
 layout (location = 3) out vec4 bloom;
-layout (location = 4) out vec4 viewPos;
-
-// Lighting
-#define PI 3.1415926535
-
-vec3 viewDir;
 
 // Normals
 in vec3 fragmentNormal;
@@ -52,7 +44,6 @@ void main()
 
     //Emission packed with PBR AO
     emission = vec4(emission3, PBR.b);
-    viewPos = vec4(fragmentPosInView, 1.0);
     bloom = vec4(0.0, 0.0, 0.0, 0.0);
 }
 

@@ -227,7 +227,7 @@ void LevelEditor::Start()
 	}
 
 	renderSystem.kernelSize = 64;
-	renderSystem.ssaoRadius = 12.0f;
+	renderSystem.ssaoRadius = 31.0f;
 	renderSystem.ssaoBias = 7.5f;
 
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {

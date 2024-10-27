@@ -198,14 +198,6 @@ void RenderSystem::DeferredUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glGenTextures(1, &viewBuffer);
-    glBindTexture(GL_TEXTURE_2D, viewBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
     glBindTexture(GL_TEXTURE_2D, depthBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -218,7 +210,6 @@ void RenderSystem::DeferredUpdate()
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, albedoBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, emissionBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, bloomBuffer, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, viewBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
 
     auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -338,7 +329,7 @@ void RenderSystem::Update(
 
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
     shadowCaster->shadowFrameBuffer->Load();
-    unsigned int deferredAttachments[5] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
+    unsigned int deferredAttachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
     unsigned int ambientAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -370,7 +361,7 @@ void RenderSystem::Update(
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    glDrawBuffers(5, deferredAttachments);
+    glDrawBuffers(4, deferredAttachments);
 
     DrawAllRenderers(animators, transforms, renders, animatedRenderered);
 
@@ -817,7 +808,6 @@ void RenderSystem::DeferredSetup()
     glGenTextures(1, &albedoBuffer);
     glGenTextures(1, &emissionBuffer);
     glGenTextures(1, &bloomBuffer);
-    glGenTextures(1, &viewBuffer);
     glGenTextures(1, &depthBuffer);
     glGenFramebuffers(1, &deferredFBO);
     DeferredUpdate();
@@ -873,7 +863,7 @@ void RenderSystem::SSAOSetup()
 
     Shader* ssaoShader = (*shaders)[ssao];
     ssaoShader->Use();
-    ssaoShader->setInt("viewPos", 1);
+    ssaoShader->setInt("depth", 1);
     ssaoShader->setInt("normalColour", 2);
     ssaoShader->setInt("texNoise", 3);
 
@@ -983,7 +973,7 @@ void RenderSystem::RenderSSAO()
     ssaoShader->setVec2("noiseScale", { SCREEN_WIDTH / 4.0, SCREEN_HEIGHT / 4.0 });
 
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, viewBuffer);
+    glBindTexture(GL_TEXTURE_2D, depthBuffer);
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, normalBuffer);
