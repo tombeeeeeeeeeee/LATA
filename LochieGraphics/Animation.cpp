@@ -16,9 +16,11 @@ Animation::Animation(const std::string& animationPath, Model* _model) :
 	model(_model),
 	modelGUID(_model->GUID)
 {
+	// TODO: Can I just reuse like 1 importer?
 	Assimp::Importer importer;
 	// TODO: what flags should be set here
-	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+	// TODO: Properties like this are also set in Model, they should be ensured to match
+	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, true);
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	
 	// If either the scene or the root node is null, then the animation has failed to load
@@ -32,9 +34,8 @@ Animation::Animation(const std::string& animationPath, Model* _model) :
 	duration = (float)animation->mDuration;
 	ticksPerSecond = (float)animation->mTicksPerSecond;
 	
-	// TODO: use this
-	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
-	globalTransformation = globalTransformation.Inverse();
+	//aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
+	//globalTransformation = globalTransformation.Inverse();
 
 	//rootNode = &(new SceneObject())->transform;
 	//SceneManager::scene->sceneObjects.push_back(rootNode->getSceneObject());

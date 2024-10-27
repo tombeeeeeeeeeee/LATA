@@ -52,15 +52,17 @@ public:
     );
 
     void SetIrradianceMap(unsigned int skybox);
-    void SetPrefilteredMap(unsigned int skybox);
 
     float exposure = 1.0f;
+    int bufferIndex = 0;
 
-    void ForwardUpdate();
+    void DeferredUpdate();
     void HDRBufferUpdate();
     void OutputBufferUpdate();
     void BloomUpdate();
     void SSAOUpdate();
+    void AmbientPassUpdate();
+
 
     void Update(
         std::unordered_map<unsigned long long, ModelRenderer>& renders,
@@ -91,6 +93,13 @@ public:
 
     void GUI();
 
+    glm::mat4 viewMatrix = glm::zero<glm::mat4>();
+
+    void ActivateFlaggedVariables(
+        Shader* shader,
+        Material* mat
+    );
+
 private:
 
     Mesh* screenQuad = nullptr;
@@ -109,7 +118,6 @@ private:
     /// </summary>
     unsigned int modelLocation = 0;
 
-    glm::mat4 viewMatrix = glm::zero<glm::mat4>();
 
     /// <summary>
     /// List of entities in order of the shader they use.
@@ -127,11 +135,6 @@ private:
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
         std::unordered_set<unsigned long long> animatedRenderered,
         Shader* shader = nullptr
-    );
-
-    void ActivateFlaggedVariables(
-        Shader* shader,
-        Material* mat
     );
 
     //void BindLightUniform(unsigned int shaderProgram,
@@ -153,8 +156,6 @@ private:
     unsigned int captureRBO = 0;
 
     unsigned int irradianceMap = 0;
-    unsigned int brdfLUTTexture = 0;
-    unsigned int prefilterMap = 0;
     Texture* paintStrokeTexture = nullptr;
 
     void BloomSetup();
@@ -166,10 +167,19 @@ private:
     void RenderDownSamples(unsigned int srcTexture);
     void RenderUpSamples(float aspectRatio);
 
-    unsigned int positionBuffer = 0;
     unsigned int normalBuffer = 0;
-    unsigned int forwardFBO = 0;
-    void ForwardSetup();
+    unsigned int albedoBuffer = 0;
+    unsigned int emissionBuffer = 0;
+    unsigned int depthBuffer = 0;
+    unsigned int deferredFBO = 0;
+    void DeferredSetup();
+
+
+    unsigned int ambientPassBuffer = 0;
+    unsigned int ambientPassFBO = 0;
+    int ambientPassShaderIndex = 0;
+    void AmibentPassSetup();
+    void RenderAmbientPass();
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;

@@ -66,7 +66,6 @@ void Input::Update()
 
 void Input::GUI()
 {
-
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("Windows")) {
 			if (ImGui::MenuItem("Input", nullptr, &windowOpen)) {
@@ -85,6 +84,21 @@ void Input::GUI()
 	if (ImGui::Button("Show all controller connection information (console)")) {
 		ShowAllControllerSlotStatuses();
 	}
+	
+	auto keyboard = std::find_if(inputDevices.begin(), inputDevices.end(), [&](const InputDevice* inputDevice) {
+		return inputDevice->getType() == Type::Keyboard;
+		});
+	if (keyboard == inputDevices.end()) {
+		if (ImGui::Button("Add Keyboard as input device")) {
+			AddKeyboard();
+		}
+	}
+	else {
+		if (ImGui::Button("Remove Keyboard as input device")) {
+			inputDevices.erase(keyboard);
+		}
+	}
+	
 	for (int i = 0; i < inputDevices.size(); i++)
 	{
 		if (ImGui::CollapsingHeader(("#" + std::to_string(i)).c_str())) {

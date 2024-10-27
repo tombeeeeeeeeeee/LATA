@@ -19,7 +19,9 @@
 #include "EnemySystem.h"
 #include "TriggerSystem.h"
 #include "DoorAndBollardSystem.h"
+#include "ParticleSystem.h"
 #include "GUI.h"
+#include "Audio.h"
 
 #include <map>
 
@@ -85,6 +87,8 @@ public:
 	EnemySystem enemySystem;
 	TriggerSystem triggerSystem;
 	DoorAndBollardSystem dabSystem;
+	ParticleSystem particleSystem;
+	Audio audio;
 
 	virtual void Start() {};
 	virtual void Update(float delta) {};
@@ -118,5 +122,6 @@ protected:
 
 	toml::table SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*) = nullptr);
 	void LoadSceneObjectsAndParts(toml::table& data);
+	void EnsureAllPartsHaveSceneObject();
 	void InitialisePlayers();
 };

@@ -93,7 +93,7 @@ void Animator::GUI()
         if (ImGui::Button(("Set all scales to 1!##" + tag).c_str())) {
             for (auto& i : currentAnimation->bones)
             {
-                for (auto& k : i.keys)
+                for (auto& k : i.scaleKeys)
                 {
                     k.scale = glm::vec3(1.0f, 1.0f, 1.0f);
                 }
@@ -103,6 +103,7 @@ void Animator::GUI()
             ImGui::Indent();
             for (size_t i = 0; i < finalBoneMatrices.size(); i++)
             {
+                std::string tag = Utilities::PointerToString(&finalBoneMatrices[i]);
                 if (ImGui::CollapsingHeader(("Bone ID " + std::to_string(i) + "##" + tag).c_str())) {
                     ExtraEditorGUI::Mat4Input(tag, &finalBoneMatrices[i]);
                 }

@@ -63,6 +63,21 @@
     <Filter Include="Source Files\Third-Party\stb\imguizmo">
       <UniqueIdentifier>{88879a22-0acc-4dea-ae36-98856c989c42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Third-Party\soloud">
+      <UniqueIdentifier>{8c7b4950-e176-45fd-8374-9241df97f0e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Third-Party\soloud\backends">
+      <UniqueIdentifier>{b8c33319-b9b1-4de7-91e4-e70c38cfe72c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Third-Party\soloud\audiosource">
+      <UniqueIdentifier>{b989e20d-0175-4986-a105-b3695311adf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Third-Party\soloud\audiosource\wav">
+      <UniqueIdentifier>{60996d84-e834-47cb-a18b-a48fe8bceece}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Third-Party\soloud\core">
+      <UniqueIdentifier>{9ae7af90-7bca-491e-a511-14745b6a322d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -308,8 +323,92 @@
     <ClCompile Include="DoorAndBollardSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelHierarchyInfo.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\backend\winmm\soloud_winmm.cpp">
+      <Filter>Source Files\Third-Party\soloud\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\audiosource\wav\soloud_wavstream.cpp">
+      <Filter>Source Files\Third-Party\soloud\audiosource\wav</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\audiosource\wav\stb_vorbis.c">
+      <Filter>Source Files\Third-Party\soloud\audiosource\wav</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\audiosource\wav\dr_impl.cpp">
+      <Filter>Source Files\Third-Party\soloud\audiosource\wav</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\audiosource\wav\soloud_wav.cpp">
+      <Filter>Source Files\Third-Party\soloud\audiosource\wav</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_getters.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_setters.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_voicegroup.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_voiceops.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_fader.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_fft.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_fft_lut.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_file.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_filter.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_misc.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_queue.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_thread.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_audiosource.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_bus.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_3d.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_basicops.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_faderops.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_filterops.cpp">
+      <Filter>Source Files\Third-Party\soloud\core</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="BoneInfo.cpp">
+      <Filter>Source Files\Rendering\Animation</Filter>
+    </ClCompile>
     <ClCompile Include="Bollard.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Parts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -610,7 +709,27 @@
     <ClInclude Include="DoorAndBollardSystem.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Bollard.h" />
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Source Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\stb_vorbis.h">
+      <Filter>Source Files\Third-Party\soloud\audiosource\wav</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\dr_flac.h">
+      <Filter>Source Files\Third-Party\soloud\audiosource\wav</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\dr_mp3.h">
+      <Filter>Source Files\Third-Party\soloud\audiosource\wav</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\dr_wav.h">
+      <Filter>Source Files\Third-Party\soloud\audiosource\wav</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>Source Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Bollard.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -709,7 +828,7 @@
     <None Include="..\Shaders\downSample.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\HDRBloom.frag">
+    <None Include="..\Shaders\Display.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\irradiance.frag">
@@ -745,12 +864,6 @@
     <None Include="..\Shaders\ssaoBlur.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\forward.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\forward.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\paintedNormals.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -767,6 +880,15 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\particle.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\prepass.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\prepass.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\ambient.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

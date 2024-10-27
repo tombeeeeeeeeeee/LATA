@@ -1,11 +1,16 @@
 #include "ModelRenderer.h"
 
 #include "ResourceManager.h"
+#include "SceneManager.h"
+#include "Scene.h"
+#include "SceneObject.h"
 
 #include "Utilities.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
+
+#include <iostream>
 
 ModelRenderer::ModelRenderer()
 {
@@ -32,45 +37,108 @@ ModelRenderer::ModelRenderer(Model* _model, Material* _material) :
 	Refresh();
 }
 
+void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
+{
+	if (!model) { return; }
+
+	Material* previousMaterial = nullptr;
+
+	for (int i = 0; i < model->meshes.size(); i++)
+	{
+		Mesh* mesh = model->meshes.at(i);
+		int materialID = mesh->materialID;
+		Material* currentMaterial = nullptr;
+
+		if (materialID >= model->materialIDs || materials[materialID] == nullptr) {
+			materialID = 0;
+			std::cout << "Invalid model material ID\n";
+		}
+		currentMaterial = materials[materialID];
+
+		// Only bind material if using a different material
+		if (currentMaterial != previousMaterial) {
+			// Skip if no material is set
+			if (currentMaterial == nullptr) { continue; }
+			currentMaterial->Use(givenShader ? givenShader : nullptr);
+			previousMaterial = currentMaterial;
+		}
+
+		Shader* shader;
+		if (!givenShader) {
+			Material* material = materials[materialID];
+			// TODO: Maybe an error / warning
+
+			if (!material) { continue; }
+			shader = material->getShader();
+		}
+		else {
+			shader = givenShader;
+		}
+
+		shader->Use();
+		shader->setMat4("view", SceneManager::scene->renderSystem.viewMatrix);
+		glm::mat4 global = glm::identity<glm::mat4>();
+
+		model->root.ModelMatrixOfMesh(i, global);
+		shader->setMat4("model", modelMatrix * global);
+		SceneManager::scene->renderSystem.ActivateFlaggedVariables(shader, materials[materialID]);
+
+		glm::vec3 overallColour = materials[materialID]->colour * GetMaterialOverlayColour();
+		shader->setVec3("materialColour", overallColour);
+
+		if (animator) {
+			std::vector<glm::mat4> boneMatrices = animator->getFinalBoneMatrices();
+			for (int i = 0; i < boneMatrices.size(); i++)
+			{
+				shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
+			}
+		}
+		mesh->Draw();
+	}
+}
+
 void ModelRenderer::GUI()
 {
 	//ImGui::Text("");
 	std::string tag = Utilities::PointerToString(this);
-	if (ImGui::CollapsingHeader("Model Renderer"))
+	if (!ImGui::CollapsingHeader("Model Renderer"))
 	{
-		ImGui::Indent();
-		ImGui::BeginDisabled();
-		int mats = (int)materialGUIDs.size();
-		ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
-		ImGui::EndDisabled();
+		return;
+	}
+	ImGui::Indent();
+	ImGui::BeginDisabled();
+	int mats = (int)materialGUIDs.size();
+	bool animated = animator;
+	ImGui::Checkbox(("Animated##" + tag).c_str(), &animated);
+	ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
+	ImGui::EndDisabled();
 
-		ImGui::ColorPicker3("Material Tint", &materialTint[0]);
+	ImGui::ColorPicker3(("Material Tint##" + tag).c_str(), &materialTint[0]);
 
-		ImGui::Indent();
-		for (size_t i = 0; i < materialGUIDs.size(); i++)
-		{
-			if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], ResourceManager::defaultShader, true)) {
-				if (materials[i] != nullptr) {
-					materialGUIDs[i] = materials[i]->GUID;
-				}
-				else {
-					materialGUIDs[i] = 0;
-				}
-			}
-		}
-		ImGui::Unindent();
-
-		if (ResourceManager::ModelSelector("Model", &model)) {
-			if (model) {
-				modelGUID = model->GUID;
+	ImGui::Indent();
+	for (size_t i = 0; i < materialGUIDs.size(); i++)
+	{
+		if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], ResourceManager::defaultShader, true)) {
+			if (materials[i] != nullptr) {
+				materialGUIDs[i] = materials[i]->GUID;
 			}
 			else {
-				modelGUID = 0;
+				materialGUIDs[i] = 0;
 			}
-			Refresh();
 		}
-		ImGui::Unindent();
 	}
+	ImGui::Unindent();
+
+	if (ResourceManager::ModelSelector("Model", &model)) {
+		if (model) {
+			modelGUID = model->GUID;
+		}
+		else {
+			modelGUID = 0;
+		}
+		Refresh();
+	}
+	ImGui::Unindent();
 }
 
 toml::table ModelRenderer::Serialise(unsigned long long GUID) const

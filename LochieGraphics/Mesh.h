@@ -31,11 +31,10 @@ private:
 	GLuint VAO, VBO, IBO;
 
 
-	friend class ResourceManager;
+public:
 	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices);
 	Mesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);
 
-public:
 	
 	static int aiLoadFlag;
 

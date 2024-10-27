@@ -35,33 +35,74 @@ void LevelEditor::RefreshWalls()
 	}
 	wallCount = 0;
 
+	// TODO: prob don't need a seperate min and maxes and could use the other one
 	float offset = (gridSize + wallThickness) / 2;
 	float minX = FLT_MAX;
 	float minZ = FLT_MAX;
 	float maxX = -FLT_MAX;
 	float maxZ = -FLT_MAX;
-	for (auto& i : tiles)
-	{
-		glm::vec3 pos = i.second->transform()->getGlobalPosition();
-		glm::vec2 tileCell = glm::vec2{ pos.x, pos.z } / gridSize;
-		tileCell = { roundf(tileCell.x), roundf(tileCell.y) };
 
+	gridMinX = INT_MAX;
+	gridMinZ = INT_MAX;
+	gridMaxX = INT_MIN;
+	gridMaxZ = INT_MIN;
+
+	for (auto& i : tiles) {
+		glm::vec3 pos = i.second->transform()->getGlobalPosition();
 		if (pos.x - gridSize < minX) minX = pos.x - gridSize;
 		if (pos.z - gridSize < minZ) minZ = pos.z - gridSize;
 		if (pos.x + gridSize > maxX) maxX = pos.x + gridSize;
 		if (pos.z + gridSize > maxZ) maxZ = pos.z + gridSize;
 
-		if (!CellAt(tileCell.x - 1, tileCell.y)) {
-			PlaceWallAt(pos.x - offset, pos.z, 0.0f);
-		}
-		if (!CellAt(tileCell.x, tileCell.y - 1)) {
-			PlaceWallAt(pos.x, pos.z - offset, 90.0f);
-		}
-		if (!CellAt(tileCell.x + 1, tileCell.y)) {
-			PlaceWallAt(pos.x + offset, pos.z, 0.0f);
-		}
-		if (!CellAt(tileCell.x, tileCell.y + 1)) {
-			PlaceWallAt(pos.x, pos.z + offset, 90.0f);
+		gridMinX = glm::min(gridMinX, i.first.first);
+		gridMinZ = glm::min(gridMinZ, i.first.second);
+
+		gridMaxX = glm::max(gridMaxX, i.first.first);
+		gridMaxZ = glm::max(gridMaxZ, i.first.second);
+	}
+
+	for (int x = gridMinX - 1; x <= gridMaxX + 1; x++)
+	{
+		for (int z = gridMinZ - 1; z <= gridMaxZ + 1; z++)
+		{
+			bool upRight = CellAt(x, z);
+			bool downRight = CellAt(x, z - 1);
+			bool downLeft = CellAt(x - 1, z - 1);
+			bool upLeft = CellAt(x - 1, z);
+			unsigned char directions = (upRight << 3) + (downRight << 2) + (downLeft << 1) + upLeft;
+			glm::vec2 pos = { x * gridSize - gridSize / 2, z * gridSize - gridSize / 2 };
+			switch (directions)
+			{
+			case 0b1111:
+			case 0b0000:
+				break;
+			case 0b0001:
+			case 0b1110:
+				PlaceWallAt(pos.x, pos.y, -90.0f, wallCornerPrefab);
+				break;
+			case 0b0010:
+			case 0b1101:
+				PlaceWallAt(pos.x, pos.y, 180.0f, wallCornerPrefab);
+				break;
+			case 0b0100:
+			case 0b1011:
+				PlaceWallAt(pos.x, pos.y, 90.0f, wallCornerPrefab);
+				break;
+			case 0b1000:
+			case 0b0111:
+				PlaceWallAt(pos.x, pos.y, 0.0f, wallCornerPrefab);
+				break;
+			case 0b0011:
+			case 0b1100:
+				PlaceWallAt(pos.x, pos.y, 0.0f, wallSidePrefab);
+				break;
+			case 0b0110:
+			case 0b1001:
+				PlaceWallAt(pos.x, pos.y, 90.0f, wallSidePrefab);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -77,21 +118,15 @@ SceneObject* LevelEditor::CellAt(float x, float z)
 	else { return tile->second; }
 }
 
-SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction)
+SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction, unsigned long long prefab)
 {
 	SceneObject* newWall = new SceneObject(this, "newWall" + std::to_string(++wallCount));
+	newWall->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(prefab));
+
 	newWall->transform()->setPosition({ x, 0.0f, z });
 	newWall->transform()->setEulerRotation({ 0.0f, direction, 0.0f });
 	newWall->transform()->setParent(wallTileParent->transform());
-	newWall->setRenderer(new ModelRenderer(wall, (unsigned long long)0));
-	// TODO: Make sure there isn't memory leaks
 
-	float wallLength = 150.f;
-	float wallThickness = 12.5f;
-	PolygonCollider* newCollider = new PolygonCollider({
-	{ +wallThickness,  +wallLength}, { +wallThickness,  -wallLength}, {  -wallThickness,  -wallLength }, { -wallThickness,  +wallLength}
-		}, 0.0f);
-	newWall->setCollider(newCollider);
 	return newWall;
 }
 
@@ -142,7 +177,7 @@ LevelEditor::LevelEditor() :
 
 void LevelEditor::Start()
 {
-	groundShader = ResourceManager::LoadShader("Shaders/floorWorld.vert", "Shaders/superDuper.frag", Shader::Flags::Spec | Shader::Flags::VPmatrix | Shader::Flags::Lit);
+	groundShader = ResourceManager::LoadShader("Shaders/floorWorld.vert", "Shaders/prepass.frag", Shader::Flags::Spec | Shader::Flags::VPmatrix | Shader::Flags::Lit);
 	groundTexture = ResourceManager::LoadTexture("images/T_MissingTexture.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
 	groundTexture->mipMapped = false;
 	groundMaterial = ResourceManager::LoadMaterial("Ground", groundShader);
@@ -171,7 +206,7 @@ void LevelEditor::Start()
 	camera->nearPlane = 10.0f;
 
 	ground = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
-	wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_adjustedOriginLocWall" + Paths::modelExtension);
+	//wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Wall" + Paths::modelExtension);
 
 	syncSo = new SceneObject(this, "Sync");
 	eccoSo = new SceneObject(this, "Ecco");
@@ -224,9 +259,9 @@ void LevelEditor::Start()
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 
-	renderSystem.kernelSize = 128;
+	renderSystem.kernelSize = 64;
 	renderSystem.ssaoRadius = 32.0f;
-	renderSystem.ssaoBias = 6.0f;
+	renderSystem.ssaoBias = 7.5f;
 
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);
@@ -237,6 +272,22 @@ void LevelEditor::Start()
 
 void LevelEditor::Update(float delta)
 {
+	if (showGrid) {
+		DrawGrid();
+	}
+	if (snapToGridEnabled) {
+		// TODO: Move to its own function
+		if (gui.getSelected()) {
+			glm::vec3 pos = gui.getSelected()->transform()->getPosition();
+			float previousY = pos.y;
+
+			pos -= glm::vec3((gridMinX - 0.5f) * gridSize, 0, (gridMinZ - 0.5f) * gridSize);
+			pos = glm::round(pos / placementGridSize) * placementGridSize;
+			pos += glm::vec3((gridMinX - 0.5f) * gridSize, 0, (gridMinZ - 0.5f) * gridSize);
+
+			gui.getSelected()->transform()->setPosition({ pos.x, previousY, pos.z });
+		}
+	}
 	if (!lastFramePlayState && inPlay) //On Play Enter
 	{
 		SaveLevel();
@@ -397,7 +448,8 @@ void LevelEditor::Draw()
 		transforms,
 		renderers,
 		animators,
-		camera
+		camera,
+		particleSystem.particles
 	);
 }
 
@@ -474,6 +526,22 @@ void LevelEditor::GUI()
 		}
 		if (ImGui::DragFloat("Wall offset", &wallThickness, 0.5f)) {
 			if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
+		}
+		ImGui::Checkbox("Snap To Grid", &snapToGridEnabled);
+		if (ImGui::CollapsingHeader("Grid")) {
+			ImGui::Checkbox("Show##Grid", &showGrid);
+			if (!showGrid) {
+				ImGui::BeginDisabled();
+			}
+			ImGui::Checkbox("Always Visible##Grid", &placementGridUseDebugLines);
+			if (ImGui::InputFloat("Size##Grid", &placementGridSize, 10.0f, 100.0f)) {
+				placementGridSize = fmaxf(placementGridSize, 10.0f);
+			}
+			ImGui::DragFloat("Height##Grid", &placementGridHeight);
+			ImGui::ColorEdit3("Colour##Grid", &gridColour.x);
+			if (!showGrid) {
+				ImGui::EndDisabled();
+			}
 		}
 	}
 	ImGui::End();
@@ -736,6 +804,25 @@ void LevelEditor::Selector(glm::vec2 targetPos)
 			gui.setSelected(i.second.getSceneObject());
 		}
 	}
+}
+
+void LevelEditor::DrawGrid()
+{
+	float xMin = (gridMinX - 0.5f) * gridSize;
+	float xMax = (gridMaxX + 0.5f) * gridSize;
+	float zMin = (gridMinZ - 0.5f) * gridSize;
+	float zMax = (gridMaxZ + 0.5f) * gridSize;
+	LineRenderer* lines = placementGridUseDebugLines ? &renderSystem.debugLines : &renderSystem.lines;
+	lines->SetColour({ gridColour.x, gridColour.y, gridColour.z });
+	for (float x = xMin; x <= xMax; x += placementGridSize)
+	{
+		lines->DrawLineSegement2D({ x, zMin }, { x, zMax }, placementGridHeight);
+	}
+	for (float z = zMin; z <= zMax; z += placementGridSize)
+	{
+		lines->DrawLineSegement2D({ xMin, z }, { xMax, z }, placementGridHeight);
+	}
+
 }
 
 glm::vec2 LevelEditor::EditorCamMouseToWorld() const

@@ -6,12 +6,14 @@
 
 class Scene;
 class SceneObject;
+class ModelHierarchyInfo;
 
 // TODO: Not all the menus need to have the word menu in their name
 class GUI
 {
 private:
 	SceneObject* sceneObjectSelected = nullptr;
+	ModelHierarchyInfo* modelHierarchySelected = nullptr;
 
 	std::vector<std::pair<SceneObject*, SceneObject*>> addRangeToSelection;
 
@@ -44,6 +46,8 @@ public:
 	bool showHealthSystemMenu = false;
 	bool showUserPrefsMenu = false;
 	bool showPrefabMenu = false;
+	bool showParticleMenu = false;
+	bool showAudioMenu = false;
 
 	SceneObject* getSelected();
 	void setSelected(SceneObject* so);
@@ -68,6 +72,7 @@ private:
 	//bool showHierarchyMenu = false;
 	void HierarchyMenu();
 	void TransformTree(SceneObject* sceneObject);
+	void TransformTree(SceneObject* so, ModelHierarchyInfo* model);
 	void TransformDragDrop(SceneObject* sceneObject);
 	// ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	int baseNodeFlags = 128 | 64 | 2048;

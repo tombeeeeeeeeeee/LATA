@@ -31,6 +31,7 @@ const std::unordered_map<Texture::Type, std::string> Texture::TypeNames =
 	{ Type::ao, "ao" },
 	{ Type::PBR, "PBR" },
 	{ Type::paint, "Paint"},
+	{ Type::count, "Unknown"},
 };
 
 Texture::Texture(std::string _path, Type _type, int _wrappingMode, bool flip) :
@@ -169,6 +170,7 @@ GLuint Texture::LoadCubeMap(std::string faces[6])
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
 	int width, height, components;
 	for (unsigned int i = 0; i < 6; i++)
 	{

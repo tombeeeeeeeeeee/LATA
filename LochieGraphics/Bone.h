@@ -15,13 +15,29 @@ struct Key {
 	float timeStamp;
 };
 
+struct PosKey {
+	glm::vec3 value;
+	float timeStamp;
+};
+struct RotKey {
+	glm::quat orientation;
+	float timeStamp;
+};
+struct ScaleKey {
+	glm::vec3 scale;
+	float timeStamp;
+};
+
 /// <summary>
 /// Stores the animation data and transform for a specific bone and the current bone transform
 /// </summary>
 class Bone {
 public:
 	// The keys
-	std::vector<Key> keys;
+	//std::vector<Key> keys;
+	std::vector<PosKey> posKeys;
+	std::vector<RotKey> rotKeys;
+	std::vector<ScaleKey> scaleKeys;
 
 	// The local transformation of the bone.
 	glm::mat4 localTransform;
@@ -65,7 +81,9 @@ public:
 	/// <returns>The bone index as an int</returns>
 	int getBoneID() const;
 
-	int getIndex(float animationTime) const;
+	int getPosIndex(float animationTime) const;
+	int getRotIndex(float animationTime) const;
+	int getScaleIndex(float animationTime) const;
 
 	void GUI();
 

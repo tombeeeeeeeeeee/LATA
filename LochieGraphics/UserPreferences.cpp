@@ -17,6 +17,7 @@ bool UserPreferences::rememberLastLevel = true;
 bool UserPreferences::loadDefaultLevel = true;
 bool UserPreferences::enterPlayModeOnStart = false;
 WindowModes UserPreferences::windowedStartMode = WindowModes::maximised;
+float UserPreferences::defaultGlobalVolume = 1.0f;
 
 void UserPreferences::GUI()
 {
@@ -39,6 +40,8 @@ void UserPreferences::GUI()
 	ImGui::Combo("Model Chooser Mode", (int*)&modelSelectMode, "Loaded\0Assets\0\0");
 
 	ImGui::Combo("Default Windowed Mode", (int*)&windowedStartMode, "Windowed\0Borderless Fullscreen\0Maximised\0\0");
+
+	ImGui::SliderFloat("Default Global Audio Volume", &defaultGlobalVolume, 0.0f, 2.0f);
 
 	if (ImGui::CollapsingHeader("Level Editor")) {
 		ImGui::Indent();
@@ -104,7 +107,8 @@ void UserPreferences::Save()
 		{ "defaultLevelLoad", defaultLevelLoad },
 		{ "rememberLastLevel", rememberLastLevel },
 		{ "enterPlayModeOnStart", enterPlayModeOnStart },
-		{ "windowedStartMode", (int)windowedStartMode }
+		{ "windowedStartMode", (int)windowedStartMode },
+		{ "defaultGlobalVolume", defaultGlobalVolume },
 	};
 
 	file << table << '\n';
@@ -125,6 +129,7 @@ void UserPreferences::Load()
 	rememberLastLevel = Serialisation::LoadAsBool(data["rememberLastLevel"]);
 	enterPlayModeOnStart = Serialisation::LoadAsBool(data["enterPlayModeOnStart"]);
 	windowedStartMode = (WindowModes)Serialisation::LoadAsInt(data["windowedStartMode"]);
+	defaultGlobalVolume = Serialisation::LoadAsFloat(data["defaultGlobalVolume"], 1.0f);
 
 	file.close();
 }

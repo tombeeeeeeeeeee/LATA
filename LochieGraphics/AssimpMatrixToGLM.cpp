@@ -1,7 +1,12 @@
 #include "AssimpMatrixToGLM.h"
 
+#include <iostream>
+
 glm::mat4 AssimpMatrixToGLM(const aiMatrix4x4& aiM)
 {
+	if (glm::isnan(aiM[1][1])) {
+		std::cout << "bleh ahsdhadhbvs\n";
+	}
 	glm::mat4 m;
 	//the a,b,c,d in assimp is the row ; the 1,2,3,4 is the column
 	m[0][0] = aiM.a1; m[1][0] = aiM.a2; m[2][0] = aiM.a3; m[3][0] = aiM.a4;

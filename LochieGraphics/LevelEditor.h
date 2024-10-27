@@ -34,7 +34,9 @@ private:
 	std::unordered_map<std::pair<int, int>, SceneObject*, hashFNV1A> tiles = {};
 
 	Model* ground = nullptr;
-	Model* wall = nullptr;
+
+	unsigned long long wallSidePrefab = 12423318852501708145;
+	unsigned long long wallCornerPrefab = 12472608399756090578;
 
 	unsigned int wallCount = 0;
 	unsigned int tileCount = 0;
@@ -55,6 +57,7 @@ private:
 	bool openSaveAs = false;
 	bool openLoad = false;
 
+	// TODO: Should be apart of base scene
 	Input input;
 
 	float syncRadius = 10.0f;
@@ -74,6 +77,13 @@ private:
 
 	float defaultColliderLength = 50.0f;
 
+	bool showGrid = false;
+	float placementGridSize = 50.0f;
+	float placementGridHeight = 1.0f;
+	bool placementGridUseDebugLines = false;
+	glm::vec3 gridColour = { 1.0f, 1.0f, 1.0f };
+	bool snapToGridEnabled = false;
+
 	float selectSize = 50.0f;
 
 	void RefreshWalls();
@@ -81,7 +91,7 @@ private:
 	SceneObject* CellAt(float x, float z);
 
 	// Worldspace placing issue
-	SceneObject* PlaceWallAt(float x, float z, float direction);
+	SceneObject* PlaceWallAt(float x, float z, float direction, unsigned long long prefab);
 	SceneObject* PlaceTileAt(float x, float z);
 
 	void Brush(glm::vec2 targetCell);
@@ -89,6 +99,7 @@ private:
 	void ModelPlacer(glm::vec2 targetPos);
 	void PrefabPlacer(glm::vec2 targetPos);
 	void Selector(glm::vec2 targetPos);
+	void DrawGrid();
 
 	void SaveAsPrompt();
 	void LoadPrompt();

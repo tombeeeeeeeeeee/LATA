@@ -10,12 +10,15 @@
 
 std::random_device Particle::random = {};
 
-Particle::Particle(unsigned int _count, float _lifetime, Shader* _shader, Texture* _texture) :
+Particle::Particle(unsigned int _count, float _lifetime, Shader* _shader, Texture* _texture, glm::vec3 startingPos) :
 	count(_count),
 	lifetime(_lifetime),
 	shader(_shader),
-	texture(_texture)
+	texture(_texture),
+	initialised(false)
 {
+	positions.assign(count, glm::vec4(startingPos.x, startingPos.y, startingPos.z, 0.0f));
+	velocities.resize(count);
 }
 
 void Particle::Spread()
@@ -34,7 +37,6 @@ void Particle::Explode()
 
 		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f });
 		if (glm::isnan(i.x)) {
-			//
 			i = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		}
 	}
@@ -66,10 +68,7 @@ unsigned int Particle::getCount() const
 }
 
 void Particle::Initialise()
-{
-	positions.resize(count);
-	velocities.resize(count);
-	
+{	
 	//mesh.InitialiseQuad(quadSize);
 	float size = quadSize;
 	float quadVerts[] = {
@@ -131,7 +130,6 @@ void Particle::Draw()
 	texture->Bind(1);
 	shader->setSampler("material.albedo", 1);
 
-
 	glBindVertexArray(quadVAO);
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, getCount());
 
@@ -171,7 +169,6 @@ void Particle::GUI()
 
 Particle::~Particle()
 {
-	// TODO:
 	glDeleteVertexArrays(1, &quadVAO);
 	glDeleteBuffers(1, &quadVBO);
 	glDeleteBuffers(1, &ssbo);

@@ -221,6 +221,9 @@ void Transform::UpdateGlobalMatrixCascading()
 	{
 		globalMatrix = getLocalMatrix();
 	}
+	if (glm::isnan(globalMatrix[1][1])) {
+		std::cout << "!!!\n";
+	}
 
 	for(auto i = children.begin(); i != children.end(); i++)
 	{

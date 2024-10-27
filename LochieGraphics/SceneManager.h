@@ -21,7 +21,6 @@ class SceneManager
 private:
 
 	// Camera
-	static Camera camera;
 	static float lastX;
 	static float lastY;
 	static bool firstMouse;
@@ -33,6 +32,7 @@ private:
 	static float deltaTime;
 	float lastFrame = 0.0f;
 public:
+	static Camera camera;
 	static FixedSizeQueue<float, 300> frameTimes;
 
 	static GLFWwindow* window;

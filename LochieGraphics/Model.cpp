@@ -26,6 +26,7 @@ Model::Model(std::string _path) :
 {
 	LoadModel(path);
 }
+
 // TODO: Models can no longer flip textures on load as they are always loaded seperatly now
 void Model::LoadModel(std::string _path)
 {
@@ -35,7 +36,7 @@ void Model::LoadModel(std::string _path)
 	//const aiScene* scene = aiImportFile(path.c_str(), Mesh::aiLoadFlag);
 
 
-
+	// TODO: Look into this
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 	const aiScene* scene = importer.ReadFile(path.c_str(), Mesh::aiLoadFlag);
 
@@ -50,9 +51,39 @@ void Model::LoadModel(std::string _path)
 		std::cout << "Loaded model at: " << path << "\n";
 	}
 
+	//PrintMetaData(scene->mMetaData);
+	float conversionScale = 1;
+	scene->mMetaData->Get<float>("UnitScaleFactor", conversionScale);
+	
+	//importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 100);
+	//importer.ApplyPostProcessing(aiProcess_GlobalScale);
+	//std::cout << "Scale factor: " << importer.GetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, AI_CONFIG_GLOBAL_SCALE_FACTOR_DEFAULT) << '\n';
+
 	meshes.resize(scene->mNumMeshes);
 	meshGUIDs.resize(scene->mNumMeshes);
 	//meshes.reserve(scene->mNumMeshes);
+
+
+	ReadHierarchyData(&root, scene->mRootNode);
+	
+	float globalScale = 100.0f;
+	// TODO: See how to apply this properly, the flag doesn't work properly
+	if (root.children.size() == 1 && root.children.at(0)->children.empty()) {
+		root.children.at(0)->transform.setScale(root.children.at(0)->transform.getScale() * conversionScale);
+	}
+	else {
+		root.transform.setScale(root.transform.getScale() * conversionScale);
+	}
+
+	//if (root.children.empty()) {
+	//}
+	//else {
+	//	for (auto& i : root.children)
+	//	{
+	//		i->transform.setScale(i->transform.getScale() * conversionScale);
+	//	}
+	//}
+
 
 	min.x = FLT_MAX;
 	min.y = FLT_MAX;
@@ -60,6 +91,8 @@ void Model::LoadModel(std::string _path)
 	max.x = -FLT_MAX;
 	max.y = -FLT_MAX;
 	max.z = -FLT_MAX;
+
+	auto temp = AssimpMatrixToGLM(scene->mRootNode->mTransformation);
 
 	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 	{
@@ -76,7 +109,6 @@ void Model::LoadModel(std::string _path)
 	}
 	materialIDs = scene->mNumMaterials;
 
-	ReadHierarchyData(&root, scene->mRootNode);
 	// TODO: Do I need to do this, check exactly what should be done
 	//aiReleaseImport(scene);
 }
@@ -130,7 +162,7 @@ void Model::GUI()
 			ImGui::Unindent();
 		}
 
-		HierarchyGUI(&root);
+		root.GUI();
 		ImGui::BeginDisabled();
 
 
@@ -159,37 +191,45 @@ std::string Model::getDisplayName() const
 	return Utilities::FilenameFromPath(path);
 }
 
+
+
 void Model::ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src)
 {
 	if (!src) {
-		std::cout << "Error, Failed to read animation hierarchy\n";
+		std::cout << "Error, Failed to read model hierarchy\n";
 		return;
 	}
 
+
+	//PrintMetaData(src->mMetaData);
+
 	dest->name = src->mName.data;
-	if (dest->name == "RootNode") {
-		std::cout << "t";
-	}
 
 	aiVector3D pos;
 	aiQuaternion rot;
 	aiVector3D scale;
 
 	src->mTransformation.Decompose(scale, rot, pos);
-	dest->transform.getPosition() = AssimpVecToGLM(pos);
+	dest->transform.setPosition(AssimpVecToGLM(pos));
 	dest->transform.setRotation(AssimpQuatToGLM(rot));
 	dest->transform.setScale(AssimpVecToGLM(scale));
+	if (dest->name == "RootNode") {
+		std::cout << "t";
+		//dest->transform.setScale(dest->transform.getScale() * 100.0f);
+	}
+	
+	for (size_t i = 0; i < src->mNumMeshes; i++)
+	{
+		dest->meshes.push_back(src->mMeshes[i]);
+	}
 
 	//dest.transform.chi children.reserve(src->mNumChildren);
 
 	for (unsigned int i = 0; i < src->mNumChildren; i++)
 	{
-		ModelHierarchyInfo* newData = new ModelHierarchyInfo();
-		ReadHierarchyData(newData, src->mChildren[i]);
-
-		dest->children.push_back(newData);
-
-		newData->transform.setParent(&dest->transform);
+		dest->children.emplace_back(new ModelHierarchyInfo());
+		dest->children.back()->transform.setParent(&dest->transform);
+		ReadHierarchyData(dest->children.back(), src->mChildren[i]);
 	}
 }
 
@@ -215,18 +255,51 @@ Model::Model(toml::table table)
 	LoadModel(Serialisation::LoadAsString(table["path"]));
 }
 
-void Model::HierarchyGUI(ModelHierarchyInfo* info)
-{
-	std::string tag = Utilities::PointerToString(info);
-	if (ImGui::CollapsingHeader((info->name + "##" + tag).c_str())) {
-		ImGui::Indent();
-		info->transform.GUI();
+void Model::PrintMetaData(aiMetadata* metaData) {
+	if (!metaData) { return; }
+	for (size_t i = 0; i < metaData->mNumProperties; i++)
+	{
+		std::cout << "\nMeta data: " << metaData->mKeys[i].C_Str() << '\n';
+		std::cout << "Type: ";
 
-		for (auto i : info->children)
+		switch (metaData->mValues[i].mType)
 		{
-			HierarchyGUI(i);
+		case AI_BOOL:
+			std::cout << "Bool\n" << *(bool*)metaData->mValues[i].mData;
+			break;
+		case AI_INT32:
+			std::cout << "int 32\n" << *(int32_t*)metaData->mValues[i].mData;
+			break;
+		case AI_UINT64:
+			std::cout << "u long long\n" << *(uint64_t*)metaData->mValues[i].mData;
+			break;
+		case AI_FLOAT:
+			std::cout << "float\n" << *(float*)metaData->mValues[i].mData;
+			break;
+		case AI_DOUBLE:
+			std::cout << "Double\n" << *(double*)metaData->mValues[i].mData;
+			break;
+		case AI_AISTRING:
+			std::cout << "string\n" << (*(aiString*)metaData->mValues[i].mData).C_Str();
+			break;
+		case AI_AIVECTOR3D:
+			std::cout << "vec3\n" << ((float*)metaData->mValues[i].mData)[0] << ", " << ((float*)metaData->mValues[i].mData)[1] << ", " << ((float*)metaData->mValues[i].mData)[2];
+			break;
+		case AI_AIMETADATA:
+			std::cout << "meta meta data, idk how to read value";
+			break;
+		case AI_INT64:
+			std::cout << "int 64\n" << *(int64_t*)metaData->mValues[i].mData;
+			break;
+		case AI_UINT32:
+			std::cout << "u int\n" << *(uint32_t*)metaData->mValues[i].mData;
+			break;
+		case AI_META_MAX:
+			std::cout << "meta max data, idk how to read value of even is one";
+			break;
+		default:
+			break;
 		}
-		ImGui::Unindent();
+		std::cout << "\n";
 	}
 }
-

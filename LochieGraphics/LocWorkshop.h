@@ -20,17 +20,9 @@ private:
 	Animation animation;
 	Animator* animator;
 	
-	std::vector<Particle*> particles = {};
-
-	Mesh* quad;
 	Model* model;
 
 	Shader* shader;
-	Texture* texture;
-	Texture* particleTexture;
-
-	int nextParticleCount = 10;
-	float nextParticleLifetime = 4.0f;
 
 public:
 

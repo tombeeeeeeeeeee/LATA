@@ -78,6 +78,11 @@ uniform sampler2D ssao;
 in vec4 ndc;
 vec2 screenPosition;
 
+uniform sampler2D screenAbledo;
+uniform sampler2D screenNormal;
+uniform sampler2D screenPBR;
+uniform sampler2D screenEmission;
+
 in vec4 directionalLightSpaceFragPos;
 
 float ShadowCalculation(vec4 fragPosLightSpace);
@@ -106,7 +111,10 @@ const float MAX_REFLECTION_LOD = 4.0;
 
 void main()
 {
-    vec3 PBR = texture(material.PBR, texCoords).rgb;
+    screenPosition = ndc.xy/ndc.w;
+    screenPosition = screenPosition * 0.5 + 0.5;
+
+    vec3 PBR = texture(screenPBR, screenPosition).rgb;
     albedo = texture(material.albedo, texCoords).rgb * fragmentColour;
 
     //TODO: Add atlasing
@@ -114,9 +122,6 @@ void main()
     metallic = PBR.r;
     roughness = PBR.g;
     ao = PBR.b;
-	
-    screenPosition = ndc.xy/ndc.w;
-    screenPosition = screenPosition * 0.5 + 0.5;
 
     TBN = mat3(normalize(fragmentTangent), normalize(fragmentBitangent), normalize(fragmentNormal));
     vec3 tangentNormal = texture(material.normal, texCoords).rgb;
@@ -331,7 +336,7 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection)
 	vec3 kD = vec3(1.0) - kS;
 	kD *= 1.0 - metallic;
     vec3 irradiance = fragmentColour * texture(irradianceMap, trueNormal).rgb;
-    float SSAO = texture(ssao, screenPosition).r;
+    float SSAOvalue = texture(ssao, screenPosition).r;
 
     vec3 diffuse = irradiance * albedo;
 	//vec3 additionalAmbient = (kD * ambientLightColour) * ao;
@@ -339,7 +344,7 @@ vec3 specularIBL(vec3 trueNormal, vec3 viewDirection)
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(trueNormal, viewDirection), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
     vec3 ambient = (kD * diffuse + specular) * 1.0;
-    ambient *= SSAO * SSAO;
+    ambient *= SSAOvalue;
 
     return ambient;
 }
