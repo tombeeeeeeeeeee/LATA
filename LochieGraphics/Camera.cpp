@@ -1,14 +1,17 @@
 #include "Camera.h"
 
+#include "UserPreferences.h"
+
 #include "EditorGUI.h"
 #include "Serialisation.h"
+
 
 Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch, float _movementSpeed, float _sensitivity, float _fov) :
     transform(nullptr, _position),
     fov(_fov)
 {
-    editorSpeed.move = _movementSpeed;
-    editorSpeed.rotate = _sensitivity;
+    UserPreferences::camMove = _movementSpeed;
+    UserPreferences::camRotate = _sensitivity;
 }
 
 
@@ -36,7 +39,7 @@ glm::mat4 Camera::GetViewMatrix() const
 void Camera::ProcessKeyboard(Direction direction, float deltaTime)
 {
     if (state == editorMode) {
-        float velocity = editorSpeed.move * deltaTime;
+        float velocity = UserPreferences::camMove * deltaTime;
         switch (direction)
         {
         case Camera::FORWARD:  transform.setPosition(transform.getPosition() + transform.forward() * velocity);         break;
@@ -48,7 +51,7 @@ void Camera::ProcessKeyboard(Direction direction, float deltaTime)
         }
     }
     else if (state == tilePlacing) {
-        float velocity = editorSpeed.move * deltaTime;
+        float velocity = UserPreferences::camMove * deltaTime;
         switch (direction)
         {
         case Camera::FORWARD:  transform.setPosition(transform.getPosition() + transform.up() * velocity);    break;
@@ -63,21 +66,21 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 {
 
     if (state == editorMode && editorRotate) {
-        Rotate(xoffset * editorSpeed.rotate, yoffset * editorSpeed.rotate);
+        Rotate(xoffset * UserPreferences::camRotate, yoffset * UserPreferences::camRotate);
     }
     else if (state == artEditorMode && artKeyDown) {
         if (artState == orbit) {
             transform.setPosition(transform.getPosition() + transform.forward() * artFocusDistance);
-            Rotate(xoffset * artEditorSpeed.orbit, yoffset * artEditorSpeed.orbit);
+            Rotate(xoffset * UserPreferences::camOrbit, yoffset * UserPreferences::camOrbit);
             transform.setPosition(transform.getPosition() - transform.forward() * artFocusDistance);
         }
         else if (artState == dolly) {
-            float moveAmount = artEditorSpeed.moveDolly * (xoffset + yoffset);
+            float moveAmount = UserPreferences::camMoveDolly * (xoffset + yoffset);
             artFocusDistance -= moveAmount;
             transform.setPosition(transform.getPosition() + transform.forward() * moveAmount);
         }
         else if (artState == boomTruck) {
-            transform.setPosition(transform.getPosition() - (transform.up() * yoffset * artEditorSpeed.boomTruck) - (transform.right() * xoffset * artEditorSpeed.boomTruck));
+            transform.setPosition(transform.getPosition() - (transform.up() * yoffset * UserPreferences::camBoomTruck) - (transform.right() * xoffset * UserPreferences::camBoomTruck));
         }
     }
 }
@@ -95,12 +98,12 @@ void Camera::ProcessMouseScroll(float yoffset)
         }
     }
     else if (state == artEditorMode) {
-        float moveAmount = artEditorSpeed.scrollDolly * yoffset;
+        float moveAmount = UserPreferences::camScrollDolly * yoffset;
         artFocusDistance -= moveAmount;
         transform.setPosition(transform.getPosition() + transform.forward() * moveAmount);
     }
     else if (InOrthoMode()) {
-        orthoScale -= yoffset * orthScrollSpeed;
+        orthoScale -= yoffset * UserPreferences::orthScrollSpeed;
         if (orthoScale < 0.1f) {
             orthoScale = 0.1f;
         }
@@ -122,25 +125,6 @@ void Camera::GUI()
     }
     if (InOrthoMode()) {
         ImGui::DragFloat("Orthographic Scale##Camera", &orthoScale, 0.01f, 0.01f, FLT_MAX);
-        ImGui::DragFloat("Orthographic Zoom Speed##Camera", &orthScrollSpeed, 0.1f, 0.0f, FLT_MAX);
-    }
-
-    if (ImGui::CollapsingHeader("Editor Move Speeds##Camera")) {
-        ImGui::Indent();
-        if (state == editorMode) {
-            ImGui::DragFloat("Movement##Camera", &editorSpeed.move, 0.1f, 0.0f, FLT_MAX);
-            ImGui::DragFloat("Rotate##Camera", &editorSpeed.rotate, 0.01f, 0.0f, FLT_MAX);
-        }
-        else if (state == artEditorMode) {
-            float orbit = artEditorSpeed.orbit * 10000.0f;
-            if (ImGui::DragFloat("Orbit##Camera", &orbit, 0.05f, 0.0f, FLT_MAX, "%.f")) {
-                artEditorSpeed.orbit = orbit / 10000.0f;
-            }
-            ImGui::DragFloat("Move##Camera", &artEditorSpeed.boomTruck, 0.01f, 0.0f, FLT_MAX);
-            ImGui::DragFloat("Mouse Dolly##Camera", &artEditorSpeed.moveDolly, 0.01f, 0.0f, FLT_MAX);
-            ImGui::DragFloat("Scroll Dolly##Camera", &artEditorSpeed.scrollDolly, 0.1f, 0.0f, FLT_MAX);
-        }
-        ImGui::Unindent();
     }
 }
 

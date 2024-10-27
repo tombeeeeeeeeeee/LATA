@@ -7,6 +7,7 @@
 #include "SceneObject.h"
 #include "ShaderEnum.h"
 #include "Paths.h"
+#include "UserPreferences.h"
 
 #include "Utilities.h"
 
@@ -190,7 +191,6 @@ void ArtScene::ResetCamera()
 	float distance = (model->max.y - model->min.y) / tanf(resetCamObjectViewSpace);
 	camera->transform.setPosition({ distance + model->max.x, (model->min.y + model->max.y) / 2, (model->min.z + model->max.z) / 2});
 	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
-	camera->editorSpeed.move = glm::length(model->max - model->min) / 3;
 	camera->artFocusDistance = distance + ((model->max.y - model->min.y) / 2);
 }
 

@@ -92,6 +92,12 @@ void LevelEditor::RefreshWalls()
 			case 0b0111:
 				PlaceWallAt(pos.x, pos.y, 0.0f, wallCornerPrefab);
 				break;
+			case 0b0101:
+			case 0b1010:
+				// TODO: Need a + plus shaped wall
+				PlaceWallAt(pos.x, pos.y, 0.0f, wallCornerPrefab);
+				PlaceWallAt(pos.x, pos.y, 180.0f, wallCornerPrefab);
+				break;
 			case 0b0011:
 			case 0b1100:
 				PlaceWallAt(pos.x, pos.y, 0.0f, wallSidePrefab);
@@ -201,7 +207,6 @@ void LevelEditor::Start()
 	camera->transform.setPosition({ 0.0f, 1000.0f, 0.0f });
 	camera->orthoScale = 300.0f;
 
-	camera->editorSpeed.move = 300.0f;
 	camera->farPlane = 100000.0f;
 	camera->nearPlane = 10.0f;
 
@@ -259,19 +264,20 @@ void LevelEditor::Start()
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 
-	renderSystem.kernelSize = 64;
-	renderSystem.ssaoRadius = 32.0f;
-	renderSystem.ssaoBias = 7.5f;
-
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);
 	}
 
 	inPlay = UserPreferences::enterPlayModeOnStart;
+
+	healthBar.InitialiseQuad(1.0f);
+	healthShader = ResourceManager::LoadShader("healthBar");
+	shaders.push_back(healthShader);
 }
 
 void LevelEditor::Update(float delta)
 {
+	bool playerDied = false;
 	if (showGrid) {
 		DrawGrid();
 	}
@@ -354,6 +360,12 @@ void LevelEditor::Update(float delta)
 
 		triggerSystem.Update(plates);
 		dabSystem.Update(transforms, doors, bollards, colliders, delta);
+
+		if (!UserPreferences::immortal) {
+			if (syncSo->health()->currHealth <= 0 || eccoSo->health()->currHealth <= 0) {
+				playerDied = true;
+			}
+		}
 	}
 
 
@@ -419,6 +431,10 @@ void LevelEditor::Update(float delta)
 		}
 	}
 
+	if (playerDied) {
+		LoadLevel(true);
+	}
+
 
 	lines.SetColour({ 1, 1, 1 });
 	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
@@ -451,11 +467,38 @@ void LevelEditor::Draw()
 		camera,
 		particleSystem.particles
 	);
+
+	if (inPlay) {
+		healthShader->Use();
+		healthShader->setVec2("offset", { syncOffsetX, syncOffsetY });
+		healthShader->setVec2("scale", { syncScaleX, syncScaleY });
+		healthShader->setFloat("healthPercent", (float)syncSo->health()->currHealth / (float)syncSo->health()->getMaxHealth());
+		healthShader->setVec3("backgroundColour", 0.05f, 0.67f, 0.0f);
+		healthShader->setVec3("healthColour", 0.1, 1.0f, 0.0f);
+		healthBar.Draw();
+		healthShader->setVec2("offset", { eccoOffsetX, eccoOffsetY });
+		healthShader->setVec2("scale", { eccoScaleX, eccoScaleY });
+		healthShader->setFloat("healthPercent", (float)eccoSo->health()->currHealth / (float)eccoSo->health()->getMaxHealth());
+		healthShader->setVec3("backgroundColour", 0.25f, 0.37f, 0.49f);
+		healthShader->setVec3("healthColour", 0.25f, 0.49f, 1.0f);
+		healthBar.Draw();
+	}
 }
 
 void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
+		if (ImGui::CollapsingHeader("Health stuff")) {
+			ImGui::Text("THESE VALUES DON'T SAVE YET");
+			ImGui::SliderFloat("syncOffsetX", &syncOffsetX, -1.0f, 1.0f);
+			ImGui::SliderFloat("syncOffsetY", &syncOffsetY, -1.0f, 1.0f);
+			ImGui::SliderFloat("syncScaleX", &syncScaleX, 0.0f, 1.0f);
+			ImGui::SliderFloat("syncScaleY", &syncScaleY, 0.0f, 1.0f);
+			ImGui::SliderFloat("eccoOffsetX", &eccoOffsetX, -1.0f, 1.0f);
+			ImGui::SliderFloat("eccoOffsetY", &eccoOffsetY, -1.0f, 1.0f);
+			ImGui::SliderFloat("eccoScaleX", &eccoScaleX, 0.0f, 1.0f);
+			ImGui::SliderFloat("eccoScaleY", &eccoScaleY, 0.0f, 1.0f);
+		}
 
 		if (ImGui::Button("PLAY")) {
 			inPlay = !inPlay;
@@ -745,8 +788,13 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	enemySystem.Start(transforms, rigidBodies, colliders);
 	previouslySaved = true;
 
-	groundTexture->path = "Levels/" + windowName + ".png";
+	// TODO: Move the _Ground to a variable or something
+	groundTexture->path = Paths::levelsPath + windowName + "_Ground.png";
 	groundTexture->Load();
+	if (!groundTexture->loaded) {
+		groundTexture->path = Paths::levelsPath + windowName + ".png";
+		groundTexture->Load();
+	}
 }
 
 void LevelEditor::ModelPlacer(glm::vec2 targetPos)

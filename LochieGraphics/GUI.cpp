@@ -19,6 +19,7 @@
 #include "ImGuizmo.h"
 
 #include <iostream>
+#include <filesystem>
 
 using Utilities::PointerToString;
 
@@ -37,24 +38,11 @@ void GUI::Update()
 	else disableGUIHeld = false;
 
 	if (!scene->displayGUI) {
-		ImGui::SetNextWindowPos({15.0f, 50.0f});
-		ImGui::Begin("Ecco");
-		ImGui::BeginDisabled();
-		ImGui::SliderInt("Health", &scene->healths[scene->ecco->GUID].currHealth, 0, scene->ecco->maxHealth);
-		ImGui::EndDisabled();
-		ImGui::End();
-
-		ImGui::SetNextWindowPos({(float)*(scene->windowWidth) - 400.0f, 50.0f});
-		ImGui::Begin("Sync");
-		ImGui::BeginDisabled();
-		ImGui::SliderInt("Health", &scene->healths[scene->sync->GUID].currHealth, 0, scene->sync->maxHealth);
-		ImGui::EndDisabled();
-		ImGui::End();
 		return;
 	}
 
 	// TODO: Rebind-able key
-	if (glfwGetKey(SceneManager::window, GLFW_KEY_DELETE)) {
+	if (glfwGetKey(SceneManager::window, GLFW_KEY_DELETE) && !ImGui::GetIO().WantCaptureKeyboard) {
 		if (sceneObjectSelected) {
 			scene->DeleteSceneObject(sceneObjectSelected->GUID);
 		}
@@ -100,6 +88,12 @@ void GUI::Update()
 				new SceneObject(scene);
 			}
 			ImGui::EndMenu();
+		}
+		ImGui::MenuItem("Open in explorer");
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+			std::string path = std::filesystem::current_path().string();
+			system(("explorer " + path).c_str());
+
 		}
 		ImGui::EndMainMenuBar();
 	}
@@ -410,7 +404,49 @@ void GUI::HierarchyMenu()
 
 	hierarchySceneObjects.clear();
 
-	ImGui::InputText("Search", &hierarchyMenuSearch);
+	ImGui::InputText("##Search", &hierarchyMenuSearch);
+	if (ImGui::BeginItemTooltip()) {
+		ImGui::Text("Search");
+		ImGui::EndTooltip();
+	}
+	ImGui::SameLine();
+	std::string partsFilterPopupID = "partsFilterPopUp";
+	if (partsFilter) {
+		// TODO: Variable for the colour
+		ImGui::PushStyleColor(0, { 0.7f, 0.3f, 0.1f, 1.0f });
+	}
+	std::string partsFilterLetter = partsFilter ? "F" : "A";
+	bool partsFilterOpen = ImGui::Button((partsFilterLetter + "##Parts filter").c_str());
+	if (partsFilter) {
+		ImGui::PopStyleColor();
+	}
+	if (ImGui::BeginItemTooltip()) {
+		ImGui::Text("Parts Filter");
+		ImGui::EndTooltip();
+	}
+	if (partsFilterOpen) {
+		ImGui::OpenPopup(partsFilterPopupID.c_str());
+	}
+	if (ImGui::BeginPopup(partsFilterPopupID.c_str())) {
+
+		ImGui::CheckboxFlags("Model Renderer##Parts Filter", &partsFilter, Parts::modelRenderer);
+		ImGui::CheckboxFlags("Animator##Parts Filter", &partsFilter, Parts::animator);
+		ImGui::CheckboxFlags("RigidBody##Parts Filter", &partsFilter, Parts::rigidBody);
+		ImGui::CheckboxFlags("Light##Parts Filter", &partsFilter, Parts::light);
+		ImGui::CheckboxFlags("Collider##Parts Filter", &partsFilter, Parts::collider);
+		ImGui::CheckboxFlags("Ecco##Parts Filter", &partsFilter, Parts::ecco);
+		ImGui::CheckboxFlags("Sync##Parts Filter", &partsFilter, Parts::sync);
+		ImGui::CheckboxFlags("Health##Parts Filter", &partsFilter, Parts::health);
+		ImGui::CheckboxFlags("Enemy##Parts Filter", &partsFilter, Parts::enemy);
+		ImGui::CheckboxFlags("Exit Elevator##Parts Filter", &partsFilter, Parts::exitElevator);
+		ImGui::CheckboxFlags("Spikes##Parts Filter", &partsFilter, Parts::spikes);
+		ImGui::CheckboxFlags("Plate##Parts Filter", &partsFilter, Parts::plate);
+		ImGui::CheckboxFlags("Spawn Manager##Parts Filter", &partsFilter, Parts::spawnManager);
+		ImGui::CheckboxFlags("Door##Parts Filter", &partsFilter, Parts::door);
+		ImGui::CheckboxFlags("Bollard##Parts Filter", &partsFilter, Parts::bollard);
+
+		ImGui::EndPopup();
+	}
 
 	ImGui::Unindent();
 	ImGui::TreeNodeEx(("Root##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
@@ -463,6 +499,9 @@ void GUI::TransformTree(SceneObject* sceneObject)
 		if (Utilities::ToLower(sceneObject->name).find(Utilities::ToLower(hierarchyMenuSearch)) == std::string::npos) {
 			return;
 		}
+	}
+	if ((partsFilter & sceneObject->parts) != partsFilter) {
+		return;
 	}
 	std::string tag = std::to_string(sceneObject->GUID);
 	ImGuiTreeNodeFlags nodeFlags = baseNodeFlags;

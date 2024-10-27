@@ -54,7 +54,7 @@ void main()
 
         //Normals
         case 2:
-        FragColor = vec4(texture(normal, texCoords).rgb, 1.0);
+        FragColor = vec4((texture(normal, texCoords).rgb + 1.0) / 2.0, 1.0);
         break;
 
         //Emission
@@ -64,19 +64,38 @@ void main()
 
         //PBR
         case 4:
-        float ro = texture(normal, texCoords).a;
-        float me = texture(albedo, texCoords).a;
+        float r = texture(normal, texCoords).a;
+        float m = texture(albedo, texCoords).a;
+        float a = texture(emission, texCoords).a;
+        FragColor = vec4(r, m, a, 1.0);
+
+        break;
+
+        // Roughness
+        case 5:
+        float roughness = texture(normal, texCoords).a;
+        FragColor = vec4(roughness.xxx, 1.0);
+        break;
+        
+        // Metallic
+        case 6:
+        float metallic = texture(albedo, texCoords).a;
+        FragColor = vec4(metallic.xxx, 1.0);
+        break;
+        
+        // AO
+        case 7:
         float ao = texture(emission, texCoords).a;
-        FragColor = vec4(ro, me, ao, 1.0);
+        FragColor = vec4(ao.xxx, 1.0);
         break;
 
         //SSAO
-        case 5:
+        case 8:
         FragColor = vec4(texture(SSAO, texCoords).rrr, 1.0);
         break;
 
         //BLOOM
-        case 6:
+        case 9:
         FragColor = vec4(texture(bloomBlur, texCoords).rgb, 1.0);
         break;
     }

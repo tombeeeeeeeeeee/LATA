@@ -58,5 +58,8 @@ void Health::GUI()
 	if (ImGui::CollapsingHeader(("Health##" + tag).c_str())) {
 		ImGui::DragInt(("Current##" + tag).c_str(), &currHealth);
 		ImGui::DragFloat(("Time Since Last Change##" + tag).c_str(), &timeSinceLastChange);
+		ImGui::BeginDisabled();
+		ImGui::DragInt(("Max Health##" + tag).c_str(), &maxHealth);
+		ImGui::EndDisabled();
 	}
 }

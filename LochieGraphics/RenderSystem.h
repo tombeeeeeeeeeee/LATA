@@ -82,8 +82,8 @@ public:
     unsigned int skyboxTexture = 0;
     glm::mat4 projection = glm::zero<glm::mat4>();
     int kernelSize = 64;
-    float ssaoRadius = 0.5f;
-    float ssaoBias = 0.025f;
+    float ssaoRadius = 32.0f;
+    float ssaoBias = 7.5f;
 
     /// <summary>
     /// Pointer to current window

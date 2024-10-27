@@ -601,7 +601,7 @@ void RenderSystem::GUI()
         ImGui::DragFloat("Radius", &ssaoRadius);
         ImGui::DragFloat("Bias", &ssaoBias);
     }
-    ImGui::DragInt("Buffer Index", &bufferIndex, 0.2f, 0, 6);
+    ImGui::Combo("Buffer Index", &bufferIndex, "Result\0Albedo\0World Normals\0Emission\0PBR (Roughness, Metallic, AO)\0Roughness\0Metallic\0AO\0SSAO\0Bloom\0\0");
 
     ImGui::SliderFloat("Post effect thing", &postEffectPercent, 0.0f, 1.0f);
     ImGui::Checkbox("Post Effect on", &postEffectOn);
@@ -839,7 +839,7 @@ void RenderSystem::RenderAmbientPass()
 
     DirectionalLight* dirLight = (DirectionalLight*)SceneManager::scene->lights[0];
     ambientShader->setVec3("lightDirection", dirLight->direction);
-    ambientShader->setVec3("lightColour", {0.0f,0.0f,0.0f});
+    ambientShader->setVec3("lightColour", dirLight->colour);
     ambientShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
 
     glActiveTexture(GL_TEXTURE0 + 1);
