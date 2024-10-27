@@ -1,6 +1,7 @@
 #include "UserPreferences.h"
 
 #include "SceneManager.h"
+#include "Scene.h"
 #include "Paths.h"
 
 #include "EditorGUI.h"
@@ -31,10 +32,16 @@ void UserPreferences::GUI()
 	// TODO: Selector for user prefs
 	// TODO: Option to create new one
 
+	bool shouldSave = false;
+
 	ImGui::InputText("User Preferences Active", &filename);
-	if (ImGui::Button("Save##User Prefrences")) {
-		Save();
-		RefreshPreferenceFile();
+	ImGui::BeginDisabled();
+	ImGui::Button("Save##User Prefrences");
+	ImGui::EndDisabled();
+	if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip | ImGuiHoveredFlags_AllowWhenDisabled)) {
+		ImGui::BeginTooltip();
+		ImGui::Text("User Preferences auto save");
+		ImGui::EndTooltip();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Load##User Prefrences")) {
@@ -42,20 +49,23 @@ void UserPreferences::GUI()
 		RefreshPreferenceFile();
 	}
 
-	ImGui::Checkbox("Pressing Escape Quits", &escapeCloses);
+	if (ImGui::Checkbox("Pressing Escape Quits", &escapeCloses)) { shouldSave = true; }
 
-	ImGui::Combo("Model Chooser Mode", (int*)&modelSelectMode, "Loaded\0Assets\0\0");
+	if (ImGui::Combo("Model Chooser Mode", (int*)&modelSelectMode, "Loaded\0Assets\0\0")) { shouldSave = true; }
 
-	ImGui::Combo("Default Windowed Mode", (int*)&windowedStartMode, "Windowed\0Borderless Fullscreen\0Maximised\0\0");
+	if (ImGui::Combo("Default Windowed Mode", (int*)&windowedStartMode, "Windowed\0Borderless Fullscreen\0Maximised\0\0")) { shouldSave = true; }
 
-	ImGui::SliderFloat("Default Global Audio Volume", &defaultGlobalVolume, 0.0f, 2.0f);
+	if (ImGui::SliderFloat("Default Global Audio Volume", &defaultGlobalVolume, 0.0f, 2.0f)) {
+		shouldSave = true;
+		SceneManager::scene->audio.soloud.setGlobalVolume(defaultGlobalVolume);
+	}
 
 	if (ImGui::CollapsingHeader("Camera Move Speeds")) {
-		ImGui::DragFloat("Orthographic Zoom Speed##Camera", &orthScrollSpeed, 0.1f, 0.0f, FLT_MAX);
+		if (ImGui::DragFloat("Orthographic Zoom Speed##Camera", &orthScrollSpeed, 0.1f, 0.0f, FLT_MAX)) { shouldSave = true; }
 		ImGui::Text("Editor Values");
 		ImGui::Indent();
-		ImGui::DragFloat("Movement##Camera", &camMove, 0.1f, 0.0f, FLT_MAX);
-		ImGui::DragFloat("Rotate##Camera", &camRotate, 0.01f, 0.0f, FLT_MAX);
+		if (ImGui::DragFloat("Movement##Camera", &camMove, 0.1f, 0.0f, FLT_MAX)) { shouldSave = true; }
+		if (ImGui::DragFloat("Rotate##Camera", &camRotate, 0.01f, 0.0f, FLT_MAX)) { shouldSave = true; }
 		ImGui::Unindent();
 		ImGui::Text("Art Values");
 		ImGui::Indent();
@@ -63,29 +73,31 @@ void UserPreferences::GUI()
 		if (ImGui::DragFloat("Orbit##Camera", &orbit, 0.05f, 0.0f, FLT_MAX, "%.f")) {
 			camOrbit = orbit / 10000.0f;
 		}
-		ImGui::DragFloat("Move##Camera", &camBoomTruck, 0.01f, 0.0f, FLT_MAX);
-		ImGui::DragFloat("Mouse Dolly##Camera", &camMoveDolly, 0.01f, 0.0f, FLT_MAX);
-		ImGui::DragFloat("Scroll Dolly##Camera", &camScrollDolly, 0.1f, 0.0f, FLT_MAX);
+		if (ImGui::DragFloat("Move##Camera", &camBoomTruck, 0.01f, 0.0f, FLT_MAX)) { shouldSave = true; }
+		if (ImGui::DragFloat("Mouse Dolly##Camera", &camMoveDolly, 0.01f, 0.0f, FLT_MAX)) { shouldSave = true; }
+		if (ImGui::DragFloat("Scroll Dolly##Camera", &camScrollDolly, 0.1f, 0.0f, FLT_MAX)) { shouldSave = true; }
 		ImGui::Unindent();
 	}
 
 	if (ImGui::CollapsingHeader("Level Editor")) {
 		ImGui::Indent();
-		ImGui::Checkbox("Load Default Level", &loadDefaultLevel);
+		if (ImGui::Checkbox("Load Default Level", &loadDefaultLevel)) { shouldSave = true; }
 		if (!loadDefaultLevel) { 
 			ImGui::BeginDisabled();
 			ImGui::Indent();
 		}
-		ImGui::InputText("Default Level Load", &defaultLevelLoad);
-		ImGui::Checkbox("Rememeber Last Level", &rememberLastLevel);
-		ImGui::Checkbox("Enter Play Mode On Launch", &enterPlayModeOnStart);
+		if (ImGui::InputText("Default Level Load", &defaultLevelLoad)) { shouldSave = true; }
+		if (ImGui::Checkbox("Rememeber Last Level", &rememberLastLevel)) { shouldSave = true; }
+		if (ImGui::Checkbox("Enter Play Mode On Launch", &enterPlayModeOnStart)) { shouldSave = true; }
 		if (!loadDefaultLevel) { 
 			ImGui::EndDisabled();
 			ImGui::Unindent();
 		}
 		ImGui::Unindent();
 	}
-
+	if (shouldSave) {
+		Save();
+	}
 }
 
 void UserPreferences::Initialise()
