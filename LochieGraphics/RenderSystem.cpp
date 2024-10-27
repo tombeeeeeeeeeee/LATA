@@ -962,6 +962,7 @@ void RenderSystem::RenderSSAO()
     ssaoShader->setMat4("projection", projection);
     ssaoShader->setMat4("invP", glm::inverse(projection));
     ssaoShader->setMat4("invV", glm::inverse(viewMatrix));
+    ssaoShader->setMat4("view", viewMatrix);
 
     ssaoShader->setInt("kernelSize", kernelSize);
     ssaoShader->setFloat("radius", ssaoRadius);
