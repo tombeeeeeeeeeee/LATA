@@ -200,6 +200,7 @@ void Texture::UseCubeMap(GLuint GLID, Shader* shader)
 void Texture::DeleteTexture()
 {
 	glDeleteTextures(1, &GLID);
+	loaded = false;
 }
 
 void Texture::EditorGUI(std::vector<Texture*>& textures) 

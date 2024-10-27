@@ -744,8 +744,13 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	enemySystem.Start(transforms, rigidBodies, colliders);
 	previouslySaved = true;
 
-	groundTexture->path = "Levels/" + windowName + ".png";
+	// TODO: Move the _Ground to a variable or something
+	groundTexture->path = Paths::levelsPath + windowName + "_Ground.png";
 	groundTexture->Load();
+	if (!groundTexture->loaded) {
+		groundTexture->path = Paths::levelsPath + windowName + ".png";
+		groundTexture->Load();
+	}
 }
 
 void LevelEditor::ModelPlacer(glm::vec2 targetPos)
