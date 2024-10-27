@@ -92,6 +92,12 @@ void LevelEditor::RefreshWalls()
 			case 0b0111:
 				PlaceWallAt(pos.x, pos.y, 0.0f, wallCornerPrefab);
 				break;
+			case 0b0101:
+			case 0b1010:
+				// TODO: Need a + plus shaped wall
+				PlaceWallAt(pos.x, pos.y, 0.0f, wallCornerPrefab);
+				PlaceWallAt(pos.x, pos.y, 180.0f, wallCornerPrefab);
+				break;
 			case 0b0011:
 			case 0b1100:
 				PlaceWallAt(pos.x, pos.y, 0.0f, wallSidePrefab);
