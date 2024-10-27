@@ -19,6 +19,7 @@
 #include "ImGuizmo.h"
 
 #include <iostream>
+#include <filesystem>
 
 using Utilities::PointerToString;
 
@@ -100,6 +101,12 @@ void GUI::Update()
 				new SceneObject(scene);
 			}
 			ImGui::EndMenu();
+		}
+		ImGui::MenuItem("Open in explorer");
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+			std::string path = std::filesystem::current_path().string();
+			system(("explorer " + path).c_str());
+
 		}
 		ImGui::EndMainMenuBar();
 	}
