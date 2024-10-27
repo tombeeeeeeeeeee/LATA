@@ -272,6 +272,22 @@ void LevelEditor::Start()
 
 void LevelEditor::Update(float delta)
 {
+	if (showGrid) {
+		DrawGrid();
+	}
+	if (snapToGridEnabled) {
+		// TODO: Move to its own function
+		if (gui.getSelected()) {
+			glm::vec3 pos = gui.getSelected()->transform()->getPosition();
+			float previousY = pos.y;
+
+			pos -= glm::vec3((gridMinX - 0.5f) * gridSize, 0, (gridMinZ - 0.5f) * gridSize);
+			pos = glm::round(pos / placementGridSize) * placementGridSize;
+			pos += glm::vec3((gridMinX - 0.5f) * gridSize, 0, (gridMinZ - 0.5f) * gridSize);
+
+			gui.getSelected()->transform()->setPosition({ pos.x, previousY, pos.z });
+		}
+	}
 	if (!lastFramePlayState && inPlay) //On Play Enter
 	{
 		SaveLevel();
@@ -504,6 +520,22 @@ void LevelEditor::GUI()
 		}
 		if (ImGui::DragFloat("Wall offset", &wallThickness, 0.5f)) {
 			if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
+		}
+		ImGui::Checkbox("Snap To Grid", &snapToGridEnabled);
+		if (ImGui::CollapsingHeader("Grid")) {
+			ImGui::Checkbox("Show##Grid", &showGrid);
+			if (!showGrid) {
+				ImGui::BeginDisabled();
+			}
+			ImGui::Checkbox("Always Visible##Grid", &placementGridUseDebugLines);
+			if (ImGui::InputFloat("Size##Grid", &placementGridSize, 10.0f, 100.0f)) {
+				placementGridSize = fmaxf(placementGridSize, 10.0f);
+			}
+			ImGui::DragFloat("Height##Grid", &placementGridHeight);
+			ImGui::ColorEdit3("Colour##Grid", &gridColour.x);
+			if (!showGrid) {
+				ImGui::EndDisabled();
+			}
 		}
 	}
 	ImGui::End();
@@ -767,6 +799,25 @@ void LevelEditor::Selector(glm::vec2 targetPos)
 			gui.setSelected(i.second.getSceneObject());
 		}
 	}
+}
+
+void LevelEditor::DrawGrid()
+{
+	float xMin = (gridMinX - 0.5f) * gridSize;
+	float xMax = (gridMaxX + 0.5f) * gridSize;
+	float zMin = (gridMinZ - 0.5f) * gridSize;
+	float zMax = (gridMaxZ + 0.5f) * gridSize;
+	LineRenderer* lines = placementGridUseDebugLines ? &renderSystem.debugLines : &renderSystem.lines;
+	lines->SetColour({ gridColour.x, gridColour.y, gridColour.z });
+	for (float x = xMin; x <= xMax; x += placementGridSize)
+	{
+		lines->DrawLineSegement2D({ x, zMin }, { x, zMax }, placementGridHeight);
+	}
+	for (float z = zMin; z <= zMax; z += placementGridSize)
+	{
+		lines->DrawLineSegement2D({ xMin, z }, { xMax, z }, placementGridHeight);
+	}
+
 }
 
 glm::vec2 LevelEditor::EditorCamMouseToWorld() const

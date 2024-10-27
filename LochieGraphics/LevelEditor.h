@@ -77,6 +77,13 @@ private:
 
 	float defaultColliderLength = 50.0f;
 
+	bool showGrid = false;
+	float placementGridSize = 50.0f;
+	float placementGridHeight = 1.0f;
+	bool placementGridUseDebugLines = false;
+	glm::vec3 gridColour = { 1.0f, 1.0f, 1.0f };
+	bool snapToGridEnabled = false;
+
 	float selectSize = 50.0f;
 
 	void RefreshWalls();
@@ -92,6 +99,7 @@ private:
 	void ModelPlacer(glm::vec2 targetPos);
 	void PrefabPlacer(glm::vec2 targetPos);
 	void Selector(glm::vec2 targetPos);
+	void DrawGrid();
 
 	void SaveAsPrompt();
 	void LoadPrompt();
