@@ -18,6 +18,13 @@ bool UserPreferences::loadDefaultLevel = true;
 bool UserPreferences::enterPlayModeOnStart = false;
 WindowModes UserPreferences::windowedStartMode = WindowModes::maximised;
 float UserPreferences::defaultGlobalVolume = 1.0f;
+float UserPreferences::camMove;
+float UserPreferences::camRotate;
+float UserPreferences::camOrbit;
+float UserPreferences::camBoomTruck;
+float UserPreferences::camMoveDolly;
+float UserPreferences::camScrollDolly;
+float UserPreferences::orthScrollSpeed;
 
 void UserPreferences::GUI()
 {
@@ -42,6 +49,25 @@ void UserPreferences::GUI()
 	ImGui::Combo("Default Windowed Mode", (int*)&windowedStartMode, "Windowed\0Borderless Fullscreen\0Maximised\0\0");
 
 	ImGui::SliderFloat("Default Global Audio Volume", &defaultGlobalVolume, 0.0f, 2.0f);
+
+	if (ImGui::CollapsingHeader("Camera Move Speeds")) {
+		ImGui::DragFloat("Orthographic Zoom Speed##Camera", &orthScrollSpeed, 0.1f, 0.0f, FLT_MAX);
+		ImGui::Text("Editor Values");
+		ImGui::Indent();
+		ImGui::DragFloat("Movement##Camera", &camMove, 0.1f, 0.0f, FLT_MAX);
+		ImGui::DragFloat("Rotate##Camera", &camRotate, 0.01f, 0.0f, FLT_MAX);
+		ImGui::Unindent();
+		ImGui::Text("Art Values");
+		ImGui::Indent();
+		float orbit = camOrbit * 10000.0f;
+		if (ImGui::DragFloat("Orbit##Camera", &orbit, 0.05f, 0.0f, FLT_MAX, "%.f")) {
+			camOrbit = orbit / 10000.0f;
+		}
+		ImGui::DragFloat("Move##Camera", &camBoomTruck, 0.01f, 0.0f, FLT_MAX);
+		ImGui::DragFloat("Mouse Dolly##Camera", &camMoveDolly, 0.01f, 0.0f, FLT_MAX);
+		ImGui::DragFloat("Scroll Dolly##Camera", &camScrollDolly, 0.1f, 0.0f, FLT_MAX);
+		ImGui::Unindent();
+	}
 
 	if (ImGui::CollapsingHeader("Level Editor")) {
 		ImGui::Indent();
@@ -109,6 +135,13 @@ void UserPreferences::Save()
 		{ "enterPlayModeOnStart", enterPlayModeOnStart },
 		{ "windowedStartMode", (int)windowedStartMode },
 		{ "defaultGlobalVolume", defaultGlobalVolume },
+		{ "camMove", camMove},
+		{ "camRotate", camRotate},
+		{ "camOrbit", camOrbit},
+		{ "camBoomTruck", camBoomTruck},
+		{ "camMoveDolly", camMoveDolly},
+		{ "camScrollDolly", camScrollDolly},
+		{ "orthScrollSpeed", orthScrollSpeed},
 	};
 
 	file << table << '\n';
@@ -130,6 +163,13 @@ void UserPreferences::Load()
 	enterPlayModeOnStart = Serialisation::LoadAsBool(data["enterPlayModeOnStart"]);
 	windowedStartMode = (WindowModes)Serialisation::LoadAsInt(data["windowedStartMode"]);
 	defaultGlobalVolume = Serialisation::LoadAsFloat(data["defaultGlobalVolume"], 1.0f);
+	camMove = Serialisation::LoadAsFloat(data["camMove"], 250.0f);
+	camRotate = Serialisation::LoadAsFloat(data["camRotate"], 0.01f);
+	camOrbit = Serialisation::LoadAsFloat(data["camOrbit"], 0.01f);
+	camBoomTruck = Serialisation::LoadAsFloat(data["camBoomTruck"], 0.05f);
+	camMoveDolly = Serialisation::LoadAsFloat(data["camMoveDolly"], 0.1f);
+	camScrollDolly = Serialisation::LoadAsFloat(data["camScrollDolly"], 0.1f);
+	orthScrollSpeed = Serialisation::LoadAsFloat(data["orthScrollSpeed"], 200.0f);
 
 	file.close();
 }

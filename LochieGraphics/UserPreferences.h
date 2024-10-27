@@ -8,6 +8,13 @@
 class UserPreferences
 {
 public:
+	static float camMove;
+	static float camRotate;
+	static float camOrbit;
+	static float camBoomTruck;
+	static float camMoveDolly;
+	static float camScrollDolly;
+	static float orthScrollSpeed;
 
 	static std::string filename;
 
@@ -24,6 +31,8 @@ public:
 	static bool rememberLastLevel;
 	static bool enterPlayModeOnStart;
 	static WindowModes windowedStartMode;
+
+
 
 	static float defaultGlobalVolume;
 

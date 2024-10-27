@@ -201,7 +201,6 @@ void LevelEditor::Start()
 	camera->transform.setPosition({ 0.0f, 1000.0f, 0.0f });
 	camera->orthoScale = 300.0f;
 
-	camera->editorSpeed.move = 300.0f;
 	camera->farPlane = 100000.0f;
 	camera->nearPlane = 10.0f;
 

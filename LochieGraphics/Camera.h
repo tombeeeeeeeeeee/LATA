@@ -14,23 +14,6 @@ class Camera
 public:
     Transform transform;
 
-    // camera options
-    // TODO: Move speed shouldn't be build into the camera
-    struct EditorSpeed {
-        float move;
-        float rotate;
-    };
-
-    struct ArtEditorSpeed {
-        float orbit = 0.01f;
-        float boomTruck = 0.05f;
-        float moveDolly = 0.1f;
-        float scrollDolly = 0.1f;
-    };
-    EditorSpeed editorSpeed;
-    ArtEditorSpeed artEditorSpeed;
-    float orthScrollSpeed = 200;
-
     float fov;
 
     float nearPlane;
@@ -91,6 +74,7 @@ public:
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset);
 
+    // TODO: This shouldn't be hardcoded
     float getOrthoHeight() const { return 9.0f * orthoScale; };
     float getOrthoWidth() const { return 16.0f * orthoScale; };
 

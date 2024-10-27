@@ -20,7 +20,6 @@ void LocWorkshop::Start()
 {
 	lights.insert(lights.end(), { &directionalLight });
 
-	camera->editorSpeed.move = 250.0f;
 	camera->nearPlane = 10.0f;
 	camera->farPlane = 50000.0f;
 	camera->transform.setPosition({ 0.0f, 0.0f, 150.0f });
