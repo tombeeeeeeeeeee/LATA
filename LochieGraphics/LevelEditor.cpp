@@ -269,6 +269,10 @@ void LevelEditor::Start()
 	}
 
 	inPlay = UserPreferences::enterPlayModeOnStart;
+
+	healthBar.InitialiseQuad(1.0f);
+	healthShader = ResourceManager::LoadShader("healthBar");
+	shaders.push_back(healthShader);
 }
 
 void LevelEditor::Update(float delta)
@@ -463,11 +467,38 @@ void LevelEditor::Draw()
 		camera,
 		particleSystem.particles
 	);
+
+	if (inPlay) {
+		healthShader->Use();
+		healthShader->setVec2("offset", { syncOffsetX, syncOffsetY });
+		healthShader->setVec2("scale", { syncScaleX, syncScaleY });
+		healthShader->setFloat("healthPercent", (float)syncSo->health()->currHealth / (float)syncSo->health()->getMaxHealth());
+		healthShader->setVec3("backgroundColour", 0.05f, 0.67f, 0.0f);
+		healthShader->setVec3("healthColour", 0.1, 1.0f, 0.0f);
+		healthBar.Draw();
+		healthShader->setVec2("offset", { eccoOffsetX, eccoOffsetY });
+		healthShader->setVec2("scale", { eccoScaleX, eccoScaleY });
+		healthShader->setFloat("healthPercent", (float)eccoSo->health()->currHealth / (float)eccoSo->health()->getMaxHealth());
+		healthShader->setVec3("backgroundColour", 0.25f, 0.37f, 0.49f);
+		healthShader->setVec3("healthColour", 0.25f, 0.49f, 1.0f);
+		healthBar.Draw();
+	}
 }
 
 void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
+		if (ImGui::CollapsingHeader("Health stuff")) {
+			ImGui::Text("THESE VALUES DON'T SAVE YET");
+			ImGui::SliderFloat("syncOffsetX", &syncOffsetX, -1.0f, 1.0f);
+			ImGui::SliderFloat("syncOffsetY", &syncOffsetY, -1.0f, 1.0f);
+			ImGui::SliderFloat("syncScaleX", &syncScaleX, 0.0f, 1.0f);
+			ImGui::SliderFloat("syncScaleY", &syncScaleY, 0.0f, 1.0f);
+			ImGui::SliderFloat("eccoOffsetX", &eccoOffsetX, -1.0f, 1.0f);
+			ImGui::SliderFloat("eccoOffsetY", &eccoOffsetY, -1.0f, 1.0f);
+			ImGui::SliderFloat("eccoScaleX", &eccoScaleX, 0.0f, 1.0f);
+			ImGui::SliderFloat("eccoScaleY", &eccoScaleY, 0.0f, 1.0f);
+		}
 
 		if (ImGui::Button("PLAY")) {
 			inPlay = !inPlay;

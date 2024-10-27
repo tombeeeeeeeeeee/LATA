@@ -38,19 +38,6 @@ void GUI::Update()
 	else disableGUIHeld = false;
 
 	if (!scene->displayGUI) {
-		ImGui::SetNextWindowPos({15.0f, 50.0f});
-		ImGui::Begin("Ecco");
-		ImGui::BeginDisabled();
-		ImGui::SliderInt("Health", &scene->healths[scene->ecco->GUID].currHealth, 0, scene->ecco->maxHealth);
-		ImGui::EndDisabled();
-		ImGui::End();
-
-		ImGui::SetNextWindowPos({(float)*(scene->windowWidth) - 400.0f, 50.0f});
-		ImGui::Begin("Sync");
-		ImGui::BeginDisabled();
-		ImGui::SliderInt("Health", &scene->healths[scene->sync->GUID].currHealth, 0, scene->sync->maxHealth);
-		ImGui::EndDisabled();
-		ImGui::End();
 		return;
 	}
 
