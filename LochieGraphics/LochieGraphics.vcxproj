@@ -212,9 +212,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WITH_WINMM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Third Party\enet\include;$(SolutionDir)Third Party\GLFW;$(SolutionDir)Third Party\glm;$(SolutionDir)Third Party\imgui</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Third Party\enet\include;$(SolutionDir)Third Party\GLFW;$(SolutionDir)Third Party\glm;$(SolutionDir)Third Party\imgui;$(SolutionDir)Third Party\soloud\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -310,6 +310,31 @@
     <ClCompile Include="..\Third Party\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="..\Third Party\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Third Party\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\audiosource\wav\dr_impl.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\audiosource\wav\soloud_wav.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\audiosource\wav\soloud_wavstream.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\audiosource\wav\stb_vorbis.c" />
+    <ClCompile Include="..\Third Party\soloud\src\backend\winmm\soloud_winmm.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_audiosource.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_bus.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_3d.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_basicops.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_faderops.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_filterops.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_getters.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_setters.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_voicegroup.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_core_voiceops.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_fader.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_fft.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_fft_lut.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_file.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_filter.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_misc.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_queue.cpp" />
+    <ClCompile Include="..\Third Party\soloud\src\core\soloud_thread.cpp" />
+    <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Bollard.cpp" />
     <ClCompile Include="BoneInfo.cpp" />
     <ClCompile Include="Door.cpp" />
@@ -333,6 +358,11 @@
     <ClInclude Include="..\Third Party\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\Third Party\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Third Party\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\dr_flac.h" />
+    <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\dr_mp3.h" />
+    <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\dr_wav.h" />
+    <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\stb_vorbis.h" />
+    <ClInclude Include="Audio.h" />
     <ClInclude Include="Bollard.h" />
     <ClInclude Include="Door.h" />
     <ClInclude Include="DoorAndBollardSystem.h" />
