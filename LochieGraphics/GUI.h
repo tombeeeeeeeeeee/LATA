@@ -28,7 +28,7 @@ public:
 	Scene* scene = nullptr;
 
 	SceneObject* lastSelected = nullptr;
-
+	unsigned int partsFilter = 0u;
 	
 
 	void Update();
