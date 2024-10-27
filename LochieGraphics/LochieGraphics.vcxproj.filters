@@ -323,17 +323,11 @@
     <ClCompile Include="DoorAndBollardSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Bollard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="ModelHierarchyInfo.cpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="BoneInfo.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Third Party\soloud\src\backend\winmm\soloud_winmm.cpp">
       <Filter>Source Files\Third-Party\soloud\backends</Filter>
@@ -409,6 +403,12 @@
     </ClCompile>
     <ClCompile Include="Audio.cpp">
       <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="BoneInfo.cpp">
+      <Filter>Source Files\Rendering\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Bollard.cpp">
+      <Filter>Source Files\Parts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -709,7 +709,6 @@
     <ClInclude Include="DoorAndBollardSystem.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Bollard.h" />
     <ClInclude Include="ParticleSystem.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
@@ -727,6 +726,9 @@
     </ClInclude>
     <ClInclude Include="Audio.h">
       <Filter>Source Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Bollard.h">
+      <Filter>Source Files\Parts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -862,12 +864,6 @@
     <None Include="..\Shaders\ssaoBlur.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\forward.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Shaders\forward.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\Shaders\paintedNormals.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -884,6 +880,15 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\particle.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\prepass.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\prepass.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\ambient.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
