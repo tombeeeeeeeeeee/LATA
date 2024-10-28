@@ -11,6 +11,7 @@
 #include "PressurePlate.h"
 #include "Door.h"
 #include "Bollard.h"
+#include "Triggerable.h"
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
@@ -63,6 +64,7 @@ public:
 	std::unordered_map<unsigned long long, PressurePlate> plates = {};
 	std::unordered_map<unsigned long long, Door> doors = {};
 	std::unordered_map<unsigned long long, Bollard> bollards = {};
+	std::unordered_map<unsigned long long, Triggerable> triggerables = {};
 	std::vector<Light*> lights = {};
 
 	std::vector<unsigned long long> markedForDeletion = {};

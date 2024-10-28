@@ -11,7 +11,6 @@
 #include "Collider.h"
 #include "ModelRenderer.h"
 #include "Scene.h"
-#include "Paths.h"
 #include "Collision.h"
 
 #include "Utilities.h"
@@ -42,8 +41,10 @@ void EnemySystem::Load(toml::table table)
     perceptionRadius = Serialisation::LoadAsFloat(table["perceptionRadius"]);
     separationRadius = Serialisation::LoadAsFloat(table["separationRadius"]);
     timeForEnemiesToSpawnAgain = Serialisation::LoadAsFloat(table["timeForEnemiesToSpawnAgain"]);
+
     explosiveEnemyHealth = Serialisation::LoadAsInt(table["explosiveEnemyHealth"]);
     timeToExplode = Serialisation::LoadAsFloat(table["timeToExplode"]);
+    speedWhileExploding = Serialisation::LoadAsFloat(table["speedWhileExploding"]);
     explosionDamage = Serialisation::LoadAsInt(table["explosionDamage"]);
     explosionRadius = Serialisation::LoadAsFloat(table["explosionRadius"]);
     distanceToExplode = Serialisation::LoadAsFloat(table["distanceToExplode"]);
@@ -105,12 +106,12 @@ void EnemySystem::Start(
     UpdateNormalFlowMap(transforms, rigidbodies, colliders);
 }
 
-void EnemySystem::SpawnExplosive(glm::vec3 pos)
+void EnemySystem::SpawnExplosive(glm::vec3 pos, std::string tag)
 {
     Scene* scene = SceneManager::scene;
 
     SceneObject* enemy = new SceneObject(scene, "ExplosiveEnemy" + std::to_string(explosiveEnemyCount++));
-    enemy->setEnemy(new Enemy((int)EnemyType::explosive));
+    enemy->setEnemy(new Enemy((int)EnemyType::explosive, tag));
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(explosiveEnemyHealth);
     enemy->setRigidBody(new RigidBody());
@@ -126,13 +127,12 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos)
     enemy->rigidbody()->isStatic = false;
 }
 
-void EnemySystem::SpawnMelee(glm::vec3 pos)
+void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
 {
     Scene* scene = SceneManager::scene;
 
     SceneObject* enemy = new SceneObject(scene, "MeleeEnemy" + std::to_string(meleeEnemyCount++));
-    enemy->setEnemy(new Enemy());
-    enemy->enemy()->type = (int)EnemyType::melee;
+    enemy->setEnemy(new Enemy((int)EnemyType::melee, tag));
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(meleeEnemyHealth);
     enemy->setRigidBody(new RigidBody());
@@ -148,11 +148,12 @@ void EnemySystem::SpawnMelee(glm::vec3 pos)
     enemy->rigidbody()->isStatic = false;
 }
 
-void EnemySystem::SpawnRanged(glm::vec3 pos)
+void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
 {
     Scene* scene = SceneManager::scene;
 
     SceneObject* enemy = new SceneObject(scene, "RangedEnemy" + std::to_string(rangedEnemyCount++));
+    enemy->setEnemy(new Enemy((int)EnemyType::ranged, tag));
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(rangedEnemyHealth);
     enemy->health()->currHealth = rangedEnemyHealth;
@@ -226,20 +227,34 @@ void EnemySystem::AbilityCheck(
                 }
                 break;
             case (int)EnemyType::melee:
-                enemyPair.second.inAbility = false;
-                glm::vec3 f = transforms[enemyPair.first].forward();
-
-                hits = PhysicsSystem::CircleCast(enemyPos + glm::vec2(f.x * meleeEnemyColliderRadius, f.z * meleeEnemyColliderRadius), punchRadius, (int)CollisionLayers::sync | (int)CollisionLayers::ecco);
-                for (auto& hit : hits)
+                if (enemyPair.second.timeInAbility < timeToPunch)
                 {
-                    Health* health = hit.sceneObject->health();
-                    if (health)
+                    enemyPair.second.timeInAbility += delta;
+                }
+                else
+                {
+                    enemyPair.second.inAbility = false;
+                    glm::vec3 f = transforms[enemyPair.first].forward();
+
+                    hits = PhysicsSystem::CircleCast(enemyPos + glm::vec2(f.x * meleeEnemyColliderRadius, f.z * meleeEnemyColliderRadius), punchRadius, (int)CollisionLayers::sync | (int)CollisionLayers::ecco);
+                    for (auto& hit : hits)
                     {
-                        health->subtractHealth(meleeEnemyDamage);
+                        Health* health = hit.sceneObject->health();
+                        if (health)
+                        {
+                            health->subtractHealth(meleeEnemyDamage);
+                        }
                     }
                 }
                 break;
             case (int)EnemyType::ranged:
+                if (enemyPair.second.timeInAbility < timeToPunch)
+                {
+                    enemyPair.second.timeInAbility += delta;
+                }
+                else
+                {
+                }
                 break;
             }
         }
@@ -258,6 +273,7 @@ void EnemySystem::AbilityCheck(
                 if (glm::dot(eccoDelta, eccoDelta) < distanceToPunch * distanceToPunch || glm::dot(syncDelta, syncDelta) < distanceToPunch * distanceToPunch)
                 {
                     enemyPair.second.inAbility = true;
+                    enemyPair.second.timeInAbility = 0.0f;
                 }
                 break;
             case (int)EnemyType::ranged:
@@ -290,11 +306,31 @@ void EnemySystem::Steering(
 
         if (enemyPair.second.inAbility)
         {
-            float length = glm::length(rigidBodies[enemyPair.first].vel);
-            if (length == 0.0f) continue;
-            float slowedLength = length * slowedPercentage / 100;
-
-            enemyPair.second.influenceThisFrame = -glm::normalize(rigidBodies[enemyPair.first].vel) * fminf(length, slowedLength);
+            if (enemyPair.second.type == (int)EnemyType::explosive)
+            {
+                glm::vec2 enemyPos = transforms[enemyPair.first].get2DGlobalPosition();
+                float sqrDistanceToEcco = glm::dot(eccoPos - enemyPos, eccoPos - enemyPos);
+                float sqrDistanceToSync = glm::dot(syncPos - enemyPos, syncPos - enemyPos);
+                glm::vec2 playerForce;
+                if (sqrDistanceToEcco == 0.0f || sqrDistanceToSync == 0.0f) playerForce = { 0.0f, 0.0f };
+                if (sqrDistanceToEcco < sqrDistanceToSync)
+                {
+                    playerForce = glm::normalize(eccoPos - enemyPos);
+                }
+                else
+                {
+                    playerForce = glm::normalize(syncPos - enemyPos);
+                }
+                playerForce *= 100 * playerCoef;
+                enemyPair.second.influenceThisFrame += playerForce;
+            }
+            else
+            {
+                float length = glm::length(rigidBodies[enemyPair.first].vel);
+                if (length == 0.0f) continue;
+                float slowedLength = length * slowedPercentage / 100;
+                enemyPair.second.influenceThisFrame = -glm::normalize(rigidBodies[enemyPair.first].vel) * fminf(length, slowedLength);
+            }
         }
         else
         {
@@ -348,7 +384,7 @@ void EnemySystem::Steering(
             {
                 playerForce = glm::normalize(syncPos - enemyPos);
             }
-            playerForce *= 100 * playerCoef;
+            playerForce *= 100 * playerCoef * enemyPair.second.fleeing ? -1 : 1;
 
             glm::vec2 normalForce = GetNormalFlowInfluence(enemyPos) * normalCoef;
             enemyPair.second.influenceThisFrame += normalForce + playerForce;
@@ -376,7 +412,10 @@ void EnemySystem::Steering(
         enemyPair.second.boidVelocity += enemyPair.second.influenceThisFrame;
         if (enemyPair.second.boidVelocity.x != 0.0f || enemyPair.second.boidVelocity.y != 0.0f)
         {
-            enemyPair.second.boidVelocity = Utilities::ClampMag(enemyPair.second.boidVelocity, maxSpeed, maxSpeed);
+            if (enemyPair.second.inAbility && enemyPair.second.type == (int)EnemyType::explosive)
+                enemyPair.second.boidVelocity = Utilities::ClampMag(enemyPair.second.boidVelocity, speedWhileExploding, speedWhileExploding);
+            else
+                enemyPair.second.boidVelocity = Utilities::ClampMag(enemyPair.second.boidVelocity, maxSpeed, maxSpeed);
         }
         enemyPair.second.influenceThisFrame = {0.0f, 0.0f};
 
@@ -405,6 +444,7 @@ void EnemySystem::Steering(
             auto health = healths.find(enemyPair.first);
             if (health != healths.end() && healths[enemyPair.first].currHealth <= 0)
             {
+                enemyTags.at(enemyPair.second.tag)--;
                 SceneManager::scene->DeleteSceneObject(enemyPair.first);
             }
         }
@@ -419,6 +459,13 @@ void EnemySystem::Steering(
 
             if (spawnPair.second.spawning)
             {
+                if (!spawner->triggeredOnce)
+                {
+                    int count = 1;
+                    for (auto& child : transforms[spawnPair.first].getChildren()) count++;
+                    AddTag(spawner->enemyTriggerTag, count);
+                }
+
                 if (spawner->timeSinceLastSpawn >= spawner->timeBetweenSpawns)
                 {
                     spawner->timeSinceLastSpawn = 0;
@@ -431,13 +478,13 @@ void EnemySystem::Steering(
                     switch (enemyType)
                     {
                     case 0:
-                        SpawnExplosive(transforms[spawnPair.first].getGlobalPosition());
+                        SpawnExplosive(transforms[spawnPair.first].getGlobalPosition(), spawner->enemyTriggerTag);
                         break;
                     case 1:
-                        SpawnMelee(transforms[spawnPair.first].getGlobalPosition());
+                        SpawnMelee(transforms[spawnPair.first].getGlobalPosition(), spawner->enemyTriggerTag);
                         break;
                     case 2:
-                        SpawnRanged(transforms[spawnPair.first].getGlobalPosition());
+                        SpawnRanged(transforms[spawnPair.first].getGlobalPosition(), spawner->enemyTriggerTag);
                         break;
                     }
                     for (auto& child : transforms[spawnPair.first].getChildren())
@@ -445,13 +492,13 @@ void EnemySystem::Steering(
                         switch (enemyType)
                         {
                         case 0:
-                            SpawnExplosive(child->getGlobalPosition());
+                            SpawnExplosive(child->getGlobalPosition(), spawner->enemyTriggerTag);
                             break;
                         case 1:
-                            SpawnMelee(child->getGlobalPosition());
+                            SpawnMelee(child->getGlobalPosition(), spawner->enemyTriggerTag);
                             break;
                         case 2:
-                            SpawnRanged(child->getGlobalPosition());
+                            SpawnRanged(child->getGlobalPosition(), spawner->enemyTriggerTag);
                             break;
                         }
                     }
@@ -511,6 +558,12 @@ void EnemySystem::Update   (
         
         HealthCheck(enemies, healths);
         
+        for (auto& triggerTag : enemyTags)
+        {
+            int enemiesWithTagRemaining = triggerTag.second;
+            TriggerSystem::TriggerTag(triggerTag.first, enemiesWithTagRemaining <= 0);
+        }
+
         UpdateSpawnManagers(transforms, spawnManagers, delta);
     }  
 }
@@ -521,20 +574,7 @@ void EnemySystem::SpawnEnemiesInScene(
     bool spawner
 )
 {
-    for (auto& enemyPair : enemies)
-    {
-        if ((enemyPair.second.type & (int)EnemyType::spawnSpot))
-        {
-            if (enemyPair.second.type & (int)EnemyType::melee)
-                SpawnMelee(transforms[enemyPair.first].getGlobalPosition());
-            else if (enemyPair.second.type & (int)EnemyType::ranged)
-                SpawnRanged(transforms[enemyPair.first].getGlobalPosition());
-            else if (enemyPair.second.type & (int)EnemyType::explosive)
-                SpawnExplosive(transforms[enemyPair.first].getGlobalPosition());
 
-            SceneManager::scene->DeleteSceneObject(enemyPair.first);
-        }
-    }
 }
 
 
@@ -614,6 +654,7 @@ void EnemySystem::GUI()
     ImGui::Text("EXPLODING ENEMY STATS");
     ImGui::DragInt("Explosive Enemy Health", &explosiveEnemyHealth);
     ImGui::DragFloat("Time To Explode", &timeToExplode, 0.02f, 0);
+    ImGui::DragFloat("Speed While Exploding", &speedWhileExploding, 2.0f, 0);
     ImGui::DragInt("Explosion Damage", &explosionDamage);
     ImGui::DragFloat("Explosion Radius", &explosionRadius, 25.0f, 0);
     ImGui::DragFloat("Distance To Start Exploding", &distanceToExplode, 25.0f, 0);
@@ -654,6 +695,7 @@ toml::table EnemySystem::Serialise() const
                 { "timeForEnemiesToSpawnAgain", timeForEnemiesToSpawnAgain },
                 { "explosiveEnemyHealth", explosiveEnemyHealth },
                 { "timeToExplode", timeToExplode },
+                { "speedWhileExploding", speedWhileExploding },
                 { "explosionDamage", explosionDamage },
                 { "explosionRadius", explosionRadius },
                 { "distanceToExplode", distanceToExplode },
@@ -996,5 +1038,10 @@ void EnemySystem::PopulateNormalFlowMapFromPoly(PolygonCollider* poly, Transform
             }
         }
     }
+}
+
+void EnemySystem::AddTag(std::string tag, int count)
+{
+    enemyTags[tag] = count;
 }
 

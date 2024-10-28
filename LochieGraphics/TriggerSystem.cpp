@@ -6,6 +6,7 @@
 #include "RigidBody.h"
 #include "Collider.h"
 #include "Collision.h"
+#include "Triggerable.h"
 #include "PressurePlate.h"
 #include <iostream>
 
@@ -25,17 +26,13 @@ void TriggerSystem::Start(
 	std::unordered_map<unsigned long long, PressurePlate>& plates,
 	std::unordered_map<unsigned long long, SpawnManager>& spawnManagers,
 	std::unordered_map<unsigned long long, Door>& doors,
-	std::unordered_map<unsigned long long, Bollard>& bollards
+	std::unordered_map<unsigned long long, Bollard>& bollards,
+	std::unordered_map<unsigned long long, Triggerable>& triggerables
 )
 {
 	for (auto& spawnPair : spawnManagers)
 	{
 		TriggerSystem::triggerables.insert({ spawnPair.second.triggerTag, spawnPair.first });
-		if (SceneManager::scene->sceneObjects[spawnPair.first]->parts & Parts::rigidBody)
-		{
-			rigidbodies[spawnPair.first].onTrigger.push_back([this, spawnPair](Collision collision) 
-				{if (collision.collisionMask & ((int)CollisionLayers::ecco | (int)CollisionLayers::sync)) TriggerSystem::TriggerTag(spawnPair.second.triggerTag, true); });
-		}
 	}
 	for (auto& platePair : plates)
 	{
@@ -54,9 +51,21 @@ void TriggerSystem::Start(
 	{
 		TriggerSystem::triggerables.insert({ pair.second.triggerTag, pair.first });
 	}
+	for (auto& pair : triggerables)
+	{
+		if (!(SceneManager::scene->sceneObjects[pair.first]->parts & Parts::rigidBody))
+		{
+			SceneManager::scene->sceneObjects[pair.first]->setRigidBody(new RigidBody());
+		}
+		rigidbodies[pair.first].onTrigger.push_back(
+			[pair](Collision collision) { SceneManager::scene->triggerables[pair.first].OnTrigger(collision.collisionMask); });
+	}
 }
 
-void TriggerSystem::Update(std::unordered_map<unsigned long long, PressurePlate>& plates)
+void TriggerSystem::Update(
+	std::unordered_map<unsigned long long, PressurePlate>& plates,
+	std::unordered_map<unsigned long long, Triggerable>& triggerables
+)
 {
 	for (auto& platePair : plates)
 	{
@@ -69,6 +78,17 @@ void TriggerSystem::Update(std::unordered_map<unsigned long long, PressurePlate>
 			platePair.second.triggeredLastFrame = platePair.second.triggeredThisFrame;
 			platePair.second.triggeredThisFrame = false;
 		}
+	}
+
+	for (auto& pair : triggerables)
+	{
+		if (pair.second.bothPlayersNeeded && pair.second.eccoThisFrame && pair.second.syncThisFrame)
+			TriggerTag(pair.second.triggerTag, !pair.second.falseIsTrue);
+		else if (!pair.second.bothPlayersNeeded && (pair.second.eccoThisFrame || pair.second.syncThisFrame))
+			TriggerTag(pair.second.triggerTag, !pair.second.falseIsTrue);
+		else if(!pair.second.doesntSendFalseEveryFrame)
+			TriggerTag(pair.second.triggerTag, pair.second.falseIsTrue);
+		pair.second.eccoThisFrame = pair.second.syncThisFrame = false;
 	}
 }
 

@@ -306,7 +306,7 @@ void LevelEditor::Update(float delta)
 
 		camera->state = Camera::targetingPlayers;
 		dabSystem.Start(transforms, doors);
-		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards);
+		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards, triggerables);
 		for (auto& pair : exits) pair.second.Initialise(sceneObjects[pair.first]);
 	}
 
@@ -358,7 +358,7 @@ void LevelEditor::Update(float delta)
 		healthSystem.PlayerHealingUpdate(eccoSo->health(), syncSo->health(),
 			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
 
-		triggerSystem.Update(plates);
+		triggerSystem.Update(plates, triggerables);
 		dabSystem.Update(transforms, doors, bollards, colliders, delta);
 
 		if (!UserPreferences::immortal) {

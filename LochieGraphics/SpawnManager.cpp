@@ -9,6 +9,7 @@ SpawnManager::SpawnManager(toml::table table)
 	numToSpawn = Serialisation::LoadAsInt(table["numToSpawn"]);
 	timeBetweenSpawns = Serialisation::LoadAsFloat(table["timeBetweenSpawns"]);
 	triggerTag = Serialisation::LoadAsString(table["triggerTag"]);
+	enemyTriggerTag = Serialisation::LoadAsString(table["enemyTriggerTag"]);
 	int enemySpawnList = Serialisation::LoadAsInt(table["enemySpawnList"]);
 	int enemySpawn = 0;
 	int decimalSlot = 1;
@@ -55,6 +56,7 @@ void SpawnManager::GUI()
 		ImGui::DragInt("Number of enemies to spawn", &numToSpawn);
 		ImGui::DragFloat("Time Between Spawns", &timeBetweenSpawns);
 		ImGui::InputText("Trigger ID", &triggerTag);
+		ImGui::InputText("Enemy Trigger ID", &enemyTriggerTag);
 
 		const char* enemyTypes[] = { "Explosive", "Melee", "Ranged" };
 
@@ -135,6 +137,7 @@ toml::table SpawnManager::Serialise(unsigned long long guid)
 		{ "numToSpawn", numToSpawn },
 		{ "timeBetweenSpawns", timeBetweenSpawns },
 		{ "triggerTag", triggerTag },
+		{ "enemyTriggerTag", enemyTriggerTag },
 		{ "enemySpawnList", enemySpawnList },
 	};
 }

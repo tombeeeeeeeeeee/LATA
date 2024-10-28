@@ -22,7 +22,7 @@ public:
 	bool triggeredOnce = false;
 
 	std::string triggerTag;
-
+	std::string enemyTriggerTag;
 	SpawnManager() {};
 	SpawnManager(toml::table);
 

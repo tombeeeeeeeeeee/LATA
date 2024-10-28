@@ -59,25 +59,26 @@ void GUI::Update()
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Windows")) {
-			ImGui::MenuItem("Test Menu", NULL, &showTestMenu);
-			ImGui::MenuItem("Resource Menu", NULL, &showResourceMenu);
+			ImGui::MenuItem("Audio Menu", NULL, &showAudioMenu);
 			ImGui::MenuItem("Camera Menu", NULL, &showCameraMenu);
-			if (ImGui::MenuItem("SceneObject Menu", NULL, &showSceneObject)) {
-				showHierarchy = showSceneObject;
-			}
-			ImGui::MenuItem("Light Menu", NULL, &showLightMenu);
+			ImGui::MenuItem("Enemy System", NULL, &showEnemyMenu);
+			ImGui::MenuItem("Health System", NULL, &showHealthSystemMenu);
 			if (ImGui::MenuItem("Hierarchy", NULL, &showHierarchy)) {
 				showSceneObject = showHierarchy;
 			}
-			ImGui::MenuItem("Physics System", NULL, &showPhysicsMenu);
-			ImGui::MenuItem("Enemy System", NULL, &showEnemyMenu);
-			ImGui::MenuItem("Health System", NULL, &showHealthSystemMenu);
-			ImGui::MenuItem("Imgui Demo", NULL, &showImguiExampleMenu);
-			ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
-			ImGui::MenuItem("User Prefs", NULL, &showUserPrefsMenu);
-			ImGui::MenuItem("Prefabs Menu", NULL, &showPrefabMenu);
+			ImGui::MenuItem("Light Menu", NULL, &showLightMenu);
 			ImGui::MenuItem("Particle Menu", NULL, &showParticleMenu);
-			ImGui::MenuItem("Audio Menu", NULL, &showAudioMenu);
+			ImGui::MenuItem("Physics System", NULL, &showPhysicsMenu);
+			ImGui::MenuItem("Prefabs Menu", NULL, &showPrefabMenu);
+			ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
+			ImGui::MenuItem("Resource Menu", NULL, &showResourceMenu);
+			if (ImGui::MenuItem("SceneObject Menu", NULL, &showSceneObject)) {
+				showHierarchy = showSceneObject;
+			}
+			ImGui::MenuItem("Test Menu", NULL, &showTestMenu);
+			ImGui::MenuItem("User Prefs", NULL, &showUserPrefsMenu);
+
+			ImGui::MenuItem("Imgui Demo", NULL, &showImguiExampleMenu);
 
 			ImGui::EndMenu();
 		}
@@ -734,18 +735,6 @@ void GUI::EnemyMenu()
 		return;
 	}
 	EnemySystem& es = scene->enemySystem;
-
-	//TODO SAVE AND LOAD
-
-	if (ImGui::Button("Spawn Enemies for Tom!"))
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			glm::vec3 pos = { -250.0f * (i / 6) - 250.0f, 0.0f, -300.0f * (i % 6) - 250.0f };
-			es.SpawnMelee(pos);
-		}
-
-	}
 
 	es.GUI();
 }

@@ -29,6 +29,8 @@ namespace Paths {
 	const std::string modelExtension = ".model";
 	const std::string levelExtension = ".level";
 	const std::string enemySystemExtension = ".enemySystem";
+	const std::string healthSystemExtension = ".healthSystem";
+	const std::string cameraSystemExtension = ".cameraSystem";
 	const std::string prefabExtension = ".prefab";
 	const std::string imageExtension = ".png";
 	const std::string userPrefsExtension = ".prefs";

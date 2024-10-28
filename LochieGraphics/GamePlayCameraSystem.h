@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Maths.h"
+#include <string>
 
 class Transform;
 class Camera;
@@ -27,7 +28,7 @@ public:
 	float cameraMoveSpeed = 0.33f;
 
 	GameplayCameraSystem() {};
-	GameplayCameraSystem(toml::table table);
+	void Load(toml::table table);
 
 	void setCameraPositionDelta(glm::vec3 pos) { cameraPositionDelta = pos; };
 
@@ -42,8 +43,11 @@ public:
 	//void ChangeCameraState(Camera& camera, Camera::State state);
 
 	void GUI();
+	void SaveAsGUI();
 	toml::table Serialise();
 private:
 	Camera* cam = nullptr;
-
+	std::string filename = "";
+	std::string newFilename = "";
+	bool saveAs = false;
 };

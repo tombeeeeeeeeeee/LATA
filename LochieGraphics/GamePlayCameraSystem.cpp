@@ -7,8 +7,16 @@
 #include <iostream>
 #include "Serialisation.h"
 #include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
+#include "Paths.h"
 
-GameplayCameraSystem::GameplayCameraSystem(toml::table table)
+#include <iostream>
+#include <filesystem>
+#include <ostream>
+#include <fstream>
+
+
+void GameplayCameraSystem::Load(toml::table table)
 {
 	cameraMoveSpeed = Serialisation::LoadAsFloat(table["cameraMoveSpeed"]);
 	cameraZoomInSpeed = Serialisation::LoadAsFloat(table["cameraZoomInSpeed"]);
@@ -61,6 +69,61 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 
 void GameplayCameraSystem::GUI()
 {
+	std::vector<std::string> loadPaths = {};
+	std::vector<std::string*> loadPathsPointers = {};
+	loadPaths.clear();
+	loadPathsPointers.clear();
+
+	for (auto& i : std::filesystem::directory_iterator(Paths::systemPath))
+	{
+		loadPaths.push_back(i.path().generic_string().substr(Paths::systemPath.size()));
+		if (loadPaths.back().substr(loadPaths.back().size() - Paths::cameraSystemExtension.size()) != Paths::cameraSystemExtension) {
+			loadPaths.erase(--loadPaths.end());
+			continue;
+		}
+		loadPaths.back() = loadPaths.back().substr(0, loadPaths.back().size() - Paths::cameraSystemExtension.size());
+	}
+	for (auto& i : loadPaths)
+	{
+		loadPathsPointers.push_back(&i);
+	}
+
+	std::string* selected = &filename;
+
+	ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Filename", Utilities::PointerToString(&loadPathsPointers));
+	filename = *selected;
+	if (ImGui::Button("Save##CameraSystems")) {
+
+		std::ofstream file(Paths::systemPath + filename + Paths::cameraSystemExtension);
+
+		toml::table table = Serialise();
+
+		file << table << '\n';
+
+		file.close();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Load##CameraySystems")) {
+		if (selected)
+		{
+			std::ifstream file(Paths::systemPath + filename + Paths::cameraSystemExtension);
+
+			toml::table data = toml::parse(file);
+
+			Load(data);
+
+			file.close();
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Save as"))
+	{
+		saveAs = true;
+	}
+
+
+	SaveAsGUI();
+
 	ImGui::DragFloat("Minimum Camera Zoom", &cameraZoomMinimum);
 	ImGui::DragFloat("Maximum Camera Zoom", &cameraZoomMaximum);
 	ImGui::DragFloat("Zoom Intensity While targetting", &cameraZoomScale);
@@ -80,6 +143,43 @@ void GameplayCameraSystem::GUI()
 		{
 			viewAngle = cam->transform.getEulerRotation();
 		}
+	}
+}
+
+void GameplayCameraSystem::SaveAsGUI()
+{
+	if (saveAs)
+	{
+		ImGui::OpenPopup("Save Camera System As");
+		saveAs = false;
+	}
+	if (ImGui::BeginPopupModal("Save Camera System As", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+
+		ImGui::InputText("File ", &newFilename);
+
+		if (ImGui::Button("Save"))
+		{
+			if (newFilename != "") {
+				std::ofstream file(Paths::systemPath + newFilename + Paths::cameraSystemExtension);
+				filename = newFilename;
+				toml::table table = Serialise();
+
+				file << table << '\n';
+
+				file.close();
+				ImGui::CloseCurrentPopup();
+
+				newFilename = "";
+			}
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel"))
+		{
+			newFilename = "";
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
 	}
 }
 

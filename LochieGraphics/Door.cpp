@@ -6,6 +6,7 @@ Door::Door(toml::table table)
 {
 	left = Serialisation::LoadAsBool(table["left"]);
 	startClosed = Serialisation::LoadAsBool(table["closed"]);
+	ignoresFalse = Serialisation::LoadAsBool(table["ignoresFalse"]);
 	amountToMove = Serialisation::LoadAsFloat(table["amountToMove"]);
 	timeToClose = Serialisation::LoadAsFloat(table["timeToClose"]);
 	timeToOpen = Serialisation::LoadAsFloat(table["timeToOpen"]);
@@ -18,6 +19,7 @@ toml::table Door::Serialise(unsigned long long guid)
 		{"guid", Serialisation::SaveAsUnsignedLongLong(guid)},
 		{"left", left},
 		{"closed", startClosed},
+		{"ignoresFalse", ignoresFalse},
 		{"amountToMove", amountToMove},
 		{"timeToClose", timeToClose},
 		{"timeToOpen", timeToOpen},
@@ -27,6 +29,7 @@ toml::table Door::Serialise(unsigned long long guid)
 
 void Door::TriggerCall(std::string tag, bool toggle)
 {
+	if (ignoresFalse && !toggle) return;
 	if (tag == triggerTag)
 	{
 		state = toggle;
@@ -44,6 +47,7 @@ void Door::GUI()
 		ImGui::SameLine();
 		bool right = !left;
 		if (ImGui::Checkbox("Moves Right", &right)) left = !right;
+		ImGui::Checkbox("Ignores False", &ignoresFalse);
 		ImGui::InputText("Trigger Tag", &triggerTag);
 		ImGui::DragFloat("Amount To Move", &amountToMove, 2.0f, 0.0f);
 		ImGui::DragFloat("Time To Close", &timeToClose, 0.02f, 0.0f);

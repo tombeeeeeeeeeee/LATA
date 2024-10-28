@@ -13,6 +13,7 @@ class Door
 public:
 	bool startClosed = true;
 	bool left = false;
+	bool ignoresFalse = false;
 	float timeToClose = 0.5f;
 	float timeToOpen = 0.5f;
 	float timeInMovement = 0.0f;

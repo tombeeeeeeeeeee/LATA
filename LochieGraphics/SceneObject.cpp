@@ -4,6 +4,7 @@
 #include "Animator.h"
 #include "Collider.h"
 #include "ExitElevator.h"
+#include "Triggerable.h"
 #include "Sync.h"
 #include "Ecco.h"
 #include "Scene.h"
@@ -89,6 +90,7 @@ void SceneObject::GUI()
 	if (parts & Parts::plate) { scene->plates[GUID].GUI(); }
 	if (parts & Parts::door) { scene->doors[GUID].GUI(); }
 	if (parts & Parts::bollard) { scene->bollards[GUID].GUI(); }
+	if (parts & Parts::triggerable) { scene->triggerables[GUID].GUI(); }
 
 	if (parts & Parts::ecco)
 	{
@@ -123,61 +125,63 @@ void SceneObject::GUI()
 	}
 
 	if (ImGui::BeginPopup(addPopup.c_str())) {
-		AddPartGUI(renderer, setRenderer, ModelRenderer(), ("Model Renderer##Add part" + tag).c_str());
-		AddPartGUI(rigidbody, setRigidBody, RigidBody(), ("Rigid Body##Add part" + tag).c_str());
+		AddPartGUI(bollard, setBollard, Bollard, ("Bollard ##Add part" + tag).c_str());
 
+		AddPartGUI(door, setDoor, Door, ("Door ##Add part" + tag).c_str());
 		if (ecco() == nullptr && scene->ecco->GUID == 0) {
 			if (ImGui::MenuItem(("Ecco##Add part" + tag).c_str())) {
 				setEcco();
 			}
 		}
+		AddPartGUI(enemy, setEnemy, Enemy, ("Enemy##Add part" + tag).c_str());
+		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
+		AddPartGUI(health, setHealth, Health, ("Health##Add part" + tag).c_str());
+		AddPartGUI(plate, setPressurePlate, PressurePlate, ("Pressure Plate ##Add part" + tag).c_str());
+		AddPartGUI(collider, setCollider, PolygonCollider({
+				{ +50, +50},
+				{ +50, -50},
+				{ -50, -50},
+				{ -50, +50}
+			}, 0.0f), ("Polygon Collider##Add part" + tag).c_str());
+		AddPartGUI(rigidbody, setRigidBody, RigidBody(), ("Rigid Body##Add part" + tag).c_str());
+		AddPartGUI(renderer, setRenderer, ModelRenderer(), ("Model Renderer##Add part" + tag).c_str());
+		AddPartGUI(spawnManager, setSpawnManager, SpawnManager, ("Spawn Manager ##Add part" + tag).c_str());
 		if (sync() == nullptr && scene->sync->GUID == 0) {
 			if (ImGui::MenuItem(("Sync##Add part" + tag).c_str())) {
 				setSync();
 			}
 		}
-		
-		AddPartGUI(health, setHealth, Health, ("Health##Add part" + tag).c_str());
-		AddPartGUI(enemy, setEnemy, Enemy, ("Enemy##Add part" + tag).c_str());
-		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
-		AddPartGUI(spawnManager, setSpawnManager, SpawnManager, ("Spawn Manager ##Add part" + tag).c_str());
-		AddPartGUI(plate, setPressurePlate, PressurePlate, ("Pressure Plate ##Add part" + tag).c_str());
-		AddPartGUI(door, setDoor, Door, ("Door ##Add part" + tag).c_str());
-		AddPartGUI(bollard, setBollard, Bollard, ("Bollard ##Add part" + tag).c_str());
-		AddPartGUI(collider, setCollider, PolygonCollider({
-		{ +50, +50},
-		{ +50, -50},
-		{ -50, -50},
-		{ -50, +50}
-			}, 0.0f), ("Polygon Collider##Add part" + tag).c_str());
+		AddPartGUI(triggerable, setTriggerable, Triggerable, ("Triggerable##Add part" + tag).c_str());
 		ImGui::EndPopup();
 	}
 
 	if (ImGui::BeginPopup(removePopup.c_str())) {
-		RemovePartGUI(modelRenderer, setRenderer, ("Model Renderer##Remove part" + tag).c_str());
-		RemovePartGUI(rigidBody, setRigidBody, ("Rigid Body##Remove part" + tag).c_str());
-
+		RemovePartGUI(bollard, setBollard, ("Bollard##Remove part" + tag).c_str());
+		RemovePartGUI(collider, setCollider, ("Collider##Remove part" + tag).c_str());
+		RemovePartGUI(door, setDoor, ("Door##Remove part" + tag).c_str());
 		if (parts & Parts::ecco) {
 			if (ImGui::MenuItem(("Ecco##Remove part" + tag).c_str())) {
 				setEcco(nullptr);
 			}
 		}
+		RemovePartGUI(enemy, setEnemy, ("Enemy##Remove part" + tag).c_str());
+		RemovePartGUI(exitElevator, setExitElevator, ("Exit##Remove part" + tag).c_str());
+		RemovePartGUI(health, setHealth, ("Health##Remove part" + tag).c_str());
+		RemovePartGUI(modelRenderer, setRenderer, ("Model Renderer##Remove part" + tag).c_str());
+		RemovePartGUI(plate, setPressurePlate, ("Pressure Plate##Remove part" + tag).c_str());
+		RemovePartGUI(rigidBody, setRigidBody, ("Rigid Body##Remove part" + tag).c_str());
+		RemovePartGUI(spawnManager, setSpawnManager, ("Spawn Manager ##Remove part" + tag).c_str());
 		if (parts & Parts::sync) {
 			if (ImGui::MenuItem(("Sync##Remove part" + tag).c_str())) {
 				setSync(nullptr);
 			}
 		}
-		RemovePartGUI(exitElevator, setExitElevator, ("Exit##Remove part" + tag).c_str());
-		RemovePartGUI(spawnManager, setSpawnManager, ("Spawn Manager ##Remove part" + tag).c_str());
-		RemovePartGUI(collider, setCollider, ("Collider##Remove part" + tag).c_str());
-		RemovePartGUI(enemy, setEnemy, ("Enemy##Remove part" + tag).c_str());
-		RemovePartGUI(plate, setPressurePlate, ("Pressure Plate##Remove part" + tag).c_str());
-		RemovePartGUI(door, setDoor, ("Door##Remove part" + tag).c_str());
-		RemovePartGUI(bollard, setBollard, ("Bollard##Remove part" + tag).c_str());
+		RemovePartGUI(triggerable, setTriggerable, ("Triggerable##Remove part" + tag).c_str());
 
 		ImGui::EndPopup();
 	}
 }
+
 
 void SceneObject::MenuGUI()
 {
@@ -229,10 +233,6 @@ void SceneObject::TriggerCall(std::string tag, bool toggle)
 
 	if (parts & Parts::bollard)
 		scene->bollards[GUID].TriggerCall(tag, toggle);
-	/*
-	if (parts & Parts::spike)
-		scene->spikes[GUID].TriggerCall(tag, toggle);
-	*/ 
 }
 
 toml::table SceneObject::Serialise() const
@@ -333,6 +333,7 @@ SetAndGetForPart(SpawnManager, spawnManagers, Parts::spawnManager, SpawnManager,
 SetAndGetForPart(PressurePlate, plates, Parts::plate, PressurePlate, plate)
 SetAndGetForPart(Door, doors, Parts::door, Door, door)
 SetAndGetForPart(Bollard, bollards, Parts::bollard, Bollard, bollard)
+SetAndGetForPart(Triggerable, triggerables, Parts::triggerable, Triggerable, triggerable)
 
 void SceneObject::setCollider(Collider* collider)
 {
@@ -430,6 +431,7 @@ void SceneObject::ClearParts(unsigned int toDelete)
 	if (toDelete & parts & Parts::plate)		 { scene->plates.erase(GUID);		 parts &= ~(Parts::plate);}
 	if (toDelete & parts & Parts::door)		     { scene->doors.erase(GUID);	     parts &= ~(Parts::door);}	
 	if (toDelete & parts & Parts::bollard)		 { scene->bollards.erase(GUID);	     parts &= ~(Parts::bollard);}	
+	if (toDelete & parts & Parts::triggerable)   { scene->triggerables.erase(GUID);	 parts &= ~(Parts::triggerable);}	
 }
 
 void SceneObject::ClearParts()
@@ -464,6 +466,7 @@ void SceneObject::SaveAsPrefab()
 	SaveAsPrefabPart("plate", plate, plates);
 	SaveAsPrefabPart("door", door, doors);
 	SaveAsPrefabPart("bollard", bollard, bollards);
+	SaveAsPrefabPart("triggerable", triggerable, triggerables);
 	
 	if (Parts::collider & parts) {
 		table.emplace("collider", scene->colliders.at(GUID)->Serialise(GUID));
@@ -518,6 +521,10 @@ void SceneObject::LoadFromPrefab(toml::table table)
 	if (parts & Parts::bollard) {
 		bollardTag = bollard()->triggerTag;
 	}
+	std::string triggerableTag = "";
+	if (parts & Parts::triggerable) {
+		triggerableTag = triggerable()->triggerTag;
+	}
 
 	ClearParts(~Parts::spawnManager);
 	
@@ -565,6 +572,12 @@ void SceneObject::LoadFromPrefab(toml::table table)
 		setBollard(new Bollard(*table["bollard"].as_table()));
 		if (bollardTag != "") {
 			bollard()->triggerTag = bollardTag;
+		}
+	};
+	if (intendedParts & Parts::triggerable) {
+		setTriggerable(new Triggerable(*table["triggerable"].as_table()));
+		if (triggerableTag != "") {
+			triggerable()->triggerTag = triggerableTag;
 		}
 	};
 
