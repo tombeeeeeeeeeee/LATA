@@ -42,8 +42,10 @@ void EnemySystem::Load(toml::table table)
     perceptionRadius = Serialisation::LoadAsFloat(table["perceptionRadius"]);
     separationRadius = Serialisation::LoadAsFloat(table["separationRadius"]);
     timeForEnemiesToSpawnAgain = Serialisation::LoadAsFloat(table["timeForEnemiesToSpawnAgain"]);
+
     explosiveEnemyHealth = Serialisation::LoadAsInt(table["explosiveEnemyHealth"]);
     timeToExplode = Serialisation::LoadAsFloat(table["timeToExplode"]);
+    speedWhileExploding = Serialisation::LoadAsFloat(table["speedWhileExploding"]);
     explosionDamage = Serialisation::LoadAsInt(table["explosionDamage"]);
     explosionRadius = Serialisation::LoadAsFloat(table["explosionRadius"]);
     distanceToExplode = Serialisation::LoadAsFloat(table["distanceToExplode"]);
@@ -305,11 +307,31 @@ void EnemySystem::Steering(
 
         if (enemyPair.second.inAbility)
         {
-            float length = glm::length(rigidBodies[enemyPair.first].vel);
-            if (length == 0.0f) continue;
-            float slowedLength = length * slowedPercentage / 100;
-
-            enemyPair.second.influenceThisFrame = -glm::normalize(rigidBodies[enemyPair.first].vel) * fminf(length, slowedLength);
+            if (enemyPair.second.type == (int)EnemyType::explosive)
+            {
+                glm::vec2 enemyPos = transforms[enemyPair.first].get2DGlobalPosition();
+                float sqrDistanceToEcco = glm::dot(eccoPos - enemyPos, eccoPos - enemyPos);
+                float sqrDistanceToSync = glm::dot(syncPos - enemyPos, syncPos - enemyPos);
+                glm::vec2 playerForce;
+                if (sqrDistanceToEcco == 0.0f || sqrDistanceToSync == 0.0f) playerForce = { 0.0f, 0.0f };
+                if (sqrDistanceToEcco < sqrDistanceToSync)
+                {
+                    playerForce = glm::normalize(eccoPos - enemyPos);
+                }
+                else
+                {
+                    playerForce = glm::normalize(syncPos - enemyPos);
+                }
+                playerForce *= 100 * playerCoef;
+                enemyPair.second.influenceThisFrame += playerForce;
+            }
+            else
+            {
+                float length = glm::length(rigidBodies[enemyPair.first].vel);
+                if (length == 0.0f) continue;
+                float slowedLength = length * slowedPercentage / 100;
+                enemyPair.second.influenceThisFrame = -glm::normalize(rigidBodies[enemyPair.first].vel) * fminf(length, slowedLength);
+            }
         }
         else
         {
@@ -391,7 +413,10 @@ void EnemySystem::Steering(
         enemyPair.second.boidVelocity += enemyPair.second.influenceThisFrame;
         if (enemyPair.second.boidVelocity.x != 0.0f || enemyPair.second.boidVelocity.y != 0.0f)
         {
-            enemyPair.second.boidVelocity = Utilities::ClampMag(enemyPair.second.boidVelocity, maxSpeed, maxSpeed);
+            if (enemyPair.second.inAbility && enemyPair.second.type == (int)EnemyType::explosive)
+                enemyPair.second.boidVelocity = Utilities::ClampMag(enemyPair.second.boidVelocity, speedWhileExploding, speedWhileExploding);
+            else
+                enemyPair.second.boidVelocity = Utilities::ClampMag(enemyPair.second.boidVelocity, maxSpeed, maxSpeed);
         }
         enemyPair.second.influenceThisFrame = {0.0f, 0.0f};
 
@@ -643,6 +668,7 @@ void EnemySystem::GUI()
     ImGui::Text("EXPLODING ENEMY STATS");
     ImGui::DragInt("Explosive Enemy Health", &explosiveEnemyHealth);
     ImGui::DragFloat("Time To Explode", &timeToExplode, 0.02f, 0);
+    ImGui::DragFloat("Speed While Exploding", &speedWhileExploding, 2.0f, 0);
     ImGui::DragInt("Explosion Damage", &explosionDamage);
     ImGui::DragFloat("Explosion Radius", &explosionRadius, 25.0f, 0);
     ImGui::DragFloat("Distance To Start Exploding", &distanceToExplode, 25.0f, 0);
@@ -683,6 +709,7 @@ toml::table EnemySystem::Serialise() const
                 { "timeForEnemiesToSpawnAgain", timeForEnemiesToSpawnAgain },
                 { "explosiveEnemyHealth", explosiveEnemyHealth },
                 { "timeToExplode", timeToExplode },
+                { "speedWhileExploding", speedWhileExploding },
                 { "explosionDamage", explosionDamage },
                 { "explosionRadius", explosionRadius },
                 { "distanceToExplode", distanceToExplode },

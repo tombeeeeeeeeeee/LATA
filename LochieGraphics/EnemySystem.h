@@ -73,6 +73,7 @@ public:
 	int explosiveEnemyHealth = 2;
 	float explosiveEnemyColliderRadius = 35.0f;
 	float timeToExplode = 2.0f;
+	float speedWhileExploding = 10.0f;
 	float explosionRadius = 350.0f;
 	int explosionDamage = 2;
 	float distanceToExplode = 250.0f;
