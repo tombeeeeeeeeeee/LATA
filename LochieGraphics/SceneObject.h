@@ -58,7 +58,8 @@ public:
 	enum class PrefabStatus {
 		none,
 		prefabOrigin,
-		prefabInstance
+		prefabInstance,
+		missing
 	};
 
 	std::string name = "Unnamed Scene Object";

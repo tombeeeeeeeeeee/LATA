@@ -166,6 +166,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 	SavePart(plates);
 	SavePart(doors);
 	SavePart(bollards);
+	SavePart(triggerables);
 
 	return toml::table{
 		{ "SceneObjects", savedSceneObjects },
@@ -183,7 +184,10 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 		{ "Bollards", savedbollards},
 		{ "Sync", sync->Serialise() },
 		{ "Ecco", ecco->Serialise() },
+		{ "Triggerables", savedtriggerables},
 	};
+
+	// TODO: Make sure save all parts, put a checker here
 }
 
 void Scene::LoadSceneObjectsAndParts(toml::table& data)
@@ -216,8 +220,8 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(plates, "Plates", PressurePlate);
 	LoadPart(doors, "Doors", Door);
 	LoadPart(bollards, "Bollards", Bollard);
+	LoadPart(triggerables, "Triggerables", Triggerable);
 	// TODO: Fix for colliders
-	
 
 	toml::array* loadingColliders = data["Colliders"].as_array(); 
 	for (int i = 0; i < loadingColliders->size(); i++) {

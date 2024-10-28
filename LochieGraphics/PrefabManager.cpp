@@ -27,13 +27,14 @@ void PrefabManager::Initialise()
 
 void PrefabManager::RefreshPrefabInstancesOf(unsigned long long GUID)
 {
-	toml::table& table = loadedPrefabOriginals.at(GUID);
+	auto search = loadedPrefabOriginals.find(GUID);
+	if (search == loadedPrefabOriginals.end()) { return; }
 	for (auto& i : SceneManager::scene->sceneObjects)
 	{
 		if (i.second->prefabBase != GUID) {
 			continue;
 		}
-		i.second->LoadFromPrefab(table);
+		i.second->LoadFromPrefab(search->second);
 	}
 }
 
@@ -44,7 +45,13 @@ void PrefabManager::RefreshAllPrefabInstances()
 		if (i.second->prefabStatus != SceneObject::PrefabStatus::prefabInstance) {
 			continue;
 		}
-		i.second->LoadFromPrefab(loadedPrefabOriginals.at(i.second->prefabBase));
+		auto search = loadedPrefabOriginals.find(i.second->prefabBase);
+		if (search == loadedPrefabOriginals.end()) {
+			i.second->prefabStatus = SceneObject::PrefabStatus::missing;
+		}
+		else {
+			i.second->LoadFromPrefab(search->second);
+		}
 	}
 }
 

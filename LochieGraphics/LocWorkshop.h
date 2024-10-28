@@ -14,14 +14,11 @@ private:
 	DirectionalLight directionalLight = DirectionalLight
 	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
 
-	SceneObject* sceneObject;
-	SceneObject* aniTest;
-
-	Animation animation;
-	Animator* animator;
+	Animation animation1;
+	Animation animation2;
+	Animation animation3;
+	Animation animation4;
 	
-	Model* model;
-
 	Shader* shader;
 
 public:

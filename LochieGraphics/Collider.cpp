@@ -152,13 +152,16 @@ void PolygonCollider::DebugDraw(Transform* transform)
 	}
 	else
 	{
-		glm::vec2 prevVert = RigidBody::Transform2Din3DSpace(transform->getGlobalMatrix(), verts[verts.size() - 1]);
+		
 		for (int i = 0; i < verts.size(); i++)
 		{
+			glm::vec3 colour = {};
+			ImGui::ColorConvertHSVtoRGB(i / (verts.size() - 1.0f), 1.0f, 1.0f, colour.x, colour.y, colour.z);
+			RenderSystem::debugLines.SetColour({ colour.x, colour.y, colour.z });
 			glm::vec2 curVert = RigidBody::Transform2Din3DSpace(transform->getGlobalMatrix(), verts[i]);
-			RenderSystem::debugLines.DrawLineSegement2D(prevVert, curVert, { 0.0f,1.0f,0.0f });
-			prevVert = curVert;
+			RenderSystem::debugLines.AddPointToLine({ curVert.x, 0.1f, curVert.y});
 		}
+		RenderSystem::debugLines.FinishLineLoop();
 	}
 }
 
