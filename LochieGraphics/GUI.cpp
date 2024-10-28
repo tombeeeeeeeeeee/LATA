@@ -521,6 +521,9 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	else if (sceneObject->prefabStatus == SceneObject::PrefabStatus::prefabInstance) {
 		textColour = { 0.0f, 0.1f, 1.0f, 1.0f };
 	}
+	else if (sceneObject->prefabStatus == SceneObject::PrefabStatus::missing) {
+		textColour = { 1.0f, 0.1f, 0.1f, 1.0f };
+	}
 
 	ImGui::PushStyleColor(0, { textColour.x, textColour.y, textColour.z, textColour.w });
 	bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + tag).c_str(), nodeFlags);
