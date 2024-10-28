@@ -1,12 +1,13 @@
 #pragma once
 
+#include "Animation.h"
+
 #include "Maths.h"
 #include "ExtraEditorGUI.h"
 
 #include <vector>
 #include <string>
 #include <unordered_map>
-
 
 struct Enemy;
 class Transform;
@@ -78,7 +79,9 @@ public:
 	int explosionDamage = 2;
 	float distanceToExplode = 250.0f;
 	ModelRenderer* explosiveEnemyRenderer = nullptr;
-	std::string explosiveEnemyModel = "SM_Enemy_TPose";
+	std::string explosiveEnemyModel = "SM_Enemy_Ranged";
+	Animation explosiveEnemyIdle;
+	std::string explosiveEnemyAnimationPath = "models/SK_Idle(RangeModel).fbx";
 	std::string explosiveEnemyMaterialPath = "images/otherskybox/nx.png";
 
 	int meleeEnemyHealth = 3;
@@ -88,7 +91,9 @@ public:
 	float distanceToPunch = 150.0f;
 	float punchRadius = 150.0f;
 	ModelRenderer* meleeEnemyRenderer = nullptr;
-	std::string meleeEnemyModel = "SM_Enemy_TPose";
+	std::string meleeEnemyModel = "SM_Enemy_Melee";
+	Animation meleeEnemyIdle;
+	std::string meleeEnemyAnimationPath = "models/SK_Idle(MeleeModel).fbx";
 	std::string meleeEnemyMaterialPath = "images/otherskybox/nx.png";
 
 	int rangedEnemyHealth = 3;
@@ -98,7 +103,9 @@ public:
 	float distanceToShoot = 500.0f;
 	float distanceToFlee = 400.0f;
 	ModelRenderer* rangedEnemyRenderer = nullptr;
-	std::string rangedEnemyModel = "SM_Sphere";
+	std::string rangedEnemyModel = "SM_Enemy_Ranged";
+	Animation rangedEnemyIdle;
+	std::string rangedEnemyAnimationPath = "models/SK_Idle(RangeModel).fbx";
 	std::string rangedEnemyMaterialPath = "images/otherskybox/nx.png";
 
 	void SpawnExplosive(glm::vec3 pos, std::string tag);

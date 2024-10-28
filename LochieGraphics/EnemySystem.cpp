@@ -103,6 +103,10 @@ void EnemySystem::Start(
         );
     }
 
+    explosiveEnemyIdle = Animation(explosiveEnemyAnimationPath, explosiveEnemyRenderer->model);
+    meleeEnemyIdle = Animation(meleeEnemyAnimationPath, meleeEnemyRenderer->model);
+    rangedEnemyIdle = Animation(rangedEnemyAnimationPath, rangedEnemyRenderer->model);
+
     UpdateNormalFlowMap(transforms, rigidbodies, colliders);
 }
 
@@ -119,6 +123,7 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos, std::string tag)
     enemy->setRenderer(
         explosiveEnemyRenderer
     );
+    enemy->setAnimator(new Animator(&explosiveEnemyIdle));
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
     enemy->transform()->setScale(6.0f);
@@ -140,6 +145,7 @@ void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
     enemy->setRenderer(
         meleeEnemyRenderer
     );
+    enemy->setAnimator(new Animator(&meleeEnemyIdle));
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
     enemy->transform()->setScale(6.0f);
@@ -162,6 +168,7 @@ void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
     enemy->setRenderer(
         rangedEnemyRenderer
     );
+    enemy->setAnimator(new Animator(&rangedEnemyIdle));
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
