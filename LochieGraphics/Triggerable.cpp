@@ -8,13 +8,13 @@
 void Triggerable::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
-	if (ImGui::CollapsingHeader(("Door##" + tag).c_str()))
+	if (ImGui::CollapsingHeader(("Triggerable##" + tag).c_str()))
 	{
 		ImGui::Indent();
-		ImGui::InputText("Trigger ID", &triggerTag);
-		ImGui::Checkbox("Both Players Needed", &bothPlayersNeeded);
-		ImGui::Checkbox("False is True", &falseIsTrue);
-		ImGui::Checkbox("Don't Send False", &doesntSendFalseEveryFrame);
+		ImGui::InputText(("Trigger ID##" + tag).c_str(), &triggerTag);
+		ImGui::Checkbox(("Both Players Needed##" + tag).c_str(), &bothPlayersNeeded);
+		ImGui::Checkbox(("False is True##" + tag).c_str(), &falseIsTrue);
+		ImGui::Checkbox(("Don't Send False##" + tag).c_str(), &doesntSendFalseEveryFrame);
 		ImGui::Unindent();
 	}
 }
@@ -32,7 +32,7 @@ toml::table Triggerable::Serialise(unsigned long long guid)
 	return toml::table
 	{
 		{"guid", Serialisation::SaveAsUnsignedLongLong(guid)},
-		{"triggertag", triggerTag},
+		{"triggerTag", triggerTag},
 		{"bothPlayersNeeded", bothPlayersNeeded},
 		{"falseIsTrue", falseIsTrue},
 		{"doesntSendFalseEveryFrame", doesntSendFalseEveryFrame},

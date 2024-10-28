@@ -126,7 +126,6 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos, std::string tag)
     enemy->setAnimator(new Animator(&explosiveEnemyIdle));
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
-    enemy->transform()->setScale(6.0f);
     enemy->health()->currHealth = explosiveEnemyHealth;
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
@@ -148,7 +147,6 @@ void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
     enemy->setAnimator(new Animator(&meleeEnemyIdle));
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
-    enemy->transform()->setScale(6.0f);
     enemy->health()->currHealth = meleeEnemyHealth;
     enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
     enemy->rigidbody()->isStatic = false;
@@ -313,7 +311,7 @@ void EnemySystem::Steering(
 
         if (enemyPair.second.inAbility)
         {
-            if (enemyPair.second.type == (int)EnemyType::explosive)
+            if (enemyPair.second.type & (int)EnemyType::explosive)
             {
                 glm::vec2 enemyPos = transforms[enemyPair.first].get2DGlobalPosition();
                 float sqrDistanceToEcco = glm::dot(eccoPos - enemyPos, eccoPos - enemyPos);
@@ -353,6 +351,7 @@ void EnemySystem::Steering(
             {
                 if (otherEnemyPair.second.type & (int)EnemyType::spawnSpot) continue;
                 if (otherEnemyPair.second.inAbility) continue;
+                if (otherEnemyPair.second.fleeing != enemyPair.second.fleeing) continue;
 
                 glm::vec2 otherEnemyPos = transforms[otherEnemyPair.first].get2DGlobalPosition();
                 if (enemyPair.first == otherEnemyPair.first) continue;
@@ -372,12 +371,14 @@ void EnemySystem::Steering(
                         float distance = glm::length(otherToSelf);
                         float strength = 1.0f - (distance / separationRadius);
 
+                        
+                           
                         enemyPair.second.influenceThisFrame += (otherToSelf / distance) * strength * seperationCoef;
                     }
                 }
             }
-
-
+            if (drawForceLines)
+            RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + enemyPair.second.influenceThisFrame, { 0,0,1 }, 100);
 
             float sqrDistanceToEcco = glm::dot(eccoPos - enemyPos, eccoPos - enemyPos);
             float sqrDistanceToSync = glm::dot(syncPos - enemyPos, syncPos - enemyPos);
@@ -396,8 +397,11 @@ void EnemySystem::Steering(
             glm::vec2 normalForce = GetNormalFlowInfluence(enemyPos) * normalCoef;
             enemyPair.second.influenceThisFrame += normalForce + playerForce;
 
-            //RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + normalForce, {1,0,0}, 100);
-            //RenderSystem::lines.DrawCircle({ enemyPos.x, 100, enemyPos.y }, 20, { 1,0,0 });
+            if (drawForceLines)
+            {
+                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + normalForce, { 1,0,0 }, 100);
+                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + playerForce, { 1,1,0 }, 100);
+            }
             if (totalNeighbours == 0) continue;
 
             avgPos /= totalNeighbours;
@@ -406,7 +410,15 @@ void EnemySystem::Steering(
 
             glm::vec2 alignmentForce = avgVel * alignmentCoef;
             glm::vec2 cohesionForce = (avgPos - enemyPos) * cohesionCoef;
+
+            if (drawForceLines)
+            {
+                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + cohesionForce,  { 0,1,0 }, 100);
+                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + alignmentForce, { 0,1,1 }, 100);
+            }
+
             enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce;
+
             if (isnan(enemyPair.second.influenceThisFrame.x))
             {
                 std::cout << "Error Here" << std::endl;
@@ -643,7 +655,8 @@ void EnemySystem::GUI()
     SaveAsGUI();
 
     ImGui::Checkbox("AI Updating",&aiUpdating);
-
+    ImGui::SameLine();
+    ImGui::Checkbox("Draw Force Lines", &drawForceLines);
     ImGui::Text("AI STATS");
     ImGui::DragFloat("Max Speed", &maxSpeed);
     ImGui::DragFloat("Alignment Coef", &alignmentCoef);
