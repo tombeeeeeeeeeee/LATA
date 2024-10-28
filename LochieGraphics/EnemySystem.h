@@ -43,6 +43,9 @@ private:
 	float timeForEnemiesToSpawnAgain = 60.0f;
 
 	bool saveAs = false;
+
+	std::unordered_map<std::string, int> enemyTags;
+
 public:
 	bool aiUpdating = false;
 	int nfmDensity = 20;
@@ -70,6 +73,7 @@ public:
 	int explosiveEnemyHealth = 2;
 	float explosiveEnemyColliderRadius = 35.0f;
 	float timeToExplode = 2.0f;
+	float speedWhileExploding = 10.0f;
 	float explosionRadius = 350.0f;
 	int explosionDamage = 2;
 	float distanceToExplode = 250.0f;
@@ -97,9 +101,9 @@ public:
 	std::string rangedEnemyModel = "SM_Sphere";
 	std::string rangedEnemyMaterialPath = "images/otherskybox/nx.png";
 
-	void SpawnExplosive(glm::vec3 pos);
-	void SpawnMelee(glm::vec3 pos);
-	void SpawnRanged(glm::vec3 pos);
+	void SpawnExplosive(glm::vec3 pos, std::string tag);
+	void SpawnMelee(glm::vec3 pos, std::string tag);
+	void SpawnRanged(glm::vec3 pos, std::string tag);
 
 	void Update(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
@@ -152,6 +156,7 @@ public:
 		std::vector<glm::vec3>& normalFlowMapVec3
 	);
 
+	void AddTag(std::string tag, int count);
 
 private:
 

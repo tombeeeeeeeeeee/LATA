@@ -2,14 +2,23 @@
 #include "Maths.h"
 
 #include <unordered_map>
+#include <string>
 
 class Health;
 class ModelRenderer;
 struct HealthPacket;
 
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
+
 class HealthSystem
 {
 public:
+	void Load(toml::table table);
+	toml::table Serialise();
 
 	void Update(
 		std::unordered_map<unsigned long long, Health>& healths,
@@ -28,7 +37,7 @@ public:
 	);
 
 	void GUI();
-
+	void SaveAsGUI();
 	glm::vec3 damageColour = { 0.8f,0.0f,0.0f };
 	glm::vec3 healColour = { 0.0f,0.8f,0.0f };
 	float colourTime = 0.4f;
@@ -46,5 +55,9 @@ private:
 	float timeSinceLastLOS = 0.0f;
 	float timeSinceLastPulse = 0.0f;
 	float timeSinceLastHealingAbility = FLT_MAX;
+
+	std::string filename = "";
+	std::string newFilename = "";
+	bool saveAs = false;
 };
 

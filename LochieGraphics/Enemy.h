@@ -2,6 +2,7 @@
 #include "Maths.h"
 
 #include <vector>
+#include <string>
 
 struct State;
 class SceneObject;
@@ -25,7 +26,7 @@ struct Enemy
 {
 	Enemy() {};
 	Enemy(toml::table table);
-	Enemy(int _type) { type = _type; };
+	Enemy(int _type, std::string _tag) { type = _type; tag = _tag; };
 
 	int type = (int)EnemyType::spawnSpot;
 
@@ -38,6 +39,8 @@ struct Enemy
 	float timeInAbility = 0.0f;
 	bool inAbility = false;
 	bool fleeing = false;
+
+	std::string tag = "";
 
 	void GUI();
 	toml::table Serialise(unsigned long long GUID);
