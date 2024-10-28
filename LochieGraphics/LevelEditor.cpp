@@ -100,11 +100,11 @@ void LevelEditor::RefreshWalls()
 				break;
 			case 0b0011:
 			case 0b1100:
-				PlaceWallAt(pos.x, pos.y, 0.0f, wallSidePrefab);
+				PlaceWallAt(pos.x, pos.y, 90.0f, wallSidePrefab);
 				break;
 			case 0b0110:
 			case 0b1001:
-				PlaceWallAt(pos.x, pos.y, 90.0f, wallSidePrefab);
+				PlaceWallAt(pos.x, pos.y, 0.0f, wallSidePrefab);
 				break;
 			default:
 				break;
