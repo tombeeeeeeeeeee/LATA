@@ -5,13 +5,47 @@
 #include "SceneObject.h"
 #include "Material.h"
 #include "imgui.h"
-
+#include "ExtraEditorGUI.h"
+#include "EditorGUI.h"
 #include "Utilities.h"
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
 #include "Collider.h"
 #include "Hit.h"
+#include "Serialisation.h"
+#include "Paths.h"
+#include <iostream>
+#include <filesystem>
+#include <ostream>
+#include <fstream>
 
+void HealthSystem::Load(toml::table table)
+{
+	damageColour = Serialisation::LoadAsVec3(table["damageColour"]);
+	healColour = Serialisation::LoadAsVec3(table["healColour"]);
+	colourTime = Serialisation::LoadAsFloat(table["colourTime"]);
+	healPerPulse = Serialisation::LoadAsInt(table["healPerPulse"]);
+	pulses = Serialisation::LoadAsInt(table["pulses"]);
+	healingAbilityCooldown = Serialisation::LoadAsFloat(table["healingAbilityCooldown"]);
+	timeBetweenPulses = Serialisation::LoadAsFloat(table["timebetweenPulses"]);
+	healDistance = Serialisation::LoadAsFloat(table["healDistance"]);
+	losToleranceTime = Serialisation::LoadAsFloat(table["losToleranceTime"]);
+}
+
+toml::table HealthSystem::Serialise()
+{
+	return toml::table{
+		{"damageColour",Serialisation::SaveAsVec3(damageColour)},
+		{"healColour",Serialisation::SaveAsVec3(healColour)},
+		{"colourTime",colourTime},
+		{"healsPerPulse",healPerPulse},
+		{"pulses",pulses},
+		{"healingAbilityCooldown",healingAbilityCooldown},
+		{"timeBetweenPulses",timeBetweenPulses},
+		{"healDistance",healDistance},
+		{"losToleranceTime",losToleranceTime},
+	};
+}
 
 void HealthSystem::Update(
 	std::unordered_map<unsigned long long, Health>& healths,
@@ -97,6 +131,61 @@ void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, g
 
 void HealthSystem::GUI()
 {
+	std::vector<std::string> loadPaths = {};
+	std::vector<std::string*> loadPathsPointers = {};
+	loadPaths.clear();
+	loadPathsPointers.clear();
+
+	for (auto& i : std::filesystem::directory_iterator(Paths::systemPath))
+	{
+		loadPaths.push_back(i.path().generic_string().substr(Paths::systemPath.size()));
+		if (loadPaths.back().substr(loadPaths.back().size() - Paths::healthSystemExtension.size()) != Paths::healthSystemExtension) {
+			loadPaths.erase(--loadPaths.end());
+			continue;
+		}
+		loadPaths.back() = loadPaths.back().substr(0, loadPaths.back().size() - Paths::healthSystemExtension.size());
+	}
+	for (auto& i : loadPaths)
+	{
+		loadPathsPointers.push_back(&i);
+	}
+
+	std::string* selected = &filename;
+
+	ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Filename", Utilities::PointerToString(&loadPathsPointers));
+	filename = *selected;
+	if (ImGui::Button("Save##HealthSystems")) {
+
+		std::ofstream file(Paths::systemPath + filename + Paths::healthSystemExtension);
+
+		toml::table table = Serialise();
+
+		file << table << '\n';
+
+		file.close();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Load##HealthSystems")) {
+		if (selected)
+		{
+			std::ifstream file(Paths::systemPath + filename + Paths::healthSystemExtension);
+
+			toml::table data = toml::parse(file);
+
+			Load(data);
+
+			file.close();
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Save as"))
+	{
+		saveAs = true;
+	}
+
+
+	SaveAsGUI();
+
 	ImGui::ColorEdit3("Health Colour", &healColour[0]);
 	ImGui::ColorEdit3("Damage Colour", &damageColour[0]);
 	ImGui::DragFloat("Health Colour Time", &colourTime, 0.02f, 0);
@@ -108,4 +197,41 @@ void HealthSystem::GUI()
 	ImGui::DragFloat("DIstance For Healing Ability", &healDistance, 20.0f, 0);
 	ImGui::DragFloat("Tolerance for no Line of Sight", &losToleranceTime, 0.02f, 0);
 	ImGui::End();
+}
+
+void HealthSystem::SaveAsGUI()
+{
+	if (saveAs)
+	{
+		ImGui::OpenPopup("Save Health System As");
+		saveAs = false;
+	}
+	if (ImGui::BeginPopupModal("Save Health System As", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+
+		ImGui::InputText("File ", &newFilename);
+
+		if (ImGui::Button("Save"))
+		{
+			if (newFilename != "") {
+				std::ofstream file(Paths::systemPath + newFilename + Paths::healthSystemExtension);
+				filename = newFilename;
+				toml::table table = Serialise();
+
+				file << table << '\n';
+
+				file.close();
+				ImGui::CloseCurrentPopup();
+
+				newFilename = "";
+			}
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel"))
+		{
+			newFilename = "";
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 }

@@ -735,18 +735,6 @@ void GUI::EnemyMenu()
 	}
 	EnemySystem& es = scene->enemySystem;
 
-	//TODO SAVE AND LOAD
-
-	if (ImGui::Button("Spawn Enemies for Tom!"))
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			glm::vec3 pos = { -250.0f * (i / 6) - 250.0f, 0.0f, -300.0f * (i % 6) - 250.0f };
-			es.SpawnMelee(pos);
-		}
-
-	}
-
 	es.GUI();
 }
 

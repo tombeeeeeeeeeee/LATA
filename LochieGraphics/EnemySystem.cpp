@@ -11,7 +11,6 @@
 #include "Collider.h"
 #include "ModelRenderer.h"
 #include "Scene.h"
-#include "Paths.h"
 #include "Collision.h"
 
 #include "Utilities.h"
@@ -575,20 +574,7 @@ void EnemySystem::SpawnEnemiesInScene(
     bool spawner
 )
 {
-    for (auto& enemyPair : enemies)
-    {
-        if ((enemyPair.second.type & (int)EnemyType::spawnSpot))
-        {
-            if (enemyPair.second.type & (int)EnemyType::melee)
-                SpawnMelee(transforms[enemyPair.first].getGlobalPosition());
-            else if (enemyPair.second.type & (int)EnemyType::ranged)
-                SpawnRanged(transforms[enemyPair.first].getGlobalPosition());
-            else if (enemyPair.second.type & (int)EnemyType::explosive)
-                SpawnExplosive(transforms[enemyPair.first].getGlobalPosition());
 
-            SceneManager::scene->DeleteSceneObject(enemyPair.first);
-        }
-    }
 }
 
 
