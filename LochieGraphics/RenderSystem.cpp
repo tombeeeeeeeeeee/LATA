@@ -371,9 +371,6 @@ void RenderSystem::Update(
     glDepthFunc(GL_ALWAYS);
     debugLines.Draw();
 
-    glDepthFunc(GL_LESS);
-    RenderSSAO();
-
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
@@ -386,6 +383,9 @@ void RenderSystem::Update(
     glDisable(GL_BLEND);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
+
+    glDepthFunc(GL_LESS);
+    RenderSSAO();
 
     RenderBloom(bloomBuffer);
 

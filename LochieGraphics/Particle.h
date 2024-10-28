@@ -37,7 +37,7 @@ public:
 
 	float explodeStrength = 1.0f;
 
-	glm::mat4 model = glm::identity<glm::mat4>();
+	glm::mat4 model;
 
 	Particle(unsigned int _count, float _lifetime, Shader* _shader, Texture* _texture, glm::vec3 startingPos);
 

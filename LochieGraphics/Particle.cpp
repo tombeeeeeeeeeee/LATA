@@ -19,6 +19,8 @@ Particle::Particle(unsigned int _count, float _lifetime, Shader* _shader, Textur
 {
 	positions.assign(count, glm::vec4(startingPos.x, startingPos.y, startingPos.z, 0.0f));
 	velocities.resize(count);
+	glm::quat rot = glm::quat(glm::vec3(PI / 2, 0, 0));
+	model = glm::mat4_cast(rot);
 }
 
 void Particle::Spread()
