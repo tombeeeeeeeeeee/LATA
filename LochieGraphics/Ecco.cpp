@@ -185,8 +185,10 @@ bool Ecco::Update(
 			timeSinceSpeedBoost = 0.0f;
 			timeInSpeedBoost = 0.0f;
 			SceneManager::scene->audio.PlaySound(SceneManager::scene->audio.eccoDash);
-			Particle* boost = SceneManager::scene->particleSystem.AddParticle(88888, 0.5f, SceneManager::scene->particleSystem.nextParticleTexture, transform.getGlobalPosition());
-			boost->explodeStrength = 100.0f;
+			Particle* boost = SceneManager::scene->particleSystem.AddParticle(100, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, transform.getGlobalPosition());
+			boost->explodeStrength = 5.0f;
+			boost->Explode();
+			boost->Explode();
 			boost->Explode();
 		}
 
