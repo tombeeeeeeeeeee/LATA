@@ -45,19 +45,22 @@ inline bool ExtraEditorGUI::InputSearchBox(Iter begin, Iter end, Type** selector
 		ExtraEditorGUI::TextSelected, &textSelected);
 	std::string popupName = (label + "##" + tag).c_str();
 	if (textSelected) {
-		ImGui::OpenPopup(popupName.c_str(), ImGuiPopupFlags_NoReopen);
+		ImGui::OpenPopup(popupName.c_str());
 		if (UserPreferences::clearSearchBar) {
 			filter = "";
 		}
 		// TODO: User prefs option to either keep or empty the search filter on new popup search
 	}
 
-	if (!ImGui::BeginPopup(popupName.c_str())) {
+	if (!ImGui::BeginPopup(popupName.c_str(), ImGuiWindowFlags_NoScrollbar)) {
 		return false;
 	}
 	/* Popup has began*/
 	ImGui::SetKeyboardFocusHere();
 	ImGui::InputText(("Search##" + tag).c_str(), &ExtraEditorGUI::filter);
+
+	// TODO: User preference file for the amount visible (the 15 v , customisable)
+	ImGui::BeginChild(("List##" + tag).c_str(), ImVec2(0, 20 * 15 + 10), ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeY);
 
 	for (auto& i = begin; i != end; i++)
 	{
@@ -93,6 +96,7 @@ inline bool ExtraEditorGUI::InputSearchBox(Iter begin, Iter end, Type** selector
 			}
 		}
 	}
+	ImGui::EndChild();
 
 	ImGui::EndPopup();
 	return returnBool;
