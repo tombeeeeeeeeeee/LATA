@@ -47,7 +47,7 @@ const float MAX_REFLECTION_LOD = 4.0;
 void main()
 {
 	float depthValue = texture(screenDepth, texCoords).r;
-    vec4 NDC = vec4(texCoords * 2.0 - 1.0, depthValue * 2.0 -1.0, 1.0);
+    vec4 NDC = vec4(texCoords * 2.0 - 1.0, depthValue * 2.0 - 1.0, 1.0);
     vec4 clipPos = invP * NDC;
     screenPos = clipPos.xyz / clipPos.w;
     fragPos = (invV * vec4(screenPos, 1.0)).xyz;
@@ -77,13 +77,15 @@ void main()
         Lo = max(CalcDirectionalLight(lightDirection, trueNormal), 0);
         vec3 IBL = specularIBL(trueNormal);
         vec3 result = Lo + IBL;
+        float SSAOvalue = texture(screenSSAO, texCoords).r;
+        result *= SSAOvalue;
         FragColour = vec4(result, 1.0);
     }
 }
 
 vec3 CalcDirectionalLight(vec3 lightDirection, vec3 normal)
 {
-	vec3 radiance = Radiance(-lightDirection, 1, normal, 1, 0, 0, lightColour);
+	vec3 radiance = Radiance(-lightDirection, 0, normal, 1, 0, 0, lightColour);
 
     return radiance;
 }
@@ -160,12 +162,10 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 vec3 specularIBL(vec3 trueNormal)
 {
     vec3 irradiance = texture(irradianceMap, trueNormal).rgb;
-    float SSAOvalue = texture(screenSSAO, texCoords).r;
+
 
     vec3 diffuse = irradiance * trueAlbedo;
     vec3 ambient = (diffuse) * 1.0;
-    ambient *= SSAOvalue * ao;
-
     return ambient;
 }
 
