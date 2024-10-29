@@ -11,8 +11,16 @@ void Audio::Initialise()
 	soloud.init();
 	music.load((Paths::importAudioLocation + "Battle_Theme.wav").c_str());
 	music.setLooping(true);
+	
+	eccoDash.load((Paths::importAudioLocation + "Ecco_Dash.wav").c_str());
+	rainbowShot.load((Paths::importAudioLocation + "Ecco_Shot_with_Railgun.wav").c_str());
+	syncShot.load((Paths::importAudioLocation + "Snipe_Shot.wav").c_str());
+	enemyHit.load((Paths::importAudioLocation + "Enemy_Shot.wav").c_str());
+	
 	musicBusHandle = soloud.play(musicBus);
 	musicBus.play(music);
+
+	
 	soloud.setGlobalVolume(UserPreferences::defaultGlobalVolume);
 }
 
@@ -32,4 +40,9 @@ void Audio::GUI()
 	{
 		soloud.setVolume(musicBusHandle, musicBusVolume);
 	}
+}
+
+void Audio::PlaySound(SoLoud::Wav& sound)
+{
+	soloud.play(sound);
 }
