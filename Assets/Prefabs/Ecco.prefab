@@ -11,7 +11,7 @@ maxCarMoveSpeed = 565.0
 maxHealth = 100
 maxReverseSpeed = 300.0
 maxWheelAngle = 60.0
-minSpeedDamageThreshold = 1.0
+minSpeedDamageThreshold = 150.0
 portionOfSidewaysSpeedKept = 80.0
 sidewaysFrictionCoef = 65.0
 speedBoost = 12500.0
@@ -22,7 +22,7 @@ speedReductionAfterDamaging = 200.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
 turningCircleScalar = 0.05999999865889549
-wheelDirection = [ -0.49469664692878723, -0.8690658807754517 ]
+wheelDirection = [ 0.49469664692878723, 0.8690658807754517 ]
 wheelTurnSpeed = 4.0
 
 [health]
@@ -33,12 +33,12 @@ maxHealth = 10
 [modelRenderer]
 guid = '2091576976424546894'
 materialTint = [ 0.0, 0.4000000059604645, 0.800000011920929 ]
-materials = [ '0', '0', '0' ]
+materials = [ '0', '15449259407003476463', '15449352838481615396' ]
 modelGuid = '15070486382632221399'
 
 [rigidBody]
 accel = [ 0.0, 0.0 ]
-angularVel = 0.0
+angularVel = -0.0
 elasticicty = 0.0
 guid = '2091576976424546894'
 invMass = 0.10000000149011612
