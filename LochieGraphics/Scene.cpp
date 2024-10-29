@@ -365,6 +365,7 @@ void Scene::InitialisePlayers()
 			break;
 		case (int)CollisionLayers::enemy:
 			physicsSystem.SetCollisionLayerMask(i, i, true);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
 			break;
 		case (int)CollisionLayers::trigger:
 			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
