@@ -40,7 +40,7 @@ void SpawnManager::TriggerCall(std::string tag, bool toggle)
 		}
 
 		//disables the spawner
-		else
+		else if(canBeDisabled)
 		{
 			if (triggeredOnce) triggeredOnce = false;
 			spawning = false;
