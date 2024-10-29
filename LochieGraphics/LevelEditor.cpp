@@ -267,6 +267,27 @@ void LevelEditor::Start()
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);
 	}
+	if (UserPreferences::defaultCameraSystemLoad != "") {
+		std::ifstream file(Paths::systemPath + UserPreferences::defaultCameraSystemLoad + Paths::cameraSystemExtension);
+		toml::table data = toml::parse(file);
+		gameCamSystem.Load(data);
+		gameCamSystem.filename = UserPreferences::defaultCameraSystemLoad;
+		file.close();
+	}
+	if (UserPreferences::defaultEnemySystemLoad != "") {
+		std::ifstream file(Paths::systemPath + UserPreferences::defaultEnemySystemLoad + Paths::enemySystemExtension);
+		toml::table data = toml::parse(file);
+		enemySystem.Load(data);
+		enemySystem.filename = UserPreferences::defaultEnemySystemLoad;
+		file.close();
+	}
+	if (UserPreferences::defaultHealthSystemLoad != "") {
+		std::ifstream file(Paths::systemPath + UserPreferences::defaultHealthSystemLoad + Paths::healthSystemExtension);
+		toml::table data = toml::parse(file);
+		healthSystem.Load(data);
+		healthSystem.filename = UserPreferences::defaultHealthSystemLoad;
+		file.close();
+	}
 
 	inPlay = UserPreferences::enterPlayModeOnStart;
 

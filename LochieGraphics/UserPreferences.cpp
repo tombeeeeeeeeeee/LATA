@@ -27,6 +27,9 @@ float UserPreferences::camMoveDolly;
 float UserPreferences::camScrollDolly;
 float UserPreferences::orthScrollSpeed;
 bool UserPreferences::immortal = true;
+std::string UserPreferences::defaultCameraSystemLoad = "";
+std::string UserPreferences::defaultEnemySystemLoad = "";
+std::string UserPreferences::defaultHealthSystemLoad = "";
 
 void UserPreferences::GUI()
 {
@@ -95,6 +98,10 @@ void UserPreferences::GUI()
 			ImGui::Unindent();
 		}
 		if (ImGui::Checkbox("Immortal", &immortal)) { shouldSave = true; }
+		if (ImGui::InputText("Default Camera System Load", &defaultCameraSystemLoad)) { shouldSave = true; }
+		if (ImGui::InputText("Default Enemy System Load", &defaultEnemySystemLoad)) { shouldSave = true; }
+		if (ImGui::InputText("Default Health System Load", &defaultHealthSystemLoad)) { shouldSave = true; }
+			
 		ImGui::Unindent();
 	}
 	if (shouldSave) {
@@ -157,6 +164,9 @@ void UserPreferences::Save()
 		{ "camScrollDolly", camScrollDolly},
 		{ "orthScrollSpeed", orthScrollSpeed},
 		{ "immortal", immortal },
+		{ "defaultCameraSystemLoad", defaultCameraSystemLoad },
+		{ "defaultEnemySystemLoad", defaultEnemySystemLoad },
+		{ "defaultHealthSystemLoad", defaultHealthSystemLoad },
 	};
 
 	file << table << '\n';
@@ -186,6 +196,9 @@ void UserPreferences::Load()
 	camScrollDolly = Serialisation::LoadAsFloat(data["camScrollDolly"], 0.1f);
 	orthScrollSpeed = Serialisation::LoadAsFloat(data["orthScrollSpeed"], 200.0f);
 	immortal = Serialisation::LoadAsBool(data["immortal"], true);
+	defaultCameraSystemLoad = Serialisation::LoadAsString(data["defaultCameraSystemLoad"]);
+	defaultEnemySystemLoad = Serialisation::LoadAsString(data["defaultEnemySystemLoad"]);
+	defaultHealthSystemLoad = Serialisation::LoadAsString(data["defaultHealthSystemLoad"]);
 
 	file.close();
 }

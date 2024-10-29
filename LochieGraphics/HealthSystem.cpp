@@ -4,9 +4,7 @@
 #include "ModelRenderer.h"
 #include "SceneObject.h"
 #include "Material.h"
-#include "imgui.h"
 #include "ExtraEditorGUI.h"
-#include "EditorGUI.h"
 #include "Utilities.h"
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
@@ -14,6 +12,7 @@
 #include "Hit.h"
 #include "Serialisation.h"
 #include "Paths.h"
+
 #include <iostream>
 #include <filesystem>
 #include <ostream>
