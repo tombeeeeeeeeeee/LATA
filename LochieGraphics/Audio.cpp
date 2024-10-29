@@ -6,6 +6,8 @@
 
 #include "EditorGUI.h"
 
+#include <iostream>
+
 void Audio::Initialise()
 {
 	soloud.init();
@@ -44,5 +46,6 @@ void Audio::GUI()
 
 void Audio::PlaySound(SoLoud::Wav& sound)
 {
+	std::cout << "Played a sound!\n";
 	soloud.play(sound);
 }

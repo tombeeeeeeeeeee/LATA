@@ -24,6 +24,9 @@ public:
 
 	static void Draw(std::vector<Particle*>& particles);
 
+	// TODO: Rename
+	Particle* AddParticle(unsigned int _count, float _lifetime, Texture* _texture, glm::vec3 startingPos);
+
 	void GUI();
 };
 

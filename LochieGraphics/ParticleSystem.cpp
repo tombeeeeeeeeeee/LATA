@@ -40,6 +40,13 @@ void ParticleSystem::Draw(std::vector<Particle*>& particles)
 	}
 }
 
+Particle* ParticleSystem::AddParticle(unsigned int _count, float _lifetime, Texture* _texture, glm::vec3 startingPos)
+{
+	particles.emplace_back(new Particle(_count, _lifetime, shader, _texture, startingPos));
+	particles.back()->Initialise();
+	return particles.back();
+}
+
 void ParticleSystem::GUI()
 {
 	for (size_t i = 0; i < particles.size(); i++)
@@ -60,7 +67,6 @@ void ParticleSystem::GUI()
 	ResourceManager::TextureSelector("Texture", &nextParticleTexture, false);
 
 	if (ImGui::Button("Add Another Particles")) {
-		particles.emplace_back(new Particle(nextParticleCount, nextParticleLifetime, shader, nextParticleTexture, nextStartingPos));
-		particles.back()->Initialise();
+
 	}
 }
