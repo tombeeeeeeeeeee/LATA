@@ -48,7 +48,7 @@ enum Parts : unsigned int
 	bollard		 =	1 << 15,
 	triggerable	 =	1 << 16,
 	ALL = (1 << 17) - 1 - 1,
-};
+}; // NOTE: The all has a minus 1 because it needs to be flipped to be all 1s, and another minus one as there is no part with the number 1
 
 class Scene;
 

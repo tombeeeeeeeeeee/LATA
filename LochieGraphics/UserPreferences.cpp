@@ -38,7 +38,7 @@ void UserPreferences::GUI()
 
 	bool shouldSave = false;
 
-	ImGui::InputText("User Preferences Active", &filename);
+	if (ImGui::InputText("User Preferences Active", &filename, ImGuiInputTextFlags_EnterReturnsTrue)) { shouldSave = true; }
 	ImGui::BeginDisabled();
 	ImGui::Button("Save##User Prefrences");
 	ImGui::EndDisabled();
@@ -50,7 +50,6 @@ void UserPreferences::GUI()
 	ImGui::SameLine();
 	if (ImGui::Button("Load##User Prefrences")) {
 		Load();
-		RefreshPreferenceFile();
 	}
 
 	if (ImGui::Checkbox("Pressing Escape Quits", &escapeCloses)) { shouldSave = true; }
@@ -172,6 +171,8 @@ void UserPreferences::Save()
 	file << table << '\n';
 
 	file.close();
+
+	RefreshPreferenceFile();
 }
 
 void UserPreferences::Load()
@@ -201,4 +202,6 @@ void UserPreferences::Load()
 	defaultHealthSystemLoad = Serialisation::LoadAsString(data["defaultHealthSystemLoad"]);
 
 	file.close();
+
+	RefreshPreferenceFile();
 }
