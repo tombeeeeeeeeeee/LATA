@@ -55,11 +55,11 @@ class Scene;
 class SceneObject
 {
 public:
-	enum class PrefabStatus {
-		none,
-		prefabOrigin,
-		prefabInstance,
-		missing
+	enum class PrefabStatus : unsigned int{
+		none = 0,
+		prefabOrigin = 1,
+		prefabInstance = 2,
+		missing = 3,
 	};
 
 	std::string name = "Unnamed Scene Object";

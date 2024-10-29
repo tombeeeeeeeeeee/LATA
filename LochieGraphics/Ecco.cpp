@@ -184,6 +184,7 @@ bool Ecco::Update(
 			boosting = true;
 			timeSinceSpeedBoost = 0.0f;
 			timeInSpeedBoost = 0.0f;
+			SceneManager::scene->audio.PlaySound(SceneManager::scene->audio.eccoDash);
 		}
 
 		speedBoostUnactuated = false;

@@ -154,13 +154,16 @@ bool Sync::Update(
 	{
 		chargingShot = false;
 
+
 		if (chargedDuration >= overclockChargeTime)
 		{
 			ShootOverClocked(globalBarrelOffset);
+			SceneManager::scene->audio.PlaySound(SceneManager::scene->audio.syncShot);
 		}
 		else if (chargedDuration >= sniperChargeTime)
 		{
 			ShootSniper(globalBarrelOffset);
+			SceneManager::scene->audio.PlaySound(SceneManager::scene->audio.syncShot);
 		}
 		else
 		{
@@ -285,6 +288,7 @@ void Sync::ShootSniper(glm::vec3 pos)
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 		{
 			hit.sceneObject->health()->subtractHealth(sniperDamage);
+			SceneManager::scene->audio.PlaySound(SceneManager::scene->audio.enemyHit);
 		}
 	}
 }
@@ -310,6 +314,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 				if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 				{
 					hit.sceneObject->health()->subtractHealth(overclockDamage);
+					SceneManager::scene->audio.PlaySound(SceneManager::scene->audio.enemyHit);
 				}
 				else break;
 			}
@@ -349,6 +354,8 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 				};
 
 				OverclockNonRebounding({ hit.position.x, pos.y, hit.position.y }, refractionDirection, refractionColour);
+
+				SceneManager::scene->audio.PlaySound(SceneManager::scene->audio.rainbowShot);
 			}
 		}
 		else if (count < overclockReboundCount && !(hit.collider->collisionLayer & (int)CollisionLayers::sync))

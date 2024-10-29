@@ -55,6 +55,17 @@ void PrefabManager::RefreshAllPrefabInstances()
 	}
 }
 
+void PrefabManager::SaveAllPrefabOrigins()
+{
+	for (auto& i : SceneManager::scene->sceneObjects)
+	{
+		if (i.second->prefabStatus != SceneObject::PrefabStatus::prefabOrigin) {
+			continue;
+		}
+		i.second->SaveAsPrefab();
+	}
+}
+
 void PrefabManager::PrefabSelector()
 {
 	PrefabHolder* selected = nullptr;
@@ -87,6 +98,9 @@ void PrefabManager::GUI()
 	}
 	if (ImGui::Button("Refresh All Prefab Instances")) {
 		RefreshAllPrefabInstances();
+	}
+	if (ImGui::Button("Save Any Origins")) {
+		SaveAllPrefabOrigins();
 	}
 }
 

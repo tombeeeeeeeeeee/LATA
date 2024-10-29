@@ -253,7 +253,7 @@ toml::table SceneObject::Serialise() const
 		{ "parts", Serialisation::SaveAsUnsignedIntOLD(parts) },
 		{ "parent", Serialisation::SaveAsUnsignedLongLong(parentGUID)},
 		{ "children", childrenGUIDs },
-		{ "prefabStatus", (int)prefabStatus },
+		{ "prefabStatus", Serialisation::SaveAsUnsignedIntOLD((unsigned int)prefabStatus)},
 		{ "prefabBase", Serialisation::SaveAsUnsignedLongLong(prefabBase) }
 	};
 }
@@ -266,7 +266,7 @@ SceneObject::SceneObject(Scene* _scene, toml::table* table) :
 	parts = Serialisation::LoadAsUnsignedIntOLD((*table)["parts"]);
 	scene->transforms[GUID] = Transform(this);
 	scene->sceneObjects[GUID] = this;
-	prefabStatus = (PrefabStatus)Serialisation::LoadAsInt((*table)["prefabStatus"]);
+	prefabStatus = (PrefabStatus)Serialisation::LoadAsUnsignedIntOLD((*table)["prefabStatus"]);
 	prefabBase = Serialisation::LoadAsUnsignedLongLong((*table)["prefabBase"]);
 }
 
@@ -449,10 +449,13 @@ void SceneObject::ClearParts()
 
 void SceneObject::SaveAsPrefab()
 {
+	prefabStatus = PrefabStatus::prefabOrigin;
+
 	auto safetyCheck = parts;
 	std::ofstream file(Paths::prefabsSaveLocation + name + Paths::prefabExtension);
 
 	toml::table table;
+
 
 	table.emplace("sceneObject", Serialise());
 
@@ -490,7 +493,6 @@ void SceneObject::SaveAsPrefab()
 
 	file.close();
 
-	prefabStatus = PrefabStatus::prefabOrigin;
 	PrefabManager::loadedPrefabOriginals[GUID] = table;
 }
 

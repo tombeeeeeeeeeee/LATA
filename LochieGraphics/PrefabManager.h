@@ -23,6 +23,7 @@ public:
 
 	static void RefreshPrefabInstancesOf(unsigned long long GUID);
 	static void RefreshAllPrefabInstances();
+	static void SaveAllPrefabOrigins();
 
 	static void PrefabSelector();
 	static void GUI();
