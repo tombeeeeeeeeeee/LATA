@@ -44,7 +44,7 @@ private:
 	float timeForEnemiesToSpawnAgain = 60.0f;
 
 	bool saveAs = false;
-	bool drawForceLines = false;
+	bool drawForceLines = true;
 
 	std::unordered_map<std::string, int> enemyTags;
 
@@ -68,14 +68,14 @@ public:
 	float cohesionCoef = 0.2f;
 	float seperationCoef = 50.0f;
 	float normalCoef = 10.0f;
-	float playerCoef = 0.5f;
+	float playerCoef = 2.5f;
 
 	float slowedPercentage = 99.5f;
 
 	int explosiveEnemyHealth = 2;
 	float explosiveEnemyColliderRadius = 35.0f;
 	float timeToExplode = 2.0f;
-	float speedWhileExploding = 10.0f;
+	float speedWhileExploding = 400.0f;
 	float explosionRadius = 350.0f;
 	int explosionDamage = 2;
 	float distanceToExplode = 250.0f;
@@ -169,8 +169,10 @@ public:
 private:
 
 	void LineOfSightAndTargetCheck(
-		Enemy enemy, Transform transform, RigidBody rigidBody,
-		SceneObject* ecco, SceneObject* sync
+		std::unordered_map<unsigned long long, Enemy>& enemies,
+		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		glm::vec2 eccoPos, glm::vec2 syncPos
 	);
 
 	void AbilityCheck(

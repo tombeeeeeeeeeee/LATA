@@ -47,7 +47,7 @@ enum Parts : unsigned int
 	door		 =	1 << 14,
 	bollard		 =	1 << 15,
 	triggerable	 =	1 << 16,
-	ALL = (1 << 16) - 1 - 1,
+	ALL = (1 << 17) - 1 - 1,
 };
 
 class Scene;

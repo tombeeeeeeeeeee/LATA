@@ -41,7 +41,7 @@ bool Ecco::Update(
 	//Variables for vector maths
 	glm::vec2 force = { 0.0f, 0.0f };
 	glm::vec3 right = transform.forward();
-	glm::vec3 forward = -transform.right();
+	glm::vec3 forward = transform.right();
 	glm::vec2 moveInput = inputDevice.getMove();
 
 	//Reading joystick input as wheel direction

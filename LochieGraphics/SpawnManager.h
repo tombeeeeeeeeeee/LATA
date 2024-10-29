@@ -20,6 +20,7 @@ public:
 	int currSpawnCount = 0;
 	
 	bool triggeredOnce = false;
+	bool canBeDisabled = false;
 
 	std::string triggerTag;
 	std::string enemyTriggerTag;

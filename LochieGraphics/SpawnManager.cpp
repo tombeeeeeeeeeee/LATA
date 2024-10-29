@@ -9,7 +9,9 @@ SpawnManager::SpawnManager(toml::table table)
 	numToSpawn = Serialisation::LoadAsInt(table["numToSpawn"]);
 	timeBetweenSpawns = Serialisation::LoadAsFloat(table["timeBetweenSpawns"]);
 	triggerTag = Serialisation::LoadAsString(table["triggerTag"]);
+	canBeDisabled = Serialisation::LoadAsBool(table["canBeDisabled"]);
 	enemyTriggerTag = Serialisation::LoadAsString(table["enemyTriggerTag"]);
+
 	int enemySpawnList = Serialisation::LoadAsInt(table["enemySpawnList"]);
 	int enemySpawn = 0;
 	int decimalSlot = 1;
@@ -55,6 +57,7 @@ void SpawnManager::GUI()
 		ImGui::Indent();
 		ImGui::DragInt("Number of enemies to spawn", &numToSpawn);
 		ImGui::DragFloat("Time Between Spawns", &timeBetweenSpawns);
+		ImGui::Checkbox("Can Be Disabled", &canBeDisabled);
 		ImGui::InputText("Trigger ID", &triggerTag);
 		ImGui::InputText("Enemy Trigger ID", &enemyTriggerTag);
 
@@ -137,6 +140,7 @@ toml::table SpawnManager::Serialise(unsigned long long guid)
 		{ "numToSpawn", numToSpawn },
 		{ "timeBetweenSpawns", timeBetweenSpawns },
 		{ "triggerTag", triggerTag },
+		{ "canBeDisabled", canBeDisabled },
 		{ "enemyTriggerTag", enemyTriggerTag },
 		{ "enemySpawnList", enemySpawnList },
 	};

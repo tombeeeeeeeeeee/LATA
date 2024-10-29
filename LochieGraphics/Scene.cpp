@@ -120,8 +120,8 @@ void Scene::DeleteAllSceneObjectsAndParts()
 
 	partsChecker &= ~Parts::ecco;
 	partsChecker &= ~Parts::sync;
-	
-
+	triggerables.clear();
+	partsChecker &= ~Parts::triggerable;
 	// TODO: Don't need a whole assert
 	assert(partsChecker == 0);
 }
@@ -320,8 +320,8 @@ void Scene::InitialisePlayers()
 
 	eccoSO->rigidbody()->vel = {0.0f, 0.0f};
 
-	if (!eccoSO->renderer()) eccoSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension),(unsigned long long) 0));
-	else eccoSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension);
+	if (!eccoSO->renderer()) eccoSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoModel(Posed)" + Paths::modelExtension),(unsigned long long) 0));
+	else eccoSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoModel(Posed)" + Paths::modelExtension);
 	eccoSO->renderer()->setMaterialTint({ 0.0f, 102.0f, 204.0f });
 	
 	//sync

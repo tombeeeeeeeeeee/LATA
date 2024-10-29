@@ -53,9 +53,11 @@ void TriggerSystem::Start(
 	}
 	for (auto& pair : triggerables)
 	{
-		if (!(SceneManager::scene->sceneObjects[pair.first]->parts & Parts::rigidBody))
+		SceneObject* so = SceneManager::scene->sceneObjects[pair.first];
+		if (!so) continue;
+		if (!(so->parts & Parts::rigidBody))
 		{
-			SceneManager::scene->sceneObjects[pair.first]->setRigidBody(new RigidBody());
+			so->setRigidBody(new RigidBody());
 		}
 		rigidbodies[pair.first].onTrigger.push_back(
 			[pair](Collision collision) { SceneManager::scene->triggerables[pair.first].OnTrigger(collision.collisionMask); });
