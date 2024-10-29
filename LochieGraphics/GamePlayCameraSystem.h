@@ -45,9 +45,9 @@ public:
 	void GUI();
 	void SaveAsGUI();
 	toml::table Serialise();
+	std::string filename = "";
 private:
 	Camera* cam = nullptr;
-	std::string filename = "";
 	std::string newFilename = "";
 	bool saveAs = false;
 };

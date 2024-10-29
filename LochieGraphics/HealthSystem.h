@@ -49,6 +49,8 @@ public:
 	float healDistance = 4000.0f;
 	float losToleranceTime = 0.4f;
 
+	std::string filename = "";
+
 private:
 	bool playerHealingAbility = false;
 	int currentPulseCount = 0;
@@ -56,7 +58,6 @@ private:
 	float timeSinceLastPulse = 0.0f;
 	float timeSinceLastHealingAbility = FLT_MAX;
 
-	std::string filename = "";
 	std::string newFilename = "";
 	bool saveAs = false;
 };
