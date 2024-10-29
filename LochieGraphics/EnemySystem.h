@@ -44,7 +44,7 @@ private:
 	float timeForEnemiesToSpawnAgain = 60.0f;
 
 	bool saveAs = false;
-	bool drawForceLines = true;
+	bool drawForceLines = false;
 
 	std::unordered_map<std::string, int> enemyTags;
 

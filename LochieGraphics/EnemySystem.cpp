@@ -503,7 +503,7 @@ void EnemySystem::Steering(
                 {
                     int count = 1;
                     for (auto& child : transforms[spawnPair.first].getChildren()) count++;
-                    AddTag(spawner->enemyTriggerTag, count);
+                    AddTag(spawner->enemyTriggerTag, count * spawner->numToSpawn);
                 }
 
                 if (spawner->timeSinceLastSpawn >= spawner->timeBetweenSpawns)
