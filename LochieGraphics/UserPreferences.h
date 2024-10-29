@@ -19,6 +19,8 @@ public:
 	static std::string filename;
 
 	static bool escapeCloses;
+
+	static bool clearSearchBar;
 	
 	enum class ModelSelectMode {
 		loaded,

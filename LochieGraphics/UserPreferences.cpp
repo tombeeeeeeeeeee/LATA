@@ -30,6 +30,7 @@ bool UserPreferences::immortal = true;
 std::string UserPreferences::defaultCameraSystemLoad = "";
 std::string UserPreferences::defaultEnemySystemLoad = "";
 std::string UserPreferences::defaultHealthSystemLoad = "";
+bool UserPreferences::clearSearchBar = true;
 
 void UserPreferences::GUI()
 {
@@ -62,6 +63,8 @@ void UserPreferences::GUI()
 		shouldSave = true;
 		SceneManager::scene->audio.soloud.setGlobalVolume(defaultGlobalVolume);
 	}
+
+	if (ImGui::Checkbox("Clear search bar on search bar creation", &clearSearchBar)) { shouldSave = true; }
 
 	if (ImGui::CollapsingHeader("Camera Move Speeds")) {
 		if (ImGui::DragFloat("Orthographic Zoom Speed##Camera", &orthScrollSpeed, 0.1f, 0.0f, FLT_MAX)) { shouldSave = true; }
@@ -166,6 +169,7 @@ void UserPreferences::Save()
 		{ "defaultCameraSystemLoad", defaultCameraSystemLoad },
 		{ "defaultEnemySystemLoad", defaultEnemySystemLoad },
 		{ "defaultHealthSystemLoad", defaultHealthSystemLoad },
+		{ "clearSearchBar", clearSearchBar }
 	};
 
 	file << table << '\n';
@@ -200,6 +204,7 @@ void UserPreferences::Load()
 	defaultCameraSystemLoad = Serialisation::LoadAsString(data["defaultCameraSystemLoad"]);
 	defaultEnemySystemLoad = Serialisation::LoadAsString(data["defaultEnemySystemLoad"]);
 	defaultHealthSystemLoad = Serialisation::LoadAsString(data["defaultHealthSystemLoad"]);
+	clearSearchBar = Serialisation::LoadAsBool(data["clearSearchBar"]);
 
 	file.close();
 

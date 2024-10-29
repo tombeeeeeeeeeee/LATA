@@ -4,6 +4,7 @@
 
 // Needs to be included due to the template definition being here
 #include "Utilities.h"
+#include "UserPreferences.h"
 
 #include <vector>
 #include <string>
@@ -45,6 +46,9 @@ inline bool ExtraEditorGUI::InputSearchBox(Iter begin, Iter end, Type** selector
 	std::string popupName = (label + "##" + tag).c_str();
 	if (textSelected) {
 		ImGui::OpenPopup(popupName.c_str(), ImGuiPopupFlags_NoReopen);
+		if (UserPreferences::clearSearchBar) {
+			filter = "";
+		}
 		// TODO: User prefs option to either keep or empty the search filter on new popup search
 	}
 
