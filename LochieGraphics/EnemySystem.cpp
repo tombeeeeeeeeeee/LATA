@@ -176,17 +176,51 @@ void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
 
 
 void EnemySystem::LineOfSightAndTargetCheck(
-    Enemy enemy, Transform transform, RigidBody rigidBody,
-    SceneObject* ecco, SceneObject* sync
+    std::unordered_map<unsigned long long, Enemy>& enemies,
+    std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    glm::vec2 eccoPos, glm::vec2 syncPos
 )
 {
+    for (auto& pair : enemies)
+    {
+        glm::vec2 pos = transforms[pair.first].get2DGlobalPosition();
+        pair.second.hasLOS = false;
+        pair.second.target = pos;
+        float distanceToSync = FLT_MAX;
+        float distanceToEcco = FLT_MAX;
 
-    glm::vec2 syncPos2D = { sync->transform()->getGlobalPosition().x, sync->transform()->getGlobalPosition().z };
-    glm::vec2 eccoPos2D = { ecco->transform()->getGlobalPosition().x, ecco->transform()->getGlobalPosition().z };
-    enemy.hasLOS = false;
-    glm::vec2 enemyPos2D = transform.get2DGlobalPosition();
-
-    float distanceToSync = FLT_MAX;
+        std::vector<Hit> eccoHits;
+        std::vector<Hit> syncHits;
+        if (PhysicsSystem::RayCast(pos, glm::normalize(eccoPos - pos), eccoHits, FLT_MAX, ((int)CollisionLayers::ecco | (int)CollisionLayers::base | (int)CollisionLayers::softCover)))
+        {
+            Hit& eccoHit = eccoHits[0];
+            if (eccoHit.collider->collisionLayer & (int)CollisionLayers::ecco)
+            {
+                distanceToEcco = eccoHit.distance;
+            }
+        }
+        if (PhysicsSystem::RayCast(pos, glm::normalize(syncPos - pos), syncHits, FLT_MAX, ((int)CollisionLayers::sync | (int)CollisionLayers::base | (int)CollisionLayers::softCover)))
+        {
+            Hit& syncHit = syncHits[0];
+            if (syncHit.collider->collisionLayer & (int)CollisionLayers::sync)
+            {
+                distanceToSync = syncHit.distance;
+            }
+        }
+        
+        if (distanceToEcco == FLT_MAX && distanceToSync == FLT_MAX) return;
+        if (distanceToEcco < distanceToSync)
+        {
+            pair.second.hasLOS = true;
+            pair.second.target = eccoPos;
+        }
+        else if(distanceToSync <= distanceToSync)
+        {
+            pair.second.hasLOS = true;
+            pair.second.target = syncPos;
+        }
+    }
 }
 
 void EnemySystem::AbilityCheck(
@@ -313,21 +347,10 @@ void EnemySystem::Steering(
         {
             if (enemyPair.second.type & (int)EnemyType::explosive)
             {
-                glm::vec2 enemyPos = transforms[enemyPair.first].get2DGlobalPosition();
-                float sqrDistanceToEcco = glm::dot(eccoPos - enemyPos, eccoPos - enemyPos);
-                float sqrDistanceToSync = glm::dot(syncPos - enemyPos, syncPos - enemyPos);
-                glm::vec2 playerForce;
-                if (sqrDistanceToEcco == 0.0f || sqrDistanceToSync == 0.0f) playerForce = { 0.0f, 0.0f };
-                if (sqrDistanceToEcco < sqrDistanceToSync)
-                {
-                    playerForce = glm::normalize(eccoPos - enemyPos);
-                }
-                else
-                {
-                    playerForce = glm::normalize(syncPos - enemyPos);
-                }
+                glm::vec2 playerForce = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
                 playerForce *= 100 * playerCoef;
                 enemyPair.second.influenceThisFrame += playerForce;
+                if(drawForceLines) RenderSystem::lines.DrawLineSegement2D(transforms[enemyPair.first].get2DGlobalPosition(), transforms[enemyPair.first].get2DGlobalPosition() + playerForce * 10.0f, { 1,1,0 }, 100);
             }
             else
             {
@@ -371,36 +394,34 @@ void EnemySystem::Steering(
                         float distance = glm::length(otherToSelf);
                         float strength = 1.0f - (distance / separationRadius);
 
-                        
-                           
                         enemyPair.second.influenceThisFrame += (otherToSelf / distance) * strength * seperationCoef;
                     }
                 }
             }
             if (drawForceLines)
-            RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + enemyPair.second.influenceThisFrame, { 0,0,1 }, 100);
+            RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + enemyPair.second.influenceThisFrame * 10.0f, { 0,0,1 }, 100);
 
-            float sqrDistanceToEcco = glm::dot(eccoPos - enemyPos, eccoPos - enemyPos);
-            float sqrDistanceToSync = glm::dot(syncPos - enemyPos, syncPos - enemyPos);
-            glm::vec2 playerForce;
-            if (sqrDistanceToEcco == 0.0f || sqrDistanceToSync == 0.0f) playerForce = { 0.0f, 0.0f };
-            if (sqrDistanceToEcco < sqrDistanceToSync)
+            if (enemyPair.second.hasLOS)
             {
-                playerForce = glm::normalize(eccoPos - enemyPos);
+                glm::vec2 tooTarget = enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition();
+                if (glm::dot(tooTarget, tooTarget) > 0)
+                {
+                    glm::vec2 playerForce = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
+                    playerForce *= 100 * playerCoef * (enemyPair.second.fleeing ? -1 : 1);
+                    enemyPair.second.influenceThisFrame += playerForce;
+                    if (drawForceLines)
+                    {
+                        RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + playerForce * 10.0f, { 1,1,0 }, 100);
+                    }
+                }
             }
-            else
-            {
-                playerForce = glm::normalize(syncPos - enemyPos);
-            }
-            playerForce *= 100 * playerCoef * enemyPair.second.fleeing ? -1 : 1;
 
             glm::vec2 normalForce = GetNormalFlowInfluence(enemyPos) * normalCoef;
-            enemyPair.second.influenceThisFrame += normalForce + playerForce;
+            enemyPair.second.influenceThisFrame += normalForce;
 
             if (drawForceLines)
             {
-                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + normalForce, { 1,0,0 }, 100);
-                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + playerForce, { 1,1,0 }, 100);
+                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + normalForce * 10.0f, { 1,0,0 }, 100);
             }
             if (totalNeighbours == 0) continue;
 
@@ -413,8 +434,8 @@ void EnemySystem::Steering(
 
             if (drawForceLines)
             {
-                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + cohesionForce,  { 0,1,0 }, 100);
-                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + alignmentForce, { 0,1,1 }, 100);
+                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + cohesionForce * 10.0f,  { 0,1,0 }, 100);
+                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + alignmentForce * 10.0f, { 0,1,1 }, 100);
             }
 
             enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce;
@@ -565,6 +586,13 @@ void EnemySystem::Update   (
             rigidbodies,
             transforms,
             eccoPos, syncPos, delta
+        );
+
+        LineOfSightAndTargetCheck(
+            enemies,
+            rigidbodies,
+            transforms,
+            eccoPos, syncPos
         );
 
         Steering(

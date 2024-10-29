@@ -48,7 +48,7 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 		Mesh* mesh = model->meshes.at(i);
 		int materialID = mesh->materialID;
 		Material* currentMaterial = nullptr;
-
+		if (materialID >= materials.size()) continue;
 		if (materialID >= model->materialIDs || materials[materialID] == nullptr) {
 			materialID = 0;
 			std::cout << "Invalid model material ID\n";
