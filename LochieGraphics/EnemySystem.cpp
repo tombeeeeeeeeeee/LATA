@@ -75,7 +75,7 @@ void EnemySystem::Start(
 {
     if (!explosiveEnemyRenderer)
     {
-        Material* explosiveEnemyMaterial = ResourceManager::defaultMaterial;
+        Material* explosiveEnemyMaterial = ResourceManager::LoadMaterialAsset(Paths::materialSaveLocation + "Enemy 2" + Paths::materialExtension);
 
         explosiveEnemyRenderer = new ModelRenderer(
             ResourceManager::LoadModelAsset(Paths::modelSaveLocation + explosiveEnemyModel + Paths::modelExtension),
@@ -85,7 +85,7 @@ void EnemySystem::Start(
 
     if (!meleeEnemyRenderer)
     {
-        Material* meleeEnemyMaterial = ResourceManager::defaultMaterial;
+        Material* meleeEnemyMaterial = ResourceManager::LoadMaterialAsset(Paths::materialSaveLocation + "Enemy 1" + Paths::materialExtension);
 
         meleeEnemyRenderer = new ModelRenderer(
             ResourceManager::LoadModelAsset(Paths::modelSaveLocation + meleeEnemyModel + Paths::modelExtension),
@@ -95,7 +95,7 @@ void EnemySystem::Start(
 
     if (!rangedEnemyRenderer)
     {
-        Material* rangedEnemyMaterial = ResourceManager::defaultMaterial;
+        Material* rangedEnemyMaterial = ResourceManager::LoadMaterialAsset(Paths::materialSaveLocation + "Enemy 2" + Paths::materialExtension);
 
         rangedEnemyRenderer = new ModelRenderer(
             ResourceManager::LoadModelAsset(Paths::modelSaveLocation + rangedEnemyModel + Paths::modelExtension),
