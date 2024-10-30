@@ -72,7 +72,7 @@ void PhysicsSystem::CollisionCheckPhase(
 		for (auto i = rigidBodies.begin(); i != rigidBodies.end(); i++)
 		{
 			if((*i).second.isStatic) continue;
-			for (auto j = std::next(i); j != rigidBodies.end(); j++)
+			for (auto j = rigidBodies.begin(); j != rigidBodies.end(); j++)
 			{
 				if (i->second.isStatic && j->second.isStatic) continue;
 				GetCollisions(
@@ -117,6 +117,7 @@ void PhysicsSystem::GetCollisions(
 	Transform* transformA, Transform* transformB,
 	std::vector<CollisionPacket>& collisions)
 {
+	if (glm::dot(transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition(), transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition()) > minCollisonDistance * minCollisonDistance) return;
 	std::vector<Collider*> aCols = (*a->getColliders());
 	std::vector<Collider*> bCols = (*b->getColliders());
 
