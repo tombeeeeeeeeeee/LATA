@@ -286,6 +286,7 @@ toml::table Ecco::Serialise()
 		{ "exceedingSlowIntensity", exceedingSlowIntensity },
 		{ "controlState", controlState},
 		{ "speedBoost", speedBoost},
+		{ "speedBoostHPCost", speedBoostHPCost },
 		{ "speedBoostCooldown", speedBoostCooldown},
 		{ "minSpeedDamageThreshold", minSpeedDamageThreshold},
 		{ "speedDamage", speedDamage},
@@ -293,6 +294,7 @@ toml::table Ecco::Serialise()
 		{ "speedReductionAfterDamaging", speedReductionAfterDamaging},
 		{ "speedBoostDuration", speedBoostDuration},
 		{ "maxHealth", maxHealth},
+		{ "speedBoostInDirectionOfBody", speedBoostInDirectionOfBody },
 	};
 }
 
@@ -316,6 +318,7 @@ Ecco::Ecco(toml::table table)
 	exceedingSlowIntensity = Serialisation::LoadAsFloat(table["exceedingSlowIntensity"]);
 	controlState = Serialisation::LoadAsBool(table["controlState"]);
 	speedBoost = Serialisation::LoadAsFloat(table["speedBoost"]);
+	speedBoostHPCost = Serialisation::LoadAsInt(table["speedBoostHPCost"]);
 	speedBoostCooldown = Serialisation::LoadAsFloat(table["speedBoostCooldown"]);
 	minSpeedDamageThreshold = Serialisation::LoadAsFloat(table["minSpeedDamageThreshold"]);
 	speedDamage = Serialisation::LoadAsInt(table["speedDamage"]);
@@ -323,6 +326,7 @@ Ecco::Ecco(toml::table table)
 	speedReductionAfterDamaging = Serialisation::LoadAsFloat(table["speedReductionAfterDamaging"]);
 	speedBoostDuration = Serialisation::LoadAsFloat(table["speedBoostDuration"]);
 	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
+	speedBoostInDirectionOfBody = Serialisation::LoadAsInt(table["speedBoostInDirectionOfBody"]);
 }
 
 
