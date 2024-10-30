@@ -71,9 +71,9 @@ public:
 
 	int collisionItterations = 3;
 
+	float minCollisonDistance = 500.0f;
 private: 
 	RigidBody dummyRigidBody = RigidBody(0.0f,0.0f);
-
 public:
 	static bool RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>& hits, float length = FLT_MAX, int layerMask = INT32_MAX, bool ignoreTriggers = true);
 	static std::vector<Hit> CircleCast(glm::vec2 pos, float radius, int layerMask = INT32_MAX, bool ignoreTriggers = true);

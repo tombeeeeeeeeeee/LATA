@@ -688,6 +688,7 @@ void GUI::PhysicsMenu()
 		return;
 	}
 
+	ImGui::DragFloat("Mininmum Collision Distance", &scene->physicsSystem.minCollisonDistance);
 	//TODO SAVE AND LOAD
 	ImGui::Checkbox("Display All Colliders", &scene->physicsSystem.displayAllColliders);
 
