@@ -185,8 +185,6 @@ void EnemySystem::LineOfSightAndTargetCheck(
     for (auto& pair : enemies)
     {
         glm::vec2 pos = transforms[pair.first].get2DGlobalPosition();
-        pair.second.hasLOS = false;
-        pair.second.target = pos;
         float distanceToSync = FLT_MAX;
         float distanceToEcco = FLT_MAX;
 
@@ -464,7 +462,7 @@ void EnemySystem::Steering(
         glm::vec2 velocityDelta = enemyPair.second.boidVelocity - curVel;
         glm::vec2 forceThisFrame = velocityDelta / delta;
         rigidBodies[enemyPair.first].netForce += forceThisFrame;
-        enemyPair.second.aim = Utilities::Lerp(enemyPair.second.aim, rigidBodies[enemyPair.first].vel, 0.3f);
+        enemyPair.second.aim = Utilities::Lerp(enemyPair.second.aim, enemyPair.second.boidVelocity, 0.01f);
 
         float angle = atan2f(enemyPair.second.aim.x, enemyPair.second.aim.y) * 180.0f / PI;
         if (isnan(angle)) continue;
