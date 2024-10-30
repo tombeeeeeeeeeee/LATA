@@ -193,9 +193,7 @@ SceneManager::SceneManager(Scene* _scene)
 
 	scene->renderSystem.Start(
 		scene->skybox->texture,
-		&scene->shaders,
-		scene->lights.front(),
-		""
+		&scene->shaders
 	);
 
 	SwitchToWindowMode(UserPreferences::windowedStartMode);
@@ -295,18 +293,12 @@ void SceneManager::Update()
 
 	for (auto s = scene->shaders.begin(); s != scene->shaders.end(); s++)
 	{
-		if (((*s)->getFlag() & Shader::Flags::Lit)) {
-			for (auto l = scene->lights.begin(); l != scene->lights.end(); l++)
-			{
-				(*l)->ApplyToShader(*s);
-				(*s)->setVec3("viewPos", camera.transform.getPosition());
-			}
-		}
 		if ((*s)->getFlag() & Shader::Flags::VPmatrix) {
 			(*s)->Use();
 			(*s)->setMat4("vp", viewProjection);
 		}
 	}
+
 	scene->Draw();
 	scene->gui.Update();
 	ImGui::Render();

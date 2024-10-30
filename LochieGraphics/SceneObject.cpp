@@ -91,6 +91,8 @@ void SceneObject::GUI()
 	if (parts & Parts::door) { scene->doors[GUID].GUI(); }
 	if (parts & Parts::bollard) { scene->bollards[GUID].GUI(); }
 	if (parts & Parts::triggerable) { scene->triggerables[GUID].GUI(); }
+	if (parts & Parts::pointLight) { scene->pointLights[GUID].GUI(); }
+	if (parts & Parts::spotlight) { scene->spotlights[GUID].GUI(); }
 
 	if (parts & Parts::ecco)
 	{
@@ -137,6 +139,7 @@ void SceneObject::GUI()
 		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
 		AddPartGUI(health, setHealth, Health, ("Health##Add part" + tag).c_str());
 		AddPartGUI(plate, setPressurePlate, PressurePlate, ("Pressure Plate ##Add part" + tag).c_str());
+		AddPartGUI(pointLight, setPointLight, PointLight, ("Point Light##Add part" + tag).c_str());
 		AddPartGUI(collider, setCollider, PolygonCollider({
 				{ +50, +50},
 				{ +50, -50},
@@ -146,6 +149,7 @@ void SceneObject::GUI()
 		AddPartGUI(rigidbody, setRigidBody, RigidBody(), ("Rigid Body##Add part" + tag).c_str());
 		AddPartGUI(renderer, setRenderer, ModelRenderer(), ("Model Renderer##Add part" + tag).c_str());
 		AddPartGUI(spawnManager, setSpawnManager, SpawnManager, ("Spawn Manager ##Add part" + tag).c_str());
+		AddPartGUI(spotlight, setSpotlight, Spotlight, ("Spotlight ##Add part" + tag).c_str());
 		if (sync() == nullptr && scene->sync->GUID == 0) {
 			if (ImGui::MenuItem(("Sync##Add part" + tag).c_str())) {
 				setSync();
@@ -169,8 +173,10 @@ void SceneObject::GUI()
 		RemovePartGUI(health, setHealth, ("Health##Remove part" + tag).c_str());
 		RemovePartGUI(modelRenderer, setRenderer, ("Model Renderer##Remove part" + tag).c_str());
 		RemovePartGUI(plate, setPressurePlate, ("Pressure Plate##Remove part" + tag).c_str());
+		RemovePartGUI(pointLight, setPointLight, ("POint Light##Remove part" + tag).c_str());
 		RemovePartGUI(rigidBody, setRigidBody, ("Rigid Body##Remove part" + tag).c_str());
 		RemovePartGUI(spawnManager, setSpawnManager, ("Spawn Manager ##Remove part" + tag).c_str());
+		RemovePartGUI(spotlight, setSpotlight, ("Spotlight ##Remove part" + tag).c_str());
 		if (parts & Parts::sync) {
 			if (ImGui::MenuItem(("Sync##Remove part" + tag).c_str())) {
 				setSync(nullptr);
@@ -233,6 +239,12 @@ void SceneObject::TriggerCall(std::string tag, bool toggle)
 
 	if (parts & Parts::bollard)
 		scene->bollards[GUID].TriggerCall(tag, toggle);
+
+	if (parts & Parts::pointLight)
+		scene->pointLights[GUID].TriggerCall(tag, toggle);
+
+	if (parts & Parts::spotlight)
+		scene->spotlights[GUID].TriggerCall(tag, toggle);
 }
 
 toml::table SceneObject::Serialise() const
@@ -334,6 +346,8 @@ SetAndGetForPart(PressurePlate, plates, Parts::plate, PressurePlate, plate)
 SetAndGetForPart(Door, doors, Parts::door, Door, door)
 SetAndGetForPart(Bollard, bollards, Parts::bollard, Bollard, bollard)
 SetAndGetForPart(Triggerable, triggerables, Parts::triggerable, Triggerable, triggerable)
+SetAndGetForPart(PointLight, pointLights, Parts::pointLight, PointLight, pointLight)
+SetAndGetForPart(Spotlight, spotlights, Parts::spotlight, Spotlight, spotlight)
 
 void SceneObject::setCollider(Collider* collider)
 {
@@ -432,6 +446,8 @@ void SceneObject::ClearParts(unsigned int toDelete)
 	if (toDelete & parts & Parts::door)		     { scene->doors.erase(GUID);	     parts &= ~(Parts::door);}	
 	if (toDelete & parts & Parts::bollard)		 { scene->bollards.erase(GUID);	     parts &= ~(Parts::bollard);}	
 	if (toDelete & parts & Parts::triggerable)   { scene->triggerables.erase(GUID);	 parts &= ~(Parts::triggerable);}	
+	if (toDelete & parts & Parts::pointLight)    { scene->pointLights.erase(GUID);	 parts &= ~(Parts::pointLight);}	
+	if (toDelete & parts & Parts::spotlight)	 { scene->spotlights.erase(GUID);	 parts &= ~(Parts::spotlight);}	
 }
 
 void SceneObject::ClearParts()
@@ -470,6 +486,8 @@ void SceneObject::SaveAsPrefab()
 	SaveAsPrefabPart("door", door, doors);
 	SaveAsPrefabPart("bollard", bollard, bollards);
 	SaveAsPrefabPart("triggerable", triggerable, triggerables);
+	SaveAsPrefabPart("pointLight", pointLight, pointLights);
+	SaveAsPrefabPart("spotlight", spotlight, spotlights);
 	
 	if (Parts::collider & parts) {
 		table.emplace("collider", scene->colliders.at(GUID)->Serialise(GUID));
@@ -528,6 +546,16 @@ void SceneObject::LoadFromPrefab(toml::table table)
 		triggerableTag = triggerable()->triggerTag;
 	}
 
+	std::string pointLightTag = "";
+	if (parts & Parts::pointLight) {
+		pointLightTag = pointLight()->triggerTag;
+	}
+
+	std::string spotlightTag = "";
+	if (parts & Parts::spotlight) {
+		spotlightTag = spotlight()->triggerTag;
+	}
+
 	ClearParts(~Parts::spawnManager);
 	
 	unsigned long long originalGUID = GUID;
@@ -551,37 +579,48 @@ void SceneObject::LoadFromPrefab(toml::table table)
 		if (exitLevel != "") {
 			exitElevator()->levelToLoad = exitLevel;
 		}
-	};
+	}
 	if (intendedParts & Parts::spawnManager) {
 		if (!hadSpawnManager) {
 			setSpawnManager(new SpawnManager(*table["spawnManager"].as_table()));
 		}
-	};
-	
+	}
 	if (intendedParts & Parts::plate) {
 		setPressurePlate(new PressurePlate(*table["plate"].as_table()));
 		if (pressurePlateTag != "") {
 			plate()->triggerTag = pressurePlateTag;
 		}
-	};
+	}
 	if (intendedParts & Parts::door) {
 		setDoor(new Door(*table["door"].as_table()));
 		if (doorTag != "") {
 			door()->triggerTag = doorTag;
 		}
-	};
+	}
 	if (intendedParts & Parts::bollard) {
 		setBollard(new Bollard(*table["bollard"].as_table()));
 		if (bollardTag != "") {
 			bollard()->triggerTag = bollardTag;
 		}
-	};
+	}
 	if (intendedParts & Parts::triggerable) {
 		setTriggerable(new Triggerable(*table["triggerable"].as_table()));
 		if (triggerableTag != "") {
 			triggerable()->triggerTag = triggerableTag;
 		}
-	};
+	}
+	if (intendedParts & Parts::pointLight) {
+		setPointLight(new PointLight(*table["pointLight"].as_table()));
+		if (pointLightTag != "") {
+			pointLight()->triggerTag = pointLightTag;
+		}
+	}
+	if (intendedParts & Parts::spotlight) {
+		setSpotlight(new Spotlight(*table["spotlight"].as_table()));
+		if (spotlightTag != "") {
+			spotlight()->triggerTag = spotlightTag;
+		}
+	}
 
 	if (intendedParts & Parts::collider) {
 		setCollider(Collider::Load(*table["collider"].as_table()));

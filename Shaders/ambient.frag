@@ -18,6 +18,7 @@ uniform mat4 invV;
 uniform vec3 lightDirection;
 uniform vec3 lightColour;
 uniform vec3 camPos;
+uniform vec3 cameraDelta;
 
 vec3 viewDirection;
 vec3 F0;
@@ -52,11 +53,11 @@ void main()
     screenPos = clipPos.xyz / clipPos.w;
     fragPos = (invV * vec4(screenPos, 1.0)).xyz;
 
-    viewDirection = normalize(fragPos - camPos);
+    viewDirection = normalize(fragPos - (camPos - cameraDelta * 0.9));
 
     if(depthValue >= 1.0)
     {
-        FragColour = texture(skybox, viewDirection);
+        FragColour = texture(skybox,  normalize(fragPos - camPos));
     }
     else
     {

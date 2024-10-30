@@ -8,18 +8,10 @@ InputTest::InputTest()
 
 void InputTest::Start()
 {
-	lights.insert(lights.end(), {
-	&directionalLight,
-	&spotlight,
-	&pointLights[0],
-	&pointLights[1],
-	&pointLights[2],
-	&pointLights[3],
-	});
-
 	input.Initialise();
 	input.ShowAllControllerSlotStatuses();
-
+	directionalLight = DirectionalLight
+	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
 	input.AddKeyboard();
 }
 

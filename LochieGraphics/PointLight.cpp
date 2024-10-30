@@ -7,77 +7,44 @@
 #include "EditorGUI.h"
 #include "Serialisation.h"
 
-PointLight::PointLight(glm::vec3 _colour, glm::vec3 _position, float _constant, float _linear, float _quadratic, int _index) :
-	Light(_colour),
-	position(_position),
-	constant(1.0f),
-	linear(_linear),
-	quadratic(_quadratic),
-	index(_index)
-{
-	SetRange(_linear, _quadratic);
-}
 
-PointLight::PointLight(glm::vec3 _colour, glm::vec3 _position, float _range, int _index) :
-	Light(_colour),
-	position(_position),
-	range(_range),
-	index(_index)
-{
-	SetRange(range);
-}
 
-void PointLight::ApplyToShader(Shader* shader)
+PointLight::PointLight(toml::table table)
 {
-	shader->Use();
-	std::string i = std::to_string(index);
-	shader->setVec3("pointLights[" + i + "].position", position);
-	shader->setVec3("pointLights[" + i + "].colour", colour);
-	shader->setFloat("pointLights[" + i + "].constant", constant);
-	shader->setFloat("pointLights[" + i + "].linear", linear);
-	shader->setFloat("pointLights[" + i + "].quadratic", quadratic);
+	quadratic = Serialisation::LoadAsFloat(table["quadratic"]);
+	linear = Serialisation::LoadAsFloat(table["linear"]);
+	range = Serialisation::LoadAsFloat(table["range"]);
+	colour = Serialisation::LoadAsVec3(table["colour"]);
+	triggerTag = Serialisation::LoadAsString(table["triggerTag"]);
+	canBeTriggered = Serialisation::LoadAsBool(table["canBeTriggered"]);
+	on = Serialisation::LoadAsBool(table["on"]);
 }
 
 void PointLight::GUI()
 {
-	Light::GUI();
 	std::string tag = Utilities::PointerToString(this);
-	ImGui::DragFloat("Projection FOV", &projectionFov, 0.1f);
-	ImGui::DragFloat3(("Position##" + tag).c_str(), &position[0], 0.01f);
-	//Tom Changed this, feel free to set it back.
-	if (ImGui::DragFloat(("Range##" + tag).c_str(), &range, 0.1f))
-		SetRange(range);
-	//ImGui::SliderFloat(("Constant##" + tag).c_str(),  &constant,    0.f, 1.f);
-	//ImGui::SliderFloat(("Linear##" + tag).c_str(),    &linear,      0.f, 1.f);
-	//ImGui::SliderFloat(("Quadratic##" + tag).c_str(), &quadratic,   0.f, 1.f);
+	if (ImGui::CollapsingHeader(("Point Light##" + tag).c_str()))
+	{
+		ImGui::Indent();
+		std::string tag = Utilities::PointerToString(this);
+		ImGui::Checkbox(("On##" + tag).c_str(), &on);
 
-	ImGui::BeginDisabled();
-	ImGui::DragInt(("Index##" + tag).c_str(), &index, 0.01f, 0, 4); //TODO: Replace 4 with the correct number of lights
-	ImGui::EndDisabled();
+		ImGui::ColorPicker3(("Light Colour##" + tag).c_str(), &colour[0]);
+		float _range = 100.0f * range;
+		if (ImGui::DragFloat(("Range##" + tag).c_str(), &_range, 0.1f))
+			SetRange(_range);
+
+		ImGui::InputText(("Trigger ID##" + tag).c_str(), &triggerTag);
+		ImGui::Checkbox(("Can Be Triggered##" + tag).c_str(), &canBeTriggered);
+		ImGui::Unindent();
+	}
 }
 
-glm::vec3 PointLight::getPos() const
-{
-	return position;
-}
-
-glm::mat4 PointLight::getShadowProjection() const
-{
-	// TODO:
-	//return glm::ortho(-projectionWidth, projectionWidth, -projectionWidth, projectionWidth, shadowNearPlane, shadowFarPlane);
-
-	return glm::perspective(glm::radians(projectionFov), (float)shadowTexWidth / (float)shadowTexHeight, shadowNearPlane, shadowFarPlane);
-}
-
-glm::mat4 PointLight::getShadowView() const
-{
-	return glm::lookAt(getPos(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.0f, 0.f));
-}
 
 void PointLight::SetRange(float _range)
 {
-	range = _range;
-	constant = 1.0f;
+	range = _range/100.0f;
+
 	if (range <= 7)
 	{
 		linear = 1 - range * 0.3f / 7;
@@ -252,20 +219,27 @@ void PointLight::SetRange(float _linear, float _quadratic)
 	}
 }
 
-toml::table PointLight::Serialise() const
+toml::table PointLight::Serialise(unsigned long long guid) const
 {
-	auto table = Light::Serialise();
-	table.emplace("position", Serialisation::SaveAsVec3(position));
-	table.emplace("constant", constant);
-	table.emplace("linear", linear);
-	table.emplace("quadratic", quadratic);
-	table.emplace("range", range);
-	table.emplace("index", index);
-	table.emplace("projectionFov", projectionFov);
-	return table;
+	return toml::table{
+		{"guid", Serialisation::SaveAsUnsignedLongLong(guid)},
+		{ "quadratic", quadratic },
+		{ "linear", linear },
+		{ "range", range },
+		{ "colour", Serialisation::SaveAsVec3(colour) },
+		{ "triggerTag", triggerTag },
+		{ "on", on },
+		{ "canBeTriggered", canBeTriggered },
+	};
 }
 
-Light::Type PointLight::getType() const
+void PointLight::TriggerCall(std::string tag, bool toggle)
 {
-	return Light::Type::point;
+	if (canBeTriggered)
+	{
+		if (tag == triggerTag)
+		{
+			on = toggle;
+		}
+	}
 }

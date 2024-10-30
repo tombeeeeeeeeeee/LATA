@@ -386,12 +386,7 @@ void GUI::LightMenu()
 		return;
 	}
 
-	if (ImGui::SliderInt("Light selected", &lightSelectedIndex, 0, scene->lights.size() ? ((int)(scene->lights.size() - 1)) : 0)) {
-		lightSelectedIndex = glm::clamp(lightSelectedIndex, 0, scene->lights.size() ? ((int)(scene->lights.size() - 1)) : 0);
-	}
-	if (lightSelectedIndex < scene->lights.size() /*&& scene->lights[lightSelectedIndex] != nullptr*/) {
-		scene->lights[lightSelectedIndex]->GUI();
-	}
+	scene->directionalLight.GUI();
 
 	ImGui::End();
 }
@@ -433,14 +428,14 @@ void GUI::HierarchyMenu()
 		ImGui::CheckboxFlags("Model Renderer##Parts Filter", &partsFilter, Parts::modelRenderer);
 		ImGui::CheckboxFlags("Animator##Parts Filter", &partsFilter, Parts::animator);
 		ImGui::CheckboxFlags("RigidBody##Parts Filter", &partsFilter, Parts::rigidBody);
-		ImGui::CheckboxFlags("Light##Parts Filter", &partsFilter, Parts::light);
+		ImGui::CheckboxFlags("PointLight##Parts Filter", &partsFilter, Parts::pointLight);
 		ImGui::CheckboxFlags("Collider##Parts Filter", &partsFilter, Parts::collider);
 		ImGui::CheckboxFlags("Ecco##Parts Filter", &partsFilter, Parts::ecco);
 		ImGui::CheckboxFlags("Sync##Parts Filter", &partsFilter, Parts::sync);
 		ImGui::CheckboxFlags("Health##Parts Filter", &partsFilter, Parts::health);
 		ImGui::CheckboxFlags("Enemy##Parts Filter", &partsFilter, Parts::enemy);
 		ImGui::CheckboxFlags("Exit Elevator##Parts Filter", &partsFilter, Parts::exitElevator);
-		ImGui::CheckboxFlags("Spikes##Parts Filter", &partsFilter, Parts::spikes);
+		ImGui::CheckboxFlags("SpotLight##Parts Filter", &partsFilter, Parts::spotlight);
 		ImGui::CheckboxFlags("Plate##Parts Filter", &partsFilter, Parts::plate);
 		ImGui::CheckboxFlags("Spawn Manager##Parts Filter", &partsFilter, Parts::spawnManager);
 		ImGui::CheckboxFlags("Door##Parts Filter", &partsFilter, Parts::door);

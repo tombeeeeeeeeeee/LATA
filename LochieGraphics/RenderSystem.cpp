@@ -26,9 +26,7 @@ LineRenderer RenderSystem::debugLines;
 
 void RenderSystem::Start(
     unsigned int _skyboxTexture,
-    std::vector<Shader*>* _shaders,
-    Light* _shadowCaster,
-    std::string paintStrokeTexturePath
+    std::vector<Shader*>* _shaders
 )
 {
     if (SCREEN_WIDTH == 0)
@@ -52,7 +50,6 @@ void RenderSystem::Start(
     DeferredSetup(); 
     AmibentPassSetup();
 
-    shadowCaster = _shadowCaster;
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
@@ -66,18 +63,12 @@ void RenderSystem::Start(
     screenQuad = ResourceManager::LoadMesh();
     screenQuad->InitialiseQuad(1.f, 0.0f);
 
-    paintStrokeTexture = nullptr;//ResourceManager::LoadTexture(paintStrokeTexturePath, Texture::Type::paint);
-
     (*shaders)[ShaderIndex::shadowDebug]->Use();
     (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
 
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Initialise();
     debugLines.Initialise();
-
-    shadowCaster = _shadowCaster;
-    shadowCaster->Initialise();
-
 
     ResourceManager::BindFlaggedVariables();
 
@@ -328,7 +319,6 @@ void RenderSystem::Update(
     if (SCREEN_WIDTH <= 64 || SCREEN_HEIGHT <= 64) { return; }
 
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
-    shadowCaster->shadowFrameBuffer->Load();
     unsigned int deferredAttachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
     unsigned int ambientAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
@@ -336,16 +326,6 @@ void RenderSystem::Update(
 
     viewMatrix = camera->GetViewMatrix();
 
-    //TODO: TO make more flexible?
-    // Render depth of scene to texture (from light's perspective)
-    glm::mat4 lightSpaceMatrix;
-    lightSpaceMatrix = shadowCaster->getShadowViewProjection();
-
-    (*shaders)[shadowMapDepth]->Use();
-    (*shaders)[shadowMapDepth]->setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-    glViewport(0, 0, shadowCaster->shadowTexWidth, shadowCaster->shadowTexHeight);
-    shadowCaster->shadowFrameBuffer->Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //DrawAllRenderers(animators, transforms, renders, animatedRenderered, (*shaders)[shadowMapDepth]);
@@ -535,11 +515,6 @@ void RenderSystem::ActivateFlaggedVariables(
 
         glActiveTexture(GL_TEXTURE0 + 11);
         glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
-    }
-    if (flag & Shader::Flags::Painted)
-    {
-        glActiveTexture(GL_TEXTURE0 + 10);
-        glBindTexture(GL_TEXTURE_2D, paintStrokeTexture->GLID);
     }
 }
 
@@ -837,10 +812,11 @@ void RenderSystem::RenderAmbientPass()
     ambientShader->setMat4("invP", glm::inverse(projection));
     ambientShader->setMat4("invV", glm::inverse(viewMatrix));
 
-    DirectionalLight* dirLight = (DirectionalLight*)SceneManager::scene->lights[0];
-    ambientShader->setVec3("lightDirection", dirLight->direction);
-    ambientShader->setVec3("lightColour", dirLight->colour);
+    DirectionalLight dirLight = SceneManager::scene->directionalLight;
+    ambientShader->setVec3("lightDirection", dirLight.direction);
+    ambientShader->setVec3("lightColour", dirLight.colour);
     ambientShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
+    ambientShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, depthBuffer);

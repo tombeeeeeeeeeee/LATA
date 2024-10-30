@@ -112,11 +112,11 @@ void Scene::DeleteAllSceneObjectsAndParts()
 	partsChecker &= ~Parts::bollard;
 
 	// TODO: Don't like how just setting these flags here but no containers atm
-	partsChecker &= ~Parts::spikes;
+	spotlights.clear();
+	partsChecker &= ~Parts::spotlight;
 
-
-	//lights.clear();
-	partsChecker &= ~Parts::light;
+	pointLights.clear();
+	partsChecker &= ~Parts::pointLight;
 
 	partsChecker &= ~Parts::ecco;
 	partsChecker &= ~Parts::sync;
@@ -167,6 +167,8 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 	SavePart(doors);
 	SavePart(bollards);
 	SavePart(triggerables);
+	SavePart(pointLights);
+	SavePart(spotlights);
 
 	return toml::table{
 		{ "SceneObjects", savedSceneObjects },
@@ -185,6 +187,8 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 		{ "Sync", sync->Serialise() },
 		{ "Ecco", ecco->Serialise() },
 		{ "Triggerables", savedtriggerables},
+		{ "PointLights", savedpointLights},
+		{ "Spotlights", savedspotlights},
 	};
 
 	// TODO: Make sure save all parts, put a checker here
@@ -221,6 +225,8 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(doors, "Doors", Door);
 	LoadPart(bollards, "Bollards", Bollard);
 	LoadPart(triggerables, "Triggerables", Triggerable);
+	LoadPart(pointLights, "PointLights", PointLight);
+	LoadPart(spotlights, "Spotlights", Spotlight);
 	// TODO: Fix for colliders
 
 	toml::array* loadingColliders = data["Colliders"].as_array(); 
@@ -292,63 +298,63 @@ void Scene::EnsureAllPartsHaveSceneObject()
 
 void Scene::InitialisePlayers()
 {
-	//ecco
-	SceneObject* eccoSO = sceneObjects[ecco->GUID];
-	if (!eccoSO->health()) eccoSO->setHealth(new Health());
-
-	if (!eccoSO->rigidbody()) eccoSO->setRigidBody(new RigidBody(1.0f, 1.0f));
-	if (eccoSO->rigidbody()->colliders.size() < 1)
-	{
-		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
-		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
-	}
-	else if (eccoSO->rigidbody()->colliders.size() < 2)
-	{
-		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
-	}
-
-	eccoSO->rigidbody()->colliders[0]->collisionLayer = (int)CollisionLayers::ecco;
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->verts = {
-		{33.0f, 0.0f}
-	};
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->radius = 75.0f;
-
-	eccoSO->rigidbody()->colliders[1]->collisionLayer = (int)CollisionLayers::reflectiveSurface;
-
-
-	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { ecco->OnCollision(collision); });
-
-	eccoSO->rigidbody()->vel = {0.0f, 0.0f};
-
-	if (!eccoSO->renderer()) eccoSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoModel(Posed)" + Paths::modelExtension),(unsigned long long) 0));
-	else eccoSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoModel(Posed)" + Paths::modelExtension);
-	eccoSO->renderer()->setMaterialTint({ 0.0f, 102.0f, 204.0f });
-	
-	//sync
+	////ecco
+	//SceneObject* eccoSO = sceneObjects[ecco->GUID];
+	//if (!eccoSO->health()) eccoSO->setHealth(new Health());
+	//
+	//if (!eccoSO->rigidbody()) eccoSO->setRigidBody(new RigidBody(1.0f, 1.0f));
+	//if (eccoSO->rigidbody()->colliders.size() < 1)
+	//{
+	//	eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
+	//	eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
+	//}
+	//else if (eccoSO->rigidbody()->colliders.size() < 2)
+	//{
+	//	eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
+	//}
+	//
+	//eccoSO->rigidbody()->colliders[0]->collisionLayer = (int)CollisionLayers::ecco;
+	//((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->verts = {
+	//	{33.0f, 0.0f}
+	//};
+	//((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->radius = 75.0f;
+	//
+	//eccoSO->rigidbody()->colliders[1]->collisionLayer = (int)CollisionLayers::reflectiveSurface;
+	//
+	//
+	//eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { ecco->OnCollision(collision); });
+	//
+	//eccoSO->rigidbody()->vel = {0.0f, 0.0f};
+	//
+	//if (!eccoSO->renderer()) eccoSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoModel(Posed)" + Paths::modelExtension),(unsigned long long) 0));
+	//else eccoSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoModel(Posed)" + Paths::modelExtension);
+	//eccoSO->renderer()->setMaterialTint({ 0.0f, 102.0f, 204.0f });
+	//
+	////sync
 	SceneObject* syncSO = sceneObjects[sync->GUID];
-	if (!syncSO->health()) syncSO->setHealth(new Health());
+	//if (!syncSO->health()) syncSO->setHealth(new Health());
 	syncSO->health()->currHealth = sync->currHealth;
-	syncSO->health()->setMaxHealth(sync->maxHealth);
-
-	if (!syncSO->rigidbody()) syncSO->setRigidBody(new RigidBody(1.0f, 1.0f));
-	if (syncSO->rigidbody()->colliders.size() < 1)
-	{
-		syncSO->rigidbody()->colliders.push_back(new PolygonCollider());
-	}
-
-	syncSO->rigidbody()->colliders[0]->collisionLayer = (int)CollisionLayers::sync;
-	((PolygonCollider*)syncSO->rigidbody()->colliders[0])->verts = {
-			{0.0f, 0.0f}
-	};
-
-	((PolygonCollider*)syncSO->rigidbody()->colliders[0])->radius = 40.0f;
-
+	//syncSO->health()->setMaxHealth(sync->maxHealth);
+	//
+	//if (!syncSO->rigidbody()) syncSO->setRigidBody(new RigidBody(1.0f, 1.0f));
+	//if (syncSO->rigidbody()->colliders.size() < 1)
+	//{
+	//	syncSO->rigidbody()->colliders.push_back(new PolygonCollider());
+	//}
+	//
+	//syncSO->rigidbody()->colliders[0]->collisionLayer = (int)CollisionLayers::sync;
+	//((PolygonCollider*)syncSO->rigidbody()->colliders[0])->verts = {
+	//		{0.0f, 0.0f}
+	//};
+	//
+	//((PolygonCollider*)syncSO->rigidbody()->colliders[0])->radius = 40.0f;
+	//
 	syncSO->rigidbody()->vel = { 0.0f, 0.0f };
-
-	if (!syncSO->renderer()) syncSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension), (unsigned long long) 0));
-	else syncSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension);
-	syncSO->renderer()->setMaterialTint({0.0f, 204.0f, 0.0f});
-	sync->barrelOffset = { -75.0f, 70.0f, 5.0f };
+	//
+	//if (!syncSO->renderer()) syncSO->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension), (unsigned long long) 0));
+	//else syncSO->renderer()->model = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_SyncBlockout_RevisedScale" + Paths::modelExtension);
+	//syncSO->renderer()->setMaterialTint({0.0f, 204.0f, 0.0f});
+	//sync->barrelOffset = { -75.0f, 70.0f, 5.0f };
 
 	for (int i = 1; i < (int)CollisionLayers::count; i *= 2)
 	{

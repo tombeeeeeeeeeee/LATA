@@ -46,9 +46,7 @@ public:
 
     void Start(
         unsigned int _skyboxTexture,
-        std::vector<Shader*>* _shaders,
-        Light* shadowCaster,
-        std::string paintStrokeTexturePath
+        std::vector<Shader*>* _shaders
     );
 
     void SetIrradianceMap(unsigned int skybox);

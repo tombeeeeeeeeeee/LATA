@@ -1,20 +1,36 @@
 #pragma once
-#include "PointLight.h"
+#include "Maths.h"
+#include <string>
 
-class Spotlight : public PointLight {
+namespace toml {
+    inline namespace v3 {
+        class table;
+    }
+}
+class Spotlight{
 public:
+    float linear = 0;
+    float quadratic = 0;
+    glm::vec3 colour = { 0.0f,0.0f,0.0f };
+
+    bool on = true;
+    bool canBeTriggered = false;
+    std::string triggerTag = "";
+
+    float range = 1;
+
     glm::vec3 direction;
     float cutOff;
     float outerCutOff;
-    Spotlight(glm::vec3 _colour, glm::vec3 _position, float _constant, float _linear, float _quadratic, glm::vec3 _direction, float _cutOff, float _outerCutOff);
-    Spotlight(glm::vec3 _colour, glm::vec3 _position, float _range, glm::vec3 _direction, float _cutOff, float _outerCutOff);
-    void ApplyToShader(Shader* shader) override;
-    void GUI() override;
 
-    //glm::mat4 getShadowProjection() const override;
-    //glm::mat4 getShadowView() const override;
-    //glm::mat4 getShadowViewProjection() const override;
-    toml::table Serialise() const override;
+    void SetRange(float range);
+    void SetRange(float linear, float quadratic);
 
-    Type getType() const;
+    Spotlight() {};
+    Spotlight(toml::table table);
+    void GUI();
+
+    void TriggerCall(std::string tag, bool toggle);
+
+    toml::table Serialise(unsigned long long guid)const;
 };

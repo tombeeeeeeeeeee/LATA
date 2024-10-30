@@ -25,18 +25,13 @@ TestScene::TestScene() :
 	tires      (new SceneObject(this, "tires")),
 	aniTest    (new SceneObject(this, "ani Test"))
 {
-	lights = std::vector<Light*>{
-		&directionalLight,
-		&pointLights[0],
-		&pointLights[1],
-		&pointLights[2],
-		&pointLights[3],
-		&spotlight,
-	};
+
 }
 
 void TestScene::Start()
 {
+	directionalLight = DirectionalLight
+	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
 	// Shaders
 	Shader* lightCubeShader = ResourceManager::LoadShader("shaders/lightCube.vert", "shaders/lightCube.frag", Shader::Flags::VPmatrix);
 	Shader* animateShader = ResourceManager::LoadShader("shaders/animate.vert", "shaders/animate.frag", Shader::Flags::Animated);
@@ -224,11 +219,6 @@ void TestScene::Update(float delta)
 
 
 	messengerInterface.Update();
-
-	pointLights[0].position.x = 1.5f * sinf((float)glfwGetTime() * 2.f);
-	lightCube->transform()->setPosition(pointLights[0].position);
-	spotlight.position = camera->transform.getPosition();
-	spotlight.direction = camera->transform.forward();
 }
 
 void TestScene::Draw()
