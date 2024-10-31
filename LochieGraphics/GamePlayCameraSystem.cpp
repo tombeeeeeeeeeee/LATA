@@ -103,7 +103,7 @@ void GameplayCameraSystem::GUI()
 		file.close();
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Load##CameraySystems")) {
+	if (ImGui::Button("Load##CameraSystem")) {
 		if (selected)
 		{
 			std::ifstream file(Paths::systemPath + filename + Paths::cameraSystemExtension);
@@ -116,7 +116,7 @@ void GameplayCameraSystem::GUI()
 		}
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Save as"))
+	if (ImGui::Button("Save as##CameraSystem"))
 	{
 		saveAs = true;
 	}

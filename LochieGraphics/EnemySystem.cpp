@@ -273,7 +273,7 @@ void EnemySystem::AbilityCheck(
                 else
                 {
                     enemyPair.second.inAbility = false;
-                    glm::vec3 f = transforms[enemyPair.first].forward();
+                    glm::vec3 f = transforms[enemyPair.first].left();
 
                     hits = PhysicsSystem::CircleCast(enemyPos + glm::vec2(f.x * meleeEnemyColliderRadius, f.z * meleeEnemyColliderRadius), punchRadius, (int)CollisionLayers::sync | (int)CollisionLayers::ecco);
                     for (auto& hit : hits)

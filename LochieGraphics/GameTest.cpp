@@ -71,7 +71,7 @@ void GameTest::Start()
 	h->setHealth(new Health());
 	r->setEcco(ecco);
 	r->setHealth(new Health());
-	ecco->wheelDirection = {r->transform()->forward().x, r->transform()->forward().y};
+	ecco->wheelDirection = {r->transform()->left().x, r->transform()->left().y};
 
 	level.path = "level.png";
 	level.Load();
@@ -257,8 +257,8 @@ void GameTest::Update(float delta)
 	lines.FinishLineLoop();
 	glm::vec3 otherPos1 = extraPoints[4] + glm::vec3(ecco->wheelDirection.x, 0.0f, ecco->wheelDirection.y) * 0.04f;
 	glm::vec3 otherPos2 = extraPoints[5] + glm::vec3(ecco->wheelDirection.x, 0.0f, ecco->wheelDirection.y) * 0.04f;
-	glm::vec3 otherPos3 = extraPoints[6] - r->transform()->forward() * 0.04f;
-	glm::vec3 otherPos4 = extraPoints[7] - r->transform()->forward() * 0.04f;
+	glm::vec3 otherPos3 = extraPoints[6] - r->transform()->left() * 0.04f;
+	glm::vec3 otherPos4 = extraPoints[7] - r->transform()->left() * 0.04f;
 	lines.DrawLineSegment(extraPoints[4], otherPos1);
 	lines.DrawLineSegment(extraPoints[5], otherPos2);
 	lines.DrawLineSegment(extraPoints[6], otherPos3);

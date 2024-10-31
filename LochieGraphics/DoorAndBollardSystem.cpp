@@ -59,7 +59,7 @@ void DoorAndBollardSystem::Update(
 		moveAmount = glm::clamp(moveAmount, 0.0f, 1.0f) * flip;
 		moveAmount *= doorPair.second.amountToMove;
 		transforms[doorPair.first].setPosition(
-			doorPair.second.pos + transforms[doorPair.first].forward() * moveAmount
+			doorPair.second.pos + transforms[doorPair.first].left() * moveAmount
 		);
 	}
 	for (auto& bolPair : bollards)

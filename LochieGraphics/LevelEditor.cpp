@@ -248,7 +248,7 @@ void LevelEditor::Start()
 	rRb = &rigidBodies[ecco->GUID];
 	syncSo->setSync(sync);
 	eccoSo->setEcco(ecco);
-	ecco->wheelDirection = { eccoSo->transform()->forward().x, eccoSo->transform()->forward().y };
+	ecco->wheelDirection = { eccoSo->transform()->left().x, eccoSo->transform()->left().y };
 
 	gameCamSystem.cameraPositionDelta = { -150.0f, 100.0f, 150.0f };
 
