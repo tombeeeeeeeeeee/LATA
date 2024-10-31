@@ -485,6 +485,12 @@ void SceneManager::ProcessKeyboardInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::RIGHT, deltaTime); }
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::UP, deltaTime); }
 
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+		if (scene->gui.getSelected()) {
+			camera.transform.LookAt(scene->gui.getSelected()->transform()->getGlobalPosition(), {0.0f, 1.0f, 0.0f});
+		}
+	}
+
 	if ((glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) != camera.artKeyDown) {
 		camera.artKeyDown = !camera.artKeyDown;
 		if (camera.state == Camera::State::artEditorMode) {

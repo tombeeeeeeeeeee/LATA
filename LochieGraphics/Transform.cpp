@@ -150,6 +150,11 @@ glm::mat4 Transform::getGlobalMatrix() const
 	return globalMatrix;
 }
 
+void Transform::setRotation(glm::vec3 _euler)
+{
+	setEulerRotation(_euler);
+}
+
 void Transform::setEulerRotation(glm::vec3 _euler)
 {
 	euler = _euler;
@@ -225,6 +230,17 @@ glm::vec3 Transform::down() const
 glm::vec3 Transform::left() const
 {
 	return glm::vec3(glm::normalize(globalMatrix[0]));
+}
+
+void Transform::LookAt(glm::vec3 point, glm::vec3 up)
+{
+	glm::vec3 direction = glm::normalize(getGlobalPosition() - point);
+	glm::quat rotAsQuat = glm::quatLookAt(direction, up);
+	glm::vec3 rotAsEuler = glm::degrees(glm::eulerAngles(rotAsQuat));
+	if (glm::isnan(rotAsEuler.x)) {
+		return;
+	}
+	setEulerRotation(rotAsEuler);
 }
 
 void Transform::UpdateGlobalMatrixCascading()

@@ -137,10 +137,10 @@ bool Camera::InOrthoMode() const
 
 void Camera::Rotate(float x, float y)
 {
-    glm::vec3 euler = { -y, -x, 0.0f };
+    glm::quat temp1 = glm::angleAxis(-x, glm::vec3{ 0.0f, 1.0f, 0.0f });
+    glm::quat temp2 = glm::angleAxis(y, transform.right());
 
-    transform.setEulerRotation(transform.getEulerRotation() + euler);
-
+    transform.setRotation(temp1 * temp2 * transform.getRotation());
 }
 
 toml::table Camera::Serialise() const

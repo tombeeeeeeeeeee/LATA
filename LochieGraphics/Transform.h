@@ -38,6 +38,8 @@ public:
 	glm::quat getRotation() const;
 	glm::vec3 getEulerRotation() const;
 	void setRotation(glm::quat _quat);
+	// Only made this overload because glm can cast vec3 to quat
+	void setRotation(glm::vec3 _euler);
 	void setEulerRotation(glm::vec3 _euler);
 
 	glm::vec3 getScale();
@@ -55,6 +57,8 @@ public:
 	glm::vec3 backward() const;
 	glm::vec3 down() const;
 	glm::vec3 left() const;
+
+	void LookAt(glm::vec3 point, glm::vec3 up);
 
 	void UpdateGlobalMatrixCascading();
 

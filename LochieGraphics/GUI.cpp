@@ -184,23 +184,6 @@ void GUI::Update()
 			t->setEulerRotation(rot);
 			t->setScale(scl);
 		}
-
-		if (!io.WantCaptureKeyboard) {
-			// TODO: Customisable key
-			if (glfwGetKey(SceneManager::window, GLFW_KEY_L)) {
-				Transform* t = &SceneManager::scene->camera->transform;
-				glm::mat4 newCam = glm::lookAt(t->getGlobalPosition(), sceneObjectSelected->transform()->getGlobalPosition(), { 0.0f, 1.0f, 0.0f });
-				// TODO: Own function would be good
-				glm::vec3 pos = { 0.0f, 0.0f, 0.0f };
-				glm::vec3 rot = { 0.0f, 0.0f, 0.0f };
-				glm::vec3 scl = {};
-				// TODO: Use own function
-				ImGuizmo::DecomposeMatrixToComponents(&newCam[0][0], &pos.x, &rot.x, &scl.x);
-				//t->setPosition(pos);
-				t->setEulerRotation(rot);
-				//t->setScale(scl);
-			}
-		}
 	}
 }
 
