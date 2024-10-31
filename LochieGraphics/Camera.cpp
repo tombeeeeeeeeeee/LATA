@@ -26,19 +26,18 @@ Camera::Camera() : Camera({ 0.f, 0.f, 0.f }, { 0.f, 1.f, 0.f }, -0.1f, 0.0f, 2.5
 }
 
 
-// TODO: this could be written without the lookAt function
-// TODO: Store postition and rotation in a matrix, could use the Transform class
 glm::mat4 Camera::GetViewMatrix() const
 {
-    return glm::lookAt(transform.getPosition(), transform.getPosition() + transform.forward(), transform.up()); // TODO: Should be the inverse of the camera matrix
+    return glm::lookAt(transform.getPosition(), transform.getPosition() + transform.forward(), transform.up());
 
+    // Note: by using inverse, the camera will be facing the opposite direction and will mean that the camera is facing away from the way it is rotated
     //return glm::inverse(transform.getGlobalMatrix());
-    //return glm::lookAt(position, position + front, up); // TODO: Should be the inverse of the camera matrix
 }
 
 void Camera::ProcessKeyboard(Direction direction, float deltaTime)
 {
     if (state == editorMode) {
+        // TODO: maybe pass in the cam move speed in as a parametre
         float velocity = UserPreferences::camMove * deltaTime;
         switch (direction)
         {
@@ -138,15 +137,10 @@ bool Camera::InOrthoMode() const
 
 void Camera::Rotate(float x, float y)
 {
-    glm::vec3 euler = { 0.0f, -x, y };
+    glm::vec3 euler = { -y, -x, 0.0f };
 
-    glm::vec3 rotationEuler = glm::vec3(euler.x, euler.y, euler.z);
+    transform.setEulerRotation(transform.getEulerRotation() + euler);
 
-    glm::quat quatZ = glm::angleAxis(rotationEuler.z, transform.right());
-    glm::quat quatY = glm::angleAxis(rotationEuler.y, glm::vec3(0, 1, 0));
-    glm::quat quatX = glm::angleAxis(rotationEuler.x, glm::vec3(1, 0, 0));
-
-    transform.setRotation(glm::normalize(quatX * quatY * quatZ) * transform.getRotation());
 }
 
 toml::table Camera::Serialise() const
