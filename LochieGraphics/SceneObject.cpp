@@ -211,6 +211,43 @@ void SceneObject::MenuGUI()
 
 }
 
+void SceneObject::MultiMenuGUI(std::set<SceneObject*> multiSelectedSceneObjects, bool* setNullSelect)
+{
+	std::string tag = "MultipleSelectRightClickSceneObjectMenu";
+
+	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
+		for (auto i : multiSelectedSceneObjects)
+		{
+			SceneManager::scene->DeleteSceneObject(i->GUID);
+		}
+		*setNullSelect = true;
+	}
+	if (ImGui::MenuItem(("Save Prefab Origins##RightClick" + tag).c_str())) {
+		for (auto i : multiSelectedSceneObjects)
+		{
+			if (i->prefabStatus == SceneObject::PrefabStatus::prefabOrigin) {
+				i->SaveAsPrefab();
+			}
+		}
+	}
+	if (ImGui::MenuItem(("Refresh Prefab Instances##RightClick" + tag).c_str())) {
+		for (auto i : multiSelectedSceneObjects) {
+			if (i->prefabStatus == SceneObject::PrefabStatus::prefabInstance) {
+				i->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(i->prefabBase));
+			}
+		}
+	}
+	if (ImGui::MenuItem(("Replace with Prefab##RightClick" + tag).c_str())) {
+		auto prefab = PrefabManager::loadedPrefabOriginals.find(PrefabManager::selectedPrefab);
+		if (prefab != PrefabManager::loadedPrefabOriginals.end()) {
+			for (auto i : multiSelectedSceneObjects) {
+				i->LoadFromPrefab(prefab->second);
+			}
+		}
+	}
+	ImGui::EndPopup();
+}
+
 void SceneObject::DebugDraw()
 {
 	if (parts & Parts::rigidBody)
@@ -221,6 +258,12 @@ void SceneObject::DebugDraw()
 	{
 		scene->colliders[GUID]->DebugDraw(&scene->transforms[GUID]);
 	}
+
+	float s = 300.0f;
+	Transform* t = transform();
+	RenderSystem::debugLines.DrawLineSegment(t->getGlobalPosition(), t->getGlobalPosition() + t->right() * s, { 1, 0, 0 });
+	RenderSystem::debugLines.DrawLineSegment(t->getGlobalPosition(), t->getGlobalPosition() + t->up() * s, { 0, 1, 0 });
+	RenderSystem::debugLines.DrawLineSegment(t->getGlobalPosition(), t->getGlobalPosition() + t->forward() * s, { 0, 0, 1 });
 }
 
 void SceneObject::TriggerCall(std::string tag, bool toggle)

@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <set>
+
 struct Collider;
 class Scene;
 class Shader;
@@ -81,6 +83,7 @@ public:
 	void GUI();
 	// This is the right click menu
 	void MenuGUI();
+	static void MultiMenuGUI(std::set<SceneObject*> multiSelectedSceneObjects, bool* setNullSelect);
 
 	void DebugDraw();
 

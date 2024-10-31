@@ -246,39 +246,11 @@ void GUI::MultiSceneObjectRightClickMenu()
 	if (!ImGui::BeginPopup(multiRightClickPopupID.c_str())) {
 		return;
 	}
-	std::string tag = Utilities::PointerToString(this);
-
-	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
-		for (auto i : multiSelectedSceneObjects)
-		{
-			scene->DeleteSceneObject(i->GUID);
-		}
+	bool removeSelection = false;
+	SceneObject::MultiMenuGUI(multiSelectedSceneObjects, &removeSelection);
+	if (removeSelection) {
 		setSelected(nullptr);
 	}
-	if (ImGui::MenuItem(("Save Prefab Origins##RightClick" + tag).c_str())) {
-		for (auto i : multiSelectedSceneObjects)
-		{
-			if (i->prefabStatus == SceneObject::PrefabStatus::prefabOrigin) {
-				i->SaveAsPrefab();
-			}
-		}
-	}
-	if (ImGui::MenuItem(("Refresh Prefab Instances##RightClick" + tag).c_str())) {
-		for (auto i : multiSelectedSceneObjects) {
-			if (i->prefabStatus == SceneObject::PrefabStatus::prefabInstance) {
-				i->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(i->prefabBase));
-			}
-		}
-	}
-	if (ImGui::MenuItem(("Replace with Prefab##RightClick" + tag).c_str())) {
-		auto prefab = PrefabManager::loadedPrefabOriginals.find(PrefabManager::selectedPrefab);
-		if (prefab != PrefabManager::loadedPrefabOriginals.end()) {
-			for (auto i : multiSelectedSceneObjects) {
-				i->LoadFromPrefab(prefab->second);
-			}
-		}
-	}
-	ImGui::EndPopup();
 }
 
 void GUI::ResourceMenu()
