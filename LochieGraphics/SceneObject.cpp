@@ -202,7 +202,9 @@ void SceneObject::MenuGUI()
 			LoadFromPrefab(prefab->second);
 		}
 		// Else // TODO: Warning
-
+	}
+	if (ImGui::MenuItem(("Refresh Prefab Instance##RightClick" + tag).c_str(), nullptr, nullptr, prefabStatus == PrefabStatus::prefabInstance)) {
+		LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(prefabBase));
 	}
 	if (ImGui::MenuItem(("Copy GUID##RightClick" + tag).c_str())) {
 		ImGui::SetClipboardText(std::to_string(GUID).c_str());
@@ -222,7 +224,7 @@ void SceneObject::MultiMenuGUI(std::set<SceneObject*> multiSelectedSceneObjects,
 		}
 		*setNullSelect = true;
 	}
-	if (ImGui::MenuItem(("Save Prefab Origins##RightClick" + tag).c_str())) {
+	if (ImGui::MenuItem(("Save Any Prefab Origins##RightClick" + tag).c_str())) {
 		for (auto i : multiSelectedSceneObjects)
 		{
 			if (i->prefabStatus == SceneObject::PrefabStatus::prefabOrigin) {
@@ -258,12 +260,11 @@ void SceneObject::DebugDraw()
 	{
 		scene->colliders[GUID]->DebugDraw(&scene->transforms[GUID]);
 	}
-
-	float s = 300.0f;
-	Transform* t = transform();
-	RenderSystem::debugLines.DrawLineSegment(t->getGlobalPosition(), t->getGlobalPosition() + t->right() * s, { 1, 0, 0 });
-	RenderSystem::debugLines.DrawLineSegment(t->getGlobalPosition(), t->getGlobalPosition() + t->up() * s, { 0, 1, 0 });
-	RenderSystem::debugLines.DrawLineSegment(t->getGlobalPosition(), t->getGlobalPosition() + t->forward() * s, { 0, 0, 1 });
+	//float s = 300.0f;
+	//Transform* t = transform();
+	//RenderSystem::debugLines.DrawLineSegment(t->getGlobalPosition(), t->getGlobalPosition() + t->right() * s, { 1, 0, 0 });
+	//RenderSystem::debugLines.DrawLineSegment(t->getGlobalPosition(), t->getGlobalPosition() + t->up() * s, { 0, 1, 0 });
+	//RenderSystem::debugLines.DrawLineSegment(t->getGlobalPosition(), t->getGlobalPosition() + t->forward() * s, { 0, 0, 1 });
 }
 
 void SceneObject::TriggerCall(std::string tag, bool toggle)
