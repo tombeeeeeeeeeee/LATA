@@ -2,6 +2,7 @@
 
 #include "SceneObject.h"
 #include "Utilities.h"
+#include "UserPreferences.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
@@ -223,7 +224,6 @@ glm::vec3 Transform::down() const
 
 glm::vec3 Transform::left() const
 {
-	// The global matrix stores the left, not right, hence the negative
 	return glm::vec3(glm::normalize(globalMatrix[0]));
 }
 
@@ -276,6 +276,7 @@ void Transform::GUI()
 			try
 			{
 				toml::table data = toml::parse(clipboard);
+				// TODO: Make a load function instead and call that
 				*this = Transform(data);
 			}
 			catch (const toml::parse_error& err)
@@ -284,8 +285,33 @@ void Transform::GUI()
 			}
 			ImGui::CloseCurrentPopup();
 		}
+		if (ImGui::MenuItem(("Show Advanced Info##" + tag).c_str(), nullptr, UserPreferences::advancedTransformInfo)) { 
+			UserPreferences::advancedTransformInfo = !UserPreferences::advancedTransformInfo;
+			UserPreferences::Save(); 
+		}
 		ImGui::EndPopup();
 	}
+
+	if (UserPreferences::advancedTransformInfo) {
+		glm::vec3 l = left();
+		glm::vec3 f = forward();
+		glm::vec3 u = up();
+		ImGui::Text("Direction Vectors");
+		ImGui::BeginDisabled();
+		ImGui::DragFloat3(("Left##" + tag).c_str(), &l.x);
+		ImGui::DragFloat3(("Up##" + tag).c_str(), &u.x);
+		ImGui::DragFloat3(("Forward##" + tag).c_str(), &f.x);
+		ImGui::EndDisabled();
+
+		ImGui::Text("Global Matrix");
+		ImGui::BeginDisabled();
+		ImGui::DragFloat4(("Left##globalMatrix" + tag).c_str(), &globalMatrix[0].x);
+		ImGui::DragFloat4(("Up##globalMatrix" + tag).c_str(), &globalMatrix[1].x);
+		ImGui::DragFloat4(("Forward##globalMatrix" + tag).c_str(), &globalMatrix[2].x);
+		ImGui::DragFloat4(("Translation##globalMatrix" + tag).c_str(), &globalMatrix[3].x);
+		ImGui::EndDisabled();
+	}
+
 
 	if(ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f))
 	{
@@ -295,11 +321,14 @@ void Transform::GUI()
 	if (ImGui::DragFloat3(("Rotation##transform" + tag).c_str(), &euler[0], 0.1f)) {
 		setEulerRotation(euler);
 	}
-	ImGui::BeginDisabled();
-	if (ImGui::DragFloat4(("Quaternion##transform" + tag).c_str(), &quaternion[0], 0.1f)) {
-		setRotation(quaternion);
+	
+	if (UserPreferences::advancedTransformInfo) {
+		ImGui::BeginDisabled();
+		if (ImGui::DragFloat4(("Quaternion##transform" + tag).c_str(), &quaternion[0], 0.1f)) {
+			setRotation(quaternion);
+		}
+		ImGui::EndDisabled();
 	}
-	ImGui::EndDisabled();
 
 	if (ImGui::DragFloat3(("Scale##transform" + tag).c_str(), &scale[0], 0.1f))
 	{

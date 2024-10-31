@@ -39,6 +39,8 @@ public:
 	static std::string defaultEnemySystemLoad;
 	static std::string defaultHealthSystemLoad;
 
+	static bool advancedTransformInfo;
+
 	static float defaultGlobalVolume;
 
 	static void GUI();
