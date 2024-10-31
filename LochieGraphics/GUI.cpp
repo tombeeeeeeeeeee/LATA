@@ -228,16 +228,19 @@ void GUI::AddFromToSelection(SceneObject* from, SceneObject* to)
 
 void GUI::UpdateSelection()
 {
+
 	while (!addRangeToSelection.empty()) {
 		std::vector<SceneObject*>::iterator one = std::find(hierarchySceneObjects.begin(), hierarchySceneObjects.end(), addRangeToSelection.front().first);
 		std::vector<SceneObject*>::iterator two = std::find(hierarchySceneObjects.begin(), hierarchySceneObjects.end(), addRangeToSelection.front().second);
 		unsigned int oneIndex = std::distance(hierarchySceneObjects.begin(), one);
 		unsigned int twoIndex = std::distance(hierarchySceneObjects.begin(), two);
-		std::vector<SceneObject*>::iterator from = oneIndex < twoIndex ? one : two;
-		std::vector<SceneObject*>::iterator to = (twoIndex < oneIndex ? one : two) + 1;
-		for (auto& i = from; i != to; i++)
-		{
-			multiSelectedSceneObjects.insert(*i);
+		if (oneIndex < hierarchySceneObjects.size() && twoIndex < hierarchySceneObjects.size()) {
+			std::vector<SceneObject*>::iterator from = oneIndex < twoIndex ? one : two;
+			std::vector<SceneObject*>::iterator to = (twoIndex < oneIndex ? one : two) + 1;
+			for (auto& i = from; i != to; i++)
+			{
+				multiSelectedSceneObjects.insert(*i);
+			}
 		}
 		addRangeToSelection.erase(addRangeToSelection.begin());
 	}
@@ -530,7 +533,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	hierarchySceneObjects.push_back(sceneObject);
 	ImGui::PopStyleColor();
 	
-
+	
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsItemToggledOpen()) {
 		bool shift = glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_SHIFT);
 		bool ctrl = glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_CONTROL);
