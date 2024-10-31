@@ -198,17 +198,33 @@ void Transform::setPosition(glm::vec3 pos)
 
 glm::vec3 Transform::forward() const
 {
-	return glm::vec3(glm::normalize(globalMatrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+	return glm::vec3(glm::normalize(globalMatrix[2]));
 }
 
 glm::vec3 Transform::right() const
 {
-	return glm::vec3(glm::normalize(globalMatrix * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f)));
+	return -left();
 }
 
 glm::vec3 Transform::up() const
 {
-	return glm::vec3(glm::normalize(globalMatrix * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
+	return glm::vec3(glm::normalize(globalMatrix[1]));
+}
+
+glm::vec3 Transform::backward() const
+{
+	return -forward();
+}
+
+glm::vec3 Transform::down() const
+{
+	return -up();
+}
+
+glm::vec3 Transform::left() const
+{
+	// The global matrix stores the left, not right, hence the negative
+	return glm::vec3(glm::normalize(globalMatrix[0]));
 }
 
 void Transform::UpdateGlobalMatrixCascading()

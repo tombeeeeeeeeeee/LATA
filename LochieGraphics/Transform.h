@@ -52,6 +52,9 @@ public:
 	glm::vec3 forward() const;
 	glm::vec3 right() const;
 	glm::vec3 up() const;
+	glm::vec3 backward() const;
+	glm::vec3 down() const;
+	glm::vec3 left() const;
 
 	void UpdateGlobalMatrixCascading();
 

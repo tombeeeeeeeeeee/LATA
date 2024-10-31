@@ -253,7 +253,6 @@ void LevelEditor::Start()
 	gameCamSystem.cameraPositionDelta = { -150.0f, 100.0f, 150.0f };
 
 	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension), (unsigned long long)0));
-	camera->transform.setRotation(glm::quat(0.899f, -0.086f, 0.377f, -0.205f));
 
 	sync->Start(&shaders);
 
