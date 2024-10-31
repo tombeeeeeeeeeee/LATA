@@ -50,6 +50,6 @@ public:
 	static void RefreshPreferenceFile();
 
 	static void Save();
-	static void Load();
+	static bool Load();
 };
 

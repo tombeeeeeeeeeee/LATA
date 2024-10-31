@@ -40,7 +40,11 @@ void UserPreferences::GUI()
 
 	bool shouldSave = false;
 
-	if (ImGui::InputText("User Preferences Active", &filename, ImGuiInputTextFlags_EnterReturnsTrue)) { shouldSave = true; }
+	if (ImGui::InputText("User Preferences Active", &filename, ImGuiInputTextFlags_EnterReturnsTrue)) {
+		if (!Load()) {
+			shouldSave = true; 
+		}
+	}
 	ImGui::BeginDisabled();
 	ImGui::Button("Save##User Prefrences");
 	ImGui::EndDisabled();
@@ -183,9 +187,13 @@ void UserPreferences::Save()
 	RefreshPreferenceFile();
 }
 
-void UserPreferences::Load()
+bool UserPreferences::Load()
 {
 	std::ifstream file(Paths::userPrefsSaveLocation + filename + Paths::userPrefsExtension);
+
+	if (!file) {
+		return false;
+	}
 
 	toml::table data = toml::parse(file);
 
@@ -214,4 +222,6 @@ void UserPreferences::Load()
 	file.close();
 
 	RefreshPreferenceFile();
+
+	return true;
 }
