@@ -467,7 +467,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	if (sceneObjectSelected == sceneObject || std::find(multiSelectedSceneObjects.begin(), multiSelectedSceneObjects.end(), sceneObject) != multiSelectedSceneObjects.end()) {
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
-	bool hasChildren = sceneObject->transform()->HasChildren() || (sceneObject->parts & Parts::modelRenderer && sceneObject->renderer()->model);
+	bool hasChildren = sceneObject->transform()->HasChildren() || (sceneObject->parts & Parts::modelRenderer && sceneObject->renderer()->model && UserPreferences::showModelHierarchy);
 	if (!hasChildren) {
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
@@ -537,7 +537,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	{
 		TransformTree(child->getSceneObject());
 	}
-	if (sceneObject->parts & Parts::modelRenderer) {
+	if (sceneObject->parts & Parts::modelRenderer && UserPreferences::showModelHierarchy) {
 		auto model = sceneObject->renderer()->model;
 		if (model) {
 			TransformTree(sceneObject, &model->root);

@@ -40,6 +40,7 @@ public:
 	static std::string defaultHealthSystemLoad;
 
 	static bool advancedTransformInfo;
+	static bool showModelHierarchy;
 
 	static float defaultGlobalVolume;
 

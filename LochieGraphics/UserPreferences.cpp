@@ -32,6 +32,7 @@ std::string UserPreferences::defaultEnemySystemLoad = "";
 std::string UserPreferences::defaultHealthSystemLoad = "";
 bool UserPreferences::clearSearchBar = true;
 bool UserPreferences::advancedTransformInfo = false;
+bool UserPreferences::showModelHierarchy = false;
 
 void UserPreferences::GUI()
 {
@@ -72,6 +73,8 @@ void UserPreferences::GUI()
 	if (ImGui::Checkbox("Clear search bar on search bar creation", &clearSearchBar)) { shouldSave = true; }
 
 	if (ImGui::Checkbox("Show Advanced Transform Information", &advancedTransformInfo)) { shouldSave = true; }
+
+	if (ImGui::Checkbox("Show Model Hierarchy Information", &showModelHierarchy)) { shouldSave = true; }
 
 	if (ImGui::CollapsingHeader("Camera Move Speeds")) {
 		if (ImGui::DragFloat("Orthographic Zoom Speed##Camera", &orthScrollSpeed, 0.1f, 0.0f, FLT_MAX)) { shouldSave = true; }
@@ -178,6 +181,7 @@ void UserPreferences::Save()
 		{ "defaultHealthSystemLoad", defaultHealthSystemLoad },
 		{ "clearSearchBar", clearSearchBar },
 		{ "advancedTransformInfo", advancedTransformInfo},
+		{ "showModelHierarchy", showModelHierarchy},
 	};
 
 	file << table << '\n';
@@ -218,6 +222,7 @@ bool UserPreferences::Load()
 	defaultHealthSystemLoad = Serialisation::LoadAsString(data["defaultHealthSystemLoad"]);
 	clearSearchBar = Serialisation::LoadAsBool(data["clearSearchBar"]);
 	advancedTransformInfo = Serialisation::LoadAsBool(data["advancedTransformInfo"], false);
+	showModelHierarchy = Serialisation::LoadAsBool(data["showModelHierarchy"], false);
 
 	file.close();
 
