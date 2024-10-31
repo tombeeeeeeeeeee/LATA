@@ -48,6 +48,7 @@ public:
 	bool showPrefabMenu = false;
 	bool showParticleMenu = false;
 	bool showAudioMenu = false;
+	bool showStyleMenu = false;
 
 	SceneObject* getSelected();
 	void setSelected(SceneObject* so);

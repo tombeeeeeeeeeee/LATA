@@ -410,6 +410,12 @@
     <ClCompile Include="Bollard.cpp">
       <Filter>Source Files\Parts</Filter>
     </ClCompile>
+    <ClCompile Include="Triggerable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ImguiMathsGLM.cpp">
+      <Filter>Source Files\Third-Party</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -730,6 +736,10 @@
     <ClInclude Include="Bollard.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
+    <ClInclude Include="Triggerable.h" />
+    <ClInclude Include="ImguiMathsGLM.h">
+      <Filter>Source Files\Third-Party</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -891,5 +901,7 @@
     <None Include="..\Shaders\ambient.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Shaders\healthBar.frag" />
+    <None Include="..\Shaders\healthBar.vert" />
   </ItemGroup>
 </Project>

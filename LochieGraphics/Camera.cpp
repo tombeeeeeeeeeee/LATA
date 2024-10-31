@@ -37,7 +37,7 @@ glm::mat4 Camera::GetViewMatrix() const
 void Camera::ProcessKeyboard(Direction direction, float deltaTime)
 {
     if (state == editorMode) {
-        // TODO: maybe pass in the cam move speed in as a parametre
+        // TODO: maybe pass in the cam move speed in as a parameter
         float velocity = UserPreferences::camMove * deltaTime;
         switch (direction)
         {

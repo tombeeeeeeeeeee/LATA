@@ -37,6 +37,24 @@ glm::vec3 Serialisation::LoadAsVec3(toml::node_view<toml::node> toml)
     return LoadAsVec3(toml.as_array());
 }
 
+glm::vec4 Serialisation::LoadAsVec4(toml::array* toml)
+{
+    if (!toml) {
+        std::cout << "Failed to load vec4\n";
+        return { NAN, NAN, NAN, NAN };
+    }
+    return glm::vec4(
+        toml->at(0).value_or<float>(0.0f),
+        toml->at(1).value_or<float>(0.0f),
+        toml->at(2).value_or<float>(0.0f),
+        toml->at(3).value_or<float>(0.0f));
+}
+
+glm::vec4 Serialisation::LoadAsVec4(toml::node_view<toml::node> toml)
+{
+    return LoadAsVec4(toml.as_array());
+}
+
 unsigned long long Serialisation::LoadAsUnsignedLongLong(toml::node_view<toml::node> toml)
 {
     return std::strtoull(LoadAsString(toml).c_str(), 0, 10);
@@ -146,6 +164,11 @@ toml::array Serialisation::SaveAsVec2(glm::vec2 vec)
 toml::array Serialisation::SaveAsVec3(glm::vec3 vec)
 {
     return toml::array(vec.x, vec.y, vec.z);
+}
+
+toml::array Serialisation::SaveAsVec4(glm::vec4 vec)
+{
+    return toml::array(vec.x, vec.y, vec.z, vec.w);
 }
 
 std::string Serialisation::SaveAsUnsignedLongLong(unsigned long long n)

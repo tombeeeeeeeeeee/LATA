@@ -11,6 +11,7 @@
 #include "Collider.h"
 #include "UserPreferences.h"
 #include "PrefabManager.h"
+#include "ImGuiStyles.h"
 
 #include "Utilities.h"
 
@@ -75,6 +76,7 @@ void GUI::Update()
 			if (ImGui::MenuItem("SceneObject Menu", NULL, &showSceneObject)) {
 				showHierarchy = showSceneObject;
 			}
+			ImGui::MenuItem("Style Editor Menu", NULL, &showStyleMenu);
 			ImGui::MenuItem("Test Menu", NULL, &showTestMenu);
 			ImGui::MenuItem("User Prefs", NULL, &showUserPrefsMenu);
 
@@ -131,6 +133,13 @@ void GUI::Update()
 	if (showAudioMenu) {
 		if (ImGui::Begin("Audio Menu", &showAudioMenu, defaultWindowFlags)) {
 			scene->audio.GUI();
+		}
+		ImGui::End();
+	}
+	if (showStyleMenu) {
+		// Remove the auto resize as this window can get quite large
+		if (ImGui::Begin("Style Editor Menu", &showStyleMenu, defaultWindowFlags & ~ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGuiStyles::GUI();
 		}
 		ImGui::End();
 	}
