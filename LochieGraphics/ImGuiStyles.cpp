@@ -86,8 +86,8 @@ void ImGuiStyles::Save()
 		{ "CurveTessellationTol", style->CurveTessellationTol },
 		{ "CircleTessellationMaxError", style->CircleTessellationMaxError },
 		{ "Colours", colours },
+		{ "Font", std::string(ImGui::GetIO().FontDefault->GetDebugName())},
 	};
-
 
 	file << table << '\n';
 
@@ -153,6 +153,15 @@ void ImGuiStyles::Load()
 	style->AntiAliasedFill = Serialisation::LoadAsBool(data["AntiAliasedFill"]);
 	style->CurveTessellationTol = Serialisation::LoadAsFloat(data["CurveTessellationTol"]);
 	style->CircleTessellationMaxError = Serialisation::LoadAsFloat(data["CircleTessellationMaxError"]);
+	
+	std::string fontName = Serialisation::LoadAsString(data["Font"]);
+	for (ImFont* font : ImGui::GetIO().Fonts->Fonts)
+	{
+		if (font->GetDebugName() == fontName) {
+			ImGui::GetIO().FontDefault = font;
+			break;
+		}
+	}
 	
 	auto loadingColours = data["Colours"].as_array();
 	for (size_t i = 0; i < loadingColours->size(); i++)

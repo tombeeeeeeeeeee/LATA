@@ -14,6 +14,7 @@ namespace Paths {
 	const std::string levelsPath = "Levels/";
 	const std::string systemPath = "Systems/";
 	const std::string stylesPath = "Styles/";
+	const std::string fontsPath = "Fonts/";
 	const std::string rendererSaveLocation = "Assets/Renderers/";
 	const std::string materialSaveLocation = "Assets/Materials/";
 	const std::string textureSaveLocation = "Assets/Textures/";

@@ -106,6 +106,18 @@ SceneManager::SceneManager(Scene* _scene)
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init(); // TODO: Theres an overload for this that takes a version, see if should be using
 
+	auto& io = ImGui::GetIO();
+	std::string fontExtension = ".ttf";
+	for (auto& i : std::filesystem::directory_iterator(Paths::fontsPath))
+	{
+		std::string path = i.path().string();
+		if (path.size() < fontExtension.size()) { continue; }
+		if (path.compare(path.size() - fontExtension.size(), fontExtension.size(), fontExtension) == 0) {
+			io.Fonts->AddFontFromFileTTF(path.c_str(), 13);
+		}
+	}
+
+	io.Fonts->AddFontDefault();
 
 	// Depth testing
 	glEnable(GL_DEPTH_TEST);

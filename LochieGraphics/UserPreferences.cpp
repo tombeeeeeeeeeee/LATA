@@ -31,7 +31,7 @@ bool UserPreferences::immortal = true;
 std::string UserPreferences::defaultCameraSystemLoad = "";
 std::string UserPreferences::defaultEnemySystemLoad = "";
 std::string UserPreferences::defaultHealthSystemLoad = "";
-std::string UserPreferences::defaultStyleLoad = "LocStyle";
+std::string UserPreferences::defaultStyleLoad = "OtherStyle";
 bool UserPreferences::clearSearchBar = true;
 bool UserPreferences::advancedTransformInfo = false;
 bool UserPreferences::showModelHierarchy = false;
@@ -239,7 +239,7 @@ bool UserPreferences::Load()
 	clearSearchBar = Serialisation::LoadAsBool(data["clearSearchBar"]);
 	advancedTransformInfo = Serialisation::LoadAsBool(data["advancedTransformInfo"], false);
 	showModelHierarchy = Serialisation::LoadAsBool(data["showModelHierarchy"], false);
-	defaultStyleLoad = Serialisation::LoadAsString(data["defaultStyleLoad"], "LocStyle");
+	defaultStyleLoad = Serialisation::LoadAsString(data["defaultStyleLoad"], "OtherStyle");
 
 	file.close();
 
