@@ -603,8 +603,12 @@ void RenderSystem::GUI()
     }
     ImGui::Combo("Buffer Index", &bufferIndex, "Result\0Albedo\0World Normals\0Emission\0PBR (Roughness, Metallic, AO)\0Roughness\0Metallic\0AO\0SSAO\0Bloom\0\0");
 
-    ImGui::SliderFloat("Post effect thing", &postEffectPercent, 0.0f, 1.0f);
+    ImGui::DragFloat("Exposure", &exposure, 0.01f, 0.0f, 5.0f);
+
     ImGui::Checkbox("Post Effect on", &postEffectOn);
+    if (!postEffectOn) { ImGui::BeginDisabled(); }
+    ImGui::SliderFloat("Tone Mapping Slider", &postEffectPercent, 0.0f, 1.0f);
+    if (!postEffectOn) { ImGui::EndDisabled(); }
     ImGui::End();
 }
 
