@@ -101,7 +101,7 @@ void ModelRenderer::GUI()
 {
 	//ImGui::Text("");
 	std::string tag = Utilities::PointerToString(this);
-	if (!ImGui::CollapsingHeader("Model Renderer"))
+	if (!ImGui::CollapsingHeader(("Model Renderer##" + tag).c_str()))
 	{
 		return;
 	}
@@ -113,7 +113,7 @@ void ModelRenderer::GUI()
 	ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
 	ImGui::EndDisabled();
 
-	ImGui::ColorPicker3(("Material Tint##" + tag).c_str(), &materialTint[0]);
+	ImGui::ColorEdit3(("Material Tint##" + tag).c_str(), &materialTint[0]);
 
 	ImGui::Indent();
 	for (size_t i = 0; i < materialGUIDs.size(); i++)

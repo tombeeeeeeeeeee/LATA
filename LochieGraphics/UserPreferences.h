@@ -42,6 +42,7 @@ public:
 
 	static bool advancedTransformInfo;
 	static bool showModelHierarchy;
+	static bool showSelectedBox;
 
 	static float defaultGlobalVolume;
 

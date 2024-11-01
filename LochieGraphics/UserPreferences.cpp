@@ -35,6 +35,7 @@ std::string UserPreferences::defaultStyleLoad = "OtherStyle";
 bool UserPreferences::clearSearchBar = true;
 bool UserPreferences::advancedTransformInfo = false;
 bool UserPreferences::showModelHierarchy = false;
+bool UserPreferences::showSelectedBox = true;
 
 void UserPreferences::GUI()
 {
@@ -89,6 +90,8 @@ void UserPreferences::GUI()
 	}
 	ImGui::Unindent();
 
+	if (ImGui::Checkbox("Show Selected Model Min-Maxes", &showSelectedBox)) { shouldSave = true; }
+
 	if (ImGui::CollapsingHeader("Camera Move Speeds")) {
 		if (ImGui::DragFloat("Orthographic Zoom Speed##Camera", &orthScrollSpeed, 0.1f, 0.0f, FLT_MAX)) { shouldSave = true; }
 		ImGui::Text("Editor Values");
@@ -101,6 +104,7 @@ void UserPreferences::GUI()
 		float orbit = camOrbit * 10000.0f;
 		if (ImGui::DragFloat("Orbit##Camera", &orbit, 0.05f, 0.0f, FLT_MAX, "%.f")) {
 			camOrbit = orbit / 10000.0f;
+			shouldSave = true;
 		}
 		if (ImGui::DragFloat("Move##Camera", &camBoomTruck, 0.01f, 0.0f, FLT_MAX)) { shouldSave = true; }
 		if (ImGui::DragFloat("Mouse Dolly##Camera", &camMoveDolly, 0.01f, 0.0f, FLT_MAX)) { shouldSave = true; }
@@ -197,6 +201,7 @@ void UserPreferences::Save()
 		{ "advancedTransformInfo", advancedTransformInfo},
 		{ "showModelHierarchy", showModelHierarchy},
 		{ "defaultStyleLoad", defaultStyleLoad },
+		{ "showSelectedBox", showSelectedBox },
 	};
 
 	file << table << '\n';
@@ -240,6 +245,7 @@ bool UserPreferences::Load()
 	advancedTransformInfo = Serialisation::LoadAsBool(data["advancedTransformInfo"], false);
 	showModelHierarchy = Serialisation::LoadAsBool(data["showModelHierarchy"], false);
 	defaultStyleLoad = Serialisation::LoadAsString(data["defaultStyleLoad"], "OtherStyle");
+	showSelectedBox = Serialisation::LoadAsBool(data["showSelectedBox"], true);
 
 	file.close();
 

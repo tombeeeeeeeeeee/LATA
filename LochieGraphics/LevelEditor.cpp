@@ -557,7 +557,7 @@ void LevelEditor::GUI()
 			case LevelEditor::BrushState::prefabPlacer: [[fallthrough]];
 			case LevelEditor::BrushState::viewSelect:
 				camera->state = Camera::State::tilePlacing;
-				camera->transform.setEulerRotation({ -90.0f, 0.0f, -90.0f });
+				camera->transform.setEulerRotation({ 90.0f, 180.0f, 0.0f });
 				glm::vec3 pos = camera->transform.getPosition();
 				pos.y = fmaxf(pos.y, 600);
 				camera->transform.setPosition(pos);

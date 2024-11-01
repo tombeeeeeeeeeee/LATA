@@ -18,6 +18,7 @@
 #include "Serialisation.h"
 
 #include <fstream>
+#include <array>
 
 SceneObject::SceneObject(Scene* _scene, std::string _name) :
 	scene(_scene),
@@ -259,6 +260,37 @@ void SceneObject::DebugDraw()
 	if (parts & Parts::collider)
 	{
 		scene->colliders[GUID]->DebugDraw(&scene->transforms[GUID]);
+	}
+	if (parts & Parts::modelRenderer && UserPreferences::showSelectedBox) {
+		Model* model = renderer()->model;
+		if (model) {
+			LineRenderer& lines = RenderSystem::lines;
+			lines.SetColour({ 1.0f, 1.0f, 1.0f });
+
+			std::array<glm::vec3, 16> v {
+				glm::vec3{ model->min.x, model->min.y, model->min.z },
+				glm::vec3{ model->min.x, model->min.y, model->max.z },
+				glm::vec3{ model->min.x, model->max.y, model->max.z },
+				glm::vec3{ model->max.x, model->max.y, model->max.z },
+				glm::vec3{ model->max.x, model->max.y, model->min.z },
+				glm::vec3{ model->min.x, model->max.y, model->min.z },
+				glm::vec3{ model->min.x, model->min.y, model->min.z },
+				glm::vec3{ model->max.x, model->min.y, model->min.z },
+				glm::vec3{ model->max.x, model->min.y, model->max.z },
+				glm::vec3{ model->min.x, model->min.y, model->max.z },
+				glm::vec3{ model->min.x, model->max.y, model->max.z },
+				glm::vec3{ model->min.x, model->max.y, model->min.z },
+				glm::vec3{ model->max.x, model->max.y, model->min.z },
+				glm::vec3{ model->max.x, model->min.y, model->min.z },
+				glm::vec3{ model->max.x, model->min.y, model->max.z },
+				glm::vec3{ model->max.x, model->max.y, model->max.z },
+			};
+			for (size_t i = 0; i < v.size(); i++)
+			{
+				lines.AddPointToLine(glm::vec3(transform()->getGlobalMatrix() * glm::vec4(v.at(i), 1.0f)));
+			}
+			lines.FinishLineStrip();
+		}
 	}
 	//float s = 300.0f;
 	//Transform* t = transform();
