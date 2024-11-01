@@ -425,6 +425,8 @@ void GUI::HierarchyMenu()
 		ImGui::EndPopup();
 	}
 
+	ImGui::BeginChild("Hierarchy List");
+
 	ImGui::Unindent();
 	ImGui::TreeNodeEx(("Root##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
 	if (ImGui::IsItemClicked()) {
@@ -476,6 +478,7 @@ void GUI::HierarchyMenu()
 	}
 	moveSelection = 0;
 
+	ImGui::EndChild();
 
 	ImGui::End();
 }
