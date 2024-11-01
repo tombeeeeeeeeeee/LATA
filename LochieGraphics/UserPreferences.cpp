@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Paths.h"
 
+#include "ImGuiStyles.h"
 #include "EditorGUI.h"
 #include "Serialisation.h"
 #include "Utilities.h"
@@ -30,6 +31,7 @@ bool UserPreferences::immortal = true;
 std::string UserPreferences::defaultCameraSystemLoad = "";
 std::string UserPreferences::defaultEnemySystemLoad = "";
 std::string UserPreferences::defaultHealthSystemLoad = "";
+std::string UserPreferences::defaultStyleLoad = "LocStyle";
 bool UserPreferences::clearSearchBar = true;
 bool UserPreferences::advancedTransformInfo = false;
 bool UserPreferences::showModelHierarchy = false;
@@ -75,6 +77,17 @@ void UserPreferences::GUI()
 	if (ImGui::Checkbox("Show Advanced Transform Information", &advancedTransformInfo)) { shouldSave = true; }
 
 	if (ImGui::Checkbox("Show Model Hierarchy Information", &showModelHierarchy)) { shouldSave = true; }
+
+	if (ImGuiStyles::Selector()) {
+		defaultStyleLoad = ImGuiStyles::filename;
+		shouldSave = true;
+	}
+	ImGui::Indent();
+	if (ImGui::Button("Open Style Editor")) {
+		SceneManager::scene->gui.showStyleMenu = true;
+		// TODO: Set window focus incase window was already open
+	}
+	ImGui::Unindent();
 
 	if (ImGui::CollapsingHeader("Camera Move Speeds")) {
 		if (ImGui::DragFloat("Orthographic Zoom Speed##Camera", &orthScrollSpeed, 0.1f, 0.0f, FLT_MAX)) { shouldSave = true; }
@@ -131,6 +144,8 @@ void UserPreferences::Initialise()
 
 	std::string newFilename = Utilities::FileToString(Paths::lastUsedUserPrefsFilePath);
 
+	lastUsed.close();
+	
 	if (newFilename != "") {
 		filename = newFilename;
 		Load();
@@ -138,7 +153,6 @@ void UserPreferences::Initialise()
 
 	// Switching to Preferenced windowed mode is done in SceneManager Start
 
-	lastUsed.close();
 }
 
 void UserPreferences::RefreshPreferenceFile()
@@ -182,6 +196,7 @@ void UserPreferences::Save()
 		{ "clearSearchBar", clearSearchBar },
 		{ "advancedTransformInfo", advancedTransformInfo},
 		{ "showModelHierarchy", showModelHierarchy},
+		{ "defaultStyleLoad", defaultStyleLoad },
 	};
 
 	file << table << '\n';
@@ -208,6 +223,7 @@ bool UserPreferences::Load()
 	rememberLastLevel = Serialisation::LoadAsBool(data["rememberLastLevel"]);
 	enterPlayModeOnStart = Serialisation::LoadAsBool(data["enterPlayModeOnStart"]);
 	windowedStartMode = (WindowModes)Serialisation::LoadAsInt(data["windowedStartMode"]);
+	// TODO: Set the volume here to this
 	defaultGlobalVolume = Serialisation::LoadAsFloat(data["defaultGlobalVolume"], 1.0f);
 	camMove = Serialisation::LoadAsFloat(data["camMove"], 250.0f);
 	camRotate = Serialisation::LoadAsFloat(data["camRotate"], 0.01f);
@@ -223,10 +239,14 @@ bool UserPreferences::Load()
 	clearSearchBar = Serialisation::LoadAsBool(data["clearSearchBar"]);
 	advancedTransformInfo = Serialisation::LoadAsBool(data["advancedTransformInfo"], false);
 	showModelHierarchy = Serialisation::LoadAsBool(data["showModelHierarchy"], false);
+	defaultStyleLoad = Serialisation::LoadAsString(data["defaultStyleLoad"], "LocStyle");
 
 	file.close();
 
 	RefreshPreferenceFile();
+
+	ImGuiStyles::filename = defaultStyleLoad;
+	ImGuiStyles::Load();
 
 	return true;
 }

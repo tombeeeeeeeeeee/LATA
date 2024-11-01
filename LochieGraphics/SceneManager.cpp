@@ -102,9 +102,6 @@ SceneManager::SceneManager(Scene* _scene)
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-
-	// ImGui style
-	ImGuiStyles::SetLocStyle();
 	
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init(); // TODO: Theres an overload for this that takes a version, see if should be using

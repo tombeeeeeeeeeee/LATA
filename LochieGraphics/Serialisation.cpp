@@ -65,16 +65,16 @@ unsigned long long Serialisation::LoadAsUnsignedLongLong(toml::node& toml)
     return std::strtoull(LoadAsString(toml).c_str(), 0, 10);
 }
 
-std::string Serialisation::LoadAsString(toml::node_view<toml::node> toml)
+std::string Serialisation::LoadAsString(toml::node_view<toml::node> toml, std::string failedReadValue)
 {
     // TODO: Error message
-    if (!toml) { return ""; }
-    return toml.as_string()->value_or<std::string>("");
+    if (!toml) { return failedReadValue; }
+    return toml.as_string()->value_or<std::string>(failedReadValue.c_str());
 }
 
-std::string Serialisation::LoadAsString(toml::node& toml)
+std::string Serialisation::LoadAsString(toml::node& toml, std::string failedReadValue)
 {
-    return toml.as_string()->value_or<std::string>("");
+    return toml.as_string()->value_or<std::string>(failedReadValue.c_str());
 }
 
 int Serialisation::LoadAsInt(toml::node_view<toml::node> toml)

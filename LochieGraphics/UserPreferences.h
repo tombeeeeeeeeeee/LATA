@@ -38,6 +38,7 @@ public:
 	static std::string defaultCameraSystemLoad;
 	static std::string defaultEnemySystemLoad;
 	static std::string defaultHealthSystemLoad;
+	static std::string defaultStyleLoad;
 
 	static bool advancedTransformInfo;
 	static bool showModelHierarchy;

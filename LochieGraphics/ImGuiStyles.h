@@ -6,6 +6,8 @@ class ImGuiStyles
 {
 public:
 
+	static bool saveAs;
+
 	static std::string filename;
 
 	static void SetLocStyle();
@@ -14,5 +16,9 @@ public:
 	static void Load();
 
 	static void GUI();
+
+	static bool Selector();
+
+	static void SaveAsGUI();
 };
 

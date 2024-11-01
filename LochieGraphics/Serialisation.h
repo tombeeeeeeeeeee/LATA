@@ -21,8 +21,8 @@ public:
 	static glm::vec4 LoadAsVec4(toml::node_view<toml::node> toml);
 	static unsigned long long LoadAsUnsignedLongLong(toml::node_view<toml::node> toml);
 	static unsigned long long LoadAsUnsignedLongLong(toml::node& toml);
-	static std::string LoadAsString(toml::node_view<toml::node> toml);
-	static std::string LoadAsString(toml::node& toml);
+	static std::string LoadAsString(toml::node_view<toml::node> toml, std::string failedReadValue = "");
+	static std::string LoadAsString(toml::node& toml, std::string failedReadValue = "");
 	static int LoadAsInt(toml::node_view<toml::node> toml);
 	static int LoadAsInt(toml::node* toml);
 	static int LoadAsInt(toml::node& toml);
