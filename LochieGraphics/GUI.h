@@ -24,6 +24,8 @@ private:
 
 	std::string hierarchyMenuSearch = "";
 
+	bool focusSceneObjectMenu = false;
+
 public:
 	Scene* scene = nullptr;
 

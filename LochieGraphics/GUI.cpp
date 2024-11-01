@@ -105,6 +105,7 @@ void GUI::Update()
 	if (showResourceMenu) { ResourceMenu(); }
 	if (showCameraMenu) { CameraMenu(); }
 	if (showSceneObject) { SceneObjectMenu(); }
+	else { focusSceneObjectMenu = false; }
 	if (showLightMenu) { LightMenu(); }
 	if (showHierarchy) { HierarchyMenu(); }
 	else { moveSelection = 0; }
@@ -208,6 +209,7 @@ void GUI::setSelected(SceneObject* so)
 	lastSelected = so;
 	if (so) {
 		modelHierarchySelected = nullptr;
+		focusSceneObjectMenu = true;
 	}
 
 	multiSelectedSceneObjects.clear();
@@ -316,9 +318,15 @@ void GUI::CameraMenu()
 void GUI::SceneObjectMenu()
 {
 	if (!ImGui::Begin("Scene Object Menu", &showSceneObject, defaultWindowFlags)) {
+		if (focusSceneObjectMenu) {
+			ImGui::SetWindowFocus();
+			focusSceneObjectMenu = false;
+		}
+
 		ImGui::End();
 		return;
 	}
+	focusSceneObjectMenu = false;
 
 	if (multiSelectedSceneObjects.size() > 0) {
 		ImGui::Text("Multi Object Editing not yet supported");
@@ -492,6 +500,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 	
+	// TODO: Allow these colours to be changed
 	ImVec4 textColour = ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Text];
 	if (sceneObject->prefabStatus == SceneObject::PrefabStatus::prefabOrigin) {
 		textColour = { 0.0823529412f, 0.8235294118f, 0.4078431373f, 1.0f };
