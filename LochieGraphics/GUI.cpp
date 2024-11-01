@@ -481,18 +481,18 @@ void GUI::TransformTree(SceneObject* sceneObject)
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 	
-	glm::vec4 textColour = { 1, 1, 1, 1 };
+	ImVec4 textColour = ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Text];
 	if (sceneObject->prefabStatus == SceneObject::PrefabStatus::prefabOrigin) {
-		textColour = { 0.66f, 0.0f, 1.0f, 1.0f };
+		textColour = { 0.0823529412f, 0.8235294118f, 0.4078431373f, 1.0f };
 	}
 	else if (sceneObject->prefabStatus == SceneObject::PrefabStatus::prefabInstance) {
-		textColour = { 0.0f, 0.1f, 1.0f, 1.0f };
+		textColour = { 0.4980392157f, 0.8392156863f, 0.9921568627f, 1.0f };
 	}
 	else if (sceneObject->prefabStatus == SceneObject::PrefabStatus::missing) {
-		textColour = { 1.0f, 0.1f, 0.1f, 1.0f };
+		textColour = { 0.7607843137f, 0.4039215686f, 0.4039215686f, 1.0f };
 	}
 
-	ImGui::PushStyleColor(0, { textColour.x, textColour.y, textColour.z, textColour.w });
+	ImGui::PushStyleColor(0, textColour);
 	bool nodeOpen = ImGui::TreeNodeEx((sceneObject->name + "##" + tag).c_str(), nodeFlags);
 	hierarchySceneObjects.push_back(sceneObject);
 	ImGui::PopStyleColor();
