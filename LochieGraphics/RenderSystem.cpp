@@ -438,6 +438,8 @@ void RenderSystem::Update(
         postFrameBuffer->Bind();
     }
 
+    glViewport(0, 0, SCREEN_WIDTH / superSampling, SCREEN_HEIGHT / superSampling);
+    
     RenderQuad();
 
     if (postEffectOn) {
@@ -487,8 +489,8 @@ void RenderSystem::SSAOUpdate()
 
 void RenderSystem::ScreenResize(int width, int height)
 {
-    SCREEN_HEIGHT = height;
-    SCREEN_WIDTH = width;
+    SCREEN_HEIGHT = height * superSampling;
+    SCREEN_WIDTH = width * superSampling;
 
     postFrameBuffer->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
     postFrameTexture->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -605,6 +607,10 @@ void RenderSystem::GUI()
 
     ImGui::DragFloat("Exposure", &exposure, 0.01f, 0.0f, 5.0f);
 
+    int previousSuper = superSampling;
+    if (ImGui::DragInt("Super Sampling", &superSampling, 0.2f, 1, 4)) {
+        ScreenResize(SCREEN_WIDTH / previousSuper, SCREEN_HEIGHT / previousSuper);
+    }
     ImGui::Checkbox("Post Effect on", &postEffectOn);
     if (!postEffectOn) { ImGui::BeginDisabled(); }
     ImGui::SliderFloat("Tone Mapping Slider", &postEffectPercent, 0.0f, 1.0f);
