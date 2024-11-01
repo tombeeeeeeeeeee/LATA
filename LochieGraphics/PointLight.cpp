@@ -18,6 +18,7 @@ PointLight::PointLight(toml::table table)
 	triggerTag = Serialisation::LoadAsString(table["triggerTag"]);
 	canBeTriggered = Serialisation::LoadAsBool(table["canBeTriggered"]);
 	on = Serialisation::LoadAsBool(table["on"]);
+	effect = (PointLightEffect)Serialisation::LoadAsInt(table["effect"]);
 }
 
 void PointLight::GUI()
@@ -33,6 +34,25 @@ void PointLight::GUI()
 		float _range = 100.0f * range;
 		if (ImGui::DragFloat(("Range##" + tag).c_str(), &_range, 0.1f))
 			SetRange(_range);
+
+		const char* effects[] = {
+			"On", "Off", "Flickering", "Explosion", "SyncGun"
+		};
+		const char* currType = effects[(int)effect];
+		ImGui::PushItemWidth(180);
+		if (ImGui::BeginCombo(("Effect Type##" + tag).c_str(), currType))
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				bool isSelected = i == (int)effect;
+				if (ImGui::Selectable(effects[i], isSelected))
+				{
+					effect = (PointLightEffect)i;
+				}
+				if (isSelected) ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
 
 		ImGui::InputText(("Trigger ID##" + tag).c_str(), &triggerTag);
 		ImGui::Checkbox(("Can Be Triggered##" + tag).c_str(), &canBeTriggered);
@@ -230,6 +250,7 @@ toml::table PointLight::Serialise(unsigned long long guid) const
 		{ "triggerTag", triggerTag },
 		{ "on", on },
 		{ "canBeTriggered", canBeTriggered },
+		{ "effect", (int)effect },
 	};
 }
 
@@ -239,7 +260,12 @@ void PointLight::TriggerCall(std::string tag, bool toggle)
 	{
 		if (tag == triggerTag)
 		{
+			if (toggle && on) return;
+			if (!toggle && !on) return;
+
 			on = toggle;
+			if (toggle) effect = PointLightEffect::On;
+			else effect = PointLightEffect::Off;
 		}
 	}
 }

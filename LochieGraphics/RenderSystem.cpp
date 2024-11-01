@@ -90,6 +90,14 @@ void RenderSystem::Start(
     colourKey2->mipMapped = false;
     colourKey2->Load();
 
+    /*
+    
+    onLightTetxture = ResourceManager::LoadTexture("images/OnLightGradient.png", Texture::type::count);
+    offLightTetxture = ResourceManager::LoadTexture("images/OffLightGradient.png", Texture::type::count);
+    syncLightTetxture = ResourceManager::LoadTexture("images/SyncLightGradient.png", Texture::type::count);
+    explodingLightTetxture = ResourceManager::LoadTexture("images/ExplodingLightGradient.png", Texture::type::count);
+    flickeringLightTetxture = ResourceManager::LoadTexture("images/FlickeringLightGradient.png", Texture::type::count);
+    */
 }
 
 void RenderSystem::SetIrradianceMap(unsigned int textureID)
@@ -483,6 +491,36 @@ void RenderSystem::ScreenResize(int width, int height)
     AmbientPassUpdate();
 }
 
+
+void RenderSystem::DrawPointLights(std::unordered_map<unsigned long long, PointLight> pointLights, float delta)
+{
+    for (auto& pair : pointLights)
+    {
+
+
+        pair.second.timeInType += delta;
+        switch (pair.second.effect)
+        {
+        case PointLightEffect::On:
+            pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOn);
+            break;
+
+        case PointLightEffect::Off:
+            pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOff);
+            break;
+
+        case PointLightEffect::Explosion:
+            pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToExplode);
+            if (pair.second.timeInType >= lightTimeToExplode) SceneManager::scene->DeleteSceneObject(pair.first);
+            break;
+
+        case PointLightEffect::Flickering:
+            pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToFlicker);
+            //FLICKERING HOW DO I WANNA DO IT?
+            break;
+        }
+    }
+}
 
 void RenderSystem::DrawAllRenderers(
     std::unordered_map<unsigned long long, Animator>& animators,

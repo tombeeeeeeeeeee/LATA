@@ -6,6 +6,7 @@
 #include "RigidBody.h"
 #include "Collider.h"
 #include "Collision.h"
+#include "Transform.h"
 #include "Triggerable.h"
 #include "PressurePlate.h"
 #include <iostream>
@@ -66,11 +67,25 @@ void TriggerSystem::Start(
 
 void TriggerSystem::Update(
 	std::unordered_map<unsigned long long, PressurePlate>& plates,
-	std::unordered_map<unsigned long long, Triggerable>& triggerables
+	std::unordered_map<unsigned long long, Triggerable>& triggerables,
+	std::unordered_map<unsigned long long, Transform>& transforms,
+	float delta
 )
 {
 	for (auto& platePair : plates)
 	{
+		glm::vec2 pos = transforms[platePair.first].get2DGlobalPosition();
+		float actuation = -pressurePlateCompression * platePair.second.actuationAmount / timeToActuate;
+		transforms[platePair.first].setPosition({ pos.x, actuation, pos.y });
+
+		//Actuation
+		if (platePair.second.triggeredThisFrame)
+			platePair.second.actuationAmount += delta;
+		else
+			platePair.second.actuationAmount -= delta;
+
+		platePair.second.actuationAmount = glm::clamp(platePair.second.actuationAmount, 0.0f, timeToActuate);
+
 		if (!platePair.second.eccoToggled)
 		{
 			if (platePair.second.triggeredLastFrame && !platePair.second.triggeredThisFrame)

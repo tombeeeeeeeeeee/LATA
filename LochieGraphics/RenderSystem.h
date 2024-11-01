@@ -44,6 +44,11 @@ public:
 
     bool particleFacingCamera;
 
+    float lightTimeToOn = 0.5f;
+    float lightTimeToOff = 0.3f;
+    float lightTimeToExplode = 0.3f; 
+    float lightTimeToFlicker = 3.5f;
+
     void Start(
         unsigned int _skyboxTexture,
         std::vector<Shader*>* _shaders
@@ -111,6 +116,11 @@ private:
     /// </summary>
     unsigned int missingTextureTexture = 0;
 
+    unsigned int onLightTexture = 0;
+    unsigned int offLightTexture = 0;
+    unsigned int flickeringLightTexture = 0;
+    unsigned int explodingLightTexture = 0;
+    unsigned int syncLightTexture = 0;
     /// <summary>
     /// Location of the Model Matrix 
     /// </summary>
@@ -127,6 +137,8 @@ private:
     /// </summary>
     std::vector<Shader*>* shaders = {};
 
+
+
     void DrawAllRenderers(
         std::unordered_map<unsigned long long, Animator>& animators,
         std::unordered_map<unsigned long long, Transform>& transforms,
@@ -135,9 +147,10 @@ private:
         Shader* shader = nullptr
     );
 
-    //void BindLightUniform(unsigned int shaderProgram,
-    //    std::unordered_map<unsigned int, Light>& lightComponents,
-    //    std::unordered_map<unsigned int, Transform>& transComponents);
+    void DrawPointLights(
+        std::unordered_map<unsigned long long, PointLight> pointLights,
+        float delta
+    );
 
     void HDRBufferSetUp();
     void OutputBufferSetUp();

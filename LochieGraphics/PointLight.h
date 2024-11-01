@@ -8,19 +8,32 @@ namespace toml {
     }
 }
 
+enum class PointLightEffect
+{
+    On,
+    Off,
+    Flickering,
+    Explosion,
+    SyncsGun,
+};
+
 class PointLight {
 public:
     float linear = 0;
     float quadratic = 0;
-    glm::vec3 colour = {0.0f,0.0f,0.0f};
+    glm::vec3 colour = {1.0f,1.0f,1.0f};
 
     bool on = true;
     bool canBeTriggered = false;
     std::string triggerTag = "";
 
     float range = 1;
+    float timeInType = 0.0f;
+    PointLightEffect effect = PointLightEffect::On;
+
     PointLight() {};
     PointLight(toml::table table);
+    PointLight(PointLightEffect _effect) : effect(_effect) {};
     void GUI();
 
     void SetRange(float range);
