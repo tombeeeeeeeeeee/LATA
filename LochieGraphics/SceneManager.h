@@ -1,15 +1,14 @@
 #pragma once
 
-#include "Graphics.h"
+#include "Camera.h"
 
 #include "FixedSizeQueue.h"
 
-#include "Camera.h"
+#include "Graphics.h"
 
 class Skybox;
 class Scene;
 
-// TODO: fullscreen window with border, exclusive fullscreen
 enum class WindowModes {
 	windowed,
 	borderlessFullscreen,

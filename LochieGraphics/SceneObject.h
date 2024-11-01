@@ -27,7 +27,6 @@ namespace toml {
 		class table;
 	}
 }
-// TODO: Look into how instancing should be handled
 
 // TODO: There might be issues later due to the parts being saved as an signed int, not unsigned
 // Changing how they are saved can affect other saves and isn't worth it at the moment of writing
@@ -95,9 +94,6 @@ public:
 	void LoadFromPrefab(toml::table table);
 
 #pragma region Part Get and Set
-
-	// TODO: Consider getting rid of the setTransform?
-	void setTransform(Transform* transform);
 	Transform* transform() const;
 
 	void setRenderer(ModelRenderer* renderer);

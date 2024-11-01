@@ -27,7 +27,7 @@ private:
 	float eccoScaleY = 0.077f;
 
 	Mesh healthBar;
-	Shader* healthShader;
+	Shader* healthShader = nullptr;
 
 	enum class BrushState {
 		none,
@@ -99,6 +99,7 @@ private:
 	void RefreshWalls();
 
 	SceneObject* CellAt(float x, float z);
+	SceneObject* CellAt(int x, int z);
 
 	// Worldspace placing issue
 	SceneObject* PlaceWallAt(float x, float z, float direction, unsigned long long prefab);

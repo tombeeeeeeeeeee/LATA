@@ -1,6 +1,6 @@
 #include "ParticleSystem.h"
 
-#include "ResourceManager.h";
+#include "ResourceManager.h"
 
 #include "EditorGUI.h"
 

@@ -18,11 +18,6 @@
 #include <fstream>
 #include <iostream>
 
-void Scene::BaseGUI()
-{
-
-}
-
 Scene::Scene()
 {
 	gui.scene = this;
@@ -226,7 +221,6 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	toml::array* loadingColliders = data["Colliders"].as_array(); 
 	for (int i = 0; i < loadingColliders->size(); i++) {
 		toml::table* loadingCollider = loadingColliders->at(i).as_table();
-		// TODO: UNCOMMENT
 		colliders[Serialisation::LoadAsUnsignedLongLong((*loadingCollider)["guid"])] = Collider::Load(*loadingCollider);
 	};
 	
@@ -261,7 +255,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	{
 		if (!i.second)
 		{
-			// TODO: Error here
+			std::cout << "ERROR: Found sceneobject index containing no sceneobject\n";
 			DeleteSceneObject(i.first);
 		}	
 	}

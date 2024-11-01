@@ -33,7 +33,7 @@ public:
 	void setParent(Transform* newParent);
 	void AddChild(Transform* newChild);
 	void RemoveChild(Transform* oldChild);
-	bool HasChildren();
+	bool HasChildren() const;
 
 	glm::quat getRotation() const;
 	glm::vec3 getEulerRotation() const;
@@ -42,7 +42,7 @@ public:
 	void setRotation(glm::vec3 _euler);
 	void setEulerRotation(glm::vec3 _euler);
 
-	glm::vec3 getScale();
+	glm::vec3 getScale() const;
 	void setScale(float scale);
 	void setScale(glm::vec3 scale);
 
@@ -77,6 +77,7 @@ public:
 	void GUI();
 
 	toml::table Serialise(unsigned long long GUID) const;
+	void Load(toml::table& table);
 	Transform(toml::table table);
 
 	~Transform();

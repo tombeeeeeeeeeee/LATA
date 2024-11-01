@@ -1,8 +1,8 @@
 #include "UserPreferences.h"
 
-#include "SceneManager.h"
 #include "Scene.h"
 #include "Paths.h"
+#include "SceneManager.h"
 
 #include "ImGuiStyles.h"
 #include "EditorGUI.h"
@@ -18,7 +18,7 @@ std::string UserPreferences::defaultLevelLoad = "";
 bool UserPreferences::rememberLastLevel = true;
 bool UserPreferences::loadDefaultLevel = true;
 bool UserPreferences::enterPlayModeOnStart = false;
-WindowModes UserPreferences::windowedStartMode = WindowModes::maximised;
+int UserPreferences::windowedStartMode = (int)WindowModes::maximised;
 float UserPreferences::defaultGlobalVolume = 1.0f;
 float UserPreferences::camMove;
 float UserPreferences::camRotate;
@@ -66,7 +66,7 @@ void UserPreferences::GUI()
 
 	if (ImGui::Combo("Model Chooser Mode", (int*)&modelSelectMode, "Loaded\0Assets\0\0")) { shouldSave = true; }
 
-	if (ImGui::Combo("Default Windowed Mode", (int*)&windowedStartMode, "Windowed\0Borderless Fullscreen\0Maximised\0\0")) { shouldSave = true; }
+	if (ImGui::Combo("Default Windowed Mode", &windowedStartMode, "Windowed\0Borderless Fullscreen\0Maximised\0\0")) { shouldSave = true; }
 
 	if (ImGui::SliderFloat("Default Global Audio Volume", &defaultGlobalVolume, 0.0f, 2.0f)) {
 		shouldSave = true;
@@ -184,7 +184,7 @@ void UserPreferences::Save()
 		{ "defaultLevelLoad", defaultLevelLoad },
 		{ "rememberLastLevel", rememberLastLevel },
 		{ "enterPlayModeOnStart", enterPlayModeOnStart },
-		{ "windowedStartMode", (int)windowedStartMode },
+		{ "windowedStartMode", windowedStartMode },
 		{ "defaultGlobalVolume", defaultGlobalVolume },
 		{ "camMove", camMove},
 		{ "camRotate", camRotate},
@@ -227,7 +227,7 @@ bool UserPreferences::Load()
 	defaultLevelLoad = Serialisation::LoadAsString(data["defaultLevelLoad"]);
 	rememberLastLevel = Serialisation::LoadAsBool(data["rememberLastLevel"]);
 	enterPlayModeOnStart = Serialisation::LoadAsBool(data["enterPlayModeOnStart"]);
-	windowedStartMode = (WindowModes)Serialisation::LoadAsInt(data["windowedStartMode"]);
+	windowedStartMode = Serialisation::LoadAsInt(data["windowedStartMode"]);
 	// TODO: Set the volume here to this
 	defaultGlobalVolume = Serialisation::LoadAsFloat(data["defaultGlobalVolume"], 1.0f);
 	camMove = Serialisation::LoadAsFloat(data["camMove"], 250.0f);

@@ -54,7 +54,7 @@ void Texture::Load(unsigned char* data)
 
 	stbi_set_flip_vertically_on_load(flipped);
 
-	int components;
+	int components = -1;
 	// Using data from something else
 	if (data == nullptr) {
 		data = stbi_load(path.c_str(), &width, &height, &components, STBI_default);
@@ -232,7 +232,7 @@ void Texture::EditorGUI(std::vector<Texture*>& textures)
 
 			ImGui::TableSetColumnIndex(0);
 			ImGui::PushItemWidth(270);
-			ImGui::InputText(("##" + PointerToString(&(*i)->path)).c_str(), &(*i)->path); // TODO:
+			ImGui::InputText(("##" + PointerToString(&(*i)->path)).c_str(), &(*i)->path);
 
 			ImGui::TableSetColumnIndex(1);
 
@@ -280,7 +280,7 @@ Texture::operator std::string() const
 std::string Texture::getDisplayName() const
 {
 	// TODO just the filename
-	return path + " " + std::to_string(GUID);
+	return path;
 }
 
 std::string Texture::getTypelessFilename(std::string path)

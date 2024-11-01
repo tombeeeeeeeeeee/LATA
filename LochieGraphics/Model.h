@@ -23,8 +23,8 @@ public:
 	static void PrintMetaData(aiMetadata* metaData);
 	Model(toml::table table);
 
-	glm::vec3 min;
-	glm::vec3 max;
+	glm::vec3 min = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 max = { 0.0f, 0.0f, 0.0f };
 
 	std::string path = "";
 
@@ -32,11 +32,10 @@ public:
 
 	ModelHierarchyInfo root;
 
-	unsigned long long GUID;
+	unsigned long long GUID = 0;
 
 
 	void LoadModel(std::string path);
-	//void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
 	void AddMesh(Mesh* mesh); // TODO: Maybe remove this function?
 
 	const std::vector<Mesh*>& getMeshes() const;

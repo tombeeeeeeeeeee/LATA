@@ -1,9 +1,9 @@
 #include "PrefabManager.h"
 
 #include "Paths.h"
-#include "SceneManager.h"
 #include "Scene.h"
 #include "SceneObject.h"
+#include "SceneManager.h"
 
 #include "ExtraEditorGUI.h"
 

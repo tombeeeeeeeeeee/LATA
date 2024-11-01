@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Graphics.h"
-
 #include "Maths.h"
 
 #include <string>
@@ -27,9 +25,9 @@ namespace toml {
 class Shader
 {
 protected:
-	GLint getUniformLocation(const std::string& name) const;
-	static GLuint CompileShader(std::string path, int type);
-	static GLuint CreateProgram(std::vector<GLuint> shaders);
+	int getUniformLocation(const std::string& name) const;
+	static unsigned int CompileShader(std::string path, int type);
+	static unsigned int CreateProgram(std::vector<unsigned int> shaders);
 	bool loaded = false;
 	int updateFlag;
 
@@ -37,15 +35,13 @@ protected:
 
 public:
 
-	// TODO: write these by bitshifting 1 instead
 	enum Flags {
-		None     = 0b00000000,
-		VPmatrix = 0b00000001,
-		Lit      = 0b00000010,
-		Animated = 0b00000100,
-		Spec	 = 0b00001000,
-		Painted  = 0b00010000,
-		All      = 0b11111111,
+		None     = 0,
+		VPmatrix = 1 << 0,
+		Lit      = 1 << 1,
+		Animated = 1 << 2,
+		Spec	 = 1 << 3,
+		Painted  = 1 << 4,
 	};
 
 	int getFlag() const;
@@ -53,11 +49,10 @@ public:
 	void AddFlag(int _flag);
 	void RemoveFlag(int _flag);
 	void setFlag(int _flag, bool state);
-	static GLuint usingID;
+	static unsigned int usingID;
 	// the program ID
-	GLuint GLID;
+	unsigned int GLID;
 	unsigned long long GUID = 0;
-	// TODO: Contructor from one name that finds all the shaders of different types, or custom shader file
 	Shader(std::string vertexPath, std::string fragmentPath, int _updateFlag = 0);
 	void Load();
 	std::string vertexPath;
@@ -69,7 +64,7 @@ public:
 	//TODO: these can be called without any warning when the shader program is not being used, it should either use the shader or send message maybe
 	// Although these can be set as const, it does not feel right and I will not be
 	void setBool(const std::string& name, bool value);
-	void setSampler(const std::string& name, GLuint value);
+	void setSampler(const std::string& name, unsigned int value);
 	void setInt(const std::string& name, int value);
 	void setFloat(const std::string& name, float value);
 	void setVec2(const std::string& name, const glm::vec2& value);

@@ -1,5 +1,6 @@
 #include "SceneObject.h"
 
+#include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Animator.h"
 #include "Collider.h"
@@ -32,7 +33,6 @@ SceneObject::SceneObject(Scene* _scene, std::string _name) :
 
 SceneObject::~SceneObject()
 {
-	// TODO: Make sure we want to this this here
 	ClearParts();
 	scene->transforms.erase(GUID);
 }
@@ -344,11 +344,6 @@ SceneObject::SceneObject(Scene* _scene, toml::table* table) :
 	scene->sceneObjects[GUID] = this;
 	prefabStatus = (PrefabStatus)Serialisation::LoadAsUnsignedIntOLD((*table)["prefabStatus"]);
 	prefabBase = Serialisation::LoadAsUnsignedLongLong((*table)["prefabBase"]);
-}
-
-void SceneObject::setTransform(Transform* transform)
-{
-	scene->transforms[GUID] = (*transform);
 }
 
 Transform* SceneObject::transform() const

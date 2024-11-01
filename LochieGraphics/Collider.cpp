@@ -14,7 +14,7 @@ void Collider::setCollisionLayer(int layer)
 	collisionLayer = layer;
 }
 
-CollisionLayers Collider::getCollisionLayer()
+CollisionLayers Collider::getCollisionLayer() const
 {
 	return (CollisionLayers)collisionLayer;
 }
@@ -68,7 +68,7 @@ void Collider::GUI()
 		"Sync", "Ecco", "Trigger",
 		"Enemy Projectile", "Soft Cover", "Half Cover"
 	};
-	const char* currType = layers[(int)log2f(collisionLayer)];
+	const char* currType = layers[(int)log2f((float)collisionLayer)];
 	ImGui::PushItemWidth(180);
 	if (ImGui::BeginCombo(("Collision Layer##" + tag).c_str(), currType))
 	{

@@ -32,9 +32,9 @@ public:
 	static bool LoadAsBool(toml::node_view<toml::node> toml, bool failedReadValue = false);
 	static unsigned int LoadAsUnsignedInt(toml::node_view<toml::node> toml);
 
-	// TODO: Made a mistake with the unsigned int, but removing this will break certain saves
+	// NOTE: Made a mistake with the unsigned int, but removing this will break certain saves
 	static unsigned int LoadAsUnsignedIntOLD(toml::node_view<toml::node> toml);
-	// TODO: Made a mistake with the unsigned int, but removing this will break certain saves
+	// NOTE: Made a mistake with the unsigned int, but removing this will break certain saves
 	static unsigned int SaveAsUnsignedIntOLD(unsigned int n);
 
 

@@ -93,7 +93,7 @@ void Transform::RemoveChild(Transform* oldChild)
 	children.erase(childIterator);
 }
 
-bool Transform::HasChildren()
+bool Transform::HasChildren() const
 {
 	return !children.empty();
 }
@@ -162,7 +162,7 @@ void Transform::setEulerRotation(glm::vec3 _euler)
 	UpdateGlobalMatrixCascading();
 }
 
-glm::vec3 Transform::getScale()
+glm::vec3 Transform::getScale() const
 {
 	return scale;
 }
@@ -292,8 +292,7 @@ void Transform::GUI()
 			try
 			{
 				toml::table data = toml::parse(clipboard);
-				// TODO: Make a load function instead and call that
-				*this = Transform(data);
+				Load(data);
 			}
 			catch (const toml::parse_error& err)
 			{
@@ -354,7 +353,7 @@ void Transform::GUI()
 
 toml::table Transform::Serialise(unsigned long long GUID) const
 {
-	// TODO: Save children/parent
+	// NOTE: Parent / Children hierarchy are saved through the sceneobject
 	return toml::table({
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
 		{ "quaternion", Serialisation::SaveAsQuaternion(quaternion)},
@@ -364,7 +363,7 @@ toml::table Transform::Serialise(unsigned long long GUID) const
 		});
 }
 
-Transform::Transform(toml::table table)
+void Transform::Load(toml::table& table)
 {
 	quaternion = Serialisation::LoadAsQuaternion(table["quaternion"]);
 	euler = Serialisation::LoadAsVec3(table["euler"]);
@@ -372,6 +371,12 @@ Transform::Transform(toml::table table)
 	scale = Serialisation::LoadAsVec3(table["scale"]);
 
 	UpdateGlobalMatrixCascading();
+
+}
+
+Transform::Transform(toml::table table)
+{
+	Load(table);
 }
 
 Transform::~Transform()

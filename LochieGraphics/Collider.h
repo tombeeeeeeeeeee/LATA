@@ -40,7 +40,7 @@ struct Collider
 	int collisionLayer = 0;
 
 	void setCollisionLayer(int layer);
-	CollisionLayers getCollisionLayer();
+	CollisionLayers getCollisionLayer() const;
 
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	static Collider* Load(toml::table table);

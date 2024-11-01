@@ -5,7 +5,6 @@
 #include "Maths.h"
 
 #include <random>
-#include <vector>
 
 class Shader;
 class ComputeShader;

@@ -61,15 +61,14 @@ Shader* ResourceManager::LoadShader(std::string vertexPath, std::string fragment
 	LoadResource(Shader, shaders, vertexPath, fragmentPath, flags);
 }
 
-// TODO: These paths and extensions should be in the Paths.h
 Shader* ResourceManager::LoadShader(std::string sharedName, int flags)
 {
-	LoadResource(Shader, shaders, "shaders/" + sharedName + ".vert", "shaders/" + sharedName + ".frag", flags);
+	LoadResource(Shader, shaders, Paths::importShaderLocation + sharedName + Paths::vertexExtension, Paths::importShaderLocation + sharedName + Paths::fragmentExtension, flags);
 }
 
 Shader* ResourceManager::LoadShaderDefaultVert(std::string fragmentName, int flags)
 {
-	LoadResource(Shader, shaders, "shaders/default.vert", "shaders/" + fragmentName + ".frag", flags);
+	LoadResource(Shader, shaders, Paths::importShaderLocation + "default.vert", Paths::importShaderLocation + fragmentName + Paths::fragmentExtension, flags);
 }
 
 
@@ -108,9 +107,6 @@ Model* ResourceManager::LoadModel()
 	Model newResource = Model();
 	newResource.GUID = GetNewGuid();
 	return &models.emplace(newResource.GUID, newResource).first->second;
-	//Model newResource;
-	//newResource.GUID = GetNewGuid();
-	//return &models.emplace(newResource.GUID, newResource).first->second;
 }
 
 Mesh* ResourceManager::LoadMesh(std::vector<Vertex> vertices, std::vector<GLuint> indices)
@@ -258,7 +254,6 @@ void ResourceManager::GUI()
 		Texture::EditorGUI(tempTextures);
 	}
 
-	// TODO: Should be able to change the stuff of materials
 	if (ImGui::CollapsingHeader("Materials")) {
 
 		for (auto i = materials.begin(); i != materials.end(); i++)
@@ -357,15 +352,11 @@ void ResourceManager::GUI()
 
 		for (auto& model : models)
 		{
-			// TODO: model gui
-			//ImGui::Text(std::to_string(model.second.GUID).c_str());
-			//model.second.
 			ImGui::Indent();
 
 			model.second.GUI();
 
 			ImGui::Unindent();
-
 		}
 	}
 }
@@ -373,7 +364,6 @@ void ResourceManager::GUI()
 
 unsigned long long ResourceManager::GetNewGuid()
 {
-	// TODO: Generate this properly
 	using namespace std::chrono;
 	
 	auto time = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();

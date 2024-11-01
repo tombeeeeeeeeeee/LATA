@@ -119,7 +119,12 @@ void LevelEditor::RefreshWalls()
 
 SceneObject* LevelEditor::CellAt(float x, float z)
 {
-	auto tile = tiles.find({ (int)x, (int)z });
+	return CellAt((int)x, (int)z);
+}
+
+SceneObject* LevelEditor::CellAt(int x, int z)
+{
+	auto tile = tiles.find({ x, z });
 	if (tile == tiles.end()) { return nullptr; }
 	else { return tile->second; }
 }
@@ -494,7 +499,7 @@ void LevelEditor::Draw()
 		healthShader->setVec2("scale", { syncScaleX, syncScaleY });
 		healthShader->setFloat("healthPercent", (float)syncSo->health()->currHealth / (float)syncSo->health()->getMaxHealth());
 		healthShader->setVec3("backgroundColour", 0.05f, 0.67f, 0.0f);
-		healthShader->setVec3("healthColour", 0.1, 1.0f, 0.0f);
+		healthShader->setVec3("healthColour", 0.1f, 1.0f, 0.0f);
 		healthBar.Draw();
 		healthShader->setVec2("offset", { eccoOffsetX, eccoOffsetY });
 		healthShader->setVec2("scale", { eccoScaleX, eccoScaleY });
@@ -788,11 +793,11 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	glm::vec2 max = { -FLT_MAX, -FLT_MAX };
 	for (auto& i : tiles)
 	{
-		if (i.first.first < min.x) { min.x = i.first.first; };
-		if (i.first.second < min.y) { min.y = i.first.second; };
+		if ((float)i.first.first < min.x) { min.x = (float)i.first.first; };
+		if ((float)i.first.second < min.y) { min.y = (float)i.first.second; };
 
-		if (i.first.first > max.x) { max.x = i.first.first; };
-		if (i.first.second > max.y) { max.y = i.first.second; };
+		if ((float)i.first.first > max.x) { max.x = (float)i.first.first; };
+		if ((float)i.first.second > max.y) { max.y = (float)i.first.second; };
 
 
 		i.second->renderer()->materials[0] = groundMaterial;

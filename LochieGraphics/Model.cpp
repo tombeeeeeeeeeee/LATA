@@ -27,7 +27,6 @@ Model::Model(std::string _path) :
 	LoadModel(path);
 }
 
-// TODO: Models can no longer flip textures on load as they are always loaded seperatly now
 void Model::LoadModel(std::string _path)
 {
 	path = _path;

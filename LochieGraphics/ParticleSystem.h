@@ -2,8 +2,6 @@
 
 #include "Particle.h"
 
-#include <vector>
-
 class Shader;
 
 class ParticleSystem

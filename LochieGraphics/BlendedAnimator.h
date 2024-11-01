@@ -3,7 +3,7 @@
 
 class BlendedAnimator : public Animator
 {
-    Animation* otherCurrentAnimation;
+    Animation* otherCurrentAnimation = nullptr;
     float currentTimeOther = 0.f;
 public:
     float lerpAmount = 0.f;

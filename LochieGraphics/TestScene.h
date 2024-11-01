@@ -17,15 +17,6 @@ private:
 	int skyboxIndex = 0;
 	std::vector<Skybox*> skyboxes;
 
-	Model* backpackModel;
-	Model* cubeModel;
-	Model* grassModel;
-	Model* soulSpearModel;
-	Model* testRedBoxModel;
-	Model* xbotModel;
-	Model* vampireModel;
-	Model* tiresModel;
-
 	SceneObject* backpack;
 	SceneObject* soulSpear;
 	SceneObject* testRedBox;

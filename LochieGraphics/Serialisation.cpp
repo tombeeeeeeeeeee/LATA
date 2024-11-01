@@ -67,8 +67,10 @@ unsigned long long Serialisation::LoadAsUnsignedLongLong(toml::node& toml)
 
 std::string Serialisation::LoadAsString(toml::node_view<toml::node> toml, std::string failedReadValue)
 {
-    // TODO: Error message
-    if (!toml) { return failedReadValue; }
+    if (!toml) { 
+        std::cout << "Failed to load string\n";
+        return failedReadValue;
+    }
     return toml.as_string()->value_or<std::string>(failedReadValue.c_str());
 }
 
@@ -102,15 +104,16 @@ int Serialisation::LoadAsInt(toml::node& toml)
 
 float Serialisation::LoadAsFloat(toml::node_view<toml::node> toml, float failedReadValue)
 {
-    // TODO: Show error message
-
-    if (!toml) { return failedReadValue; }
-    return toml.as_floating_point()->value_or<float>((double)failedReadValue);
+    if (!toml) { 
+        std::cout << "Failed to load float\n";
+        return failedReadValue;
+    }
+    return toml.as_floating_point()->value_or<float>((float)failedReadValue);
 }
 
 float Serialisation::LoadAsFloat(toml::node& toml, float failedReadValue)
 {
-    return toml.as_floating_point()->value_or<float>((double)failedReadValue);
+    return toml.as_floating_point()->value_or<float>((float)failedReadValue);
 }
 
 glm::quat Serialisation::LoadAsQuaternion(toml::node_view<toml::node> table)

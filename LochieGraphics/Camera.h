@@ -16,8 +16,8 @@ public:
 
     float fov;
 
-    float nearPlane;
-    float farPlane;
+    float nearPlane = 1.0f;
+    float farPlane = 1000.0f;
 
     enum State {
         editorMode,
@@ -44,7 +44,7 @@ public:
         dolly, // Forward/backward
         boomTruck, // Left/Right/Up/Down locally
     };
-    ArtState artState;
+    ArtState artState = none;
     float artFocusDistance = 1;
 
     enum Direction {

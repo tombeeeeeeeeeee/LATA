@@ -1,5 +1,7 @@
 #include "ComputeShader.h"
 
+#include "Graphics.h"
+
 ComputeShader::ComputeShader(std::string path)
 {
 	GLuint compute = Shader::CompileShader(path, GL_COMPUTE_SHADER);

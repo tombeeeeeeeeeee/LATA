@@ -53,9 +53,6 @@ SceneManager::SceneManager(Scene* _scene)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	//TODO:
-	//glfwWindowHint(GLFW_SAMPLES, 16); // for MSAA
-
 #if _DEBUG  
 	std::cout << "Running in debug mode!\n";
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
@@ -128,9 +125,6 @@ SceneManager::SceneManager(Scene* _scene)
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-	//TODO:
-	// MSAA
-	//glEnable(GL_MULTISAMPLE);
 
 	// Draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -207,7 +201,7 @@ SceneManager::SceneManager(Scene* _scene)
 		""
 	);
 
-	SwitchToWindowMode(UserPreferences::windowedStartMode);
+	SwitchToWindowMode((WindowModes)UserPreferences::windowedStartMode);
 
 
 

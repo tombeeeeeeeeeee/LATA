@@ -5,6 +5,7 @@
 #include "Utilities.h"
 
 #include "Serialisation.h"
+#include "Graphics.h"
 
 #include <iostream>
 #include <sstream>
@@ -51,12 +52,12 @@ Shader::Shader(std::string _vertexPath, std::string _fragmentPath, int _updateFl
 	Load();
 }
 
-GLuint Shader::CompileShader(std::string path, int type)
+unsigned int Shader::CompileShader(std::string path, int type)
 {
 	std::string temp = Utilities::FileToString(path);
 	const char* shaderCode = temp.c_str();
 
-	GLuint shader;
+	unsigned int shader;
 
 	int success;
 	char infoLog[512];
@@ -141,7 +142,7 @@ void Shader::setBool(const std::string& name, bool value)
 	glUniform1i(getUniformLocation(name), (int)value);
 }
 
-void Shader::setSampler(const std::string& name, GLuint value)
+void Shader::setSampler(const std::string& name, unsigned int value)
 {
 	// TODO: This might should be glUniform1ui, u for unsigned, check
 	glUniform1i(getUniformLocation(name), value);
