@@ -386,6 +386,14 @@ void LevelEditor::Update(float delta)
 				playerDied = true;
 			}
 		}
+	} // In play
+	else { // Not in play
+		lines.SetColour({ 1, 1, 1 });
+		lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
+		lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + gridSize + gridSize / 2.0f });
+		lines.AddPointToLine({ gridSize * gridMaxX + gridSize + gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + gridSize + gridSize / 2.0f });
+		lines.AddPointToLine({ gridSize * gridMaxX + gridSize + gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
+		lines.FinishLineLoop();
 	}
 
 
@@ -454,14 +462,6 @@ void LevelEditor::Update(float delta)
 	if (playerDied) {
 		LoadLevel(true);
 	}
-
-
-	lines.SetColour({ 1, 1, 1 });
-	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
-	lines.AddPointToLine({ gridSize * gridMinX - gridSize - gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + gridSize + gridSize / 2.0f });
-	lines.AddPointToLine({ gridSize * gridMaxX + gridSize + gridSize / 2.0f, 0.0f, gridSize * gridMaxZ + gridSize + gridSize / 2.0f });
-	lines.AddPointToLine({ gridSize * gridMaxX + gridSize + gridSize / 2.0f, 0.0f, gridSize * gridMinZ - gridSize - gridSize / 2.0f });
-	lines.FinishLineLoop();
 
 	glm::vec2 targetCell = EditorCamMouseToWorld() / gridSize;
 	targetCell = glm::vec2{ roundf(targetCell.x), roundf(targetCell.y) };

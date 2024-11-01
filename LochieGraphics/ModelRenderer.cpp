@@ -118,7 +118,7 @@ void ModelRenderer::GUI()
 	ImGui::Indent();
 	for (size_t i = 0; i < materialGUIDs.size(); i++)
 	{
-		if (ResourceManager::MaterialSelector(std::to_string(i), &materials[i], ResourceManager::defaultShader, true)) {
+		if (ResourceManager::MaterialSelector("Material " + std::to_string(i), &materials[i], ResourceManager::defaultShader, true)) {
 			if (materials[i] != nullptr) {
 				materialGUIDs[i] = materials[i]->GUID;
 			}
