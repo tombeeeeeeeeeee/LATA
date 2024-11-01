@@ -455,6 +455,13 @@ void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int ac
 		scene->Load();
 	}
 
+	if (key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+		scene->gui.moveSelection--;
+	}
+	if (key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+		scene->gui.moveSelection++;
+	}
+
 	scene->OnKeyDown(key, action);
 }
 

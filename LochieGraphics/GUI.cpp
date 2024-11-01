@@ -107,6 +107,7 @@ void GUI::Update()
 	if (showSceneObject) { SceneObjectMenu(); }
 	if (showLightMenu) { LightMenu(); }
 	if (showHierarchy) { HierarchyMenu(); }
+	else { moveSelection = 0; }
 	if (showPhysicsMenu) { PhysicsMenu(); }
 	if (showEnemyMenu) { EnemyMenu(); }
 	if (showHealthSystemMenu) { HealthMenu(); }
@@ -456,6 +457,16 @@ void GUI::HierarchyMenu()
 	UpdateSelection();
 
 	MultiSceneObjectRightClickMenu();
+
+	if (moveSelection && sceneObjectSelected && ImGui::IsWindowFocused()) {
+		auto selected = std::find(hierarchySceneObjects.begin(), hierarchySceneObjects.end(), sceneObjectSelected);
+		unsigned int selectedIndex = std::distance(hierarchySceneObjects.begin(), selected);
+		unsigned int desiredIndex = selectedIndex + moveSelection;
+		if (desiredIndex < hierarchySceneObjects.size()) {
+			setSelected(hierarchySceneObjects.at(desiredIndex));
+		}
+	}
+	moveSelection = 0;
 
 
 	ImGui::End();

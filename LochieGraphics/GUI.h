@@ -30,9 +30,6 @@ public:
 	SceneObject* lastSelected = nullptr;
 	unsigned int partsFilter = 0u;
 	
-
-	void Update();
-
 	bool showResourceMenu = false;
 	bool showTestMenu = false;
 	bool showCameraMenu = false;
@@ -49,6 +46,10 @@ public:
 	bool showParticleMenu = false;
 	bool showAudioMenu = false;
 	bool showStyleMenu = false;
+
+	int moveSelection = 0;
+
+	void Update();
 
 	SceneObject* getSelected();
 	void setSelected(SceneObject* so);
