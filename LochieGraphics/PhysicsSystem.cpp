@@ -117,7 +117,9 @@ void PhysicsSystem::GetCollisions(
 	Transform* transformA, Transform* transformB,
 	std::vector<CollisionPacket>& collisions)
 {
-	if (glm::dot(transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition(), transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition()) > minCollisonDistance * minCollisonDistance) return;
+	float collidableDistance = a->maxVertDistance + b->maxVertDistance + 100.0f;
+	collidableDistance *= collidableDistance;
+	if (glm::dot(transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition(), transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition()) > collidableDistance ) return;
 	std::vector<Collider*> aCols = (*a->getColliders());
 	std::vector<Collider*> bCols = (*b->getColliders());
 
@@ -485,7 +487,7 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 
 	for (auto& rigidBody : *rigidBodiesInScene)
 	{
-		for(auto& collider : rigidBody.second.colliders)
+		for(auto& collider : *rigidBody.second.getColliders())
 		{
 			bool triggerPassing = true;
 			if (collider->isTrigger && ignoreTriggers)
@@ -562,7 +564,7 @@ std::vector<Hit> PhysicsSystem::CircleCast(glm::vec2 pos, float radius, int laye
 
 	for (auto& rigidBodyPair : *rigidBodiesInScene)
 	{
-		for (auto& collider : rigidBodyPair.second.colliders)
+		for (auto& collider : *rigidBodyPair.second.getColliders())
 		{
 			bool triggerPassing = true;
 			if (collider->isTrigger && ignoreTriggers)

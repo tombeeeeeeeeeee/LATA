@@ -50,6 +50,15 @@ glm::vec2 RigidBody::AddDepen(glm::vec2 depen)
 
 void RigidBody::addCollider(Collider* collider)
 {
+	if (collider->getType() == ColliderType::polygon)
+	{
+		PolygonCollider* poly = (PolygonCollider*)collider;
+		for (int i = 0; i < poly->verts.size(); i++)
+		{
+			maxVertDistance = glm::max(poly->verts[i].x + poly->radius, maxVertDistance);
+			maxVertDistance = glm::max(poly->verts[i].y + poly->radius, maxVertDistance);
+		}
+	}
 	colliders.push_back(collider);
 }
 
@@ -219,6 +228,6 @@ RigidBody::RigidBody(toml::table table)
 	}
 	for (size_t i = 0; i < loadingColliders->size(); i++)
 	{
-		colliders.push_back(Collider::Load(*loadingColliders->at(i).as_table()));
+		addCollider(Collider::Load(*loadingColliders->at(i).as_table()));
 	}
 }

@@ -127,7 +127,7 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos, std::string tag)
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
     enemy->health()->currHealth = explosiveEnemyHealth;
-    enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy) };
+    enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy));
     enemy->rigidbody()->isStatic = false;
 }
 
@@ -148,7 +148,7 @@ void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
     enemy->health()->currHealth = meleeEnemyHealth;
-    enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
+    enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) );
     enemy->rigidbody()->isStatic = false;
 }
 
@@ -169,7 +169,7 @@ void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
     enemy->setAnimator(new Animator(&rangedEnemyIdle));
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
-    enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
+    enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) );
     enemy->rigidbody()->isStatic = false;
 }
 
@@ -877,7 +877,7 @@ void EnemySystem::PopulateNormalFlowMap(
     
     for (auto& rigidBodyPair : rigidbodies)
     {
-        for (auto& collider : rigidBodyPair.second.colliders)
+        for (auto& collider : *rigidBodyPair.second.getColliders())
         {
             if ((collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::softCover)) && !collider->isTrigger)
             {
