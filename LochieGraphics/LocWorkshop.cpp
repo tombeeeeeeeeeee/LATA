@@ -54,14 +54,16 @@ void LocWorkshop::Update(float delta)
 {
 }
 
-void LocWorkshop::Draw()
+void LocWorkshop::Draw(float delta)
 {
 	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
 		animators,
+		pointLights,
 		camera,
+		delta,
 		particleSystem.particles
 	);
 }

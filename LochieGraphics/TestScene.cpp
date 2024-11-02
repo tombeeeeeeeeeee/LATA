@@ -221,7 +221,7 @@ void TestScene::Update(float delta)
 	messengerInterface.Update();
 }
 
-void TestScene::Draw()
+void TestScene::Draw(float delta)
 {
 	//auto& xBotTransforms = xbotAnimator.getFinalBoneMatrices();
 	//auto& xBotOtherTransforms = xbotOtherAnimator.getFinalBoneMatrices();
@@ -233,7 +233,9 @@ void TestScene::Draw()
 		transforms,
 		renderers,
 		animators,
-		camera
+		pointLights,
+		camera,
+		delta
 	);
 }
 

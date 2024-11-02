@@ -405,14 +405,16 @@ void ArtScene::Update(float delta)
 {
 }
 
-void ArtScene::Draw()
+void ArtScene::Draw(float delta)
 {
 	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
 		animators,
-		camera
+		pointLights,
+		camera, 
+		delta
 	);
 }
 

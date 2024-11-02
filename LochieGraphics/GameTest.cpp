@@ -303,14 +303,16 @@ void GameTest::Update(float delta)
 	}
 }
 
-void GameTest::Draw()
+void GameTest::Draw(float delta)
 {
 	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
 		animators,
-		camera
+		pointLights,
+		camera,
+		delta
 	);
 }
 

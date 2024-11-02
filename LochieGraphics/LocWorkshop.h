@@ -26,7 +26,7 @@ public:
 	LocWorkshop();
 	void Start() override;
 	void Update(float delta) override;
-	void Draw() override;
+	void Draw(float delta) override;
 	//	void OnMouseDown() override;
 	void GUI() override;
 	//	void OnWindowResize() override;

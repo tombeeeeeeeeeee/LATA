@@ -373,7 +373,7 @@ void LevelEditor::Update(float delta)
 		healthSystem.PlayerHealingUpdate(eccoSo->health(), syncSo->health(),
 			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
 
-		triggerSystem.Update(plates, triggerables, transforms);
+		triggerSystem.Update(plates, triggerables, transforms, delta);
 		dabSystem.Update(transforms, doors, bollards, colliders, delta);
 
 		if (!UserPreferences::immortal) {
@@ -472,14 +472,16 @@ void LevelEditor::Update(float delta)
 
 }
 
-void LevelEditor::Draw()
+void LevelEditor::Draw(float delta)
 {
 	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
 		animators,
+		pointLights,
 		camera,
+		delta,
 		particleSystem.particles
 	);
 

@@ -100,7 +100,7 @@ public:
 
 	virtual void Start() {};
 	virtual void Update(float delta) {};
-	virtual void Draw() {};
+	virtual void Draw(float delta) {};
 	virtual void OnMouseDown() {};
 	virtual void OnKeyDown(int key, int action) {};
 	virtual void OnKey(int key, int action) {};

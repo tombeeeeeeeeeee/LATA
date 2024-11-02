@@ -299,7 +299,7 @@ void SceneManager::Update()
 		}
 	}
 
-	scene->Draw();
+	scene->Draw(deltaTime);
 	scene->gui.Update();
 	ImGui::Render();
 

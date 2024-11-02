@@ -16,8 +16,8 @@ class Transform;
 class TriggerSystem
 {
 public:
-	float pressurePlateCompression = 20.0f;
-	float timeToActuate = 0.8f;
+	float pressurePlateCompression = 5.0f;
+	float timeToActuate = 0.2f;
 
 	static std::multimap<std::string, unsigned long long> triggerables;
 	static void TriggerTag(std::string tag, bool toggle);
@@ -34,7 +34,8 @@ public:
 	void Update(
 		std::unordered_map<unsigned long long, PressurePlate>& plates,
 		std::unordered_map<unsigned long long, Triggerable>& triggerables,
-		std::unordered_map<unsigned long long, Transform>& transforms
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		float delta
 	);
 
 	void Clear();

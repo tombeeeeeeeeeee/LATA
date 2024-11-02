@@ -14,7 +14,7 @@ void EmptyScene::Update(float delta)
 
 }
 
-void EmptyScene::Draw()
+void EmptyScene::Draw(float delta)
 {
 	directionalLight = DirectionalLight
 	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
@@ -24,7 +24,9 @@ void EmptyScene::Draw()
 		transforms,
 		renderers,
 		animators,
-		camera
+		pointLights,
+		camera,
+		delta
 	);
 }
 

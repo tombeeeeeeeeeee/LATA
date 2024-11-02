@@ -20,14 +20,16 @@ void InputTest::Update(float delta)
 	input.Update();
 }
 
-void InputTest::Draw()
+void InputTest::Draw(float delta)
 {
 	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
 		animators,
-		camera
+		pointLights,
+		camera,
+		delta
 	);
 
 }

@@ -410,6 +410,9 @@
     <ClCompile Include="Bollard.cpp">
       <Filter>Source Files\Parts</Filter>
     </ClCompile>
+    <ClCompile Include="Triggerable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -730,6 +733,7 @@
     <ClInclude Include="Bollard.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
+    <ClInclude Include="Triggerable.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -889,6 +893,14 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\ambient.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\healthBar.frag" />
+    <None Include="..\Shaders\healthBar.vert" />
+    <None Include="..\Shaders\pointLight.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\pointLight.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

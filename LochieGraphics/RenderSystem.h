@@ -17,6 +17,7 @@ class Shader;
 class Transform;
 class Texture;
 class Particle;
+class PointLight;
 
 struct bloomMip
 {
@@ -65,6 +66,7 @@ public:
     void BloomUpdate();
     void SSAOUpdate();
     void AmbientPassUpdate();
+    void LightPassUpdate();
 
 
     void Update(
@@ -72,7 +74,9 @@ public:
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
         std::unordered_map<unsigned long long, Animator>& animators,
+        std::unordered_map<unsigned long long, PointLight>& pointLights,
         Camera* camera,
+        float delta,
         std::vector<Particle*> particles = {}
     );
 
@@ -148,7 +152,8 @@ private:
     );
 
     void DrawPointLights(
-        std::unordered_map<unsigned long long, PointLight> pointLights,
+        std::unordered_map<unsigned long long, PointLight>& pointLights,
+        std::unordered_map<unsigned long long, Transform>& transforms,
         float delta
     );
 
@@ -191,6 +196,12 @@ private:
     int ambientPassShaderIndex = 0;
     void AmibentPassSetup();
     void RenderAmbientPass();
+
+    unsigned int lightPassBuffer = 0;
+    unsigned int lightPassFBO = 0;
+    int pointLightPassShaderIndex = 0;
+    int spotlightPassShaderIndex = 0;
+    void LightPassSetup();
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;

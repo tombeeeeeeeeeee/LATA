@@ -49,6 +49,7 @@ void RenderSystem::Start(
     SSAOSetup();
     DeferredSetup(); 
     AmibentPassSetup();
+    LightPassSetup();
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -188,15 +189,6 @@ void RenderSystem::DeferredUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    // create bloom buffer
-    glGenTextures(1, &bloomBuffer);
-    glBindTexture(GL_TEXTURE_2D, bloomBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
     glBindTexture(GL_TEXTURE_2D, depthBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -208,7 +200,6 @@ void RenderSystem::DeferredUpdate()
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, albedoBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, emissionBuffer, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, bloomBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
 
     auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -230,11 +221,40 @@ void RenderSystem::AmbientPassUpdate()
 
     glBindFramebuffer(GL_FRAMEBUFFER, ambientPassFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ambientPassBuffer, 0);
+
+    auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (whatever != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "Error: Framebuffer is not complete!" << "\n";
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+}
+
+void RenderSystem::LightPassUpdate()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
+
+    glBindTexture(GL_TEXTURE_2D, lightPassBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, lightPassBuffer, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
+
+    auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (whatever != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "Error: Framebuffer is not complete!" << "\n";
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void RenderSystem::HDRBufferUpdate()
 {
-    // create floating point color buffer
     glBindTexture(GL_TEXTURE_2D, colorBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -242,15 +262,19 @@ void RenderSystem::HDRBufferUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    // create depth buffer (renderbuffer)
-    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCREEN_WIDTH, SCREEN_HEIGHT);
+    glGenTextures(1, &bloomBuffer);
+    glBindTexture(GL_TEXTURE_2D, bloomBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     // attach buffers
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, bloomBuffer, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer not complete!" << std::endl;
@@ -313,7 +337,9 @@ void RenderSystem::Update(
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
     std::unordered_map<unsigned long long, Animator>& animators,
+    std::unordered_map<unsigned long long, PointLight>& pointLights,
     Camera* camera,
+    float delta,
     std::vector<Particle*> particles
 )
 {
@@ -327,7 +353,7 @@ void RenderSystem::Update(
     if (SCREEN_WIDTH <= 64 || SCREEN_HEIGHT <= 64) { return; }
 
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
-    unsigned int deferredAttachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+    unsigned int deferredAttachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
     unsigned int ambientAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -349,9 +375,14 @@ void RenderSystem::Update(
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    glDrawBuffers(4, deferredAttachments);
+    glDrawBuffers(3, deferredAttachments);
 
     DrawAllRenderers(animators, transforms, renders, animatedRenderered);
+
+    RenderAmbientPass();
+
+    DrawPointLights(pointLights, transforms, delta);
+    
 
     (*shaders)[ShaderIndex::lines]->Use();
     lines.Draw();
@@ -377,7 +408,7 @@ void RenderSystem::Update(
 
     RenderBloom(bloomBuffer);
 
-    RenderAmbientPass();
+  
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Unbind framebuffer
@@ -484,16 +515,24 @@ void RenderSystem::ScreenResize(int width, int height)
 
     DeferredUpdate();
     AmbientPassUpdate();
+    LightPassUpdate();
     SSAOUpdate();
     HDRBufferUpdate();
     OutputBufferUpdate();
     BloomUpdate();
-    AmbientPassUpdate();
 }
 
 
-void RenderSystem::DrawPointLights(std::unordered_map<unsigned long long, PointLight> pointLights, float delta)
+void RenderSystem::DrawPointLights(
+std::unordered_map<unsigned long long, PointLight>& pointLights,
+std::unordered_map<unsigned long long, Transform>& transforms,
+float delta
+)
 {
+    return;
+    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
+    glDepthMask(GL_FALSE);
+    Shader* shader = (*shaders)[pointLightPassShaderIndex];
     for (auto& pair : pointLights)
     {
 
@@ -516,7 +555,6 @@ void RenderSystem::DrawPointLights(std::unordered_map<unsigned long long, PointL
 
         case PointLightEffect::Flickering:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToFlicker);
-            //FLICKERING HOW DO I WANNA DO IT?
             break;
         }
     }
@@ -560,7 +598,7 @@ void RenderSystem::HDRBufferSetUp()
 {
     glGenFramebuffers(1, &hdrFBO);
     glGenTextures(1, &colorBuffer);
-    glGenRenderbuffers(1, &rboDepth);
+    glGenTextures(1, &bloomBuffer);
 
     HDRBufferUpdate();
 }
@@ -741,7 +779,6 @@ void RenderSystem::DeferredSetup()
     glGenTextures(1, &normalBuffer);
     glGenTextures(1, &albedoBuffer);
     glGenTextures(1, &emissionBuffer);
-    glGenTextures(1, &bloomBuffer);
     glGenTextures(1, &depthBuffer);
     glGenFramebuffers(1, &deferredFBO);
     DeferredUpdate();
@@ -754,6 +791,17 @@ void RenderSystem::AmibentPassSetup()
     AmbientPassUpdate();
     ambientPassShaderIndex = (*shaders).size();
     (*shaders).push_back(ResourceManager::LoadShaderDefaultVert("ambient"));
+}
+
+void RenderSystem::LightPassSetup()
+{
+    glGenTextures(1, &lightPassBuffer);
+    glGenFramebuffers(1, &lightPassFBO);
+    LightPassUpdate();
+    pointLightPassShaderIndex = (*shaders).size();
+    (*shaders).push_back(ResourceManager::LoadShader("pointLight"));
+    //spotlightPassShaderIndex = (*shaders).size();
+    //(*shaders).push_back(ResourceManager::LoadShaderDefaultVert("spotlights"));
 }
 
 void RenderSystem::RenderQuad()
