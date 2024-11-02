@@ -84,6 +84,8 @@ bool Sync::Update(
 		}
 		rigidBody.netForce += force;
 
+		// TODO: Walking sound
+
 		fireDirection = move;
 	}
 	else
@@ -136,10 +138,18 @@ bool Sync::Update(
 			if (chargedDuration + delta >= sniperChargeTime && chargedDuration < sniperChargeTime)
 			{
 				//At this time the charge is enough to shoot the sniper.
+				if (!playedReachCharge1) {
+					playedReachCharge1 = true;
+					SceneManager::scene->audio.PlaySound(Audio::railgunFirstChargeReached);
+				}
 			}
 			else if (chargedDuration + delta >= overclockChargeTime && chargedDuration < overclockChargeTime)
 			{
 				//At this time the charge is enough to shoot the reflecting shot
+				if (!playedReachCharge2) {
+					playedReachCharge2 = true;
+					SceneManager::scene->audio.PlaySound(Audio::railgunSecondChargeReached);
+				}
 			}
 			chargedDuration += delta;
 		}
@@ -149,10 +159,13 @@ bool Sync::Update(
 		glm::vec2 lineOfShoot = barrelOffset2D + fireDirection * 80.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f);
 		lines->DrawLineSegment(glm::vec3(barrelOffset2D.x, barrelOffset.y, barrelOffset2D.y), glm::vec3(lineOfShoot.x, barrelOffset.y, lineOfShoot.y), {sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z});
 		lines->DrawCircle(glm::vec3(pos2D.x, 0.2f, pos2D.y), 100.0f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
+		// TODO: Max charge sound
 	}
 	else if (chargingShot)
 	{
 		chargingShot = false;
+		playedReachCharge1 = false;
+		playedReachCharge2 = false;
 
 
 		if (chargedDuration >= overclockChargeTime)
@@ -276,6 +289,8 @@ void Sync::ShootMisfire(glm::vec3 pos)
 	shot->rigidbody()->onTrigger.push_back([this](Collision collision) {misfireShotOnCollision(collision); });
 	shot->transform()->setPosition(pos);
 	shot->transform()->setScale(0.1f);
+
+	SceneManager::scene->audio.PlaySound(Audio::railgunMisfire);
 }
 
 void Sync::ShootSniper(glm::vec3 pos)
@@ -291,11 +306,14 @@ void Sync::ShootSniper(glm::vec3 pos)
 			SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
 		}
 	}
+
+	SceneManager::scene->audio.PlaySound(Audio::railgunShotFirstCharged);
 }
 
 void Sync::ShootOverClocked(glm::vec3 pos)
 {
 	OverclockRebounding(pos, fireDirection, 0, overclockBeamColour);
+	SceneManager::scene->audio.PlaySound(Audio::railgunShotSecondCharged);
 }
 
 void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour)
@@ -373,19 +391,17 @@ void Sync::OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour
 	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::ecco | (int)CollisionLayers::reflectiveSurface | Collider::transparentLayers));
 	Hit hit = hits[0];
 
-	if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+	if(hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 	{
 		hit.sceneObject->health()->subtractHealth(overclockDamage);
-	}
-	if((hit.collider->collisionLayer & (int)CollisionLayers::enemy))
-	{
-		for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
+		SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
+		for (int i = 1; i < hits.size() && i < enemyPierceCount; i++)
 		{
 			hit = hits[i];
-			if (i == enemyPierceCount - 1) return;
 			if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 			{
 				hit.sceneObject->health()->subtractHealth(overclockDamage);
+				SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
 			}
 			else break;
 		}
@@ -405,5 +421,7 @@ void Sync::misfireShotOnCollision(Collision collision)
 	unsigned long long GUID = collision.self->GUID;
 	delete collision.self;
 	SceneManager::scene->sceneObjects.erase(GUID);
+
+	SceneManager::scene->audio.PlaySound(Audio::railgunHitEnemy);
 }
 

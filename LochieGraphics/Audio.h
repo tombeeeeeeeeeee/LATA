@@ -16,10 +16,10 @@ class Audio
 {
 private:
 
+
 	void CheckForMissingPaths();
 
 public:
-
 	enum SoundIndex : unsigned int {
 		railgunMisfire,
 		railgunShotFirstCharged,
@@ -46,7 +46,7 @@ public:
 		enemyRangedCharging,
 		enemyStunned,
 		enemyDeathShot,
-		enemyHitByShot,
+		enemyHitByShot, //TODO: When is this supposed to be played, there is already enemy getting hit by other things
 		bollardMove,
 		doorMove,
 		pressurePlateActivate,
@@ -71,7 +71,17 @@ public:
 		SoLoud::Wav wav;
 		bool loop = false;
 		void Load();
+		unsigned int timesPlayed = 0;
 	};
+
+	class Mixer {
+	public:
+		SoLoud::Bus bus;
+		int handle = -1;
+		bool initialised = false;
+		void Init(SoLoud::Soloud& soloud);
+	};
+
 	std::array<Sound, COUNT> sounds;
 
 	SoLoud::Soloud soloud;
@@ -80,13 +90,11 @@ public:
 
 	void GUI();
 
-	void PlaySound(SoundIndex index, SoLoud::Bus* bus = nullptr);
+	void PlaySound(SoundIndex index, Mixer* mixer = nullptr);
 
 	void EnsureAllSoundsLoaded();
 
-	// Busses are like mixers
-	SoLoud::Bus musicBus;
-	float musicBusVolume = 1.0f;
-	int musicBusHandle;
+	Mixer musicMixer;
+	Mixer testMixer;
 };
 

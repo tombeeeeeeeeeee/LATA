@@ -79,6 +79,10 @@ void TriggerSystem::Update(
 			}
 			platePair.second.triggeredLastFrame = platePair.second.triggeredThisFrame;
 			platePair.second.triggeredThisFrame = false;
+
+		}
+		if (!platePair.second.triggeredLastFrame && platePair.second.triggeredThisFrame) {
+			SceneManager::scene->audio.PlaySound(Audio::pressurePlateActivate);
 		}
 	}
 

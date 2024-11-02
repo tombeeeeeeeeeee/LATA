@@ -12,6 +12,8 @@
 #include "Hit.h"
 #include "Serialisation.h"
 #include "Paths.h"
+#include "SceneManager.h"
+#include "Scene.h"
 
 #include <iostream>
 #include <filesystem>
@@ -92,6 +94,7 @@ void HealthSystem::PlayerHealingActivate(glm::vec2 eccoPos, glm::vec2 syncPos)
 			timeSinceLastPulse = FLT_MAX;
 			currentPulseCount = 0;
 		}
+		SceneManager::scene->audio.PlaySound(Audio::healingAbilityActivate);
 	}
 }
 
@@ -123,6 +126,7 @@ void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, g
 			playerHealingAbility = false;
 			currentPulseCount = 0;
 			timeSinceLastHealingAbility = 0.0f;
+			SceneManager::scene->audio.PlaySound(Audio::healingAbilityDeactivate);
 		}
 	}
 	else timeSinceLastHealingAbility += delta;

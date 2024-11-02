@@ -90,4 +90,7 @@ private:
 	float maxMoveForce = 1.0f;
 	float maxStopForce = 1.0f;
 
+	bool playedReachCharge1 = false;
+	bool playedReachCharge2 = false;
+	
 };

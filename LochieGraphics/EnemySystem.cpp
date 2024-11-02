@@ -262,6 +262,7 @@ void EnemySystem::AbilityCheck(
                             health->subtractHealth(explosionDamage);
                         }
                     }
+                    SceneManager::scene->audio.PlaySound(Audio::enemyExplode);
                     SceneManager::scene->DeleteSceneObject(enemyPair.first);
                 }
                 break;

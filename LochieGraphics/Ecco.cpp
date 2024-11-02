@@ -218,6 +218,7 @@ void Ecco::OnCollision(Collision collision)
 			if (glm::length(rb->vel) > minSpeedDamageThreshold)
 			{
 				collision.sceneObject->health()->subtractHealth(speedDamage);
+				SceneManager::scene->audio.PlaySound(Audio::eccoEnemyHit);
 				collision.self->health()->addHealth(healingFromDamage);
 			}
 		}
