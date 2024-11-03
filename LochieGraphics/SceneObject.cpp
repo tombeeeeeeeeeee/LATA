@@ -248,6 +248,18 @@ void SceneObject::MenuGUI()
 	if (ImGui::MenuItem(("Copy GUID##RightClick" + tag).c_str())) {
 		ImGui::SetClipboardText(std::to_string(GUID).c_str());
 	}
+	auto prefabGUID = 0ull;
+	if (prefabStatus == PrefabStatus::prefabOrigin) {
+		prefabGUID = GUID;
+	}
+	else if (prefabStatus == PrefabStatus::prefabInstance) {
+		prefabGUID = prefabBase;
+	}
+	if (prefabGUID) {
+		if (ImGui::MenuItem(("Select Prefab##RightClick" + tag).c_str())) {
+			PrefabManager::selectedPrefab = prefabGUID;
+		}
+	}
 	ImGui::EndPopup();
 
 }
@@ -403,6 +415,8 @@ toml::table SceneObject::SerialiseWithParts() const
 		table.emplace("sync", scene->sync->Serialise());
 		safetyCheck &= ~Parts::sync;
 	}
+
+	table.emplace("transform", transform()->Serialise(GUID));
 
 	// TODO: Probably don't need a whole assert here, could just print a error and continue on
 	assert(safetyCheck == 0);
@@ -632,6 +646,14 @@ void SceneObject::LoadWithParts(toml::table table)
 		setSync(scene->sync);
 	}
 
+	auto loadingTransform = table["transform"];
+	if (!loadingTransform) {
+		// Transform info wasn't saved, this is okay for old prefabs
+	}
+	else {
+		transform()->Load(*loadingTransform.as_table());
+	}
+
 	// TODO: Don't need a whole assert here
 	assert(intendedParts == parts);
 }
@@ -727,6 +749,9 @@ void SceneObject::LoadWithPartsSafeAndChildren(toml::table table)
 
 void SceneObject::LoadFromPrefab(toml::table table)
 {
+	// When loading directly from a prefab, the transform (of this object) should not be changed
+	glm::mat4 originalTransform = transform()->getLocalMatrix();
 	LoadWithPartsSafeAndChildren(table);
 	prefabStatus = PrefabStatus::prefabInstance;
+	transform()->setLocalMatrix(originalTransform);
 }
