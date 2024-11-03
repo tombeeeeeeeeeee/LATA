@@ -44,8 +44,7 @@ public:
 	float invMass = 0;
 
 	float elasticicty = 0;
-
-	std::vector<Collider*> colliders = {};
+	float maxVertDistance = 0.0f;
 
 	glm::vec2 AddImpulse(glm::vec2 impulse);
 	float AddRotationalImpulse(float impulse);
@@ -76,5 +75,6 @@ public:
 
 	bool ignoreThisCollision = false;
 private:
-	//TODO: ADD FUNCTION POINTERS FOR ON COLLISION AND ON TRIGGER
+	std::vector<Collider*> colliders = {};
+	
 };

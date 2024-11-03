@@ -291,23 +291,23 @@ void Scene::InitialisePlayers()
 	if (!eccoSO->health()) eccoSO->setHealth(new Health());
 
 	if (!eccoSO->rigidbody()) eccoSO->setRigidBody(new RigidBody(1.0f, 1.0f));
-	if (eccoSO->rigidbody()->colliders.size() < 1)
+	if (eccoSO->rigidbody()->getColliders()->size() < 1)
 	{
-		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
-		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
+		eccoSO->rigidbody()->addCollider(new PolygonCollider());
+		eccoSO->rigidbody()->addCollider(new PolygonCollider());
 	}
-	else if (eccoSO->rigidbody()->colliders.size() < 2)
+	else if (eccoSO->rigidbody()->getColliders()->size() < 2)
 	{
-		eccoSO->rigidbody()->colliders.push_back(new PolygonCollider());
+		eccoSO->rigidbody()->addCollider(new PolygonCollider());
 	}
 
-	eccoSO->rigidbody()->colliders[0]->collisionLayer = (int)CollisionLayers::ecco;
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->verts = {
+	(*eccoSO->rigidbody()->getColliders())[0]->collisionLayer = (int)CollisionLayers::ecco;
+	((PolygonCollider*)(*eccoSO->rigidbody()->getColliders())[0])->verts = {
 		{33.0f, 0.0f}
 	};
-	((PolygonCollider*)eccoSO->rigidbody()->colliders[0])->radius = 75.0f;
+	((PolygonCollider*)(*eccoSO->rigidbody()->getColliders())[0])->radius = 75.0f;
 
-	eccoSO->rigidbody()->colliders[1]->collisionLayer = (int)CollisionLayers::reflectiveSurface;
+	(*eccoSO->rigidbody()->getColliders())[1]->collisionLayer = (int)CollisionLayers::reflectiveSurface;
 
 
 	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { ecco->OnCollision(collision); });
@@ -325,17 +325,17 @@ void Scene::InitialisePlayers()
 	syncSO->health()->setMaxHealth(sync->maxHealth);
 
 	if (!syncSO->rigidbody()) syncSO->setRigidBody(new RigidBody(1.0f, 1.0f));
-	if (syncSO->rigidbody()->colliders.size() < 1)
+	if (syncSO->rigidbody()->getColliders()->size() < 1)
 	{
-		syncSO->rigidbody()->colliders.push_back(new PolygonCollider());
+		syncSO->rigidbody()->addCollider(new PolygonCollider());
 	}
 
-	syncSO->rigidbody()->colliders[0]->collisionLayer = (int)CollisionLayers::sync;
-	((PolygonCollider*)syncSO->rigidbody()->colliders[0])->verts = {
+	(*syncSO->rigidbody()->getColliders())[0]->collisionLayer = (int)CollisionLayers::sync;
+	((PolygonCollider*)(*syncSO->rigidbody()->getColliders())[0])->verts = {
 			{0.0f, 0.0f}
 	};
 
-	((PolygonCollider*)syncSO->rigidbody()->colliders[0])->radius = 40.0f;
+	((PolygonCollider*)(*syncSO->rigidbody()->getColliders())[0])->radius = 40.0f;
 
 	syncSO->rigidbody()->vel = { 0.0f, 0.0f };
 

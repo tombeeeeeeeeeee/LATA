@@ -127,7 +127,7 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos, std::string tag)
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
     enemy->health()->currHealth = explosiveEnemyHealth;
-    enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy) };
+    enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy));
     enemy->rigidbody()->isStatic = false;
 }
 
@@ -148,7 +148,7 @@ void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
     enemy->health()->currHealth = meleeEnemyHealth;
-    enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
+    enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) );
     enemy->rigidbody()->isStatic = false;
 }
 
@@ -169,7 +169,7 @@ void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
     enemy->setAnimator(new Animator(&rangedEnemyIdle));
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos);
-    enemy->rigidbody()->colliders = { new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) };
+    enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) );
     enemy->rigidbody()->isStatic = false;
 }
 
@@ -185,8 +185,6 @@ void EnemySystem::LineOfSightAndTargetCheck(
     for (auto& pair : enemies)
     {
         glm::vec2 pos = transforms[pair.first].get2DGlobalPosition();
-        pair.second.hasLOS = false;
-        pair.second.target = pos;
         float distanceToSync = FLT_MAX;
         float distanceToEcco = FLT_MAX;
 
@@ -465,7 +463,7 @@ void EnemySystem::Steering(
         glm::vec2 velocityDelta = enemyPair.second.boidVelocity - curVel;
         glm::vec2 forceThisFrame = velocityDelta / delta;
         rigidBodies[enemyPair.first].netForce += forceThisFrame;
-        enemyPair.second.aim = Utilities::Lerp(enemyPair.second.aim, rigidBodies[enemyPair.first].vel, 0.3f);
+        enemyPair.second.aim = Utilities::Lerp(enemyPair.second.aim, enemyPair.second.boidVelocity, 0.01f);
 
         float angle = atan2f(enemyPair.second.aim.x, enemyPair.second.aim.y) * 180.0f / PI;
         if (isnan(angle)) continue;
@@ -880,7 +878,7 @@ void EnemySystem::PopulateNormalFlowMap(
     
     for (auto& rigidBodyPair : rigidbodies)
     {
-        for (auto& collider : rigidBodyPair.second.colliders)
+        for (auto& collider : *rigidBodyPair.second.getColliders())
         {
             if ((collider->collisionLayer & ((int)CollisionLayers::base | (int)CollisionLayers::softCover)) && !collider->isTrigger)
             {

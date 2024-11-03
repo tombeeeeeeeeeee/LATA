@@ -71,8 +71,8 @@ void PhysicsSystem::CollisionCheckPhase(
 		std::vector<CollisionPacket> collisions;
 		for (auto i = rigidBodies.begin(); i != rigidBodies.end(); i++)
 		{
-
-			for (auto j = std::next(i); j != rigidBodies.end(); j++)
+			if((*i).second.isStatic) continue;
+			for (auto j = rigidBodies.begin(); j != rigidBodies.end(); j++)
 			{
 				if (i->second.isStatic && j->second.isStatic) continue;
 				GetCollisions(
@@ -117,6 +117,9 @@ void PhysicsSystem::GetCollisions(
 	Transform* transformA, Transform* transformB,
 	std::vector<CollisionPacket>& collisions)
 {
+	float collidableDistance = a->maxVertDistance + b->maxVertDistance + 100.0f;
+	collidableDistance *= collidableDistance;
+	if (glm::dot(transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition(), transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition()) > collidableDistance ) return;
 	std::vector<Collider*> aCols = (*a->getColliders());
 	std::vector<Collider*> bCols = (*b->getColliders());
 
@@ -208,7 +211,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 {
 	std::vector<Collider*> aCols = (*a->getColliders());
 	Collider* colliderB = b;
-
+	if (glm::dot(transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition(), transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition()) > minCollisonDistance * minCollisonDistance) return;
 	for (Collider* colliderA : aCols)
 	{
 		if (!GetCollisionLayerBool(colliderA->collisionLayer, colliderB->collisionLayer))
@@ -484,7 +487,7 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 
 	for (auto& rigidBody : *rigidBodiesInScene)
 	{
-		for(auto& collider : rigidBody.second.colliders)
+		for(auto& collider : *rigidBody.second.getColliders())
 		{
 			bool triggerPassing = true;
 			if (collider->isTrigger && ignoreTriggers)
@@ -561,7 +564,7 @@ std::vector<Hit> PhysicsSystem::CircleCast(glm::vec2 pos, float radius, int laye
 
 	for (auto& rigidBodyPair : *rigidBodiesInScene)
 	{
-		for (auto& collider : rigidBodyPair.second.colliders)
+		for (auto& collider : *rigidBodyPair.second.getColliders())
 		{
 			bool triggerPassing = true;
 			if (collider->isTrigger && ignoreTriggers)
