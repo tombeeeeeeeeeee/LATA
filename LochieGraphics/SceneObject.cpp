@@ -21,21 +21,17 @@
 #include <fstream>
 #include <array>
 
-SceneObject::SceneObject(Scene* _scene, std::string _name) :
-	scene(_scene),
-	name(_name)
-{
-	GUID = ResourceManager::GetNewGuid();
-	scene->transforms[GUID] = Transform(this);
-	scene->sceneObjects[GUID] = this;
-	// TODO: Put a safetly check for if a guid that gets made is already on a sceneobject
-}
+#define SavePart(saveName, partsName, container)                              \
+	if (Parts::##partsName & parts) {                                         \
+		table.emplace(saveName, scene->##container.at(GUID).Serialise(GUID)); \
+		safetyCheck &= ~Parts::##partsName;                                   \
+	}
 
-SceneObject::~SceneObject()
-{
-	ClearParts();
-	scene->transforms.erase(GUID);
-}
+#define LoadPart(saveName, partsName, setter, type)         \
+	if (intendedParts & Parts::##partsName) {               \
+		/* TODO: likely leaking here, fix */                \
+		setter(new type(*table[saveName].as_table()));      \
+	}
 
 #define AddPartGUI(getter, setter, constructor, label) \
 if (getter() == nullptr) {                             \
@@ -51,6 +47,48 @@ if (parts & Parts::partsType) {                 \
 	}                                           \
 }
 
+#define setPart(part, container, enumValue)                     \
+	if (part) {                                                 \
+		parts |= enumValue;                                     \
+ /*TODO: Ensure that this isn't leaking memory and is alright*/ \
+		scene->container[GUID] = *part;                         \
+	}                                                           \
+	else {                                                      \
+		parts &= ~enumValue;                                    \
+		scene->container.erase(GUID);                           \
+	}
+
+#define getPart(container, enumValue)     \
+	if (parts & enumValue) {              \
+		return &(scene->container[GUID]); \
+	}                                     \
+	return nullptr
+
+#define SetAndGetForPart(Type, container, enumValue, nameInSet, nameInGet) \
+void SceneObject::set##nameInSet(Type* part)                               \
+{                                                                          \
+	setPart(part, container, enumValue);                                   \
+}                                                                          \
+Type * SceneObject::##nameInGet()                                          \
+{                                                                          \
+	getPart(container, enumValue);                                         \
+}
+
+SceneObject::SceneObject(Scene* _scene, std::string _name) :
+	scene(_scene),
+	name(_name)
+{
+	GUID = ResourceManager::GetNewGuid();
+	scene->transforms[GUID] = Transform(this);
+	scene->sceneObjects[GUID] = this;
+	// TODO: Put a safetly check for if a guid that gets made is already on a sceneobject
+}
+
+SceneObject::~SceneObject()
+{
+	ClearParts();
+	scene->transforms.erase(GUID);
+}
 
 void SceneObject::GUI()
 {
@@ -334,6 +372,60 @@ toml::table SceneObject::Serialise() const
 	};
 }
 
+toml::table SceneObject::SerialiseWithParts() const
+{
+	auto safetyCheck = parts;
+
+	toml::table table;
+	table.emplace("sceneObject", Serialise());
+
+	SavePart("modelRenderer", modelRenderer, renderers);
+	SavePart("animator", animator, animators);
+	SavePart("rigidBody", rigidBody, rigidBodies);
+	SavePart("health", health, healths);
+	SavePart("enemy", enemy, enemies);
+	SavePart("exitElevator", exitElevator, exits);
+	SavePart("spawnManager", spawnManager, spawnManagers);
+	SavePart("plate", plate, plates);
+	SavePart("door", door, doors);
+	SavePart("bollard", bollard, bollards);
+	SavePart("triggerable", triggerable, triggerables);
+
+	if (Parts::collider & parts) {
+		table.emplace("collider", scene->colliders.at(GUID)->Serialise(GUID));
+		safetyCheck &= ~Parts::collider;
+	}
+	if (Parts::ecco & parts) {
+		table.emplace("ecco", scene->ecco->Serialise());
+		safetyCheck &= ~Parts::ecco;
+	}
+	if (Parts::sync & parts) {
+		table.emplace("sync", scene->sync->Serialise());
+		safetyCheck &= ~Parts::sync;
+	}
+
+	// TODO: Probably don't need a whole assert here, could just print a error and continue on
+	assert(safetyCheck == 0);
+
+	return table;
+}
+
+toml::table SceneObject::SerialiseWithPartsAndChildren() const
+{
+	toml::table table = SerialiseWithParts();
+
+	toml::array savingChildren;
+	auto children = transform()->getChildren();
+	for (size_t i = 0; i < children.size(); i++)
+	{
+		savingChildren.push_back(children.at(i)->so->SerialiseWithPartsAndChildren());
+	}
+
+	table.emplace("children", savingChildren);
+
+	return table;
+}
+
 SceneObject::SceneObject(Scene* _scene, toml::table* table) :
 	scene(_scene)
 {
@@ -349,33 +441,6 @@ SceneObject::SceneObject(Scene* _scene, toml::table* table) :
 Transform* SceneObject::transform() const
 {
 	return &(scene->transforms[GUID]);
-}
-
-#define setPart(part, container, enumValue)                     \
-	if (part) {                                                 \
-		parts |= enumValue;                                     \
- /*TODO: Ensure that this isn't leaking memory and is alright*/ \
-		scene->container[GUID] = *part;                         \
-	}                                                           \
-	else {                                                      \
-		parts &= ~enumValue;                                    \
-		scene->container.erase(GUID);                           \
-	}
-
-#define getPart(container, enumValue)     \
-	if (parts & enumValue) {              \
-		return &(scene->container[GUID]); \
-	}                                     \
-	return nullptr
-
-#define SetAndGetForPart(Type, container, enumValue, nameInSet, nameInGet) \
-void SceneObject::set##nameInSet(Type* part)                               \
-{                                                                          \
-	setPart(part, container, enumValue);                                   \
-}                                                                          \
-Type * SceneObject::##nameInGet()                                          \
-{                                                                          \
-	getPart(container, enumValue);                                         \
 }
 
 SetAndGetForPart(ModelRenderer, renderers, Parts::modelRenderer, Renderer, renderer)
@@ -511,54 +576,13 @@ void SceneObject::ClearParts()
 	assert(parts == 0);
 }
 
-#define SaveAsPrefabPart(saveName, partsName, container)                      \
-	if (Parts::##partsName & parts) {                                         \
-		table.emplace(saveName, scene->##container.at(GUID).Serialise(GUID)); \
-		safetyCheck &= ~Parts::##partsName;                                   \
-	}                                                                         \
-
-
 void SceneObject::SaveAsPrefab()
 {
 	prefabStatus = PrefabStatus::prefabOrigin;
 
-	auto safetyCheck = parts;
 	std::ofstream file(Paths::prefabsSaveLocation + name + Paths::prefabExtension);
 
-	toml::table table;
-
-
-	table.emplace("sceneObject", Serialise());
-
-	SaveAsPrefabPart("modelRenderer", modelRenderer, renderers);
-	SaveAsPrefabPart("animator", animator, animators);
-	SaveAsPrefabPart("rigidBody", rigidBody, rigidBodies);
-	SaveAsPrefabPart("health", health, healths);
-	SaveAsPrefabPart("enemy", enemy, enemies);
-	SaveAsPrefabPart("exitElevator", exitElevator, exits);
-	SaveAsPrefabPart("spawnManager", spawnManager, spawnManagers);
-	SaveAsPrefabPart("plate", plate, plates);
-	SaveAsPrefabPart("door", door, doors);
-	SaveAsPrefabPart("bollard", bollard, bollards);
-	SaveAsPrefabPart("triggerable", triggerable, triggerables);
-	
-	if (Parts::collider & parts) {
-		table.emplace("collider", scene->colliders.at(GUID)->Serialise(GUID));
-		safetyCheck &= ~Parts::collider;
-	}
-	if (Parts::ecco & parts) {
-		table.emplace("ecco", scene->ecco->Serialise());
-		safetyCheck &= ~Parts::ecco;
-	}
-	if (Parts::sync & parts) {
-		table.emplace("sync", scene->sync->Serialise());
-		safetyCheck &= ~Parts::sync;
-	}
-
-	// TODO: Probably don't need a whole assert here, could just print a error and continue on
-	assert(safetyCheck == 0);
-
-	// TODO: Give a warning incase the object has children as they won't be saved along with the prefab just yet
+	toml::table table =	SerialiseWithPartsAndChildren();
 
 	file << table << '\n';
 
@@ -567,92 +591,32 @@ void SceneObject::SaveAsPrefab()
 	PrefabManager::loadedPrefabOriginals[GUID] = table;
 }
 
-#define LoadAsPrefabPart(saveName, partsName, setter, type) \
-	if (intendedParts & Parts::##partsName) {               \
-		/* TODO: likely leakig here, fix */                 \
-		setter(new type(*table[saveName].as_table()));      \
-	}                                                       \
-
-
-void SceneObject::LoadFromPrefab(toml::table table)
+void SceneObject::LoadWithParts(toml::table table)
 {
-	// Information that shouldn't be loaded from prefab
-	std::string exitLevel = "";
-	if (parts & Parts::exitElevator) {
-		exitLevel = exitElevator()->levelToLoad;
-	}
-	bool hadSpawnManager = parts & Parts::spawnManager;
-	std::string pressurePlateTag = "";
-	if (parts & Parts::plate) {
-		pressurePlateTag = plate()->triggerTag;
-	}
-	std::string doorTag = "";
-	if (parts & Parts::door) {
-		doorTag = door()->triggerTag;
-	}
-	std::string bollardTag = "";
-	if (parts & Parts::bollard) {
-		bollardTag = bollard()->triggerTag;
-	}
-	std::string triggerableTag = "";
-	if (parts & Parts::triggerable) {
-		triggerableTag = triggerable()->triggerTag;
-	}
-
-	ClearParts(~Parts::spawnManager);
-	
-	unsigned long long originalGUID = GUID;
-
-	prefabStatus = PrefabStatus::prefabInstance;
+	ClearParts();
 
 	toml::table sceneObjectTable = *table["sceneObject"].as_table();
 	prefabBase = Serialisation::LoadAsUnsignedLongLong(sceneObjectTable["guid"]);
+	prefabStatus = (PrefabStatus)Serialisation::LoadAsUnsignedIntOLD(sceneObjectTable["prefabStatus"]);
+	if (prefabStatus == PrefabStatus::prefabOrigin) {
+		prefabStatus = PrefabStatus::prefabInstance;
+	}
 
 	name = Serialisation::LoadAsString(sceneObjectTable["name"]);
 
 	unsigned long long intendedParts = Serialisation::LoadAsUnsignedIntOLD(sceneObjectTable["parts"]);
 
-	LoadAsPrefabPart("modelRenderer", modelRenderer, setRenderer, ModelRenderer);
-	LoadAsPrefabPart("animator", animator, setAnimator, Animator);
-	LoadAsPrefabPart("rigidBody", rigidBody, setRigidBody, RigidBody);
-	LoadAsPrefabPart("health", health, setHealth, Health);
-	LoadAsPrefabPart("enemy", enemy, setEnemy, Enemy);
-	if (intendedParts & Parts::exitElevator) {
-		setExitElevator(new ExitElevator(*table["exitElevator"].as_table()));
-		if (exitLevel != "") {
-			exitElevator()->levelToLoad = exitLevel;
-		}
-	};
-	if (intendedParts & Parts::spawnManager) {
-		if (!hadSpawnManager) {
-			setSpawnManager(new SpawnManager(*table["spawnManager"].as_table()));
-		}
-	};
-	
-	if (intendedParts & Parts::plate) {
-		setPressurePlate(new PressurePlate(*table["plate"].as_table()));
-		if (pressurePlateTag != "") {
-			plate()->triggerTag = pressurePlateTag;
-		}
-	};
-	if (intendedParts & Parts::door) {
-		setDoor(new Door(*table["door"].as_table()));
-		if (doorTag != "") {
-			door()->triggerTag = doorTag;
-		}
-	};
-	if (intendedParts & Parts::bollard) {
-		setBollard(new Bollard(*table["bollard"].as_table()));
-		if (bollardTag != "") {
-			bollard()->triggerTag = bollardTag;
-		}
-	};
-	if (intendedParts & Parts::triggerable) {
-		setTriggerable(new Triggerable(*table["triggerable"].as_table()));
-		if (triggerableTag != "") {
-			triggerable()->triggerTag = triggerableTag;
-		}
-	};
+	LoadPart("modelRenderer", modelRenderer, setRenderer, ModelRenderer);
+	LoadPart("animator", animator, setAnimator, Animator);
+	LoadPart("rigidBody", rigidBody, setRigidBody, RigidBody);
+	LoadPart("health", health, setHealth, Health);
+	LoadPart("enemy", enemy, setEnemy, Enemy);
+	LoadPart("exitElevator", exitElevator, setExitElevator, ExitElevator);
+	LoadPart("spawnManager", spawnManager, setSpawnManager, SpawnManager);
+	LoadPart("plate", plate, setPressurePlate, PressurePlate);
+	LoadPart("door", door, setDoor, Door);
+	LoadPart("bollard", bollard, setBollard, Bollard);
+	LoadPart("triggerable", triggerable, setTriggerable, Triggerable);
 
 	if (intendedParts & Parts::collider) {
 		setCollider(Collider::Load(*table["collider"].as_table()));
@@ -670,4 +634,99 @@ void SceneObject::LoadFromPrefab(toml::table table)
 
 	// TODO: Don't need a whole assert here
 	assert(intendedParts == parts);
+}
+
+void SceneObject::LoadWithPartsSafe(toml::table table)
+{
+	// Remember information that should be kept
+	std::string exitLevel = "";
+	if (parts & Parts::exitElevator) {
+		exitLevel = exitElevator()->levelToLoad;
+	}
+	bool hadSpawnManager = parts & Parts::spawnManager;
+	toml::table spawnManagerData;
+	if (hadSpawnManager) {
+		spawnManagerData = SpawnManager().Serialise(GUID);
+	}
+	std::string pressurePlateTag = "";
+	if (parts & Parts::plate) {
+		pressurePlateTag = plate()->triggerTag;
+	}
+	std::string doorTag = "";
+	if (parts & Parts::door) {
+		doorTag = door()->triggerTag;
+	}
+	std::string bollardTag = "";
+	if (parts & Parts::bollard) {
+		bollardTag = bollard()->triggerTag;
+	}
+	std::string triggerableTag = "";
+	if (parts & Parts::triggerable) {
+		triggerableTag = triggerable()->triggerTag;
+	}
+
+	// Load parts
+	LoadWithParts(table);
+
+	// Apply saved information
+	if (parts & Parts::exitElevator && exitLevel != "") {
+		exitElevator()->levelToLoad = exitLevel;
+	}
+	if (parts & Parts::plate && pressurePlateTag != "") {
+		plate()->triggerTag = pressurePlateTag;
+	}
+	if (parts & Parts::door && doorTag != "") {
+		door()->triggerTag = doorTag;
+	}
+	if (parts & Parts::bollard && bollardTag != "") {
+		bollard()->triggerTag = bollardTag;
+	}
+	if (parts & Parts::triggerable && triggerableTag != "") {
+		triggerable()->triggerTag = triggerableTag;
+	}
+	if (parts & Parts::spawnManager && hadSpawnManager) {
+		spawnManager()->Load(spawnManagerData);
+	}
+}
+
+void SceneObject::LoadWithPartsSafeAndChildren(toml::table table)
+{
+	LoadWithPartsSafe(table);
+
+	auto previousChildren = transform()->getChildren();
+	auto temp = table["children"];
+	if (!temp) {
+		return;
+	}
+
+	auto loadingChildren = temp.as_array();
+	if (loadingChildren->size() == 0) {
+		return;
+	}
+	for (size_t i = 0; i < loadingChildren->size(); i++)
+	{
+		SceneObject* loadInto;
+		if (i < previousChildren.size()) {
+			// Load over the existing child object
+			loadInto = previousChildren.at(i)->so;
+		}
+		else {
+			// Create new sceneobject and load into that
+			SceneObject* newChild = new SceneObject(scene);
+			transform()->AddChild(newChild->transform());
+			loadInto = newChild;
+		}
+		loadInto->LoadWithPartsSafeAndChildren(*loadingChildren->at(i).as_table());
+	}
+	// Clear extra children
+	for (size_t i = loadingChildren->size(); i < previousChildren.size(); i++)
+	{
+		scene->DeleteSceneObject(previousChildren.at(i)->so->GUID);
+	}
+}
+
+void SceneObject::LoadFromPrefab(toml::table table)
+{
+	LoadWithPartsSafeAndChildren(table);
+	prefabStatus = PrefabStatus::prefabInstance;
 }

@@ -89,8 +89,14 @@ public:
 	void TriggerCall(std::string tag, bool toggle);
 
 	toml::table Serialise() const;
+	toml::table SerialiseWithParts() const;
+	toml::table SerialiseWithPartsAndChildren() const;
 
 	void SaveAsPrefab();
+	void LoadWithParts(toml::table table);
+	// Keeps certain information about the sceneobjects parts that shouldn't be replaced (like tags)
+	void LoadWithPartsSafe(toml::table table);
+	void LoadWithPartsSafeAndChildren(toml::table table);
 	void LoadFromPrefab(toml::table table);
 
 #pragma region Part Get and Set

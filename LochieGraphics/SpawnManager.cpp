@@ -4,8 +4,8 @@
 #include "Serialisation.h"
 #include "TriggerSystem.h"
 
-SpawnManager::SpawnManager(toml::table table)
-{
+void SpawnManager::Load(toml::table table)
+{	
 	numToSpawn = Serialisation::LoadAsInt(table["numToSpawn"]);
 	timeBetweenSpawns = Serialisation::LoadAsFloat(table["timeBetweenSpawns"]);
 	triggerTag = Serialisation::LoadAsString(table["triggerTag"]);
@@ -24,6 +24,11 @@ SpawnManager::SpawnManager(toml::table table)
 		}
 		decimalSlot *= 10;
 	} while (enemySpawn != 0);
+}
+
+SpawnManager::SpawnManager(toml::table table)
+{
+	Load(table);
 }
 
 void SpawnManager::TriggerCall(std::string tag, bool toggle)

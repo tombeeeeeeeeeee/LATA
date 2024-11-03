@@ -25,6 +25,7 @@ public:
 	std::string triggerTag;
 	std::string enemyTriggerTag;
 	SpawnManager() {};
+	void Load(toml::table table);
 	SpawnManager(toml::table);
 
 	void TriggerCall(std::string tag, bool toggle);
