@@ -495,17 +495,23 @@ void LevelEditor::Draw()
 
 	if (inPlay) {
 		healthShader->Use();
-		healthShader->setVec2("offset", { syncOffsetX, syncOffsetY });
-		healthShader->setVec2("scale", { syncScaleX, syncScaleY });
+		healthShader->setVec2("offset", { sync->healthOffsetX, sync->healthOffsetY });
+		healthShader->setVec2("scale", { sync->healthScaleX, sync->healthScaleY });
 		healthShader->setFloat("healthPercent", (float)syncSo->health()->currHealth / (float)syncSo->health()->getMaxHealth());
-		healthShader->setVec3("backgroundColour", 0.05f, 0.67f, 0.0f);
-		healthShader->setVec3("healthColour", 0.1f, 1.0f, 0.0f);
+		healthShader->setVec3("backgroundColour", sync->healthBackgroundColour);
+		healthShader->setVec3("healthColour", sync->healthForegroundColour);
 		healthBar.Draw();
-		healthShader->setVec2("offset", { eccoOffsetX, eccoOffsetY });
-		healthShader->setVec2("scale", { eccoScaleX, eccoScaleY });
+		healthShader->setVec2("offset", { ecco->healthOffsetX, ecco->healthOffsetY });
+		healthShader->setVec2("scale", { ecco->healthScaleX, ecco->healthScaleY });
 		healthShader->setFloat("healthPercent", (float)eccoSo->health()->currHealth / (float)eccoSo->health()->getMaxHealth());
-		healthShader->setVec3("backgroundColour", 0.25f, 0.37f, 0.49f);
-		healthShader->setVec3("healthColour", 0.25f, 0.49f, 1.0f);
+		healthShader->setVec3("backgroundColour", ecco->healthBackgroundColour);
+		healthShader->setVec3("healthColour", ecco->healthForegroundColour);
+		healthBar.Draw();
+		healthShader->setVec2("offset", { sync->chargeOffsetX, sync->chargeOffsetY });
+		healthShader->setVec2("scale", { sync->chargeScaleX, sync->chargeScaleY });
+		healthShader->setFloat("healthPercent", sync->chargedDuration / sync->overclockChargeTime);
+		healthShader->setVec3("backgroundColour", sync->chargeBackgroundColour);
+		healthShader->setVec3("healthColour", sync->chargeForegroundColour);
 		healthBar.Draw();
 	}
 }
@@ -513,18 +519,6 @@ void LevelEditor::Draw()
 void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
-		if (ImGui::CollapsingHeader("Health stuff")) {
-			ImGui::Text("THESE VALUES DON'T SAVE YET");
-			ImGui::SliderFloat("syncOffsetX", &syncOffsetX, -1.0f, 1.0f);
-			ImGui::SliderFloat("syncOffsetY", &syncOffsetY, -1.0f, 1.0f);
-			ImGui::SliderFloat("syncScaleX", &syncScaleX, 0.0f, 1.0f);
-			ImGui::SliderFloat("syncScaleY", &syncScaleY, 0.0f, 1.0f);
-			ImGui::SliderFloat("eccoOffsetX", &eccoOffsetX, -1.0f, 1.0f);
-			ImGui::SliderFloat("eccoOffsetY", &eccoOffsetY, -1.0f, 1.0f);
-			ImGui::SliderFloat("eccoScaleX", &eccoScaleX, 0.0f, 1.0f);
-			ImGui::SliderFloat("eccoScaleY", &eccoScaleY, 0.0f, 1.0f);
-		}
-
 		if (ImGui::Button("PLAY")) {
 			inPlay = !inPlay;
 		}

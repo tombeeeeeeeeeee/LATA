@@ -15,8 +15,8 @@ class Serialisation {
 public:
 	static glm::vec2 LoadAsVec2(toml::array* toml);
 	static glm::vec2 LoadAsVec2(toml::node_view<toml::node> toml);
-	static glm::vec3 LoadAsVec3(toml::array* toml);
-	static glm::vec3 LoadAsVec3(toml::node_view<toml::node> toml);
+	static glm::vec3 LoadAsVec3(toml::array* toml, glm::vec3 failedReadValue = { 0.0f, 0.0f, 0.0f });
+	static glm::vec3 LoadAsVec3(toml::node_view<toml::node> toml, glm::vec3 failedReadValue = { 0.0f, 0.0f, 0.0f });
 	static glm::vec4 LoadAsVec4(toml::array* toml);
 	static glm::vec4 LoadAsVec4(toml::node_view<toml::node> toml);
 	static unsigned long long LoadAsUnsignedLongLong(toml::node_view<toml::node> toml);

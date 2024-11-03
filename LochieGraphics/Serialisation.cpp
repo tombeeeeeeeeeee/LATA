@@ -20,20 +20,24 @@ glm::vec2 Serialisation::LoadAsVec2(toml::node_view<toml::node> toml)
     return LoadAsVec2(toml.as_array());
 }
 
-glm::vec3 Serialisation::LoadAsVec3(toml::array* toml)
+glm::vec3 Serialisation::LoadAsVec3(toml::array* toml, glm::vec3 failedReadValue)
 {
     if (!toml) {
         std::cout << "Failed to load vec3\n";
-        return {NAN, NAN, NAN};
+        return failedReadValue;
     }
     return glm::vec3(
-        toml->at(0).value_or<float>(0.0f),
-        toml->at(1).value_or<float>(0.0f),
-        toml->at(2).value_or<float>(0.0f));
+        toml->at(0).value_or<float>((float)failedReadValue.x),
+        toml->at(1).value_or<float>((float)failedReadValue.y),
+        toml->at(2).value_or<float>((float)failedReadValue.z));
 }
 
-glm::vec3 Serialisation::LoadAsVec3(toml::node_view<toml::node> toml)
+glm::vec3 Serialisation::LoadAsVec3(toml::node_view<toml::node> toml, glm::vec3 failedReadValue)
 {
+    if (!toml) {
+        std::cout << "Error, failed to load vec3\n";
+        return failedReadValue;
+    }
     return LoadAsVec3(toml.as_array());
 }
 

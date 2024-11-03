@@ -48,6 +48,23 @@ public:
 	float windowOfTimeForHealPressed = 0.2f;
 	glm::vec3 globalBarrelOffset = {};
 	glm::vec3 barrelOffset = { -80.0f, 70.0f, 5.0f };
+
+	float chargedDuration = 0.0f;
+	float overclockChargeTime = 0.3f;
+
+	float healthOffsetX = 0.0f;
+	float healthOffsetY = 0.0f;
+	float healthScaleX = 0.5f;
+	float healthScaleY = 0.5f;
+	glm::vec3 healthBackgroundColour{};
+	glm::vec3 healthForegroundColour{};
+
+	float chargeOffsetX = 0.0f;
+	float chargeOffsetY = 0.0f;
+	float chargeScaleX = 0.5f;
+	float chargeScaleY = 0.5f;
+	glm::vec3 chargeBackgroundColour{};
+	glm::vec3 chargeForegroundColour{};
 private:
 
 	std::vector<unsigned long long> misfireShots;
@@ -66,7 +83,6 @@ private:
 	glm::vec3 sniperBeamColour = { 0.5f,0.5f,1.0f };
 
 	int overclockDamage = 1;
-	float overclockChargeTime = 0.3f;
 	float overclockBeamLifeSpan = 1.0f;
 	glm::vec3 overclockBeamColour = { 1.0f,1.0f,0.5f };
 	int enemyPierceCount = 99;
@@ -75,7 +91,6 @@ private:
 	float eccoRefractionAngle = 30.0f;
 	int eccoRefractionCount = 5;
 
-	float chargedDuration = 0.0f;
 	bool chargingShot = false;
 
 	glm::vec2 fireDirection = {1.0f, 0.0f};

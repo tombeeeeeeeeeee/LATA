@@ -227,41 +227,53 @@ void Ecco::OnCollision(Collision collision)
 
 void Ecco::GUI()
 {
+	std::string tag = Utilities::PointerToString(this);
 	//ImGui::Text("");
-	if (ImGui::CollapsingHeader("Ecco Component"))
+	if (ImGui::CollapsingHeader(("Ecco Component##" + tag).c_str()))
 	{
 		ImGui::Indent();
-		ImGui::DragFloat("Car move speed", &carMoveSpeed);
-		ImGui::DragFloat("Car reverse move speed", &carReverseMoveSpeed);
-		ImGui::DragFloat("Max car move speed", &maxCarMoveSpeed);
-		ImGui::DragFloat("Max reverse speed", &maxReverseSpeed);
-		ImGui::DragFloat("Turning circle scalar", &turningCircleScalar);
-		ImGui::DragFloat("Max wheel angle", &maxWheelAngle);
-		ImGui::DragFloat("Speed wheel turn influence", &speedWheelTurnInfluence, 1.0f, 0.0f, 100.0f);
-		ImGui::DragFloat("boost wheel turn influence", &boostWheelTurnInfluence, 1.0f, 0.0f, 100.0f);
-		ImGui::DragFloat("Wheel Turn Speed", &wheelTurnSpeed);
-		ImGui::DragFloat("Sideways Wheel Drag", &sidewaysFrictionCoef, 0.01f, 0.0f);
-		ImGui::DragFloat("Portion of Sideways Speed Kept", &portionOfSidewaysSpeedKept, 1.0f, 0.0f, 100.0f);
-		ImGui::DragFloat("Stopping Wheel Drag", &stoppingFrictionCoef, 0.01f, 0.0f);
-		ImGui::DragFloat("Exceeding Max Slowing Force", &exceedingSlowIntensity, 0.1f, 0.0f);
-		ImGui::Checkbox("Local Steering", &controlState);
-		ImGui::DragFloat("Speed Boost", &speedBoost);
-		ImGui::DragInt("Speed boost self damage", &speedBoostHPCost);
-		ImGui::DragFloat("Speed Boost Cooldown", &speedBoostCooldown);
-		ImGui::DragFloat("Minimum damaging speed", &minSpeedDamageThreshold);
-		ImGui::DragInt("On Collision Damage", &speedDamage);
-		ImGui::DragInt("On Collision Heal", &healingFromDamage);
-		ImGui::DragFloat("Speed reduction after damage", &speedReductionAfterDamaging);
-		ImGui::DragInt("Max Health", &maxHealth);
-		if (ImGui::DragFloat("Heal Button Tolerance", &windowOfTimeForHealPressed))
+		ImGui::DragFloat(("Car move speed##" + tag).c_str(), &carMoveSpeed);
+		ImGui::DragFloat(("Car reverse move speed##" + tag).c_str(), &carReverseMoveSpeed);
+		ImGui::DragFloat(("Max car move speed##" + tag).c_str(), &maxCarMoveSpeed);
+		ImGui::DragFloat(("Max reverse speed##" + tag).c_str(), &maxReverseSpeed);
+		ImGui::DragFloat(("Turning circle scalar##" + tag).c_str(), &turningCircleScalar);
+		ImGui::DragFloat(("Max wheel angle##" + tag).c_str(), &maxWheelAngle);
+		ImGui::DragFloat(("Speed wheel turn influence##" + tag).c_str(), &speedWheelTurnInfluence, 1.0f, 0.0f, 100.0f);
+		ImGui::DragFloat(("boost wheel turn influence##" + tag).c_str(), &boostWheelTurnInfluence, 1.0f, 0.0f, 100.0f);
+		ImGui::DragFloat(("Wheel Turn Speed##" + tag).c_str(), &wheelTurnSpeed);
+		ImGui::DragFloat(("Sideways Wheel Drag##" + tag).c_str(), &sidewaysFrictionCoef, 0.01f, 0.0f);
+		ImGui::DragFloat(("Portion of Sideways Speed Kept##" + tag).c_str(), &portionOfSidewaysSpeedKept, 1.0f, 0.0f, 100.0f);
+		ImGui::DragFloat(("Stopping Wheel Drag##" + tag).c_str(), &stoppingFrictionCoef, 0.01f, 0.0f);
+		ImGui::DragFloat(("Exceeding Max Slowing Force##" + tag).c_str(), &exceedingSlowIntensity, 0.1f, 0.0f);
+		ImGui::Checkbox(("Local Steering##" + tag).c_str(), &controlState);
+		ImGui::DragFloat(("Speed Boost##" + tag).c_str(), &speedBoost);
+		ImGui::DragInt(("Speed boost self damage##" + tag).c_str(), &speedBoostHPCost);
+		ImGui::DragFloat(("Speed Boost Cooldown##" + tag).c_str(), &speedBoostCooldown);
+		ImGui::DragFloat(("Minimum damaging speed##" + tag).c_str(), &minSpeedDamageThreshold);
+		ImGui::DragInt(("On Collision Damage##" + tag).c_str(), &speedDamage);
+		ImGui::DragInt(("On Collision Heal##" + tag).c_str(), &healingFromDamage);
+		ImGui::DragFloat(("Speed reduction after damage##" + tag).c_str(), &speedReductionAfterDamaging);
+		ImGui::DragInt(("Max Health##" + tag).c_str(), &maxHealth);
+		if (ImGui::DragFloat(("Heal Button Tolerance##" + tag).c_str(), &windowOfTimeForHealPressed))
 		{
 			SceneManager::scene->sync->windowOfTimeForHealPressed = windowOfTimeForHealPressed;
 		}
 		ImGui::BeginDisabled();
-		ImGui::DragFloat2(("WheelDirection"), &wheelDirection[0]);
+		ImGui::DragFloat2((("WheelDirection##" + tag).c_str()), &wheelDirection[0]);
 		ImGui::EndDisabled();
-		ImGui::Checkbox("Boost Not In Wheel Direction", &speedBoostInDirectionOfBody);
-		ImGui::DragFloat("Speed Boost Duration", &speedBoostDuration );
+		ImGui::Checkbox(("Boost Not In Wheel Direction##" + tag).c_str(), &speedBoostInDirectionOfBody);
+		ImGui::DragFloat(("Speed Boost Duration##" + tag).c_str(), &speedBoostDuration);
+
+		if (ImGui::CollapsingHeader(("Game UI##" + tag).c_str())) {
+			ImGui::SliderFloat(("healthOffsetX##" + tag).c_str(), &healthOffsetX, -1.0f, 1.0f);
+			ImGui::SliderFloat(("healthOffsetY##" + tag).c_str(), &healthOffsetY, -1.0f, 1.0f);
+			ImGui::SliderFloat(("healthScaleX##" + tag).c_str(), &healthScaleX, 0.0f, 1.0f);
+			ImGui::SliderFloat(("healthScaleY##" + tag).c_str(), &healthScaleY, 0.0f, 1.0f);
+			ImGui::ColorEdit3(("health Background colour##" + tag).c_str(), &healthBackgroundColour.x);
+			ImGui::ColorEdit3(("health Foreground colour##" + tag).c_str(), &healthForegroundColour.x);
+		}
+
+
 		ImGui::Unindent();
 	}
 }
@@ -296,6 +308,12 @@ toml::table Ecco::Serialise()
 		{ "speedBoostDuration", speedBoostDuration},
 		{ "maxHealth", maxHealth},
 		{ "speedBoostInDirectionOfBody", speedBoostInDirectionOfBody },
+		{ "healthOffsetX", healthOffsetX},
+		{ "healthOffsetY", healthOffsetY},
+		{ "healthScaleX", healthScaleX},
+		{ "healthScaleY", healthScaleY},
+		{ "healthBackgroundColour", Serialisation::SaveAsVec3(healthBackgroundColour) },
+		{ "healthForegroundColour", Serialisation::SaveAsVec3(healthForegroundColour) },
 	};
 }
 
@@ -328,6 +346,12 @@ Ecco::Ecco(toml::table table)
 	speedBoostDuration = Serialisation::LoadAsFloat(table["speedBoostDuration"]);
 	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
 	speedBoostInDirectionOfBody = Serialisation::LoadAsInt(table["speedBoostInDirectionOfBody"]);
+	healthOffsetX = Serialisation::LoadAsFloat(table["healthOffsetX"], -0.618f);
+	healthOffsetY = Serialisation::LoadAsFloat(table["healthOffsetY"], -0.845f);
+	healthScaleX = Serialisation::LoadAsFloat(table["healthScaleX"], 0.304f);
+	healthScaleY = Serialisation::LoadAsFloat(table["healthScaleY"], 0.077f);
+	healthBackgroundColour = Serialisation::LoadAsVec3(table["healthBackgroundColour"], glm::vec3(0.25f, 0.37f, 0.49f));
+	healthForegroundColour = Serialisation::LoadAsVec3(table["healthForegroundColour"], glm::vec3(0.25f, 0.49f, 1.0f));
 }
 
 

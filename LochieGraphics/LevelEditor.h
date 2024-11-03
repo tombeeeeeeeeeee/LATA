@@ -17,15 +17,6 @@ private:
 	Material* groundMaterial = nullptr;
 	Texture* groundTexture = nullptr;
 
-	float syncOffsetX = 0.618f;
-	float syncOffsetY = -0.845f;
-	float syncScaleX = 0.304f;
-	float syncScaleY = 0.077f;
-	float eccoOffsetX = -0.618f;
-	float eccoOffsetY = -0.845f;
-	float eccoScaleX = 0.304f;
-	float eccoScaleY = 0.077f;
-
 	Mesh healthBar;
 	Shader* healthShader = nullptr;
 

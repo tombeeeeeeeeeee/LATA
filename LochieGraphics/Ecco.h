@@ -41,6 +41,13 @@ public:
 
 	float windowOfTimeForHealPressed = 0.2f;
 
+	float healthOffsetX = 0.0f;
+	float healthOffsetY = 0.0f;
+	float healthScaleX = 0.5f;
+	float healthScaleY = 0.5f;
+	glm::vec3 healthBackgroundColour{};
+	glm::vec3 healthForegroundColour{};
+
 private:
 	float carMoveSpeed = 0.25f;
 	float carReverseMoveSpeed = 0.125f;
