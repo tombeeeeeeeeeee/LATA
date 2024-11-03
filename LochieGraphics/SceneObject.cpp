@@ -58,10 +58,10 @@ if (parts & Parts::partsType) {                 \
 		scene->container.erase(GUID);                           \
 	}
 
-#define getPart(container, enumValue)     \
-	if (parts & enumValue) {              \
-		return &(scene->container[GUID]); \
-	}                                     \
+#define getPart(container, enumValue)        \
+	if (parts & enumValue) {                 \
+		return &(scene->container.at(GUID)); \
+	}                                        \
 	return nullptr
 
 #define SetAndGetForPart(Type, container, enumValue, nameInSet, nameInGet) \
@@ -668,7 +668,7 @@ void SceneObject::LoadWithPartsSafe(toml::table table)
 	bool hadSpawnManager = parts & Parts::spawnManager;
 	toml::table spawnManagerData;
 	if (hadSpawnManager) {
-		spawnManagerData = SpawnManager().Serialise(GUID);
+		spawnManagerData = spawnManager()->Serialise(GUID);
 	}
 	std::string pressurePlateTag = "";
 	if (parts & Parts::plate) {

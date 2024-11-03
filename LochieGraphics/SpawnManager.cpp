@@ -141,7 +141,7 @@ toml::table SpawnManager::Serialise(unsigned long long guid)
 	}
 
 	return toml::table{
-		{"guid", Serialisation::SaveAsUnsignedLongLong(guid)},
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(guid)},
 		{ "numToSpawn", numToSpawn },
 		{ "timeBetweenSpawns", timeBetweenSpawns },
 		{ "triggerTag", triggerTag },
