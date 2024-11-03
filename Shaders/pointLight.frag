@@ -8,6 +8,7 @@ layout (location = 0) out vec4 finalColour;
 in vec2 screenPos;
 in vec3 fragmentNormal;
 
+uniform float lerpAmount;
 uniform float linear;
 uniform float quad;
 uniform vec3 lightPos;
@@ -18,6 +19,7 @@ uniform mat4 invVP;
 uniform sampler2D albedo;
 uniform sampler2D normal;
 uniform sampler2D depth;
+uniform sampler2D lightLerp;
 
 vec3 trueNormal;
 vec3 trueAlbedo;
@@ -77,6 +79,7 @@ void main()
 		length(posToLight),
 		trueNormal, 1, linear, quad, lightColour
 		), 0, 1);
+        Lo *= texture(lightLerp, vec2(0.0, lerpAmount)).rgb;
 		finalColour = vec4(Lo, 1.0);
 		return;
 	}

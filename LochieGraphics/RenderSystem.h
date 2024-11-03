@@ -13,6 +13,7 @@ class Light;
 class Mesh;
 class Material;
 class ModelRenderer;
+class Model;
 class Shader;
 class Transform;
 class Texture;
@@ -65,7 +66,6 @@ public:
     void OutputBufferUpdate();
     void BloomUpdate();
     void SSAOUpdate();
-    void AmbientPassUpdate();
     void LightPassUpdate();
 
 
@@ -120,11 +120,13 @@ private:
     /// </summary>
     unsigned int missingTextureTexture = 0;
 
-    unsigned int onLightTexture = 0;
-    unsigned int offLightTexture = 0;
-    unsigned int flickeringLightTexture = 0;
-    unsigned int explodingLightTexture = 0;
-    unsigned int syncLightTexture = 0;
+    Texture* onLightTexture = nullptr;
+    Texture* offLightTexture = nullptr;
+    Texture* flickeringLightTexture = nullptr;
+    Texture* explodingLightTexture = nullptr;
+    Texture* syncLightTexture = nullptr;
+    Model* lightSphere = nullptr;
+
     /// <summary>
     /// Location of the Model Matrix 
     /// </summary>
@@ -190,18 +192,13 @@ private:
     unsigned int deferredFBO = 0;
     void DeferredSetup();
 
-
-    unsigned int ambientPassBuffer = 0;
-    unsigned int ambientPassFBO = 0;
-    int ambientPassShaderIndex = 0;
-    void AmibentPassSetup();
-    void RenderAmbientPass();
-
     unsigned int lightPassBuffer = 0;
     unsigned int lightPassFBO = 0;
+    int ambientPassShaderIndex = 0;
     int pointLightPassShaderIndex = 0;
     int spotlightPassShaderIndex = 0;
     void LightPassSetup();
+    void RenderAmbientPass();
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;
