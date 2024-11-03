@@ -81,9 +81,12 @@ private:
 	// ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	int baseNodeFlags = 128 | 64 | 2048;
 
-	bool operationChanged = false;
+	bool guizmoOperationChanged = false;
+	bool guizmoModeChanged = false;
 	// ImGuizmo::OPERATION::TRANSLATE
 	unsigned int transformGizmoOperation = 7;
+	// ImGuizmo::MODE::WORLD
+	unsigned int transformGizmoMode = 1;
 
 	void PhysicsMenu();
 	void EnemyMenu();

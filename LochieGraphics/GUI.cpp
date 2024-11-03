@@ -17,6 +17,7 @@
 
 #include "EditorGUI.h"
 #include "Paths.h"
+
 #include "ImGuizmo.h"
 
 #include <iostream>
@@ -156,44 +157,34 @@ void GUI::Update()
 
 	// TODO: Customisable keys
 	if (glfwGetKey(SceneManager::window, GLFW_KEY_G) == GLFW_PRESS && !io.WantCaptureKeyboard) {
-		if (!operationChanged) {
-			if (transformGizmoOperation == 7) {
-				transformGizmoOperation = 120;
-			}
-			else if (transformGizmoOperation == 120) {
-				transformGizmoOperation = 7;
-			}
+		if (!guizmoOperationChanged) {
+			transformGizmoOperation = (transformGizmoOperation == ImGuizmo::OPERATION::TRANSLATE) ? ImGuizmo::OPERATION::ROTATE : ImGuizmo::OPERATION::TRANSLATE;
 		}
-		operationChanged = true;
+		guizmoOperationChanged = true;
 	}
 	else {
-		operationChanged = false;
+		guizmoOperationChanged = false;
+	}
+
+	// TODO: Customisable keys
+	if (glfwGetKey(SceneManager::window, GLFW_KEY_H) == GLFW_PRESS && !io.WantCaptureKeyboard) {
+		if (!guizmoModeChanged) {
+			transformGizmoMode = (transformGizmoMode == ImGuizmo::MODE::WORLD) ? ImGuizmo::MODE::LOCAL : ImGuizmo::MODE::WORLD;
+		}
+		guizmoModeChanged = true;
+	}
+	else {
+		guizmoModeChanged = false;
 	}
 
 	// Transform GIZMO
 	if (sceneObjectSelected) {
-		// TODO: This should be somewhere else
-		ImGuizmo::SetOrthographic(SceneManager::scene->camera->InOrthoMode());
-
-		//SceneManager
-		// TODO: should be moving window stuff out of scenemanager directly
-		// TODO: There should be a window pos change callback, should justbe stored somewhere
 		int xOffset, yOffset;
+		// TODO: There should be a window pos change callback, should justbe stored somewhere
 		glfwGetWindowPos(SceneManager::window, &xOffset, &yOffset);
+		ImGuizmo::SetOrthographic(scene->camera->InOrthoMode());
 		ImGuizmo::SetRect((float)xOffset, (float)yOffset, io.DisplaySize.x, io.DisplaySize.y);
-		glm::mat4 editMatrix = sceneObjectSelected->transform()->getGlobalMatrix();
-		if (ImGuizmo::Manipulate(&SceneManager::view[0][0], &SceneManager::projection[0][0], (ImGuizmo::OPERATION)transformGizmoOperation, ImGuizmo::MODE::WORLD, &editMatrix[0][0])) {
-			glm::vec3 pos = {};
-			glm::vec3 rot = {};
-			glm::vec3 scl = {};
-			// TODO: Use own function
-			ImGuizmo::DecomposeMatrixToComponents(&editMatrix[0][0], &pos.x, &rot.x, &scl.x);
-			Transform* t = sceneObjectSelected->transform();
-			// TODO: THis might break for children need to be doing stuff in local
-			t->setPosition(pos);
-			t->setEulerRotation(rot);
-			t->setScale(scl);
-		}
+		sceneObjectSelected->transform()->Gizmo(SceneManager::view, SceneManager::projection, transformGizmoOperation, transformGizmoMode);
 	}
 }
 

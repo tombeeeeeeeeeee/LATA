@@ -7,6 +7,8 @@
 #include "EditorGUI.h"
 #include "Serialisation.h"
 
+#include "ImGuizmo.h"
+
 #include <iostream>
 #include <sstream>
 
@@ -130,6 +132,16 @@ glm::mat4 Transform::getLocalMatrix() const
 	return translation * rot * scaling;
 }
 
+void Transform::setLocalMatrix(const glm::mat4& m)
+{
+	glm::vec3 newPos{}, newRot{}, newScale{};
+	// TODO: Use own function
+	ImGuizmo::DecomposeMatrixToComponents(&m[0][0], &newPos.x, &newRot.x, &newScale.x);
+	position = newPos;
+	scale = newScale;
+	setEulerRotation(newRot); // setting the rotation updates the matrices
+}
+
 void Transform::setRotation(glm::quat _quat)
 {
 	glm::vec3 newEuler = glm::degrees(glm::eulerAngles(_quat));
@@ -148,6 +160,25 @@ void Transform::setRotation(glm::quat _quat)
 glm::mat4 Transform::getGlobalMatrix() const
 {
 	return globalMatrix;
+}
+
+void Transform::setGlobalMatrix(const glm::mat4& m)
+{
+	if (parent)
+	{
+		/*
+			globalMatrix = parent->getGlobalMatrix() * getLocalMatrix();
+			gm = p.gm * lm
+			inv(lm) * gm = p.gm
+			inv(lm) = inv(gm) * p.gm
+			lm = inv(inv(gm) * p.gm)
+		*/
+		setLocalMatrix(glm::inverse(glm::inverse(m) * parent->getGlobalMatrix()));
+	}
+	else
+	{
+		setLocalMatrix(m);
+	}
 }
 
 void Transform::setRotation(glm::vec3 _euler)
@@ -188,7 +219,7 @@ glm::vec3 Transform::getPosition() const
 
 glm::vec3 Transform::getGlobalPosition() const
 {
-	return { globalMatrix[3][0], globalMatrix[3][1], globalMatrix[3][2] };
+	return glm::vec3(globalMatrix[3]);
 }
 
 glm::vec2 Transform::get2DGlobalPosition() const
@@ -348,6 +379,15 @@ void Transform::GUI()
 	if (ImGui::DragFloat3(("Scale##transform" + tag).c_str(), &scale[0], 0.1f))
 	{
 		UpdateGlobalMatrixCascading();
+	}
+}
+
+void Transform::Gizmo(const glm::mat4& view, const glm::mat4& projection, unsigned int operation, unsigned int mode)
+{
+	glm::mat4 editMatrix;
+	editMatrix = getGlobalMatrix();
+	if (ImGuizmo::Manipulate(&view[0][0], &projection[0][0], (ImGuizmo::OPERATION)operation, (ImGuizmo::MODE)mode, &editMatrix[0][0])) {
+		setGlobalMatrix(editMatrix);
 	}
 }
 
