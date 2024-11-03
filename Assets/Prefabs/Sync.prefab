@@ -1,3 +1,5 @@
+children = []
+
 [health]
 currHealth = 5
 guid = '2091576977596946314'
@@ -40,10 +42,22 @@ prefabStatus = 1
 
 [sync]
 barrelOffset = [ -75.0, 70.0, 5.0 ]
+chargeBackgroundColour = [ 0.5299999713897705, 0.0, 0.07999999821186066 ]
+chargeForegroundColour = [ 0.9300000071525574, 0.10999999940395355, 0.14000000059604645 ]
+chargeOffsetX = 0.6179999709129333
+chargeOffsetY = -0.9520000219345093
+chargeScaleX = 0.30399999022483826
+chargeScaleY = 0.024000000208616257
 eccoRefractionAngle = 70.0
 eccoRefractionCount = 5
 enemyPierceCount = 99
 guid = '2091576977596946314'
+healthBackgroundColour = [ 0.05000000074505806, 0.6700000166893005, 0.0 ]
+healthForegroundColour = [ 0.10000000149011612, 1.0, 0.0 ]
+healthOffsetX = 0.6179999709129333
+healthOffsetY = -0.8450000286102295
+healthScaleX = 0.30399999022483826
+healthScaleY = 0.07699999958276749
 lookDeadZone = 0.4000000059604645
 maxMoveForce = 4000.0
 maxStopForce = 4000.0
@@ -51,7 +65,7 @@ misfireColliderRadius = 0.10000000149011612
 misfireDamage = 0
 misfireShotSpeed = 0.10000000149011612
 moveDeadZone = 0.4000000059604645
-moveSpeed = 400.0
+moveSpeed = 450.0
 overclockBeamColour = [ 0.06395351886749268, 1.0, 0.0 ]
 overclockBeamLifeSpan = 1.5
 overclockChargeTime = 1.7999999523162842
@@ -61,3 +75,15 @@ sniperBeamColour = [ 0.5641789436340332, 1.0, 0.5353982448577881 ]
 sniperBeamLifeSpan = 0.5
 sniperChargeTime = 0.30000001192092896
 sniperDamage = 50
+
+[transform]
+euler = [ -360.0, 180.0, 0.0 ]
+guid = '2091576977596946314'
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [
+    4.371138828673793e-08,
+    -3.82137093032941e-15,
+    -1.0,
+    -8.742277657347586e-08
+]
+scale = [ 1.0, 1.0, 1.0 ]
