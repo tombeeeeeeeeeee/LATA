@@ -20,14 +20,16 @@ uniform vec3 lightColour;
 uniform vec3 camPos;
 uniform vec3 cameraDelta;
 
-vec3 viewDirection;
-vec3 F0;
+
 vec3 trueAlbedo;
 float roughness;
 float metallic;
 float ao;
 vec3 screenPos;
 vec3 fragPos;
+
+vec3 viewDirection;
+vec3 F0;
 
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);

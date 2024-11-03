@@ -532,10 +532,45 @@ float delta
     return;
     glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
     glDepthMask(GL_FALSE);
+    glDepthFunc(GL_GREATER);
+    glCullFace(GL_BACK);
     Shader* shader = (*shaders)[pointLightPassShaderIndex];
+    shader->Use();
+    shader->setMat4("vp", projection * viewMatrix);
+    shader->setMat4("invVP", glm::inverse(projection * viewMatrix));
+    shader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
+    shader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
+    shader->setInt("albedo", 1);
+    shader->setInt("normal", 2);
+    shader->setInt("depth", 3);
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, albedoBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glBindTexture(GL_TEXTURE_2D, normalBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 3);
+    glBindTexture(GL_TEXTURE_2D, depthBuffer);
+
     for (auto& pair : pointLights)
     {
+        shader->setMat4("model", transforms[pair.first].getGlobalMatrix());
+        shader->setVec3("lightPos", transforms[pair.first].getGlobalPosition());
+        shader->setVec3("colour", pair.second.colour);
+        shader->setFloat("linear", pair.second.linear);
+        shader->setFloat("quad", pair.second.quadratic);
 
+        //TODO: Render sphere
+        //TODO: Write lerp amount on CPU side.
+        //TODO: WRITE LIGHT TEXTURE LERP CODE IN SHADER:
+        /*
+        * vec3 textureLight = texture(lerpColour, vec2(0.0, lerpAmount));
+        * Lo *= textureLight;
+        */ 
+        //TODO: Collect all lights, add emission
+        //      Calculate Bloom
+        //      Do the same for lines
 
         pair.second.timeInType += delta;
         switch (pair.second.effect)
