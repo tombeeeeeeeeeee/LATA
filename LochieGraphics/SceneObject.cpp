@@ -229,9 +229,9 @@ void SceneObject::MenuGUI()
 	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
 		scene->DeleteSceneObject(GUID);
 	}
-	// TODO:
-	//if (ImGui::MenuItem((("Duplicate##RightClick") + tag).c_str())) {
-	//}
+	if (ImGui::MenuItem((("Duplicate##RightClick") + tag).c_str())) {
+		Duplicate();
+	}
 	if (ImGui::MenuItem(("Save As Prefab##RightClick" + tag).c_str())) {
 		SaveAsPrefab();
 	}
@@ -754,4 +754,12 @@ void SceneObject::LoadFromPrefab(toml::table table)
 	LoadWithPartsSafeAndChildren(table);
 	prefabStatus = PrefabStatus::prefabInstance;
 	transform()->setLocalMatrix(originalTransform);
+}
+
+void SceneObject::Duplicate() const
+{
+	SceneObject* newSceneObject = new SceneObject(scene);
+	newSceneObject->LoadWithPartsSafeAndChildren(SerialiseWithPartsAndChildren());
+	// Make the new object a sibling
+	newSceneObject->transform()->setParent(transform()->getParent());
 }

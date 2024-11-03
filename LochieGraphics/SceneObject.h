@@ -99,6 +99,8 @@ public:
 	void LoadWithPartsSafeAndChildren(toml::table table);
 	void LoadFromPrefab(toml::table table);
 
+	void Duplicate() const;
+
 #pragma region Part Get and Set
 	Transform* transform() const;
 
