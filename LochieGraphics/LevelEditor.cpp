@@ -353,6 +353,8 @@ void LevelEditor::Update(float delta)
 
 		camera->state = Camera::editorMode;
 		triggerSystem.Clear();
+
+		fadeTimer = 0.0f;
 	}
 
 	lastFramePlayState = inPlay;
@@ -373,7 +375,7 @@ void LevelEditor::Update(float delta)
 
 		for (auto& exitPair : exits)
 		{
-			if (exitPair.second.Update())
+			if (exitPair.second.Update(delta))
 				return;
 		}
 
@@ -399,6 +401,13 @@ void LevelEditor::Update(float delta)
 				playerDied = true;
 			}
 		}
+		if (fadeOut) {
+			renderSystem.exposure = fmaxf(1 - fadeTimer / fadeOutTime, 0.0f);
+		}
+		else {
+			renderSystem.exposure = fminf(fadeTimer / fadeInTime, 1.0f);
+		}
+		fadeTimer += delta;
 	} // In play
 	else { // Not in play
 		lines.SetColour({ 1, 1, 1 });
@@ -527,6 +536,7 @@ void LevelEditor::Draw()
 void LevelEditor::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
+
 		if (ImGui::Button("PLAY")) {
 			inPlay = !inPlay;
 		}

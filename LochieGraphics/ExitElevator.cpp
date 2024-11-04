@@ -27,13 +27,27 @@ ExitElevator::ExitElevator(toml::table table)
 	levelToLoad = Serialisation::LoadAsString(table["levelToLoad"]);
 }
 
-bool ExitElevator::Update()
+bool ExitElevator::Update(float delta)
 {
 	if (syncInExit && eccoInExit)
 	{
-		syncInExit = eccoInExit = false;
-		((LevelEditor*)SceneManager::scene)->LoadLevel(true, levelToLoad);
-		return true;
+		LevelEditor* levelEditor = ((LevelEditor*)SceneManager::scene);
+		if (!countingDown) {
+			timerTillLevelSwitch = levelEditor->fadeOutTime;
+			levelEditor->fadeTimer = 0.0f;
+			levelEditor->fadeOut = true;
+
+			countingDown = true;
+		}
+		if (timerTillLevelSwitch <= 0.0f) {
+			syncInExit = eccoInExit = false;
+			levelEditor->LoadLevel(true, levelToLoad);
+			return true;
+		}
+		else {
+			timerTillLevelSwitch -= delta;
+			return false;
+		}
 	}
 	else
 	{

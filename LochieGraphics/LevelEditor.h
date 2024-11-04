@@ -113,6 +113,11 @@ private:
 
 public:
 
+	bool fadeOut = false;
+	float fadeTimer = 0.0f;
+	float fadeInTime = 3.5f;
+	float fadeOutTime = 1.5f;
+
 	PointLight pointLights[4] = {
 	PointLight({ 1.0f, 1.0f, 1.0f }, {  0.0f,  5.2f,  2.0f }, 0.2f, 0.09f, 0.032f, 0),
 	PointLight({ 0.8f, 0.8f, 0.8f }, {  2.3f, -3.3f, -4.0f }, 1.0f, 0.09f, 0.032f, 1),

@@ -17,7 +17,7 @@ public:
 	ExitElevator() {};
 	ExitElevator(toml::table table);
 
-	bool Update();
+	bool Update(float delta);
 	void OnTrigger(Collision collision);
 
 	void GUI(SceneObject* so);
@@ -31,5 +31,7 @@ private:
 	bool eccoInExit = false;
 	bool syncInExit = false;
 
+	bool countingDown = false;
+	float timerTillLevelSwitch = 0.0f;
 };
 
