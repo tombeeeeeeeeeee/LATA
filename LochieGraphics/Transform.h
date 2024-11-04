@@ -30,6 +30,8 @@ public:
 	Transform* getParent() const;
 	std::vector<Transform*> getChildren() const;
 	bool isChildOf(Transform* transform) const;
+	bool isDirectChildOf(Transform* transform) const;
+	bool isDirectParentOf(Transform* transform) const;
 	void setParent(Transform* newParent);
 	void AddChild(Transform* newChild);
 	void RemoveChild(Transform* oldChild);

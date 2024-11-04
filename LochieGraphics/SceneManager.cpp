@@ -254,18 +254,7 @@ void SceneManager::Update()
 	viewProjection = projection * view;
 
 	// Delete sceneobjects marked for deletion
-	
-	while (!scene->markedForDeletion.empty())
-	{
-		if (scene->gui.getSelected()) {
-			if (scene->gui.getSelected()->GUID == scene->markedForDeletion.front()) {
-				scene->gui.setSelected(nullptr);
-			}
-		}
-		delete scene->sceneObjects.at(scene->markedForDeletion.front());
-		scene->sceneObjects.erase(scene->markedForDeletion.front());
-		scene->markedForDeletion.erase(scene->markedForDeletion.begin());
-	}
+	scene->DeleteSceneObjectsMarkedForDelete();
 
 	//// TODO: Actual draw/update loop
 	scene->renderSystem.projection = projection;
