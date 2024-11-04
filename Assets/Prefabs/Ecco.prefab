@@ -1,3 +1,5 @@
+children = []
+
 [ecco]
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
@@ -6,27 +8,35 @@ controlState = false
 deadZone = 0.6000000238418579
 exceedingSlowIntensity = 3.5
 guid = '2091576976424546894'
-healingFromDamage = 1
+healingFromDamage = 2
+healthBackgroundColour = [ 0.03844675049185753, 0.09765485674142838, 0.15686273574829102 ]
+healthForegroundColour = [ 0.2191465049982071, 0.400000661611557, 0.7843137383460999 ]
+healthOffsetX = -0.6179999709129333
+healthOffsetY = -0.8450000286102295
+healthScaleX = 0.30399999022483826
+healthScaleY = 0.07699999958276749
 maxCarMoveSpeed = 565.0
 maxHealth = 100
 maxReverseSpeed = 300.0
 maxWheelAngle = 60.0
-minSpeedDamageThreshold = 250.0
+minSpeedDamageThreshold = 1.0
 portionOfSidewaysSpeedKept = 80.0
 sidewaysFrictionCoef = 65.0
 speedBoost = 12500.0
 speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
-speedDamage = 5
+speedBoostHPCost = 0
+speedBoostInDirectionOfBody = false
+speedDamage = 25
 speedReductionAfterDamaging = 200.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
 turningCircleScalar = 0.05999999865889549
-wheelDirection = [ -0.5052847266197205, 0.8629528284072876 ]
+wheelDirection = [ -0.9303005337715149, -0.3667982816696167 ]
 wheelTurnSpeed = 4.0
 
 [health]
-currHealth = 100
+currHealth = 6
 guid = '2091576976424546894'
 maxHealth = 10
 
@@ -38,7 +48,7 @@ modelGuid = '15070486382632221399'
 
 [rigidBody]
 accel = [ 0.0, 0.0 ]
-angularVel = 0.0
+angularVel = -0.0
 elasticicty = 0.0
 guid = '2091576976424546894'
 invMass = 0.10000000149011612
@@ -46,7 +56,10 @@ invMomentOfInertia = 0.20000000298023224
 isStatic = false
 netDepen = [ 0.0, 0.0 ]
 netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
+vel = [
+    -2.622626612886421e-23,
+    -1.0340475520336597e-23
+]
 
     [[rigidBody.colliders]]
     collisionLayer = 16
@@ -72,3 +85,10 @@ parent = '0'
 parts = 330
 prefabBase = '2091576976424546894'
 prefabStatus = 1
+
+[transform]
+euler = [ -179.99855041503906, -68.48284912109375, 899.999755859375 ]
+guid = '2091576976424546894'
+position = [ 692.7316284179688, 0.0, 94.81782531738281 ]
+quaternion = [ 0.5627216100692749, 5.469366442412138e-06, -0.8266146183013916, 9.337951269117184e-06 ]
+scale = [ 0.9999299049377441, 1.0, 0.9999299049377441 ]
