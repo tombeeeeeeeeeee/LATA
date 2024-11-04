@@ -28,7 +28,7 @@ void HealthSystem::Load(toml::table table)
 	healPerPulse = Serialisation::LoadAsInt(table["healPerPulse"]);
 	pulses = Serialisation::LoadAsInt(table["pulses"]);
 	healingAbilityCooldown = Serialisation::LoadAsFloat(table["healingAbilityCooldown"]);
-	timeBetweenPulses = Serialisation::LoadAsFloat(table["timebetweenPulses"]);
+	timeBetweenPulses = Serialisation::LoadAsFloat(table["timeBetweenPulses"]);
 	healDistance = Serialisation::LoadAsFloat(table["healDistance"]);
 	losToleranceTime = Serialisation::LoadAsFloat(table["losToleranceTime"]);
 }
@@ -39,7 +39,7 @@ toml::table HealthSystem::Serialise()
 		{"damageColour",Serialisation::SaveAsVec3(damageColour)},
 		{"healColour",Serialisation::SaveAsVec3(healColour)},
 		{"colourTime",colourTime},
-		{"healsPerPulse",healPerPulse},
+		{"healPerPulse",healPerPulse},
 		{"pulses",pulses},
 		{"healingAbilityCooldown",healingAbilityCooldown},
 		{"timeBetweenPulses",timeBetweenPulses},

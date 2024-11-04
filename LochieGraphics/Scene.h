@@ -114,6 +114,7 @@ public:
 	virtual void Load() {};
 
 	void DeleteSceneObject(unsigned long long GUID);
+	void DeleteSceneObjectsMarkedForDelete();
 protected:
 
 	void DeleteAllSceneObjectsAndParts();

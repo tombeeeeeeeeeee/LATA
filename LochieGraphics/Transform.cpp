@@ -29,12 +29,31 @@ std::vector<Transform*> Transform::getChildren() const
 
 bool Transform::isChildOf(Transform* transform) const
 {
+	if (transform == parent && !transform) { return true; }
 	for (Transform* search = parent; search != nullptr; search = search->parent)
 	{
 		if (search == transform) {
 			return true;
 		}
 	}
+	return false;
+}
+
+bool Transform::isDirectChildOf(Transform* transform) const
+{
+	if (transform == parent && !transform) { return true; }
+	for (const auto i : transform->children)
+	{
+		if (i == this) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Transform::isDirectParentOf(Transform* transform) const
+{
+	if (transform->parent == this) { return true; }
 	return false;
 }
 
@@ -421,17 +440,11 @@ Transform::Transform(toml::table table)
 
 Transform::~Transform()
 {
-	if (parent) {
-		auto temp = std::find(parent->children.begin(), parent->children.end(), this);
-		if (temp != parent->children.end()) {
-			parent->children.erase(temp);
-		}
-		else {
-			std::cout << "Deleting Transform, parent was missing this in its children\n";
-		}
-	}
 	for (auto i : children)
 	{
-		i->parent = parent;
+		i->setParent(parent);
+	}
+	if (parent) {
+		parent->RemoveChild(this);
 	}
 }

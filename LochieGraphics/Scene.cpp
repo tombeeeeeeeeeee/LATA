@@ -60,6 +60,21 @@ void Scene::DeleteSceneObject(unsigned long long GUID)
 	markedForDeletion.push_back(GUID);
 }
 
+void Scene::DeleteSceneObjectsMarkedForDelete()
+{
+	while (!markedForDeletion.empty())
+	{
+		if (gui.getSelected()) {
+			if (gui.getSelected()->GUID == markedForDeletion.front()) {
+				gui.setSelected(nullptr);
+			}
+		}
+		delete sceneObjects.at(markedForDeletion.front());
+		sceneObjects.erase(markedForDeletion.front());
+		markedForDeletion.erase(markedForDeletion.begin());
+	}
+}
+
 void Scene::DeleteAllSceneObjectsAndParts()
 {
 	while (!sceneObjects.empty())
@@ -204,9 +219,29 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	};
 	LoadPart(transforms, "Transforms", Transform);
 	// Loading transforms doesn't keep the sceneobject pointer, they need to be refreshed
+	// There was previously a bug that meant the hierarchy linkage could be broken
 	for (auto& i : transforms)
 	{
 		i.second.so = sceneObjects[i.first];
+	}
+	// Some transform could be linked incorrectly, remove any that are
+	for (auto& i : transforms)
+	{
+		bool marked = false;
+		if (!i.second.isDirectChildOf(i.second.getParent())) {
+			marked = true;
+		}
+		for (auto c : i.second.getChildren())
+		{
+			if (!i.second.isDirectParentOf(c)) {
+				marked = true;
+			}
+		}
+		if (marked) {
+			// Delete object
+			DeleteSceneObject(i.first);
+			std::cout << "Error: Found a sceneobject with a broken transform hierarchy, removing object\n";
+		}
 	}
 	LoadPart(animators, "Animators", Animator);
 	LoadPart(rigidBodies, "RigidBodies", RigidBody);
