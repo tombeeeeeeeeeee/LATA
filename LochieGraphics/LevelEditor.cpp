@@ -333,6 +333,8 @@ void LevelEditor::Update(float delta)
 		dabSystem.Start(transforms, doors);
 		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards, triggerables);
 		for (auto& pair : exits) pair.second.Initialise(sceneObjects[pair.first]);
+
+		state = BrushState::none;
 	}
 
 	else if(lastFramePlayState && !inPlay) //On Play exit
