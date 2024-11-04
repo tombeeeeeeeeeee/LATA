@@ -1,3 +1,5 @@
+children = []
+
 [ecco]
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
@@ -7,17 +9,25 @@ deadZone = 0.6000000238418579
 exceedingSlowIntensity = 3.5
 guid = '2091576976424546894'
 healingFromDamage = 1
+healthBackgroundColour = [ 0.25, 0.3700000047683716, 0.49000000953674316 ]
+healthForegroundColour = [ 0.25, 0.49000000953674316, 1.0 ]
+healthOffsetX = -0.6179999709129333
+healthOffsetY = -0.8450000286102295
+healthScaleX = 0.30399999022483826
+healthScaleY = 0.07699999958276749
 maxCarMoveSpeed = 565.0
-maxHealth = 100
+maxHealth = 10
 maxReverseSpeed = 300.0
 maxWheelAngle = 60.0
-minSpeedDamageThreshold = 250.0
+minSpeedDamageThreshold = 300.0
 portionOfSidewaysSpeedKept = 80.0
 sidewaysFrictionCoef = 65.0
 speedBoost = 12500.0
 speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
-speedDamage = 5
+speedBoostHPCost = 1
+speedBoostInDirectionOfBody = false
+speedDamage = 25
 speedReductionAfterDamaging = 200.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
@@ -26,13 +36,13 @@ wheelDirection = [ -0.5052847266197205, 0.8629528284072876 ]
 wheelTurnSpeed = 4.0
 
 [health]
-currHealth = 100
+currHealth = 10
 guid = '2091576976424546894'
 maxHealth = 10
 
 [modelRenderer]
 guid = '2091576976424546894'
-materialTint = [ 0.0, 0.4000000059604645, 0.800000011920929 ]
+materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0', '15449259407003476463', '15449352838481615396' ]
 modelGuid = '15070486382632221399'
 
@@ -72,3 +82,10 @@ parent = '0'
 parts = 330
 prefabBase = '2091576976424546894'
 prefabStatus = 1
+
+[transform]
+euler = [ -179.9137420654297, -89.31473541259766, 899.9148559570312 ]
+guid = '2091576976424546894'
+position = [ 2963.973876953125, 0.0, 475.7161560058594 ]
+quaternion = [ 0.7049049735069275, 3.6621927392843645e-06, -0.7092646360397339, 1.0183306585531682e-05 ]
+scale = [ 0.9999299049377441, 1.0, 0.9999299049377441 ]
