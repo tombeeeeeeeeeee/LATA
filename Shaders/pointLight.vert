@@ -15,7 +15,7 @@ uniform vec3 colour;
 
 out vec3 lightColour;
 out vec2 texCoords;
-out vec2 screenPosition;
+out vec2 screenPos;
 
 out vec3 fragmentNormal;
 
@@ -29,7 +29,7 @@ void main()
     fragmentNormal = normalize((model * vec4(aNormal, 0.0)).xyz);
 
     gl_Position = vp * vec4(pos);
-    screenPosition = (gl_Position.xyz / gl_Position.w).xy;
-    screenPosition = screenPosition * 0.5 + 0.5;
+    screenPos = (gl_Position.xyz / gl_Position.w).xy;
+    screenPos = screenPos * 0.5 + 0.5;
     lightColour = colour;
 }

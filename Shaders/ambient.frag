@@ -82,7 +82,7 @@ void main()
         vec3 result = Lo + IBL;
         float SSAOvalue = texture(screenSSAO, texCoords).r;
         result *= SSAOvalue;
-        FragColour = vec4(result, 1.0);
+        FragColour = vec4(result + emission.rgb, 1.0);
     }
 }
 

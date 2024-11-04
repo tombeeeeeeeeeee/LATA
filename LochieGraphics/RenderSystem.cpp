@@ -44,12 +44,13 @@ void RenderSystem::Start(
     cube->InitialiseCube(2.0f);
 
     IBLBufferSetup(skyboxTexture);
-    HDRBufferSetUp();
+    DeferredSetup();
+    CompositeBufferSetUp();
     OutputBufferSetUp();
     BloomSetup();
     SSAOSetup();
-    DeferredSetup(); 
     LightPassSetup();
+    LinesSetup();
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -95,9 +96,9 @@ void RenderSystem::Start(
     onLightTexture = ResourceManager::LoadTexture("images/OnLightGradient.png", Texture::Type::count);
     offLightTexture = ResourceManager::LoadTexture("images/OffLightGradient.png", Texture::Type::count);
     syncLightTexture = ResourceManager::LoadTexture("images/SyncLightGradient.png", Texture::Type::count);
-    explodingLightTexture = ResourceManager::LoadTexture("images/ExplodingLightGradient.png", Texture::Type::count);
+    explodingLightTexture = ResourceManager::LoadTexture("images/ExplosionLightGradient.png", Texture::Type::count);
     flickeringLightTexture = ResourceManager::LoadTexture("images/FlickeringLightGradient.png", Texture::Type::count);
-    lightSphere = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "Sphere" + Paths::modelExtension);
+    lightSphere = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Sphere" + Paths::modelExtension);
 }
 
 void RenderSystem::SetIrradianceMap(unsigned int textureID)
@@ -221,7 +222,7 @@ void RenderSystem::LightPassUpdate()
 
     glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, lightPassBuffer, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
 
     auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (whatever != GL_FRAMEBUFFER_COMPLETE) {
@@ -230,7 +231,30 @@ void RenderSystem::LightPassUpdate()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void RenderSystem::HDRBufferUpdate()
+void RenderSystem::LinesUpdate()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
+
+    glBindTexture(GL_TEXTURE_2D, linesBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, linesBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
+
+    auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (whatever != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "Error: Framebuffer is not complete!" << "\n";
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+void RenderSystem::CompositeBufferUpdate()
 {
     glBindTexture(GL_TEXTURE_2D, colorBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
@@ -239,7 +263,6 @@ void RenderSystem::HDRBufferUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glGenTextures(1, &bloomBuffer);
     glBindTexture(GL_TEXTURE_2D, bloomBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -248,16 +271,13 @@ void RenderSystem::HDRBufferUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     // attach buffers
-    glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, compositeFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, bloomBuffer, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    OutputBufferUpdate();
 }
 
 void RenderSystem::OutputBufferUpdate()
@@ -331,8 +351,7 @@ void RenderSystem::Update(
 
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
     unsigned int deferredAttachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-    unsigned int ambientAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     viewMatrix = camera->GetViewMatrix();
@@ -356,38 +375,34 @@ void RenderSystem::Update(
 
     DrawAllRenderers(animators, transforms, renders, animatedRenderered);
 
+    RenderSSAO();
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
+    glEnable(GL_CULL_FACE);
     //glDisable(GL_DEPTH_TEST);
-    glDepthFunc(GL_ALWAYS);
     glBlendEquation(GL_FUNC_ADD);
-
+    glDepthMask(GL_FALSE);
     RenderAmbientPass();
 
     DrawPointLights(pointLights, transforms, delta);
 
     glDepthFunc(GL_LESS);
-    glCullFace(GL_FRONT);
-    (*shaders)[ShaderIndex::lines]->Use();
-    lines.Draw();
+    glCullFace(GL_BACK);
 
-    glDepthFunc(GL_ALWAYS);
-    debugLines.Draw();
+    RenderParticles(particles);
 
-    glDisable(GL_CULL_FACE);
+    RenderLinePass();
 
-    ParticleSystem::Draw(particles);
+    RenderComposite();
 
     glDisable(GL_BLEND);
-    glEnable(GL_CULL_FACE);
+    
     glEnable(GL_DEPTH_TEST);
 
     glDepthFunc(GL_LESS);
-    RenderSSAO();
 
     RenderBloom(bloomBuffer);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Unbind framebuffer
     //FrameBuffer::Unbind();
@@ -402,7 +417,7 @@ void RenderSystem::Update(
 
     (*shaders)[screen]->Use();
 
-    (*shaders)[screen]->setInt("ambientPass", 1);
+    (*shaders)[screen]->setInt("colour", 1);
     (*shaders)[screen]->setInt("albedo", 2);
     (*shaders)[screen]->setInt("normal", 3);
     (*shaders)[screen]->setInt("emission", 4);
@@ -410,7 +425,7 @@ void RenderSystem::Update(
     (*shaders)[screen]->setInt("bloomBlur", 6);
 
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, lightPassBuffer);
+    glBindTexture(GL_TEXTURE_2D, colorBuffer);
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, albedoBuffer);
@@ -493,8 +508,9 @@ void RenderSystem::ScreenResize(int width, int height)
 
     DeferredUpdate();
     LightPassUpdate();
+    LinesUpdate();
     SSAOUpdate();
-    HDRBufferUpdate();
+    CompositeBufferUpdate();
     OutputBufferUpdate();
     BloomUpdate();
 }
@@ -506,15 +522,17 @@ std::unordered_map<unsigned long long, Transform>& transforms,
 float delta
 )
 {
-    return;
     glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
-    glDepthMask(GL_FALSE);
+    glEnable(GL_DEPTH_TEST);
+
     glDepthFunc(GL_GREATER);
-    glCullFace(GL_BACK);
+    glCullFace(GL_FRONT);
     Shader* shader = (*shaders)[pointLightPassShaderIndex];
     shader->Use();
     shader->setMat4("vp", projection * viewMatrix);
     shader->setMat4("invVP", glm::inverse(projection * viewMatrix));
+    shader->setMat4("invV", glm::inverse(viewMatrix));
+    shader->setMat4("invP", glm::inverse(projection));
     shader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
     shader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
     shader->setInt("albedo", 1);
@@ -533,7 +551,10 @@ float delta
 
     for (auto& pair : pointLights)
     {
-        shader->setMat4("model", transforms[pair.first].getGlobalMatrix());
+        Transform transform = Transform();
+        transform.setPosition(transforms[pair.first].getGlobalPosition());
+        transform.setScale(pair.second.range);
+        shader->setMat4("model", transform.getGlobalMatrix());
         shader->setVec3("lightPos", transforms[pair.first].getGlobalPosition());
         shader->setVec3("colour", pair.second.colour);
         shader->setFloat("linear", pair.second.linear);
@@ -575,12 +596,11 @@ float delta
             glActiveTexture(GL_TEXTURE0 + 4);
             glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
         }
-        //TODO: Render sphere
-
-        //TODO: Collect all lights, add emission
-        //      Calculate Bloom
-        //      Do the same for lines
+        lightSphere->getMeshes()[0]->Draw();
     }
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LESS);
+    glCullFace(GL_BACK);
 }
 
 void RenderSystem::DrawAllRenderers(
@@ -617,13 +637,38 @@ void RenderSystem::ActivateFlaggedVariables(
     }
 }
 
-void RenderSystem::HDRBufferSetUp()
+void RenderSystem::CompositeBufferSetUp()
 {
-    glGenFramebuffers(1, &hdrFBO);
+    glGenFramebuffers(1, &compositeFBO);
     glGenTextures(1, &colorBuffer);
     glGenTextures(1, &bloomBuffer);
+    compositeShaderIndex = (*shaders).size();
+    (*shaders).push_back(ResourceManager::LoadShaderDefaultVert("composite"));
 
-    HDRBufferUpdate();
+    CompositeBufferUpdate();
+}
+
+void RenderSystem::RenderComposite()
+{
+
+    unsigned int compositeAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glBindFramebuffer(GL_FRAMEBUFFER, compositeFBO);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawBuffers(2, compositeAttachments);
+
+    Shader* shader = (*shaders)[compositeShaderIndex];
+    shader->Use();
+    shader->setInt("lines", 1);
+    shader->setInt("lights", 2);
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, linesBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glBindTexture(GL_TEXTURE_2D, lightPassBuffer);
+
+    RenderQuad();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void RenderSystem::OutputBufferSetUp()
@@ -717,7 +762,7 @@ void RenderSystem::BloomSetup()
 void RenderSystem::RenderBloom(unsigned int srcTexture)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-
+    glClear(GL_COLOR_BUFFER_BIT);
     RenderDownSamples(srcTexture);
 
     RenderUpSamples((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT);
@@ -813,10 +858,31 @@ void RenderSystem::LightPassSetup()
     glGenTextures(1, &lightPassBuffer);
     glGenFramebuffers(1, &lightPassFBO);
     LightPassUpdate();
+    ambientPassShaderIndex = (*shaders).size();
+    (*shaders).push_back(ResourceManager::LoadShaderDefaultVert("ambient"));
     pointLightPassShaderIndex = (*shaders).size();
     (*shaders).push_back(ResourceManager::LoadShader("pointLight"));
     //spotlightPassShaderIndex = (*shaders).size();
     //(*shaders).push_back(ResourceManager::LoadShaderDefaultVert("spotlights"));
+}
+
+void RenderSystem::LinesSetup()
+{
+    glGenTextures(1, &linesBuffer);
+    glGenFramebuffers(1, &linesFBO);
+    LinesUpdate();
+}
+
+void RenderSystem::RenderLinePass()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
+    glClear(GL_COLOR_BUFFER_BIT);
+    (*shaders)[ShaderIndex::lines]->Use();
+    lines.Draw();
+
+    glDepthFunc(GL_ALWAYS);
+    debugLines.Draw();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void RenderSystem::RenderQuad()
@@ -898,7 +964,7 @@ void RenderSystem::SSAOSetup()
 void RenderSystem::RenderAmbientPass()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
-    
+    glClear(GL_COLOR_BUFFER_BIT);
     Shader* ambientShader = (*shaders)[ambientPassShaderIndex];
 
     ambientShader->Use();
@@ -942,6 +1008,16 @@ void RenderSystem::RenderAmbientPass()
 
     RenderQuad();
 
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void RenderSystem::RenderParticles(
+    std::vector<Particle*> particles
+)
+{
+    glDisable(GL_CULL_FACE);
+    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
+    ParticleSystem::Draw(particles);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

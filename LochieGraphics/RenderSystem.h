@@ -62,12 +62,12 @@ public:
     int bufferIndex = 0;
 
     void DeferredUpdate();
-    void HDRBufferUpdate();
+    void CompositeBufferUpdate();
     void OutputBufferUpdate();
     void BloomUpdate();
     void SSAOUpdate();
     void LightPassUpdate();
-
+    void LinesUpdate();
 
     void Update(
         std::unordered_map<unsigned long long, ModelRenderer>& renders,
@@ -159,13 +159,15 @@ private:
         float delta
     );
 
-    void HDRBufferSetUp();
+    void CompositeBufferSetUp();
+    void RenderComposite();
     void OutputBufferSetUp();
 
-    unsigned int hdrFBO = 0;
+
+    unsigned int compositeFBO = 0;
     unsigned int bloomBuffer = 0;
     unsigned int colorBuffer = 0;
-    unsigned int rboDepth = 0;
+    int compositeShaderIndex = 0;
 
     unsigned int outputFBO = 0;
     unsigned int outputTexture = 0;
@@ -199,6 +201,15 @@ private:
     int spotlightPassShaderIndex = 0;
     void LightPassSetup();
     void RenderAmbientPass();
+
+    unsigned int linesBuffer = 0;
+    unsigned int linesFBO = 0;
+    void LinesSetup();
+    void RenderLinePass();
+
+    void RenderParticles(
+        std::vector<Particle*> particles
+    );
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;

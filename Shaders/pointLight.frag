@@ -3,7 +3,7 @@
 in vec2 texCoords;
 in vec3 lightColour;
 
-layout (location = 0) out vec4 finalColour;
+out vec4 finalColour;
 
 in vec2 screenPos;
 in vec3 fragmentNormal;
@@ -15,6 +15,8 @@ uniform vec3 lightPos;
 uniform vec3 camPos;
 uniform vec3 cameraDelta;
 uniform mat4 invVP;
+uniform mat4 invP;
+uniform mat4 invV;
 
 uniform sampler2D albedo;
 uniform sampler2D normal;
@@ -26,6 +28,7 @@ vec3 trueAlbedo;
 float metallic;
 float roughness;
 
+vec3 fragPos;
 vec3 viewDirection;
 vec3 F0;
 
@@ -56,31 +59,33 @@ void main()
 	metallic = albedo4.w;
 	roughness = normal4.w;
 
-	float depthValue = texture(screenDepth, screenPos).r;
+	float depthValue = texture(depth, screenPos).r;
     vec4 NDC = vec4(texCoords * 2.0 - 1.0, depthValue * 2.0 - 1.0, 1.0);
     vec4 clipPos = invP * NDC;
-    screenPos = clipPos.xyz / clipPos.w;
-    fragPos = (invV * vec4(screenPos, 1.0)).xyz;
+    vec3 screenPosition = clipPos.xyz / clipPos.w;
+    fragPos = (invV * vec4(screenPosition, 1.0)).xyz;
 
 	vec3 posToLight = lightPos - fragPos;
 	if(dot(posToLight, trueNormal) < 0.0)
 	{
 		finalColour = vec4(0.0);
+        finalColour = vec4(1.0,0.0,0.0,1.0);
 		return;
 	}
 	else
 	{
-		vec3 viewDirection = normalize(fragmentPos - (camPos - cameraDelta));
+		viewDirection = normalize(fragPos - (camPos - cameraDelta));
 		F0 = vec3(0.04); 
-		F0 = mix(F0, treuAlbedo, metallic);
+		F0 = mix(F0, trueAlbedo, metallic);
 
 		vec3 Lo = clamp(Radiance(
 		normalize(posToLight),
-		length(posToLight),
+		length(posToLight) / 100.0,
 		trueNormal, 1, linear, quad, lightColour
 		), 0, 1);
         Lo *= texture(lightLerp, vec2(0.0, lerpAmount)).rgb;
 		finalColour = vec4(Lo, 1.0);
+        finalColour = vec4(1.0,0.0,0.0,1.0);
 		return;
 	}
 }
@@ -111,7 +116,7 @@ vec3 Radiance(
             
     // add to outgoing radiance Lo
     float NdotL = max(dot(normal, lightDir), 0.0);                
-    return (kD * albedo / PI + specular) * radiance * NdotL; 
+    return (kD * trueAlbedo / PI + specular) * radiance * NdotL; 
 }
 
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight) {
