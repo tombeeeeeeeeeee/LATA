@@ -35,31 +35,7 @@ void LevelEditor::RefreshWalls()
 	}
 	wallCount = 0;
 
-	// TODO: prob don't need a seperate min and maxes and could use the other one
-	float offset = (gridSize + wallThickness) / 2;
-	float minX = FLT_MAX;
-	float minZ = FLT_MAX;
-	float maxX = -FLT_MAX;
-	float maxZ = -FLT_MAX;
-
-	gridMinX = INT_MAX;
-	gridMinZ = INT_MAX;
-	gridMaxX = INT_MIN;
-	gridMaxZ = INT_MIN;
-
-	for (auto& i : tiles) {
-		glm::vec3 pos = i.second->transform()->getGlobalPosition();
-		if (pos.x - gridSize < minX) minX = pos.x - gridSize;
-		if (pos.z - gridSize < minZ) minZ = pos.z - gridSize;
-		if (pos.x + gridSize > maxX) maxX = pos.x + gridSize;
-		if (pos.z + gridSize > maxZ) maxZ = pos.z + gridSize;
-
-		gridMinX = glm::min(gridMinX, i.first.first);
-		gridMinZ = glm::min(gridMinZ, i.first.second);
-
-		gridMaxX = glm::max(gridMaxX, i.first.first);
-		gridMaxZ = glm::max(gridMaxZ, i.first.second);
-	}
+	RefreshMinMaxes();
 
 	for (int x = gridMinX - 1; x <= gridMaxX + 1; x++)
 	{
@@ -112,8 +88,38 @@ void LevelEditor::RefreshWalls()
 		}
 	}
 
-	enemySystem.mapMinCorner = {minX, minZ};
-	enemySystem.mapDimensions = {maxX - minX, maxZ - minZ};
+}
+
+void LevelEditor::RefreshMinMaxes()
+{
+	// TODO: prob don't need a seperate min and maxes and could use the other one
+	float offset = (gridSize + wallThickness) / 2;
+	float minX = FLT_MAX;
+	float minZ = FLT_MAX;
+	float maxX = -FLT_MAX;
+	float maxZ = -FLT_MAX;
+
+	gridMinX = INT_MAX;
+	gridMinZ = INT_MAX;
+	gridMaxX = INT_MIN;
+	gridMaxZ = INT_MIN;
+
+	for (auto& i : tiles) {
+		glm::vec3 pos = i.second->transform()->getGlobalPosition();
+		if (pos.x - gridSize < minX) minX = pos.x - gridSize;
+		if (pos.z - gridSize < minZ) minZ = pos.z - gridSize;
+		if (pos.x + gridSize > maxX) maxX = pos.x + gridSize;
+		if (pos.z + gridSize > maxZ) maxZ = pos.z + gridSize;
+
+		gridMinX = glm::min(gridMinX, i.first.first);
+		gridMinZ = glm::min(gridMinZ, i.first.second);
+
+		gridMaxX = glm::max(gridMaxX, i.first.first);
+		gridMaxZ = glm::max(gridMaxZ, i.first.second);
+	}
+
+	enemySystem.mapMinCorner = { minX, minZ };
+	enemySystem.mapDimensions = { maxX - minX, maxZ - minZ };
 	enemySystem.mapDimensions /= enemySystem.nfmDensity;
 }
 
@@ -775,7 +781,6 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
 
-
 	// Refresh the tiles collection
 	auto children = groundTileParent->transform()->getChildren();
 	for (size_t i = 0; i < children.size(); i++)
@@ -814,6 +819,8 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 		groundTexture->path = Paths::levelsPath + windowName + ".png";
 		groundTexture->Load();
 	}
+
+	RefreshMinMaxes();
 }
 
 void LevelEditor::ModelPlacer(glm::vec2 targetPos)

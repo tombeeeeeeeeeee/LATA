@@ -88,6 +88,7 @@ private:
 	float selectSize = 50.0f;
 
 	void RefreshWalls();
+	void RefreshMinMaxes();
 
 	SceneObject* CellAt(float x, float z);
 	SceneObject* CellAt(int x, int z);
