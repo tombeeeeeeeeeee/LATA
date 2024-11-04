@@ -42,7 +42,7 @@ void PrefabManager::RefreshAllPrefabInstances()
 {
 	for (auto& i : SceneManager::scene->sceneObjects)
 	{
-		if (i.second->prefabStatus != SceneObject::PrefabStatus::prefabInstance) {
+		if (i.second->prefabStatus != SceneObject::PrefabStatus::instance) {
 			continue;
 		}
 		auto search = loadedPrefabOriginals.find(i.second->prefabBase);
@@ -59,7 +59,7 @@ void PrefabManager::SaveAllPrefabOrigins()
 {
 	for (auto& i : SceneManager::scene->sceneObjects)
 	{
-		if (i.second->prefabStatus != SceneObject::PrefabStatus::prefabOrigin) {
+		if (i.second->prefabStatus != SceneObject::PrefabStatus::origin) {
 			continue;
 		}
 		i.second->SaveAsPrefab();

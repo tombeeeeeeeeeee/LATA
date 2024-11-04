@@ -58,8 +58,8 @@ class SceneObject
 public:
 	enum class PrefabStatus : unsigned int{
 		none = 0,
-		prefabOrigin = 1,
-		prefabInstance = 2,
+		origin = 1,
+		instance = 2,
 		missing = 3,
 	};
 
@@ -98,6 +98,8 @@ public:
 	void LoadWithPartsSafe(toml::table table);
 	void LoadWithPartsSafeAndChildren(toml::table table);
 	void LoadFromPrefab(toml::table table);
+
+	void UnlinkFromPrefab();
 
 	void Duplicate() const;
 

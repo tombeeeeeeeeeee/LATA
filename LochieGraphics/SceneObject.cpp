@@ -95,7 +95,7 @@ void SceneObject::GUI()
 	std::string tag = Utilities::PointerToString(this);
 	ImGui::InputText(("Name##" + tag).c_str(), &name);
 
-	if (prefabStatus == PrefabStatus::prefabOrigin) {
+	if (prefabStatus == PrefabStatus::origin) {
 		if (ImGui::Button(("Save Prefab##" + tag).c_str())) {
 			SaveAsPrefab();
 		}
@@ -104,7 +104,7 @@ void SceneObject::GUI()
 			PrefabManager::RefreshPrefabInstancesOf(GUID);
 		}
 	}
-	if (prefabStatus == PrefabStatus::prefabInstance) {
+	if (prefabStatus == PrefabStatus::instance) {
 		if (ImGui::Button(("Refresh This Instance##" + tag).c_str())) {
 			LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(prefabBase));
 		}
@@ -242,17 +242,20 @@ void SceneObject::MenuGUI()
 		}
 		// Else // TODO: Warning
 	}
-	if (ImGui::MenuItem(("Refresh Prefab Instance##RightClick" + tag).c_str(), nullptr, nullptr, prefabStatus == PrefabStatus::prefabInstance)) {
+	if (ImGui::MenuItem(("Refresh Prefab Instance##RightClick" + tag).c_str(), nullptr, nullptr, prefabStatus == PrefabStatus::instance)) {
 		LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(prefabBase));
+	}
+	if (ImGui::MenuItem(("Unlink Prefab Instance##RightClick" + tag).c_str(), nullptr, nullptr, prefabStatus == PrefabStatus::instance)) {
+		prefabStatus = PrefabStatus::missing;
 	}
 	if (ImGui::MenuItem(("Copy GUID##RightClick" + tag).c_str())) {
 		ImGui::SetClipboardText(std::to_string(GUID).c_str());
 	}
 	auto prefabGUID = 0ull;
-	if (prefabStatus == PrefabStatus::prefabOrigin) {
+	if (prefabStatus == PrefabStatus::origin) {
 		prefabGUID = GUID;
 	}
-	else if (prefabStatus == PrefabStatus::prefabInstance) {
+	else if (prefabStatus == PrefabStatus::instance) {
 		prefabGUID = prefabBase;
 	}
 	if (prefabGUID) {
@@ -278,14 +281,14 @@ void SceneObject::MultiMenuGUI(std::set<SceneObject*> multiSelectedSceneObjects,
 	if (ImGui::MenuItem(("Save Any Prefab Origins##RightClick" + tag).c_str())) {
 		for (auto i : multiSelectedSceneObjects)
 		{
-			if (i->prefabStatus == SceneObject::PrefabStatus::prefabOrigin) {
+			if (i->prefabStatus == SceneObject::PrefabStatus::origin) {
 				i->SaveAsPrefab();
 			}
 		}
 	}
 	if (ImGui::MenuItem(("Refresh Prefab Instances##RightClick" + tag).c_str())) {
 		for (auto i : multiSelectedSceneObjects) {
-			if (i->prefabStatus == SceneObject::PrefabStatus::prefabInstance) {
+			if (i->prefabStatus == SceneObject::PrefabStatus::instance) {
 				i->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(i->prefabBase));
 			}
 		}
@@ -295,6 +298,13 @@ void SceneObject::MultiMenuGUI(std::set<SceneObject*> multiSelectedSceneObjects,
 		if (prefab != PrefabManager::loadedPrefabOriginals.end()) {
 			for (auto i : multiSelectedSceneObjects) {
 				i->LoadFromPrefab(prefab->second);
+			}
+		}
+	}
+	if (ImGui::MenuItem(("Unlink Any Prefabs##RightClick" + tag).c_str())) {
+		for (auto i : multiSelectedSceneObjects) {
+			if (i->prefabStatus == PrefabStatus::instance) {
+				i->prefabStatus = PrefabStatus::missing;
 			}
 		}
 	}
@@ -592,7 +602,7 @@ void SceneObject::ClearParts()
 
 void SceneObject::SaveAsPrefab()
 {
-	prefabStatus = PrefabStatus::prefabOrigin;
+	prefabStatus = PrefabStatus::origin;
 
 	std::ofstream file(Paths::prefabsSaveLocation + name + Paths::prefabExtension);
 
@@ -612,8 +622,8 @@ void SceneObject::LoadWithParts(toml::table table)
 	toml::table sceneObjectTable = *table["sceneObject"].as_table();
 	prefabBase = Serialisation::LoadAsUnsignedLongLong(sceneObjectTable["guid"]);
 	prefabStatus = (PrefabStatus)Serialisation::LoadAsUnsignedIntOLD(sceneObjectTable["prefabStatus"]);
-	if (prefabStatus == PrefabStatus::prefabOrigin) {
-		prefabStatus = PrefabStatus::prefabInstance;
+	if (prefabStatus == PrefabStatus::origin) {
+		prefabStatus = PrefabStatus::instance;
 	}
 
 	name = Serialisation::LoadAsString(sceneObjectTable["name"]);
@@ -752,8 +762,13 @@ void SceneObject::LoadFromPrefab(toml::table table)
 	// When loading directly from a prefab, the transform (of this object) should not be changed
 	glm::mat4 originalTransform = transform()->getLocalMatrix();
 	LoadWithPartsSafeAndChildren(table);
-	prefabStatus = PrefabStatus::prefabInstance;
+	prefabStatus = PrefabStatus::instance;
 	transform()->setLocalMatrix(originalTransform);
+}
+
+void SceneObject::UnlinkFromPrefab()
+{
+	prefabStatus = PrefabStatus::missing;
 }
 
 void SceneObject::Duplicate() const

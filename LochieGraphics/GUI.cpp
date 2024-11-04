@@ -495,10 +495,10 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	
 	// TODO: Allow these colours to be changed
 	ImVec4 textColour = ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Text];
-	if (sceneObject->prefabStatus == SceneObject::PrefabStatus::prefabOrigin) {
+	if (sceneObject->prefabStatus == SceneObject::PrefabStatus::origin) {
 		textColour = { 0.0823529412f, 0.8235294118f, 0.4078431373f, 1.0f };
 	}
-	else if (sceneObject->prefabStatus == SceneObject::PrefabStatus::prefabInstance) {
+	else if (sceneObject->prefabStatus == SceneObject::PrefabStatus::instance) {
 		textColour = { 0.4980392157f, 0.8392156863f, 0.9921568627f, 1.0f };
 	}
 	else if (sceneObject->prefabStatus == SceneObject::PrefabStatus::missing) {
