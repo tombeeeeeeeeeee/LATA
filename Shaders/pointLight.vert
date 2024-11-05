@@ -14,14 +14,13 @@ uniform mat4 model;
 uniform vec3 colour;
 
 out vec3 lightColour;
-out vec2 texCoords;
-out vec2 screenPos;
+out vec3 fragPos;
 
 out vec3 fragmentNormal;
 
 void main()
 {
-    texCoords = aTexCoords;
+
     vec4 pos;
     
     pos = model * vec4(aPos, 1.0);
@@ -29,7 +28,8 @@ void main()
     fragmentNormal = normalize((model * vec4(aNormal, 0.0)).xyz);
 
     gl_Position = vp * vec4(pos);
-    screenPos = (gl_Position.xyz / gl_Position.w).xy;
-    screenPos = screenPos * 0.5 + 0.5;
+    fragPos = pos.xyz;
+    //screenPos = (gl_Position.xyz / gl_Position.w).xy;
+    //screenPos = screenPos * 0.5 + 0.5;
     lightColour = colour;
 }

@@ -79,7 +79,7 @@ void main()
 
         Lo = max(CalcDirectionalLight(lightDirection, trueNormal), 0);
         vec3 IBL = specularIBL(trueNormal);
-        vec3 result = Lo + IBL;
+        vec3 result = Lo;
         float SSAOvalue = texture(screenSSAO, texCoords).r;
         result *= SSAOvalue;
         FragColour = vec4(result + emission.rgb, 1.0);

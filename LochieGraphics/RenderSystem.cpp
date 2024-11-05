@@ -98,7 +98,7 @@ void RenderSystem::Start(
     syncLightTexture = ResourceManager::LoadTexture("images/SyncLightGradient.png", Texture::Type::count);
     explodingLightTexture = ResourceManager::LoadTexture("images/ExplosionLightGradient.png", Texture::Type::count);
     flickeringLightTexture = ResourceManager::LoadTexture("images/FlickeringLightGradient.png", Texture::Type::count);
-    lightSphere = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Sphere" + Paths::modelExtension);
+    lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
 }
 
 void RenderSystem::SetIrradianceMap(unsigned int textureID)
@@ -423,6 +423,8 @@ void RenderSystem::Update(
     (*shaders)[screen]->setInt("emission", 4);
     (*shaders)[screen]->setInt("SSAO", 5);
     (*shaders)[screen]->setInt("bloomBlur", 6);
+    (*shaders)[screen]->setInt("lightBuffer", 7);
+
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, colorBuffer);
@@ -441,6 +443,9 @@ void RenderSystem::Update(
 
     glActiveTexture(GL_TEXTURE6);
     glBindTexture(GL_TEXTURE_2D, bloomMips[0].texture);
+
+    glActiveTexture(GL_TEXTURE7);
+    glBindTexture(GL_TEXTURE_2D, lightPassBuffer);
 
 
     (*shaders)[screen]->setFloat("exposure", exposure);
@@ -533,6 +538,7 @@ float delta
     shader->setMat4("invVP", glm::inverse(projection * viewMatrix));
     shader->setMat4("invV", glm::inverse(viewMatrix));
     shader->setMat4("invP", glm::inverse(projection));
+    shader->setVec2("invViewPort", glm::vec2(1.0f/SCREEN_WIDTH, 1.0f/SCREEN_HEIGHT));
     shader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
     shader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
     shader->setInt("albedo", 1);
@@ -553,7 +559,7 @@ float delta
     {
         Transform transform = Transform();
         transform.setPosition(transforms[pair.first].getGlobalPosition());
-        transform.setScale(pair.second.range);
+        transform.setScale(pair.second.range * 100.0f);
         shader->setMat4("model", transform.getGlobalMatrix());
         shader->setVec3("lightPos", transforms[pair.first].getGlobalPosition());
         shader->setVec3("colour", pair.second.colour);

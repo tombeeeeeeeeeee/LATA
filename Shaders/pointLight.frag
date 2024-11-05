@@ -1,11 +1,11 @@
 #version 460 core
 
-in vec2 texCoords;
+
 in vec3 lightColour;
 
 out vec4 finalColour;
 
-in vec2 screenPos;
+in vec3 fragPos;
 in vec3 fragmentNormal;
 
 uniform float lerpAmount;
@@ -17,6 +17,7 @@ uniform vec3 cameraDelta;
 uniform mat4 invVP;
 uniform mat4 invP;
 uniform mat4 invV;
+uniform vec2 invViewPort;
 
 uniform sampler2D albedo;
 uniform sampler2D normal;
@@ -28,7 +29,6 @@ vec3 trueAlbedo;
 float metallic;
 float roughness;
 
-vec3 fragPos;
 vec3 viewDirection;
 vec3 F0;
 
@@ -51,30 +51,33 @@ const float MAX_REFLECTION_LOD = 4.0;
 
 void main()
 {
-	vec4 albedo4 = texture(albedo, screenPos);
-	vec4 normal4 = texture(normal, screenPos);
+    vec2 texCoords = gl_FragCoord.xy;
+    texCoords *= invViewPort;
+	vec4 albedo4 = texture(albedo, texCoords);
+	vec4 normal4 = texture(normal, texCoords);
 
 	trueNormal = normal4.xyz;
 	trueAlbedo = albedo4.xyz;
 	metallic = albedo4.w;
 	roughness = normal4.w;
 
-	float depthValue = texture(depth, screenPos).r;
+	float depthValue = texture(depth, texCoords).r;
+
+
     vec4 NDC = vec4(texCoords * 2.0 - 1.0, depthValue * 2.0 - 1.0, 1.0);
     vec4 clipPos = invP * NDC;
     vec3 screenPosition = clipPos.xyz / clipPos.w;
-    fragPos = (invV * vec4(screenPosition, 1.0)).xyz;
+    vec3 worldPos = (invV * vec4(screenPosition, 1.0)).xyz;
 
-	vec3 posToLight = lightPos - fragPos;
+	vec3 posToLight = lightPos - worldPos;
 	if(dot(posToLight, trueNormal) < 0.0)
 	{
 		finalColour = vec4(0.0);
-        finalColour = vec4(1.0,0.0,0.0,1.0);
 		return;
 	}
 	else
 	{
-		viewDirection = normalize(fragPos - (camPos - cameraDelta));
+		viewDirection = normalize(worldPos - (camPos));
 		F0 = vec3(0.04); 
 		F0 = mix(F0, trueAlbedo, metallic);
 
@@ -83,9 +86,8 @@ void main()
 		length(posToLight) / 100.0,
 		trueNormal, 1, linear, quad, lightColour
 		), 0, 1);
-        Lo *= texture(lightLerp, vec2(0.0, lerpAmount)).rgb;
+        //Lo *= texture(lightLerp, vec2(0.0, lerpAmount)).rgb;
 		finalColour = vec4(Lo, 1.0);
-        finalColour = vec4(1.0,0.0,0.0,1.0);
 		return;
 	}
 }

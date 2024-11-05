@@ -9,6 +9,7 @@ uniform sampler2D normal;
 uniform sampler2D emission;
 uniform sampler2D SSAO;
 uniform sampler2D bloomBlur;
+uniform sampler2D lightBuffer;
 
 uniform float exposure;
 uniform float bloomStrength = 0.04f;
@@ -39,7 +40,7 @@ void main()
     {
         //Depth
         case 0:
-        //FragColor = vec4(texture(ambientPass, texCoords).rgb ,1.0);
+        FragColor = vec4(texture(lightBuffer, texCoords).rgb ,1.0);
         break;
 
         //Albedo
