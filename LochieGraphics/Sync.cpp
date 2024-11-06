@@ -54,6 +54,8 @@ Sync::Sync(toml::table table)
 	chargeOffsetY = Serialisation::LoadAsFloat(table["chargeOffsetY"], -0.952f);
 	chargeScaleX = Serialisation::LoadAsFloat(table["chargeScaleX"], 0.304f);
 	chargeScaleY = Serialisation::LoadAsFloat(table["chargeScaleY"], 0.024f);
+	startSlowTime = Serialisation::LoadAsFloat(table["startSlowTime"], 0.5f);
+	stopSlowTime = Serialisation::LoadAsFloat(table["stopSlowTime"], 1.5f);
 	healthBackgroundColour = Serialisation::LoadAsVec3(table["healthBackgroundColour"], glm::vec3(0.05f, 0.67f, 0.0f));
 	healthForegroundColour = Serialisation::LoadAsVec3(table["healthForegroundColour"], glm::vec3(0.1f, 1.0f, 0.0f));
 	chargeBackgroundColour = Serialisation::LoadAsVec3(table["chargeBackgroundColour"], glm::vec3(0.53f, 0.0f, 0.08f));
@@ -86,7 +88,11 @@ bool Sync::Update(
 			move.x * c - move.y * s,
 			move.x * s + move.y * c
 		};
-		float currentMoveSpeed = Utilities::Lerp(moveSpeed, 0.0f, glm::min(chargedDuration, sniperChargeTime) / sniperChargeTime);
+		float currentMoveSpeed = moveSpeed;
+		if (chargedDuration >= startSlowTime)
+		{
+			currentMoveSpeed = Utilities::Lerp(moveSpeed, 0.0f, (glm::min(chargedDuration, stopSlowTime) - startSlowTime) / (stopSlowTime - startSlowTime));
+		}
 		
 		glm::vec2 desiredVel = currentMoveSpeed * move;
 		glm::vec2 desiredVelChange = desiredVel - rigidBody.vel;
@@ -225,6 +231,8 @@ void Sync::GUI()
 	ImGui::DragFloat(("Stationary Stopping Force##" + tag).c_str(), &maxStopForce, 1.0f, 0.0f, FLT_MAX);
 	ImGui::DragFloat(("Look DeadZone##" + tag).c_str(), &lookDeadZone);
 	ImGui::DragFloat(("Move DeadZone##" + tag).c_str(), &moveDeadZone);
+	ImGui::DragFloat(("Start Slow Time##" + tag).c_str(), &startSlowTime, 0.02f, 0, stopSlowTime);
+	ImGui::DragFloat(("Stop Slow Time##" + tag).c_str(), &stopSlowTime, 0.02f, startSlowTime);
 	if (ImGui::DragFloat(("Heal Button Tolerance##" + tag).c_str(), &windowOfTimeForHealPressed))
 	{
 		SceneManager::scene->ecco->windowOfTimeForHealPressed = windowOfTimeForHealPressed;
@@ -313,6 +321,8 @@ toml::table Sync::Serialise() const
 		{ "healthForegroundColour", Serialisation::SaveAsVec3(healthForegroundColour) },
 		{ "chargeBackgroundColour", Serialisation::SaveAsVec3(chargeBackgroundColour) },
 		{ "chargeForegroundColour", Serialisation::SaveAsVec3(chargeForegroundColour) },
+		{ "startSlowTime", startSlowTime },
+		{ "stopSlowTime", stopSlowTime },
 	};
 }
 
