@@ -124,5 +124,5 @@ protected:
 	toml::table SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*) = nullptr);
 	void LoadSceneObjectsAndParts(toml::table& data);
 	void EnsureAllPartsHaveSceneObject();
-	void InitialisePlayers();
+	void InitialiseLayers();
 };

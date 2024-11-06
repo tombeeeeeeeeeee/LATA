@@ -827,7 +827,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	groundShader->setVec2("worldMin", (min - glm::vec2(1, 1)) * gridSize);
 	groundShader->setVec2("worldMax", (max + glm::vec2(1, 1)) * gridSize);
 
-	InitialisePlayers();
+	InitialiseLayers();
 
 	enemySystem.Start(transforms, rigidBodies, colliders);
 	previouslySaved = true;
