@@ -529,7 +529,6 @@ float delta
 {
     glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
     glEnable(GL_DEPTH_TEST);
-
     glDepthFunc(GL_GREATER);
     glCullFace(GL_FRONT);
     Shader* shader = (*shaders)[pointLightPassShaderIndex];
@@ -986,7 +985,7 @@ void RenderSystem::RenderAmbientPass()
     ambientShader->setMat4("invV", glm::inverse(viewMatrix));
 
     DirectionalLight dirLight = SceneManager::scene->directionalLight;
-    ambientShader->setVec3("lightDirection", dirLight.direction);
+    ambientShader->setVec3("lightDirection", glm::normalize(dirLight.direction));
     ambientShader->setVec3("lightColour", dirLight.colour);
     ambientShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
     ambientShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);

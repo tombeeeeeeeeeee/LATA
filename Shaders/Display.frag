@@ -40,7 +40,7 @@ void main()
     {
         //Depth
         case 0:
-        FragColor = vec4(texture(lightBuffer, texCoords).rgb ,1.0);
+        //FragColor = vec4(texture(lightBuffer, texCoords).rgb ,1.0);
         break;
 
         //Albedo

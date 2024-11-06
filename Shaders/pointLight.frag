@@ -71,12 +71,12 @@ void main()
 
 	vec3 posToLight = lightPos - worldPos;
 	if(dot(posToLight, trueNormal) < 0.0)
-	{
-		finalColour = vec4(0.0);
-		return;
-	}
-	else
-	{
+	//{
+	//	finalColour = vec4(0.0);
+	//	return;
+	//}
+	//else
+	//{
 		viewDirection = normalize(worldPos - (camPos));
 		F0 = vec3(0.04); 
 		F0 = mix(F0, trueAlbedo, metallic);
@@ -86,10 +86,10 @@ void main()
 		length(posToLight) / 100.0,
 		trueNormal, 1, linear, quad, lightColour
 		), 0, 1);
-        //Lo *= texture(lightLerp, vec2(0.0, lerpAmount)).rgb;
+        Lo *= texture(lightLerp, vec2(0.0, lerpAmount)).rgb;
 		finalColour = vec4(Lo, 1.0);
 		return;
-	}
+	//}
 }
 
 vec3 Radiance(

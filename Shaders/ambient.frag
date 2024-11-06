@@ -57,38 +57,31 @@ void main()
 
     viewDirection = normalize(fragPos - (camPos - cameraDelta * 0.9));
 
-    if(depthValue >= 1.0)
-    {
-        FragColour = texture(skybox,  normalize(fragPos - camPos));
-    }
-    else
-    {
-        vec4 emission = texture(screenEmission, texCoords);
-        vec4 albedo = texture(screenAlbedo, texCoords);
-        vec4 normal = texture(screenNormal, texCoords);
-        vec3 trueNormal = normal.rgb;
-        trueAlbedo = albedo.rgb;
-        roughness = normal.a;
-        metallic = albedo.a;
-        ao = emission.a;
-        if(ao == 0) ao = 1.0;
+    vec4 emission = texture(screenEmission, texCoords);
+    vec4 albedo = texture(screenAlbedo, texCoords);
+    vec4 normal = texture(screenNormal, texCoords);
+    vec3 trueNormal = normal.rgb;
+    trueAlbedo = albedo.rgb;
+    roughness = normal.a;
+    metallic = albedo.a;
+    ao = emission.a;
+    if(ao == 0) ao = 1.0;
 
-        vec3 Lo = vec3(0.0);
-	    F0 = vec3(0.04); 
-        F0 = mix(F0, trueAlbedo, metallic);
+    vec3 Lo = vec3(0.0);
+	F0 = vec3(0.04); 
+    F0 = mix(F0, trueAlbedo, metallic);
 
-        Lo = max(CalcDirectionalLight(lightDirection, trueNormal), 0);
-        vec3 IBL = specularIBL(trueNormal);
-        vec3 result = Lo;
-        float SSAOvalue = texture(screenSSAO, texCoords).r;
-        result *= SSAOvalue;
-        FragColour = vec4(result + emission.rgb, 1.0);
-    }
+    Lo = max(CalcDirectionalLight(lightDirection, trueNormal), 0);
+
+    vec3 result = Lo;
+    float SSAOvalue = texture(screenSSAO, texCoords).r;
+    result *= SSAOvalue;
+    FragColour = vec4(result, 1.0);
 }
 
 vec3 CalcDirectionalLight(vec3 lightDirection, vec3 normal)
 {
-	vec3 radiance = Radiance(-lightDirection, 0, normal, 1, 0, 0, lightColour);
+	vec3 radiance = Radiance(-lightDirection, 1, normal, 1, 0, 0 , lightColour);
 
     return radiance;
 }
@@ -101,18 +94,18 @@ vec3 Radiance(
 {
     // calculate per-light radiance
     vec3 H = normalize(viewDirection + lightDir);
-    float attenuation = CalcAttenuation(constant, linear, quadratic, distanceToLight);
+    float attenuation = 1.0;//CalcAttenuation(constant, linear, quadratic, distanceToLight);
     vec3 radiance  = diffuse * attenuation;        
         
     // cook-torrance brdf
     float NDF = DistributionGGX(normal, H, roughness);        
     float G   = GeometrySmith(normal, viewDirection, lightDir, roughness);      
     vec3 F    = fresnelSchlick(max(dot(H, viewDirection), 0.0), F0);       
-        
+    
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
     kD *= 1.0 - metallic;
-        
+   
     vec3 numerator    = NDF * G * F;
     float denominator = 4.0 * max(dot(normal, viewDirection), 0.0) * max(dot(normal, lightDir), 0.0) + 0.0001;
     vec3 specular     = numerator / denominator;  
@@ -173,5 +166,5 @@ vec3 specularIBL(vec3 trueNormal)
 }
 
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight) {
-    return 1.0 / (constant + linear * distanceToLight + quadratic * (distanceToLight * distanceToLight));
+    return 1.0;
 }

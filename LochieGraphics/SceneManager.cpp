@@ -163,7 +163,8 @@ SceneManager::SceneManager(Scene* _scene)
 	}
 
 
-	std::array<std::string, 6> skyboxFaces = { "images/skybox/left.jpg", "images/skybox/right.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
+	//std::array<std::string, 6> skyboxFaces = { "images/skybox/left.jpg", "images/skybox/right.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
+	std::array<std::string, 6> skyboxFaces = { "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png" };
 	defaultSkybox = new Skybox(scene->shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data()));
 
 	if (scene->skybox == nullptr) {
