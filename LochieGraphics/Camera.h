@@ -21,8 +21,10 @@ public:
 
     enum State {
         editorMode,
-        targetingPosition,
-        targetingPlayers,
+        targetingPositionOrthographic,
+        targetingPositionPerspective,
+        targetingPlayersOrthographic,
+        targetingPlayersPerspective,
         artEditorMode,
         tilePlacing
     };

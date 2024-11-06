@@ -129,8 +129,8 @@ void Camera::GUI()
 
 bool Camera::InOrthoMode() const
 {
-    return state == State::targetingPlayers || 
-        state == State::targetingPosition || 
+    return state == State::targetingPlayersOrthographic || 
+        state == State::targetingPositionOrthographic || 
         (state == State::editorMode && editorOrth) ||
         state == State::tilePlacing;
 }

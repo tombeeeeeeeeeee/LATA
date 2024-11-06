@@ -39,7 +39,7 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 
 	switch (camera.state)
 	{
-	case Camera::targetingPlayers:
+	case Camera::targetingPlayersOrthographic:
 		
 		camera.transform.setEulerRotation(viewAngle);
 		glm::vec3 deltaPos = eccoTransform.getGlobalPosition() - syncTransform.getGlobalPosition();
@@ -47,7 +47,7 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 		target = syncTransform.getGlobalPosition() + (deltaPos * 0.5f);
 		[[fallthrough]];
 
-	case Camera::targetingPosition: 
+	case Camera::targetingPositionOrthographic: 
 
 		if(camera.orthoScale < zoomScale)
 			camera.orthoScale = Utilities::Lerp(camera.orthoScale, zoomScale, cameraZoomOutSpeed);

@@ -335,7 +335,7 @@ void LevelEditor::Update(float delta)
 
 		enemySystem.SpawnEnemiesInScene(enemies, transforms);
 
-		camera->state = Camera::targetingPlayers;
+		camera->state = Camera::targetingPlayersOrthographic;
 		dabSystem.Start(transforms, doors);
 		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards, triggerables);
 		for (auto& pair : exits) pair.second.Initialise(sceneObjects[pair.first]);
@@ -379,8 +379,8 @@ void LevelEditor::Update(float delta)
 				return;
 		}
 
-		if(singlePlayer == 0) camera->state = Camera::targetingPlayers;
-		else camera->state = Camera::targetingPosition;
+		if(singlePlayer == 0) camera->state = Camera::targetingPlayersOrthographic;
+		else camera->state = Camera::targetingPositionOrthographic;
 
 		if		(singlePlayer == 1) gameCamSystem.target = syncSo->transform()->getGlobalPosition();
 		else if (singlePlayer == 2) gameCamSystem.target = eccoSo->transform()->getGlobalPosition();
