@@ -359,8 +359,7 @@ void LevelEditor::Update(float delta)
 	LineRenderer& lines = renderSystem.lines;
 	input.Update();
 
-	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
-	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
+
 
 
 	if (inPlay)
@@ -420,6 +419,9 @@ void LevelEditor::Update(float delta)
 		syncSo->transform()->get2DGlobalPosition(),
 		delta
 	);
+
+	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
+	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 
 	if (input.inputDevices.size() > 0)
 	{
