@@ -31,6 +31,12 @@ void HealthSystem::Load(toml::table table)
 	timeBetweenPulses = Serialisation::LoadAsFloat(table["timeBetweenPulses"]);
 	healDistance = Serialisation::LoadAsFloat(table["healDistance"]);
 	losToleranceTime = Serialisation::LoadAsFloat(table["losToleranceTime"]);
+	abilityOffsetX = Serialisation::LoadAsFloat(table["abilityOffsetX"], 0.0f);
+	abilityOffsetY = Serialisation::LoadAsFloat(table["abilityOffsetY"], -0.845f);
+	abilityScaleX = Serialisation::LoadAsFloat(table["abilityScaleX"], 0.100f);
+	abilityScaleY = Serialisation::LoadAsFloat(table["abilityScaleY"], 0.077f);
+	abilityBackgroundColour = Serialisation::LoadAsVec3(table["abilityBackgroundColour"], glm::vec3(0.3f, 0.3f, 0.3f));
+	abilityForegroundColour = Serialisation::LoadAsVec3(table["abilityForegroundColour"], glm::vec3(0.3f, 1.0f, 0.3f));
 }
 
 toml::table HealthSystem::Serialise()
@@ -45,6 +51,13 @@ toml::table HealthSystem::Serialise()
 		{"timeBetweenPulses",timeBetweenPulses},
 		{"healDistance",healDistance},
 		{"losToleranceTime",losToleranceTime},
+		{ "abilityOffsetX", abilityOffsetX},
+		{ "abilityOffsetY", abilityOffsetY},
+		{ "abilityScaleX", abilityScaleX},
+		{ "abilityScaleY", abilityScaleY},
+		{ "abilityBackgroundColour", Serialisation::SaveAsVec3(abilityBackgroundColour) },
+		{ "abilityForegroundColour", Serialisation::SaveAsVec3(abilityForegroundColour) },
+
 	};
 }
 
