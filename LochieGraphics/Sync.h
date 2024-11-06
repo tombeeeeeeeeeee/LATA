@@ -107,5 +107,8 @@ private:
 
 	bool playedReachCharge1 = false;
 	bool playedReachCharge2 = false;
+
+	float stopSlowTime = 10.0f;
+	float startSlowTime = 5.0f;
 	
 };

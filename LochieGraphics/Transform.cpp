@@ -444,7 +444,8 @@ Transform::Transform(toml::table table)
 
 Transform::~Transform()
 {
-	for (auto i : children)
+	std::vector<Transform*> oldChildren = getChildren();
+	for (auto i : oldChildren)
 	{
 		i->setParent(parent);
 	}

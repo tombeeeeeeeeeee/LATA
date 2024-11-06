@@ -530,6 +530,14 @@ void LevelEditor::Draw()
 		healthShader->setVec3("backgroundColour", sync->chargeBackgroundColour);
 		healthShader->setVec3("healthColour", sync->chargeForegroundColour);
 		healthBar.Draw();
+
+		healthShader->setVec2("offset", { healthSystem.abilityOffsetX, healthSystem.abilityOffsetY });
+		healthShader->setVec2("scale", { healthSystem.abilityScaleX, healthSystem.abilityScaleY });
+		healthShader->setFloat("healthPercent", glm::clamp(healthSystem.timeSinceLastHealingAbility / healthSystem.healingAbilityCooldown, 0.0f, 1.0f));
+		healthShader->setVec3("backgroundColour", healthSystem.abilityBackgroundColour);
+		healthShader->setVec3("healthColour", healthSystem.abilityForegroundColour);
+		healthBar.Draw();
+
 	}
 }
 

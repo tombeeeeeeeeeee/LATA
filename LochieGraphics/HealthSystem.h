@@ -51,12 +51,19 @@ public:
 
 	std::string filename = "";
 
+	float abilityOffsetX = 0.0f;
+	float abilityOffsetY = 0.0f;
+	float abilityScaleX = 0.5f;
+	float abilityScaleY = 0.5f;
+	glm::vec3 abilityBackgroundColour{};
+	glm::vec3 abilityForegroundColour{};
+
+	float timeSinceLastHealingAbility = FLT_MAX;
 private:
 	bool playerHealingAbility = false;
 	int currentPulseCount = 0;
 	float timeSinceLastLOS = 0.0f;
 	float timeSinceLastPulse = 0.0f;
-	float timeSinceLastHealingAbility = FLT_MAX;
 
 	std::string newFilename = "";
 	bool saveAs = false;
