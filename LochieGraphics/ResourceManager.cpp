@@ -104,9 +104,11 @@ Model* ResourceManager::LoadModelAsset(std::string path)
 // TODO: Clean
 Model* ResourceManager::LoadModel()
 {
-	Model newResource = Model();
-	newResource.GUID = GetNewGuid();
-	return &models.emplace(newResource.GUID, newResource).first->second;
+	return nullptr;
+	Model* newResource = nullptr;
+	auto newGuid = GetNewGuid();
+	auto temp = models.emplace(std::piecewise_construct, std::make_tuple(newGuid), std::make_tuple());
+	return &temp.first->second;
 }
 
 Mesh* ResourceManager::LoadMesh(std::vector<Vertex> vertices, std::vector<GLuint> indices)

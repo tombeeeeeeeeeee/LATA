@@ -25,7 +25,7 @@ namespace CollisionFunctions
 
 	bool CircleOnPolyCheck(
 		glm::vec2 circlePos, float radius,
-		PolygonCollider* poly, Transform transformB
+		PolygonCollider* poly, const Transform& transformB
 	);
 
 	//TODO

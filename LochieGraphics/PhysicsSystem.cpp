@@ -599,7 +599,7 @@ std::vector<Hit> PhysicsSystem::CircleCast(glm::vec2 pos, float radius, int laye
 					else
 					{
 						bool overLap = CollisionFunctions::CircleOnPolyCheck(
-							pos, radius, poly, (*transformsInScene)[rigidBodyPair.first]
+							pos, radius, poly, (*transformsInScene).at(rigidBodyPair.first)
 						);
 						if (overLap)
 						{

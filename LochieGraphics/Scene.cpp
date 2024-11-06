@@ -217,7 +217,11 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 			toml::table* loadingModelRenderer = loadingModelRenderers->at(i).as_table(); renderers[Serialisation::LoadAsUnsignedLongLong((*loadingModelRenderer)["guid"])] = ModelRenderer(*loadingModelRenderer);
 		}
 	};
-	LoadPart(transforms, "Transforms", Transform);
+	toml::array* loadingTransforms = data["Transforms"].as_array(); if (loadingTransforms) {
+		for (int i = 0; i < loadingTransforms->size(); i++) {
+			toml::table* loadingTransform = loadingTransforms->at(i).as_table(); transforms[Serialisation::LoadAsUnsignedLongLong((*loadingTransform)["guid"])].Load(*loadingTransform);
+		}
+	};
 	// Loading transforms doesn't keep the sceneobject pointer, they need to be refreshed
 	// There was previously a bug that meant the hierarchy linkage could be broken
 	for (auto& i : transforms)

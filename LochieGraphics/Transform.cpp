@@ -60,7 +60,7 @@ bool Transform::isDirectParentOf(Transform* transform) const
 void Transform::setParent(Transform* newParent)
 {
 	if (newParent) {
-		if (newParent->isChildOf(this)) {
+		if (newParent->isDirectChildOf(this)) {
 			std::cout << "Error, Unemplemented Behaviour, trying to set the parent of a transform as its child\n";
 			return;
 		}
@@ -88,7 +88,7 @@ void Transform::AddChild(Transform* newChild)
 		std::cout << "Error, Unemplemented Behaviour, trying to set a transform as its own child\n";
 		return;
 	}
-	if (std::find(children.begin(), children.end(), newChild) != children.end()) {
+	if (!children.empty() && std::find(children.begin(), children.end(), newChild) != children.end()) {
 		// Child already exists as a child
 		if (newChild->parent != this) {
 			std::cout << "Error: Trying to add a child that was already a child but had a different parent!\n";
@@ -102,6 +102,10 @@ void Transform::AddChild(Transform* newChild)
 
 void Transform::RemoveChild(Transform* oldChild)
 {
+	if (children.empty()) {
+		std::cout << "Error: 46828623948239490138\n";
+		return;
+	}
 	auto childIterator = std::find(children.begin(), children.end(), oldChild);
 	if (childIterator == children.end()) {
 		// Child not found

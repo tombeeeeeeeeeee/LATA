@@ -20,7 +20,7 @@ public:
 	// How many ticks/'frames per second' for this animation.
 	float ticksPerSecond = 0.f;
 
-	// The bones apart of the model for this animation
+	// The animation bones with animation key data
 	std::vector<Bone> bones = {};
 
 	Model* model = nullptr;

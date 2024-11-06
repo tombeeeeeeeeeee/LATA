@@ -79,7 +79,7 @@ SceneObject::SceneObject(Scene* _scene, std::string _name) :
 	name(_name)
 {
 	GUID = ResourceManager::GetNewGuid();
-	scene->transforms[GUID] = Transform(this);
+	scene->transforms[GUID].so = this;
 	scene->sceneObjects[GUID] = this;
 	// TODO: Put a safetly check for if a guid that gets made is already on a sceneobject
 }
@@ -456,7 +456,7 @@ SceneObject::SceneObject(Scene* _scene, toml::table* table) :
 	name = Serialisation::LoadAsString((*table)["name"]);
 	GUID = Serialisation::LoadAsUnsignedLongLong((*table)["guid"]);
 	parts = Serialisation::LoadAsUnsignedIntOLD((*table)["parts"]);
-	scene->transforms[GUID] = Transform(this);
+	scene->transforms[GUID].so = this;
 	scene->sceneObjects[GUID] = this;
 	prefabStatus = (PrefabStatus)Serialisation::LoadAsUnsignedIntOLD((*table)["prefabStatus"]);
 	prefabBase = Serialisation::LoadAsUnsignedLongLong((*table)["prefabBase"]);
@@ -464,7 +464,7 @@ SceneObject::SceneObject(Scene* _scene, toml::table* table) :
 
 Transform* SceneObject::transform() const
 {
-	return &(scene->transforms[GUID]);
+	return &(scene->transforms.at(GUID));
 }
 
 SetAndGetForPart(ModelRenderer, renderers, Parts::modelRenderer, Renderer, renderer)

@@ -88,6 +88,8 @@ public:
 
 	~Transform();
 
-	// TODO: rule o three
+	// TODO:
+	Transform(const Transform& other) = delete;
+	Transform& operator=(const Transform& other) = delete;
 };
 

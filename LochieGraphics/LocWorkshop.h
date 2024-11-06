@@ -18,6 +18,8 @@ private:
 	Animation animation2;
 	Animation animation3;
 	Animation animation4;
+
+	Animation animation5;
 	
 	Shader* shader;
 
