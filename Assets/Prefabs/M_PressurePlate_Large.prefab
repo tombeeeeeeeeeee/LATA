@@ -1,0 +1,72 @@
+[collider]
+collisionLayer = 256
+guid = '265813382285790478'
+isTrigger = true
+radius = 0.0
+type = 1
+verts = [ [ 80.0, 65.0 ], [ 80.0, -100.0 ], [ -80.0, -100.0 ], [ -80.0, 65.0 ] ]
+
+[modelRenderer]
+guid = '265813382285790478'
+materialTint = [ 0.46568626165390015, 0.8271340131759644, 1.0 ]
+materials = [ '15379552588297712660' ]
+modelGuid = '15379861888557426788'
+
+[plate]
+guid = '265813382285790478'
+smallType = false
+triggerTag = ''
+
+[rigidBody]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+colliders = []
+elasticicty = 0.0
+guid = '265813382285790478'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+[sceneObject]
+children = [ '265813382626728744' ]
+guid = '265813382285790478'
+name = 'M_PressurePlate_Large'
+parent = '0'
+parts = 4138
+prefabBase = '260214795107391098'
+prefabStatus = 1
+
+[transform]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '265813382285790478'
+position = [ 1900.0, 0.0, -100.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.25, 1.25, 1.25 ]
+
+[[children]]
+children = []
+
+    [children.modelRenderer]
+    guid = '265813382626728744'
+    materialTint = [ 1.0, 1.0, 1.0 ]
+    materials = [ '15379552588297712660' ]
+    modelGuid = '15379807979942761909'
+
+    [children.sceneObject]
+    children = []
+    guid = '265813382626728744'
+    name = 'M_PressurePlate_Base'
+    parent = '265813382285790478'
+    parts = 2
+    prefabBase = '260232844936125037'
+    prefabStatus = 2
+
+    [children.transform]
+    euler = [ -0.0, -0.0, -0.0 ]
+    guid = '265813382626728744'
+    position = [ 0.0, 0.0, 0.0 ]
+    quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]
