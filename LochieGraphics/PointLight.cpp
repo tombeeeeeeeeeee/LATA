@@ -48,6 +48,7 @@ void PointLight::GUI()
 				if (ImGui::Selectable(effects[i], isSelected))
 				{
 					effect = (PointLightEffect)i;
+					timeInType = 0.0f;
 				}
 				if (isSelected) ImGui::SetItemDefaultFocus();
 			}

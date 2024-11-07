@@ -93,11 +93,11 @@ void RenderSystem::Start(
     colourKey2->Load();
 
     
-    onLightTexture = ResourceManager::LoadTexture("images/OnLightGradient.png", Texture::Type::count);
-    offLightTexture = ResourceManager::LoadTexture("images/OffLightGradient.png", Texture::Type::count);
-    syncLightTexture = ResourceManager::LoadTexture("images/SyncLightGradient.png", Texture::Type::count);
-    explodingLightTexture = ResourceManager::LoadTexture("images/ExplosionLightGradient.png", Texture::Type::count);
-    flickeringLightTexture = ResourceManager::LoadTexture("images/FlickeringLightGradient.png", Texture::Type::count);
+    onLightTexture = ResourceManager::LoadTexture("images/OnLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
+    offLightTexture = ResourceManager::LoadTexture("images/OffLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
+    syncLightTexture = ResourceManager::LoadTexture("images/SyncLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
+    explodingLightTexture = ResourceManager::LoadTexture("images/ExplosionLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
+    flickeringLightTexture = ResourceManager::LoadTexture("images/FlickeringLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
     lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
 }
 
@@ -383,10 +383,12 @@ void RenderSystem::Update(
     //glDisable(GL_DEPTH_TEST);
     glBlendEquation(GL_FUNC_ADD);
     glDepthMask(GL_FALSE);
-    RenderAmbientPass();
 
     DrawPointLights(pointLights, transforms, delta);
+    RenderAmbientPass();
 
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS);
     glCullFace(GL_BACK);
 
@@ -528,6 +530,7 @@ float delta
 )
 {
     glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
+    glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_GREATER);
     glCullFace(GL_FRONT);
@@ -538,7 +541,7 @@ float delta
     shader->setMat4("invV", glm::inverse(viewMatrix));
     shader->setMat4("invP", glm::inverse(projection));
     shader->setVec2("invViewPort", glm::vec2(1.0f/SCREEN_WIDTH, 1.0f/SCREEN_HEIGHT));
-    shader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
+    shader->setVec3("camPos", SceneManager::scene->camera->transform.getGlobalPosition());
     shader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
     shader->setInt("albedo", 1);
     shader->setInt("normal", 2);
@@ -558,52 +561,53 @@ float delta
     {
         Transform transform = Transform();
         transform.setPosition(transforms[pair.first].getGlobalPosition());
-        transform.setScale(pair.second.range * 100.0f);
+        transform.setScale(pair.second.range * 1000.0f);
         shader->setMat4("model", transform.getGlobalMatrix());
         shader->setVec3("lightPos", transforms[pair.first].getGlobalPosition());
         shader->setVec3("colour", pair.second.colour);
         shader->setFloat("linear", pair.second.linear);
         shader->setFloat("quad", pair.second.quadratic);
         pair.second.timeInType += delta;
+        float lerpAmount;
         switch (pair.second.effect)
         {
         case PointLightEffect::On:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOn);
-            shader->setFloat("lerpAmount", pair.second.timeInType / lightTimeToOn);
+            lerpAmount = pair.second.timeInType / lightTimeToOn;
             glActiveTexture(GL_TEXTURE0 + 4);
             glBindTexture(GL_TEXTURE_2D, onLightTexture->GLID);
             break;
 
         case PointLightEffect::Off:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOff);
-            shader->setFloat("lerpAmount", pair.second.timeInType / lightTimeToOff);
+            lerpAmount = pair.second.timeInType / lightTimeToOff;
             glActiveTexture(GL_TEXTURE0 + 4);
             glBindTexture(GL_TEXTURE_2D, offLightTexture->GLID);
             break;
 
         case PointLightEffect::Explosion:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToExplode);
-            if (pair.second.timeInType >= lightTimeToExplode) SceneManager::scene->DeleteSceneObject(pair.first);
-            shader->setFloat("lerpAmount", pair.second.timeInType / lightTimeToExplode);
+            //if (pair.second.timeInType >= lightTimeToExplode) SceneManager::scene->DeleteSceneObject(pair.first);
+            lerpAmount = pair.second.timeInType / lightTimeToExplode;
             glActiveTexture(GL_TEXTURE0 + 4);
             glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
             break;
 
         case PointLightEffect::Flickering:
-            pair.second.timeInType = glm::modf(pair.second.timeInType, lightTimeToFlicker);
-            shader->setFloat("lerpAmount", glm::modf(pair.second.timeInType + (pair.first % 10)/10.0f, lightTimeToFlicker) / lightTimeToFlicker);
+            pair.second.timeInType = fmod(pair.second.timeInType, lightTimeToFlicker);
+            lerpAmount = fmod(pair.second.timeInType + (pair.first % 100)/100.0f, lightTimeToFlicker) / lightTimeToFlicker;
             glActiveTexture(GL_TEXTURE0 + 4);
             glBindTexture(GL_TEXTURE_2D, flickeringLightTexture->GLID);
             break;
 
         case PointLightEffect::SyncsGun:
-            shader->setFloat("lerpAmount", pair.second.timeInType);
             glActiveTexture(GL_TEXTURE0 + 4);
             glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
         }
+        shader->setFloat("lerpAmount", glm::clamp(lerpAmount, 0.0f, 1.0f));
         lightSphere->getMeshes()[0]->Draw();
     }
-    glDepthMask(GL_TRUE);
+    glDisable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glCullFace(GL_BACK);
 }
@@ -969,7 +973,7 @@ void RenderSystem::SSAOSetup()
 void RenderSystem::RenderAmbientPass()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
-    glClear(GL_COLOR_BUFFER_BIT);
+    
     Shader* ambientShader = (*shaders)[ambientPassShaderIndex];
 
     ambientShader->Use();
@@ -987,7 +991,7 @@ void RenderSystem::RenderAmbientPass()
     DirectionalLight dirLight = SceneManager::scene->directionalLight;
     ambientShader->setVec3("lightDirection", glm::normalize(dirLight.direction));
     ambientShader->setVec3("lightColour", dirLight.colour);
-    ambientShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
+    ambientShader->setVec3("camPos", SceneManager::scene->camera->transform.getGlobalPosition());
     ambientShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
 
     glActiveTexture(GL_TEXTURE0 + 1);

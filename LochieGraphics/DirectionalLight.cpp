@@ -18,7 +18,10 @@ void DirectionalLight::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	ImGui::ColorEdit3(("Colour##" + tag).c_str(), &colour[0]);
-	ImGui::DragFloat3(("Direction##" + tag).c_str(), &direction[0], 0.01f, -1.f, 1.f);
+	if (ImGui::DragFloat3(("Direction##" + tag).c_str(), &direction[0], 0.01f, -1.f, 1.f))
+	{
+		direction = glm::normalize(direction);
+	}
 }
 
 

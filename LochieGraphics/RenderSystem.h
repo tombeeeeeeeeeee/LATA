@@ -46,10 +46,10 @@ public:
 
     bool particleFacingCamera;
 
-    float lightTimeToOn = 0.5f;
-    float lightTimeToOff = 0.3f;
-    float lightTimeToExplode = 0.3f; 
-    float lightTimeToFlicker = 3.5f;
+    float lightTimeToOn = 2.5f;
+    float lightTimeToOff = 2.5f;
+    float lightTimeToExplode = 0.2f; 
+    float lightTimeToFlicker = 1.5f;
 
     void Start(
         unsigned int _skyboxTexture,

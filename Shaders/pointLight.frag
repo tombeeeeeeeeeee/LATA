@@ -51,6 +51,7 @@ const float MAX_REFLECTION_LOD = 4.0;
 
 void main()
 {
+
     vec2 texCoords = gl_FragCoord.xy;
     texCoords *= invViewPort;
 	vec4 albedo4 = texture(albedo, texCoords);
@@ -70,26 +71,19 @@ void main()
     vec3 worldPos = (invV * vec4(screenPosition, 1.0)).xyz;
 
 	vec3 posToLight = lightPos - worldPos;
-	if(dot(posToLight, trueNormal) < 0.0)
-	//{
-	//	finalColour = vec4(0.0);
-	//	return;
-	//}
-	//else
-	//{
-		viewDirection = normalize(worldPos - (camPos));
-		F0 = vec3(0.04); 
-		F0 = mix(F0, trueAlbedo, metallic);
 
-		vec3 Lo = clamp(Radiance(
-		normalize(posToLight),
-		length(posToLight) / 100.0,
-		trueNormal, 1, linear, quad, lightColour
-		), 0, 1);
-        Lo *= texture(lightLerp, vec2(0.0, lerpAmount)).rgb;
-		finalColour = vec4(Lo, 1.0);
-		return;
-	//}
+	viewDirection = normalize(worldPos - (camPos));
+	F0 = vec3(0.04); 
+	F0 = mix(F0, trueAlbedo, metallic);
+
+	vec3 Lo = clamp(Radiance(
+	normalize(posToLight),
+	length(posToLight) / 100.0,
+	trueNormal, 1, linear, quad, lightColour
+	), 0, 1);
+    Lo *= texture(lightLerp, lerpAmount.rr).rgb;
+	finalColour = vec4(Lo, 1.0);
+	return;
 }
 
 vec3 Radiance(
