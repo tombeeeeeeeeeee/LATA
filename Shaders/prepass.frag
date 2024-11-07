@@ -15,7 +15,6 @@ in vec3 fragmentColour;
 layout (location = 0) out vec4 normal;
 layout (location = 1) out vec4 albedo;
 layout (location = 2) out vec4 emission;
-layout (location = 3) out vec4 bloom;
 
 // Normals
 in vec3 fragmentNormal;
@@ -44,7 +43,6 @@ void main()
 
     //Emission packed with PBR AO
     emission = vec4(emission3, PBR.b);
-    bloom = vec4(0.0, 0.0, 0.0, 0.0);
 }
 
     

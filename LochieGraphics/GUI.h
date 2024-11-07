@@ -70,7 +70,6 @@ private:
 	//bool showSceneObjectMenu = false;
 	void SceneObjectMenu();
 	
-	int lightSelectedIndex = 0;
 	void LightMenu();
 	
 	//bool showHierarchyMenu = false;

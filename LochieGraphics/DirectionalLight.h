@@ -1,23 +1,15 @@
 #pragma once
 #include "Light.h"
 
-class DirectionalLight : public Light {
+class DirectionalLight {
 public:
-    glm::vec3 direction;
+    glm::vec3 direction = {0.0f,0.0f,0.0f};
+    glm::vec3 colour = {0.0f,0.0f,0.0f};
 
-    float fakePosDistance = 10.f;
-    float projectionWidth = 15.0f;
-
+    DirectionalLight() {};
     DirectionalLight(glm::vec3 _colour, glm::vec3 _direction);
-    void ApplyToShader(Shader* shader) override;
-    void GUI() override;
+    void GUI();
 
-    glm::vec3 getPos() const override;
-    glm::mat4 getShadowProjection() const override;
-    glm::mat4 getShadowView() const override;
-
-    toml::table Serialise() const override;
-
-    Type getType() const;
+    toml::table Serialise() const;
 };
 

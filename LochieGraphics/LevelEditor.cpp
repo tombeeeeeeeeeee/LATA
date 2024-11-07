@@ -41,10 +41,10 @@ void LevelEditor::RefreshWalls()
 	{
 		for (int z = gridMinZ - 1; z <= gridMaxZ + 1; z++)
 		{
-			bool upRight = CellAt(x, z);
-			bool downRight = CellAt(x, z - 1);
-			bool downLeft = CellAt(x - 1, z - 1);
-			bool upLeft = CellAt(x - 1, z);
+			bool upRight = CellAt((float)x, (float)z);
+			bool downRight = CellAt((float)x, (float)z - 1.0f);
+			bool downLeft = CellAt((float)x - 1.0f, (float)z - 1.0f);
+			bool upLeft = CellAt((float)x - 1.0f, (float)z);
 			unsigned char directions = (upRight << 3) + (downRight << 2) + (downLeft << 1) + upLeft;
 			glm::vec2 pos = { x * gridSize - gridSize / 2, z * gridSize - gridSize / 2 };
 			switch (directions)
@@ -202,14 +202,8 @@ void LevelEditor::Start()
 	shaders.push_back(groundShader);
 
 
-	lights.insert(lights.end(), {
-	&directionalLight,
-	&spotlight,
-	&pointLights[0],
-	&pointLights[1],
-	&pointLights[2],
-	&pointLights[3],
-		});
+	directionalLight = DirectionalLight
+	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
 
 	gui.showHierarchy = true;
 	gui.showSceneObject = true;
@@ -392,7 +386,7 @@ void LevelEditor::Update(float delta)
 		healthSystem.PlayerHealingUpdate(eccoSo->health(), syncSo->health(),
 			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
 
-		triggerSystem.Update(plates, triggerables);
+		triggerSystem.Update(plates, triggerables, transforms, delta);
 		dabSystem.Update(transforms, doors, bollards, colliders, delta);
 
 		if (!UserPreferences::immortal) {
@@ -501,14 +495,16 @@ void LevelEditor::Update(float delta)
 
 }
 
-void LevelEditor::Draw()
+void LevelEditor::Draw(float delta)
 {
 	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
 		animators,
+		pointLights,
 		camera,
+		delta,
 		particleSystem.particles
 	);
 

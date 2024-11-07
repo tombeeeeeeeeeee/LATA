@@ -12,6 +12,9 @@
 #include "Door.h"
 #include "Bollard.h"
 #include "Triggerable.h"
+#include "PointLight.h"
+#include "Spotlight.h"
+#include "DirectionalLight.h"
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
@@ -65,7 +68,10 @@ public:
 	std::unordered_map<unsigned long long, Door> doors = {};
 	std::unordered_map<unsigned long long, Bollard> bollards = {};
 	std::unordered_map<unsigned long long, Triggerable> triggerables = {};
-	std::vector<Light*> lights = {};
+	std::unordered_map<unsigned long long, PointLight> pointLights = {};
+	std::unordered_map<unsigned long long, Spotlight> spotlights = {};
+
+	DirectionalLight directionalLight;
 
 	std::vector<unsigned long long> markedForDeletion = {};
 
@@ -94,7 +100,7 @@ public:
 
 	virtual void Start() {};
 	virtual void Update(float delta) {};
-	virtual void Draw() {};
+	virtual void Draw(float delta) {};
 	virtual void OnMouseDown() {};
 	virtual void OnKeyDown(int key, int action) {};
 	virtual void OnKey(int key, int action) {};

@@ -122,11 +122,11 @@ void Scene::DeleteAllSceneObjectsAndParts()
 	partsChecker &= ~Parts::bollard;
 
 	// TODO: Don't like how just setting these flags here but no containers atm
-	partsChecker &= ~Parts::spikes;
+	spotlights.clear();
+	partsChecker &= ~Parts::spotlight;
 
-
-	//lights.clear();
-	partsChecker &= ~Parts::light;
+	pointLights.clear();
+	partsChecker &= ~Parts::pointLight;
 
 	partsChecker &= ~Parts::ecco;
 	partsChecker &= ~Parts::sync;
@@ -177,6 +177,8 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 	SavePart(doors);
 	SavePart(bollards);
 	SavePart(triggerables);
+	SavePart(pointLights);
+	SavePart(spotlights);
 
 	return toml::table{
 		{ "SceneObjects", savedSceneObjects },
@@ -195,6 +197,8 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 		{ "Sync", sync->Serialise() },
 		{ "Ecco", ecco->Serialise() },
 		{ "Triggerables", savedtriggerables},
+		{ "PointLights", savedpointLights},
+		{ "Spotlights", savedspotlights},
 	};
 
 	// TODO: Make sure save all parts, put a checker here
@@ -255,6 +259,8 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(doors, "Doors", Door);
 	LoadPart(bollards, "Bollards", Bollard);
 	LoadPart(triggerables, "Triggerables", Triggerable);
+	LoadPart(pointLights, "PointLights", PointLight);
+	LoadPart(spotlights, "Spotlights", Spotlight);
 	// TODO: Fix for colliders
 
 	toml::array* loadingColliders = data["Colliders"].as_array(); 
@@ -324,6 +330,14 @@ void Scene::EnsureAllPartsHaveSceneObject()
 
 void Scene::InitialiseLayers()
 {
+	////ecco
+	SceneObject* eccoSO = sceneObjects[ecco->GUID];
+	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { ecco->OnCollision(collision); });
+	////sync
+	SceneObject* syncSO = sceneObjects[sync->GUID];
+	//if (!syncSO->health()) syncSO->setHealth(new Health());
+	syncSO->health()->currHealth = sync->currHealth;
+	syncSO->rigidbody()->vel = { 0.0f, 0.0f };
 
 	for (int i = 1; i < (int)CollisionLayers::count; i *= 2)
 	{
