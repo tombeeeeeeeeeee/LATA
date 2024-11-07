@@ -118,9 +118,6 @@ public:
 	float fadeInTime = 3.5f;
 	float fadeOutTime = 1.5f;
 
-	DirectionalLight directionalLight = DirectionalLight
-	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
-
 	LevelEditor();
 	void Start() override;
 	void Update(float delta) override;

@@ -298,6 +298,9 @@ void LevelEditor::Start()
 	healthBar.InitialiseQuad(1.0f);
 	healthShader = ResourceManager::LoadShader("healthBar");
 	shaders.push_back(healthShader);
+
+	directionalLight.colour = { 1.0f, 1.0f, 1.0f };
+	directionalLight.direction = glm::normalize(glm::vec3(-0.25, -1.0f, -0.5f));
 }
 
 void LevelEditor::Update(float delta)

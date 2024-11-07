@@ -71,6 +71,7 @@ void main()
     vec3 result = Lo;
     float SSAOvalue = texture(screenSSAO, texCoords).r;
     result *= SSAOvalue;
+    result += emission.rgb;
     FragColour = vec4(result, 1.0);
 }
 
