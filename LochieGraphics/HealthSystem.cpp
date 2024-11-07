@@ -212,6 +212,15 @@ void HealthSystem::GUI()
 	ImGui::DragFloat("Time Since Last Heal Ability", &timeSinceLastHealingAbility, 0.02f, 0);
 	ImGui::DragFloat("DIstance For Healing Ability", &healDistance, 20.0f, 0);
 	ImGui::DragFloat("Tolerance for no Line of Sight", &losToleranceTime, 0.02f, 0);
+
+	ImGui::SliderFloat("abilityOffsetX", &abilityOffsetX, -1.0f, 1.0f);
+	ImGui::SliderFloat("abilityOffsetY", &abilityOffsetY, -1.0f, 1.0f);
+	ImGui::SliderFloat("abilityScaleX", &abilityScaleX, 0.0f, 1.0f);
+	ImGui::SliderFloat("abilityScaleY", &abilityScaleY, 0.0f, 1.0f);
+	ImGui::ColorEdit3("abilityBackgroundColour", &abilityBackgroundColour.x);
+	ImGui::ColorEdit3("abilityForegroundColour", &abilityForegroundColour.x);
+
+
 	ImGui::End();
 }
 
