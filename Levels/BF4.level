@@ -10,12 +10,12 @@ deadZone = 0.6000000238418579
 exceedingSlowIntensity = 3.5
 guid = '18251280005058221518'
 healingFromDamage = 1
-healthBackgroundColour = [ 0.25, 0.3700000047683716, 0.49000000953674316 ]
+healthBackgroundColour = [ 0.21950691938400269, 0.3229888081550598, 0.4264705777168274 ]
 healthForegroundColour = [ 0.25, 0.49000000953674316, 1.0 ]
-healthOffsetX = -0.6179999709129333
-healthOffsetY = -0.8450000286102295
-healthScaleX = 0.30399999022483826
-healthScaleY = 0.07699999958276749
+healthOffsetX = -0.5109999775886536
+healthOffsetY = -0.8840000033378601
+healthScaleX = 0.37299999594688416
+healthScaleY = 0.09000000357627869
 maxCarMoveSpeed = 565.0
 maxHealth = 10
 maxReverseSpeed = 300.0
@@ -38,22 +38,22 @@ wheelTurnSpeed = 4.0
 
 [Sync]
 barrelOffset = [ -75.0, 70.0, 5.0 ]
-chargeBackgroundColour = [ 0.5299999713897705, 0.0, 0.07999999821186066 ]
-chargeForegroundColour = [ 0.9300000071525574, 0.10999999940395355, 0.14000000059604645 ]
-chargeOffsetX = 0.6179999709129333
-chargeOffsetY = -0.9520000219345093
-chargeScaleX = 0.30399999022483826
-chargeScaleY = 0.024000000208616257
+chargeBackgroundColour = [ 0.4215686321258545, 0.002066506538540125, 0.06538752466440201 ]
+chargeForegroundColour = [ 0.9019607901573181, 0.137062668800354, 0.16504670679569244 ]
+chargeOffsetX = 0.5
+chargeOffsetY = -0.9399999976158142
+chargeScaleX = 0.3779999911785126
+chargeScaleY = 0.03799999877810478
 eccoRefractionAngle = 70.0
 eccoRefractionCount = 5
 enemyPierceCount = 99
 guid = '18251280004792080046'
-healthBackgroundColour = [ 0.05000000074505806, 0.6700000166893005, 0.0 ]
+healthBackgroundColour = [ 0.12239838391542435, 0.3529411554336548, 0.10380621254444122 ]
 healthForegroundColour = [ 0.10000000149011612, 1.0, 0.0 ]
-healthOffsetX = 0.6179999709129333
-healthOffsetY = -0.8450000286102295
-healthScaleX = 0.30399999022483826
-healthScaleY = 0.07699999958276749
+healthOffsetX = 0.5
+healthOffsetY = -0.8410000205039978
+healthScaleX = 0.3779999911785126
+healthScaleY = 0.05299999937415123
 lookDeadZone = 0.4000000059604645
 maxMoveForce = 4000.0
 maxStopForce = 4000.0
@@ -7075,22 +7075,22 @@ triggerTag = ''
 [[Doors]]
 amountToMove = 85.0
 closed = true
-guid = '15737803621372179612'
-ignoresFalse = false
-left = true
-timeToClose = 0.5
-timeToOpen = 0.5
-triggerTag = ''
-
-[[Doors]]
-amountToMove = 85.0
-closed = true
 guid = '18406440371033760193'
 ignoresFalse = false
 left = false
 timeToClose = 0.5
 timeToOpen = 0.5
 triggerTag = 'DoorL3'
+
+[[Doors]]
+amountToMove = 85.0
+closed = true
+guid = '15737803621372179612'
+ignoresFalse = false
+left = true
+timeToClose = 0.5
+timeToOpen = 0.5
+triggerTag = ''
 
 [[Doors]]
 amountToMove = 85.0
@@ -7538,14 +7538,14 @@ guid = '6250046355424393871'
 maxHealth = 0
 
 [[Healths]]
-currHealth = 5
-guid = '18251280004792080046'
-maxHealth = 5
-
-[[Healths]]
 currHealth = 10
 guid = '18251280005058221518'
 maxHealth = 10
+
+[[Healths]]
+currHealth = 5
+guid = '18251280004792080046'
+maxHealth = 5
 
 [[Plates]]
 guid = '7617985286286442741'
@@ -18524,12 +18524,6 @@ materials = [ '11557720335555147721' ]
 modelGuid = '17948350466954700839'
 
 [[Renderers]]
-guid = '18251280004792080046'
-materialTint = [ 0.0, 0.800000011920929, 0.0 ]
-materials = [ '0' ]
-modelGuid = '18138382404370373262'
-
-[[Renderers]]
 guid = '17628226705953312701'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -20371,6 +20365,12 @@ materialTint = [ 0.0, 0.4000000059604645, 0.800000011920929 ]
 materials = [ '0', '15449259407003476463', '15449352838481615396' ]
 modelGuid = '15070486382632221399'
 
+[[Renderers]]
+guid = '18251280004792080046'
+materialTint = [ 0.0, 0.800000011920929, 0.0 ]
+materials = [ '0' ]
+modelGuid = '18138382404370373262'
+
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
@@ -21446,26 +21446,6 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ 781.0, 2095.0 ], [ 500.0, -500.0 ], [ -1257.0, -500.0 ], [ -2005.0, 1835.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '18251280004792080046'
-invMass = 1.0
-invMomentOfInertia = 0.20000000298023224
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 8
-    guid = '18251280004792080046'
-    isTrigger = false
-    radius = 40.0
-    type = 1
-    verts = [ [ 0.0, 0.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -23477,6 +23457,26 @@ vel = [ 0.0, 0.0 ]
     radius = 60.0
     type = 1
     verts = [ [ 1.0, -46.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '18251280004792080046'
+invMass = 1.0
+invMomentOfInertia = 0.20000000298023224
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 8
+    guid = '18251280004792080046'
+    isTrigger = false
+    radius = 40.0
+    type = 1
+    verts = [ [ 0.0, 0.0 ] ]
 
 [[SceneObjects]]
 children = []
@@ -44316,21 +44316,21 @@ triggerTag = 'SpawnerRoom1'
 
 [[SpawnManagers]]
 canBeDisabled = false
-enemySpawnList = 21
-enemyTriggerTag = ''
-guid = '15767087275933143891'
-numToSpawn = 4
-timeBetweenSpawns = 0.15000000596046448
-triggerTag = 'SpawnerRoom3Top'
-
-[[SpawnManagers]]
-canBeDisabled = false
 enemySpawnList = 221
 enemyTriggerTag = ''
 guid = '15766506117538482072'
 numToSpawn = 4
 timeBetweenSpawns = 0.20000000298023224
 triggerTag = 'SpawnerRoom2'
+
+[[SpawnManagers]]
+canBeDisabled = false
+enemySpawnList = 21
+enemyTriggerTag = ''
+guid = '15767087275933143891'
+numToSpawn = 4
+timeBetweenSpawns = 0.15000000596046448
+triggerTag = 'SpawnerRoom3Top'
 
 [[SpawnManagers]]
 canBeDisabled = false
@@ -58573,23 +58573,18 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -360.0, 180.0, 0.0 ]
+euler = [ 0.0, -5.008956122765085e-06, 0.0 ]
 guid = '18251280004792080046'
 position = [ 3450.0, 0.0, 3450.0 ]
-quaternion = [
-    4.371138828673793e-08,
-    -3.82137093032941e-15,
-    -1.0,
-    -8.742277657347586e-08
-]
+quaternion = [ 1.0, 0.0, -4.371138828673793e-08, 0.0 ]
 scale = [ 0.9999930262565613, 1.0, 0.9999930262565613 ]
 
 [[Transforms]]
-euler = [ -0.0004005015653092414, 69.88243103027344, 5.012015662941849e-06 ]
+euler = [ -0.0004005016526207328, 69.88243103027344, 5.012015662941849e-06 ]
 guid = '18251280005058221518'
 position = [ 3375.178466796875, 0.0, 3267.319091796875 ]
-quaternion = [ 0.8197401165962219, -2.8900713004986756e-06, 0.5727357268333435, 2.037585545622278e-06 ]
-scale = [ 0.9985049962997437, 1.0, 0.9985049962997437 ]
+quaternion = [ 0.8197401165962219, -2.8900717552460264e-06, 0.5727357268333435, 2.037586000369629e-06 ]
+scale = [ 0.9985051155090332, 1.0, 0.9985051155090332 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
