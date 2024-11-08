@@ -338,6 +338,9 @@ void LevelEditor::Update(float delta)
 		for (auto& pair : exits) pair.second.Initialise(sceneObjects[pair.first]);
 
 		state = BrushState::none;
+
+		camera->nearPlane = 5000.0f;
+		camera->farPlane = 100000.0f;
 	}
 
 	else if(lastFramePlayState && !inPlay) //On Play exit
