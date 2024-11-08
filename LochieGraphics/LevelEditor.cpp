@@ -335,7 +335,7 @@ void LevelEditor::Update(float delta)
 
 		enemySystem.SpawnEnemiesInScene(enemies, transforms);
 
-		camera->state = Camera::targetingPlayersOrthographic;
+		camera->state = Camera::targetingPlayersPerspective;
 		dabSystem.Start(transforms, doors);
 		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards, triggerables);
 		for (auto& pair : exits) pair.second.Initialise(sceneObjects[pair.first]);
@@ -379,8 +379,9 @@ void LevelEditor::Update(float delta)
 				return;
 		}
 
-		if(singlePlayer == 0) camera->state = Camera::targetingPlayersOrthographic;
-		else camera->state = Camera::targetingPositionOrthographic;
+		// TODO: Remove this here and just change the state when the option is switched via the GUI
+		if(singlePlayer == 0) camera->state = Camera::targetingPlayersPerspective;
+		else camera->state = Camera::targetingPositionPerspective;
 
 		if		(singlePlayer == 1) gameCamSystem.target = syncSo->transform()->getGlobalPosition();
 		else if (singlePlayer == 2) gameCamSystem.target = eccoSo->transform()->getGlobalPosition();

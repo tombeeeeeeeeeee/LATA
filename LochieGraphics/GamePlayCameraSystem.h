@@ -14,18 +14,22 @@ namespace toml {
 class GameplayCameraSystem
 {
 public:
-	glm::vec3 cameraPositionDelta = {550.0f, 1000.0f, 750.0f};
+	glm::vec3 cameraPositionDelta = { 550.0f, 1000.0f, 750.0f };
 	glm::vec3 viewAngle = { 45.5f, 215.0f, 0.0f };
 	glm::vec3 target = { 0.0f, 0.0f, 0.0f};
-	glm::vec3 anchor = { 0.0f, 0.0f, 0.0f };
-	glm::vec2 constraint = { 0.0f, 0.0f };
-	bool anchoring = false;
 	float cameraZoomScale = 0.13f;
 	float cameraZoomMinimum = 125.0f;
 	float cameraZoomMaximum = 205.0f;
 	float cameraZoomInSpeed = 0.33f;
 	float cameraZoomOutSpeed = 0.01f;
 	float cameraMoveSpeed = 0.33f;
+
+	// TODO: Save new values
+	// These are values specfic to perspective, some above values are shared or just orthographic
+	float cameraFov;
+	float cameraZoomOutFurthest;
+	float cameraZoomClosestDistance;
+	float cameraZoomFurthestDistance;
 
 	GameplayCameraSystem() {};
 	void Load(toml::table table);
@@ -50,4 +54,12 @@ private:
 	Camera* cam = nullptr;
 	std::string newFilename = "";
 	bool saveAs = false;
+
+	// Only used for perspective
+	float desiredDistance;
+	float spread;
+	float distance;
+	float currentDistance;
+	glm::vec3 currentTarget;
+	glm::vec3 lerpedPos;
 };
