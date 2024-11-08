@@ -26,9 +26,9 @@ public:
 
 	// TODO: Save new values
 	// These are values specfic to perspective, some above values are shared or just orthographic
-	float cameraFov;
-	float cameraZoomClosestDistance;
-	float cameraZoomFurthestDistance;
+	float cameraFov = 0.0f;
+	float cameraZoomClosestDistance = 0.0f;
+	float cameraZoomFurthestDistance = 0.0f;
 
 	GameplayCameraSystem() {};
 	void Load(toml::table table);
@@ -51,16 +51,16 @@ public:
 	std::string filename = "";
 
 	// Only needs to be used while the camera system is active
-	glm::vec3 currentTarget;
+	glm::vec3 currentTarget = { 0.0f, 0.0f, 0.0f };
 private:
 	Camera* cam = nullptr;
 	std::string newFilename = "";
 	bool saveAs = false;
 
 	// debug values to see in the debugger
-	float desiredDistance;
-	float spread;
-	float distance;
-	float currentDistance;
-	glm::vec3 lerpedPos;
+	float desiredDistance = 0.0f;
+	float spread = 0.0f;
+	float distance = 0.0f;
+	float currentDistance = 0.0f;
+	glm::vec3 lerpedPos = { 0.0f, 0.0f, 0.0f };
 };

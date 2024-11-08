@@ -21,79 +21,77 @@
 
 void LevelEditor::RefreshWalls()
 {
-	auto walls = wallTileParent->transform()->getChildren();
+	//auto walls = wallTileParent->transform()->getChildren();
 
-	while (walls.size())
-	{
-		// TODO: Should be using a delete sceneobject function
-		unsigned long long GUID = walls.front()->getSceneObject()->GUID;
-		
-		delete sceneObjects[GUID];
-		sceneObjects.erase(GUID);
-		
-		walls.erase(walls.begin());
-	}
-	wallCount = 0;
+	//while (walls.size())
+	//{
+	//	// TODO: Should be using a delete sceneobject function
+	//	unsigned long long GUID = walls.front()->getSceneObject()->GUID;
+	//	
+	//	delete sceneObjects[GUID];
+	//	sceneObjects.erase(GUID);
+	//	
+	//	walls.erase(walls.begin());
+	//}
+	//wallCount = 0;
 
-	RefreshMinMaxes();
+	//RefreshMinMaxes();
 
-	for (int x = gridMinX - 1; x <= gridMaxX + 1; x++)
-	{
-		for (int z = gridMinZ - 1; z <= gridMaxZ + 1; z++)
-		{
-			bool upRight = CellAt((float)x, (float)z);
-			bool downRight = CellAt((float)x, (float)z - 1.0f);
-			bool downLeft = CellAt((float)x - 1.0f, (float)z - 1.0f);
-			bool upLeft = CellAt((float)x - 1.0f, (float)z);
-			unsigned char directions = (upRight << 3) + (downRight << 2) + (downLeft << 1) + upLeft;
-			glm::vec2 pos = { x * gridSize - gridSize / 2, z * gridSize - gridSize / 2 };
-			switch (directions)
-			{
-			case 0b1111:
-			case 0b0000:
-				break;
-			case 0b0001:
-			case 0b1110:
-				PlaceWallAt(pos.x, pos.y, -90.0f, wallCornerPrefab);
-				break;
-			case 0b0010:
-			case 0b1101:
-				PlaceWallAt(pos.x, pos.y, 180.0f, wallCornerPrefab);
-				break;
-			case 0b0100:
-			case 0b1011:
-				PlaceWallAt(pos.x, pos.y, 90.0f, wallCornerPrefab);
-				break;
-			case 0b1000:
-			case 0b0111:
-				PlaceWallAt(pos.x, pos.y, 0.0f, wallCornerPrefab);
-				break;
-			case 0b0101:
-			case 0b1010:
-				// TODO: Need a + plus shaped wall
-				PlaceWallAt(pos.x, pos.y, 0.0f, wallCornerPrefab);
-				PlaceWallAt(pos.x, pos.y, 180.0f, wallCornerPrefab);
-				break;
-			case 0b0011:
-			case 0b1100:
-				PlaceWallAt(pos.x, pos.y, 90.0f, wallSidePrefab);
-				break;
-			case 0b0110:
-			case 0b1001:
-				PlaceWallAt(pos.x, pos.y, 0.0f, wallSidePrefab);
-				break;
-			default:
-				break;
-			}
-		}
-	}
-
+	//for (int x = gridMinX - 1; x <= gridMaxX + 1; x++)
+	//{
+	//	for (int z = gridMinZ - 1; z <= gridMaxZ + 1; z++)
+	//	{
+	//		bool upRight = CellAt((float)x, (float)z);
+	//		bool downRight = CellAt((float)x, (float)z - 1.0f);
+	//		bool downLeft = CellAt((float)x - 1.0f, (float)z - 1.0f);
+	//		bool upLeft = CellAt((float)x - 1.0f, (float)z);
+	//		unsigned char directions = (upRight << 3) + (downRight << 2) + (downLeft << 1) + upLeft;
+	//		glm::vec2 pos = { x * gridSize - gridSize / 2, z * gridSize - gridSize / 2 };
+	//		switch (directions)
+	//		{
+	//		case 0b1111:
+	//		case 0b0000:
+	//			break;
+	//		case 0b0001:
+	//		case 0b1110:
+	//			//PlaceWallAt(pos.x, pos.y, -90.0f, wallCornerPrefab);
+	//			break;
+	//		case 0b0010:
+	//		case 0b1101:
+	//			//PlaceWallAt(pos.x, pos.y, 180.0f, wallCornerPrefab);
+	//			break;
+	//		case 0b0100:
+	//		case 0b1011:
+	//			//PlaceWallAt(pos.x, pos.y, 90.0f, wallCornerPrefab);
+	//			break;
+	//		case 0b1000:
+	//		case 0b0111:
+	//			//PlaceWallAt(pos.x, pos.y, 0.0f, wallCornerPrefab);
+	//			break;
+	//		case 0b0101:
+	//		case 0b1010:
+	//			// TODO: Need a + plus shaped wall
+	//			//PlaceWallAt(pos.x, pos.y, 0.0f, wallCornerPrefab);
+	//			//PlaceWallAt(pos.x, pos.y, 180.0f, wallCornerPrefab);
+	//			break;
+	//		case 0b0011:
+	//		case 0b1100:
+	//			//PlaceWallAt(pos.x, pos.y, 90.0f, wallSidePrefab);
+	//			break;
+	//		case 0b0110:
+	//		case 0b1001:
+	//			//PlaceWallAt(pos.x, pos.y, 0.0f, wallSidePrefab);
+	//			break;
+	//		default:
+	//			break;
+	//		}
+	//	}
+	//}
 }
 
 void LevelEditor::RefreshMinMaxes()
 {
 	// TODO: prob don't need a seperate min and maxes and could use the other one
-	float offset = (gridSize + wallThickness) / 2;
 	float minX = FLT_MAX;
 	float minZ = FLT_MAX;
 	float maxX = -FLT_MAX;
@@ -135,17 +133,17 @@ SceneObject* LevelEditor::CellAt(int x, int z)
 	else { return tile->second; }
 }
 
-SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction, unsigned long long prefab)
-{
-	SceneObject* newWall = new SceneObject(this, "newWall" + std::to_string(++wallCount));
-	newWall->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(prefab));
-
-	newWall->transform()->setPosition({ x, 0.0f, z });
-	newWall->transform()->setEulerRotation({ 0.0f, direction, 0.0f });
-	newWall->transform()->setParent(wallTileParent->transform());
-
-	return newWall;
-}
+//SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction, unsigned long long prefab)
+//{
+//	SceneObject* newWall = new SceneObject(this, "newWall" + std::to_string(++wallCount));
+//	newWall->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(prefab));
+//
+//	newWall->transform()->setPosition({ x, 0.0f, z });
+//	newWall->transform()->setEulerRotation({ 0.0f, direction, 0.0f });
+//	newWall->transform()->setParent(wallTileParent->transform());
+//
+//	return newWall;
+//}
 
 SceneObject* LevelEditor::PlaceTileAt(float x, float z)
 {
@@ -170,8 +168,6 @@ void LevelEditor::Brush(glm::vec2 targetCell)
 
 	gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
 	gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
-
-	if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
 }
 
 void LevelEditor::Eraser(glm::vec2 targetCell)
@@ -182,13 +178,10 @@ void LevelEditor::Eraser(glm::vec2 targetCell)
 	}
 	DeleteSceneObject(alreadyPlaced->GUID);
 	tiles.erase({ (int)targetCell.x, (int)targetCell.y });
-
-	if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
 }
 
 LevelEditor::LevelEditor() :
-	groundTileParent(new SceneObject(this, "Ground Tiles")),
-	wallTileParent(new SceneObject(this, "Wall Tiles"))
+	groundTileParent(new SceneObject(this, "Ground Tiles"))
 {
 }
 
@@ -628,15 +621,6 @@ void LevelEditor::GUI()
 		}
 		ImGui::Unindent();
 
-		ImGui::Checkbox("Always refresh walls", &alwaysRefreshWallsOnPlace);
-		if (!alwaysRefreshWallsOnPlace) {
-			if (ImGui::Button("Refresh Walls")) {
-				RefreshWalls();
-			}
-		}
-		if (ImGui::DragFloat("Wall offset", &wallThickness, 0.5f)) {
-			if (alwaysRefreshWallsOnPlace) { RefreshWalls(); }
-		}
 		ImGui::Checkbox("Snap To Grid", &snapToGridEnabled);
 		if (ImGui::CollapsingHeader("Grid")) {
 			ImGui::Checkbox("Show##Grid", &showGrid);
@@ -817,7 +801,6 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	gui.setSelected(nullptr);
 
 	groundTileParent = FindSceneObjectOfName("Ground Tiles");
-	wallTileParent = FindSceneObjectOfName("Wall Tiles");
 	syncSo = FindSceneObjectOfName("Sync");
 	eccoSo = FindSceneObjectOfName("Ecco");
 
@@ -906,11 +889,11 @@ void LevelEditor::Selector(glm::vec2 targetPos)
 	{
 		Transform* parent = i.second.getParent();
 		if (parent) {
-			if (parent->getSceneObject() == wallTileParent || parent->getSceneObject() == groundTileParent) {
+			if (parent->getSceneObject() == groundTileParent) {
 				continue;
 			}
 		}
-		if (i.second.getSceneObject() == wallTileParent || i.second.getSceneObject() == groundTileParent)
+		if (i.second.getSceneObject() == groundTileParent)
 		if (i.second.getSceneObject() == gui.getSelected()) { continue; }
 		glm::vec3 temp = i.second.getPosition();
 		glm::vec2 pos = { temp.x, temp.z };

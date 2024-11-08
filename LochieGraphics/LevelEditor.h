@@ -30,27 +30,20 @@ private:
 	BrushState state = BrushState::none;
 
 	SceneObject* groundTileParent;
-	SceneObject* wallTileParent;
 
 	std::unordered_map<std::pair<int, int>, SceneObject*, hashFNV1A> tiles = {};
 
 	Model* ground = nullptr;
 
-	unsigned long long wallSidePrefab = 12423318852501708145;
-	unsigned long long wallCornerPrefab = 12472608399756090578;
-
-	unsigned int wallCount = 0;
 	unsigned int tileCount = 0;
 
 	float gridSize = 300.0f;
-	float wallThickness = 25.0f;
 
 	int gridMinX = INT_MAX;
 	int gridMaxX = INT_MIN;
 	int gridMinZ = INT_MAX;
 	int gridMaxZ = INT_MIN;
 
-	bool alwaysRefreshWallsOnPlace = true;
 	
 	// For save to open the save as prompt, or just save
 	bool previouslySaved = false;
@@ -94,7 +87,7 @@ private:
 	SceneObject* CellAt(int x, int z);
 
 	// Worldspace placing issue
-	SceneObject* PlaceWallAt(float x, float z, float direction, unsigned long long prefab);
+	//SceneObject* PlaceWallAt(float x, float z, float direction, unsigned long long prefab);
 	SceneObject* PlaceTileAt(float x, float z);
 
 	void Brush(glm::vec2 targetCell);
