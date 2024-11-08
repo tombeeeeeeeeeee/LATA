@@ -1,7 +1,15 @@
 Animators = []
 Enemies = []
+PointLights = []
+Spotlights = []
 
 [Ecco]
+boostBackgroundColour = [ 0.25, 0.3700000047683716, 0.49000000953674316 ]
+boostForegroundColour = [ 0.25, 0.49000000953674316, 1.0 ]
+boostOffsetX = -0.6179999709129333
+boostOffsetY = -0.8450000286102295
+boostScaleX = 0.30399999022483826
+boostScaleY = 0.07699999958276749
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
 carReverseMoveSpeed = 3000.0
@@ -2263,14 +2271,6 @@ type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
 
 [[Colliders]]
-collisionLayer = 1
-guid = '15763204480048664000'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 120.0, 260.0 ], [ 120.0, -260.0 ], [ -120.0, -260.0 ], [ -120.0, 260.0 ] ]
-
-[[Colliders]]
 collisionLayer = 256
 guid = '15733369560143322230'
 isTrigger = false
@@ -4192,19 +4192,19 @@ verts = [ [ 120.0, 260.0 ], [ 120.0, -260.0 ], [ -120.0, -260.0 ], [ -120.0, 260
 
 [[Colliders]]
 collisionLayer = 1
-guid = '267018540128825756'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
 guid = '15547989007818856088'
 isTrigger = false
 radius = 0.0
 type = 1
 verts = [ [ 120.0, 260.0 ], [ 120.0, -260.0 ], [ -120.0, -260.0 ], [ -120.0, 260.0 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '267018540128825756'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
@@ -7139,12 +7139,22 @@ maxHealth = 0
 
 [[Healths]]
 currHealth = 0
+guid = '9797635121322260592'
+maxHealth = 0
+
+[[Healths]]
+currHealth = 0
 guid = '9810085868782937795'
 maxHealth = 0
 
 [[Healths]]
 currHealth = 0
-guid = '9797635121322260592'
+guid = '10183675170586091684'
+maxHealth = 0
+
+[[Healths]]
+currHealth = 0
+guid = '2791765175404296612'
 maxHealth = 0
 
 [[Healths]]
@@ -7155,16 +7165,6 @@ maxHealth = 0
 [[Healths]]
 currHealth = 0
 guid = '2056315331888814184'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2791765175404296612'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10183675170586091684'
 maxHealth = 0
 
 [[Healths]]
@@ -7922,12 +7922,6 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '7210689899771640525'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
 guid = '267018554399267612'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15095763643605868389' ]
@@ -7940,19 +7934,25 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
+guid = '7210689899771640525'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
 guid = '7210818314062224590'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15175249516255012601'
+guid = '15175254826144013096'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15175254826144013096'
+guid = '15175249516255012601'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -10622,25 +10622,25 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15735553645775887108'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
 guid = '15517106656463257394'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '7210864061771468676'
+guid = '15735553645775887108'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '7210913446618553876'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '7210864061771468676'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -12674,12 +12674,6 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15763204480048664000'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15379552588297712660' ]
-modelGuid = '15379905298581784261'
-
-[[Renderers]]
 guid = '15175340762088574459'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -13700,6 +13694,12 @@ materials = [ '15038846507057049718' ]
 modelGuid = '15061121900084148500'
 
 [[Renderers]]
+guid = '18373097758684386491'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
 guid = '267018549085443026'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15095763643605868389' ]
@@ -13710,12 +13710,6 @@ guid = '267018530086495175'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15095763643605868389' ]
 modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '18373097758684386491'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '15735683295122443707'
@@ -16326,6 +16320,12 @@ guid = '15735739383917766749'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '267018543486992983'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15095763643605868389' ]
+modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '15735740392163104221'
@@ -19851,12 +19851,6 @@ modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '267018543060173073'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15095763643605868389' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '267018543486992983'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15095763643605868389' ]
 modelGuid = '12471826850464180481'
@@ -40076,15 +40070,6 @@ prefabStatus = 2
 
 [[SceneObjects]]
 children = []
-guid = '15763204480048664000'
-name = 'W_ShippingContainer_Closed'
-parent = '0'
-parts = 34
-prefabBase = '12425355164734013637'
-prefabStatus = 2
-
-[[SceneObjects]]
-children = []
 guid = '15763232478614040686'
 name = 'W_ShippingContainer_Closed'
 parent = '0'
@@ -53484,13 +53469,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15763204480048664000'
-position = [ 18650.0, 0.0, -3850.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15175340762088574459'
 position = [ 19800.0, 0.0, -2100.0 ]
@@ -58365,7 +58343,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '15763232478614040686'
-position = [ 18650.0, 0.0, -3330.0 ]
+position = [ 18650.0, 0.0, -3470.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -58658,15 +58636,15 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '18375567626826107115'
-position = [ 14700.0, 0.0, 5400.0 ]
+guid = '17629554938112584539'
+position = [ 14400.0, 0.0, 1500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '17629554938112584539'
-position = [ 14400.0, 0.0, 1500.0 ]
+guid = '18375567626826107115'
+position = [ 14700.0, 0.0, 5400.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
