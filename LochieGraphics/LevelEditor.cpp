@@ -355,6 +355,15 @@ void LevelEditor::Update(float delta)
 		triggerSystem.Clear();
 
 		fadeTimer = 0.0f;
+
+		camera->nearPlane = 10.0f;
+		camera->farPlane = 50000.0f;
+
+		camera->fov = 70.0f;
+
+		camera->transform.setPosition(gameCamSystem.currentTarget + camera->transform.backward() * 1414.2f);
+
+		renderSystem.exposure = 1.0f;
 	}
 
 	lastFramePlayState = inPlay;
