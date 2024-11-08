@@ -19,6 +19,7 @@ class Transform;
 class Texture;
 class Particle;
 class PointLight;
+class Spotlight;
 
 struct bloomMip
 {
@@ -38,6 +39,7 @@ public:
     Texture* baseColourKey = nullptr;
     Texture* colourKey1 = nullptr;
     Texture* colourKey2 = nullptr;
+    Texture* roomAbience = nullptr;
     float postEffectPercent = 0;
     bool postEffectOn = false;
 
@@ -52,11 +54,22 @@ public:
     float lightTimeToOff = 2.5f;
     float lightTimeToExplode = 0.2f; 
     float lightTimeToFlicker = 1.5f;
+    float ambientIntensity = 1.0f;
+    bool inOrtho = false;
+    glm::vec2 mapMin = { 0.0f, 0.0f };
+    glm::vec2 mapDelta = { 0.0f, 0.0f };
 
     void Start(
         unsigned int _skyboxTexture,
         std::vector<Shader*>* _shaders
     );
+
+    void LevelLoad();
+
+    void PlayStart(
+        std::unordered_map<unsigned long long, PointLight>& pointLights,
+        std::unordered_map<unsigned long long, Spotlight>& spotlights
+        );
 
     void SetIrradianceMap(unsigned int skybox);
 

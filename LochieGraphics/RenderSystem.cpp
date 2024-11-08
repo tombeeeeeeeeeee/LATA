@@ -3,7 +3,7 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include "DirectionalLight.h"
-#include "SpotLight.h"
+#include "Spotlight.h"
 #include "PointLight.h"
 #include "ResourceManager.h"
 #include "Light.h"
@@ -99,6 +99,30 @@ void RenderSystem::Start(
     explodingLightTexture = ResourceManager::LoadTexture("images/ExplosionLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
     flickeringLightTexture = ResourceManager::LoadTexture("images/FlickeringLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
     lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
+}
+
+void RenderSystem::LevelLoad()
+{
+    if (roomAbience) delete roomAbience;
+    roomAbience = ResourceManager::LoadTexture("Levels/" + SceneManager::scene->windowName + "_Ambience.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
+    if (!roomAbience->loaded)
+        roomAbience = ResourceManager::LoadTexture("Levels/" + SceneManager::scene->windowName + ".png", Texture::Type::count, GL_CLAMP_TO_EDGE);
+}
+
+void RenderSystem::PlayStart(std::unordered_map<unsigned long long, PointLight>& pointLights, std::unordered_map<unsigned long long, Spotlight>& spotlights)
+{
+
+    for (auto& pair : pointLights)
+    {
+        if (pair.second.effect == PointLightEffect::Off)
+        {
+            pair.second.timeInType = 1.0f;
+        }
+        else
+        {
+            pair.second.timeInType = 0.0f;
+        }
+    }
 }
 
 void RenderSystem::SetIrradianceMap(unsigned int textureID)
@@ -732,8 +756,13 @@ void RenderSystem::GUI()
         ImGui::DragFloat("Bias", &ssaoBias);
     }
     ImGui::Combo("Buffer Index", &bufferIndex, "Result\0Albedo\0World Normals\0Emission\0PBR (Roughness, Metallic, AO)\0Roughness\0Metallic\0AO\0SSAO\0Bloom\0\0");
-
     ImGui::DragFloat("Exposure", &exposure, 0.01f, 0.0f, 5.0f);
+    ImGui::DragFloat("Ambient Light Intensity", &ambientIntensity, 0.1f, 0);
+    ImGui::Text("Light Speeds");
+    ImGui::DragFloat("On Light Time", &lightTimeToOn);
+    ImGui::DragFloat("Off Light Time", &lightTimeToOff);
+    ImGui::DragFloat("Exploding Light Time", &lightTimeToExplode);
+    ImGui::DragFloat("Flicker Light Time", &lightTimeToFlicker);
 
     int previousSuper = superSampling;
     if (ImGui::DragInt("Super Sampling", &superSampling, 0.2f, 1, 4)) {
@@ -993,7 +1022,7 @@ void RenderSystem::RenderAmbientPass()
     ambientShader->setInt("screenEmission", 4);
     ambientShader->setInt("screenSSAO", 5);
     ambientShader->setInt("skybox", 6);
-    ambientShader->setInt("irradianceMap", 7);
+    ambientShader->setInt("roomLight", 7);
 
     ambientShader->setMat4("invP", glm::inverse(projection));
     ambientShader->setMat4("invV", glm::inverse(viewMatrix));
@@ -1003,6 +1032,10 @@ void RenderSystem::RenderAmbientPass()
     ambientShader->setVec3("lightColour", dirLight.colour);
     ambientShader->setVec3("camPos", SceneManager::scene->camera->transform.getGlobalPosition());
     ambientShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
+    ambientShader->setVec2("mapMins", mapMin);
+    ambientShader->setVec2("mapDimensions", mapDelta);
+    ambientShader->setFloat("ambientIntensity", ambientIntensity);
+    ambientShader->setBool("inOrtho", inOrtho);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, depthBuffer);
@@ -1022,8 +1055,11 @@ void RenderSystem::RenderAmbientPass()
     glActiveTexture(GL_TEXTURE0 + 6);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
 
-    glActiveTexture(GL_TEXTURE0 + 7);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+    if (roomAbience)
+    {
+        glActiveTexture(GL_TEXTURE0 + 7);
+        glBindTexture(GL_TEXTURE_2D, roomAbience->GLID);
+    }
 
     RenderQuad();
 
