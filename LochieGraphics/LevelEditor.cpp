@@ -526,6 +526,7 @@ void LevelEditor::Draw(float delta)
 
 	if (inPlay) {
 		healthShader->Use();
+
 		healthShader->setVec2("offset", { sync->healthOffsetX, sync->healthOffsetY });
 		healthShader->setVec2("scale", { sync->healthScaleX, sync->healthScaleY });
 		healthShader->setFloat("healthPercent", (float)syncSo->health()->currHealth / (float)syncSo->health()->getMaxHealth());
@@ -544,6 +545,13 @@ void LevelEditor::Draw(float delta)
 		healthShader->setVec3("backgroundColour", sync->chargeBackgroundColour);
 		healthShader->setVec3("healthColour", sync->chargeForegroundColour);
 		healthBar.Draw();
+		healthShader->setVec2("offset", { ecco->boostOffsetX, ecco->boostOffsetY });
+		healthShader->setVec2("scale", { ecco->boostScaleX, ecco->boostScaleY });
+		healthShader->setFloat("healthPercent", ecco->getSpeedBoostCooldownPercent());
+		healthShader->setVec3("backgroundColour", ecco->boostBackgroundColour);
+		healthShader->setVec3("healthColour", ecco->boostForegroundColour);
+		healthBar.Draw();
+
 
 		healthShader->setVec2("offset", { healthSystem.abilityOffsetX, healthSystem.abilityOffsetY });
 		healthShader->setVec2("scale", { healthSystem.abilityScaleX, healthSystem.abilityScaleY });

@@ -314,7 +314,19 @@ toml::table Ecco::Serialise()
 		{ "healthScaleY", healthScaleY},
 		{ "healthBackgroundColour", Serialisation::SaveAsVec3(healthBackgroundColour) },
 		{ "healthForegroundColour", Serialisation::SaveAsVec3(healthForegroundColour) },
+		{ "boostOffsetX", boostOffsetX},
+		{ "boostOffsetY", boostOffsetY},
+		{ "boostScaleX", boostScaleX},
+		{ "boostScaleY", boostScaleY},
+		{ "boostBackgroundColour", Serialisation::SaveAsVec3(boostBackgroundColour) },
+		{ "boostForegroundColour", Serialisation::SaveAsVec3(boostForegroundColour) },
+
 	};
+}
+
+float Ecco::getSpeedBoostCooldownPercent() const
+{
+	return timeSinceSpeedBoost / speedBoostCooldown;
 }
 
 Ecco::Ecco(toml::table table)
@@ -352,6 +364,13 @@ Ecco::Ecco(toml::table table)
 	healthScaleY = Serialisation::LoadAsFloat(table["healthScaleY"], 0.077f);
 	healthBackgroundColour = Serialisation::LoadAsVec3(table["healthBackgroundColour"], glm::vec3(0.25f, 0.37f, 0.49f));
 	healthForegroundColour = Serialisation::LoadAsVec3(table["healthForegroundColour"], glm::vec3(0.25f, 0.49f, 1.0f));
+	boostOffsetX = Serialisation::LoadAsFloat(table["boostOffsetX"], -0.618f);
+	boostOffsetY = Serialisation::LoadAsFloat(table["boostOffsetY"], -0.845f);
+	boostScaleX = Serialisation::LoadAsFloat(table["boostScaleX"], 0.304f);
+	boostScaleY = Serialisation::LoadAsFloat(table["boostScaleY"], 0.077f);
+	boostBackgroundColour = Serialisation::LoadAsVec3(table["boostBackgroundColour"], glm::vec3(0.25f, 0.37f, 0.49f));
+	boostForegroundColour = Serialisation::LoadAsVec3(table["boostForegroundColour"], glm::vec3(0.25f, 0.49f, 1.0f));
+
 }
 
 
