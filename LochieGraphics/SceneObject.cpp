@@ -425,6 +425,7 @@ toml::table SceneObject::SerialiseWithParts() const
 	SavePart("bollard", bollard, bollards);
 	SavePart("triggerable", triggerable, triggerables);
 	SavePart("spotlight", spotlight, spotlights);
+	SavePart("pointLight", pointLight, pointLights);
 
 
 	if (Parts::collider & parts) {
@@ -659,6 +660,8 @@ void SceneObject::LoadWithParts(toml::table table)
 	LoadPart("door", door, setDoor, Door);
 	LoadPart("bollard", bollard, setBollard, Bollard);
 	LoadPart("triggerable", triggerable, setTriggerable, Triggerable);
+	LoadPart("spotlight", spotlight, setSpotlight, Spotlight);
+	LoadPart("pointLight", pointLight, setPointLight, PointLight);
 
 	if (intendedParts & Parts::collider) {
 		setCollider(Collider::Load(*table["collider"].as_table()));
