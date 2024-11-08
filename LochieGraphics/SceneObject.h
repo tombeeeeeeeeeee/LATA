@@ -21,6 +21,8 @@ class PressurePlate;
 class Door;
 class Bollard;
 class Triggerable;
+class PointLight;
+class Spotlight;
 struct Enemy;
 namespace toml {
 	inline namespace v3 {
@@ -35,14 +37,14 @@ enum Parts : unsigned int
 	modelRenderer = 1 << 1,
 	animator =      1 << 2,
 	rigidBody =     1 << 3,
-	light =         1 << 4,
+	pointLight =    1 << 4,
 	collider =      1 << 5,
 	ecco =          1 << 6,
 	sync =          1 << 7,
 	health =        1 << 8,
 	enemy =         1 << 9,
 	exitElevator =	1 << 10,
-	spikes =		1 << 11,
+	spotlight =		1 << 11,
 	plate = 		1 << 12,
 	spawnManager =	1 << 13,
 	door		 =	1 << 14,
@@ -112,8 +114,11 @@ public:
 	void setAnimator(Animator* animator);
 	Animator* animator();
 
-	//void setLight(Light light);
-	//Light* light();
+	void setPointLight(PointLight* pointLight);
+	PointLight* pointLight();
+
+	void setSpotlight(Spotlight* spotlight);
+	Spotlight* spotlight();
 
 	void setRigidBody(RigidBody* rb);
 	// TODO: Should be a cap b to match the rest?

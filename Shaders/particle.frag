@@ -1,7 +1,6 @@
 #version 460 core
 
 layout (location = 0) out vec4 FragColor;
-layout (location = 1) out vec4 bloomColour;
 
 
 in vec2 TexCoord;
@@ -20,5 +19,4 @@ void main()
 	vec3 colour = texture(material.albedo, TexCoord).rgb;
 	//vec3 colour = vec3(1, 0, 1);
 	FragColor = vec4(colour * fakeAlpha, 1);
-	bloomColour = vec4(colour * fakeAlpha, 1.0);
 }

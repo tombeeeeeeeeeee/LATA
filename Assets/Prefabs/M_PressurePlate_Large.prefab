@@ -1,0 +1,48 @@
+children = []
+
+[modelRenderer]
+guid = '265813382285790478'
+materialTint = [ 0.593137264251709, 0.8683682084083557, 1.0 ]
+materials = [ '15379552588297712660' ]
+modelGuid = '15379861888557426788'
+
+[plate]
+guid = '265813382285790478'
+smallType = false
+triggerTag = ''
+
+[rigidBody]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '265813382285790478'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[rigidBody.colliders]]
+    collisionLayer = 1
+    guid = '265813382285790478'
+    isTrigger = true
+    radius = 0.0
+    type = 1
+    verts = [ [ 80.0, 60.0 ], [ 80.0, -100.0 ], [ -80.0, -100.0 ], [ -80.0, 60.0 ] ]
+
+[sceneObject]
+children = []
+guid = '265813382285790478'
+name = 'M_PressurePlate_Large'
+parent = '686932564207004036'
+parts = 4106
+prefabBase = '260214795107391098'
+prefabStatus = 1
+
+[transform]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '265813382285790478'
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.25, 1.25, 1.25 ]

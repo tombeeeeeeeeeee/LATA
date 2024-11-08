@@ -166,7 +166,8 @@ SceneManager::SceneManager(Scene* _scene)
 	}
 
 
-	std::array<std::string, 6> skyboxFaces = { "images/skybox/left.jpg", "images/skybox/right.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
+	//std::array<std::string, 6> skyboxFaces = { "images/skybox/left.jpg", "images/skybox/right.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
+	std::array<std::string, 6> skyboxFaces = { "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png" };
 	defaultSkybox = new Skybox(scene->shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data()));
 
 	if (scene->skybox == nullptr) {
@@ -196,9 +197,7 @@ SceneManager::SceneManager(Scene* _scene)
 
 	scene->renderSystem.Start(
 		scene->skybox->texture,
-		&scene->shaders,
-		scene->lights.front(),
-		""
+		&scene->shaders
 	);
 
 	SwitchToWindowMode((WindowModes)UserPreferences::windowedStartMode);
@@ -287,19 +286,13 @@ void SceneManager::Update()
 
 	for (auto s = scene->shaders.begin(); s != scene->shaders.end(); s++)
 	{
-		if (((*s)->getFlag() & Shader::Flags::Lit)) {
-			for (auto l = scene->lights.begin(); l != scene->lights.end(); l++)
-			{
-				(*l)->ApplyToShader(*s);
-				(*s)->setVec3("viewPos", camera.transform.getPosition());
-			}
-		}
 		if ((*s)->getFlag() & Shader::Flags::VPmatrix) {
 			(*s)->Use();
 			(*s)->setMat4("vp", viewProjection);
 		}
 	}
-	scene->Draw();
+
+	scene->Draw(deltaTime);
 	scene->gui.Update();
 	ImGui::Render();
 

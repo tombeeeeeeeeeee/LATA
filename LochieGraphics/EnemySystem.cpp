@@ -185,38 +185,31 @@ void EnemySystem::LineOfSightAndTargetCheck(
     for (auto& pair : enemies)
     {
         glm::vec2 pos = transforms[pair.first].get2DGlobalPosition();
-        float distanceToSync = FLT_MAX;
-        float distanceToEcco = FLT_MAX;
+        float distanceToSync = glm::length(syncPos - pos);
+        float distanceToEcco = glm::length(eccoPos - pos);
 
         std::vector<Hit> eccoHits;
         std::vector<Hit> syncHits;
-        if (PhysicsSystem::RayCast(pos, glm::normalize(eccoPos - pos), eccoHits, FLT_MAX, ((int)CollisionLayers::ecco | (int)CollisionLayers::base | (int)CollisionLayers::softCover)))
-        {
-            Hit& eccoHit = eccoHits[0];
-            if (eccoHit.collider->collisionLayer & (int)CollisionLayers::ecco)
-            {
-                distanceToEcco = eccoHit.distance;
-            }
-        }
-        if (PhysicsSystem::RayCast(pos, glm::normalize(syncPos - pos), syncHits, FLT_MAX, ((int)CollisionLayers::sync | (int)CollisionLayers::base | (int)CollisionLayers::softCover)))
-        {
-            Hit& syncHit = syncHits[0];
-            if (syncHit.collider->collisionLayer & (int)CollisionLayers::sync)
-            {
-                distanceToSync = syncHit.distance;
-            }
-        }
+
+        bool eccoWasHit = !PhysicsSystem::RayCast(pos, glm::normalize(eccoPos - pos), eccoHits, distanceToEcco, ((int)CollisionLayers::base | (int)CollisionLayers::softCover));
+        bool syncWasHit = !PhysicsSystem::RayCast(pos, glm::normalize(syncPos - pos), syncHits, distanceToSync, ((int)CollisionLayers::base | (int)CollisionLayers::softCover));
+
         
-        if (distanceToEcco == FLT_MAX && distanceToSync == FLT_MAX) return;
-        if (distanceToEcco < distanceToSync)
+        if (!eccoWasHit && !syncWasHit)
         {
-            pair.second.hasLOS = true;
-            pair.second.target = eccoPos;
+            pair.second.hasLOS = false;
         }
-        else if(distanceToSync <= distanceToSync)
+        else
         {
             pair.second.hasLOS = true;
-            pair.second.target = syncPos;
+            if (distanceToEcco < distanceToSync)
+            {
+                pair.second.target = eccoPos;
+            }
+            else
+            {
+                pair.second.target = syncPos;
+            }
         }
     }
 }
@@ -402,7 +395,8 @@ void EnemySystem::Steering(
 
             if (enemyPair.second.hasLOS)
             {
-                glm::vec2 tooTarget = enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition();
+
+                glm::vec2 tooTarget = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
                 if (glm::dot(tooTarget, tooTarget) > 0)
                 {
                     glm::vec2 playerForce = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
@@ -411,6 +405,23 @@ void EnemySystem::Steering(
                     if (drawForceLines)
                     {
                         RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + playerForce * 10.0f, { 1,1,0 }, 100);
+                    }
+                }
+            }
+            else
+            {
+                if (glm::length(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition()) > 20.0f)
+                {
+                    glm::vec2 tooTarget = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
+                    if (glm::dot(tooTarget, tooTarget) > 0)
+                    {
+                        glm::vec2 playerForce = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
+                        playerForce *= 100 * playerCoef * (enemyPair.second.fleeing ? -1 : 1);
+                        enemyPair.second.influenceThisFrame += playerForce;
+                        if (drawForceLines)
+                        {
+                            RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + playerForce * 10.0f, { 1,1,0 }, 100);
+                        }
                     }
                 }
             }

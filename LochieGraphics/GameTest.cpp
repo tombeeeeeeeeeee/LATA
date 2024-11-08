@@ -29,14 +29,8 @@ GameTest::GameTest() :
 
 void GameTest::Start()
 {
-	lights.insert(lights.end(), {
-	&directionalLight,
-	&spotlight,
-	&pointLights[0],
-	&pointLights[1],
-	&pointLights[2],
-	&pointLights[3],
-	});
+	directionalLight = DirectionalLight
+	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
 	
 	r = sceneObjects[r->GUID];
 	h = sceneObjects[h->GUID];
@@ -309,14 +303,16 @@ void GameTest::Update(float delta)
 	}
 }
 
-void GameTest::Draw()
+void GameTest::Draw(float delta)
 {
 	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
 		animators,
-		camera
+		pointLights,
+		camera,
+		delta
 	);
 }
 

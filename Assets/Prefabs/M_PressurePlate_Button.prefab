@@ -1,3 +1,13 @@
+children = []
+
+[collider]
+collisionLayer = 256
+guid = '12425190164294534160'
+isTrigger = true
+radius = 0.0
+type = 1
+verts = [ [ 80.0, 65.0 ], [ 80.0, -100.0 ], [ -80.0, -100.0 ], [ -80.0, 65.0 ] ]
+
 [modelRenderer]
 guid = '12425190164294534160'
 materialTint = [ 1.0, 1.0, 1.0 ]
@@ -12,6 +22,7 @@ triggerTag = ''
 [rigidBody]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
+colliders = []
 elasticicty = 0.0
 guid = '12425190164294534160'
 invMass = 0.0
@@ -21,19 +32,18 @@ netDepen = [ 0.0, 0.0 ]
 netForce = [ 0.0, 0.0 ]
 vel = [ 0.0, 0.0 ]
 
-    [[rigidBody.colliders]]
-    collisionLayer = 1
-    guid = '12425190164294534160'
-    isTrigger = true
-    radius = 0.0
-    type = 1
-    verts = [ [ 50.0, 50.0 ], [ 50.0, -50.0 ], [ -50.0, -50.0 ], [ -50.0, 50.0 ] ]
-
 [sceneObject]
 children = []
 guid = '12425190164294534160'
 name = 'M_PressurePlate_Button'
 parent = '0'
-parts = 4106
+parts = 4138
 prefabBase = '12425190164294534160'
 prefabStatus = 1
+
+[transform]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425190164294534160'
+position = [ 3010.0, 0.0, -1450.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]

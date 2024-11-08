@@ -13,10 +13,12 @@ class Light;
 class Mesh;
 class Material;
 class ModelRenderer;
+class Model;
 class Shader;
 class Transform;
 class Texture;
 class Particle;
+class PointLight;
 
 struct bloomMip
 {
@@ -46,11 +48,14 @@ public:
 
     bool particleFacingCamera;
 
+    float lightTimeToOn = 2.5f;
+    float lightTimeToOff = 2.5f;
+    float lightTimeToExplode = 0.2f; 
+    float lightTimeToFlicker = 1.5f;
+
     void Start(
         unsigned int _skyboxTexture,
-        std::vector<Shader*>* _shaders,
-        Light* shadowCaster,
-        std::string paintStrokeTexturePath
+        std::vector<Shader*>* _shaders
     );
 
     void SetIrradianceMap(unsigned int skybox);
@@ -59,19 +64,21 @@ public:
     int bufferIndex = 0;
 
     void DeferredUpdate();
-    void HDRBufferUpdate();
+    void CompositeBufferUpdate();
     void OutputBufferUpdate();
     void BloomUpdate();
     void SSAOUpdate();
-    void AmbientPassUpdate();
-
+    void LightPassUpdate();
+    void LinesUpdate();
 
     void Update(
         std::unordered_map<unsigned long long, ModelRenderer>& renders,
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
         std::unordered_map<unsigned long long, Animator>& animators,
+        std::unordered_map<unsigned long long, PointLight>& pointLights,
         Camera* camera,
+        float delta,
         std::vector<Particle*> particles = {}
     );
 
@@ -115,6 +122,13 @@ private:
     /// </summary>
     unsigned int missingTextureTexture = 0;
 
+    Texture* onLightTexture = nullptr;
+    Texture* offLightTexture = nullptr;
+    Texture* flickeringLightTexture = nullptr;
+    Texture* explodingLightTexture = nullptr;
+    Texture* syncLightTexture = nullptr;
+    Model* lightSphere = nullptr;
+
     /// <summary>
     /// Location of the Model Matrix 
     /// </summary>
@@ -131,6 +145,8 @@ private:
     /// </summary>
     std::vector<Shader*>* shaders = {};
 
+
+
     void DrawAllRenderers(
         std::unordered_map<unsigned long long, Animator>& animators,
         std::unordered_map<unsigned long long, Transform>& transforms,
@@ -139,17 +155,21 @@ private:
         Shader* shader = nullptr
     );
 
-    //void BindLightUniform(unsigned int shaderProgram,
-    //    std::unordered_map<unsigned int, Light>& lightComponents,
-    //    std::unordered_map<unsigned int, Transform>& transComponents);
+    void DrawPointLights(
+        std::unordered_map<unsigned long long, PointLight>& pointLights,
+        std::unordered_map<unsigned long long, Transform>& transforms,
+        float delta
+    );
 
-    void HDRBufferSetUp();
+    void CompositeBufferSetUp();
+    void RenderComposite();
     void OutputBufferSetUp();
 
-    unsigned int hdrFBO = 0;
+
+    unsigned int compositeFBO = 0;
     unsigned int bloomBuffer = 0;
     unsigned int colorBuffer = 0;
-    unsigned int rboDepth = 0;
+    int compositeShaderIndex = 0;
 
     unsigned int outputFBO = 0;
     unsigned int outputTexture = 0;
@@ -176,12 +196,22 @@ private:
     unsigned int deferredFBO = 0;
     void DeferredSetup();
 
-
-    unsigned int ambientPassBuffer = 0;
-    unsigned int ambientPassFBO = 0;
+    unsigned int lightPassBuffer = 0;
+    unsigned int lightPassFBO = 0;
     int ambientPassShaderIndex = 0;
-    void AmibentPassSetup();
+    int pointLightPassShaderIndex = 0;
+    int spotlightPassShaderIndex = 0;
+    void LightPassSetup();
     void RenderAmbientPass();
+
+    unsigned int linesBuffer = 0;
+    unsigned int linesFBO = 0;
+    void LinesSetup();
+    void RenderLinePass();
+
+    void RenderParticles(
+        std::vector<Particle*> particles
+    );
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;

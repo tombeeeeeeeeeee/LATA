@@ -18,7 +18,6 @@ LocWorkshop::LocWorkshop()
 
 void LocWorkshop::Start()
 {
-	lights.insert(lights.end(), { &directionalLight });
 
 	camera->nearPlane = 10.0f;
 	camera->farPlane = 50000.0f;
@@ -61,14 +60,16 @@ void LocWorkshop::Update(float delta)
 {
 }
 
-void LocWorkshop::Draw()
+void LocWorkshop::Draw(float delta)
 {
 	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
 		animators,
+		pointLights,
 		camera,
+		delta,
 		particleSystem.particles
 	);
 }

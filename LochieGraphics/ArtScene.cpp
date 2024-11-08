@@ -365,15 +365,6 @@ void ArtScene::Start()
 	ModelRenderer* modelRenderer = new ModelRenderer(model, material);
 	sceneObject->setRenderer(modelRenderer);
 
-	lights.insert(lights.end(), {
-		&directionalLight,
-		&spotlight,
-		&pointLights[0],
-		&pointLights[1],
-		&pointLights[2],
-		&pointLights[3],
-		});
-
 	glfwSetDropCallback(SceneManager::window, DragDropCallback);
 
 	// TODO: These should not be one channel, and instead create the image so that it is white ( not red)
@@ -414,14 +405,16 @@ void ArtScene::Update(float delta)
 {
 }
 
-void ArtScene::Draw()
+void ArtScene::Draw(float delta)
 {
 	renderSystem.Update(
 		renderers,
 		transforms,
 		renderers,
 		animators,
-		camera
+		pointLights,
+		camera, 
+		delta
 	);
 }
 

@@ -1,0 +1,202 @@
+Animators = []
+Bollards = []
+Colliders = []
+Doors = []
+Enemies = []
+Exits = []
+Plates = []
+SpawnManagers = []
+Triggerables = []
+
+[Ecco]
+boostWheelTurnInfluence = 50.0
+carMoveSpeed = 0.25
+carReverseMoveSpeed = 0.125
+controlState = false
+deadZone = 0.6000000238418579
+exceedingSlowIntensity = 2.5
+guid = '18426608942575163926'
+healingFromDamage = 0
+healthBackgroundColour = [ 0.0, 0.0, 0.0 ]
+healthForegroundColour = [ 0.0, 0.0, 0.0 ]
+healthOffsetX = 0.0
+healthOffsetY = 0.0
+healthScaleX = 0.5
+healthScaleY = 0.5
+maxCarMoveSpeed = 6.0
+maxHealth = 10
+maxReverseSpeed = 100.0
+maxWheelAngle = 60.0
+minSpeedDamageThreshold = 0.0
+portionOfSidewaysSpeedKept = 100.0
+sidewaysFrictionCoef = 0.6499999761581421
+speedBoost = 1.0
+speedBoostCooldown = 0.10000000149011612
+speedBoostDuration = 0.0
+speedBoostHPCost = 0
+speedBoostInDirectionOfBody = true
+speedDamage = 0
+speedReductionAfterDamaging = 0.0
+speedWheelTurnInfluence = 50.0
+stoppingFrictionCoef = 0.800000011920929
+turningCircleScalar = 6.0
+wheelDirection = [ 1.0, 0.0 ]
+wheelTurnSpeed = 4.0
+
+[Sync]
+barrelOffset = [ -80.0, 70.0, 5.0 ]
+chargeBackgroundColour = [ 0.0, 0.0, 0.0 ]
+chargeForegroundColour = [ 0.0, 0.0, 0.0 ]
+chargeOffsetX = 0.0
+chargeOffsetY = 0.0
+chargeScaleX = 0.5
+chargeScaleY = 0.5
+eccoRefractionAngle = 30.0
+eccoRefractionCount = 5
+enemyPierceCount = 99
+guid = '18426608944637094511'
+healthBackgroundColour = [ 0.0, 0.0, 0.0 ]
+healthForegroundColour = [ 0.0, 0.0, 0.0 ]
+healthOffsetX = 0.0
+healthOffsetY = 0.0
+healthScaleX = 0.5
+healthScaleY = 0.5
+lookDeadZone = 0.029999999329447746
+maxMoveForce = 1.0
+maxStopForce = 1.0
+misfireColliderRadius = 0.10000000149011612
+misfireDamage = 1
+misfireShotSpeed = 0.10000000149011612
+moveDeadZone = 0.10000000149011612
+moveSpeed = 1.0
+overclockBeamColour = [ 1.0, 1.0, 0.5 ]
+overclockBeamLifeSpan = 1.0
+overclockChargeTime = 0.30000001192092896
+overclockDamage = 1
+overclockReboundCount = 5
+sniperBeamColour = [ 0.5, 0.5, 1.0 ]
+sniperBeamLifeSpan = 0.5
+sniperChargeTime = 0.10000000149011612
+sniperDamage = 1
+startSlowTime = 5.0
+stopSlowTime = 10.0
+
+[[Healths]]
+currHealth = 0
+guid = '18426608942575163926'
+maxHealth = 0
+
+[[Healths]]
+currHealth = 0
+guid = '18426608944637094511'
+maxHealth = 0
+
+[[Renderers]]
+guid = '18426608942575163926'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0', '0' ]
+modelGuid = '18261955999599967914'
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '18426608944637094511'
+invMass = 1.0
+invMomentOfInertia = 0.20000000298023224
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 8
+    guid = '18426608944637094511'
+    isTrigger = false
+    radius = 10.0
+    type = 1
+    verts = [ [ 0.0, 0.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '18426608942575163926'
+invMass = 10.0
+invMomentOfInertia = 0.20000000298023224
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 16
+    guid = '18426608942575163926'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 75.0, 75.0 ], [ 75.0, -75.0 ], [ -75.0, -75.0 ], [ -75.0, 75.0 ] ]
+
+[[SceneObjects]]
+children = []
+guid = '18426591329445781129'
+name = 'Ground Tiles'
+parent = '0'
+parts = 0
+prefabBase = '0'
+prefabStatus = 0
+
+[[SceneObjects]]
+children = []
+guid = '18426591332321705156'
+name = 'Wall Tiles'
+parent = '0'
+parts = 0
+prefabBase = '0'
+prefabStatus = 0
+
+[[SceneObjects]]
+children = []
+guid = '18426608942575163926'
+name = 'Ecco'
+parent = '0'
+parts = 74
+prefabBase = '0'
+prefabStatus = 0
+
+[[SceneObjects]]
+children = []
+guid = '18426608944637094511'
+name = 'Sync'
+parent = '0'
+parts = 136
+prefabBase = '0'
+prefabStatus = 0
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '18426591329445781129'
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '18426591332321705156'
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '18426608944637094511'
+position = [ 1.0, 0.0, 1.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '18426608942575163926'
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]

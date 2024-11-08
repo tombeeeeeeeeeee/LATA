@@ -3,12 +3,13 @@
 out vec4 FragColor;
 in vec2 texCoords;
 
-uniform sampler2D ambientPass;
+uniform sampler2D colour;
 uniform sampler2D albedo;
 uniform sampler2D normal;
 uniform sampler2D emission;
 uniform sampler2D SSAO;
 uniform sampler2D bloomBlur;
+uniform sampler2D lightBuffer;
 
 uniform float exposure;
 uniform float bloomStrength = 0.04f;
@@ -19,20 +20,15 @@ void main()
     // to bloom or not to bloom
     vec3 result = vec3(0.0);
     //
-    result = texture(ambientPass, texCoords).rgb;
+    result = texture(colour, texCoords).rgb;
     //
     vec3 bloomColor = texture(bloomBlur, texCoords).rgb;
     result = mix(result, bloomColor, bloomStrength); // linear interpolation
-    vec3 em = texture(emission, texCoords).rgb;
 
 
     // tone mapping
     result = vec3(1.0) - exp(-result * exposure);
-    //
-    if(em.x + em.y + em.z > 0)
-    {
-        result = em;
-    }
+
 
     ////Gamma
     const float gamma = 2.2;
@@ -44,7 +40,7 @@ void main()
     {
         //Depth
         case 0:
-        //FragColor = vec4(texture(ambientPass, texCoords).rgb ,1.0);
+        //FragColor = vec4(texture(lightBuffer, texCoords).rgb ,1.0);
         break;
 
         //Albedo

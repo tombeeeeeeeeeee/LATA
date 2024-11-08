@@ -4,9 +4,7 @@
 #include <vector>
 #include <string>
 
-struct State;
 class SceneObject;
-struct Node;
 namespace toml {
 	inline namespace v3 {
 		class table;
