@@ -47,7 +47,9 @@ private:
 	bool drawForceLines = false;
 
 	std::unordered_map<std::string, int> enemyTags;
-
+	int enemyFrameIndex = 0;
+	int frameCountMin = 6;
+	int frameCount;
 public:
 	bool aiUpdating = false;
 	int nfmDensity = 20;
@@ -204,5 +206,6 @@ private:
 
 	glm::vec2 GetNormalFlowInfluence(glm::vec2 pos);
 
+	int getEnemyFrameIndex();
 };
 

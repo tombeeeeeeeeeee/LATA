@@ -269,7 +269,6 @@ void SceneManager::Update()
 	
 	scene->renderSystem.lines.Clear();
 	scene->renderSystem.debugLines.Clear();
-	scene->Update(deltaTime);
 	if (scene->gui.getSelected()) {
 		scene->gui.getSelected()->DebugDraw();
 	}
@@ -295,6 +294,7 @@ void SceneManager::Update()
 	scene->Draw(deltaTime);
 	scene->gui.Update();
 	ImGui::Render();
+	scene->Update(deltaTime);
 
 	// TODO: remove if if not needed
 	//if (ImGui::GetDrawData())

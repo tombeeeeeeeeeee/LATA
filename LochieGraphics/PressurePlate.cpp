@@ -12,6 +12,7 @@ void PressurePlate::GUI()
 	if (ImGui::CollapsingHeader(("Pressure Plate##" + tag).c_str()))
 	{
 		ImGui::Indent();
+		ImGui::DragFloat("Actuation Amount", &actuationAmount);
 
 		if (ImGui::Button("Trigger"))
 		{
@@ -46,6 +47,7 @@ PressurePlate::PressurePlate(toml::table table)
 {
 	triggerTag = Serialisation::LoadAsString(table["triggerTag"]);
 	smallType = Serialisation::LoadAsBool(table["smallType"]);
+	actuationAmount = Serialisation::LoadAsFloat(table["actuationAmount"]);
 }
 
 toml::table PressurePlate::Serialise(unsigned long long guid)
@@ -55,6 +57,7 @@ toml::table PressurePlate::Serialise(unsigned long long guid)
 		{"guid", Serialisation::SaveAsUnsignedLongLong(guid)},
 		{"triggerTag", triggerTag},
 		{"smallType", smallType},
+		{"actuationAmount", actuationAmount },
 	};
 }
 

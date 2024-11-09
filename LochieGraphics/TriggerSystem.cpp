@@ -74,9 +74,9 @@ void TriggerSystem::Update(
 {
 	for (auto& platePair : plates)
 	{
-		glm::vec2 pos = transforms[platePair.first].get2DGlobalPosition();
+		glm::vec3 pos = transforms[platePair.first].getPosition();
 		float actuation = -pressurePlateCompression * platePair.second.actuationAmount / timeToActuate;
-		transforms[platePair.first].setPosition({ pos.x, actuation, pos.y });
+		transforms[platePair.first].setPosition({ pos.x, actuation, pos.z });
 
 		//Actuation
 		if (platePair.second.triggeredThisFrame)

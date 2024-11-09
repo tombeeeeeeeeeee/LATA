@@ -119,6 +119,8 @@ void LevelEditor::RefreshMinMaxes()
 	enemySystem.mapMinCorner = { minX, minZ };
 	enemySystem.mapDimensions = { maxX - minX, maxZ - minZ };
 	enemySystem.mapDimensions /= enemySystem.nfmDensity;
+	renderSystem.mapMin = enemySystem.mapMinCorner;
+	renderSystem.mapDelta = { maxX - minX, maxZ - minZ };
 }
 
 SceneObject* LevelEditor::CellAt(float x, float z)
@@ -330,6 +332,8 @@ void LevelEditor::Update(float delta)
 		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards, triggerables);
 		for (auto& pair : exits) pair.second.Initialise(sceneObjects[pair.first]);
 
+		renderSystem.PlayStart(pointLights, spotlights);
+
 		state = BrushState::none;
 
 		camera->nearPlane = 5000.0f;
@@ -362,8 +366,6 @@ void LevelEditor::Update(float delta)
 	lastFramePlayState = inPlay;
 	LineRenderer& lines = renderSystem.lines;
 	input.Update();
-
-
 
 
 	if (inPlay)
@@ -844,6 +846,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	}
 
 	RefreshMinMaxes();
+	renderSystem.LevelLoad();
 }
 
 void LevelEditor::ModelPlacer(glm::vec2 targetPos)
