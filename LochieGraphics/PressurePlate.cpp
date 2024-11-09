@@ -13,6 +13,7 @@ void PressurePlate::GUI()
 	{
 		ImGui::Indent();
 		ImGui::DragFloat("Actuation Amount", &actuationAmount);
+		ImGui::DragFloat("At Rest Height", &atRestHeight);
 
 		if (ImGui::Button("Trigger"))
 		{
@@ -47,7 +48,8 @@ PressurePlate::PressurePlate(toml::table table)
 {
 	triggerTag = Serialisation::LoadAsString(table["triggerTag"]);
 	smallType = Serialisation::LoadAsBool(table["smallType"]);
-	timeInActuation = Serialisation::LoadAsFloat(table["actuationAmount"], 5.0f);
+	actuationAmount = Serialisation::LoadAsFloat(table["actuationAmount"], 5.0f);
+	atRestHeight = Serialisation::LoadAsFloat(table["atRestHeight"], 5.0f);
 }
 
 toml::table PressurePlate::Serialise(unsigned long long guid)
@@ -58,6 +60,7 @@ toml::table PressurePlate::Serialise(unsigned long long guid)
 		{"triggerTag", triggerTag},
 		{"smallType", smallType},
 		{"actuationAmount", actuationAmount },
+		{"atRestHeight", atRestHeight },
 	};
 }
 

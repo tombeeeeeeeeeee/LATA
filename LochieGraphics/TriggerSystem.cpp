@@ -75,7 +75,7 @@ void TriggerSystem::Update(
 	for (auto& platePair : plates)
 	{
 		glm::vec3 pos = transforms[platePair.first].getPosition();
-		float actuation = -platePair.second.actuationAmount * platePair.second.timeInActuation / timeToActuate;
+		float actuation = Utilities::Lerp(platePair.second.timeInActuation / timeToActuate, -platePair.second.actuationAmount, platePair.second.atRestHeight);
 		transforms[platePair.first].setPosition({ pos.x, actuation, pos.z });
 
 		//Actuation

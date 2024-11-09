@@ -16,6 +16,7 @@ public:
 	//represents time in press
 	float timeInActuation = 0.0f;
 	float actuationAmount = 5.0f;
+	float atRestHeight = 5.0f;
 
 	bool triggeredThisFrame = false;
 	bool triggeredLastFrame = false;
