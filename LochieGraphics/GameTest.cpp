@@ -70,7 +70,7 @@ void GameTest::Start()
 	level.path = "level.png";
 	level.Load();
 
-	camera->state = Camera::targetingPlayers;
+	camera->state = Camera::targetingPlayersOrthographic;
 	gameCamSystem.cameraPositionDelta = { -15,10,15 };
 
 	Material* robotMaterial = ResourceManager::LoadMaterial("robot", shaders[super]);

@@ -26,11 +26,15 @@ void GameplayCameraSystem::Load(toml::table table)
 	cameraZoomMaximum = Serialisation::LoadAsFloat(table["cameraZoomMaximum"]);
 	cameraPositionDelta = Serialisation::LoadAsVec3(table["cameraPositionDelta"]);
 	viewAngle = Serialisation::LoadAsVec3(table["viewAngle"]);
+	cameraFov = Serialisation::LoadAsFloat(table["cameraFov"]);
+	cameraZoomClosestDistance = Serialisation::LoadAsFloat(table["cameraZoomClosestDistance"]);
+	cameraZoomFurthestDistance = Serialisation::LoadAsFloat(table["cameraZoomFurthestDistance"]);
 }
 
 void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Transform& syncTransform, float zoomScale)
 {
 	cam = &camera;
+
 
 	if (isnan(syncTransform.getGlobalPosition().x) || isnan(eccoTransform.getGlobalPosition().x))
 	{
@@ -39,33 +43,58 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 
 	switch (camera.state)
 	{
-	case Camera::targetingPlayers:
+	case Camera::targetingPlayersOrthographic:
 		
 		camera.transform.setEulerRotation(viewAngle);
 		glm::vec3 deltaPos = eccoTransform.getGlobalPosition() - syncTransform.getGlobalPosition();
 		zoomScale = glm::clamp(glm::length(deltaPos) * cameraZoomScale, cameraZoomMinimum, cameraZoomMaximum);
 		target = syncTransform.getGlobalPosition() + (deltaPos * 0.5f);
 		[[fallthrough]];
+	case Camera::targetingPositionOrthographic: 
 
-	case Camera::targetingPosition: 
-
-		if(camera.orthoScale < zoomScale)
+		if (camera.orthoScale < zoomScale) {
 			camera.orthoScale = Utilities::Lerp(camera.orthoScale, zoomScale, cameraZoomOutSpeed);
-		else
+		}
+		else {
 			camera.orthoScale = Utilities::Lerp(camera.orthoScale, zoomScale, cameraZoomInSpeed);
+		}
 
 		glm::vec3 pos = Utilities::Lerp(cameraPositionDelta + target, camera.transform.getPosition(), cameraMoveSpeed);
 		camera.transform.setPosition(pos);
 		break;
 
+	case Camera::targetingPlayersPerspective:
+
+		target = (syncTransform.getGlobalPosition() + eccoTransform.getGlobalPosition()) / 2.0f;
+
+		spread = glm::length(eccoTransform.get2DGlobalPosition() - syncTransform.get2DGlobalPosition());
+		desiredDistance = Utilities::Lerp(cameraZoomMinimum, cameraZoomMaximum, glm::clamp(((spread - cameraZoomClosestDistance) / cameraZoomFurthestDistance), 0.0f, 1.0f));
+
+
+		[[fallthrough]];
+	case Camera::targetingPositionPerspective:
+		camera.transform.setEulerRotation(viewAngle);
+		
+		currentDistance = camera.transform.getGlobalPosition().y / -camera.transform.forward().y;
+		currentTarget = camera.transform.getGlobalPosition() + currentDistance * camera.transform.forward();
+
+		lerpedPos = Utilities::Lerp(currentTarget, target, cameraMoveSpeed);
+
+		distance = currentDistance;
+		if (currentDistance < desiredDistance) {
+			distance = Utilities::Lerp(currentDistance, desiredDistance, cameraZoomOutSpeed);
+		}
+		else if (currentDistance > desiredDistance) {
+			distance = Utilities::Lerp(currentDistance, desiredDistance, cameraZoomInSpeed);
+		}
+
+		camera.fov = cameraFov;
+		camera.transform.setPosition(lerpedPos + distance * camera.transform.backward());
+		break;
 	default:
 		break;
 	}
 }
-
-//void GameplayCameraSystem::ChangeCameraState(Camera& camera, Camera::State state)
-//{
-//}
 
 void GameplayCameraSystem::GUI()
 {
@@ -144,6 +173,20 @@ void GameplayCameraSystem::GUI()
 			viewAngle = cam->transform.getEulerRotation();
 		}
 	}
+
+	ImGui::DragFloat("cameraFov", &cameraFov);
+	ImGui::DragFloat("cameraZoomClosestDistance", &cameraZoomClosestDistance);
+	ImGui::DragFloat("cameraZoomFurthestDistance", &cameraZoomFurthestDistance);
+
+	ImGui::BeginDisabled();
+	ImGui::DragFloat("desiredDistance", &desiredDistance);
+	ImGui::DragFloat("spread", &spread);
+	ImGui::DragFloat("distance", &distance);
+	ImGui::DragFloat("currentDistance", &currentDistance);
+	ImGui::DragFloat3("currentTarget", &currentTarget.x);
+	ImGui::DragFloat3("lerpedPos", &lerpedPos.x);
+	ImGui::EndDisabled();
+
 }
 
 void GameplayCameraSystem::SaveAsGUI()
@@ -186,13 +229,16 @@ void GameplayCameraSystem::SaveAsGUI()
 toml::table GameplayCameraSystem::Serialise()
 {
 	return toml::table{
-	{ "cameraMoveSpeed", cameraMoveSpeed },
-	{ "cameraZoomInSpeed", cameraZoomInSpeed },
-	{ "cameraZoomOutSpeed", cameraZoomOutSpeed },
-	{ "cameraZoomScale", cameraZoomScale },
-	{ "cameraZoomMinimum" , cameraZoomMinimum },
-	{ "cameraZoomMaximum" , cameraZoomMaximum },
-	{ "cameraPositionDelta", Serialisation::SaveAsVec3(cameraPositionDelta) },
-	{ "viewAngle", Serialisation::SaveAsVec3(viewAngle)},
+		{ "cameraMoveSpeed", cameraMoveSpeed },
+		{ "cameraZoomInSpeed", cameraZoomInSpeed },
+		{ "cameraZoomOutSpeed", cameraZoomOutSpeed },
+		{ "cameraZoomScale", cameraZoomScale },
+		{ "cameraZoomMinimum" , cameraZoomMinimum },
+		{ "cameraZoomMaximum" , cameraZoomMaximum },
+		{ "cameraPositionDelta", Serialisation::SaveAsVec3(cameraPositionDelta) },
+		{ "viewAngle", Serialisation::SaveAsVec3(viewAngle)},
+		{ "cameraFov", cameraFov },
+		{ "cameraZoomClosestDistance", cameraZoomClosestDistance },
+		{ "cameraZoomFurthestDistance", cameraZoomFurthestDistance },
 	};
 }

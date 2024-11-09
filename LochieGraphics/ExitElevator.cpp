@@ -42,6 +42,7 @@ bool ExitElevator::Update(float delta)
 		if (timerTillLevelSwitch <= 0.0f) {
 			syncInExit = eccoInExit = false;
 			levelEditor->LoadLevel(true, levelToLoad);
+			levelEditor->fadeOut = false;
 			return true;
 		}
 		else {

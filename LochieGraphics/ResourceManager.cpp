@@ -104,7 +104,6 @@ Model* ResourceManager::LoadModelAsset(std::string path)
 // TODO: Clean
 Model* ResourceManager::LoadModel()
 {
-	return nullptr;
 	Model* newResource = nullptr;
 	auto newGuid = GetNewGuid();
 	auto temp = models.emplace(std::piecewise_construct, std::make_tuple(newGuid), std::make_tuple());

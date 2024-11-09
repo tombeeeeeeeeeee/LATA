@@ -372,12 +372,4 @@ void Scene::InitialiseLayers()
 			break;
 		}
 	}
-	gameCamSystem.cameraZoomMinimum = 125.0f;
-	gameCamSystem.cameraZoomMaximum = 205.0f;
-	gameCamSystem.cameraZoomScale = 0.130f;
-	gameCamSystem.cameraZoomOutSpeed = 0.330f;
-	gameCamSystem.cameraZoomInSpeed = 0.01f;
-	gameCamSystem.cameraMoveSpeed = 0.330f;
-	gameCamSystem.viewAngle = { 45.5f, 215.0f, 0.0f };
-	gameCamSystem.setCameraPositionDelta({700, 1000, 700});
 }

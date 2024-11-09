@@ -48,6 +48,14 @@ public:
 	glm::vec3 healthBackgroundColour{};
 	glm::vec3 healthForegroundColour{};
 
+	float boostOffsetX = 0.0f;
+	float boostOffsetY = 0.0f;
+	float boostScaleX = 0.5f;
+	float boostScaleY = 0.5f;
+	glm::vec3 boostBackgroundColour{};
+	glm::vec3 boostForegroundColour{};
+
+	float getSpeedBoostCooldownPercent() const;
 private:
 	float carMoveSpeed = 0.25f;
 	float carReverseMoveSpeed = 0.125f;
