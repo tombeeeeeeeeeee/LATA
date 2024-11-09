@@ -13,7 +13,9 @@ public:
 	bool eccoToggled = false;
 	bool smallType = false;
 	std::string triggerTag = "";
-	float actuationAmount = 20.0f;
+	//represents time in press
+	float timeInActuation = 0.0f;
+	float actuationAmount = 5.0f;
 
 	bool triggeredThisFrame = false;
 	bool triggeredLastFrame = false;

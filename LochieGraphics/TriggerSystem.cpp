@@ -75,16 +75,16 @@ void TriggerSystem::Update(
 	for (auto& platePair : plates)
 	{
 		glm::vec3 pos = transforms[platePair.first].getPosition();
-		float actuation = -pressurePlateCompression * platePair.second.actuationAmount / timeToActuate;
+		float actuation = -platePair.second.actuationAmount * platePair.second.timeInActuation / timeToActuate;
 		transforms[platePair.first].setPosition({ pos.x, actuation, pos.z });
 
 		//Actuation
 		if (platePair.second.triggeredThisFrame)
-			platePair.second.actuationAmount += delta;
+			platePair.second.timeInActuation += delta;
 		else
-			platePair.second.actuationAmount -= delta;
+			platePair.second.timeInActuation -= delta;
 
-		platePair.second.actuationAmount = glm::clamp(platePair.second.actuationAmount, 0.0f, timeToActuate);
+		platePair.second.timeInActuation = glm::clamp(platePair.second.timeInActuation, 0.0f, timeToActuate);
 
 		if (!platePair.second.eccoToggled)
 		{

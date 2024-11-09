@@ -47,7 +47,7 @@ PressurePlate::PressurePlate(toml::table table)
 {
 	triggerTag = Serialisation::LoadAsString(table["triggerTag"]);
 	smallType = Serialisation::LoadAsBool(table["smallType"]);
-	actuationAmount = Serialisation::LoadAsFloat(table["actuationAmount"]);
+	timeInActuation = Serialisation::LoadAsFloat(table["actuationAmount"], 5.0f);
 }
 
 toml::table PressurePlate::Serialise(unsigned long long guid)
