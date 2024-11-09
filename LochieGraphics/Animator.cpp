@@ -13,9 +13,9 @@ Animator::Animator(Animation* animation) :
 {
     //TODO: A plain 100 shouldn't be here
     // If there is just a fixed max size than an array might just be better to use
-    finalBoneMatrices.reserve(100);
+    finalBoneMatrices.reserve(MAX_BONES_ON_MODEL);
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < MAX_BONES_ON_MODEL; i++) {
         finalBoneMatrices.push_back(glm::mat4(1.0f));
     }
 }

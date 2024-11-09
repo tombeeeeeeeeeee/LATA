@@ -4,6 +4,9 @@
 
 #include <vector>
 
+// DON'T FORGET TO CHANGE ON SHADER IF CHANGING
+constexpr auto MAX_BONES_ON_MODEL = 100;
+
 class Animation;
 class ModelHierarchyInfo;
 namespace toml {
