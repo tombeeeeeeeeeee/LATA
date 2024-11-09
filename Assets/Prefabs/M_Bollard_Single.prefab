@@ -1,0 +1,61 @@
+[modelRenderer]
+guid = '1156743746146833032'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15379552588297712660' ]
+modelGuid = '15379758948098669725'
+
+[sceneObject]
+children = [ '1156743744463646758' ]
+guid = '1156743746146833032'
+name = 'M_Bollard_Single'
+parent = '0'
+parts = 2
+prefabBase = '261523939781336746'
+prefabStatus = 1
+
+[transform]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1156743746146833032'
+position = [ 552.5001220703125, 0.0, 90.98124694824219 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+children = []
+
+    [children.bollard]
+    guid = '1156743744463646758'
+    startsUp = true
+    timeToLower = 0.5
+    timeToRaise = 0.5
+    triggerTag = ''
+
+    [children.collider]
+    collisionLayer = 1
+    guid = '1156743744463646758'
+    isTrigger = false
+    radius = 30.0
+    type = 1
+    verts = [ [ 0.0, 0.0 ] ]
+
+    [children.modelRenderer]
+    guid = '1156743744463646758'
+    materialTint = [ 1.0, 1.0, 1.0 ]
+    materials = [ '15379552588297712660' ]
+    modelGuid = '15379620717004398300'
+
+    [children.sceneObject]
+    children = []
+    guid = '1156743744463646758'
+    name = 'M_Bollard'
+    parent = '1156743746146833032'
+    parts = 32802
+    prefabBase = '261504909491167900'
+    prefabStatus = 2
+
+    [children.transform]
+    euler = [ -0.0, -0.0, -0.0 ]
+    guid = '1156743744463646758'
+    position = [ 0.0, 0.0, 0.0 ]
+    quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]

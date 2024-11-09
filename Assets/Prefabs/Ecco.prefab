@@ -1,6 +1,10 @@
-children = []
-
 [ecco]
+boostBackgroundColour = [ 0.25, 0.3700000047683716, 0.49000000953674316 ]
+boostForegroundColour = [ 0.25, 0.49000000953674316, 1.0 ]
+boostOffsetX = -0.6179999709129333
+boostOffsetY = -0.8450000286102295
+boostScaleX = 0.30399999022483826
+boostScaleY = 0.07699999958276749
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
 carReverseMoveSpeed = 3000.0
@@ -32,7 +36,7 @@ speedReductionAfterDamaging = 200.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
 turningCircleScalar = 0.05999999865889549
-wheelDirection = [ -0.5052847266197205, 0.8629528284072876 ]
+wheelDirection = [ -0.9229004383087158, -0.3850388824939728 ]
 wheelTurnSpeed = 4.0
 
 [health]
@@ -48,7 +52,7 @@ modelGuid = '15070486382632221399'
 
 [rigidBody]
 accel = [ 0.0, 0.0 ]
-angularVel = 0.0
+angularVel = -0.0
 elasticicty = 0.0
 guid = '2091576976424546894'
 invMass = 0.10000000149011612
@@ -75,7 +79,7 @@ vel = [ 0.0, 0.0 ]
     verts = [ [ 1.0, -46.0 ] ]
 
 [sceneObject]
-children = []
+children = [ '1153871057560872383' ]
 guid = '2091576976424546894'
 name = 'Ecco'
 parent = '0'
@@ -84,8 +88,38 @@ prefabBase = '2091576976424546894'
 prefabStatus = 1
 
 [transform]
-euler = [ -179.9137420654297, -89.31501770019531, 899.9148559570312 ]
+euler = [ -179.91290283203125, -89.64974212646484, 179.91407775878906 ]
 guid = '2091576976424546894'
-position = [ 3000.0, 0.0, 450.0 ]
-quaternion = [ 0.7049049735069275, 3.6621927392843645e-06, -0.7092646360397339, 1.0183306585531682e-05 ]
-scale = [ 0.9999299049377441, 1.0, 0.9999299049377441 ]
+position = [ 3626.490234375, 0.0, -452.8886413574219 ]
+quaternion = [ 0.7049421072006226, 3.986060619354248e-06, -0.7092647552490234, 1.0512478183954954e-05 ]
+scale = [ 0.9998419880867004, 1.0, 0.9998419880867004 ]
+
+[[children]]
+children = []
+
+    [children.pointLight]
+    canBeTriggered = false
+    colour = [ 0.0, 0.5760869979858398, 1.0 ]
+    effect = 0
+    guid = '1153871057560872383'
+    linear = 0.14800000190734863
+    on = true
+    quadratic = 0.08300001174211502
+    range = 30.0
+    triggerTag = ''
+
+    [children.sceneObject]
+    children = []
+    guid = '1153871057560872383'
+    name = 'Ecco light'
+    parent = '2091576976424546894'
+    parts = 16
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.transform]
+    euler = [ 4.077012949466052e-09, 1.9770195649471134e-05, -4.689904575805315e-10 ]
+    guid = '1153871057560872383'
+    position = [ 0.0, 112.5545883178711, 0.0 ]
+    quaternion = [ 1.0, 3.5578651136347617e-11, 1.725275069475174e-07, -4.092719652765142e-12 ]
+    scale = [ 1.0, 1.0, 1.0 ]
