@@ -367,7 +367,6 @@ void LevelEditor::Update(float delta)
 	LineRenderer& lines = renderSystem.lines;
 	input.Update();
 
-	renderSystem.inOrtho = camera->InOrthoMode();
 
 	if (inPlay)
 	{

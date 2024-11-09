@@ -39,7 +39,7 @@ public:
     Texture* baseColourKey = nullptr;
     Texture* colourKey1 = nullptr;
     Texture* colourKey2 = nullptr;
-    Texture* roomAbience = nullptr;
+    Texture* roomAmbience = nullptr;
     float postEffectPercent = 0;
     bool postEffectOn = false;
 

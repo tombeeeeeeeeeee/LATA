@@ -24,7 +24,7 @@ struct Enemy
 {
 	Enemy() {};
 	Enemy(toml::table table);
-	Enemy(int _type, std::string _tag) { type = _type; tag = _tag; };
+	Enemy(int _type, std::string _tag, int frame = 0) { type = _type; tag = _tag; frameForCheck = frame; };
 
 	int type = (int)EnemyType::spawnSpot;
 
@@ -33,6 +33,7 @@ struct Enemy
 	glm::vec2 influenceThisFrame = { 0.0f, 0.0f };
 	glm::vec2 boidVelocity = { 0.0f, 0.0f };
 
+	int frameForCheck = 0;
 	bool hasLOS = false;
 	glm::vec2 target = {};
 

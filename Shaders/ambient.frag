@@ -18,11 +18,9 @@ uniform mat4 invV;
 uniform vec3 lightDirection;
 uniform vec3 lightColour;
 uniform vec3 camPos;
-uniform vec3 cameraDelta;
 uniform vec2 mapMins;
 uniform vec2 mapDimensions;
 uniform float ambientIntensity;
-uniform bool inOrtho = false;
 
 
 vec3 trueAlbedo;
@@ -49,24 +47,20 @@ const float MAX_REFLECTION_LOD = 4.0;
 void main()
 {
 	float depthValue = texture(screenDepth, texCoords).r;
+
     if(depthValue == 1.0)
     {
         FragColour = vec4(0.0);
         return;
     }
+
     vec4 NDC = vec4(texCoords * 2.0 - 1.0, depthValue * 2.0 - 1.0, 1.0);
     vec4 clipPos = invP * NDC;
     screenPos = clipPos.xyz / clipPos.w;
     fragPos = (invV * vec4(screenPos, 1.0)).xyz;
 
-    if(inOrtho)
-    {
-        viewDirection = normalize(camPos - fragPos - cameraDelta);
-    }
-    else
-    {
-        viewDirection = normalize(camPos - fragPos);
-    }
+
+    viewDirection = normalize(camPos - fragPos);
 
     vec4 emission = texture(screenEmission, texCoords);
     vec4 albedo = texture(screenAlbedo, texCoords);
@@ -83,16 +77,18 @@ void main()
     F0 = mix(F0, trueAlbedo, metallic);
 
     Lo = max(Radiance(trueNormal), 0);
-    vec2 worldTexPos = ((-fragPos.xz + mapMins)/mapDimensions).xy;
+
+    vec2 worldTexPos = ((fragPos.xz - mapMins)/mapDimensions).xy;
+    worldTexPos.y = 1 - worldTexPos.y;
+
     vec3 roomAmbience = 4.0 * texture(roomLight, worldTexPos).rgb;
-    vec3 result = Lo + roomAmbience;
+    vec3 result = Lo + roomAmbience * trueAlbedo;
     result *= ambientIntensity;
     float SSAOvalue = texture(screenSSAO, texCoords).r;
     result *= SSAOvalue;
     result += emission.rgb;
     FragColour = vec4(result, 1.0);
 }
-
 
 vec3 Radiance(
     vec3 normal

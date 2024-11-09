@@ -103,10 +103,10 @@ void RenderSystem::Start(
 
 void RenderSystem::LevelLoad()
 {
-    if (roomAbience) delete roomAbience;
-    roomAbience = ResourceManager::LoadTexture("Levels/" + SceneManager::scene->windowName + "_Ambience.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
-    if (!roomAbience->loaded)
-        roomAbience = ResourceManager::LoadTexture("Levels/" + SceneManager::scene->windowName + ".png", Texture::Type::count, GL_CLAMP_TO_EDGE);
+    if (roomAmbience) roomAmbience->DeleteTexture();
+    roomAmbience = ResourceManager::LoadTexture("Levels/" + SceneManager::scene->windowName + "_Ambience.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
+    if (!roomAmbience->loaded)
+        roomAmbience = ResourceManager::LoadTexture("Levels/" + SceneManager::scene->windowName + ".png", Texture::Type::count, GL_CLAMP_TO_EDGE);
 }
 
 void RenderSystem::PlayStart(std::unordered_map<unsigned long long, PointLight>& pointLights, std::unordered_map<unsigned long long, Spotlight>& spotlights)
@@ -567,7 +567,7 @@ float delta
     shader->setMat4("invV", glm::inverse(viewMatrix));
     shader->setMat4("invP", glm::inverse(projection));
     shader->setVec2("invViewPort", glm::vec2(1.0f/SCREEN_WIDTH, 1.0f/SCREEN_HEIGHT));
-    shader->setVec3("camPos", SceneManager::scene->camera->transform.getGlobalPosition());
+    shader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
     shader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
     shader->setInt("albedo", 1);
     shader->setInt("normal", 2);
@@ -1030,12 +1030,10 @@ void RenderSystem::RenderAmbientPass()
     DirectionalLight dirLight = SceneManager::scene->directionalLight;
     ambientShader->setVec3("lightDirection", glm::normalize(dirLight.direction));
     ambientShader->setVec3("lightColour", dirLight.colour);
-    ambientShader->setVec3("camPos", SceneManager::scene->camera->transform.getGlobalPosition());
-    ambientShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
+    ambientShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
     ambientShader->setVec2("mapMins", mapMin);
     ambientShader->setVec2("mapDimensions", mapDelta);
     ambientShader->setFloat("ambientIntensity", ambientIntensity);
-    ambientShader->setBool("inOrtho", inOrtho);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, depthBuffer);
@@ -1055,10 +1053,10 @@ void RenderSystem::RenderAmbientPass()
     glActiveTexture(GL_TEXTURE0 + 6);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
 
-    if (roomAbience)
+    if (roomAmbience)
     {
         glActiveTexture(GL_TEXTURE0 + 7);
-        glBindTexture(GL_TEXTURE_2D, roomAbience->GLID);
+        glBindTexture(GL_TEXTURE_2D, roomAmbience->GLID);
     }
 
     RenderQuad();
