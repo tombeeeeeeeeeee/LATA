@@ -189,6 +189,10 @@ LevelEditor::LevelEditor() :
 
 void LevelEditor::Start()
 {
+	gameUiOverlay = ResourceManager::LoadTexture("images/gameUiOverlay.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
+	overlayMesh.InitialiseQuad(1.0f);
+	overlayShader = ResourceManager::LoadShader("Shaders/defaultWithNormal.vert", "Shaders/simpleTexturedWithCutout.frag");
+
 	groundShader = ResourceManager::LoadShader("Shaders/floorWorld.vert", "Shaders/prepass.frag", Shader::Flags::Spec | Shader::Flags::VPmatrix | Shader::Flags::Lit);
 	groundTexture = ResourceManager::LoadTexture("images/T_MissingTexture.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
 	groundTexture->mipMapped = false;
@@ -541,6 +545,12 @@ void LevelEditor::Draw(float delta)
 	);
 
 	if (inPlay) {
+
+		overlayShader->Use();
+		gameUiOverlay->Bind(1);
+		overlayShader->setSampler("material.albedo", 1);
+		overlayMesh.Draw();
+
 		healthShader->Use();
 
 		ecco->boostUI.ApplyToShader(healthShader, ecco->getSpeedBoostCooldownPercent());

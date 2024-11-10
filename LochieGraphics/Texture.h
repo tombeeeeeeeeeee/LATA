@@ -50,6 +50,7 @@ public:
 	GLenum dataType;
 	bool mipMapped = true;
 	GLint minFilter;
+	// TODO: Rename to mag
 	GLint maxFilter;
 	bool flipped; //TODO: rename to flip?
 

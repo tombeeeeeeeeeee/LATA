@@ -17,6 +17,10 @@ private:
 	Material* groundMaterial = nullptr;
 	Texture* groundTexture = nullptr;
 
+	Shader* overlayShader = nullptr;
+	Texture* gameUiOverlay = nullptr;
+	Mesh overlayMesh;
+
 	Mesh healthBar;
 	Shader* healthShader = nullptr;
 
