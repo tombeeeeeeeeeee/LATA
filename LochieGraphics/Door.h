@@ -19,7 +19,7 @@ public:
 	float timeInMovement = 0.0f;
 	float amountToMove = 0.0f;
 	std::string	triggerTag;
-	glm::vec3 pos = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 startingPos = { 0.0f, 0.0f, 0.0f };
 	bool state = false;
 	Door() {};
 	Door(toml::table table);

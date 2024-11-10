@@ -52,6 +52,13 @@ void Door::GUI()
 		ImGui::DragFloat("Amount To Move", &amountToMove, 2.0f, 0.0f);
 		ImGui::DragFloat("Time To Close", &timeToClose, 0.02f, 0.0f);
 		ImGui::DragFloat("Time To Open", &timeToOpen, 0.02f, 0.0f);
+
+		ImGui::BeginDisabled();
+		ImGui::DragFloat(("Time in movement##" + tag).c_str(), &timeInMovement);
+		ImGui::DragFloat3(("Starting Pos##" + tag).c_str(), &startingPos.x);
+		ImGui::Checkbox(("State##" + tag).c_str(), &state);
+		ImGui::EndDisabled();
+
 		ImGui::Unindent();
 	}
 }
