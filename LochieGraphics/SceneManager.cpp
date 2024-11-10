@@ -267,8 +267,7 @@ void SceneManager::Update()
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 	ImGuizmo::BeginFrame();
 	
-	scene->renderSystem.lines.Clear();
-	scene->renderSystem.debugLines.Clear();
+
 	if (scene->gui.getSelected()) {
 		scene->gui.getSelected()->DebugDraw();
 	}
@@ -292,6 +291,8 @@ void SceneManager::Update()
 	}
 
 	scene->Draw(deltaTime);
+	scene->renderSystem.lines.Clear();
+	scene->renderSystem.debugLines.Clear();
 	scene->gui.Update();
 	ImGui::Render();
 	scene->Update(deltaTime);

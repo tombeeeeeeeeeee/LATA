@@ -510,6 +510,7 @@ void EnemySystem::Steering(
 
             if (spawnPair.second.spawning)
             {
+                if (spawnPair.second.spawnPattern.size() == 0) continue;
                 if (!spawner->triggeredOnce)
                 {
                     int count = 1;

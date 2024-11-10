@@ -15,6 +15,7 @@ std::multimap<std::string, unsigned long long> TriggerSystem::triggerables = {};
 
 void TriggerSystem::TriggerTag(std::string tag, bool toggle)
 {
+	if (tag == "") return;
 	auto range = triggerables.equal_range(tag);
 	for (auto& it = range.first; it != range.second; it++)
 	{
@@ -75,7 +76,7 @@ void TriggerSystem::Update(
 	for (auto& platePair : plates)
 	{
 		glm::vec3 pos = transforms[platePair.first].getPosition();
-		float actuation = Utilities::Lerp(platePair.second.timeInActuation / timeToActuate, -platePair.second.actuationAmount, platePair.second.atRestHeight);
+		float actuation = Utilities::Lerp(platePair.second.atRestHeight, -platePair.second.actuationAmount, platePair.second.timeInActuation / timeToActuate );
 		transforms[platePair.first].setPosition({ pos.x, actuation, pos.z });
 
 		//Actuation
