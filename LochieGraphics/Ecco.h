@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UiElement.h"
+
 #include "Input.h"
 
 class Transform;
@@ -41,19 +43,9 @@ public:
 
 	float windowOfTimeForHealPressed = 0.2f;
 
-	float healthOffsetX = 0.0f;
-	float healthOffsetY = 0.0f;
-	float healthScaleX = 0.5f;
-	float healthScaleY = 0.5f;
-	glm::vec3 healthBackgroundColour{};
-	glm::vec3 healthForegroundColour{};
+	UiElement healthUI;
+	UiElement boostUI;
 
-	float boostOffsetX = 0.0f;
-	float boostOffsetY = 0.0f;
-	float boostScaleX = 0.5f;
-	float boostScaleY = 0.5f;
-	glm::vec3 boostBackgroundColour{};
-	glm::vec3 boostForegroundColour{};
 
 	float getSpeedBoostCooldownPercent() const;
 private:

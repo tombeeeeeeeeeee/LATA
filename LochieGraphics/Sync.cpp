@@ -46,20 +46,10 @@ Sync::Sync(toml::table table)
 	misfireColliderRadius = Serialisation::LoadAsFloat(table["misfireColliderRadius"]);
 	maxMoveForce = Serialisation::LoadAsFloat(table["maxMoveForce"]);
 	maxStopForce = Serialisation::LoadAsFloat(table["maxStopForce"]);
-	healthOffsetX = Serialisation::LoadAsFloat(table["healthOffsetX"], 0.618f);
-	healthOffsetY = Serialisation::LoadAsFloat(table["healthOffsetY"], -0.845f);
-	healthScaleX = Serialisation::LoadAsFloat(table["healthScaleX"], 0.304f);
-	healthScaleY = Serialisation::LoadAsFloat(table["healthScaleY"], 0.077f);
-	chargeOffsetX = Serialisation::LoadAsFloat(table["chargeOffsetX"], 0.618f);
-	chargeOffsetY = Serialisation::LoadAsFloat(table["chargeOffsetY"], -0.952f);
-	chargeScaleX = Serialisation::LoadAsFloat(table["chargeScaleX"], 0.304f);
-	chargeScaleY = Serialisation::LoadAsFloat(table["chargeScaleY"], 0.024f);
+	healthUI.Load(table["healthUI"].as_table());
+	chargeUI.Load(table["chargeUI"].as_table());
 	startSlowTime = Serialisation::LoadAsFloat(table["startSlowTime"], 0.5f);
 	stopSlowTime = Serialisation::LoadAsFloat(table["stopSlowTime"], 1.5f);
-	healthBackgroundColour = Serialisation::LoadAsVec3(table["healthBackgroundColour"], glm::vec3(0.05f, 0.67f, 0.0f));
-	healthForegroundColour = Serialisation::LoadAsVec3(table["healthForegroundColour"], glm::vec3(0.1f, 1.0f, 0.0f));
-	chargeBackgroundColour = Serialisation::LoadAsVec3(table["chargeBackgroundColour"], glm::vec3(0.53f, 0.0f, 0.08f));
-	chargeForegroundColour = Serialisation::LoadAsVec3(table["chargeForegroundColour"], glm::vec3(0.93f, 0.11f, 0.14f));
 }
 
 void Sync::Start(
@@ -263,23 +253,12 @@ void Sync::GUI()
 		ImGui::DragInt(("Refraction Beams Off Ecco##" + tag).c_str(), &eccoRefractionCount);
 		ImGui::DragFloat(("Refraction Beams Angle##" + tag).c_str(), &eccoRefractionAngle);
 	}
-	if (ImGui::CollapsingHeader(("Game UI##" + tag).c_str())) {
-		ImGui::SeparatorText(("Health##" + tag).c_str());
-		ImGui::SliderFloat(("healthOffsetX##" + tag).c_str(), &healthOffsetX, -1.0f, 1.0f);
-		ImGui::SliderFloat(("healthOffsetY##" + tag).c_str(), &healthOffsetY, -1.0f, 1.0f);
-		ImGui::SliderFloat(("healthScaleX##" + tag).c_str(), &healthScaleX, 0.0f, 1.0f);
-		ImGui::SliderFloat(("healthScaleY##" + tag).c_str(), &healthScaleY, 0.0f, 1.0f);
-		ImGui::ColorEdit3(("health background##" + tag).c_str(), &healthBackgroundColour.x);
-		ImGui::ColorEdit3(("health foreground##" + tag).c_str(), &healthForegroundColour.x);
-		ImGui::SeparatorText(("Charge##" + tag).c_str());
-		ImGui::SliderFloat(("chargeOffsetX##" + tag).c_str(), &chargeOffsetX, -1.0f, 1.0f);
-		ImGui::SliderFloat(("chargeOffsetY##" + tag).c_str(), &chargeOffsetY, -1.0f, 1.0f);
-		ImGui::SliderFloat(("chargeScaleX##" + tag).c_str(), &chargeScaleX, 0.0f, 1.0f);
-		ImGui::SliderFloat(("chargeScaleY##" + tag).c_str(), &chargeScaleY, 0.0f, 1.0f);
-		ImGui::ColorEdit3(("charge background##" + tag).c_str(), &chargeBackgroundColour.x);
-		ImGui::ColorEdit3(("charge foreground##" + tag).c_str(), &chargeForegroundColour.x);
+	if (ImGui::CollapsingHeader(("Health UI##" + tag).c_str())) {
+		healthUI.GUI();
 	}
-
+	if (ImGui::CollapsingHeader(("Charge UI##" + tag).c_str())) {
+		chargeUI.GUI();
+	}
 
 	ImGui::Unindent();
 }
@@ -309,18 +288,8 @@ toml::table Sync::Serialise() const
 		{ "misfireColliderRadius", misfireColliderRadius },
 		{ "maxMoveForce", maxMoveForce },
 		{ "maxStopForce", maxStopForce },
-		{ "healthOffsetX", healthOffsetX},
-		{ "healthOffsetY", healthOffsetY},
-		{ "healthScaleX", healthScaleX},
-		{ "healthScaleY", healthScaleY},
-		{ "chargeOffsetX", chargeOffsetX},
-		{ "chargeOffsetY", chargeOffsetY},
-		{ "chargeScaleX", chargeScaleX},
-		{ "chargeScaleY", chargeScaleY},
-		{ "healthBackgroundColour", Serialisation::SaveAsVec3(healthBackgroundColour) },
-		{ "healthForegroundColour", Serialisation::SaveAsVec3(healthForegroundColour) },
-		{ "chargeBackgroundColour", Serialisation::SaveAsVec3(chargeBackgroundColour) },
-		{ "chargeForegroundColour", Serialisation::SaveAsVec3(chargeForegroundColour) },
+		{ "healthUI", healthUI.Serialise() },
+		{ "chargeUI", chargeUI.Serialise() },
 		{ "startSlowTime", startSlowTime },
 		{ "stopSlowTime", stopSlowTime },
 	};

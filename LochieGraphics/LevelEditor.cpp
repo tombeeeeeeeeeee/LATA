@@ -520,39 +520,16 @@ void LevelEditor::Draw(float delta)
 	if (inPlay) {
 		healthShader->Use();
 
-		healthShader->setVec2("offset", { sync->healthOffsetX, sync->healthOffsetY });
-		healthShader->setVec2("scale", { sync->healthScaleX, sync->healthScaleY });
-		healthShader->setFloat("healthPercent", (float)syncSo->health()->currHealth / (float)syncSo->health()->getMaxHealth());
-		healthShader->setVec3("backgroundColour", sync->healthBackgroundColour);
-		healthShader->setVec3("healthColour", sync->healthForegroundColour);
+		ecco->boostUI.ApplyToShader(healthShader, ecco->getSpeedBoostCooldownPercent());
 		healthBar.Draw();
-		healthShader->setVec2("offset", { ecco->healthOffsetX, ecco->healthOffsetY });
-		healthShader->setVec2("scale", { ecco->healthScaleX, ecco->healthScaleY });
-		healthShader->setFloat("healthPercent", (float)eccoSo->health()->currHealth / (float)eccoSo->health()->getMaxHealth());
-		healthShader->setVec3("backgroundColour", ecco->healthBackgroundColour);
-		healthShader->setVec3("healthColour", ecco->healthForegroundColour);
+		sync->healthUI.ApplyToShader(healthShader, (float)syncSo->health()->currHealth / (float)syncSo->health()->getMaxHealth());
 		healthBar.Draw();
-		healthShader->setVec2("offset", { sync->chargeOffsetX, sync->chargeOffsetY });
-		healthShader->setVec2("scale", { sync->chargeScaleX, sync->chargeScaleY });
-		healthShader->setFloat("healthPercent", sync->chargedDuration / sync->overclockChargeTime);
-		healthShader->setVec3("backgroundColour", sync->chargeBackgroundColour);
-		healthShader->setVec3("healthColour", sync->chargeForegroundColour);
+		ecco->healthUI.ApplyToShader(healthShader, (float)eccoSo->health()->currHealth / (float)eccoSo->health()->getMaxHealth());
 		healthBar.Draw();
-		healthShader->setVec2("offset", { ecco->boostOffsetX, ecco->boostOffsetY });
-		healthShader->setVec2("scale", { ecco->boostScaleX, ecco->boostScaleY });
-		healthShader->setFloat("healthPercent", ecco->getSpeedBoostCooldownPercent());
-		healthShader->setVec3("backgroundColour", ecco->boostBackgroundColour);
-		healthShader->setVec3("healthColour", ecco->boostForegroundColour);
+		sync->chargeUI.ApplyToShader(healthShader, sync->chargedDuration / sync->overclockChargeTime);
 		healthBar.Draw();
-
-
-		healthShader->setVec2("offset", { healthSystem.abilityOffsetX, healthSystem.abilityOffsetY });
-		healthShader->setVec2("scale", { healthSystem.abilityScaleX, healthSystem.abilityScaleY });
-		healthShader->setFloat("healthPercent", glm::clamp(healthSystem.timeSinceLastHealingAbility / healthSystem.healingAbilityCooldown, 0.0f, 1.0f));
-		healthShader->setVec3("backgroundColour", healthSystem.abilityBackgroundColour);
-		healthShader->setVec3("healthColour", healthSystem.abilityForegroundColour);
+		healthSystem.abilityUI.ApplyToShader(healthShader, glm::clamp(healthSystem.timeSinceLastHealingAbility / healthSystem.healingAbilityCooldown, 0.0f, 1.0f));
 		healthBar.Draw();
-
 	}
 }
 

@@ -31,33 +31,22 @@ void HealthSystem::Load(toml::table table)
 	timeBetweenPulses = Serialisation::LoadAsFloat(table["timeBetweenPulses"]);
 	healDistance = Serialisation::LoadAsFloat(table["healDistance"]);
 	losToleranceTime = Serialisation::LoadAsFloat(table["losToleranceTime"]);
-	abilityOffsetX = Serialisation::LoadAsFloat(table["abilityOffsetX"], 0.0f);
-	abilityOffsetY = Serialisation::LoadAsFloat(table["abilityOffsetY"], -0.845f);
-	abilityScaleX = Serialisation::LoadAsFloat(table["abilityScaleX"], 0.100f);
-	abilityScaleY = Serialisation::LoadAsFloat(table["abilityScaleY"], 0.077f);
-	abilityBackgroundColour = Serialisation::LoadAsVec3(table["abilityBackgroundColour"], glm::vec3(0.3f, 0.3f, 0.3f));
-	abilityForegroundColour = Serialisation::LoadAsVec3(table["abilityForegroundColour"], glm::vec3(0.3f, 1.0f, 0.3f));
+	abilityUI.Load(table["abilityUI"].as_table());
 }
 
 toml::table HealthSystem::Serialise()
 {
 	return toml::table{
-		{"damageColour",Serialisation::SaveAsVec3(damageColour)},
-		{"healColour",Serialisation::SaveAsVec3(healColour)},
-		{"colourTime",colourTime},
-		{"healPerPulse",healPerPulse},
-		{"pulses",pulses},
-		{"healingAbilityCooldown",healingAbilityCooldown},
-		{"timeBetweenPulses",timeBetweenPulses},
-		{"healDistance",healDistance},
-		{"losToleranceTime",losToleranceTime},
-		{ "abilityOffsetX", abilityOffsetX},
-		{ "abilityOffsetY", abilityOffsetY},
-		{ "abilityScaleX", abilityScaleX},
-		{ "abilityScaleY", abilityScaleY},
-		{ "abilityBackgroundColour", Serialisation::SaveAsVec3(abilityBackgroundColour) },
-		{ "abilityForegroundColour", Serialisation::SaveAsVec3(abilityForegroundColour) },
-
+		{ "damageColour", Serialisation::SaveAsVec3(damageColour)},
+		{ "healColour", Serialisation::SaveAsVec3(healColour)},
+		{ "colourTime", colourTime},
+		{ "healPerPulse", healPerPulse},
+		{ "pulses", pulses},
+		{ "healingAbilityCooldown", healingAbilityCooldown},
+		{ "timeBetweenPulses", timeBetweenPulses},
+		{ "healDistance", healDistance},
+		{ "losToleranceTime", losToleranceTime},
+		{ "abilityUI", abilityUI.Serialise() },
 	};
 }
 
@@ -213,13 +202,7 @@ void HealthSystem::GUI()
 	ImGui::DragFloat("DIstance For Healing Ability", &healDistance, 20.0f, 0);
 	ImGui::DragFloat("Tolerance for no Line of Sight", &losToleranceTime, 0.02f, 0);
 
-	ImGui::SliderFloat("abilityOffsetX", &abilityOffsetX, -1.0f, 1.0f);
-	ImGui::SliderFloat("abilityOffsetY", &abilityOffsetY, -1.0f, 1.0f);
-	ImGui::SliderFloat("abilityScaleX", &abilityScaleX, 0.0f, 1.0f);
-	ImGui::SliderFloat("abilityScaleY", &abilityScaleY, 0.0f, 1.0f);
-	ImGui::ColorEdit3("abilityBackgroundColour", &abilityBackgroundColour.x);
-	ImGui::ColorEdit3("abilityForegroundColour", &abilityForegroundColour.x);
-
+	abilityUI.GUI();
 
 	ImGui::End();
 }

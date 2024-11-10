@@ -416,6 +416,9 @@
     <ClCompile Include="ImguiMathsGLM.cpp">
       <Filter>Source Files\Third-Party</Filter>
     </ClCompile>
+    <ClCompile Include="UiElement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -740,6 +743,7 @@
     <ClInclude Include="ImguiMathsGLM.h">
       <Filter>Source Files\Third-Party</Filter>
     </ClInclude>
+    <ClInclude Include="UiElement.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -903,5 +907,8 @@
     </None>
     <None Include="..\Shaders\healthBar.frag" />
     <None Include="..\Shaders\healthBar.vert" />
+    <None Include="..\Shaders\composite.frag" />
+    <None Include="..\Shaders\pointLight.frag" />
+    <None Include="..\Shaders\pointLight.vert" />
   </ItemGroup>
 </Project>

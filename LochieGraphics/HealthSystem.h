@@ -1,5 +1,6 @@
 #pragma once
-#include "Maths.h"
+
+#include "UiElement.h"
 
 #include <unordered_map>
 #include <string>
@@ -51,12 +52,7 @@ public:
 
 	std::string filename = "";
 
-	float abilityOffsetX = 0.0f;
-	float abilityOffsetY = 0.0f;
-	float abilityScaleX = 0.5f;
-	float abilityScaleY = 0.5f;
-	glm::vec3 abilityBackgroundColour{};
-	glm::vec3 abilityForegroundColour{};
+	UiElement abilityUI;
 
 	float timeSinceLastHealingAbility = FLT_MAX;
 private:

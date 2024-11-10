@@ -1,5 +1,6 @@
 #pragma once
 #include "BlastLine.h"
+#include "UiElement.h"
 #include "Input.h"
 
 #include <string>
@@ -52,19 +53,9 @@ public:
 	float chargedDuration = 0.0f;
 	float overclockChargeTime = 0.3f;
 
-	float healthOffsetX = 0.0f;
-	float healthOffsetY = 0.0f;
-	float healthScaleX = 0.5f;
-	float healthScaleY = 0.5f;
-	glm::vec3 healthBackgroundColour{};
-	glm::vec3 healthForegroundColour{};
+	UiElement chargeUI;
+	UiElement healthUI;
 
-	float chargeOffsetX = 0.0f;
-	float chargeOffsetY = 0.0f;
-	float chargeScaleX = 0.5f;
-	float chargeScaleY = 0.5f;
-	glm::vec3 chargeBackgroundColour{};
-	glm::vec3 chargeForegroundColour{};
 private:
 
 	std::vector<unsigned long long> misfireShots;

@@ -264,15 +264,12 @@ void Ecco::GUI()
 		ImGui::Checkbox(("Boost Not In Wheel Direction##" + tag).c_str(), &speedBoostInDirectionOfBody);
 		ImGui::DragFloat(("Speed Boost Duration##" + tag).c_str(), &speedBoostDuration);
 
-		if (ImGui::CollapsingHeader(("Game UI##" + tag).c_str())) {
-			ImGui::SliderFloat(("healthOffsetX##" + tag).c_str(), &healthOffsetX, -1.0f, 1.0f);
-			ImGui::SliderFloat(("healthOffsetY##" + tag).c_str(), &healthOffsetY, -1.0f, 1.0f);
-			ImGui::SliderFloat(("healthScaleX##" + tag).c_str(), &healthScaleX, 0.0f, 1.0f);
-			ImGui::SliderFloat(("healthScaleY##" + tag).c_str(), &healthScaleY, 0.0f, 1.0f);
-			ImGui::ColorEdit3(("health Background colour##" + tag).c_str(), &healthBackgroundColour.x);
-			ImGui::ColorEdit3(("health Foreground colour##" + tag).c_str(), &healthForegroundColour.x);
+		if (ImGui::CollapsingHeader(("Health UI##" + tag).c_str())) {
+			healthUI.GUI();
 		}
-
+		if (ImGui::CollapsingHeader(("Boost UI##" + tag).c_str())) {
+			boostUI.GUI();
+		}
 
 		ImGui::Unindent();
 	}
@@ -308,19 +305,8 @@ toml::table Ecco::Serialise()
 		{ "speedBoostDuration", speedBoostDuration},
 		{ "maxHealth", maxHealth},
 		{ "speedBoostInDirectionOfBody", speedBoostInDirectionOfBody },
-		{ "healthOffsetX", healthOffsetX},
-		{ "healthOffsetY", healthOffsetY},
-		{ "healthScaleX", healthScaleX},
-		{ "healthScaleY", healthScaleY},
-		{ "healthBackgroundColour", Serialisation::SaveAsVec3(healthBackgroundColour) },
-		{ "healthForegroundColour", Serialisation::SaveAsVec3(healthForegroundColour) },
-		{ "boostOffsetX", boostOffsetX},
-		{ "boostOffsetY", boostOffsetY},
-		{ "boostScaleX", boostScaleX},
-		{ "boostScaleY", boostScaleY},
-		{ "boostBackgroundColour", Serialisation::SaveAsVec3(boostBackgroundColour) },
-		{ "boostForegroundColour", Serialisation::SaveAsVec3(boostForegroundColour) },
-
+		{ "healthUI", healthUI.Serialise() },
+		{ "boostUI", boostUI.Serialise() },
 	};
 }
 
@@ -358,19 +344,8 @@ Ecco::Ecco(toml::table table)
 	speedBoostDuration = Serialisation::LoadAsFloat(table["speedBoostDuration"]);
 	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
 	speedBoostInDirectionOfBody = Serialisation::LoadAsInt(table["speedBoostInDirectionOfBody"]);
-	healthOffsetX = Serialisation::LoadAsFloat(table["healthOffsetX"], -0.618f);
-	healthOffsetY = Serialisation::LoadAsFloat(table["healthOffsetY"], -0.845f);
-	healthScaleX = Serialisation::LoadAsFloat(table["healthScaleX"], 0.304f);
-	healthScaleY = Serialisation::LoadAsFloat(table["healthScaleY"], 0.077f);
-	healthBackgroundColour = Serialisation::LoadAsVec3(table["healthBackgroundColour"], glm::vec3(0.25f, 0.37f, 0.49f));
-	healthForegroundColour = Serialisation::LoadAsVec3(table["healthForegroundColour"], glm::vec3(0.25f, 0.49f, 1.0f));
-	boostOffsetX = Serialisation::LoadAsFloat(table["boostOffsetX"], -0.618f);
-	boostOffsetY = Serialisation::LoadAsFloat(table["boostOffsetY"], -0.845f);
-	boostScaleX = Serialisation::LoadAsFloat(table["boostScaleX"], 0.304f);
-	boostScaleY = Serialisation::LoadAsFloat(table["boostScaleY"], 0.077f);
-	boostBackgroundColour = Serialisation::LoadAsVec3(table["boostBackgroundColour"], glm::vec3(0.25f, 0.37f, 0.49f));
-	boostForegroundColour = Serialisation::LoadAsVec3(table["boostForegroundColour"], glm::vec3(0.25f, 0.49f, 1.0f));
-
+	healthUI.Load(table["healthUI"].as_table());
+	boostUI.Load(table["boostUI"].as_table());
 }
 
 
