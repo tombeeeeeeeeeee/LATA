@@ -51,11 +51,12 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight);
 float ScreenSpaceShadows();
 float interleaved_gradient_noise(vec2 position_screen);
+
 #define PI 3.1415926535
 
 const float MAX_REFLECTION_LOD = 4.0;
-const int sssSteps = 16;
-const float sssStepLength = 2000.0/16.0;
+const int sssSteps = 32;
+const float sssStepLength = 2000.0/32.0;
 const float RPC_16  = 0.0625f;
 
 void main()
@@ -184,7 +185,7 @@ float ScreenSpaceShadows()
     // Ray march towards the light
     float occlusion = 0.0;
     vec2 ray_uv   = vec2(0.0);
-    float offset = interleaved_gradient_noise(gl_FragCoord.xy) * 2.0f - 1.0f;
+    float offset = interleaved_gradient_noise(gl_FragCoord.xy);
     ray_pos += ray_step * offset;
 
     for (uint i = 0; i < sssSteps; i++)
@@ -212,7 +213,6 @@ float ScreenSpaceShadows()
             {
                 // Mark as occluded
                 occlusion = 1.0f;
-
                 break;
             }
         }
