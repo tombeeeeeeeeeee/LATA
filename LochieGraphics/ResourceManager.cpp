@@ -1,7 +1,6 @@
 #include "ResourceManager.h"
 
 #include "Paths.h"
-#include "ShaderEnum.h"
 #include "Vertex.h"
 #include "UserPreferences.h"
 
@@ -29,6 +28,21 @@ Shader* ResourceManager::defaultShader = nullptr;
 Material* ResourceManager::defaultMaterial = nullptr;
 Model* ResourceManager::defaultModel = nullptr;
 Mesh* ResourceManager::defaultMesh = nullptr;
+
+Shader* ResourceManager::skyBoxShader = nullptr;
+Shader* ResourceManager::shadowMapDepth = nullptr;
+Shader* ResourceManager::shadowDebug = nullptr;
+Shader* ResourceManager::screen = nullptr;
+Shader* ResourceManager::brdf = nullptr;
+Shader* ResourceManager::prefilter = nullptr;
+Shader* ResourceManager::downSample = nullptr;
+Shader* ResourceManager::upSample = nullptr;
+Shader* ResourceManager::irradiance = nullptr;
+Shader* ResourceManager::lines = nullptr;
+Shader* ResourceManager::ssao = nullptr;
+Shader* ResourceManager::ssaoBlur = nullptr;
+Shader* ResourceManager::prepass = nullptr;
+Shader* ResourceManager::super = nullptr;
 
 unsigned long long ResourceManager::guidCounter = 100;
 std::random_device ResourceManager::guidRandomiser = {};

@@ -13,7 +13,6 @@
 #include "Skybox.h"
 #include "Animator.h"
 #include "FrameBuffer.h"
-#include "ShaderEnum.h"
 #include "ParticleSystem.h"
 #include "Paths.h"
 
@@ -25,10 +24,7 @@
 LineRenderer RenderSystem::lines;
 LineRenderer RenderSystem::debugLines;
 
-void RenderSystem::Start(
-    unsigned int _skyboxTexture,
-    std::vector<Shader*>* _shaders
-)
+void RenderSystem::Start(unsigned int _skyboxTexture)
 {
     if (SCREEN_WIDTH == 0)
     {
@@ -37,7 +33,6 @@ void RenderSystem::Start(
         SCREEN_WIDTH = scrWidth;
         SCREEN_HEIGHT = scrHeight;
     }
-    shaders = _shaders;
     skyboxTexture = _skyboxTexture;
 
     cube = ResourceManager::LoadMesh();
@@ -65,10 +60,10 @@ void RenderSystem::Start(
     screenQuad = ResourceManager::LoadMesh();
     screenQuad->InitialiseQuad(1.f, 0.0f);
 
-    (*shaders)[ShaderIndex::shadowDebug]->Use();
-    (*shaders)[ShaderIndex::shadowDebug]->setInt("depthMap", 1);
+    ResourceManager::shadowDebug->Use();
+    ResourceManager::shadowDebug->setInt("depthMap", 1);
 
-    (*shaders)[ShaderIndex::lines]->Use();
+    ResourceManager::lines->Use();
     lines.Initialise();
     debugLines.Initialise();
 
@@ -164,7 +159,7 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
 
-    unsigned int currShader = (*shaders)[ShaderIndex::irradiance]->GLID;
+    unsigned int currShader = ResourceManager::irradiance->GLID;
     glUseProgram(currShader);
     glUniform1i(glGetUniformLocation(currShader, "environmentMap"), 1);
     glUniformMatrix4fv(glGetUniformLocation(currShader, "projection"), 1, GL_FALSE, &captureProjection[0][0]);
@@ -442,15 +437,15 @@ void RenderSystem::Update(
     //HDR
     
 
-    (*shaders)[screen]->Use();
+    ResourceManager::screen->Use();
 
-    (*shaders)[screen]->setInt("colour", 1);
-    (*shaders)[screen]->setInt("albedo", 2);
-    (*shaders)[screen]->setInt("normal", 3);
-    (*shaders)[screen]->setInt("emission", 4);
-    (*shaders)[screen]->setInt("SSAO", 5);
-    (*shaders)[screen]->setInt("bloomBlur", 6);
-    (*shaders)[screen]->setInt("lightBuffer", 7);
+    ResourceManager::screen->setInt("colour", 1);
+    ResourceManager::screen->setInt("albedo", 2);
+    ResourceManager::screen->setInt("normal", 3);
+    ResourceManager::screen->setInt("emission", 4);
+    ResourceManager::screen->setInt("SSAO", 5);
+    ResourceManager::screen->setInt("bloomBlur", 6);
+    ResourceManager::screen->setInt("lightBuffer", 7);
 
 
     glActiveTexture(GL_TEXTURE1);
@@ -475,8 +470,8 @@ void RenderSystem::Update(
     glBindTexture(GL_TEXTURE_2D, lightPassBuffer);
 
 
-    (*shaders)[screen]->setFloat("exposure", exposure);
-    (*shaders)[screen]->setInt("bufferIndex", bufferIndex);
+    ResourceManager::screen->setFloat("exposure", exposure);
+    ResourceManager::screen->setInt("bufferIndex", bufferIndex);
 
     if (postEffectOn) {
         postFrameBuffer->Bind();
@@ -561,19 +556,18 @@ float delta
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_GREATER);
     glCullFace(GL_FRONT);
-    Shader* shader = (*shaders)[pointLightPassShaderIndex];
-    shader->Use();
-    shader->setMat4("vp", projection * viewMatrix);
-    shader->setMat4("invVP", glm::inverse(projection * viewMatrix));
-    shader->setMat4("invV", glm::inverse(viewMatrix));
-    shader->setMat4("invP", glm::inverse(projection));
-    shader->setVec2("invViewPort", glm::vec2(1.0f/SCREEN_WIDTH, 1.0f/SCREEN_HEIGHT));
-    shader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
-    shader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
-    shader->setInt("albedo", 1);
-    shader->setInt("normal", 2);
-    shader->setInt("depth", 3);
-    shader->setInt("lightLerp", 4);
+    pointLightPassShader->Use();
+    pointLightPassShader->setMat4("vp", projection * viewMatrix);
+    pointLightPassShader->setMat4("invVP", glm::inverse(projection * viewMatrix));
+    pointLightPassShader->setMat4("invV", glm::inverse(viewMatrix));
+    pointLightPassShader->setMat4("invP", glm::inverse(projection));
+    pointLightPassShader->setVec2("invViewPort", glm::vec2(1.0f/SCREEN_WIDTH, 1.0f/SCREEN_HEIGHT));
+    pointLightPassShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
+    pointLightPassShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
+    pointLightPassShader->setInt("albedo", 1);
+    pointLightPassShader->setInt("normal", 2);
+    pointLightPassShader->setInt("depth", 3);
+    pointLightPassShader->setInt("lightLerp", 4);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, albedoBuffer);
@@ -589,11 +583,11 @@ float delta
         Transform transform = Transform();
         transform.setPosition(transforms[pair.first].getGlobalPosition());
         transform.setScale(pair.second.range * 500.0f);
-        shader->setMat4("model", transform.getGlobalMatrix());
-        shader->setVec3("lightPos", transforms[pair.first].getGlobalPosition());
-        shader->setVec3("colour", pair.second.colour);
-        shader->setFloat("linear", pair.second.linear);
-        shader->setFloat("quad", pair.second.quadratic);
+        pointLightPassShader->setMat4("model", transform.getGlobalMatrix());
+        pointLightPassShader->setVec3("lightPos", transforms[pair.first].getGlobalPosition());
+        pointLightPassShader->setVec3("colour", pair.second.colour);
+        pointLightPassShader->setFloat("linear", pair.second.linear);
+        pointLightPassShader->setFloat("quad", pair.second.quadratic);
         pair.second.timeInType += delta;
         float lerpAmount;
         switch (pair.second.effect)
@@ -631,7 +625,7 @@ float delta
             glActiveTexture(GL_TEXTURE0 + 4);
             glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
         }
-        shader->setFloat("lerpAmount", glm::clamp(lerpAmount, 0.0f, 1.0f));
+        pointLightPassShader->setFloat("lerpAmount", glm::clamp(lerpAmount, 0.0f, 1.0f));
         lightSphere->getMeshes()[0]->Draw();
     }
     glDisable(GL_DEPTH_TEST);
@@ -678,8 +672,7 @@ void RenderSystem::CompositeBufferSetUp()
     glGenFramebuffers(1, &compositeFBO);
     glGenTextures(1, &colorBuffer);
     glGenTextures(1, &bloomBuffer);
-    compositeShaderIndex = (*shaders).size();
-    (*shaders).push_back(ResourceManager::LoadShaderDefaultVert("composite"));
+    compositeShader = ResourceManager::LoadShaderDefaultVert("composite");
 
     CompositeBufferUpdate();
 }
@@ -692,10 +685,9 @@ void RenderSystem::RenderComposite()
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawBuffers(2, compositeAttachments);
 
-    Shader* shader = (*shaders)[compositeShaderIndex];
-    shader->Use();
-    shader->setInt("lines", 1);
-    shader->setInt("lights", 2);
+    compositeShader->Use();
+    compositeShader->setInt("lines", 1);
+    compositeShader->setInt("lights", 2);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, linesBuffer);
@@ -736,7 +728,7 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-    (*shaders)[ShaderIndex::super]->Use();
+    ResourceManager::super->Use();
 
     int scrWidth, scrHeight;
     glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
@@ -823,7 +815,7 @@ void RenderSystem::RenderBloom(unsigned int srcTexture)
 
 void RenderSystem::RenderDownSamples(unsigned int srcTexture)
 {
-    (*shaders)[downSample]->Use();
+    ResourceManager::downSample->Use();
 
     // Bind srcTexture (HDR color buffer) as initial texture input
     glActiveTexture(GL_TEXTURE0);
@@ -831,8 +823,8 @@ void RenderSystem::RenderDownSamples(unsigned int srcTexture)
 
     glm::vec2 inverseRes = { 1.0f / (float)SCREEN_WIDTH, 1.0f / (float)SCREEN_HEIGHT };
 
-    (*shaders)[downSample]->setInt("mipLevel", 0);
-    (*shaders)[downSample]->setVec2("srcResolution", inverseRes);
+    ResourceManager::downSample->setInt("mipLevel", 0);
+    ResourceManager::downSample->setVec2("srcResolution", inverseRes);
 
     glDisable(GL_BLEND);
 
@@ -849,22 +841,22 @@ void RenderSystem::RenderDownSamples(unsigned int srcTexture)
         RenderQuad();
 
         // Set current mip resolution as srcResolution for next iteration
-        (*shaders)[downSample]->setVec2("srcResolution", inverseRes);
+        ResourceManager::downSample->setVec2("srcResolution", inverseRes);
 
         // Set current mip as texture input for next iteration
         glBindTexture(GL_TEXTURE_2D, mip.texture);
 
         // Disable Karis average for consequent downsamples
         if (i == 0) {
-            (*shaders)[downSample]->setInt("mipLevel", 1);
+            ResourceManager::downSample->setInt("mipLevel", 1);
         }
     }
 }
 
 void RenderSystem::RenderUpSamples(float aspectRatio)
 {
-    (*shaders)[upSample]->Use();
-    (*shaders)[upSample]->setFloat("aspectRatio", aspectRatio);
+    ResourceManager::upSample->Use();
+    ResourceManager::upSample->setFloat("aspectRatio", aspectRatio);
 
     // Enable additive blending
     glEnable(GL_BLEND);
@@ -907,10 +899,8 @@ void RenderSystem::LightPassSetup()
     glGenTextures(1, &lightPassBuffer);
     glGenFramebuffers(1, &lightPassFBO);
     LightPassUpdate();
-    ambientPassShaderIndex = (*shaders).size();
-    (*shaders).push_back(ResourceManager::LoadShaderDefaultVert("ambient"));
-    pointLightPassShaderIndex = (*shaders).size();
-    (*shaders).push_back(ResourceManager::LoadShader("pointLight"));
+    ambientPassShader = ResourceManager::LoadShaderDefaultVert("ambient");
+    pointLightPassShader = ResourceManager::LoadShader("pointLight");
     //spotlightPassShaderIndex = (*shaders).size();
     //(*shaders).push_back(ResourceManager::LoadShaderDefaultVert("spotlights"));
 }
@@ -926,7 +916,7 @@ void RenderSystem::RenderLinePass()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
     glClear(GL_COLOR_BUFFER_BIT);
-    (*shaders)[ShaderIndex::lines]->Use();
+    ResourceManager::lines->Use();
     lines.Draw();
 
     glDepthFunc(GL_ALWAYS);
@@ -973,7 +963,7 @@ void RenderSystem::SSAOSetup()
     glGenTextures(1, &ssaoBluredBuffer);
     glGenFramebuffers(1, &ssaoBlurFBO);
 
-    Shader* ssaoShader = (*shaders)[ssao];
+    Shader* ssaoShader = ResourceManager::ssao;
     ssaoShader->Use();
     ssaoShader->setInt("depth", 1);
     ssaoShader->setInt("normalColour", 2);
@@ -1014,28 +1004,26 @@ void RenderSystem::RenderAmbientPass()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
     
-    Shader* ambientShader = (*shaders)[ambientPassShaderIndex];
+    ambientPassShader->Use();
+    ambientPassShader->setInt("screenDepth", 1);
+    ambientPassShader->setInt("screenAlbedo", 2);
+    ambientPassShader->setInt("screenNormal", 3);
+    ambientPassShader->setInt("screenEmission", 4);
+    ambientPassShader->setInt("screenSSAO", 5);
+    ambientPassShader->setInt("skybox", 6);
+    ambientPassShader->setInt("roomLight", 7);
 
-    ambientShader->Use();
-    ambientShader->setInt("screenDepth", 1);
-    ambientShader->setInt("screenAlbedo", 2);
-    ambientShader->setInt("screenNormal", 3);
-    ambientShader->setInt("screenEmission", 4);
-    ambientShader->setInt("screenSSAO", 5);
-    ambientShader->setInt("skybox", 6);
-    ambientShader->setInt("roomLight", 7);
-
-    ambientShader->setMat4("invP", glm::inverse(projection));
-    ambientShader->setMat4("invV", glm::inverse(viewMatrix));
+    ambientPassShader->setMat4("invP", glm::inverse(projection));
+    ambientPassShader->setMat4("invV", glm::inverse(viewMatrix));
 
     DirectionalLight dirLight = SceneManager::scene->directionalLight;
-    ambientShader->setVec3("lightDirection", glm::normalize(dirLight.direction));
-    ambientShader->setVec3("lightColour", dirLight.colour);
-    ambientShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
-    ambientShader->setVec2("mapMins", mapMin);
-    ambientShader->setVec2("mapDimensions", mapDelta);
-    ambientShader->setFloat("ambientIntensity", ambientIntensity);
-    ambientShader->setInt("frameCount", frameCountInSixteen);
+    ambientPassShader->setVec3("lightDirection", glm::normalize(dirLight.direction));
+    ambientPassShader->setVec3("lightColour", dirLight.colour);
+    ambientPassShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
+    ambientPassShader->setVec2("mapMins", mapMin);
+    ambientPassShader->setVec2("mapDimensions", mapDelta);
+    ambientPassShader->setFloat("ambientIntensity", ambientIntensity);
+    ambientPassShader->setInt("frameCount", frameCountInSixteen);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, depthBuffer);
@@ -1082,7 +1070,7 @@ void RenderSystem::RenderSSAO()
     glClear(GL_COLOR_BUFFER_BIT);
 
     //SSAO Pre Blur
-    Shader* ssaoShader = (*shaders)[ssao];
+    Shader* ssaoShader = ResourceManager::ssao;
     ssaoShader->Use();
 
     // Send kernel + rotation 
@@ -1114,7 +1102,7 @@ void RenderSystem::RenderSSAO()
     RenderQuad();
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
 
-    Shader* blur = (*shaders)[ssaoBlur];
+    Shader* blur = ResourceManager::ssaoBlur;
     blur->Use();
     blur->setInt("SSAO", 1);
     glActiveTexture(GL_TEXTURE1);

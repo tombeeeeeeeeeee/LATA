@@ -6,7 +6,6 @@
 #include "Health.h"
 #include "ModelRenderer.h"
 #include "LineRenderer.h"
-#include "ShaderEnum.h"
 #include "Hit.h"
 #include "Paths.h"
 #include "Collision.h"
@@ -52,9 +51,7 @@ Sync::Sync(toml::table table)
 	stopSlowTime = Serialisation::LoadAsFloat(table["stopSlowTime"], 1.5f);
 }
 
-void Sync::Start(
-	std::vector<Shader*>* shaders
-)
+void Sync::Start()
 {
 	Model* misfireModel = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + misfireModelPath + Paths::modelExtension);
 	Material* misfireMaterial = ResourceManager::defaultMaterial;

@@ -25,7 +25,7 @@ public:
 	Sync() {};
 	Sync(toml::table table);
 
-	void Start(std::vector<Shader*>* shaders);
+	void Start();
 
 	bool Update(
 		Input::InputDevice& inputDevice, Transform& transform,

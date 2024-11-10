@@ -194,8 +194,6 @@ void LevelEditor::Start()
 	groundTexture->mipMapped = false;
 	groundMaterial = ResourceManager::LoadMaterial("Ground", groundShader);
 	groundMaterial->AddTextures({ groundTexture });
-	shaders.push_back(groundShader);
-
 
 	directionalLight = DirectionalLight
 	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
@@ -254,7 +252,7 @@ void LevelEditor::Start()
 
 	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension), (unsigned long long)0));
 
-	sync->Start(&shaders);
+	sync->Start();
 
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 
@@ -292,7 +290,6 @@ void LevelEditor::Start()
 
 	healthBar.InitialiseQuad(1.0f);
 	healthShader = ResourceManager::LoadShader("healthBar");
-	shaders.push_back(healthShader);
 
 	directionalLight.colour = { 1.0f, 1.0f, 1.0f };
 	directionalLight.direction = glm::normalize(glm::vec3(-0.25, -1.0f, -0.5f));

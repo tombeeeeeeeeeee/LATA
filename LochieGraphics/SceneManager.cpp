@@ -3,7 +3,6 @@
 #include "Scene.h"
 #include "Skybox.h"
 #include "ResourceManager.h"
-#include "ShaderEnum.h"
 #include "SceneObject.h"
 #include "Lights.h"
 #include "UserPreferences.h"
@@ -140,22 +139,20 @@ SceneManager::SceneManager(Scene* _scene)
 
 	scene->cursorPos = &cursorPos;
 
-	scene->shaders.insert(scene->shaders.end(), {
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "cubemap" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "simpleDepthShader" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "shadowDebug" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "Display" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "brdf" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prefilter" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "downSample" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "upSample" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "irradiance" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "lineRenderer" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssao" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssaoBlur" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prepass" + Paths::shaderExtension),
-		ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "superDuper" + Paths::shaderExtension),
-	});
+	ResourceManager::skyBoxShader   = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "cubemap"           + Paths::shaderExtension);
+	ResourceManager::shadowMapDepth = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "simpleDepthShader" + Paths::shaderExtension);
+	ResourceManager::shadowDebug    = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "shadowDebug"       + Paths::shaderExtension);
+	ResourceManager::screen         = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "Display"           + Paths::shaderExtension);
+	ResourceManager::brdf           = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "brdf"              + Paths::shaderExtension);
+	ResourceManager::prefilter      = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prefilter"         + Paths::shaderExtension);
+	ResourceManager::downSample     = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "downSample"        + Paths::shaderExtension);
+	ResourceManager::upSample       = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "upSample"          + Paths::shaderExtension);
+	ResourceManager::irradiance     = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "irradiance"        + Paths::shaderExtension);
+	ResourceManager::lines          = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "lineRenderer"      + Paths::shaderExtension);
+	ResourceManager::ssao           = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssao"              + Paths::shaderExtension);
+	ResourceManager::ssaoBlur       = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssaoBlur"          + Paths::shaderExtension);
+	ResourceManager::prepass        = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prepass"           + Paths::shaderExtension);
+	ResourceManager::super          = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "superDuper"        + Paths::shaderExtension);
 
 	for (auto& i : std::filesystem::directory_iterator(Paths::textureSaveLocation)) {
 		ResourceManager::LoadTextureAsset(i.path().string());
@@ -168,7 +165,7 @@ SceneManager::SceneManager(Scene* _scene)
 
 	//std::array<std::string, 6> skyboxFaces = { "images/skybox/left.jpg", "images/skybox/right.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
 	std::array<std::string, 6> skyboxFaces = { "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png" };
-	defaultSkybox = new Skybox(scene->shaders[skyBoxShader], Texture::LoadCubeMap(skyboxFaces.data()));
+	defaultSkybox = new Skybox(ResourceManager::skyBoxShader, Texture::LoadCubeMap(skyboxFaces.data()));
 
 	if (scene->skybox == nullptr) {
 		scene->skybox = defaultSkybox;
@@ -176,19 +173,18 @@ SceneManager::SceneManager(Scene* _scene)
 
 	ResourceManager::defaultTexture = ResourceManager::LoadTexture("images/T_DefaultTexture.png", Texture::Type::albedo);
 	ResourceManager::defaultNormal = ResourceManager::LoadTexture("images/T_Normal.png", Texture::Type::normal);
-	ResourceManager::defaultMaterial = ResourceManager::LoadMaterial("Default Material", scene->shaders[super]);
+	ResourceManager::defaultMaterial = ResourceManager::LoadMaterial("Default Material", ResourceManager::super);
 	ResourceManager::defaultMaterial->AddTextures({
 		ResourceManager::defaultTexture,
 		ResourceManager::defaultNormal
 		});
-	ResourceManager::defaultShader = scene->shaders[super];
+	ResourceManager::defaultShader = ResourceManager::super;
 
 	UserPreferences::Initialise();
 	PrefabManager::Initialise();
 
 	// TODO: Use a shader asset
 	Shader* particleShader = ResourceManager::LoadShader("particle", Shader::Flags::VPmatrix);
-	scene->shaders.push_back(particleShader);
 	scene->particleSystem.Initialise(particleShader);
 
 	scene->audio.Initialise();
@@ -196,8 +192,7 @@ SceneManager::SceneManager(Scene* _scene)
 	scene->Start();
 
 	scene->renderSystem.Start(
-		scene->skybox->texture,
-		&scene->shaders
+		scene->skybox->texture
 	);
 
 	SwitchToWindowMode((WindowModes)UserPreferences::windowedStartMode);
@@ -289,11 +284,11 @@ void SceneManager::Update()
 
 	scene->skybox->Update(&camera, (float)windowWidth / (float)windowHeight);
 
-	for (auto s = scene->shaders.begin(); s != scene->shaders.end(); s++)
+	for (auto& s : ResourceManager::shaders)
 	{
-		if ((*s)->getFlag() & Shader::Flags::VPmatrix) {
-			(*s)->Use();
-			(*s)->setMat4("vp", viewProjection);
+		if (s.second.getFlag() & Shader::Flags::VPmatrix) {
+			s.second.Use();
+			s.second.setMat4("vp", viewProjection);
 		}
 	}
 

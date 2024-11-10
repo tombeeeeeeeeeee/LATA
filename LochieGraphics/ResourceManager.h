@@ -89,4 +89,20 @@ public:
 	static Material* defaultMaterial;
 	static Model* defaultModel;
 	static Mesh* defaultMesh;
+
+	static Shader* skyBoxShader;
+	static Shader* shadowMapDepth;
+	static Shader* shadowDebug;
+	static Shader* screen;
+	static Shader* brdf;
+	static Shader* prefilter;
+	static Shader* downSample;
+	static Shader* upSample;
+	static Shader* irradiance;
+	static Shader* lines;
+	static Shader* ssao;
+	static Shader* ssaoBlur;
+	static Shader* prepass;
+	static Shader* super;
+
 };

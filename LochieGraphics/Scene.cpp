@@ -6,7 +6,6 @@
 #include "Ecco.h"
 #include "Sync.h"
 #include "ResourceManager.h"
-#include "ShaderEnum.h"
 #include "Skybox.h"
 #include "Collider.h"
 #include "Collision.h"

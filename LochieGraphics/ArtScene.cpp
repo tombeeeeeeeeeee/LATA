@@ -5,7 +5,6 @@
 #include "Skybox.h"
 #include "Camera.h"
 #include "SceneObject.h"
-#include "ShaderEnum.h"
 #include "Paths.h"
 #include "UserPreferences.h"
 
@@ -353,10 +352,10 @@ void ArtScene::Start()
 	};
 
 	auto temp = Texture::LoadCubeMap(&skyboxPaths[0]);
-	skybox = new Skybox(shaders[skyBoxShader], temp);
+	skybox = new Skybox(ResourceManager::skyBoxShader, temp);
 
 	model = ResourceManager::LoadModel();
-	material = ResourceManager::LoadMaterial("New Material", shaders[super]);
+	material = ResourceManager::LoadMaterial("New Material", ResourceManager::super);
 	unsigned long long GUID = material->GUID;
 	*material = *ResourceManager::defaultMaterial;
 	material->GUID = GUID;
@@ -422,7 +421,7 @@ void ArtScene::GUI()
 {
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 
-		if (ResourceManager::MaterialSelector("Editing Material", &material, shaders[super], false)) {
+		if (ResourceManager::MaterialSelector("Editing Material", &material, ResourceManager::super, false)) {
 			// TODO: Refresh the preview materials
 		}
 

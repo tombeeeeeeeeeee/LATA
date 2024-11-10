@@ -60,10 +60,7 @@ public:
     glm::vec2 mapDelta = { 0.0f, 0.0f };
     int frameCountInSixteen = 0;
 
-    void Start(
-        unsigned int _skyboxTexture,
-        std::vector<Shader*>* _shaders
-    );
+    void Start(unsigned int _skyboxTexture);
 
     void LevelLoad();
 
@@ -154,13 +151,6 @@ private:
     /// </summary>
     std::vector<std::vector<unsigned int>> entityShaderOrder;
 
-    /// <summary>
-    /// shader programs
-    /// </summary>
-    std::vector<Shader*>* shaders = {};
-
-
-
     void DrawAllRenderers(
         std::unordered_map<unsigned long long, Animator*>& animators,
         std::unordered_map<unsigned long long, Transform>& transforms,
@@ -183,7 +173,7 @@ private:
     unsigned int compositeFBO = 0;
     unsigned int bloomBuffer = 0;
     unsigned int colorBuffer = 0;
-    int compositeShaderIndex = 0;
+    Shader* compositeShader = nullptr;
 
     unsigned int outputFBO = 0;
     unsigned int outputTexture = 0;
@@ -212,9 +202,9 @@ private:
 
     unsigned int lightPassBuffer = 0;
     unsigned int lightPassFBO = 0;
-    int ambientPassShaderIndex = 0;
-    int pointLightPassShaderIndex = 0;
-    int spotlightPassShaderIndex = 0;
+    Shader* ambientPassShader = nullptr;
+    Shader* pointLightPassShader = nullptr;
+    Shader* spotlightPassShader = nullptr;
     void LightPassSetup();
     void RenderAmbientPass();
 

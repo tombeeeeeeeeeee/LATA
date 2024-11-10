@@ -7,7 +7,6 @@
 #include "Collider.h"
 #include "Camera.h"
 #include "Ecco.h"
-#include "ShaderEnum.h"
 #include "Sync.h"
 
 #include "Utilities.h"
@@ -73,7 +72,7 @@ void GameTest::Start()
 	camera->state = Camera::targetingPlayersOrthographic;
 	gameCamSystem.cameraPositionDelta = { -15,10,15 };
 
-	Material* robotMaterial = ResourceManager::LoadMaterial("robot", shaders[super]);
+	Material* robotMaterial = ResourceManager::LoadMaterial("robot", ResourceManager::super);
 	robotMaterial->AddTextures(std::vector<Texture*>{
 		ResourceManager::LoadTexture("images/otherskybox/top.png", Texture::Type::albedo, GL_REPEAT, true),
 			ResourceManager::LoadTexture("models/soulspear/soulspear_specular.tga", Texture::Type::PBR, GL_REPEAT, true),
@@ -91,7 +90,7 @@ void GameTest::Start()
 	r->name = "Ecco";
 	h->name = "Sync";
 
-	sync->Start(&shaders);
+	sync->Start();
 
 	SceneObject* newSceneObject = new SceneObject(this, "Walls");
 	RigidBody* newRigidBody = new RigidBody(0.0f, 0.0f, {}, true);
@@ -148,7 +147,7 @@ void GameTest::Update(float delta)
 	if (firstFrame)
 	{
 		firstFrame = false;
-		Skybox irradiance = Skybox(shaders[skyBoxShader], Texture::LoadCubeMap(irradianceFaces.data()));
+		Skybox irradiance = Skybox(ResourceManager::skyBoxShader, Texture::LoadCubeMap(irradianceFaces.data()));
 		renderSystem.SetIrradianceMap(irradiance.texture);
 	}
 
