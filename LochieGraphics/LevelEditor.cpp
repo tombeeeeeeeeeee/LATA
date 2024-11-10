@@ -317,6 +317,30 @@ void LevelEditor::Update(float delta)
 			gui.getSelected()->transform()->setPosition({ pos.x, previousY, pos.z });
 		}
 	}
+
+	if (multiSelecting && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+		multiSelecting = false;
+		glm::vec2 mousePos = EditorCamMouseToWorld();
+		std::vector<SceneObject*> selected;
+		for (auto& i : transforms)
+		{
+			Transform* parent = i.second.getParent();
+			if (parent) {
+				if (parent->getSceneObject() == groundTileParent) {
+					continue;
+				}
+			}
+			glm::vec2 pos = i.second.get2DGlobalPosition();
+			if (pos.x > fminf(multiSelectingPos.x, mousePos.x) &&
+					pos.x < fmaxf(multiSelectingPos.x, mousePos.x) &&
+					pos.y > fminf(multiSelectingPos.y, mousePos.y) &&
+					pos.y < fmaxf(multiSelectingPos.y, mousePos.y)) {
+				selected.push_back(i.second.so);
+			}
+		}
+		gui.setSelected(selected);
+	}
+
 	if (!lastFramePlayState && inPlay) //On Play Enter
 	{
 		SaveLevel();
@@ -652,7 +676,13 @@ void LevelEditor::OnMouseDown()
 
 	if (camera->state == Camera::State::tilePlacing && state == BrushState::viewSelect) {
 		glm::vec2 mouseWorld = EditorCamMouseToWorld();
-		Selector(mouseWorld);
+		if (glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_SHIFT)) {
+			multiSelecting = true;
+			multiSelectingPos = mouseWorld;
+		}
+		else {
+			Selector(mouseWorld);
+		}
 	}
 }
 

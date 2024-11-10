@@ -188,9 +188,14 @@ void GUI::Update()
 	}
 }
 
-SceneObject* GUI::getSelected()
+SceneObject* GUI::getSelected() const
 {
 	return sceneObjectSelected;
+}
+
+const std::set<SceneObject*>& GUI::getMultiSelected() const
+{
+	return multiSelectedSceneObjects;
 }
 
 void GUI::setSelected(SceneObject* so)
@@ -203,6 +208,16 @@ void GUI::setSelected(SceneObject* so)
 	}
 
 	multiSelectedSceneObjects.clear();
+}
+
+void GUI::setSelected(std::vector<SceneObject*> sceneObjects)
+{
+	if (sceneObjects.size() == 1) {
+		setSelected(sceneObjects.front());
+	}
+	else {
+		multiSelectedSceneObjects = std::set<SceneObject*>(sceneObjects.begin(), sceneObjects.end());
+	}
 }
 
 void GUI::AddFromToSelection(SceneObject* from, SceneObject* to)

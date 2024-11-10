@@ -202,7 +202,9 @@ void HealthSystem::GUI()
 	ImGui::DragFloat("DIstance For Healing Ability", &healDistance, 20.0f, 0);
 	ImGui::DragFloat("Tolerance for no Line of Sight", &losToleranceTime, 0.02f, 0);
 
-	abilityUI.GUI();
+	if (ImGui::CollapsingHeader("Heal Ability UI")) {
+		abilityUI.GUI();
+	}
 
 	ImGui::End();
 }

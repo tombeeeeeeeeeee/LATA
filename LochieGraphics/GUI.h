@@ -53,8 +53,10 @@ public:
 
 	void Update();
 
-	SceneObject* getSelected();
+	SceneObject* getSelected() const;
+	const std::set<SceneObject*>& getMultiSelected() const;
 	void setSelected(SceneObject* so);
+	void setSelected(std::vector<SceneObject*> sceneObjects);
 
 private:
 
