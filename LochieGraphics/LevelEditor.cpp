@@ -895,8 +895,7 @@ void LevelEditor::Selector(glm::vec2 targetPos)
 		}
 		if (i.second.getSceneObject() == groundTileParent)
 		if (i.second.getSceneObject() == gui.getSelected()) { continue; }
-		glm::vec3 temp = i.second.getPosition();
-		glm::vec2 pos = { temp.x, temp.z };
+		glm::vec2 pos = i.second.get2DGlobalPosition();
 		if (glm::length(pos - targetPos) < selectSize) {
 			gui.setSelected(i.second.getSceneObject());
 		}
