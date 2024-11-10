@@ -271,6 +271,13 @@ void SceneManager::Update()
 	if (scene->gui.getSelected()) {
 		scene->gui.getSelected()->DebugDraw();
 	}
+	else if (!scene->gui.getMultiSelected().empty()) {
+		auto& s = scene->gui.getMultiSelected();
+		for (auto i : s)
+		{
+			i->DebugDraw();
+		}
+	}
 	for (auto& i : scene->animators)
 	{
 		i.second.UpdateAnimation(deltaTime);

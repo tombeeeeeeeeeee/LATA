@@ -47,6 +47,7 @@ if(loading##type##s){																				       \
 	for (int i = 0; i < loading##type##s->size(); i++)                                                     \
 	{                                                                                                      \
 		toml::table* loading##type = loading##type##s->at(i).as_table();                                   \
+                               /* TODO:  Should be constructing in place */                                \
 		container[Serialisation::LoadAsUnsignedLongLong((*loading##type)["guid"])] = type(*loading##type); \
 	}																								       \
 }
@@ -216,22 +217,34 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 		new SceneObject(this, loadingSceneObject);
 	}
 
-	toml::array* loadingModelRenderers = data["Renderers"].as_array(); if (loadingModelRenderers) {
-		for (int i = 0; i < loadingModelRenderers->size(); i++) {
-			toml::table* loadingModelRenderer = loadingModelRenderers->at(i).as_table(); renderers[Serialisation::LoadAsUnsignedLongLong((*loadingModelRenderer)["guid"])] = ModelRenderer(*loadingModelRenderer);
-		}
-	};
+	LoadPart(renderers, "Renderers", ModelRenderer);
 	toml::array* loadingTransforms = data["Transforms"].as_array(); if (loadingTransforms) {
 		for (int i = 0; i < loadingTransforms->size(); i++) {
 			toml::table* loadingTransform = loadingTransforms->at(i).as_table(); transforms[Serialisation::LoadAsUnsignedLongLong((*loadingTransform)["guid"])].Load(*loadingTransform);
 		}
 	};
+
 	// Loading transforms doesn't keep the sceneobject pointer, they need to be refreshed
-	// There was previously a bug that meant the hierarchy linkage could be broken
+	std::vector<unsigned long long> toDeleteOfTransforms;
 	for (auto& i : transforms)
 	{
-		i.second.so = sceneObjects[i.first];
+		auto search = sceneObjects.find(i.first);
+		if (search == sceneObjects.end()) {
+			toDeleteOfTransforms.push_back(i.first);
+		}
+		else {
+			i.second.so = search->second;
+		}
 	}
+	for (size_t i = 0; i < toDeleteOfTransforms.size(); i++)
+	{
+		transforms.erase(toDeleteOfTransforms.at(i));
+	}
+
+
+
+
+	// There was previously a bug that meant the hierarchy linkage could be broken
 	// Some transform could be linked incorrectly, remove any that are
 	for (auto& i : transforms)
 	{
@@ -284,14 +297,14 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 		// TODO: Don't think sceneObjects need to store parents
 		unsigned long long parentGUID = Serialisation::LoadAsUnsignedLongLong((*loading)["parent"]);
 		if (parentGUID) {
-			sceneObject->transform()->setParent(sceneObjects[parentGUID]->transform());
+			sceneObject->transform()->setParent(sceneObjects.at(parentGUID)->transform());
 		}
 		auto loadingChildren = (*loading)["children"].as_array();
 		for (size_t i = 0; i < loadingChildren->size(); i++)
 		{
 			auto& temp = loadingChildren->at(i);
 			unsigned long long childGUID = Serialisation::LoadAsUnsignedLongLong(temp);
-			sceneObject->transform()->AddChild(sceneObjects[childGUID]->transform());
+			sceneObject->transform()->AddChild(sceneObjects.at(childGUID)->transform());
 		}
 	}
 
@@ -304,6 +317,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 			DeleteSceneObject(i.first);
 		}	
 	}
+	EnsurePartsValueMatchesParts();
 }
 
 #define EnsurePartSafety(container)                             \
@@ -324,8 +338,35 @@ void Scene::EnsureAllPartsHaveSceneObject()
 	// TODO: Rest of parts
 	unsigned int partsChecker = Parts::ALL;
 
-	EnsurePartSafety(transforms);
+	// Transform do this themselves on load parts
+	//EnsurePartSafety(transforms);
 	EnsurePartSafety(renderers);
+	EnsurePartSafety(rigidBodies);
+}
+
+#define EnsurePartValueMatchesParts(partsType, container)                                                  \
+if (container.find(i.first) == container.end()) {                                                          \
+	if (i.second->parts & partsType) {                                                                     \
+		i.second->parts &= !partsType;                                                                     \
+		std::cout << "Error: removed extra (missing actual part) parts marker for " << #partsType << '\n'; \
+	}                                                                                                      \
+}																										   \
+else if (!(i.second->parts & partsType)) {																   \
+	i.second->parts |= partsType;                                                                          \
+	std::cout << "Error: added extra (had actual part) parts marker for " << #partsType << '\n';           \
+}
+
+void Scene::EnsurePartsValueMatchesParts()
+{
+	// TODO: For all parts
+	// TODO: Put a parts checker
+
+	for (auto& i : sceneObjects)
+	{
+		EnsurePartValueMatchesParts(Parts::rigidBody, rigidBodies);
+		EnsurePartValueMatchesParts(Parts::collider, colliders);
+		EnsurePartValueMatchesParts(Parts::modelRenderer, renderers);
+	}
 }
 
 void Scene::InitialiseLayers()

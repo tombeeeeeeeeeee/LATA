@@ -45,11 +45,12 @@ void PhysicsSystem::UpdateRigidBodies(
 		rb->netDepen = { 0,0 };
 		rb->netForce = { 0,0 };
 
-		glm::vec3 eulers = transforms[i->first].getEulerRotation();
+		Transform& t = transforms.at(i->first);
+		glm::vec3 eulers = t.getEulerRotation();
 
-		transforms[i->first].setPosition(transforms[i->first].getPosition() + glm::vec3(pos.x, 0.0f, pos.y));
-		transforms[i->first].setRotation(
-			transforms[i->first].getRotation()
+		t.setPosition(t.getPosition() + glm::vec3(pos.x, 0.0f, pos.y));
+		t.setRotation(
+			t.getRotation()
 			*
 			glm::rotate(glm::identity<glm::quat>(), rb->angularVel * deltaTime, {0.0f,1.0f,0.0f})
 		);

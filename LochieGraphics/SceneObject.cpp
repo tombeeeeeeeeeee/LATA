@@ -319,13 +319,14 @@ void SceneObject::MultiMenuGUI(std::set<SceneObject*> multiSelectedSceneObjects,
 
 void SceneObject::DebugDraw()
 {
+	Transform* t = &scene->transforms.at(GUID);
 	if (parts & Parts::rigidBody)
 	{
-		scene->rigidBodies[GUID].DebugDraw(&scene->transforms[GUID]);
+		scene->rigidBodies.at(GUID).DebugDraw(t);
 	}
 	if (parts & Parts::collider)
 	{
-		scene->colliders[GUID]->DebugDraw(&scene->transforms[GUID]);
+		scene->colliders.at(GUID)->DebugDraw(t);
 	}
 	if (parts & Parts::modelRenderer && UserPreferences::showSelectedBox) {
 		Model* model = renderer()->model;
