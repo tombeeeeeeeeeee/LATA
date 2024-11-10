@@ -165,7 +165,9 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 	}
 	SavePart(renderers);
 	SavePart(transforms);
-	SavePart(animators);
+	auto savedanimators = toml::array(); for (auto i = animators.begin(); i != animators.end(); i++) {
+		savedanimators.push_back(i->second->Serialise(i->first));
+	};
 	SavePart(rigidBodies);
 	SavePart(enemies);
 	auto savedcolliders = toml::array(); for (auto i = colliders.begin(); i != colliders.end(); i++) {
@@ -264,7 +266,11 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 			std::cout << "Error: Found a sceneobject with a broken transform hierarchy, removing object\n";
 		}
 	}
-	LoadPart(animators, "Animators", Animator);
+	toml::array* loadingAnimators = data["Animators"].as_array(); if (loadingAnimators) {
+		for (int i = 0; i < loadingAnimators->size(); i++) {
+			toml::table* loadingAnimator = loadingAnimators->at(i).as_table(); animators[Serialisation::LoadAsUnsignedLongLong((*loadingAnimator)["guid"])] = new Animator(*loadingAnimator);
+		}
+	};
 	LoadPart(rigidBodies, "RigidBodies", RigidBody);
 	LoadPart(enemies, "Enemies", Enemy);
 	LoadPart(spawnManagers, "SpawnManagers", SpawnManager);

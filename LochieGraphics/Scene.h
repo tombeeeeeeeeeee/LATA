@@ -57,7 +57,7 @@ public:
 	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};
 	std::unordered_map<unsigned long long, Transform> transforms = {};
 	// TODO: There is types of animators, don't think its safe to store them like this
-	std::unordered_map<unsigned long long, Animator> animators = {};
+	std::unordered_map<unsigned long long, Animator*> animators = {};
 	std::unordered_map<unsigned long long, RigidBody> rigidBodies = {};
 	std::unordered_map<unsigned long long, Collider*> colliders = {};
 	std::unordered_map<unsigned long long, Health> healths = {};

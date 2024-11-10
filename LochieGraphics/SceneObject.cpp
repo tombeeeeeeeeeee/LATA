@@ -111,15 +111,15 @@ void SceneObject::GUI()
 		// TODO: Button to 'overwrite' the prefab, like apply changes to prefab
 	}
 
-	scene->transforms[GUID].GUI();
+	scene->transforms.at(GUID).GUI();
 
-	if (parts & Parts::modelRenderer) { scene->renderers[GUID].GUI(); }
-	if (parts & Parts::rigidBody) { scene->rigidBodies[GUID].GUI(); }
+	if (parts & Parts::modelRenderer) { scene->renderers.at(GUID).GUI(); }
+	if (parts & Parts::rigidBody) { scene->rigidBodies.at(GUID).GUI(); }
 
 	if (parts & Parts::collider) { 
 		// Collapsing Header is not apart of the collider GUI as it can be apart of the rigidbody too
 		if (ImGui::CollapsingHeader(("Collider##" + tag).c_str())) {
-			scene->colliders[GUID]->GUI();
+			scene->colliders.at(GUID)->GUI();
 		}
 	}
 	
@@ -147,11 +147,11 @@ void SceneObject::GUI()
 
 	if (parts & Parts::exitElevator)
 	{
-		scene->exits[GUID].GUI(this);
+		scene->exits.at(GUID).GUI(this);
 	}
 	// TODO: Add animator parts;
 	if ((parts & Parts::animator)) {
-		scene->animators[GUID].GUI();
+		scene->animators.at(GUID)->GUI();
 	}
 
 	std::string addPopup = "SceneObject Add Part" + tag;
@@ -415,7 +415,9 @@ toml::table SceneObject::SerialiseWithParts() const
 	table.emplace("sceneObject", Serialise());
 
 	SavePart("modelRenderer", modelRenderer, renderers);
-	SavePart("animator", animator, animators);
+	if (Parts::animator & parts) {
+		table.emplace("animator", scene->animators.at(GUID)->Serialise(GUID)); safetyCheck &= ~Parts::animator;
+	};
 	SavePart("rigidBody", rigidBody, rigidBodies);
 	SavePart("health", health, healths);
 	SavePart("enemy", enemy, enemies);
@@ -486,9 +488,9 @@ Transform* SceneObject::transform() const
 SetAndGetForPart(ModelRenderer, renderers, Parts::modelRenderer, Renderer, renderer)
 void SceneObject::setAnimator(Animator* part) {
 	if (part) {
-		parts |= Parts::animator; scene->animators[GUID] = *part;
+		parts |= Parts::animator; scene->animators[GUID] = part;
 		if (parts & Parts::modelRenderer) {
-			renderer()->animator = &scene->animators[GUID];
+			renderer()->animator = scene->animators[GUID];
 		}
 	}
 	else {
@@ -499,7 +501,9 @@ void SceneObject::setAnimator(Animator* part) {
 	};
 } 
 Animator* SceneObject::animator() {
-	getPart(animators, Parts::animator);
+	if (parts & Parts::animator) {
+		return (scene->animators.at(GUID));
+	} return nullptr;
 }
 SetAndGetForPart(RigidBody, rigidBodies, Parts::rigidBody, RigidBody, rigidbody)
 SetAndGetForPart(Health, healths, Parts::health, Health, health)

@@ -280,7 +280,7 @@ void SceneManager::Update()
 	}
 	for (auto& i : scene->animators)
 	{
-		i.second.UpdateAnimation(deltaTime);
+		i.second->UpdateAnimation(deltaTime);
 	}
 	scene->particleSystem.Update(deltaTime);
 

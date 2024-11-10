@@ -89,7 +89,7 @@ public:
         std::unordered_map<unsigned long long, ModelRenderer>& renders,
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
-        std::unordered_map<unsigned long long, Animator>& animators,
+        std::unordered_map<unsigned long long, Animator*>& animators,
         std::unordered_map<unsigned long long, PointLight>& pointLights,
         Camera* camera,
         float delta,
@@ -162,7 +162,7 @@ private:
 
 
     void DrawAllRenderers(
-        std::unordered_map<unsigned long long, Animator>& animators,
+        std::unordered_map<unsigned long long, Animator*>& animators,
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
         std::unordered_set<unsigned long long> animatedRenderered,
