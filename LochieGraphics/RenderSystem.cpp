@@ -364,6 +364,7 @@ void RenderSystem::Update(
     std::vector<Particle*> particles
 )
 {
+    frameCountInSixteen = (frameCountInSixteen + 1) % 16;
     std::unordered_set<unsigned long long> animatedRenderered = {};
     for (auto& i : animators)
     {
@@ -1034,6 +1035,7 @@ void RenderSystem::RenderAmbientPass()
     ambientShader->setVec2("mapMins", mapMin);
     ambientShader->setVec2("mapDimensions", mapDelta);
     ambientShader->setFloat("ambientIntensity", ambientIntensity);
+    ambientShader->setInt("frameCount", frameCountInSixteen);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, depthBuffer);

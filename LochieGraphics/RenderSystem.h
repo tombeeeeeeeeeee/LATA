@@ -58,6 +58,7 @@ public:
     bool inOrtho = false;
     glm::vec2 mapMin = { 0.0f, 0.0f };
     glm::vec2 mapDelta = { 0.0f, 0.0f };
+    int frameCountInSixteen = 0;
 
     void Start(
         unsigned int _skyboxTexture,
