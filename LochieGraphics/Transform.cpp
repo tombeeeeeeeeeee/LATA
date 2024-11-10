@@ -250,6 +250,11 @@ glm::vec2 Transform::get2DGlobalPosition() const
 	return { globalMatrix[3][0], globalMatrix[3][2] };
 }
 
+glm::vec2 Transform::get2DPosition() const
+{
+	return { position.x, position.z };
+}
+
 void Transform::setPosition(glm::vec3 pos)
 {
 	position = pos;

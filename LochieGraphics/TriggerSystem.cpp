@@ -74,7 +74,7 @@ void TriggerSystem::Update(
 {
 	for (auto& platePair : plates)
 	{
-		glm::vec2 pos = transforms[platePair.first].get2DGlobalPosition();
+		glm::vec2 pos = transforms[platePair.first].get2DPosition();
 		float actuation = -pressurePlateCompression * platePair.second.actuationAmount / timeToActuate;
 		transforms[platePair.first].setPosition({ pos.x, actuation, pos.y });
 
@@ -97,7 +97,8 @@ void TriggerSystem::Update(
 
 		}
 		if (!platePair.second.triggeredLastFrame && platePair.second.triggeredThisFrame) {
-			SceneManager::scene->audio.PlaySound(Audio::pressurePlateActivate);
+			// TODO: Sound not playing correctly, plays every frame, fix
+			//SceneManager::scene->audio.PlaySound(Audio::pressurePlateActivate);
 		}
 	}
 

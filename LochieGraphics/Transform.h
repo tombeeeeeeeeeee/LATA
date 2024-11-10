@@ -51,6 +51,7 @@ public:
 	glm::vec3 getPosition() const;
 	glm::vec3 getGlobalPosition() const;
 	glm::vec2 get2DGlobalPosition() const;
+	glm::vec2 get2DPosition() const;
 	void setPosition(glm::vec3 pos);
 
 	glm::vec3 forward() const;
