@@ -172,24 +172,27 @@ bool Ecco::Update(
 
 	if (inputDevice.getButton1())// && lastSpeedBoostPressed + speedBoostCooldown > Time.time)
 	{
-		if (!boosting && speedBoostUnactuated && timeSinceSpeedBoost >= speedBoostCooldown)
+		if (health.currHealth > speedBoostHPCost)
 		{
-			if (speedBoostInDirectionOfBody)
+			if (!boosting && speedBoostUnactuated && timeSinceSpeedBoost >= speedBoostCooldown)
 			{
-				wheelDirection = { forward.x, forward.z };
-			}
+				if (speedBoostInDirectionOfBody)
+				{
+					wheelDirection = { forward.x, forward.z };
+				}
 
-			rigidBody.AddImpulse(speedBoost * wheelDirection);
-			health.subtractHealth(speedBoostHPCost);
-			boosting = true;
-			timeSinceSpeedBoost = 0.0f;
-			timeInSpeedBoost = 0.0f;
-			SceneManager::scene->audio.PlaySound(Audio::eccoBoost);
-			Particle* boost = SceneManager::scene->particleSystem.AddParticle(100, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, transform.getGlobalPosition());
-			boost->explodeStrength = 5.0f;
-			boost->Explode();
-			boost->Explode();
-			boost->Explode();
+				rigidBody.AddImpulse(speedBoost * wheelDirection);
+				health.subtractHealth(speedBoostHPCost);
+				boosting = true;
+				timeSinceSpeedBoost = 0.0f;
+				timeInSpeedBoost = 0.0f;
+				SceneManager::scene->audio.PlaySound(Audio::eccoBoost);
+				Particle* boost = SceneManager::scene->particleSystem.AddParticle(100, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, transform.getGlobalPosition());
+				boost->explodeStrength = 5.0f;
+				boost->Explode();
+				boost->Explode();
+				boost->Explode();
+			}
 		}
 
 		speedBoostUnactuated = false;

@@ -30,7 +30,7 @@ void PointLight::GUI()
 		std::string tag = Utilities::PointerToString(this);
 		ImGui::Checkbox(("On##" + tag).c_str(), &on);
 
-		ImGui::ColorPicker3(("Light Colour##" + tag).c_str(), &colour[0]);
+		ImGui::ColorPicker3(("Light Colour##" + tag).c_str(), &colour[0], ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
 		float _range = 100.0f * range;
 		if (ImGui::DragFloat(("Range##" + tag).c_str(), &_range, 0.1f))
 			SetRange(_range);

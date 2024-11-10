@@ -115,7 +115,7 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos, std::string tag)
     Scene* scene = SceneManager::scene;
 
     SceneObject* enemy = new SceneObject(scene, "ExplosiveEnemy" + std::to_string(explosiveEnemyCount++));
-    enemy->setEnemy(new Enemy((int)EnemyType::explosive, tag));
+    enemy->setEnemy(new Enemy((int)EnemyType::explosive, tag, getEnemyFrameIndex()));
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(explosiveEnemyHealth);
     enemy->setRigidBody(new RigidBody());
@@ -136,7 +136,7 @@ void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
     Scene* scene = SceneManager::scene;
 
     SceneObject* enemy = new SceneObject(scene, "MeleeEnemy" + std::to_string(meleeEnemyCount++));
-    enemy->setEnemy(new Enemy((int)EnemyType::melee, tag));
+    enemy->setEnemy(new Enemy((int)EnemyType::melee, tag, getEnemyFrameIndex()));
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(meleeEnemyHealth);
     enemy->setRigidBody(new RigidBody());
@@ -157,7 +157,7 @@ void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
     Scene* scene = SceneManager::scene;
 
     SceneObject* enemy = new SceneObject(scene, "RangedEnemy" + std::to_string(rangedEnemyCount++));
-    enemy->setEnemy(new Enemy((int)EnemyType::ranged, tag));
+    enemy->setEnemy(new Enemy((int)EnemyType::ranged, tag, getEnemyFrameIndex()));
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(rangedEnemyHealth);
     enemy->health()->currHealth = rangedEnemyHealth;
@@ -184,6 +184,7 @@ void EnemySystem::LineOfSightAndTargetCheck(
 {
     for (auto& pair : enemies)
     {
+        if (frameCount != pair.second.frameForCheck) continue;
         glm::vec2 pos = transforms[pair.first].get2DGlobalPosition();
         float distanceToSync = glm::length(syncPos - pos);
         float distanceToEcco = glm::length(eccoPos - pos);
@@ -474,7 +475,7 @@ void EnemySystem::Steering(
         glm::vec2 velocityDelta = enemyPair.second.boidVelocity - curVel;
         glm::vec2 forceThisFrame = velocityDelta / delta;
         rigidBodies[enemyPair.first].netForce += forceThisFrame;
-        enemyPair.second.aim = Utilities::Lerp(enemyPair.second.aim, enemyPair.second.boidVelocity, 0.01f);
+        enemyPair.second.aim = Utilities::Lerp(enemyPair.second.aim, enemyPair.second.boidVelocity, 0.1f);
 
         float angle = atan2f(enemyPair.second.aim.x, enemyPair.second.aim.y) * 180.0f / PI;
         if (isnan(angle)) continue;
@@ -509,6 +510,7 @@ void EnemySystem::Steering(
 
             if (spawnPair.second.spawning)
             {
+                if (spawnPair.second.spawnPattern.size() == 0) continue;
                 if (!spawner->triggeredOnce)
                 {
                     int count = 1;
@@ -578,6 +580,13 @@ glm::vec2 EnemySystem::GetNormalFlowInfluence(glm::vec2 pos)
     return { normalInfluence.x, normalInfluence.y };
 }
 
+int EnemySystem::getEnemyFrameIndex()
+{
+    int returnValue = enemyFrameIndex;
+    enemyFrameIndex = (enemyFrameIndex + 1) % frameCountMin;
+    return returnValue;
+}
+
 
 //TODO: Add AI Pathfinding and attacking in here.
 void EnemySystem::Update   (
@@ -589,6 +598,8 @@ void EnemySystem::Update   (
     glm::vec2 eccoPos, glm::vec2 syncPos, float delta
 )
 {
+    frameCount = (frameCount + 1) % frameCountMin;
+
     if (aiUpdating)
     {
         AbilityCheck(

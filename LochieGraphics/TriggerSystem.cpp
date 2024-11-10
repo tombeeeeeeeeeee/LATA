@@ -15,6 +15,7 @@ std::multimap<std::string, unsigned long long> TriggerSystem::triggerables = {};
 
 void TriggerSystem::TriggerTag(std::string tag, bool toggle)
 {
+	if (tag == "") return;
 	auto range = triggerables.equal_range(tag);
 	for (auto& it = range.first; it != range.second; it++)
 	{
@@ -75,16 +76,16 @@ void TriggerSystem::Update(
 	for (auto& platePair : plates)
 	{
 		glm::vec2 pos = transforms[platePair.first].get2DPosition();
-		float actuation = -pressurePlateCompression * platePair.second.actuationAmount / timeToActuate;
+		float actuation = Utilities::Lerp(platePair.second.atRestHeight, -platePair.second.actuationAmount, platePair.second.timeInActuation / timeToActuate );
 		transforms[platePair.first].setPosition({ pos.x, actuation, pos.y });
 
 		//Actuation
 		if (platePair.second.triggeredThisFrame)
-			platePair.second.actuationAmount += delta;
+			platePair.second.timeInActuation += delta;
 		else
-			platePair.second.actuationAmount -= delta;
+			platePair.second.timeInActuation -= delta;
 
-		platePair.second.actuationAmount = glm::clamp(platePair.second.actuationAmount, 0.0f, timeToActuate);
+		platePair.second.timeInActuation = glm::clamp(platePair.second.timeInActuation, 0.0f, timeToActuate);
 
 		if (!platePair.second.eccoToggled)
 		{
