@@ -24,7 +24,7 @@ Animation::Animation(const std::string& animationPath, Model* _model) :
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	
 	// If either the scene or the root node is null, then the animation has failed to load
-	if (!(scene && scene->mRootNode)) {
+	if (!scene || !scene->mRootNode || !scene->mNumAnimations) {
 		std::cout << "Error: Failed to load animation at: " << animationPath << "\n";
 		return;
 	}

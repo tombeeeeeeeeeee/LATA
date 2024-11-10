@@ -16,11 +16,10 @@ void BlendedAnimator::UpdateAnimation(float delta)
         return;
     }
     currentTime += currentAnimation->getTicksPerSecond() * delta;
-    currentTime = fmod(currentTime, currentAnimation->getDuration());
+    currentTime = fmodf(currentTime, currentAnimation->getDuration());
     currentTimeOther += otherCurrentAnimation->getTicksPerSecond() * delta;
-    currentTimeOther = fmod(currentTimeOther, otherCurrentAnimation->getDuration());
+    currentTimeOther = fmodf(currentTimeOther, otherCurrentAnimation->getDuration());
     CalculateBoneTransform(currentAnimation->getRootNode(), glm::mat4(1.0f));
-
 }
 
 void BlendedAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 parentTransform)
@@ -53,6 +52,7 @@ void BlendedAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm
         glm::quat quat1 = glm::quat_cast(bone1Transform);
         glm::quat quat2 = glm::quat_cast(bone2Transform);
 
+        // TODO: there is a lerp function in utils
         //glm::vec3 lerpPos = pos1 + (pos2 - pos1) * lerpAmount;
         glm::vec3 lerpPos = pos1 * (1.f - lerpAmount) + pos2 * lerpAmount;
         glm::quat slerpQuat = glm::slerp(quat1, quat2, lerpAmount);

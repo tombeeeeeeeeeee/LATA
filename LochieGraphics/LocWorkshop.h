@@ -20,6 +20,7 @@ private:
 	Animation animation4;
 
 	Animation animation5;
+	Animation animation6;
 	
 	Shader* shader;
 
