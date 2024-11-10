@@ -12,7 +12,7 @@ void DoorAndBollardSystem::Start(
 {
 	for (auto& doorPair : doors)
 	{
-		doorPair.second.pos = transforms[doorPair.first].getPosition();
+		doorPair.second.startingPos = transforms.at(doorPair.first).getPosition();
 	}
 }
 
@@ -58,8 +58,9 @@ void DoorAndBollardSystem::Update(
 		}
 		moveAmount = glm::clamp(moveAmount, 0.0f, 1.0f) * flip;
 		moveAmount *= doorPair.second.amountToMove;
-		transforms[doorPair.first].setPosition(
-			doorPair.second.pos + transforms[doorPair.first].left() * moveAmount
+		Transform& transform = transforms.at(doorPair.first);
+		transform.setPosition(
+			doorPair.second.startingPos + glm::vec3(1.0f, 0.0f, 0.0f) * moveAmount
 		);
 	}
 	for (auto& bolPair : bollards)
