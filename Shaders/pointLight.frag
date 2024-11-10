@@ -178,7 +178,6 @@ float ScreenSpaceShadows()
 
     vec3 ray_pos = worldPos;
     vec3 ray_dir = normalize(posToLight).xyz;
-    float startingDepth = (view * vec4(worldPos, 1.0)).z;
     // Compute ray step
     vec3 ray_step = ray_dir * sssStepLength;
 	
@@ -187,6 +186,8 @@ float ScreenSpaceShadows()
     vec2 ray_uv   = vec2(0.0);
     float offset = interleaved_gradient_noise(gl_FragCoord.xy);
     ray_pos += ray_step * offset;
+    float startingDepth = (view * vec4(worldPos, 1.0)).z;
+    
 
     for (uint i = 0; i < sssSteps; i++)
     {
@@ -208,11 +209,11 @@ float ScreenSpaceShadows()
             float depth_delta = sampleScreenPos.z - viewSpace.z;
 
             // Check if the camera can't "see" the ray (ray depth must be larger than the camera depth, so positive depth_delta)
-            bool onCam = (depth_delta > 0.0f);
+            bool onCam = (depth_delta > 0.0);
             if (onCam)
             {
                 // Mark as occluded
-                occlusion = 1.0f;
+                occlusion = 1.0;
                 break;
             }
         }
@@ -220,7 +221,7 @@ float ScreenSpaceShadows()
     }
 
     // Convert to visibility
-    return 1.0f - occlusion;
+    return 1.0 - occlusion;
 }
 
 float interleaved_gradient_noise(vec2 screen_pos)
