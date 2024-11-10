@@ -476,14 +476,16 @@ void RenderSystem::Update(
     if (postEffectOn) {
         postFrameBuffer->Bind();
     }
-
-    glViewport(0, 0, SCREEN_WIDTH / superSampling, SCREEN_HEIGHT / superSampling);
+    else {
+        glViewport(0, 0, SCREEN_WIDTH / superSampling, SCREEN_HEIGHT / superSampling);
+    }
     
     RenderQuad();
 
     if (postEffectOn) {
         FrameBuffer::Unbind();
 
+        glViewport(0, 0, SCREEN_WIDTH / superSampling, SCREEN_HEIGHT / superSampling);
 
         postProcess->Use();
         postFrameTexture->Bind(1);
