@@ -96,8 +96,9 @@ void GameplayCameraSystem::Update(Camera& camera, Transform& eccoTransform, Tran
 	}
 }
 
-void GameplayCameraSystem::GUI()
+bool GameplayCameraSystem::FileSelector(std::string* filename)
 {
+	std::string* selected = nullptr;
 	std::vector<std::string> loadPaths = {};
 	std::vector<std::string*> loadPathsPointers = {};
 	loadPaths.clear();
@@ -115,12 +116,23 @@ void GameplayCameraSystem::GUI()
 	for (auto& i : loadPaths)
 	{
 		loadPathsPointers.push_back(&i);
+		if (*filename == i) {
+			selected = &i;
+		}
 	}
 
-	std::string* selected = &filename;
+	if (ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Camera System Filename", Utilities::PointerToString(filename))) {
+		*filename = *selected;
+		return true;
+	}
 
-	ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Filename", Utilities::PointerToString(&loadPathsPointers));
-	filename = *selected;
+	return false;
+}
+
+void GameplayCameraSystem::GUI()
+{
+	FileSelector(&filename);
+
 	if (ImGui::Button("Save##CameraSystems")) {
 
 		std::ofstream file(Paths::systemPath + filename + Paths::cameraSystemExtension);
@@ -133,16 +145,13 @@ void GameplayCameraSystem::GUI()
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Load##CameraSystem")) {
-		if (selected)
-		{
-			std::ifstream file(Paths::systemPath + filename + Paths::cameraSystemExtension);
+		std::ifstream file(Paths::systemPath + filename + Paths::cameraSystemExtension);
 
-			toml::table data = toml::parse(file);
+		toml::table data = toml::parse(file);
 
-			Load(data);
+		Load(data);
 
-			file.close();
-		}
+		file.close();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Save as##CameraSystem"))

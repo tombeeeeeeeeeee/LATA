@@ -37,6 +37,8 @@ public:
 		float delta
 	);
 
+	// TODO: make a util function to do some of this
+	static bool FileSelector(std::string* filename);
 	void GUI();
 	void SaveAsGUI();
 	glm::vec3 damageColour = { 0.8f,0.0f,0.0f };

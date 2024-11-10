@@ -131,8 +131,12 @@ public:
 		bool spawner = true
 	);
 
+	static bool FileSelector(std::string* filename);
+
+
 	void GUI();
 	void SaveAsGUI();
+
 	std::string filename = "";
 	std::string newFilename = "";
 	toml::table Serialise() const;

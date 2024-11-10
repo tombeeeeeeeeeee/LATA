@@ -45,6 +45,7 @@ public:
 
 	//void ChangeCameraState(Camera& camera, Camera::State state);
 
+	static bool FileSelector(std::string* filename);
 	void GUI();
 	void SaveAsGUI();
 	toml::table Serialise();

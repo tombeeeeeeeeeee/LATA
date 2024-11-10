@@ -646,8 +646,9 @@ void EnemySystem::SpawnEnemiesInScene(
 }
 
 
-void EnemySystem::GUI()
+bool EnemySystem::FileSelector(std::string* filename)
 {
+    std::string* selected = nullptr;
     std::vector<std::string> loadPaths = {};
     std::vector<std::string*> loadPathsPointers = {};
     loadPaths.clear();
@@ -665,12 +666,24 @@ void EnemySystem::GUI()
     for (auto& i : loadPaths)
     {
         loadPathsPointers.push_back(&i);
+        if (*filename == i) {
+            selected = &i;
+        }
     }
 
-    std::string* selected = &filename; 
 
-    ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Filename", Utilities::PointerToString(&loadPathsPointers));
-    filename = *selected;
+    if (ExtraEditorGUI::InputSearchBox(loadPathsPointers.begin(), loadPathsPointers.end(), &selected, "Enemy System Filename", Utilities::PointerToString(filename))) {
+        *filename = *selected;
+        return true;
+    }
+
+    return false;
+}
+
+void EnemySystem::GUI()
+{
+    FileSelector(&filename);
+
     if (ImGui::Button("Save##EnemySystems")) {
 
         std::ofstream file(Paths::systemPath + filename + Paths::enemySystemExtension);
@@ -683,16 +696,13 @@ void EnemySystem::GUI()
     }
     ImGui::SameLine();
     if (ImGui::Button("Load##EnemySystems")) {
-        if (selected)
-        {
-            std::ifstream file(Paths::systemPath + filename + Paths::enemySystemExtension);
+        std::ifstream file(Paths::systemPath + filename + Paths::enemySystemExtension);
 
-            toml::table data = toml::parse(file);
+        toml::table data = toml::parse(file);
 
-            Load(data);
+        Load(data);
  
-            file.close();
-        }
+        file.close();
     }
     ImGui::SameLine();
     if (ImGui::Button("Save as"))

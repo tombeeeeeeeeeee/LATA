@@ -127,10 +127,10 @@ void UserPreferences::GUI()
 			ImGui::Unindent();
 		}
 		if (ImGui::Checkbox("Immortal", &immortal)) { shouldSave = true; }
-		if (ImGui::InputText("Default Camera System Load", &defaultCameraSystemLoad)) { shouldSave = true; }
-		if (ImGui::InputText("Default Enemy System Load", &defaultEnemySystemLoad)) { shouldSave = true; }
-		if (ImGui::InputText("Default Health System Load", &defaultHealthSystemLoad)) { shouldSave = true; }
-			
+		if (GameplayCameraSystem::FileSelector(&defaultCameraSystemLoad)) { shouldSave = true; }
+		if (EnemySystem::FileSelector(&defaultEnemySystemLoad)) { shouldSave = true; }
+		if (HealthSystem::FileSelector(&defaultHealthSystemLoad)) { shouldSave = true; }
+
 		ImGui::Unindent();
 	}
 	if (shouldSave) {
