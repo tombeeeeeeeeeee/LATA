@@ -238,6 +238,9 @@ void SceneObject::MenuGUI()
 	if (ImGui::MenuItem((("Duplicate##RightClick") + tag).c_str())) {
 		Duplicate();
 	}
+	if (ImGui::MenuItem(("Add empty child##" + tag).c_str())) {
+		(new SceneObject(scene))->transform()->setParent(transform());
+	}
 	if (ImGui::MenuItem(("Save As Prefab##RightClick" + tag).c_str())) {
 		SaveAsPrefab();
 	}
