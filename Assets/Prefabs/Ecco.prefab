@@ -24,14 +24,14 @@ speedReductionAfterDamaging = 200.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
 turningCircleScalar = 0.05999999865889549
-wheelDirection = [ -0.9229004383087158, -0.3850388824939728 ]
+wheelDirection = [ 0.9523025751113892, 0.3051552474498749 ]
 wheelTurnSpeed = 4.0
 
     [ecco.boostUI]
     backgroundColour = [ 0.4274509847164154, 0.21960784494876862, 0.26926952600479126 ]
     foregroundColour = [ 0.6853627562522888, 0.4503093361854553, 0.8141592741012573 ]
-    offset = [ -0.5109999775886536, -0.9319999814033508 ]
-    scale = [ 0.37299999594688416, 0.041999995708465576 ]
+    offset = [ -0.24999995529651642, -0.9284999966621399 ]
+    scale = [ 0.11200003325939178, 0.045499980449676514 ]
 
     [ecco.healthUI]
     backgroundColour = [ 0.21960784494876862, 0.32156863808631897, 0.4274509847164154 ]
@@ -40,7 +40,7 @@ wheelTurnSpeed = 4.0
     scale = [ 0.37299999594688416, 0.09000000357627869 ]
 
 [health]
-currHealth = 10
+currHealth = 9
 guid = '2091576976424546894'
 maxHealth = 10
 
@@ -52,7 +52,7 @@ modelGuid = '15070486382632221399'
 
 [rigidBody]
 accel = [ 0.0, 0.0 ]
-angularVel = -0.0
+angularVel = 0.0
 elasticicty = 0.0
 guid = '2091576976424546894'
 invMass = 0.10000000149011612
@@ -60,7 +60,10 @@ invMomentOfInertia = 0.20000000298023224
 isStatic = false
 netDepen = [ 0.0, 0.0 ]
 netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
+vel = [
+    2.613623974463858e-23,
+    8.375074328910949e-24
+]
 
     [[rigidBody.colliders]]
     collisionLayer = 16
@@ -88,11 +91,11 @@ prefabBase = '2091576976424546894'
 prefabStatus = 1
 
 [transform]
-euler = [ -179.91290283203125, -89.64974212646484, 179.91407775878906 ]
+euler = [ -0.0017432598397135735, 72.2170181274414, -0.0004867909592576325 ]
 guid = '2091576976424546894'
-position = [ 1171.975341796875, 0.0, -573.95068359375 ]
-quaternion = [ 0.7049421072006226, 3.986060619354248e-06, -0.7092647552490234, 1.0512478183954954e-05 ]
-scale = [ 0.9997994303703308, 1.0, 0.9997994303703308 ]
+position = [ 1027.696044921875, 0.0, 39.150535583496094 ]
+quaternion = [ 0.8079023957252502, -9.78702064458048e-06, 0.5893163681030273, 5.53314748685807e-06 ]
+scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
 
 [[children]]
 children = []
@@ -114,7 +117,7 @@ children = []
     name = 'Ecco light'
     parent = '2091576976424546894'
     parts = 16
-    prefabBase = '0'
+    prefabBase = '1153871057560872383'
     prefabStatus = 0
 
     [children.transform]
