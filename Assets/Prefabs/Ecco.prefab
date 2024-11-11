@@ -1,5 +1,3 @@
-children = []
-
 [ecco]
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
@@ -49,7 +47,7 @@ maxHealth = 10
 [modelRenderer]
 guid = '2091576976424546894'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0', '15449259407003476463', '15449352838481615396' ]
+materials = [ '2129808855546110652', '15449259407003476463', '15449352838481615396' ]
 modelGuid = '15070486382632221399'
 
 [rigidBody]
@@ -84,7 +82,7 @@ vel = [
     verts = [ [ 1.0, -46.0 ] ]
 
 [sceneObject]
-children = []
+children = [ '2120176559991300301' ]
 guid = '2091576976424546894'
 name = 'Ecco'
 parent = '0'
@@ -98,3 +96,22 @@ guid = '2091576976424546894'
 position = [ 4400.0, 0.0, 1100.0 ]
 quaternion = [ 0.8079022765159607, -9.787021554075181e-06, 0.5893164873123169, 5.533146122616017e-06 ]
 scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
+
+[[children]]
+children = []
+
+    [children.sceneObject]
+    children = []
+    guid = '2120176559991300301'
+    name = 'Unnamed Scene Object'
+    parent = '2091576976424546894'
+    parts = 0
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.transform]
+    euler = [ 0.0, 0.0, 0.0 ]
+    guid = '2120176559991300301'
+    position = [ 0.0, 0.0, 0.0 ]
+    quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]
