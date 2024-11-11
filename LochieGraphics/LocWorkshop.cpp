@@ -37,11 +37,11 @@ void LocWorkshop::Start()
 	animationTestPackets.emplace_back("sync7", Paths::importModelLocation + "ANIM_Sync_Shoot_Snipe_BlockOut.dae");
 	animationTestPackets.emplace_back("sync8", Paths::importModelLocation + "ANIM_Sync_Shoot_Charge.dae");
 	animationTestPackets.emplace_back("sync9", Paths::importModelLocation + "ANIM_Sync_Shoot_Hold.dae");
+	animationTestPackets.emplace_back("sync10", Paths::importModelLocation + "ANIM_Sync_Shoot_Snipe.dae");
 	animationTestPackets.emplace_back("ecco1", Paths::importModelLocation + "SK_EccoLeanBack.dae");
 	animationTestPackets.emplace_back("ecco2", Paths::importModelLocation + "SK_EccoLeanForward.dae");
 	animationTestPackets.emplace_back("ecco3", Paths::importModelLocation + "SK_EccoLeanLeft.dae");
 	animationTestPackets.emplace_back("ecco4", Paths::importModelLocation + "SK_EccoLeanRight.dae");
-	//animationTestPackets.emplace_back("ecco", Paths::importModelLocation + "SK_EccoLeanForward.dae");
 
 	
 
@@ -63,13 +63,10 @@ void LocWorkshop::Start()
 	Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanLeft.dae");
 	eccoLeft = ResourceManager::LoadAnimation(Paths::importModelLocation + "SK_EccoLeanLeft.dae", eccoModel);
 
-	//Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanRight.dae");
 	eccoRight = ResourceManager::LoadAnimation(Paths::importModelLocation + "SK_EccoLeanRight.dae", eccoModel);
 
-	//Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanForward.dae");
 	eccoUp = ResourceManager::LoadAnimation(Paths::importModelLocation + "SK_EccoLeanForward.dae", eccoModel);
 
-	//Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanBack.dae");
 	eccoDown = ResourceManager::LoadAnimation(Paths::importModelLocation + "SK_EccoLeanBack.dae", eccoModel);
 
 	eccoAnimator = Directional2dAnimator(eccoLeft, eccoRight, eccoUp, eccoDown);
