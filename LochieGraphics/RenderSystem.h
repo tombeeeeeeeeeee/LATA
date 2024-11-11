@@ -59,6 +59,11 @@ public:
     glm::vec2 mapMin = { 0.0f, 0.0f };
     glm::vec2 mapDelta = { 0.0f, 0.0f };
     int frameCountInSixteen = 0;
+    int sssSteps = 32;
+    float sssMaxRayDistance = 0.5;
+    float sssThickness = 0.05;
+    float sssMaxDepthDelta = 0.005;
+
 
     void Start(unsigned int _skyboxTexture);
 

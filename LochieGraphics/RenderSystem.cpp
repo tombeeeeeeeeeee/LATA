@@ -561,6 +561,8 @@ float delta
     pointLightPassShader->Use();
     pointLightPassShader->setMat4("vp", projection * viewMatrix);
     pointLightPassShader->setMat4("invVP", glm::inverse(projection * viewMatrix));
+    pointLightPassShader->setMat4("view", viewMatrix);
+    pointLightPassShader->setMat4("proj", projection);
     pointLightPassShader->setMat4("invV", glm::inverse(viewMatrix));
     pointLightPassShader->setMat4("invP", glm::inverse(projection));
     pointLightPassShader->setVec2("invViewPort", glm::vec2(1.0f/SCREEN_WIDTH, 1.0f/SCREEN_HEIGHT));
@@ -570,6 +572,15 @@ float delta
     pointLightPassShader->setInt("normal", 2);
     pointLightPassShader->setInt("depth", 3);
     pointLightPassShader->setInt("lightLerp", 4);
+    pointLightPassShader->setInt("frameCount", frameCountInSixteen);
+    pointLightPassShader->setFloat("near",SceneManager::camera.nearPlane);
+    pointLightPassShader->setFloat("far",SceneManager::camera.farPlane);
+    pointLightPassShader->setInt("sssSteps", sssSteps);
+    pointLightPassShader->setFloat("sssThickness", sssThickness);
+    pointLightPassShader->setFloat("sssMaxDepthDelta", sssMaxDepthDelta);
+    pointLightPassShader->setFloat("sssMaxRayDistance", sssMaxRayDistance);
+
+
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, albedoBuffer);
@@ -758,6 +769,12 @@ void RenderSystem::GUI()
     ImGui::DragFloat("Off Light Time", &lightTimeToOff);
     ImGui::DragFloat("Exploding Light Time", &lightTimeToExplode);
     ImGui::DragFloat("Flicker Light Time", &lightTimeToFlicker);
+
+    ImGui::Text("Screen Space Shadows");
+    ImGui::DragInt("Step Count", &sssSteps);
+    ImGui::DragFloat("Max Ray Distance", &sssMaxRayDistance);
+    ImGui::DragFloat("Ray Thicknes", &sssThickness);
+    ImGui::DragFloat("Max Acceptable Delta", &sssMaxDepthDelta);
 
     int previousSuper = superSampling;
     if (ImGui::DragInt("Super Sampling", &superSampling, 0.2f, 1, 4)) {
@@ -1025,7 +1042,6 @@ void RenderSystem::RenderAmbientPass()
     ambientPassShader->setVec2("mapMins", mapMin);
     ambientPassShader->setVec2("mapDimensions", mapDelta);
     ambientPassShader->setFloat("ambientIntensity", ambientIntensity);
-    ambientPassShader->setInt("frameCount", frameCountInSixteen);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, depthBuffer);
