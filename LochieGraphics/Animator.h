@@ -5,7 +5,7 @@
 #include <vector>
 
 // DON'T FORGET TO CHANGE ON SHADER IF CHANGING
-constexpr auto MAX_BONES_ON_MODEL = 100;
+constexpr auto MAX_BONES_ON_MODEL = 130;
 
 class Animation;
 class ModelHierarchyInfo;
@@ -63,6 +63,10 @@ public:
 	toml::table Serialise(unsigned long long GUID) const;
 	Animator(toml::table table);
 
-	void GUI();
+	virtual void GUI();
+
+protected:
+
+	void BaseGUI();
 };
 

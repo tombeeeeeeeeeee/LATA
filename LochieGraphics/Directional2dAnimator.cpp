@@ -7,6 +7,8 @@
 
 #include "Utilities.h"
 
+#include "EditorGUI.h"
+
 Directional2dAnimator::Directional2dAnimator(Animation* left, Animation* right, Animation* up, Animation* down) :
 	Animator(left),
 	rightAnimation(right),
@@ -113,4 +115,31 @@ void Directional2dAnimator::CalculateBoneTransform(const ModelHierarchyInfo* nod
 	for (int i = 0; i < node->children.size(); i++) {
 		CalculateBoneTransform(node->children[i], globalTransformation);
 	}
+}
+
+void Directional2dAnimator::GUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	if (ImGui::CollapsingHeader(("Directional 2D Animator##" + tag).c_str())) {
+		ImGui::Indent();
+		BaseGUI();
+		ImGui::Unindent();
+	}
+}
+
+void Directional2dAnimator::BaseGUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	Animator::BaseGUI();
+
+	ImGui::SliderFloat(("downUpLerpAmount##" + tag).c_str(), &downUpLerpAmount, 0.0f, 1.0f);
+	ImGui::SliderFloat(("leftRightLerpAmount##" + tag).c_str(), &leftRightLerpAmount, 0.0f, 1.0f);
+
+	ImGui::BeginDisabled();
+
+	ImGui::DragFloat(("currentTimeRight##" + tag).c_str(), &currentTimeRight);
+	ImGui::DragFloat(("currentTimeUp##" + tag).c_str(), &currentTimeUp);
+	ImGui::DragFloat(("currentTimeDown##" + tag).c_str(), &currentTimeDown);
+
+	ImGui::EndDisabled();
 }

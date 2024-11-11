@@ -86,33 +86,40 @@ Animator::Animator(toml::table table)
 
 void Animator::GUI()
 {
-
     std::string tag = Utilities::PointerToString(this);
     if (ImGui::CollapsingHeader(("Animator##" + tag).c_str())) {
         ImGui::Indent();
-        if (ImGui::Button(("Set all scales to 1!##" + tag).c_str())) {
-            for (auto& i : currentAnimation->bones)
-            {
-                for (auto& k : i.scaleKeys)
-                {
-                    k.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-                }
-            }
-        }
-        if (ImGui::CollapsingHeader(("Final Bone Matrices##" + tag).c_str())) {
-            ImGui::Indent();
-            for (size_t i = 0; i < finalBoneMatrices.size(); i++)
-            {
-                std::string tag = Utilities::PointerToString(&finalBoneMatrices[i]);
-                if (ImGui::CollapsingHeader(("Bone ID " + std::to_string(i) + "##" + tag).c_str())) {
-                    ExtraEditorGUI::Mat4Input(tag, &finalBoneMatrices[i]);
-                }
-            }
-            ImGui::Unindent();
-        }
-        // TODO: Show the animation
-        currentAnimation->GUI();
-        ImGui::DragFloat(("Animation Time##" + tag).c_str(), &currentTime);
+        BaseGUI();
         ImGui::Unindent();
     }
+}
+
+void Animator::BaseGUI()
+{
+    std::string tag = Utilities::PointerToString(this);
+
+    if (ImGui::Button(("Set all scales to 1!##" + tag).c_str())) {
+        for (auto& i : currentAnimation->bones)
+        {
+            for (auto& k : i.scaleKeys)
+            {
+                k.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+            }
+        }
+    }
+    if (ImGui::CollapsingHeader(("Final Bone Matrices##" + tag).c_str())) {
+        ImGui::Indent();
+        for (size_t i = 0; i < finalBoneMatrices.size(); i++)
+        {
+            std::string tag = Utilities::PointerToString(&finalBoneMatrices[i]);
+            if (ImGui::CollapsingHeader(("Bone ID " + std::to_string(i) + "##" + tag).c_str())) {
+                ExtraEditorGUI::Mat4Input(tag, &finalBoneMatrices[i]);
+            }
+        }
+        ImGui::Unindent();
+    }
+    // TODO: Show the animation
+    currentAnimation->GUI();
+    ImGui::DragFloat(("Animation Time##" + tag).c_str(), &currentTime);
+
 }

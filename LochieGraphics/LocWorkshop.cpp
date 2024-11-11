@@ -16,50 +16,73 @@ LocWorkshop::LocWorkshop()
 {
 }
 
+
 void LocWorkshop::Start()
 {
-
 	camera->nearPlane = 10.0f;
 	camera->farPlane = 50000.0f;
 	camera->transform.setPosition({ 0.0f, 0.0f, 150.0f });
 	camera->transform.setEulerRotation({ 0.0f, 90.0f, 0.0f });
 
-	SceneObject* enemy1 = new SceneObject(this, "enemy1");
-	SceneObject* enemy2 = new SceneObject(this, "enemy2");
-	SceneObject* enemy3 = new SceneObject(this, "enemy3");
-	SceneObject* enemy4 = new SceneObject(this, "enemy4");
-	SceneObject* sync = new SceneObject(this, "sync");
-	//SceneObject* ecco = new SceneObject(this, "ecco");
-	std::string path1 = Paths::importModelLocation + "SK_Idle(MeleeModel).fbx";
-	std::string path2 = Paths::importModelLocation + "SK_Idle(RangeModel).fbx";
-	std::string path3 = Paths::importModelLocation + "SK_Punch.fbx";
-	std::string path4 = Paths::importModelLocation + "SK_Shoot.fbx";
-	std::string path5 = Paths::importModelLocation + "ANIM_Sync_Run_BlockOut01.dae";
-	//std::string path6 = Paths::importModelLocation + "SK_EccoLeanForward.dae";
-	Model* model1 = ResourceManager::LoadModel(path1);
-	Model* model2 = ResourceManager::LoadModel(path2);
-	Model* model3 = ResourceManager::LoadModel(path3);
-	Model* model4 = ResourceManager::LoadModel(path4);
-	Model* model5 = ResourceManager::LoadModel(path5);
-	//Model* model6 = ResourceManager::LoadModel(path6);
-	enemy1->setRenderer(new ModelRenderer(model1, ResourceManager::defaultMaterial));
-	enemy2->setRenderer(new ModelRenderer(model2, ResourceManager::defaultMaterial));
-	enemy3->setRenderer(new ModelRenderer(model3, ResourceManager::defaultMaterial));
-	enemy4->setRenderer(new ModelRenderer(model4, ResourceManager::defaultMaterial));
-	sync->setRenderer(new ModelRenderer(model5, ResourceManager::defaultMaterial));
-	//ecco->setRenderer(new ModelRenderer(model5, ResourceManager::defaultMaterial));
-	animation1 = Animation(path1, model1);
-	animation2 = Animation(path2, model2);
-	animation3 = Animation(path3, model3);
-	animation4 = Animation(path4, model4);
-	animation5 = Animation(path5, model5);
-	//animation6 = Animation(path6, model6);
-	enemy1->setAnimator(new Animator(&animation1));
-	enemy2->setAnimator(new Animator(&animation2));
-	enemy3->setAnimator(new Animator(&animation3));
-	enemy4->setAnimator(new Animator(&animation4));
-	sync->setAnimator(new Animator(&animation5));
-	//ecco->setAnimator(new Animator(&animation6));
+	animationTestPackets.emplace_back("enemy1", Paths::importModelLocation + "SK_Idle(MeleeModel).fbx");
+	animationTestPackets.emplace_back("enemy2", Paths::importModelLocation + "SK_Idle(RangeModel).fbx");
+	animationTestPackets.emplace_back("enemy3", Paths::importModelLocation + "SK_Punch.fbx");
+	animationTestPackets.emplace_back("enemy4", Paths::importModelLocation + "SK_Shoot.fbx");
+	animationTestPackets.emplace_back("sync1", Paths::importModelLocation + "ANIM_Sync_Run_BlockOut01.dae");
+	animationTestPackets.emplace_back("sync2", Paths::importModelLocation + "ANIM_Sync_Death_BlockOut.dae");
+	animationTestPackets.emplace_back("sync3", Paths::importModelLocation + "ANIM_Sync_Idle_BlockOut.dae");
+	animationTestPackets.emplace_back("sync4", Paths::importModelLocation + "ANIM_Sync_Shoot_Charge_BlockOut.dae");
+	animationTestPackets.emplace_back("sync5", Paths::importModelLocation + "ANIM_Sync_Shoot_Hold_BlockOut.dae");
+	animationTestPackets.emplace_back("sync6", Paths::importModelLocation + "ANIM_Sync_Shoot_Shot_BlockOut.dae");
+	animationTestPackets.emplace_back("sync7", Paths::importModelLocation + "ANIM_Sync_Shoot_Snipe_BlockOut.dae");
+	animationTestPackets.emplace_back("sync8", Paths::importModelLocation + "ANIM_Sync_Shoot_Charge.dae");
+	animationTestPackets.emplace_back("sync9", Paths::importModelLocation + "ANIM_Sync_Shoot_Hold.dae");
+	animationTestPackets.emplace_back("ecco1", Paths::importModelLocation + "SK_EccoLeanBack.dae");
+	animationTestPackets.emplace_back("ecco2", Paths::importModelLocation + "SK_EccoLeanForward.dae");
+	animationTestPackets.emplace_back("ecco3", Paths::importModelLocation + "SK_EccoLeanLeft.dae");
+	animationTestPackets.emplace_back("ecco4", Paths::importModelLocation + "SK_EccoLeanRight.dae");
+	//animationTestPackets.emplace_back("ecco", Paths::importModelLocation + "SK_EccoLeanForward.dae");
+
+	
+
+	glm::vec3 placePos = { 0.0f, 0.0f, 0.0f };
+	for (auto& i : animationTestPackets)
+	{
+		i.sceneObject = new SceneObject(this, i.name);
+		i.model = ResourceManager::LoadModel(i.path);
+		i.sceneObject->setRenderer(new ModelRenderer(i.model, ResourceManager::defaultMaterial));
+		i.animation = Animation(i.path, i.model);
+		i.sceneObject->setAnimator(new Animator(&i.animation));
+
+		i.sceneObject->transform()->setPosition(placePos);
+		placePos += glm::vec3{ 200.0f, 0.0f, 0.0f };
+
+		i.model->root.transform.setScale(1.0f);
+	}
+
+	Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanLeft.dae");
+	eccoLeft = Animation(Paths::importModelLocation + "SK_EccoLeanLeft.dae", eccoModel);
+
+	//Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanRight.dae");
+	eccoRight = Animation(Paths::importModelLocation + "SK_EccoLeanRight.dae", eccoModel);
+
+	//Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanForward.dae");
+	eccoUp = Animation(Paths::importModelLocation + "SK_EccoLeanForward.dae", eccoModel);
+
+	//Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanBack.dae");
+	eccoDown = Animation(Paths::importModelLocation + "SK_EccoLeanBack.dae", eccoModel);
+
+	eccoAnimator = Directional2dAnimator(&eccoLeft, &eccoRight, &eccoUp, &eccoDown);
+
+	SceneObject* animatedEcco = new SceneObject(this, "animatedEcco");
+	animatedEcco->setRenderer(new ModelRenderer(eccoModel, ResourceManager::defaultMaterial));
+	animatedEcco->setAnimator(&eccoAnimator);
+
+	animatedEcco->transform()->setPosition(placePos);
+
+	eccoModel->root.transform.setScale(1.0f);
+
+
 
 	directionalLight.direction = glm::normalize(glm::vec3(-0.2f, -2.0f, 0.5f));
 	directionalLight.colour = { 1.0f, 1.0f, 1.0f };
@@ -85,4 +108,12 @@ void LocWorkshop::Draw(float delta)
 
 void LocWorkshop::GUI()
 {
+}
+
+
+LocWorkshop::AnimationTestPacket::AnimationTestPacket(std::string _name, std::string _path) :
+	name(_name),
+	path(_path)
+{
+
 }
