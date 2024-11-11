@@ -30,6 +30,7 @@ Shader* ResourceManager::defaultShader = nullptr;
 Material* ResourceManager::defaultMaterial = nullptr;
 Model* ResourceManager::defaultModel = nullptr;
 Mesh* ResourceManager::defaultMesh = nullptr;
+Animation* ResourceManager::defaultAnimation = nullptr;
 
 Shader* ResourceManager::skyBoxShader = nullptr;
 Shader* ResourceManager::shadowMapDepth = nullptr;
@@ -258,6 +259,7 @@ GetResource(Texture, textures)
 GetResource(Material, materials)
 GetResource(Model, models)
 GetResource(Mesh, meshes)
+GetResource(Animation, animations)
 
 ResourceManager::~ResourceManager()
 {

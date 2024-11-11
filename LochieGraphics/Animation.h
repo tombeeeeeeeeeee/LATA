@@ -8,8 +8,12 @@ class Model;
 class ModelHierarchyInfo;
 struct aiAnimation;
 struct BoneInfo;
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
-// TODO: Needs a GUID
 class Animation
 {
 public:
@@ -37,7 +41,10 @@ public:
 	/// <param name="animationPath">The path to the animation file</param>
 	/// <param name="model">The model this animation is for</param>
 	Animation(const std::string& animationPath, Model* _model);
+	Animation(toml::table table);
 	
+	void Load();
+
 	/// <summary>
 	/// Returns a pointer to the bone with the given name.
 	/// </summary>
@@ -52,6 +59,8 @@ public:
 	const ModelHierarchyInfo* getRootNode() const;
 
 	void GUI();
+
+	toml::table Serialise();
 
 private:
 	void ReadMissingBones(const aiAnimation* animation, Model* model);

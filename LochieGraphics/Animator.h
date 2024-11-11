@@ -15,6 +15,8 @@ namespace toml {
 	}
 }
 
+// TODO: With how some stuff is laid out almost feels like it would be worth having an 
+
 class Animator
 {
 protected:
@@ -23,11 +25,18 @@ protected:
 
 	// The current animation that is playing.
 	Animation* currentAnimation = nullptr;
+	unsigned long long currentAnimationGUID = 0;
 	
 	// The current time into the animation.
 	float currentTime = 0.f;
 
 public:
+	enum Type : unsigned int {
+		base,
+		blended,
+		directional2dAnimator,
+	};
+
 	Animator() {};
 	/// <summary>
 	/// Sets a starting animation.
@@ -60,10 +69,14 @@ public:
 	/// <returns>const reference vector of the bone transforms</returns>
 	const std::vector<glm::mat4>& getFinalBoneMatrices();
 
-	toml::table Serialise(unsigned long long GUID) const;
+	virtual toml::table Serialise(unsigned long long GUID) const;
 	Animator(toml::table table);
 
 	virtual void GUI();
+
+	virtual Type getType() const;
+
+	static Animator* Load(toml::table table);
 
 protected:
 

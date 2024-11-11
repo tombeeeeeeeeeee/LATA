@@ -35,11 +35,13 @@ public:
 	static Texture* LoadTexture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_SRGB, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
 	static Texture* LoadTextureAsset(std::string path);
 	// TODO: Should I be using hint file?
+	// TODO: These are the some of the only few getters with a cap 'g'
 	static Material* GetMaterial(unsigned long long GUID);
 	static Shader* GetShader(unsigned long long GUID);
 	static Texture* GetTexture(unsigned long long GUID);
 	static Model* GetModel(unsigned long long GUID);
 	static Mesh* GetMesh(unsigned long long GUID);
+	static Animation* GetAnimation(unsigned long long GUID);
 	// TODO: Remove this nullptr default for the shader reference, a material can't really exist without a shader
 	// TODO: Should really be called create instead of load
 	static Material* LoadMaterial(std::string name, Shader* shader = nullptr);
@@ -92,6 +94,7 @@ public:
 	static Material* defaultMaterial;
 	static Model* defaultModel;
 	static Mesh* defaultMesh;
+	static Animation* defaultAnimation;
 
 	static Shader* skyBoxShader;
 	static Shader* shadowMapDepth;

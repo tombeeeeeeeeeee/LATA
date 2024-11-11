@@ -4,10 +4,12 @@
 #include "ModelHierarchyInfo.h"
 #include "BoneInfo.h"
 #include "Model.h"
+#include "ResourceManager.h"
 
 #include "Utilities.h"
 
 #include "EditorGUI.h"
+#include "Serialisation.h"
 
 Directional2dAnimator::Directional2dAnimator(Animation* left, Animation* right, Animation* up, Animation* down) :
 	Animator(left),
@@ -15,6 +17,17 @@ Directional2dAnimator::Directional2dAnimator(Animation* left, Animation* right, 
 	upAnimation(up),
 	downAnimation(down)
 {
+}
+
+Directional2dAnimator::Directional2dAnimator(toml::table table) : Animator(table)
+{
+	rightAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["rightAnimationGUID"]);
+	upAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["upAnimationGUID"]);
+	downAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["downAnimationGUID"]);
+
+	rightAnimation = ResourceManager::GetAnimation(rightAnimationGUID);
+	upAnimation = ResourceManager::GetAnimation(upAnimationGUID);
+	downAnimation = ResourceManager::GetAnimation(downAnimationGUID);
 }
 
 void Directional2dAnimator::UpdateAnimation(float delta)
@@ -128,6 +141,22 @@ void Directional2dAnimator::GUI()
 		BaseGUI();
 		ImGui::Unindent();
 	}
+}
+
+toml::table Directional2dAnimator::Serialise(unsigned long long GUID) const
+{
+	toml::table table = Animator::Serialise(GUID);
+
+	table.emplace("rightAnimationGUID", Serialisation::SaveAsUnsignedLongLong(rightAnimationGUID));
+	table.emplace("upAnimationGUID", Serialisation::SaveAsUnsignedLongLong(upAnimationGUID));
+	table.emplace("downAnimationGUID", Serialisation::SaveAsUnsignedLongLong(downAnimationGUID));
+
+	return table;
+}
+
+Animator::Type Directional2dAnimator::getType() const
+{
+	return Animator::Type::directional2dAnimator;
 }
 
 void Directional2dAnimator::BaseGUI()

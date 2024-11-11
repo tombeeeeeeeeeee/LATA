@@ -4,9 +4,14 @@
 #include "ModelHierarchyInfo.h"
 #include "BoneInfo.h"
 #include "Model.h"
+#include "ResourceManager.h"
+#include "BlendedAnimator.h"
+#include "Directional2dAnimator.h"
 
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
+
+#include <iostream>
 
 Animator::Animator(Animation* animation) :
     currentAnimation(animation)
@@ -18,6 +23,8 @@ Animator::Animator(Animation* animation) :
     for (int i = 0; i < MAX_BONES_ON_MODEL; i++) {
         finalBoneMatrices.push_back(glm::mat4(1.0f));
     }
+
+    currentAnimationGUID = currentAnimation->GUID;
 }
 
 void Animator::UpdateAnimation(float delta)
@@ -33,6 +40,7 @@ void Animator::UpdateAnimation(float delta)
 void Animator::PlayAnimation(Animation* animation)
 {
     currentAnimation = animation;
+    currentAnimationGUID = currentAnimation->GUID;
     currentTime = 0.0f;
 }
 
@@ -73,15 +81,17 @@ const std::vector<glm::mat4>& Animator::getFinalBoneMatrices()
 
 toml::table Animator::Serialise(unsigned long long GUID) const
 {
-    // TODO: Save the current animation
     return toml::table{
-        { "guid", Serialisation::SaveAsUnsignedLongLong(GUID) }
+        { "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
+        { "currentAnimationGUID", Serialisation::SaveAsUnsignedLongLong(currentAnimationGUID) },
+        { "type", Serialisation::SaveAsUnsignedInt(getType())},
     };
 }
 
 Animator::Animator(toml::table table)
 {
-    // TODO: Write
+    currentAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["currentAnimationGUID"]);
+    currentAnimation = ResourceManager::GetAnimation(currentAnimationGUID);
 }
 
 void Animator::GUI()
@@ -93,6 +103,29 @@ void Animator::GUI()
         ImGui::Unindent();
     }
 }
+
+Animator::Type Animator::getType() const
+{
+    return Animator::Type::base;
+}
+
+Animator* Animator::Load(toml::table table)
+{
+    Animator::Type animatorType = (Animator::Type)Serialisation::LoadAsUnsignedInt(table["type"]);
+    switch (animatorType)
+    {
+    case Animator::Type::base:
+        return new Animator(table);
+    case Animator::Type::blended:
+        return new BlendedAnimator(table);
+    case Animator::Type::directional2dAnimator:
+        return new Directional2dAnimator(table);
+    default:
+        std::cout << "Unsupported Collider attempting to load\n";
+        return nullptr;
+    }
+}
+
 
 void Animator::BaseGUI()
 {
