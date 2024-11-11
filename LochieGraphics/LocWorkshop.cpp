@@ -28,7 +28,7 @@ void LocWorkshop::Start()
 	animationTestPackets.emplace_back("enemy2", Paths::importModelLocation + "SK_Idle(RangeModel).fbx");
 	animationTestPackets.emplace_back("enemy3", Paths::importModelLocation + "SK_Punch.fbx");
 	animationTestPackets.emplace_back("enemy4", Paths::importModelLocation + "SK_Shoot.fbx");
-	animationTestPackets.emplace_back("sync1", Paths::importModelLocation + "ANIM_Sync_Run_BlockOut01.dae");
+	animationTestPackets.emplace_back("sync1", Paths::importModelLocation + "ANIM_Sync_Run_BlockOut.dae");
 	animationTestPackets.emplace_back("sync2", Paths::importModelLocation + "ANIM_Sync_Death_BlockOut.dae");
 	animationTestPackets.emplace_back("sync3", Paths::importModelLocation + "ANIM_Sync_Idle_BlockOut.dae");
 	animationTestPackets.emplace_back("sync4", Paths::importModelLocation + "ANIM_Sync_Shoot_Charge_BlockOut.dae");
@@ -51,8 +51,8 @@ void LocWorkshop::Start()
 		i.sceneObject = new SceneObject(this, i.name);
 		i.model = ResourceManager::LoadModel(i.path);
 		i.sceneObject->setRenderer(new ModelRenderer(i.model, ResourceManager::defaultMaterial));
-		i.animation = Animation(i.path, i.model);
-		i.sceneObject->setAnimator(new Animator(&i.animation));
+		i.animation = ResourceManager::LoadAnimation(i.path, i.model);
+		i.sceneObject->setAnimator(new Animator(i.animation));
 
 		i.sceneObject->transform()->setPosition(placePos);
 		placePos += glm::vec3{ 200.0f, 0.0f, 0.0f };
@@ -61,18 +61,18 @@ void LocWorkshop::Start()
 	}
 
 	Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanLeft.dae");
-	eccoLeft = Animation(Paths::importModelLocation + "SK_EccoLeanLeft.dae", eccoModel);
+	eccoLeft = ResourceManager::LoadAnimation(Paths::importModelLocation + "SK_EccoLeanLeft.dae", eccoModel);
 
 	//Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanRight.dae");
-	eccoRight = Animation(Paths::importModelLocation + "SK_EccoLeanRight.dae", eccoModel);
+	eccoRight = ResourceManager::LoadAnimation(Paths::importModelLocation + "SK_EccoLeanRight.dae", eccoModel);
 
 	//Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanForward.dae");
-	eccoUp = Animation(Paths::importModelLocation + "SK_EccoLeanForward.dae", eccoModel);
+	eccoUp = ResourceManager::LoadAnimation(Paths::importModelLocation + "SK_EccoLeanForward.dae", eccoModel);
 
 	//Model* eccoModel = ResourceManager::LoadModel(Paths::importModelLocation + "SK_EccoLeanBack.dae");
-	eccoDown = Animation(Paths::importModelLocation + "SK_EccoLeanBack.dae", eccoModel);
+	eccoDown = ResourceManager::LoadAnimation(Paths::importModelLocation + "SK_EccoLeanBack.dae", eccoModel);
 
-	eccoAnimator = Directional2dAnimator(&eccoLeft, &eccoRight, &eccoUp, &eccoDown);
+	eccoAnimator = Directional2dAnimator(eccoLeft, eccoRight, eccoUp, eccoDown);
 
 	SceneObject* animatedEcco = new SceneObject(this, "animatedEcco");
 	animatedEcco->setRenderer(new ModelRenderer(eccoModel, ResourceManager::defaultMaterial));

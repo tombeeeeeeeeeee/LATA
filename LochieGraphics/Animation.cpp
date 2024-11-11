@@ -14,7 +14,8 @@
 
 Animation::Animation(const std::string& animationPath, Model* _model) :
 	model(_model),
-	modelGUID(_model->GUID)
+	modelGUID(_model->GUID),
+	path(animationPath)
 {
 	// TODO: Can I just reuse like 1 importer?
 	Assimp::Importer importer;

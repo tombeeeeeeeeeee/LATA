@@ -83,7 +83,7 @@ public:
 	float distanceToExplode = 250.0f;
 	ModelRenderer* explosiveEnemyRenderer = nullptr;
 	std::string explosiveEnemyModel = "SM_Enemy_Ranged";
-	Animation explosiveEnemyIdle;
+	Animation* explosiveEnemyIdle;
 	std::string explosiveEnemyAnimationPath = "models/SK_Idle(RangeModel).fbx";
 	std::string explosiveEnemyMaterialPath = "images/otherskybox/nx.png";
 
@@ -95,7 +95,7 @@ public:
 	float punchRadius = 150.0f;
 	ModelRenderer* meleeEnemyRenderer = nullptr;
 	std::string meleeEnemyModel = "SM_Enemy_Melee";
-	Animation meleeEnemyIdle;
+	Animation* meleeEnemyIdle;
 	std::string meleeEnemyAnimationPath = "models/SK_Idle(MeleeModel).fbx";
 	std::string meleeEnemyMaterialPath = "images/otherskybox/nx.png";
 
@@ -107,7 +107,7 @@ public:
 	float distanceToFlee = 400.0f;
 	ModelRenderer* rangedEnemyRenderer = nullptr;
 	std::string rangedEnemyModel = "SM_Enemy_Ranged";
-	Animation rangedEnemyIdle;
+	Animation* rangedEnemyIdle;
 	std::string rangedEnemyAnimationPath = "models/SK_Idle(RangeModel).fbx";
 	std::string rangedEnemyMaterialPath = "images/otherskybox/nx.png";
 

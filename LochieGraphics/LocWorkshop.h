@@ -16,7 +16,7 @@ private:
 	struct AnimationTestPacket {
 		std::string name;
 		std::string path;
-		Animation animation;
+		Animation* animation;
 		SceneObject* sceneObject = nullptr;
 		Model* model = nullptr;
 		AnimationTestPacket(std::string name, std::string path);
@@ -25,10 +25,10 @@ private:
 	std::vector<AnimationTestPacket> animationTestPackets;
 	
 	Directional2dAnimator eccoAnimator;
-	Animation eccoLeft;
-	Animation eccoRight;
-	Animation eccoUp;
-	Animation eccoDown;
+	Animation* eccoLeft;
+	Animation* eccoRight;
+	Animation* eccoUp;
+	Animation* eccoDown;
 	
 	
 	Shader* shader;

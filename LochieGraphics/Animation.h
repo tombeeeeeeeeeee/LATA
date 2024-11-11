@@ -26,7 +26,10 @@ public:
 	Model* model = nullptr;
 	unsigned long long modelGUID = 0;
 
-	Animation() {};
+	std::string path;
+
+	unsigned long long GUID = 0;
+
 
 	/// <summary>
 	/// Creates an animation from the animationPath for a given model.
@@ -52,5 +55,7 @@ public:
 
 private:
 	void ReadMissingBones(const aiAnimation* animation, Model* model);
+
+	Animation() {};
 };
 

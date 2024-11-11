@@ -28,14 +28,14 @@ private:
 	SceneObject* aniTest;
 	SceneObject* tires;
 
-	Animation xbotChicken;
-	Animation xbotIdle;
+	Animation* xbotChicken;
+	Animation* xbotIdle;
 	Animator xbotAnimator;
 	Animator xbotOtherAnimator;
 	BlendedAnimator xbotBlendedAnimator;
 	float lerpAmount = 0.f;
 
-	Animation vampireWalk;
+	Animation* vampireWalk;
 	Animator vampireAnimator;
 
 	

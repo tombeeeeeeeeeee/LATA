@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "Model.h"
 #include "Mesh.h"
+#include "Animation.h"
 
 #include "hashFNV1A.h"
 
@@ -28,6 +29,7 @@ public:
 	static Mesh* LoadMesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, GLuint* indices = nullptr);
 	static Mesh* LoadMesh(Mesh::presets preset);
 	static Mesh* LoadMesh();
+	static Animation* LoadAnimation(std::string path, Model* model);
 	static Texture* LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	// TODO: See if this function can be cleaned up
 	static Texture* LoadTexture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_SRGB, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
@@ -82,6 +84,7 @@ public:
 	static std::unordered_map<unsigned long long, Material, hashFNV1A> materials;
 	static std::unordered_map<unsigned long long, Model, hashFNV1A> models;
 	static std::unordered_map<unsigned long long, Mesh, hashFNV1A> meshes;
+	static std::unordered_map<unsigned long long, Animation, hashFNV1A> animations;
 
 	static Texture* defaultTexture;
 	static Texture* defaultNormal;

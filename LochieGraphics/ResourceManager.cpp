@@ -21,6 +21,8 @@ std::unordered_map<unsigned long long, Shader, hashFNV1A> ResourceManager::shade
 std::unordered_map<unsigned long long, Material, hashFNV1A> ResourceManager::materials;
 std::unordered_map<unsigned long long, Model, hashFNV1A> ResourceManager::models;
 std::unordered_map<unsigned long long, Mesh, hashFNV1A> ResourceManager::meshes;
+std::unordered_map<unsigned long long, Animation, hashFNV1A> ResourceManager::animations;
+
 
 Texture* ResourceManager::defaultTexture = nullptr;
 Texture* ResourceManager::defaultNormal = nullptr;
@@ -142,6 +144,11 @@ Mesh* ResourceManager::LoadMesh(Mesh::presets preset)
 Mesh* ResourceManager::LoadMesh()
 {
 	LoadResource(Mesh, meshes);
+}
+
+Animation* ResourceManager::LoadAnimation(std::string path, Model* model)
+{
+	LoadResource(Animation, animations, path, model);
 }
 
 Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)

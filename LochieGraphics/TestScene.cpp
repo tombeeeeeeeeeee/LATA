@@ -150,11 +150,11 @@ void TestScene::Start()
 	});
 	//xbot->setRenderer(new ModelRenderer(xbotModel, xbotMaterial));
 
-	xbotChicken = Animation("models/Chicken Dance.fbx", xbotModel);
-	xbotIdle = Animation("models/Ymca Dance.fbx", xbotModel);
-	xbotAnimator = Animator(&xbotChicken);
-	xbotOtherAnimator = Animator(&xbotIdle);
-	xbotBlendedAnimator = BlendedAnimator(&xbotChicken, &xbotIdle);
+	xbotChicken = ResourceManager::LoadAnimation("models/Chicken Dance.fbx", xbotModel);
+	xbotIdle = ResourceManager::LoadAnimation("models/Ymca Dance.fbx", xbotModel);
+	xbotAnimator = Animator(xbotChicken);
+	xbotOtherAnimator = Animator(xbotIdle);
+	xbotBlendedAnimator = BlendedAnimator(xbotChicken, xbotIdle);
 	//xbot->setAnimator(&xbotBlendedAnimator);
 
 	Model* vampireModel = ResourceManager::LoadModel(std::string("models/Skinning Test.fbx"));
@@ -169,8 +169,8 @@ void TestScene::Start()
 	vampire->transform()->setPosition({ 1.6f, -0.5f, -2.f });
 
 
-	vampireWalk = Animation("models/Skinning Test.fbx", vampireModel);
-	vampireAnimator = Animator(&vampireWalk);
+	vampireWalk = ResourceManager::LoadAnimation("models/Skinning Test.fbx", vampireModel);
+	vampireAnimator = Animator(vampireWalk);
 	vampire->setAnimator(&vampireAnimator);
 
 	//aniTest->setRenderer(new ModelRenderer(ResourceManager::LoadModel("C:/Users/s220518/Downloads/test/Anim_Sync_RunTEST.fbx"), ResourceManager::LoadDefaultMaterial()));
