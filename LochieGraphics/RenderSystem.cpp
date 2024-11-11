@@ -682,8 +682,9 @@ void RenderSystem::RenderSpotlights(
         spotlightPassShader->setFloat("linear", pair.second.linear);
         spotlightPassShader->setFloat("quad", pair.second.quadratic);
         spotlightPassShader->setFloat("cutOff", pair.second.cutOff);
-        spotlightPassShader->setFloat("outerCutOff", 1.0f - pair.second.outerCutOff); 
-        spotlightPassShader->setVec3("direction", pair.second.direction);
+        spotlightPassShader->setFloat("outerCutOff", 1.0f - pair.second.outerCutOff);
+        glm::vec4 globalDir = transforms[pair.first].getGlobalMatrix() * glm::vec4(pair.second.direction.x, pair.second.direction.y, pair.second.direction.z, 0.0);
+        spotlightPassShader->setVec3("direction", {globalDir.x, globalDir.y, globalDir.z});
         pair.second.timeInType += delta;
         float lerpAmount;
         switch (pair.second.effect)
