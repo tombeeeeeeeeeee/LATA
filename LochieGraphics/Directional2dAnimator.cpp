@@ -82,13 +82,16 @@ void Directional2dAnimator::CalculateBoneTransform(const ModelHierarchyInfo* nod
 		glm::quat quat3 = glm::quat_cast(bone3Transform);
 		glm::quat quat4 = glm::quat_cast(bone4Transform);
 
+
+		float biasValue = (fabsf(downUpLerpAmount - 0.5f) - fabsf(leftRightLerpAmount - 0.5f)) + 0.5f;
+
 		glm::vec3 leftRightPos = Utilities::Lerp(pos1, pos2, leftRightLerpAmount);
 		glm::vec3 downUpPos = Utilities::Lerp(pos4, pos3, downUpLerpAmount);
-		glm::vec3 lerpedPos = Utilities::Lerp(leftRightPos, downUpPos, 0.5f);
+		glm::vec3 lerpedPos = Utilities::Lerp(leftRightPos, downUpPos, biasValue);
 
 		glm::quat leftRightQuat = glm::slerp(quat1, quat2, leftRightLerpAmount);
 		glm::quat downUpQuat = glm::slerp(quat4, quat3, downUpLerpAmount);
-		glm::quat slerpedQuat = glm::slerp(leftRightQuat, downUpQuat, 0.5f);
+		glm::quat slerpedQuat = glm::slerp(leftRightQuat, downUpQuat, biasValue);
 
 		// TODO: Scale
 
