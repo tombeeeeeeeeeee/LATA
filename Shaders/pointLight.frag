@@ -87,7 +87,7 @@ void main()
 
 	posToLight = lightPos - worldPos;
 
-	viewDirection = normalize(worldPos - (camPos));
+	viewDirection = -normalize(worldPos - (camPos));
 	F0 = vec3(0.04); 
 	F0 = mix(F0, trueAlbedo, metallic);
 

@@ -329,7 +329,7 @@ void RenderSystem::BloomUpdate()
         mipIntSize /= 2;
         bloomMips[i].size = mipSize;
         bloomMips[i].intSize = mipIntSize;
-
+        glDeleteTextures(1, &bloomMips[i].texture);
         glGenTextures(1, &bloomMips[i].texture);
         glBindTexture(GL_TEXTURE_2D, bloomMips[i].texture);
 

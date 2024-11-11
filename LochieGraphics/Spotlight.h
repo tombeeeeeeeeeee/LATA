@@ -14,6 +14,12 @@ public:
     float cutOff;
     float outerCutOff;
 
+    bool castsShadows = true;
+
+    int frameBuffer = 0;
+    int depthbuffer = 0;
+    glm::mat4 viewProj = glm::zero<glm::mat4>();
+
     Spotlight() {};
     Spotlight(toml::table table);
     void GUI() override;
