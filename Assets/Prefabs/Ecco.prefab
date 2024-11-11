@@ -1,3 +1,5 @@
+children = []
+
 [ecco]
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
@@ -82,7 +84,7 @@ vel = [
     verts = [ [ 1.0, -46.0 ] ]
 
 [sceneObject]
-children = [ '1153871057560872383' ]
+children = []
 guid = '2091576976424546894'
 name = 'Ecco'
 parent = '0'
@@ -96,33 +98,3 @@ guid = '2091576976424546894'
 position = [ 4400.0, 0.0, 1100.0 ]
 quaternion = [ 0.8079022765159607, -9.787021554075181e-06, 0.5893164873123169, 5.533146122616017e-06 ]
 scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
-
-[[children]]
-children = []
-
-    [children.pointLight]
-    canBeTriggered = false
-    colour = [ 0.0, 2.8804361820220947, 5.0 ]
-    effect = 0
-    guid = '1153871057560872383'
-    linear = 0.1475680023431778
-    on = true
-    quadratic = 0.08229801058769226
-    range = 30.107999801635742
-    triggerTag = ''
-
-    [children.sceneObject]
-    children = []
-    guid = '1153871057560872383'
-    name = 'Ecco light'
-    parent = '2091576976424546894'
-    parts = 16
-    prefabBase = '1153871057560872383'
-    prefabStatus = 0
-
-    [children.transform]
-    euler = [ -2.3991878705942327e-08, 3.609862324083224e-05, -1.7821706776999235e-08 ]
-    guid = '1153871057560872383'
-    position = [ -7.108713150024414, 112.5583724975586, -13.327266693115234 ]
-    quaternion = [ 1.0, -2.0936857803022235e-10, 3.1501991770710447e-07, -1.5552366339210977e-10 ]
-    scale = [ 1.0, 1.0, 1.0 ]
