@@ -310,6 +310,7 @@ void GameTest::Draw(float delta)
 		renderers,
 		animators,
 		pointLights,
+		spotlights,
 		camera,
 		delta
 	);

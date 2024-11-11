@@ -40,7 +40,7 @@ public:
 	void ShootSniper(glm::vec3 pos);
 	void ShootOverClocked(glm::vec3 pos);
 	void OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour);
-	void OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour);
+	void OverclockRaindowShot(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour, bool rebound);
 	void misfireShotOnCollision(Collision collision);
 
 	int currHealth = 5;
@@ -52,6 +52,7 @@ public:
 
 	float chargedDuration = 0.0f;
 	float overclockChargeTime = 0.3f;
+
 
 	UiElement chargeUI;
 	UiElement healthUI;
@@ -78,6 +79,7 @@ private:
 	glm::vec3 overclockBeamColour = { 1.0f,1.0f,0.5f };
 	int enemyPierceCount = 99;
 	int overclockReboundCount = 5;
+	float knockBackForce = 10.0f;
 
 	float eccoRefractionAngle = 30.0f;
 	int eccoRefractionCount = 5;
@@ -102,4 +104,8 @@ private:
 	float stopSlowTime = 10.0f;
 	float startSlowTime = 5.0f;
 	
+
+	bool rainbowRebounding = true;
+	float rainbowDimming = 1.0f;
+	int overclockBounceDamage = 10;
 };

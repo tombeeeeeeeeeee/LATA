@@ -354,6 +354,7 @@ void RenderSystem::Update(
     std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
     std::unordered_map<unsigned long long, Animator*>& animators,
     std::unordered_map<unsigned long long, PointLight>& pointLights,
+    std::unordered_map<unsigned long long, Spotlight>& spotlights,
     Camera* camera,
     float delta,
     std::vector<Particle*> particles
@@ -404,7 +405,8 @@ void RenderSystem::Update(
     glBlendEquation(GL_FUNC_ADD);
     glDepthMask(GL_FALSE);
 
-    DrawPointLights(pointLights, transforms, delta);
+    RenderPointLights(pointLights, transforms, delta);
+    RenderSpotlights(spotlights, transforms, delta);
     RenderAmbientPass();
 
     glEnable(GL_DEPTH_TEST);
@@ -547,7 +549,7 @@ void RenderSystem::ScreenResize(int width, int height)
 }
 
 
-void RenderSystem::DrawPointLights(
+void RenderSystem::RenderPointLights(
 std::unordered_map<unsigned long long, PointLight>& pointLights,
 std::unordered_map<unsigned long long, Transform>& transforms,
 float delta
@@ -561,6 +563,8 @@ float delta
     pointLightPassShader->Use();
     pointLightPassShader->setMat4("vp", projection * viewMatrix);
     pointLightPassShader->setMat4("invVP", glm::inverse(projection * viewMatrix));
+    pointLightPassShader->setMat4("view", viewMatrix);
+    pointLightPassShader->setMat4("proj", projection);
     pointLightPassShader->setMat4("invV", glm::inverse(viewMatrix));
     pointLightPassShader->setMat4("invP", glm::inverse(projection));
     pointLightPassShader->setVec2("invViewPort", glm::vec2(1.0f/SCREEN_WIDTH, 1.0f/SCREEN_HEIGHT));
@@ -570,6 +574,7 @@ float delta
     pointLightPassShader->setInt("normal", 2);
     pointLightPassShader->setInt("depth", 3);
     pointLightPassShader->setInt("lightLerp", 4);
+    pointLightPassShader->setInt("frameCount", frameCountInSixteen);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, albedoBuffer);
@@ -628,6 +633,95 @@ float delta
             glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
         }
         pointLightPassShader->setFloat("lerpAmount", glm::clamp(lerpAmount, 0.0f, 1.0f));
+        lightSphere->getMeshes()[0]->Draw();
+    }
+    glDisable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glCullFace(GL_BACK);
+}
+
+void RenderSystem::RenderSpotlights(
+    std::unordered_map<unsigned long long, Spotlight>& spotlights,
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    float delta
+)
+{
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_GREATER);
+    glCullFace(GL_FRONT);
+    spotlightPassShader->Use();
+    spotlightPassShader->setMat4("vp", projection * viewMatrix);
+    spotlightPassShader->setMat4("invVP", glm::inverse(projection * viewMatrix));
+    spotlightPassShader->setMat4("invV", glm::inverse(viewMatrix));
+    spotlightPassShader->setMat4("invP", glm::inverse(projection));
+    spotlightPassShader->setVec2("invViewPort", glm::vec2(1.0f / SCREEN_WIDTH, 1.0f / SCREEN_HEIGHT));
+    spotlightPassShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
+    spotlightPassShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
+    spotlightPassShader->setInt("albedo", 1);
+    spotlightPassShader->setInt("normal", 2);
+    spotlightPassShader->setInt("depth", 3);
+    spotlightPassShader->setInt("lightLerp", 4);
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, albedoBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glBindTexture(GL_TEXTURE_2D, normalBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 3);
+    glBindTexture(GL_TEXTURE_2D, depthBuffer);
+
+    for (auto& pair : spotlights)
+    {
+        Transform transform = Transform();
+        transform.setPosition(transforms[pair.first].getGlobalPosition());
+        transform.setScale(pair.second.range * 900.0f);
+        spotlightPassShader->setMat4("model", transform.getGlobalMatrix());
+        spotlightPassShader->setVec3("lightPos", transforms[pair.first].getGlobalPosition());
+        spotlightPassShader->setVec3("colour", pair.second.colour);
+        spotlightPassShader->setFloat("linear", pair.second.linear);
+        spotlightPassShader->setFloat("quad", pair.second.quadratic);
+        spotlightPassShader->setFloat("cutOff", pair.second.cutOff);
+        spotlightPassShader->setFloat("outerCutOff", 1.0f - pair.second.outerCutOff); 
+        spotlightPassShader->setVec3("direction", pair.second.direction);
+        pair.second.timeInType += delta;
+        float lerpAmount;
+        switch (pair.second.effect)
+        {
+        case PointLightEffect::On:
+            pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOn);
+            lerpAmount = pair.second.timeInType / lightTimeToOn;
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, onLightTexture->GLID);
+            break;
+
+        case PointLightEffect::Off:
+            pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOff);
+            lerpAmount = pair.second.timeInType / lightTimeToOff;
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, offLightTexture->GLID);
+            break;
+
+        case PointLightEffect::Explosion:
+            pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToExplode);
+            //if (pair.second.timeInType >= lightTimeToExplode) SceneManager::scene->DeleteSceneObject(pair.first);
+            lerpAmount = pair.second.timeInType / lightTimeToExplode;
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
+            break;
+
+        case PointLightEffect::Flickering:
+            pair.second.timeInType = fmod(pair.second.timeInType, lightTimeToFlicker);
+            lerpAmount = fmod(pair.second.timeInType + (pair.first % 100) / 100.0f, lightTimeToFlicker) / lightTimeToFlicker;
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, flickeringLightTexture->GLID);
+            break;
+
+        case PointLightEffect::SyncsGun:
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
+        }
+        spotlightPassShader->setFloat("lerpAmount", glm::clamp(lerpAmount, 0.0f, 1.0f));
         lightSphere->getMeshes()[0]->Draw();
     }
     glDisable(GL_DEPTH_TEST);
@@ -903,8 +997,7 @@ void RenderSystem::LightPassSetup()
     LightPassUpdate();
     ambientPassShader = ResourceManager::LoadShaderDefaultVert("ambient");
     pointLightPassShader = ResourceManager::LoadShader("pointLight");
-    //spotlightPassShaderIndex = (*shaders).size();
-    //(*shaders).push_back(ResourceManager::LoadShaderDefaultVert("spotlights"));
+    spotlightPassShader = ResourceManager::LoadShader("spotlight");
 }
 
 void RenderSystem::LinesSetup()
@@ -1025,7 +1118,6 @@ void RenderSystem::RenderAmbientPass()
     ambientPassShader->setVec2("mapMins", mapMin);
     ambientPassShader->setVec2("mapDimensions", mapDelta);
     ambientPassShader->setFloat("ambientIntensity", ambientIntensity);
-    ambientPassShader->setInt("frameCount", frameCountInSixteen);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, depthBuffer);

@@ -77,6 +77,7 @@ void LocWorkshop::Draw(float delta)
 		renderers,
 		animators,
 		pointLights,
+		spotlights,
 		camera,
 		delta,
 		particleSystem.particles
