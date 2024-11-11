@@ -72,7 +72,6 @@ void main()
 
 	float depthValue = texture(depth, texCoords).r;
 
-
     vec4 NDC = vec4(texCoords * 2.0 - 1.0, depthValue * 2.0 - 1.0, 1.0);
     vec4 clipPos = invP * NDC;
     vec3 screenPosition = clipPos.xyz / clipPos.w;

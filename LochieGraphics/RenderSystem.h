@@ -50,6 +50,7 @@ public:
 
     bool particleFacingCamera;
 
+
     float lightTimeToOn = 2.5f;
     float lightTimeToOff = 2.5f;
     float lightTimeToExplode = 0.1f; 

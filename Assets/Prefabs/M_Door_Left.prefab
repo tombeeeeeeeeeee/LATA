@@ -1,3 +1,5 @@
+children = []
+
 [collider]
 collisionLayer = 1
 guid = '12472247769792521165'
@@ -7,7 +9,7 @@ type = 1
 verts = [ [ 110.0, 15.0 ], [ 110.0, -15.0 ], [ -5.0, -15.0 ], [ -5.0, 15.0 ] ]
 
 [door]
-amountToMove = 85.0
+amountToMove = 0.0
 closed = true
 guid = '12472247769792521165'
 ignoresFalse = false
@@ -19,7 +21,7 @@ triggerTag = ''
 [modelRenderer]
 guid = '12472247769792521165'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15095763643605868389' ]
+materials = [ '1766071748038532778' ]
 modelGuid = '12471265708787363967'
 
 [sceneObject]
@@ -30,3 +32,10 @@ parent = '0'
 parts = 16418
 prefabBase = '0'
 prefabStatus = 1
+
+[transform]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12472247769792521165'
+position = [ -1450.0, 0.0, -1100.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
