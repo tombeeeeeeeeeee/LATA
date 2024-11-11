@@ -227,6 +227,7 @@ void TestScene::Draw(float delta)
 		renderers,
 		animators,
 		pointLights,
+		spotlights,
 		camera,
 		delta
 	);

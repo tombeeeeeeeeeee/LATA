@@ -419,6 +419,9 @@
     <ClCompile Include="UiElement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Directional2dAnimator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -530,9 +533,6 @@
       <Filter>Source Files\Third-Party</Filter>
     </ClInclude>
     <ClInclude Include="RenderSystem.h">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="shaderEnum.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="RigidBody.h">
@@ -744,6 +744,7 @@
       <Filter>Source Files\Third-Party</Filter>
     </ClInclude>
     <ClInclude Include="UiElement.h" />
+    <ClInclude Include="Directional2dAnimator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -910,5 +911,13 @@
     <None Include="..\Shaders\composite.frag" />
     <None Include="..\Shaders\pointLight.frag" />
     <None Include="..\Shaders\pointLight.vert" />
+    <None Include="..\Shaders\defaultWithNormal.vert" />
+    <None Include="..\Shaders\simpleTexturedWithCutout.frag" />
+    <None Include="..\Shaders\spotlight.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\spotlight.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

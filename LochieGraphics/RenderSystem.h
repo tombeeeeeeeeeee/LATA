@@ -52,8 +52,8 @@ public:
 
     float lightTimeToOn = 2.5f;
     float lightTimeToOff = 2.5f;
-    float lightTimeToExplode = 0.2f; 
-    float lightTimeToFlicker = 1.5f;
+    float lightTimeToExplode = 0.1f; 
+    float lightTimeToFlicker = 5.5f;
     float ambientIntensity = 1.0f;
     bool inOrtho = false;
     glm::vec2 mapMin = { 0.0f, 0.0f };
@@ -93,6 +93,7 @@ public:
         std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
         std::unordered_map<unsigned long long, Animator*>& animators,
         std::unordered_map<unsigned long long, PointLight>& pointLights,
+        std::unordered_map<unsigned long long, Spotlight>& spotlights,
         Camera* camera,
         float delta,
         std::vector<Particle*> particles = {}
@@ -164,8 +165,14 @@ private:
         Shader* shader = nullptr
     );
 
-    void DrawPointLights(
+    void RenderPointLights(
         std::unordered_map<unsigned long long, PointLight>& pointLights,
+        std::unordered_map<unsigned long long, Transform>& transforms,
+        float delta
+    );
+
+    void RenderSpotlights(
+        std::unordered_map<unsigned long long, Spotlight>& spotlights,
         std::unordered_map<unsigned long long, Transform>& transforms,
         float delta
     );

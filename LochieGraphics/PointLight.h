@@ -34,12 +34,12 @@ public:
     PointLight() {};
     PointLight(toml::table table);
     PointLight(PointLightEffect _effect) : effect(_effect) {};
-    void GUI();
+    virtual void GUI();
 
     void SetRange(float range);
     void SetRange(float linear, float quadratic);
 
-    toml::table Serialise(unsigned long long guid)const;
+    virtual toml::table Serialise(unsigned long long guid)const;
 
     void TriggerCall(std::string tag, bool toggle);
 };
