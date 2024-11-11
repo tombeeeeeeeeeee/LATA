@@ -1,5 +1,5 @@
 [sceneObject]
-children = [ '261523939781336746', '261058320472689460' ]
+children = [ '261058320472689460', '261523939781336746' ]
 guid = '261641414300656217'
 name = 'M_Bollards_Both'
 parent = '0'
@@ -10,73 +10,9 @@ prefabStatus = 1
 [transform]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '261641414300656217'
-position = [ 2775.0, 0.0, -150.0 ]
+position = [ 1600.0, 0.0, -550.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
-
-[[children]]
-
-    [children.modelRenderer]
-    guid = '261523939781336746'
-    materialTint = [ 1.0, 1.0, 1.0 ]
-    materials = [ '15379552588297712660' ]
-    modelGuid = '15379758948098669725'
-
-    [children.sceneObject]
-    children = [ '261504909491167900' ]
-    guid = '261523939781336746'
-    name = 'M_Bollard_Base'
-    parent = '261641414300656217'
-    parts = 2
-    prefabBase = '12423383987824314724'
-    prefabStatus = 2
-
-    [children.transform]
-    euler = [ -0.0, -0.0, -0.0 ]
-    guid = '261523939781336746'
-    position = [ 75.0, 0.0, 0.0 ]
-    quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
-    scale = [ 1.0, 1.0, 1.0 ]
-
-    [[children.children]]
-    children = []
-
-        [children.children.bollard]
-        guid = '261504909491167900'
-        startsUp = true
-        timeToLower = 0.5
-        timeToRaise = 0.5
-        triggerTag = ''
-
-        [children.children.collider]
-        collisionLayer = 1
-        guid = '261504909491167900'
-        isTrigger = false
-        radius = 30.0
-        type = 1
-        verts = [ [ 0.0, 0.0 ] ]
-
-        [children.children.modelRenderer]
-        guid = '261504909491167900'
-        materialTint = [ 1.0, 1.0, 1.0 ]
-        materials = [ '15379552588297712660' ]
-        modelGuid = '15379620717004398300'
-
-        [children.children.sceneObject]
-        children = []
-        guid = '261504909491167900'
-        name = 'M_Bollard'
-        parent = '261523939781336746'
-        parts = 32802
-        prefabBase = '15094854743533244076'
-        prefabStatus = 2
-
-        [children.children.transform]
-        euler = [ -0.0, -0.0, -0.0 ]
-        guid = '261504909491167900'
-        position = [ 0.0, 0.0, 0.0 ]
-        quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
-        scale = [ 1.0, 1.0, 1.0 ]
 
 [[children]]
 
@@ -113,7 +49,7 @@ scale = [ 1.0, 1.0, 1.0 ]
         triggerTag = ''
 
         [children.children.collider]
-        collisionLayer = 1
+        collisionLayer = 128
         guid = '261111949873993829'
         isTrigger = false
         radius = 30.0
@@ -138,6 +74,70 @@ scale = [ 1.0, 1.0, 1.0 ]
         [children.children.transform]
         euler = [ -0.0, -0.0, -0.0 ]
         guid = '261111949873993829'
+        position = [ 0.0, 0.0, 0.0 ]
+        quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
+        scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+
+    [children.modelRenderer]
+    guid = '261523939781336746'
+    materialTint = [ 1.0, 1.0, 1.0 ]
+    materials = [ '15379552588297712660' ]
+    modelGuid = '15379758948098669725'
+
+    [children.sceneObject]
+    children = [ '261504909491167900' ]
+    guid = '261523939781336746'
+    name = 'M_Bollard_Base'
+    parent = '261641414300656217'
+    parts = 2
+    prefabBase = '12423383987824314724'
+    prefabStatus = 2
+
+    [children.transform]
+    euler = [ -0.0, -0.0, -0.0 ]
+    guid = '261523939781336746'
+    position = [ 75.0, 0.0, 0.0 ]
+    quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]
+
+    [[children.children]]
+    children = []
+
+        [children.children.bollard]
+        guid = '261504909491167900'
+        startsUp = true
+        timeToLower = 0.5
+        timeToRaise = 0.5
+        triggerTag = ''
+
+        [children.children.collider]
+        collisionLayer = 128
+        guid = '261504909491167900'
+        isTrigger = false
+        radius = 30.0
+        type = 1
+        verts = [ [ 0.0, 0.0 ] ]
+
+        [children.children.modelRenderer]
+        guid = '261504909491167900'
+        materialTint = [ 1.0, 1.0, 1.0 ]
+        materials = [ '15379552588297712660' ]
+        modelGuid = '15379620717004398300'
+
+        [children.children.sceneObject]
+        children = []
+        guid = '261504909491167900'
+        name = 'M_Bollard'
+        parent = '261523939781336746'
+        parts = 32802
+        prefabBase = '15094854743533244076'
+        prefabStatus = 2
+
+        [children.children.transform]
+        euler = [ -0.0, -0.0, -0.0 ]
+        guid = '261504909491167900'
         position = [ 0.0, 0.0, 0.0 ]
         quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
         scale = [ 1.0, 1.0, 1.0 ]
