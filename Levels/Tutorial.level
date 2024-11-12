@@ -1214,12 +1214,12 @@ verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ]
 [[Doors]]
 amountToMove = 85.0
 closed = true
-guid = '1929736735101035039'
+guid = '1929393437998244572'
 ignoresFalse = false
 left = false
 timeToClose = 0.5
 timeToOpen = 0.5
-triggerTag = 'BasicCombatComplete'
+triggerTag = 'AdvancedCombatComplete'
 
 [[Doors]]
 amountToMove = 85.0
@@ -1234,12 +1234,22 @@ triggerTag = 'RefractionShotShowcaseComplete'
 [[Doors]]
 amountToMove = 85.0
 closed = true
-guid = '1929393437998244572'
+guid = '1929736735101035039'
 ignoresFalse = false
 left = false
 timeToClose = 0.5
 timeToOpen = 0.5
-triggerTag = 'AdvancedCombatComplete'
+triggerTag = 'BasicCombatComplete'
+
+[[Doors]]
+amountToMove = 85.0
+closed = true
+guid = '1929922388057335367'
+ignoresFalse = false
+left = true
+timeToClose = 0.5
+timeToOpen = 0.5
+triggerTag = 'CombatEnter1'
 
 [[Doors]]
 amountToMove = 85.0
@@ -1264,32 +1274,22 @@ triggerTag = 'AdvancedCombatComplete'
 [[Doors]]
 amountToMove = 85.0
 closed = true
-guid = '1929550824899516805'
-ignoresFalse = false
-left = true
-timeToClose = 0.5
-timeToOpen = 0.5
-triggerTag = 'RefractionShotShowcaseComplete'
-
-[[Doors]]
-amountToMove = 85.0
-closed = true
-guid = '1929922388057335367'
-ignoresFalse = false
-left = true
-timeToClose = 0.5
-timeToOpen = 0.5
-triggerTag = 'CombatEnter1'
-
-[[Doors]]
-amountToMove = 85.0
-closed = true
 guid = '1929922386599545446'
 ignoresFalse = false
 left = false
 timeToClose = 0.5
 timeToOpen = 0.5
 triggerTag = 'CombatEnter1'
+
+[[Doors]]
+amountToMove = 85.0
+closed = true
+guid = '1929550824899516805'
+ignoresFalse = false
+left = true
+timeToClose = 0.5
+timeToOpen = 0.5
+triggerTag = 'RefractionShotShowcaseComplete'
 
 [[Doors]]
 amountToMove = 85.0
@@ -13094,10 +13094,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -179.99989318847656, -5.008955668017734e-06, -179.99989318847656 ]
+euler = [ -360.0, 180.0, 0.0 ]
 guid = '18133337474269889811'
-position = [ -583.406005859375, 0.0, -7988.8876953125 ]
-quaternion = [ -4.371055695173709e-08, -9.099629778575036e-07, 1.0, -9.099629778575036e-07 ]
+position = [ -150.0, 0.0, 300.0 ]
+quaternion = [ -4.371138828673793e-08, 0.0, 1.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -16610,10 +16610,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -0.00010427406232338399, 180.0, 0.00010427406232338399 ]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '18133337472315591294'
-position = [ -864.6499633789062, 0.0, -7943.80078125 ]
-quaternion = [ -4.371221606902509e-08, -9.09962807327247e-07, 1.0, 9.09962807327247e-07 ]
+position = [ 150.0, 0.0, 300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Triggerables]]
