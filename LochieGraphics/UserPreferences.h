@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "Maths.h"
+
 class UserPreferences
 {
 public:
@@ -42,6 +44,9 @@ public:
 	static bool showSelectedBox;
 
 	static float defaultGlobalVolume;
+
+	static glm::vec3 loadedDirectionalLightDirection;
+	static glm::vec3 loadedDirectionalLightColour;
 
 	static void GUI();
 

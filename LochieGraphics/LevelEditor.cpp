@@ -199,9 +199,6 @@ void LevelEditor::Start()
 	groundMaterial = ResourceManager::LoadMaterial("Ground", groundShader);
 	groundMaterial->AddTextures({ groundTexture });
 
-	directionalLight = DirectionalLight
-	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
-
 	gui.showHierarchy = true;
 	gui.showSceneObject = true;
 	gui.showCameraMenu = true;
@@ -289,9 +286,6 @@ void LevelEditor::Start()
 
 	healthBar.InitialiseQuad(1.0f);
 	healthShader = ResourceManager::LoadShader("healthBar");
-
-	directionalLight.colour = { 1.0f, 1.0f, 1.0f };
-	directionalLight.direction = glm::normalize(glm::vec3(-0.25, -1.0f, -0.5f));
 }
 
 void LevelEditor::Update(float delta)
@@ -797,6 +791,9 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 		return;
 	}
 
+	directionalLight.direction = UserPreferences::loadedDirectionalLightDirection;
+	directionalLight.colour = UserPreferences::loadedDirectionalLightColour;
+
 	if (UserPreferences::rememberLastLevel) {
 		UserPreferences::defaultLevelLoad = windowName;
 		UserPreferences::Save();
@@ -857,6 +854,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 
 	RefreshMinMaxes();
 	renderSystem.LevelLoad();
+
 }
 
 void LevelEditor::ModelPlacer(glm::vec2 targetPos)

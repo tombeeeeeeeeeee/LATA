@@ -10,6 +10,7 @@
 #include "Utilities.h"
 
 #include <fstream>
+#include <iostream>
 
 bool UserPreferences::escapeCloses = false;
 std::string UserPreferences::filename = "";
@@ -36,6 +37,9 @@ bool UserPreferences::clearSearchBar = true;
 bool UserPreferences::advancedTransformInfo = false;
 bool UserPreferences::showModelHierarchy = false;
 bool UserPreferences::showSelectedBox = true;
+
+glm::vec3 UserPreferences::loadedDirectionalLightDirection = {};
+glm::vec3 UserPreferences::loadedDirectionalLightColour = {};
 
 void UserPreferences::GUI()
 {
@@ -202,6 +206,8 @@ void UserPreferences::Save()
 		{ "showModelHierarchy", showModelHierarchy},
 		{ "defaultStyleLoad", defaultStyleLoad },
 		{ "showSelectedBox", showSelectedBox },
+		{ "directionalLightDirection", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.direction)},
+		{ "directionalLightColour", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.colour)},
 	};
 
 	file << table << '\n';
@@ -209,6 +215,8 @@ void UserPreferences::Save()
 	file.close();
 
 	RefreshPreferenceFile();
+
+	std::cout << "saved user prefs\n";
 }
 
 bool UserPreferences::Load()
@@ -246,6 +254,9 @@ bool UserPreferences::Load()
 	showModelHierarchy = Serialisation::LoadAsBool(data["showModelHierarchy"], false);
 	defaultStyleLoad = Serialisation::LoadAsString(data["defaultStyleLoad"], "OtherStyle");
 	showSelectedBox = Serialisation::LoadAsBool(data["showSelectedBox"], true);
+
+	loadedDirectionalLightColour = Serialisation::LoadAsVec3(data["directionalLightColour"], { 0.5f, 0.5f, 0.5f });
+	loadedDirectionalLightDirection = Serialisation::LoadAsVec3(data["directionalLightDirection"], { 0.0f, -1.0f, 0.0f });
 
 	file.close();
 
