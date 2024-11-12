@@ -61,16 +61,16 @@ moveDeadZone = 0.4000000059604645
 moveSpeed = 400.0
 overclockBeamColour = [ 0.06395351886749268, 1.0, 0.0 ]
 overclockBeamLifeSpan = 1.5
-overclockBounceDamage = 100
+overclockBounceDamage = 75
 overclockChargeTime = 1.5
-overclockDamage = 200
+overclockDamage = 150
 overclockReboundCount = 1
 rainbowDimming = 2.5
 rainbowRebounding = true
 sniperBeamColour = [ 0.5641789436340332, 1.0, 0.5353982448577881 ]
 sniperBeamLifeSpan = 0.5
 sniperChargeTime = 0.30000001192092896
-sniperDamage = 100
+sniperDamage = 50
 startSlowTime = 0.5
 stopSlowTime = 1.5
 
@@ -3538,14 +3538,14 @@ guid = '2059137251082024605'
 maxHealth = 0
 
 [[Healths]]
-currHealth = 10
-guid = '18133337474269889811'
-maxHealth = 10
-
-[[Healths]]
 currHealth = 0
 guid = '2831884389789555394'
 maxHealth = 0
+
+[[Healths]]
+currHealth = 10
+guid = '18133337474269889811'
+maxHealth = 10
 
 [[Healths]]
 currHealth = 0
@@ -3603,14 +3603,14 @@ guid = '2121247268062425558'
 maxHealth = 0
 
 [[Healths]]
-currHealth = 5
-guid = '18133337472315591294'
-maxHealth = 5
-
-[[Healths]]
 currHealth = 0
 guid = '2062006338945910735'
 maxHealth = 0
+
+[[Healths]]
+currHealth = 5
+guid = '18133337472315591294'
+maxHealth = 5
 
 [[Healths]]
 currHealth = 0
@@ -5291,12 +5291,6 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '2240017917810692591'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '2229847150575832532' ]
-modelGuid = '2234949598158592467'
-
-[[Renderers]]
 guid = '171466687729132847'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -5823,12 +5817,6 @@ guid = '181941716028602999'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '2240017917986065089'
-materialTint = [ 0.0, 0.32743364572525024, 0.11880327016115189 ]
-materials = [ '0' ]
-modelGuid = '2236096697336878089'
 
 [[Renderers]]
 guid = '181920533861707282'
@@ -9005,16 +8993,16 @@ materials = [ '15038846507057049718' ]
 modelGuid = '17948476418088678547'
 
 [[Renderers]]
-guid = '18133337474269889811'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15449259407003476463', '15449352838481615396' ]
-modelGuid = '2140790440003113620'
-
-[[Renderers]]
 guid = '1898886860383697815'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1822012501052853337' ]
 modelGuid = '1821597911529641420'
+
+[[Renderers]]
+guid = '18133337474269889811'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15449259407003476463', '15449352838481615396' ]
+modelGuid = '2140790440003113620'
 
 [[Renderers]]
 guid = '1895349674825472022'
@@ -9159,6 +9147,12 @@ guid = '15914974912852030237'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 modelGuid = '17948561943578888234'
+
+[[Renderers]]
+guid = '18133337472315591294'
+materialTint = [ 0.0, 0.800000011920929, 0.0 ]
+materials = [ '0' ]
+modelGuid = '18138382404370373262'
 
 [[Renderers]]
 guid = '1495368793067749597'
@@ -11654,6 +11648,57 @@ vel = [ 0.0, 0.0 ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
+angularVel = -0.0
+elasticicty = 0.0
+guid = '18133337474269889811'
+invMass = 0.10000000149011612
+invMomentOfInertia = 0.20000000298023224
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [
+    -8.310501330653178e-24,
+    2.6263940547975757e-23
+]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 16
+    guid = '18133337474269889811'
+    isTrigger = false
+    radius = 71.0
+    type = 1
+    verts = [ [ 0.0, -46.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 4
+    guid = '18133337474269889811'
+    isTrigger = false
+    radius = 60.0
+    type = 1
+    verts = [ [ 1.0, -46.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '18133337472315591294'
+invMass = 1.0
+invMomentOfInertia = 0.20000000298023224
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 8
+    guid = '18133337472315591294'
+    isTrigger = false
+    radius = 40.0
+    type = 1
+    verts = [ [ 0.0, 0.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
 guid = '1495368793067749597'
@@ -12687,57 +12732,6 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = -0.0
-elasticicty = 0.0
-guid = '18133337474269889811'
-invMass = 0.10000000149011612
-invMomentOfInertia = 0.20000000298023224
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [
-    -8.310501330653178e-24,
-    2.6263940547975757e-23
-]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 16
-    guid = '18133337474269889811'
-    isTrigger = false
-    radius = 71.0
-    type = 1
-    verts = [ [ 0.0, -46.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 4
-    guid = '18133337474269889811'
-    isTrigger = false
-    radius = 60.0
-    type = 1
-    verts = [ [ 1.0, -46.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '18133337472315591294'
-invMass = 1.0
-invMomentOfInertia = 0.20000000298023224
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 8
-    guid = '18133337472315591294'
-    isTrigger = false
-    radius = 40.0
-    type = 1
-    verts = [ [ 0.0, 0.0 ] ]
 
 [[SceneObjects]]
 children = []
@@ -18718,24 +18712,6 @@ prefabStatus = 0
 
 [[SceneObjects]]
 children = []
-guid = '2240017917810692591'
-name = 'Sink Model'
-parent = '18133337472315591294'
-parts = 2
-prefabBase = '2236905023818184222'
-prefabStatus = 0
-
-[[SceneObjects]]
-children = []
-guid = '2240017917986065089'
-name = 'Gundam'
-parent = '18133337472315591294'
-parts = 2
-prefabBase = '2237067691946253859'
-prefabStatus = 0
-
-[[SceneObjects]]
-children = []
 guid = '2426575358481402888'
 name = 'tile 2'
 parent = '18133334142995481696'
@@ -22831,11 +22807,11 @@ prefabBase = '0'
 prefabStatus = 0
 
 [[SceneObjects]]
-children = [ '2240017917810692591', '2240017917986065089' ]
+children = []
 guid = '18133337472315591294'
 name = 'Sync'
 parent = '0'
-parts = 392
+parts = 394
 prefabBase = '2091576977596946314'
 prefabStatus = 2
 
@@ -24230,13 +24206,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -90.0, 0.0 ]
-guid = '2240017917810692591'
-position = [ 0.0, 0.0, 0.0 ]
-quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '171466687729132847'
 position = [ 2700.0, 0.0, -6600.0 ]
@@ -25103,13 +25072,6 @@ guid = '181920084845864803'
 position = [ 5700.0, 0.0, -6600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.890749990940094, -2.2175400257110596, -21.890897750854492 ]
-guid = '2240017917986065089'
-position = [ -22.592910766601562, 1.9634391069412231, -7.275335788726807 ]
-quaternion = [ 0.9816234707832336, 0.0039562988094985485, -0.0204735416918993, -0.18968532979488373 ]
-scale = [ 0.9999995231628418, 0.9999975562095642, 0.9999959468841553 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
@@ -28458,10 +28420,10 @@ quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -179.99989318847656, -5.008955668017734e-06, -179.99989318847656 ]
+euler = [ -179.99993896484375, -5.008955668017734e-06, -179.99993896484375 ]
 guid = '18133337474269889811'
 position = [ -2087.41796875, -0.00827309675514698, -244.8717498779297 ]
-quaternion = [ -4.371055695173709e-08, -9.099629778575036e-07, 1.0, -9.099629778575036e-07 ]
+quaternion = [ -4.371107920064787e-08, -5.52335052361741e-07, 1.0, -5.52335052361741e-07 ]
 scale = [ 0.9979211688041687, 1.0, 0.9979211688041687 ]
 
 [[Transforms]]
@@ -30138,15 +30100,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -360.0, 180.0, 0.0 ]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '18133337472315591294'
 position = [ -1943.924072265625, 0.0, -258.7098083496094 ]
-quaternion = [
-    4.371138828673793e-08,
-    -3.82137093032941e-15,
-    -1.0,
-    -8.742277657347586e-08
-]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 0.9999904632568359, 1.0, 0.9999904632568359 ]
 
 [[Triggerables]]
