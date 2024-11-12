@@ -67,16 +67,16 @@ moveDeadZone = 0.4000000059604645
 moveSpeed = 400.0
 overclockBeamColour = [ 0.06395351886749268, 1.0, 0.0 ]
 overclockBeamLifeSpan = 1.5
-overclockBounceDamage = 0
+overclockBounceDamage = 100
 overclockChargeTime = 1.5
-overclockDamage = 150
+overclockDamage = 200
 overclockReboundCount = 1
-rainbowDimming = 1.0
-rainbowRebounding = false
+rainbowDimming = 2.5
+rainbowRebounding = true
 sniperBeamColour = [ 0.5641789436340332, 1.0, 0.5353982448577881 ]
 sniperBeamLifeSpan = 0.5
 sniperChargeTime = 0.30000001192092896
-sniperDamage = 50
+sniperDamage = 100
 startSlowTime = 0.5
 stopSlowTime = 1.5
 
@@ -568,12 +568,6 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '18133337472315591294'
-materialTint = [ 0.0, 0.800000011920929, 0.0 ]
-materials = [ '0' ]
-modelGuid = '18138382404370373262'
-
-[[Renderers]]
 guid = '2180440961794698669'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
@@ -716,6 +710,18 @@ guid = '2185784294620069167'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394', '1766071748038532778' ]
 modelGuid = '12471765937523797163'
+
+[[Renderers]]
+guid = '2242796768069289897'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '2229847150575832532' ]
+modelGuid = '2234949598158592467'
+
+[[Renderers]]
+guid = '2242796768663020572'
+materialTint = [ 0.0, 0.32743364572525024, 0.11880327016115189 ]
+materials = [ '0' ]
+modelGuid = '2236096697336878089'
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -892,26 +898,6 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
-guid = '18133337472315591294'
-invMass = 1.0
-invMomentOfInertia = 0.20000000298023224
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 8
-    guid = '18133337472315591294'
-    isTrigger = false
-    radius = 40.0
-    type = 1
-    verts = [ [ 0.0, 0.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
 guid = '2185440126880072731'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -1027,6 +1013,26 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ 150.0, -60.0 ], [ 150.0, -275.0 ], [ -150.0, -275.0 ], [ -150.0, -60.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '18133337472315591294'
+invMass = 1.0
+invMomentOfInertia = 0.20000000298023224
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 8
+    guid = '18133337472315591294'
+    isTrigger = false
+    radius = 40.0
+    type = 1
+    verts = [ [ 0.0, 0.0 ] ]
 
 [[SceneObjects]]
 children = [
@@ -1271,6 +1277,24 @@ parent = '0'
 parts = 1034
 prefabBase = '263450243779483742'
 prefabStatus = 2
+
+[[SceneObjects]]
+children = []
+guid = '2242796768069289897'
+name = 'Sink Model'
+parent = '18133337472315591294'
+parts = 2
+prefabBase = '2236905023818184222'
+prefabStatus = 0
+
+[[SceneObjects]]
+children = []
+guid = '2242796768663020572'
+name = 'Gundam'
+parent = '18133337472315591294'
+parts = 2
+prefabBase = '2237067691946253859'
+prefabStatus = 0
 
 [[SceneObjects]]
 children = []
@@ -1534,11 +1558,11 @@ prefabBase = '0'
 prefabStatus = 0
 
 [[SceneObjects]]
-children = []
+children = [ '2242796768069289897', '2242796768663020572' ]
 guid = '18133337472315591294'
 name = 'Sync'
 parent = '0'
-parts = 394
+parts = 392
 prefabBase = '2091576977596946314'
 prefabStatus = 2
 
@@ -1909,15 +1933,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -360.0, 180.0, 0.0 ]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '18133337472315591294'
 position = [ 480.99755859375, 0.0, -362.1824951171875 ]
-quaternion = [
-    4.371138828673793e-08,
-    -3.82137093032941e-15,
-    -1.0,
-    -8.742277657347586e-08
-]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -1926,3 +1945,17 @@ guid = '18133337474269889811'
 position = [ -273.30999755859375, 0.0, 93.05679321289062 ]
 quaternion = [ -4.371055695173709e-08, -9.099629778575036e-07, 1.0, -9.099629778575036e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -90.0, 0.0 ]
+guid = '2242796768069289897'
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.890749990940094, -2.2175400257110596, -21.890897750854492 ]
+guid = '2242796768663020572'
+position = [ -22.592910766601562, 1.9634391069412231, -7.275335788726807 ]
+quaternion = [ 0.9816234707832336, 0.0039562988094985485, -0.0204735416918993, -0.18968532979488373 ]
+scale = [ 0.9999995231628418, 0.9999975562095642, 0.9999959468841553 ]
