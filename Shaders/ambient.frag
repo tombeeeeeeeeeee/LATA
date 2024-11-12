@@ -70,7 +70,7 @@ void main()
     roughness = normal.a;
     metallic = albedo.a;
     ao = emission.a;
-    if(ao == 0) ao = 1.0;d
+    if(ao == 0) ao = 1.0;
 
     vec3 Lo = vec3(0.0);
 	F0 = vec3(0.04); 
