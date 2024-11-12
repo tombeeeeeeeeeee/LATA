@@ -14,6 +14,8 @@ uniform float quad;
 uniform vec3 lightPos;
 uniform vec3 camPos;
 uniform vec3 cameraDelta;
+uniform mat4 view;
+uniform mat4 proj;
 uniform mat4 invVP;
 uniform mat4 invP;
 uniform mat4 invV;
@@ -50,14 +52,17 @@ vec3 specularIBL(vec3 trueNormal);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight);
 float ScreenSpaceShadows();
-float interleaved_gradient_noise(vec2 position_screen);
+float InterleavedGradientNoise(vec2 position_screen);
 
 #define PI 3.1415926535
 
 const float MAX_REFLECTION_LOD = 4.0;
+
 const int sssSteps = 32;
-const float sssStepLength = 2000.0/32.0;
+const float sssMaxRayDistance = 2000;
+const float sssThickness = 142;
 const float RPC_16  = 0.0625f;
+
 
 void main()
 {
@@ -82,7 +87,7 @@ void main()
 
 	posToLight = lightPos - worldPos;
 
-	viewDirection = normalize(worldPos - (camPos));
+	viewDirection = -normalize(worldPos - (camPos));
 	F0 = vec3(0.04); 
 	F0 = mix(F0, trueAlbedo, metallic);
 
@@ -173,18 +178,16 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 float ScreenSpaceShadows()
 {
     // Compute ray position and direction (in view-space)
-    mat4 view = inverse(invV);
-    mat4 proj = inverse(invP);
 
     vec3 ray_pos = worldPos;
     vec3 ray_dir = normalize(posToLight).xyz;
     // Compute ray step
-    vec3 ray_step = ray_dir * sssStepLength;
+    vec3 ray_step = ray_dir * sssMaxRayDistance / sssSteps;
 	
     // Ray march towards the light
     float occlusion = 0.0;
     vec2 ray_uv   = vec2(0.0);
-    float offset = interleaved_gradient_noise(gl_FragCoord.xy);
+    float offset = InterleavedGradientNoise(gl_FragCoord.xy);
     ray_pos += ray_step * offset;
     float startingDepth = (view * vec4(worldPos, 1.0)).z;
     
@@ -206,14 +209,14 @@ float ScreenSpaceShadows()
             vec4 sampleNDC = vec4(ray_uv.xy * 2.0 - 1.0, depth_z * 2.0 - 1.0, 1.0);
             vec4 sampleClipPos = invP * sampleNDC;
             vec3 sampleScreenPos = sampleClipPos.xyz /sampleClipPos.w;
-            float depth_delta = sampleScreenPos.z - viewSpace.z;
+            float depthDelta = sampleScreenPos.z - viewSpace.z;
 
             // Check if the camera can't "see" the ray (ray depth must be larger than the camera depth, so positive depth_delta)
-            bool onCam = (depth_delta > 0.0);
+            bool onCam = (depthDelta > 0.0 && depthDelta < sssThickness);
             if (onCam)
             {
                 // Mark as occluded
-                occlusion = 1.0;
+                occlusion = cos((i/sssSteps * PI) / 2);
                 break;
             }
         }
@@ -224,7 +227,7 @@ float ScreenSpaceShadows()
     return 1.0 - occlusion;
 }
 
-float interleaved_gradient_noise(vec2 screen_pos)
+float InterleavedGradientNoise(vec2 screen_pos)
 {
     float frame_step  = frameCount * RPC_16;
     screen_pos.x     += frame_step * 4.7526;

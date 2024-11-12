@@ -49,6 +49,10 @@ Sync::Sync(toml::table table)
 	chargeUI.Load(table["chargeUI"].as_table());
 	startSlowTime = Serialisation::LoadAsFloat(table["startSlowTime"], 0.5f);
 	stopSlowTime = Serialisation::LoadAsFloat(table["stopSlowTime"], 1.5f);
+	knockBackForce = Serialisation::LoadAsFloat(table["knockBackForce"], 1.0f);
+	rainbowDimming = Serialisation::LoadAsFloat(table["rainbowDimming"], 1.0f);
+	overclockBounceDamage = Serialisation::LoadAsInt(table["overclockBounceDamage"]);
+	rainbowRebounding = Serialisation::LoadAsBool(table["rainbowRebounding"]);
 }
 
 void Sync::Start()
@@ -176,6 +180,7 @@ bool Sync::Update(
 		if (chargedDuration >= overclockChargeTime)
 		{
 			ShootOverClocked(globalBarrelOffset);
+			rigidBody.AddImpulse(-fireDirection * knockBackForce);
 			SceneManager::scene->audio.PlaySound(Audio::railgunShotFirstCharged);
 		}
 		else if (chargedDuration >= sniperChargeTime)
@@ -245,10 +250,14 @@ void Sync::GUI()
 		ImGui::DragFloat(("Charge Time##" + tag).c_str(), &overclockChargeTime);
 		ImGui::DragFloat(("Beam life span##" + tag).c_str(), &overclockBeamLifeSpan);
 		ImGui::ColorEdit3(("Beam Colour##" + tag).c_str(), &overclockBeamColour[0]);
+		ImGui::DragFloat(("Knock Back Force##" + tag).c_str(), &knockBackForce);
 		ImGui::DragInt(("Max Enemy Pierce Count##" + tag).c_str(), &enemyPierceCount);
 		ImGui::DragInt(("Rebound Count##" + tag).c_str(), &overclockReboundCount);
 		ImGui::DragInt(("Refraction Beams Off Ecco##" + tag).c_str(), &eccoRefractionCount);
 		ImGui::DragFloat(("Refraction Beams Angle##" + tag).c_str(), &eccoRefractionAngle);
+		ImGui::Checkbox(("Rainbow Shots Rebound##" + tag).c_str(), &rainbowRebounding);
+		ImGui::DragFloat(("Rainbow Rebound Dimming" + tag).c_str(), &rainbowDimming);
+		ImGui::DragInt(("Rainbow Rebound Damage" + tag).c_str(), &overclockBounceDamage);
 	}
 	if (ImGui::CollapsingHeader(("Health UI##" + tag).c_str())) {
 		healthUI.GUI();
@@ -289,6 +298,10 @@ toml::table Sync::Serialise() const
 		{ "chargeUI", chargeUI.Serialise() },
 		{ "startSlowTime", startSlowTime },
 		{ "stopSlowTime", stopSlowTime },
+		{ "rainbowDimming", rainbowDimming },
+		{ "rainbowRebounding", rainbowRebounding },
+		{ "overclockBounceDamage", overclockBounceDamage },
+		{ "knockBackForce", knockBackForce },
 	};
 }
 
@@ -387,7 +400,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 					dir.x * s + dir.y * c
 				};
 
-				OverclockNonRebounding({ hit.position.x, pos.y, hit.position.y }, refractionDirection, refractionColour);
+				OverclockRaindowShot({ hit.position.x, pos.y, hit.position.y }, refractionDirection, refractionColour, rainbowRebounding);
 
 				SceneManager::scene->audio.PlaySound(SceneManager::scene->audio.rainbowShot);
 			}
@@ -401,7 +414,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 	}
 }
 
-void Sync::OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour)
+void Sync::OverclockRaindowShot(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour, bool rebound)
 {
 	std::vector<Hit> hits;
 	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::ecco | (int)CollisionLayers::reflectiveSurface | Collider::transparentLayers));
@@ -416,11 +429,15 @@ void Sync::OverclockNonRebounding(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour
 			hit = hits[i];
 			if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 			{
-				hit.sceneObject->health()->subtractHealth(overclockDamage);
+				hit.sceneObject->health()->subtractHealth(rebound ? overclockDamage : overclockBounceDamage);
 				SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
 			}
 			else break;
 		}
+	}
+	else if(rebound)
+	{
+		OverclockRaindowShot({ hit.position.x,pos.y, hit.position.y }, glm::reflect(dir, hit.normal),colour/rainbowDimming ,false);
 	}
 
 	blasts.push_back({ overclockBeamLifeSpan, 0.0f, colour, pos, {hit.position.x, pos.y, hit.position.y} });

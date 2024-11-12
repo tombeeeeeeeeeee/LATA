@@ -161,9 +161,10 @@ bool Ecco::Update(
 			force += wheelDirection * abs(sidewaysMagnitude) * sidewaysFrictionCoef * (portionOfSidewaysSpeedKept / 100.0f) * (inputDevice.getLeftTrigger() > 0.001f ? -1.0f : 1.0f);
 	}
 
-	rigidBody.angularVel = -turningCircleScalar						 //scalar that represents wheel distance apart
+	rigidBody.angularVel = 
+		(!boosting ? -turningCircleScalar : -turningCircleScalarBoosting)					 //scalar that represents wheel distance apart
 		* acos(wheelInDirectionOfForward)							 //angle wheel makes with forward vector
-		* (glm::length(rigidBody.vel))								 //units per second
+		* (glm::min (glm::length(rigidBody.vel), maxCarMoveSpeed))								 //units per second
 		* glm::sign(glm::dot({ right.x, right.z }, wheelDirection)); //reflects based off of left or right
 
 	//Update rigidBody
@@ -240,6 +241,7 @@ void Ecco::GUI()
 		ImGui::DragFloat(("Max car move speed##" + tag).c_str(), &maxCarMoveSpeed);
 		ImGui::DragFloat(("Max reverse speed##" + tag).c_str(), &maxReverseSpeed);
 		ImGui::DragFloat(("Turning circle scalar##" + tag).c_str(), &turningCircleScalar);
+		ImGui::DragFloat(("Boosting turning circle scalar##" + tag).c_str(), &turningCircleScalarBoosting);
 		ImGui::DragFloat(("Max wheel angle##" + tag).c_str(), &maxWheelAngle);
 		ImGui::DragFloat(("Speed wheel turn influence##" + tag).c_str(), &speedWheelTurnInfluence, 1.0f, 0.0f, 100.0f);
 		ImGui::DragFloat(("boost wheel turn influence##" + tag).c_str(), &boostWheelTurnInfluence, 1.0f, 0.0f, 100.0f);
@@ -289,6 +291,7 @@ toml::table Ecco::Serialise()
 		{ "maxReverseSpeed", maxReverseSpeed },
 		{ "deadZone", deadZone },
 		{ "turningCircleScalar", turningCircleScalar },
+		{ "turningCircleScalarBoosting", turningCircleScalarBoosting },
 		{ "speedWheelTurnInfluence", speedWheelTurnInfluence },
 		{ "boostWheelTurnInfluence", boostWheelTurnInfluence },
 		{ "maxWheelAngle", maxWheelAngle },
@@ -328,6 +331,7 @@ Ecco::Ecco(toml::table table)
 	maxReverseSpeed = Serialisation::LoadAsFloat(table["maxReverseSpeed"]);
 	deadZone = Serialisation::LoadAsFloat(table["deadZone"]);
 	turningCircleScalar = Serialisation::LoadAsFloat(table["turningCircleScalar"]);
+	turningCircleScalarBoosting = Serialisation::LoadAsFloat(table["turningCircleScalarBoosting"], 0.06f);
 	speedWheelTurnInfluence = Serialisation::LoadAsFloat(table["speedWheelTurnInfluence"]);
 	boostWheelTurnInfluence = Serialisation::LoadAsFloat(table["boostWheelTurnInfluence"]);
 	maxWheelAngle = Serialisation::LoadAsFloat(table["maxWheelAngle"]);

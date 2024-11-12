@@ -28,6 +28,7 @@ void InputTest::Draw(float delta)
 		renderers,
 		animators,
 		pointLights,
+		spotlights,
 		camera,
 		delta
 	);

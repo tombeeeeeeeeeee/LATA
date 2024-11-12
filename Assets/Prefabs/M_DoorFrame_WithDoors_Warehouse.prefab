@@ -1,5 +1,5 @@
 [sceneObject]
-children = [ '1466601407344077622', '1466601408287500814', '1466601408066032604' ]
+children = [ '1466601407344077622', '1466601408066032604', '1466601408287500814' ]
 guid = '1466601406390514171'
 name = 'M_DoorFrame_WithDoors_Warehouse'
 parent = '0'
@@ -10,7 +10,7 @@ prefabStatus = 1
 [transform]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '1466601406390514171'
-position = [ 2337.5, 0.0, -762.5 ]
+position = [ 1400.0, 0.0, -750.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -38,7 +38,7 @@ children = []
     [children.modelRenderer]
     guid = '1466601407344077622'
     materialTint = [ 1.0, 1.0, 1.0 ]
-    materials = [ '15095763643605868389' ]
+    materials = [ '1766071748038532778' ]
     modelGuid = '12471686768254296210'
 
     [children.sceneObject]
@@ -47,57 +47,14 @@ children = []
     name = 'M_Door_Right'
     parent = '1466601406390514171'
     parts = 16418
-    prefabBase = '264497878890832668'
-    prefabStatus = 3
+    prefabBase = '12472509190243971103'
+    prefabStatus = 2
 
     [children.transform]
-    euler = [ -0.0, -0.0, -0.0 ]
+    euler = [ 0.0, -0.0, 0.0 ]
     guid = '1466601407344077622'
     position = [ 0.0, 0.0, 0.0 ]
-    quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
-    scale = [ 1.0, 1.0, 1.0 ]
-
-[[children]]
-children = []
-
-    [children.collider]
-    collisionLayer = 1
-    guid = '1466601408287500814'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 110.0, 15.0 ], [ 110.0, -15.0 ], [ -5.0, -15.0 ], [ -5.0, 15.0 ] ]
-
-    [children.door]
-    amountToMove = 85.0
-    closed = true
-    guid = '1466601408287500814'
-    ignoresFalse = false
-    left = false
-    timeToClose = 0.5
-    timeToOpen = 0.5
-    triggerTag = ''
-
-    [children.modelRenderer]
-    guid = '1466601408287500814'
-    materialTint = [ 1.0, 1.0, 1.0 ]
-    materials = [ '15095763643605868389' ]
-    modelGuid = '12471265708787363967'
-
-    [children.sceneObject]
-    children = []
-    guid = '1466601408287500814'
-    name = 'M_Door_Left'
-    parent = '1466601406390514171'
-    parts = 16418
-    prefabBase = '264497880954241996'
-    prefabStatus = 3
-
-    [children.transform]
-    euler = [ -0.0, -0.0, -0.0 ]
-    guid = '1466601408287500814'
-    position = [ 0.0, 0.0, 0.0 ]
-    quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
+    quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
     scale = [ 1.0, 1.0, 1.0 ]
 
 [[children]]
@@ -106,7 +63,7 @@ children = []
     [children.modelRenderer]
     guid = '1466601408066032604'
     materialTint = [ 1.0, 1.0, 1.0 ]
-    materials = [ '15095763643605868389' ]
+    materials = [ '1766071748038532778', '1777838767709883819' ]
     modelGuid = '12471732002840469521'
 
     [children.rigidBody]
@@ -143,12 +100,55 @@ children = []
     name = 'M_DoorFrame_Warehouse'
     parent = '1466601406390514171'
     parts = 10
-    prefabBase = '1466323787222681078'
+    prefabBase = '12472536751963613579'
     prefabStatus = 2
 
     [children.transform]
     euler = [ 0.0, -0.0, 0.0 ]
     guid = '1466601408066032604'
+    position = [ 0.0, 0.0, 0.0 ]
+    quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+children = []
+
+    [children.collider]
+    collisionLayer = 1
+    guid = '1466601408287500814'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 110.0, 15.0 ], [ 110.0, -15.0 ], [ -5.0, -15.0 ], [ -5.0, 15.0 ] ]
+
+    [children.door]
+    amountToMove = 85.0
+    closed = true
+    guid = '1466601408287500814'
+    ignoresFalse = false
+    left = false
+    timeToClose = 0.5
+    timeToOpen = 0.5
+    triggerTag = ''
+
+    [children.modelRenderer]
+    guid = '1466601408287500814'
+    materialTint = [ 1.0, 1.0, 1.0 ]
+    materials = [ '1766071748038532778' ]
+    modelGuid = '12471265708787363967'
+
+    [children.sceneObject]
+    children = []
+    guid = '1466601408287500814'
+    name = 'M_Door_Left'
+    parent = '1466601406390514171'
+    parts = 16418
+    prefabBase = '12472247769792521165'
+    prefabStatus = 2
+
+    [children.transform]
+    euler = [ 0.0, -0.0, 0.0 ]
+    guid = '1466601408287500814'
     position = [ 0.0, 0.0, 0.0 ]
     quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
     scale = [ 1.0, 1.0, 1.0 ]

@@ -526,7 +526,18 @@ SetAndGetForPart(Door, doors, Parts::door, Door, door)
 SetAndGetForPart(Bollard, bollards, Parts::bollard, Bollard, bollard)
 SetAndGetForPart(Triggerable, triggerables, Parts::triggerable, Triggerable, triggerable)
 SetAndGetForPart(PointLight, pointLights, Parts::pointLight, PointLight, pointLight)
-SetAndGetForPart(Spotlight, spotlights, Parts::spotlight, Spotlight, spotlight)
+void SceneObject::setSpotlight(Spotlight* part) {
+	if (part) {
+		parts |= Parts::spotlight; scene->spotlights[GUID] = std::move(*part);
+	}
+	else {
+		parts &= ~Parts::spotlight; scene->spotlights.erase(GUID);
+	};
+} Spotlight* SceneObject::spotlight() {
+	if (parts & Parts::spotlight) {
+		return &(scene->spotlights.at(GUID));
+	} return nullptr;
+}
 
 void SceneObject::setCollider(Collider* collider)
 {

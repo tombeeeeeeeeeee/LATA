@@ -50,15 +50,21 @@ public:
 
     bool particleFacingCamera;
 
+
     float lightTimeToOn = 2.5f;
     float lightTimeToOff = 2.5f;
-    float lightTimeToExplode = 0.2f; 
-    float lightTimeToFlicker = 1.5f;
+    float lightTimeToExplode = 0.1f; 
+    float lightTimeToFlicker = 5.5f;
     float ambientIntensity = 1.0f;
     bool inOrtho = false;
     glm::vec2 mapMin = { 0.0f, 0.0f };
     glm::vec2 mapDelta = { 0.0f, 0.0f };
     int frameCountInSixteen = 0;
+    int sssSteps = 32;
+    float sssMaxRayDistance = 0.5;
+    float sssThickness = 0.05;
+    float sssMaxDepthDelta = 0.005;
+
 
     void Start(unsigned int _skyboxTexture);
 
@@ -88,6 +94,7 @@ public:
         std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
         std::unordered_map<unsigned long long, Animator*>& animators,
         std::unordered_map<unsigned long long, PointLight>& pointLights,
+        std::unordered_map<unsigned long long, Spotlight>& spotlights,
         Camera* camera,
         float delta,
         std::vector<Particle*> particles = {}
@@ -159,8 +166,22 @@ private:
         Shader* shader = nullptr
     );
 
-    void DrawPointLights(
+    void RenderSpotLightShadowMaps(
+        std::unordered_map<unsigned long long, Spotlight>& spotlights,
+        std::unordered_map<unsigned long long, Animator*>& animators,
+        std::unordered_map<unsigned long long, Transform>& transforms,
+        std::unordered_map<unsigned long long, ModelRenderer>& renderers,
+        std::unordered_set<unsigned long long> animatedRenderered
+    );
+
+    void RenderPointLights(
         std::unordered_map<unsigned long long, PointLight>& pointLights,
+        std::unordered_map<unsigned long long, Transform>& transforms,
+        float delta
+    );
+
+    void RenderSpotlights(
+        std::unordered_map<unsigned long long, Spotlight>& spotlights,
         std::unordered_map<unsigned long long, Transform>& transforms,
         float delta
     );
@@ -205,6 +226,7 @@ private:
     Shader* ambientPassShader = nullptr;
     Shader* pointLightPassShader = nullptr;
     Shader* spotlightPassShader = nullptr;
+    Shader* spotlightShadowPassShader = nullptr;
     void LightPassSetup();
     void RenderAmbientPass();
 

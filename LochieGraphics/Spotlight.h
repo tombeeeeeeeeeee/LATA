@@ -1,5 +1,6 @@
 #pragma once
 #include "Maths.h"
+#include "PointLight.h"
 #include <string>
 
 namespace toml {
@@ -7,30 +8,37 @@ namespace toml {
         class table;
     }
 }
-class Spotlight{
+
+class Spotlight : public PointLight {
+private:
+    static int SHADOW_DIMENSIONS;
 public:
-    float linear = 0;
-    float quadratic = 0;
-    glm::vec3 colour = { 0.0f,0.0f,0.0f };
-
-    bool on = true;
-    bool canBeTriggered = false;
-    std::string triggerTag = "";
-
-    float range = 1;
-
-    glm::vec3 direction;
+    glm::vec3 direction = { -1.0f,0.0f,0.0f };
     float cutOff;
     float outerCutOff;
 
-    void SetRange(float range);
-    void SetRange(float linear, float quadratic);
+    bool castsShadows = true;
 
-    Spotlight() {};
+    unsigned int frameBuffer = 0;
+    unsigned int depthBuffer = 0;
+
+    Spotlight();
     Spotlight(toml::table table);
-    void GUI();
+    ~Spotlight();
 
-    void TriggerCall(std::string tag, bool toggle);
+    Spotlight(const Spotlight& other) = delete;
+    Spotlight& operator=(const Spotlight& other) = delete;
 
-    toml::table Serialise(unsigned long long guid)const;
+    Spotlight(Spotlight&& other);
+    Spotlight& operator=(Spotlight&& other);
+    
+    void Initialise();
+
+    void GUI() override;
+
+    glm::mat4 getProj();
+    glm::mat4 getView(glm::mat4 globalTransform);
+
+    toml::table Serialise(unsigned long long guid)const override;
 };
+
