@@ -13,9 +13,9 @@ uniform mat4 vp;
 uniform mat4 model;
 uniform vec3 colour;
 
+
 out vec3 lightColour;
 out vec3 fragPos;
-
 out vec3 fragmentNormal;
 
 void main()
