@@ -189,6 +189,7 @@ LevelEditor::LevelEditor() :
 
 void LevelEditor::Start()
 {
+	directionalLight.colour = { 0.0f, 0.0f, 0.0f };
 	gameUiOverlay = ResourceManager::LoadTexture("images/gameUiOverlay.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
 	overlayMesh.InitialiseQuad(1.0f);
 	overlayShader = ResourceManager::LoadShader("Shaders/defaultWithNormal.vert", "Shaders/simpleTexturedWithCutout.frag");
@@ -290,6 +291,7 @@ void LevelEditor::Start()
 
 void LevelEditor::Update(float delta)
 {
+	directionalLight.colour = { 0.0f, 0.0f, 0.0f };
 	bool playerDied = false;
 	if (showGrid) {
 		DrawGrid();
