@@ -11,6 +11,10 @@
 #include "EditorGUI.h"
 #include "Serialisation.h"
 
+Directional2dAnimator::Directional2dAnimator() : Animator()
+{
+}
+
 Directional2dAnimator::Directional2dAnimator(Animation* left, Animation* right, Animation* up, Animation* down) :
 	Animator(left),
 	rightAnimation(right),
@@ -164,14 +168,47 @@ void Directional2dAnimator::BaseGUI()
 	std::string tag = Utilities::PointerToString(this);
 	Animator::BaseGUI();
 
+	if (ResourceManager::AnimationSelector(("Right Animation##" + tag).c_str(), &rightAnimation)) {
+		if (rightAnimation) {
+			rightAnimationGUID = rightAnimation->GUID;
+		}
+		else {
+			rightAnimationGUID = 0;
+		}
+	}
+	if (rightAnimation) {
+		rightAnimation->GUI();
+	}
+	if (ResourceManager::AnimationSelector(("Up Animation##" + tag).c_str(), &upAnimation)) {
+		if (upAnimation) {
+			upAnimationGUID = upAnimation->GUID;
+		}
+		else {
+			upAnimationGUID = 0;
+		}
+	}
+	if (upAnimation) {
+		upAnimation->GUI();
+	}
+	if (ResourceManager::AnimationSelector(("Down Animation##" + tag).c_str(), &downAnimation)) {
+		if (downAnimation) {
+			downAnimationGUID = downAnimation->GUID;
+		}
+		else {
+			downAnimationGUID = 0;
+		}
+	}
+	if (downAnimation) {
+		downAnimation->GUI();
+	}
+
+
 	ImGui::SliderFloat(("downUpLerpAmount##" + tag).c_str(), &downUpLerpAmount, 0.0f, 1.0f);
 	ImGui::SliderFloat(("leftRightLerpAmount##" + tag).c_str(), &leftRightLerpAmount, 0.0f, 1.0f);
 
-	ImGui::BeginDisabled();
 
 	ImGui::DragFloat(("currentTimeRight##" + tag).c_str(), &currentTimeRight);
 	ImGui::DragFloat(("currentTimeUp##" + tag).c_str(), &currentTimeUp);
 	ImGui::DragFloat(("currentTimeDown##" + tag).c_str(), &currentTimeDown);
 
-	ImGui::EndDisabled();
 }

@@ -60,7 +60,9 @@ public:
 
 	void GUI();
 
-	toml::table Serialise();
+	toml::table Serialise() const;
+
+	operator std::string() const;
 
 private:
 	void ReadMissingBones(const aiAnimation* animation, Model* model);

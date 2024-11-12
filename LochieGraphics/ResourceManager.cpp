@@ -57,19 +57,19 @@ newResource->GUID = newGuid;                                                 \
 return newResource;                                                        \
 
 
-#define LoadResourceAsset(type, container)                                                \
-	std::ifstream file(path);                                                             \
-	if (!file) {                                                                          \
-		std::cout << "Failed to load ##type asset, attempted at path: " << path << '\n';  \
-		return nullptr;                                                                   \
-	}                                                                                     \
-	toml::table data = toml::parse(file);                                                 \
-	unsigned long long loadingGUID = Serialisation::LoadAsUnsignedLongLong(data["guid"]); \
-	auto search = container.find(loadingGUID);                                            \
-	if (search != container.end()) {                                                      \
-		return &search->second;                                                           \
-	}                                                                                     \
-	file.close();                                                                         \
+#define LoadResourceAsset(type, container)                                                       \
+	std::ifstream file(path);                                                                    \
+	if (!file) {                                                                                 \
+		std::cout << "Failed to load" << #type << "asset, attempted at path: " << path << '\n';  \
+		return nullptr;                                                                          \
+	}                                                                                            \
+	toml::table data = toml::parse(file);                                                        \
+	unsigned long long loadingGUID = Serialisation::LoadAsUnsignedLongLong(data["guid"]);        \
+	auto search = container.find(loadingGUID);                                                   \
+	if (search != container.end()) {                                                             \
+		return &search->second;                                                                  \
+	}                                                                                            \
+	file.close();                                                                                \
 	return &container.emplace(loadingGUID, data).first->second;
 
 
@@ -150,6 +150,11 @@ Mesh* ResourceManager::LoadMesh()
 Animation* ResourceManager::LoadAnimation(std::string path, Model* model)
 {
 	LoadResource(Animation, animations, path, model);
+}
+
+Animation* ResourceManager::LoadAnimationAsset(std::string path)
+{
+	LoadResourceAsset(Animation, animations);
 }
 
 Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
@@ -242,6 +247,11 @@ bool ResourceManager::ModelSelector(std::string label, Model** model, bool showN
 	}
 	std::cout << "Unknown Model Selector Type\n";
 	return false;
+}
+
+bool ResourceManager::AnimationSelector(std::string label, Animation** animation, bool showNull)
+{
+	ResourceSelector(Animation, animation, label, (Animation*(*)())nullptr);
 }
 
 #define GetResource(type, collection)                    \

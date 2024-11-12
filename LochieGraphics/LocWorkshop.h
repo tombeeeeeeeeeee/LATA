@@ -17,7 +17,8 @@ private:
 		std::string name;
 		std::string path;
 		Animation* animation;
-		SceneObject* sceneObject = nullptr;
+		SceneObject* animatedSceneObject = nullptr;
+		SceneObject* modelSceneObject = nullptr;
 		Model* model = nullptr;
 		AnimationTestPacket(std::string name, std::string path);
 	};

@@ -260,11 +260,6 @@ void LevelEditor::Start()
 
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 
-	for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation))
-	{
-		ResourceManager::LoadModelAsset(i.path().string());
-	}
-
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);
 	}

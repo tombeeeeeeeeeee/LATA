@@ -29,6 +29,8 @@ protected:
 	
 	// The current time into the animation.
 	float currentTime = 0.f;
+	
+	Animator(toml::table table);
 
 public:
 	enum Type : unsigned int {
@@ -37,7 +39,7 @@ public:
 		directional2dAnimator,
 	};
 
-	Animator() {};
+	Animator();
 	/// <summary>
 	/// Sets a starting animation.
 	/// </summary>
@@ -70,7 +72,6 @@ public:
 	const std::vector<glm::mat4>& getFinalBoneMatrices();
 
 	virtual toml::table Serialise(unsigned long long GUID) const;
-	Animator(toml::table table);
 
 	virtual void GUI();
 

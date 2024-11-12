@@ -20,7 +20,7 @@ public:
     float downUpLerpAmount = 0.5f;
     // 0 is left, right is 1
     float leftRightLerpAmount = 0.5f;
-    Directional2dAnimator() = default;
+    Directional2dAnimator();
     Directional2dAnimator(Animation* left, Animation* right, Animation* up, Animation* down);
     Directional2dAnimator(toml::table table);
 

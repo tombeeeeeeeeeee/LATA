@@ -13,18 +13,22 @@
 
 #include <iostream>
 
-Animator::Animator(Animation* animation) :
-    currentAnimation(animation)
+Animator::Animator()
 {
-    //TODO: A plain 100 shouldn't be here
     // If there is just a fixed max size than an array might just be better to use
     finalBoneMatrices.reserve(MAX_BONES_ON_MODEL);
 
     for (int i = 0; i < MAX_BONES_ON_MODEL; i++) {
         finalBoneMatrices.push_back(glm::mat4(1.0f));
     }
+}
 
-    currentAnimationGUID = currentAnimation->GUID;
+Animator::Animator(Animation* animation) : Animator()
+{
+    currentAnimation = animation;
+    if (currentAnimation) {
+        currentAnimationGUID = currentAnimation->GUID;
+    }
 }
 
 void Animator::UpdateAnimation(float delta)
@@ -88,10 +92,15 @@ toml::table Animator::Serialise(unsigned long long GUID) const
     };
 }
 
-Animator::Animator(toml::table table)
+Animator::Animator(toml::table table) : Animator()
 {
     currentAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["currentAnimationGUID"]);
     currentAnimation = ResourceManager::GetAnimation(currentAnimationGUID);
+}
+
+Animator::Type Animator::getType() const
+{
+    return Type::base;
 }
 
 void Animator::GUI()
@@ -102,11 +111,6 @@ void Animator::GUI()
         BaseGUI();
         ImGui::Unindent();
     }
-}
-
-Animator::Type Animator::getType() const
-{
-    return Animator::Type::base;
 }
 
 Animator* Animator::Load(toml::table table)
@@ -152,7 +156,17 @@ void Animator::BaseGUI()
         ImGui::Unindent();
     }
     // TODO: Show the animation
-    currentAnimation->GUI();
+    if (ResourceManager::AnimationSelector(("Animation #1##" + tag).c_str(), &currentAnimation, true)) {
+        if (currentAnimation) {
+            currentAnimationGUID = currentAnimation->GUID;
+        }
+        else {
+            currentAnimationGUID = 0;
+        }
+    }
+    if (currentAnimation) {
+        currentAnimation->GUI();
+    }
     ImGui::DragFloat(("Animation Time##" + tag).c_str(), &currentTime);
 
 }

@@ -11,6 +11,8 @@
 #include "Scene.h"
 #include "Paths.h"
 #include "PrefabManager.h"
+#include "BlendedAnimator.h"
+#include "Directional2dAnimator.h"
 
 #include "Utilities.h"
 
@@ -166,8 +168,11 @@ void SceneObject::GUI()
 	}
 
 	if (ImGui::BeginPopup(addPopup.c_str())) {
-		AddPartGUI(bollard, setBollard, Bollard, ("Bollard ##Add part" + tag).c_str());
 
+		AddPartGUI(animator, setAnimator, Animator(), ("Animator##Add part" + tag).c_str());
+		AddPartGUI(animator, setAnimator, BlendedAnimator(), ("Blended Animator##Add part" + tag).c_str());
+		AddPartGUI(animator, setAnimator, Directional2dAnimator(), ("Directional 2D Animator##Add part" + tag).c_str());
+		AddPartGUI(bollard, setBollard, Bollard, ("Bollard ##Add part" + tag).c_str());
 		AddPartGUI(door, setDoor, Door, ("Door ##Add part" + tag).c_str());
 		if (ecco() == nullptr && scene->ecco->GUID == 0) {
 			if (ImGui::MenuItem(("Ecco##Add part" + tag).c_str())) {
@@ -199,6 +204,7 @@ void SceneObject::GUI()
 	}
 
 	if (ImGui::BeginPopup(removePopup.c_str())) {
+		RemovePartGUI(animator, setAnimator, ("Animator##Remove part" + tag).c_str());
 		RemovePartGUI(bollard, setBollard, ("Bollard##Remove part" + tag).c_str());
 		RemovePartGUI(collider, setCollider, ("Collider##Remove part" + tag).c_str());
 		RemovePartGUI(door, setDoor, ("Door##Remove part" + tag).c_str());
@@ -488,6 +494,8 @@ Transform* SceneObject::transform() const
 	return &(scene->transforms.at(GUID));
 }
 
+// TODO: There is a case for the scene load to ensure that the below is also matched on scene load
+// TODO: Try to remove any different special set / get
 SetAndGetForPart(ModelRenderer, renderers, Parts::modelRenderer, Renderer, renderer)
 void SceneObject::setAnimator(Animator* part) {
 	if (part) {
@@ -658,7 +666,9 @@ void SceneObject::LoadWithParts(toml::table table)
 	unsigned long long intendedParts = Serialisation::LoadAsUnsignedIntOLD(sceneObjectTable["parts"]);
 
 	LoadPart("modelRenderer", modelRenderer, setRenderer, ModelRenderer);
-	LoadPart("animator", animator, setAnimator, Animator);
+	if (intendedParts & Parts::animator) {
+		setAnimator(Animator::Load(*table["animator"].as_table()));
+	};
 	LoadPart("rigidBody", rigidBody, setRigidBody, RigidBody);
 	LoadPart("health", health, setHealth, Health);
 	LoadPart("enemy", enemy, setEnemy, Enemy);

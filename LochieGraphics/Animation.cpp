@@ -115,7 +115,7 @@ void Animation::GUI()
 	}
 }
 
-toml::table Animation::Serialise()
+toml::table Animation::Serialise() const
 {
 	return toml::table {
 		{ "modelGUID", Serialisation::SaveAsUnsignedLongLong(modelGUID) },
@@ -123,6 +123,12 @@ toml::table Animation::Serialise()
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
 	};
 }
+
+Animation::operator std::string() const
+{
+	return path;
+}
+
 
 void Animation::ReadMissingBones(const aiAnimation* animation, Model* model)
 {

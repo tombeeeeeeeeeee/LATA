@@ -30,6 +30,7 @@ public:
 	static Mesh* LoadMesh(Mesh::presets preset);
 	static Mesh* LoadMesh();
 	static Animation* LoadAnimation(std::string path, Model* model);
+	static Animation* LoadAnimationAsset(std::string path);
 	static Texture* LoadTexture(std::string path, Texture::Type type, int wrappingMode = GL_REPEAT, bool flipOnLoad = true);
 	// TODO: See if this function can be cleaned up
 	static Texture* LoadTexture(unsigned int width = 1024, unsigned int height = 1024, GLenum format = GL_SRGB, unsigned char* data = nullptr, GLint wrappingMode = GL_REPEAT, GLenum dataType = GL_UNSIGNED_BYTE, bool mipMaps = false, GLint minFilter = GL_LINEAR, GLint magFilter = GL_LINEAR);
@@ -58,6 +59,8 @@ public:
 	static bool MaterialSelector(std::string label, Material** material, Shader* newMaterialShader = nullptr, bool showNull = true);
 	// Selector doesn't need a tag for label, just label is fine
 	static bool ModelSelector(std::string label, Model** model, bool showNull = true);
+	static bool AnimationSelector(std::string label, Animation** animation, bool showNull = true);
+
 
 	static unsigned long long guidCounter;
 	static std::random_device guidRandomiser;

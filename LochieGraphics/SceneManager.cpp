@@ -162,6 +162,15 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadMaterialAsset(i.path().string());
 	}
 
+	for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation))
+	{
+		ResourceManager::LoadModelAsset(i.path().string());
+	}
+
+	for (auto& i : std::filesystem::directory_iterator(Paths::animationsSaveLocation)) {
+		ResourceManager::LoadAnimationAsset(i.path().string());
+	}
+
 
 	//std::array<std::string, 6> skyboxFaces = { "images/skybox/left.jpg", "images/skybox/right.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
 	std::array<std::string, 6> skyboxFaces = { "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png" };

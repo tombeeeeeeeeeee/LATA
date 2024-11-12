@@ -4,7 +4,7 @@
 
 BoneInfo::BoneInfo()
 {
-	std::cout << "bone info\n";
+	//std::cout << "bone info\n";
 	offset = glm::identity<glm::mat4>();
 }
 
