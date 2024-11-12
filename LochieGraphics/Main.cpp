@@ -16,7 +16,7 @@ int main()
 #elif defined LEVEL_EDITOR
 	LevelEditor scene;
 #else
-	LocWorkshop scene;
+	LevelEditor scene;
 #endif
 	SceneManager sceneManager(&scene);
 	while (!sceneManager.ShouldClose())
