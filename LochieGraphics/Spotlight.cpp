@@ -44,6 +44,7 @@ Spotlight::Spotlight(Spotlight&& other)
 	cutOff = other.cutOff;
 	outerCutOff = other.outerCutOff;
 	castsShadows = other.castsShadows;
+	intensity = other.intensity;
 
 	depthBuffer = other.depthBuffer;
 	other.depthBuffer = 0;
@@ -68,6 +69,7 @@ Spotlight& Spotlight::operator=(Spotlight&& other)
 	cutOff = other.cutOff;
 	outerCutOff = other.outerCutOff;
 	castsShadows = other.castsShadows;
+	intensity = other.intensity;
 
 	glDeleteTextures(1, &depthBuffer);
 	glDeleteFramebuffers(1, &frameBuffer);
@@ -103,20 +105,53 @@ void Spotlight::GUI()
 	{
 		ImGui::Indent();
 		std::string tag = Utilities::PointerToString(this);
-		ImGui::Checkbox(("On##" + tag).c_str(), &on);
-		ImGui::ColorPicker3(("Colour##" + tag).c_str(), &colour[0]);
+		if (ImGui::Checkbox(("On##" + tag).c_str(), &on))
+		{
+			if (on)
+			{
+				effect = PointLightEffect::On;
+			}
+			else
+			{
+				effect = PointLightEffect::Off;
+			}
+			timeInType = 0;
+		};
+		ImGui::ColorPicker3(("Colour##" + tag).c_str(), &colour[0], ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
 		//Tom Changed this, feel free to set it back.
 		float _range = 100.0f * range;
 		if (ImGui::DragFloat(("Range##" + tag).c_str(), &_range, 0.1f))
 			SetRange(_range);
+
+		ImGui::DragFloat("Intensity", &intensity);
 		ImGui::SliderFloat(("Cut off##" + tag).c_str(), &cutOff, 0.f, 1.f);
 		ImGui::SliderFloat(("Outer cut off##" + tag).c_str(), &outerCutOff, 0.f, 1.f);
+		const char* effects[] = {
+			"On", "Off", "Flickering", "SyncGun"
+		};
+		const char* currType = effects[(int)effect];
+		ImGui::PushItemWidth(180);
+		if (ImGui::BeginCombo(("Effect Type##" + tag).c_str(), currType))
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				bool isSelected = i == (int)effect;
+				if (ImGui::Selectable(effects[i], isSelected))
+				{
+					effect = (PointLightEffect)i;
+					timeInType = 0.0f;
+				}
+				if (isSelected) ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
 		if (ImGui::DragFloat3(("Direction" + tag).c_str(), &direction[0]))
 		{
 			direction = glm::normalize(direction);
 		}
 		ImGui::InputText(("Trigger ID##" + tag).c_str(), &triggerTag);
 		ImGui::Checkbox(("Can Be Triggered##" + tag).c_str(), &canBeTriggered);
+		ImGui::Checkbox(("Casts Shadows##" + tag).c_str(), &castsShadows);
 		ImGui::Unindent();
 	}
 }

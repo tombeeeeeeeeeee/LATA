@@ -21,11 +21,15 @@ uniform mat4 invVP;
 uniform mat4 invP;
 uniform mat4 invV;
 uniform vec2 invViewPort;
+uniform mat4 lightMat;
+
 
 uniform sampler2D albedo;
 uniform sampler2D normal;
 uniform sampler2D depth;
 uniform sampler2D lightLerp;
+uniform sampler2D shadowMap;
+
 
 vec3 trueNormal;
 vec3 trueAlbedo;

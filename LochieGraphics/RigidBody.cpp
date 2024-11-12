@@ -55,8 +55,8 @@ void RigidBody::addCollider(Collider* collider)
 		PolygonCollider* poly = (PolygonCollider*)collider;
 		for (int i = 0; i < poly->verts.size(); i++)
 		{
-			maxVertDistance = glm::max(poly->verts[i].x + poly->radius, maxVertDistance);
-			maxVertDistance = glm::max(poly->verts[i].y + poly->radius, maxVertDistance);
+			maxVertDistance = glm::max(abs(poly->verts[i].x) + poly->radius, maxVertDistance);
+			maxVertDistance = glm::max(abs(poly->verts[i].y) + poly->radius, maxVertDistance);
 		}
 	}
 	colliders.push_back(collider);
