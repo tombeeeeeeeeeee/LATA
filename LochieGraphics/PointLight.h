@@ -22,6 +22,7 @@ public:
     float linear = 0;
     float quadratic = 0;
     glm::vec3 colour = {1.0f,1.0f,1.0f};
+    float intensity = 1.0f;
 
     bool on = true;
     bool canBeTriggered = false;

@@ -593,7 +593,7 @@ float delta
         transform.setScale(pair.second.range * 500.0f);
         pointLightPassShader->setMat4("model", transform.getGlobalMatrix());
         pointLightPassShader->setVec3("lightPos", transforms[pair.first].getGlobalPosition());
-        pointLightPassShader->setVec3("colour", pair.second.colour);
+        pointLightPassShader->setVec3("colour", pair.second.colour * pair.second.intensity);
         pointLightPassShader->setFloat("linear", pair.second.linear);
         pointLightPassShader->setFloat("quad", pair.second.quadratic);
         pair.second.timeInType += delta;
@@ -679,7 +679,7 @@ void RenderSystem::RenderSpotlights(
         transform.setScale(pair.second.range * 900.0f);
         spotlightPassShader->setMat4("model", transform.getGlobalMatrix());
         spotlightPassShader->setVec3("lightPos", transforms[pair.first].getGlobalPosition());
-        spotlightPassShader->setVec3("colour", pair.second.colour);
+        spotlightPassShader->setVec3("colour", pair.second.colour  * pair.second.intensity);
         spotlightPassShader->setFloat("linear", pair.second.linear);
         spotlightPassShader->setFloat("quad", pair.second.quadratic);
         spotlightPassShader->setFloat("cutOff", pair.second.cutOff);
@@ -805,9 +805,11 @@ void RenderSystem::RenderSpotLightShadowMaps(
     std::unordered_set<unsigned long long> animatedRenderered
 )
 {
+    glCullFace(GL_FRONT);
     spotlightPassShader->Use();
     for (auto& pair : spotlights)
     {
+        if (!pair.second.castsShadows) continue;
         spotlightPassShader->setMat4("vp",pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
         glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -816,6 +818,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+    glCullFace(GL_BACK);
 }
 
 void RenderSystem::OutputBufferSetUp()

@@ -224,6 +224,7 @@ void Ecco::OnCollision(Collision collision)
 				collision.sceneObject->health()->subtractHealth(speedDamage);
 				SceneManager::scene->audio.PlaySound(Audio::eccoEnemyHit);
 				collision.self->health()->addHealth(healingFromDamage);
+				collision.self->rigidbody()->AddImpulse(collision.normal * -speedReductionAfterDamaging);
 			}
 		}
 	}

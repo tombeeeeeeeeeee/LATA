@@ -19,6 +19,7 @@ PointLight::PointLight(toml::table table)
 	canBeTriggered = Serialisation::LoadAsBool(table["canBeTriggered"]);
 	on = Serialisation::LoadAsBool(table["on"]);
 	effect = (PointLightEffect)Serialisation::LoadAsInt(table["effect"]);
+	intensity = Serialisation::LoadAsFloat(table["intensity"], 1.0f);
 }
 
 void PointLight::GUI()
@@ -32,11 +33,12 @@ void PointLight::GUI()
 
 		ImGui::ColorPicker3(("Light Colour##" + tag).c_str(), &colour[0], ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
 		float _range = 100.0f * range;
+		ImGui::DragFloat("Intensity", &intensity);
 		if (ImGui::DragFloat(("Range##" + tag).c_str(), &_range, 0.1f))
 			SetRange(_range);
 
 		const char* effects[] = {
-			"On", "Off", "Flickering", "Explosion", "SyncGun"
+			"On", "Off", "Flickering", "SyncGun"
 		};
 		const char* currType = effects[(int)effect];
 		ImGui::PushItemWidth(180);
@@ -252,6 +254,7 @@ toml::table PointLight::Serialise(unsigned long long guid) const
 		{ "on", on },
 		{ "canBeTriggered", canBeTriggered },
 		{ "effect", (int)effect },
+		{ "intensity", intensity },
 	};
 }
 

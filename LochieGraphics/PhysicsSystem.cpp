@@ -118,7 +118,7 @@ void PhysicsSystem::GetCollisions(
 	Transform* transformA, Transform* transformB,
 	std::vector<CollisionPacket>& collisions)
 {
-	float collidableDistance = a->maxVertDistance + b->maxVertDistance + 100.0f;
+	float collidableDistance = a->maxVertDistance + b->maxVertDistance;
 	collidableDistance *= collidableDistance;
 	if (glm::dot(transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition(), transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition()) > collidableDistance ) return;
 	std::vector<Collider*> aCols = (*a->getColliders());
