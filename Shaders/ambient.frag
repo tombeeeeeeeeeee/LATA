@@ -81,7 +81,7 @@ void main()
     vec2 worldTexPos = ((fragPos.xz - mapMins)/mapDimensions).xy;
     worldTexPos.y = 1 - worldTexPos.y;
 
-    vec3 roomAmbience = 4.0 * pow(texture(roomLight, worldTexPos).rgb, vec3(2.2));
+    vec3 roomAmbience = 8.0 * pow(texture(roomLight, worldTexPos).rgb, vec3(2.2));
     vec3 result = Lo + roomAmbience * trueAlbedo;
     result *= ambientIntensity;
     float SSAOvalue = texture(screenSSAO, texCoords).r;

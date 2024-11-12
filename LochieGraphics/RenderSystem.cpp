@@ -814,6 +814,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
 {
     glCullFace(GL_FRONT);
     glEnable(GL_DEPTH_TEST);
+    glViewport(0, 0, 1024, 1024);
     spotlightShadowPassShader->Use();
     for (auto& pair : spotlights)
     {
@@ -826,6 +827,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glDisable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
 }
