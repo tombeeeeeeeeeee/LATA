@@ -5,7 +5,7 @@
 #include <vector>
 
 // DON'T FORGET TO CHANGE ON SHADER IF CHANGING
-constexpr auto MAX_BONES_ON_MODEL = 100;
+constexpr auto MAX_BONES_ON_MODEL = 130;
 
 class Animation;
 class ModelHierarchyInfo;
@@ -15,6 +15,8 @@ namespace toml {
 	}
 }
 
+// TODO: With how some stuff is laid out almost feels like it would be worth having an 
+
 class Animator
 {
 protected:
@@ -23,12 +25,21 @@ protected:
 
 	// The current animation that is playing.
 	Animation* currentAnimation = nullptr;
+	unsigned long long currentAnimationGUID = 0;
 	
 	// The current time into the animation.
 	float currentTime = 0.f;
+	
+	Animator(toml::table table);
 
 public:
-	Animator() {};
+	enum Type : unsigned int {
+		base,
+		blended,
+		directional2dAnimator,
+	};
+
+	Animator();
 	/// <summary>
 	/// Sets a starting animation.
 	/// </summary>
@@ -60,9 +71,16 @@ public:
 	/// <returns>const reference vector of the bone transforms</returns>
 	const std::vector<glm::mat4>& getFinalBoneMatrices();
 
-	toml::table Serialise(unsigned long long GUID) const;
-	Animator(toml::table table);
+	virtual toml::table Serialise(unsigned long long GUID) const;
 
-	void GUI();
+	virtual void GUI();
+
+	virtual Type getType() const;
+
+	static Animator* Load(toml::table table);
+
+protected:
+
+	void BaseGUI();
 };
 

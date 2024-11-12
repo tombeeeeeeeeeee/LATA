@@ -21,6 +21,7 @@ namespace Paths {
 	const std::string modelSaveLocation = "Assets/Models/";
 	const std::string prefabsSaveLocation = "Assets/Prefabs/";
 	const std::string shadersSaveLocation = "Assets/Shaders/";
+	const std::string animationsSaveLocation = "Assets/Animations/";
 
 
 	const std::string userPrefsSaveLocation = "UserPrefs/";
@@ -30,6 +31,7 @@ namespace Paths {
 	const std::string textureExtension = ".texture";
 	const std::string modelExtension = ".model";
 	const std::string levelExtension = ".level";
+	const std::string animationExtension = ".animation";
 	const std::string enemySystemExtension = ".enemySystem";
 	const std::string healthSystemExtension = ".healthSystem";
 	const std::string cameraSystemExtension = ".cameraSystem";

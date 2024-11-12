@@ -662,6 +662,7 @@ void RenderSystem::RenderSpotlights(
     spotlightPassShader->setInt("normal", 2);
     spotlightPassShader->setInt("depth", 3);
     spotlightPassShader->setInt("lightLerp", 4);
+    spotlightPassShader->setInt("shadowMap", 5);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, albedoBuffer);
@@ -686,6 +687,11 @@ void RenderSystem::RenderSpotlights(
         spotlightPassShader->setFloat("outerCutOff", 1.0f - pair.second.outerCutOff);
         glm::vec4 globalDir = transforms[pair.first].getGlobalMatrix() * glm::vec4(pair.second.direction.x, pair.second.direction.y, pair.second.direction.z, 0.0);
         spotlightPassShader->setVec3("direction", {globalDir.x, globalDir.y, globalDir.z});
+        spotlightPassShader->setMat4("lightMat", pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
+
+        glActiveTexture(GL_TEXTURE0 + 5);
+        glBindTexture(GL_TEXTURE_2D, pair.second.depthBuffer);
+
         pair.second.timeInType += delta;
         float lerpAmount;
         switch (pair.second.effect)
@@ -726,6 +732,7 @@ void RenderSystem::RenderSpotlights(
         spotlightPassShader->setFloat("lerpAmount", glm::clamp(lerpAmount, 0.0f, 1.0f));
         lightSphere->getMeshes()[0]->Draw();
     }
+
     glDisable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glCullFace(GL_BACK);
@@ -806,18 +813,22 @@ void RenderSystem::RenderSpotLightShadowMaps(
 )
 {
     glCullFace(GL_FRONT);
-    spotlightPassShader->Use();
+    glEnable(GL_DEPTH_TEST);
+    glViewport(0, 0, 1024, 1024);
+    spotlightShadowPassShader->Use();
     for (auto& pair : spotlights)
     {
         if (!pair.second.castsShadows) continue;
-        spotlightPassShader->setMat4("vp",pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
+        spotlightShadowPassShader->setMat4("vp",pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
         glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
         glClear(GL_DEPTH_BUFFER_BIT);
         
-        DrawAllRenderers(animators, transforms, renderers, animatedRenderered, spotlightPassShader);
+        DrawAllRenderers(animators, transforms, renderers, animatedRenderered, spotlightShadowPassShader);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    glDisable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
 }
 

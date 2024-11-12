@@ -4,9 +4,13 @@
 #include "ModelHierarchyInfo.h"
 #include "BoneInfo.h"
 #include "Model.h"
+#include "ResourceManager.h"
+
+#include "Serialisation.h"
 
 BlendedAnimator::BlendedAnimator(Animation* one, Animation* two) : Animator(one),
-    otherCurrentAnimation(two)
+    otherCurrentAnimation(two),
+    otherCurrentAnimationGUID(two->GUID)
 {
 }
 
@@ -83,4 +87,23 @@ void BlendedAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm
     for (int i = 0; i < node->children.size(); i++) {
         CalculateBoneTransform(node->children[i], globalTransformation);
     }
+}
+
+Animator::Type BlendedAnimator::getType() const
+{
+    return Animator::Type::blended;
+}
+
+BlendedAnimator::BlendedAnimator(toml::table table) : Animator(table)
+{
+    otherCurrentAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["otherCurrentAnimationGUID "]);
+    otherCurrentAnimation = ResourceManager::GetAnimation(otherCurrentAnimationGUID);
+}
+
+toml::table BlendedAnimator::Serialise(unsigned long long GUID) const
+{
+    toml::table table = Animator::Serialise(GUID);
+
+    table.emplace("otherCurrentAnimationGUID", Serialisation::SaveAsUnsignedLongLong(otherCurrentAnimationGUID));
+    return table;
 }

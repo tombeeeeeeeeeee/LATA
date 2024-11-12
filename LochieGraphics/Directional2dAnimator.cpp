@@ -4,8 +4,16 @@
 #include "ModelHierarchyInfo.h"
 #include "BoneInfo.h"
 #include "Model.h"
+#include "ResourceManager.h"
 
 #include "Utilities.h"
+
+#include "EditorGUI.h"
+#include "Serialisation.h"
+
+Directional2dAnimator::Directional2dAnimator() : Animator()
+{
+}
 
 Directional2dAnimator::Directional2dAnimator(Animation* left, Animation* right, Animation* up, Animation* down) :
 	Animator(left),
@@ -13,6 +21,17 @@ Directional2dAnimator::Directional2dAnimator(Animation* left, Animation* right, 
 	upAnimation(up),
 	downAnimation(down)
 {
+}
+
+Directional2dAnimator::Directional2dAnimator(toml::table table) : Animator(table)
+{
+	rightAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["rightAnimationGUID"]);
+	upAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["upAnimationGUID"]);
+	downAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["downAnimationGUID"]);
+
+	rightAnimation = ResourceManager::GetAnimation(rightAnimationGUID);
+	upAnimation = ResourceManager::GetAnimation(upAnimationGUID);
+	downAnimation = ResourceManager::GetAnimation(downAnimationGUID);
 }
 
 void Directional2dAnimator::UpdateAnimation(float delta)
@@ -80,13 +99,16 @@ void Directional2dAnimator::CalculateBoneTransform(const ModelHierarchyInfo* nod
 		glm::quat quat3 = glm::quat_cast(bone3Transform);
 		glm::quat quat4 = glm::quat_cast(bone4Transform);
 
+
+		float biasValue = (fabsf(downUpLerpAmount - 0.5f) - fabsf(leftRightLerpAmount - 0.5f)) + 0.5f;
+
 		glm::vec3 leftRightPos = Utilities::Lerp(pos1, pos2, leftRightLerpAmount);
 		glm::vec3 downUpPos = Utilities::Lerp(pos4, pos3, downUpLerpAmount);
-		glm::vec3 lerpedPos = Utilities::Lerp(leftRightPos, downUpPos, 0.5f);
+		glm::vec3 lerpedPos = Utilities::Lerp(leftRightPos, downUpPos, biasValue);
 
 		glm::quat leftRightQuat = glm::slerp(quat1, quat2, leftRightLerpAmount);
 		glm::quat downUpQuat = glm::slerp(quat4, quat3, downUpLerpAmount);
-		glm::quat slerpedQuat = glm::slerp(leftRightQuat, downUpQuat, 0.5f);
+		glm::quat slerpedQuat = glm::slerp(leftRightQuat, downUpQuat, biasValue);
 
 		// TODO: Scale
 
@@ -113,4 +135,80 @@ void Directional2dAnimator::CalculateBoneTransform(const ModelHierarchyInfo* nod
 	for (int i = 0; i < node->children.size(); i++) {
 		CalculateBoneTransform(node->children[i], globalTransformation);
 	}
+}
+
+void Directional2dAnimator::GUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	if (ImGui::CollapsingHeader(("Directional 2D Animator##" + tag).c_str())) {
+		ImGui::Indent();
+		BaseGUI();
+		ImGui::Unindent();
+	}
+}
+
+toml::table Directional2dAnimator::Serialise(unsigned long long GUID) const
+{
+	toml::table table = Animator::Serialise(GUID);
+
+	table.emplace("rightAnimationGUID", Serialisation::SaveAsUnsignedLongLong(rightAnimationGUID));
+	table.emplace("upAnimationGUID", Serialisation::SaveAsUnsignedLongLong(upAnimationGUID));
+	table.emplace("downAnimationGUID", Serialisation::SaveAsUnsignedLongLong(downAnimationGUID));
+
+	return table;
+}
+
+Animator::Type Directional2dAnimator::getType() const
+{
+	return Animator::Type::directional2dAnimator;
+}
+
+void Directional2dAnimator::BaseGUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	Animator::BaseGUI();
+
+	if (ResourceManager::AnimationSelector(("Right Animation##" + tag).c_str(), &rightAnimation)) {
+		if (rightAnimation) {
+			rightAnimationGUID = rightAnimation->GUID;
+		}
+		else {
+			rightAnimationGUID = 0;
+		}
+	}
+	if (rightAnimation) {
+		rightAnimation->GUI();
+	}
+	if (ResourceManager::AnimationSelector(("Up Animation##" + tag).c_str(), &upAnimation)) {
+		if (upAnimation) {
+			upAnimationGUID = upAnimation->GUID;
+		}
+		else {
+			upAnimationGUID = 0;
+		}
+	}
+	if (upAnimation) {
+		upAnimation->GUI();
+	}
+	if (ResourceManager::AnimationSelector(("Down Animation##" + tag).c_str(), &downAnimation)) {
+		if (downAnimation) {
+			downAnimationGUID = downAnimation->GUID;
+		}
+		else {
+			downAnimationGUID = 0;
+		}
+	}
+	if (downAnimation) {
+		downAnimation->GUI();
+	}
+
+
+	ImGui::SliderFloat(("downUpLerpAmount##" + tag).c_str(), &downUpLerpAmount, 0.0f, 1.0f);
+	ImGui::SliderFloat(("leftRightLerpAmount##" + tag).c_str(), &leftRightLerpAmount, 0.0f, 1.0f);
+
+
+	ImGui::DragFloat(("currentTimeRight##" + tag).c_str(), &currentTimeRight);
+	ImGui::DragFloat(("currentTimeUp##" + tag).c_str(), &currentTimeUp);
+	ImGui::DragFloat(("currentTimeDown##" + tag).c_str(), &currentTimeDown);
+
 }

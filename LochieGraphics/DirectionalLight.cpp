@@ -3,6 +3,7 @@
 #include "Shader.h"
 
 #include "Utilities.h"
+#include "UserPreferences.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
@@ -17,10 +18,11 @@ DirectionalLight::DirectionalLight(glm::vec3 _colour, glm::vec3 _direction) :
 void DirectionalLight::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
-	ImGui::ColorEdit3(("Colour##" + tag).c_str(), &colour[0]);
+	if (ImGui::ColorEdit3(("Colour##" + tag).c_str(), &colour[0])) { UserPreferences::Save(); }
 	if (ImGui::DragFloat3(("Direction##" + tag).c_str(), &direction[0], 0.01f, -1.f, 1.f))
 	{
 		direction = glm::normalize(direction);
+		UserPreferences::Save();
 	}
 }
 

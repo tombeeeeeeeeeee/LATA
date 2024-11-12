@@ -189,6 +189,7 @@ LevelEditor::LevelEditor() :
 
 void LevelEditor::Start()
 {
+	directionalLight.colour = { 0.0f, 0.0f, 0.0f };
 	gameUiOverlay = ResourceManager::LoadTexture("images/gameUiOverlay.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
 	overlayMesh.InitialiseQuad(1.0f);
 	overlayShader = ResourceManager::LoadShader("Shaders/defaultWithNormal.vert", "Shaders/simpleTexturedWithCutout.frag");
@@ -198,9 +199,6 @@ void LevelEditor::Start()
 	groundTexture->mipMapped = false;
 	groundMaterial = ResourceManager::LoadMaterial("Ground", groundShader);
 	groundMaterial->AddTextures({ groundTexture });
-
-	directionalLight = DirectionalLight
-	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
 
 	gui.showHierarchy = true;
 	gui.showSceneObject = true;
@@ -260,11 +258,6 @@ void LevelEditor::Start()
 
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 
-	for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation))
-	{
-		ResourceManager::LoadModelAsset(i.path().string());
-	}
-
 	if (UserPreferences::loadDefaultLevel && UserPreferences::defaultLevelLoad != "") {
 		LoadLevel(false, UserPreferences::defaultLevelLoad);
 	}
@@ -294,13 +287,11 @@ void LevelEditor::Start()
 
 	healthBar.InitialiseQuad(1.0f);
 	healthShader = ResourceManager::LoadShader("healthBar");
-
-	directionalLight.colour = { 1.0f, 1.0f, 1.0f };
-	directionalLight.direction = glm::normalize(glm::vec3(-0.25, -1.0f, -0.5f));
 }
 
 void LevelEditor::Update(float delta)
 {
+	directionalLight.colour = { 0.0f, 0.0f, 0.0f };
 	bool playerDied = false;
 	if (showGrid) {
 		DrawGrid();
@@ -802,6 +793,9 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 		return;
 	}
 
+	directionalLight.direction = UserPreferences::loadedDirectionalLightDirection;
+	directionalLight.colour = UserPreferences::loadedDirectionalLightColour;
+
 	if (UserPreferences::rememberLastLevel) {
 		UserPreferences::defaultLevelLoad = windowName;
 		UserPreferences::Save();
@@ -862,6 +856,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 
 	RefreshMinMaxes();
 	renderSystem.LevelLoad();
+
 }
 
 void LevelEditor::ModelPlacer(glm::vec2 targetPos)

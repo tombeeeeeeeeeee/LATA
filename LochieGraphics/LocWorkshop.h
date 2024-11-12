@@ -6,21 +6,31 @@
 #include "ComputeShader.h"
 #include "Mesh.h"
 #include "Particle.h"
+#include "Directional2dAnimator.h"
 
 class LocWorkshop : public Scene
 {
 private:
 
-	DirectionalLight directionalLight = DirectionalLight
-	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
 
-	Animation animation1;
-	Animation animation2;
-	Animation animation3;
-	Animation animation4;
+	struct AnimationTestPacket {
+		std::string name;
+		std::string path;
+		Animation* animation;
+		SceneObject* animatedSceneObject = nullptr;
+		SceneObject* modelSceneObject = nullptr;
+		Model* model = nullptr;
+		AnimationTestPacket(std::string name, std::string path);
+	};
 
-	Animation animation5;
-	Animation animation6;
+	std::vector<AnimationTestPacket> animationTestPackets;
+	
+	Directional2dAnimator eccoAnimator;
+	Animation* eccoLeft;
+	Animation* eccoRight;
+	Animation* eccoUp;
+	Animation* eccoDown;
+	
 	
 	Shader* shader;
 

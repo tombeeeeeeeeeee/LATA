@@ -2,10 +2,12 @@
 
 #include "BoneInfo.h"
 #include "Model.h"
+#include "ResourceManager.h"
 
 #include "Utilities.h"
 
 #include "EditorGUI.h"
+#include "Serialisation.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -14,18 +16,34 @@
 
 Animation::Animation(const std::string& animationPath, Model* _model) :
 	model(_model),
-	modelGUID(_model->GUID)
+	modelGUID(_model->GUID),
+	path(animationPath)
+{
+	Load();
+}
+
+Animation::Animation(toml::table table)
+{
+	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
+	modelGUID = Serialisation::LoadAsUnsignedLongLong(table["modelGUID"]);
+	model = ResourceManager::GetModel(modelGUID);
+	path = Serialisation::LoadAsString(table["path"]);
+
+	Load();
+}
+
+void Animation::Load()
 {
 	// TODO: Can I just reuse like 1 importer?
 	Assimp::Importer importer;
 	// TODO: what flags should be set here
 	// TODO: Properties like this are also set in Model, they should be ensured to match
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
-	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
-	
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
+
 	// If either the scene or the root node is null, then the animation has failed to load
 	if (!scene || !scene->mRootNode || !scene->mNumAnimations) {
-		std::cout << "Error: Failed to load animation at: " << animationPath << "\n";
+		std::cout << "Error: Failed to load animation at: " << path << "\n";
 		return;
 	}
 
@@ -33,13 +51,13 @@ Animation::Animation(const std::string& animationPath, Model* _model) :
 	aiAnimation* animation = scene->mAnimations[0];
 	duration = (float)animation->mDuration;
 	ticksPerSecond = (float)animation->mTicksPerSecond;
-	
+
 	//aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
 	//globalTransformation = globalTransformation.Inverse();
 
 	//rootNode = &(new SceneObject())->transform;
 	//SceneManager::scene->sceneObjects.push_back(rootNode->getSceneObject());
-	
+
 	//ReadHierarchyData(rootNode, scene->mRootNode);
 	ReadMissingBones(animation, model);
 }
@@ -96,6 +114,21 @@ void Animation::GUI()
 		ImGui::Unindent();
 	}
 }
+
+toml::table Animation::Serialise() const
+{
+	return toml::table {
+		{ "modelGUID", Serialisation::SaveAsUnsignedLongLong(modelGUID) },
+		{ "path", path },
+		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
+	};
+}
+
+Animation::operator std::string() const
+{
+	return path;
+}
+
 
 void Animation::ReadMissingBones(const aiAnimation* animation, Model* model)
 {

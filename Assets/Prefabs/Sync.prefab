@@ -1,15 +1,7 @@
-children = []
-
 [health]
 currHealth = 5
 guid = '2091576977596946314'
 maxHealth = 5
-
-[modelRenderer]
-guid = '2091576977596946314'
-materialTint = [ 0.0, 0.800000011920929, 0.0 ]
-materials = [ '0' ]
-modelGuid = '18138382404370373262'
 
 [rigidBody]
 accel = [ 0.0, 0.0 ]
@@ -32,11 +24,11 @@ vel = [ 0.0, 0.0 ]
     verts = [ [ 0.0, 0.0 ] ]
 
 [sceneObject]
-children = []
+children = [ '2236905023818184222', '2237067691946253859' ]
 guid = '2091576977596946314'
 name = 'Sync'
 parent = '0'
-parts = 394
+parts = 392
 prefabBase = '2091576977596946314'
 prefabStatus = 1
 
@@ -57,34 +49,84 @@ moveDeadZone = 0.4000000059604645
 moveSpeed = 400.0
 overclockBeamColour = [ 0.06395351886749268, 1.0, 0.0 ]
 overclockBeamLifeSpan = 1.5
-overclockBounceDamage = 0
+overclockBounceDamage = 100
 overclockChargeTime = 1.5
-overclockDamage = 150
+overclockDamage = 200
 overclockReboundCount = 1
-rainbowDimming = 1.0
-rainbowRebounding = false
+rainbowDimming = 2.5
+rainbowRebounding = true
 sniperBeamColour = [ 0.5641789436340332, 1.0, 0.5353982448577881 ]
 sniperBeamLifeSpan = 0.5
 sniperChargeTime = 0.30000001192092896
-sniperDamage = 50
+sniperDamage = 100
 startSlowTime = 0.5
 stopSlowTime = 1.5
 
     [sync.chargeUI]
-    backgroundColour = [ 0.42352941632270813, 0.003921568859368563, 0.06666667014360428 ]
-    foregroundColour = [ 0.9019607901573181, 0.13725490868091583, 0.16470588743686676 ]
+    backgroundColour = [ 0.12156862765550613, 0.3529411852359772, 0.10196078568696976 ]
+    foregroundColour = [ 0.10196078568696976, 1.0, 0.0 ]
     offset = [ 0.5, -0.9399999976158142 ]
     scale = [ 0.3779999911785126, 0.03799999877810478 ]
 
     [sync.healthUI]
-    backgroundColour = [ 0.12156862765550613, 0.3529411852359772, 0.10196078568696976 ]
-    foregroundColour = [ 0.10196078568696976, 1.0, 0.0 ]
+    backgroundColour = [ 0.42352941632270813, 0.003921568859368563, 0.06666667014360428 ]
+    foregroundColour = [ 0.9019607901573181, 0.13725490868091583, 0.16470588743686676 ]
     offset = [ 0.5, -0.8410000205039978 ]
     scale = [ 0.3779999911785126, 0.05299999937415123 ]
 
 [transform]
-euler = [ 179.99998474121094, 180.0, 180.0 ]
+euler = [ -2.2311789507512003e-05, 124.23625946044922, 5.008955668017734e-06 ]
 guid = '2091576977596946314'
-position = [ 1778.0653076171875, -0.00390625, -118.4177017211914 ]
-quaternion = [ 1.0, -1.9470718370939721e-07, -4.3711395392165286e-08, 4.371138118131057e-08 ]
+position = [ 1346.20166015625, -0.016998419538140297, 513.5111083984375 ]
+quaternion = [ 0.4676501154899597, -1.2969188389888586e-07, 0.8839136958122253, 1.9254589744832629e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+children = []
+
+    [children.modelRenderer]
+    guid = '2236905023818184222'
+    materialTint = [ 1.0, 1.0, 1.0 ]
+    materials = [ '2229847150575832532' ]
+    modelGuid = '2234949598158592467'
+
+    [children.sceneObject]
+    children = []
+    guid = '2236905023818184222'
+    name = 'Sink Model'
+    parent = '2091576977596946314'
+    parts = 2
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.transform]
+    euler = [ 0.0, -90.0, 0.0 ]
+    guid = '2236905023818184222'
+    position = [ 0.0, 0.0, 0.0 ]
+    quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+children = []
+
+    [children.modelRenderer]
+    guid = '2237067691946253859'
+    materialTint = [ 0.0, 0.32743364572525024, 0.11880327016115189 ]
+    materials = [ '0' ]
+    modelGuid = '2236096697336878089'
+
+    [children.sceneObject]
+    children = []
+    guid = '2237067691946253859'
+    name = 'Gundam'
+    parent = '2091576977596946314'
+    parts = 2
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.transform]
+    euler = [ 0.890749990940094, -2.2175400257110596, -21.890897750854492 ]
+    guid = '2237067691946253859'
+    position = [ -22.592910766601562, 1.9634391069412231, -7.275335788726807 ]
+    quaternion = [ 0.9816234707832336, 0.0039562988094985485, -0.0204735416918993, -0.18968532979488373 ]
+    scale = [ 0.9999995231628418, 0.9999975562095642, 0.9999959468841553 ]

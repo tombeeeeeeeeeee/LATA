@@ -4,19 +4,30 @@
 #include "ModelHierarchyInfo.h"
 #include "BoneInfo.h"
 #include "Model.h"
+#include "ResourceManager.h"
+#include "BlendedAnimator.h"
+#include "Directional2dAnimator.h"
 
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
 
-Animator::Animator(Animation* animation) :
-    currentAnimation(animation)
+#include <iostream>
+
+Animator::Animator()
 {
-    //TODO: A plain 100 shouldn't be here
     // If there is just a fixed max size than an array might just be better to use
     finalBoneMatrices.reserve(MAX_BONES_ON_MODEL);
 
     for (int i = 0; i < MAX_BONES_ON_MODEL; i++) {
         finalBoneMatrices.push_back(glm::mat4(1.0f));
+    }
+}
+
+Animator::Animator(Animation* animation) : Animator()
+{
+    currentAnimation = animation;
+    if (currentAnimation) {
+        currentAnimationGUID = currentAnimation->GUID;
     }
 }
 
@@ -33,6 +44,7 @@ void Animator::UpdateAnimation(float delta)
 void Animator::PlayAnimation(Animation* animation)
 {
     currentAnimation = animation;
+    currentAnimationGUID = currentAnimation->GUID;
     currentTime = 0.0f;
 }
 
@@ -73,46 +85,88 @@ const std::vector<glm::mat4>& Animator::getFinalBoneMatrices()
 
 toml::table Animator::Serialise(unsigned long long GUID) const
 {
-    // TODO: Save the current animation
     return toml::table{
-        { "guid", Serialisation::SaveAsUnsignedLongLong(GUID) }
+        { "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
+        { "currentAnimationGUID", Serialisation::SaveAsUnsignedLongLong(currentAnimationGUID) },
+        { "type", Serialisation::SaveAsUnsignedInt(getType())},
     };
 }
 
-Animator::Animator(toml::table table)
+Animator::Animator(toml::table table) : Animator()
 {
-    // TODO: Write
+    currentAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["currentAnimationGUID"]);
+    currentAnimation = ResourceManager::GetAnimation(currentAnimationGUID);
+}
+
+Animator::Type Animator::getType() const
+{
+    return Type::base;
 }
 
 void Animator::GUI()
 {
-
     std::string tag = Utilities::PointerToString(this);
     if (ImGui::CollapsingHeader(("Animator##" + tag).c_str())) {
         ImGui::Indent();
-        if (ImGui::Button(("Set all scales to 1!##" + tag).c_str())) {
-            for (auto& i : currentAnimation->bones)
-            {
-                for (auto& k : i.scaleKeys)
-                {
-                    k.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-                }
-            }
-        }
-        if (ImGui::CollapsingHeader(("Final Bone Matrices##" + tag).c_str())) {
-            ImGui::Indent();
-            for (size_t i = 0; i < finalBoneMatrices.size(); i++)
-            {
-                std::string tag = Utilities::PointerToString(&finalBoneMatrices[i]);
-                if (ImGui::CollapsingHeader(("Bone ID " + std::to_string(i) + "##" + tag).c_str())) {
-                    ExtraEditorGUI::Mat4Input(tag, &finalBoneMatrices[i]);
-                }
-            }
-            ImGui::Unindent();
-        }
-        // TODO: Show the animation
-        currentAnimation->GUI();
-        ImGui::DragFloat(("Animation Time##" + tag).c_str(), &currentTime);
+        BaseGUI();
         ImGui::Unindent();
     }
+}
+
+Animator* Animator::Load(toml::table table)
+{
+    Animator::Type animatorType = (Animator::Type)Serialisation::LoadAsUnsignedInt(table["type"]);
+    switch (animatorType)
+    {
+    case Animator::Type::base:
+        return new Animator(table);
+    case Animator::Type::blended:
+        return new BlendedAnimator(table);
+    case Animator::Type::directional2dAnimator:
+        return new Directional2dAnimator(table);
+    default:
+        std::cout << "Unsupported Collider attempting to load\n";
+        return nullptr;
+    }
+}
+
+
+void Animator::BaseGUI()
+{
+    std::string tag = Utilities::PointerToString(this);
+
+    if (ImGui::Button(("Set all scales to 1!##" + tag).c_str())) {
+        for (auto& i : currentAnimation->bones)
+        {
+            for (auto& k : i.scaleKeys)
+            {
+                k.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+            }
+        }
+    }
+    if (ImGui::CollapsingHeader(("Final Bone Matrices##" + tag).c_str())) {
+        ImGui::Indent();
+        for (size_t i = 0; i < finalBoneMatrices.size(); i++)
+        {
+            std::string tag = Utilities::PointerToString(&finalBoneMatrices[i]);
+            if (ImGui::CollapsingHeader(("Bone ID " + std::to_string(i) + "##" + tag).c_str())) {
+                ExtraEditorGUI::Mat4Input(tag, &finalBoneMatrices[i]);
+            }
+        }
+        ImGui::Unindent();
+    }
+    // TODO: Show the animation
+    if (ResourceManager::AnimationSelector(("Animation #1##" + tag).c_str(), &currentAnimation, true)) {
+        if (currentAnimation) {
+            currentAnimationGUID = currentAnimation->GUID;
+        }
+        else {
+            currentAnimationGUID = 0;
+        }
+    }
+    if (currentAnimation) {
+        currentAnimation->GUI();
+    }
+    ImGui::DragFloat(("Animation Time##" + tag).c_str(), &currentTime);
+
 }

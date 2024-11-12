@@ -18,7 +18,7 @@ out vec2 texCoords;
 out vec2 screenPosition;
 
 // Animation
-const int MAX_BONES = 100;
+const int MAX_BONES = 130;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 boneMatrices[MAX_BONES];
 

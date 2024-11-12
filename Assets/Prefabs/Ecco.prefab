@@ -1,4 +1,10 @@
-children = []
+[animator]
+currentAnimationGUID = '15148335964655446906'
+downAnimationGUID = '15148335964655446904'
+guid = '2091576976424546894'
+rightAnimationGUID = '15148335964655446905'
+type = '2'
+upAnimationGUID = '15148335964655446903'
 
 [ecco]
 boostWheelTurnInfluence = 25.0
@@ -19,15 +25,16 @@ sidewaysFrictionCoef = 65.0
 speedBoost = 12500.0
 speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
-speedBoostHPCost = 1
+speedBoostHPCost = 0
 speedBoostInDirectionOfBody = false
 speedDamage = 25
 speedReductionAfterDamaging = 200.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
-turningCircleScalar = 0.05999999865889549
-wheelDirection = [ 0.9523025751113892, 0.3051552474498749 ]
-wheelTurnSpeed = 4.0
+turningCircleScalar = 0.12999999523162842
+turningCircleScalarBoosting = 0.05999999865889549
+wheelDirection = [ 0.3579700291156769, -0.9337331056594849 ]
+wheelTurnSpeed = 4.400000095367432
 
     [ecco.boostUI]
     backgroundColour = [ 0.21960784494876862, 0.3907727301120758, 0.4274509847164154 ]
@@ -49,12 +56,12 @@ maxHealth = 10
 [modelRenderer]
 guid = '2091576976424546894'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0', '15449259407003476463', '15449352838481615396' ]
-modelGuid = '15070486382632221399'
+materials = [ '15449259407003476463', '15449352838481615396' ]
+modelGuid = '2140790440003113620'
 
 [rigidBody]
 accel = [ 0.0, 0.0 ]
-angularVel = 0.0
+angularVel = -0.0
 elasticicty = 0.0
 guid = '2091576976424546894'
 invMass = 0.10000000149011612
@@ -63,8 +70,8 @@ isStatic = false
 netDepen = [ 0.0, 0.0 ]
 netForce = [ 0.0, 0.0 ]
 vel = [
-    2.5489746144704614e-23,
-    8.167915510895385e-24
+    -8.310501330653178e-24,
+    2.6263940547975757e-23
 ]
 
     [[rigidBody.colliders]]
@@ -84,17 +91,36 @@ vel = [
     verts = [ [ 1.0, -46.0 ] ]
 
 [sceneObject]
-children = []
+children = [ '2120176559991300301' ]
 guid = '2091576976424546894'
 name = 'Ecco'
 parent = '0'
-parts = 330
+parts = 334
 prefabBase = '2091576976424546894'
 prefabStatus = 1
 
 [transform]
-euler = [ -0.0017432618187740445, 72.217041015625, -0.00048679279279895127 ]
+euler = [ -179.99940490722656, -25.994375228881836, -899.9990844726562 ]
 guid = '2091576976424546894'
-position = [ 4400.0, 0.0, 1100.0 ]
-quaternion = [ 0.8079022765159607, -9.787021554075181e-06, 0.5893164873123169, 5.533146122616017e-06 ]
+position = [ 2282.0400390625, 0.0, -1735.219482421875 ]
+quaternion = [ 0.2249041050672531, 8.930544026952703e-06, -0.9743772745132446, 6.829676749475766e-06 ]
 scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
+
+[[children]]
+children = []
+
+    [children.sceneObject]
+    children = []
+    guid = '2120176559991300301'
+    name = 'Unnamed Scene Object'
+    parent = '2091576976424546894'
+    parts = 0
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.transform]
+    euler = [ 0.0, 0.0, 0.0 ]
+    guid = '2120176559991300301'
+    position = [ 0.0, 0.0, 0.0 ]
+    quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]

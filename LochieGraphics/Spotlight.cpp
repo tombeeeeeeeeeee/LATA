@@ -96,6 +96,7 @@ void Spotlight::Initialise()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Spotlight::GUI()
@@ -152,19 +153,21 @@ void Spotlight::GUI()
 		ImGui::InputText(("Trigger ID##" + tag).c_str(), &triggerTag);
 		ImGui::Checkbox(("Can Be Triggered##" + tag).c_str(), &canBeTriggered);
 		ImGui::Checkbox(("Casts Shadows##" + tag).c_str(), &castsShadows);
+		ImGui::Image((ImTextureID)(unsigned long long)depthBuffer, {512,512});
+
 		ImGui::Unindent();
 	}
 }
 
 glm::mat4 Spotlight::getProj()
 {
-	return glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, range * 500.0f);
+	return glm::perspective(glm::radians(120.0f), 1.0f, 1.0f, 20000.0f);
 }
 
 glm::mat4 Spotlight::getView(glm::mat4 globalTransform)
 {
 	glm::vec3 pos = globalTransform[3];
-	glm::vec3 up = globalTransform * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	glm::vec3 up = glm::vec3(glm::normalize(globalTransform[1]));
 	glm::vec3 globalDir = globalTransform * glm::vec4(direction, 0.0f);
 	return glm::lookAt(pos, pos + globalDir, up);
 }
@@ -184,6 +187,8 @@ toml::table Spotlight::Serialise(unsigned long long guid) const
 		{ "cutOff", cutOff },
 		{ "outerCutOff", outerCutOff },
 		{ "castsShadows", castsShadows },
+		{ "effect", (int)effect },
+		{ "intensity", intensity },
 	};
 }
 

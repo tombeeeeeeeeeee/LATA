@@ -77,10 +77,14 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 
 		shader->Use();
 		shader->setMat4("view", SceneManager::scene->renderSystem.viewMatrix);
-		glm::mat4 global = glm::identity<glm::mat4>();
+		glm::mat4 subModel = glm::identity<glm::mat4>();
 
-		model->root.ModelMatrixOfMesh(i, global);
-		shader->setMat4("model", modelMatrix * global);
+		if (animator) {
+
+		}
+
+		model->root.ModelMatrixOfMesh(i, subModel);
+		shader->setMat4("model", modelMatrix * subModel);
 		SceneManager::scene->renderSystem.ActivateFlaggedVariables(shader, materials[materialID]);
 
 		glm::vec3 overallColour = materials[materialID]->colour * GetMaterialOverlayColour();

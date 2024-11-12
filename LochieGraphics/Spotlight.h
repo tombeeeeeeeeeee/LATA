@@ -26,7 +26,7 @@ public:
     Spotlight(toml::table table);
     ~Spotlight();
 
-    Spotlight(const Spotlight& other) = delete;
+    Spotlight(const Spotlight& other);
     Spotlight& operator=(const Spotlight& other) = delete;
 
     Spotlight(Spotlight&& other);
