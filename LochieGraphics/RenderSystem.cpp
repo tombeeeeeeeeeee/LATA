@@ -395,6 +395,7 @@ void RenderSystem::Update(
     glDrawBuffers(3, deferredAttachments);
 
     DrawAllRenderers(animators, transforms, renders, animatedRenderered);
+    RenderSpotLightShadowMaps(spotlights, animators, transforms, renders, animatedRenderered);
 
     RenderSSAO();
 
@@ -796,6 +797,27 @@ void RenderSystem::RenderComposite()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void RenderSystem::RenderSpotLightShadowMaps(
+    std::unordered_map<unsigned long long, Spotlight>& spotlights,
+    std::unordered_map<unsigned long long, Animator*>& animators,
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    std::unordered_map<unsigned long long, ModelRenderer>& renderers,
+    std::unordered_set<unsigned long long> animatedRenderered
+)
+{
+    spotlightPassShader->Use();
+    for (auto& pair : spotlights)
+    {
+        spotlightPassShader->setMat4("vp",pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
+        glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        
+        DrawAllRenderers(animators, transforms, renderers, animatedRenderered, spotlightPassShader);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+}
+
 void RenderSystem::OutputBufferSetUp()
 {
     glGenFramebuffers(1, &outputFBO);
@@ -999,6 +1021,7 @@ void RenderSystem::LightPassSetup()
     ambientPassShader = ResourceManager::LoadShaderDefaultVert("ambient");
     pointLightPassShader = ResourceManager::LoadShader("pointLight");
     spotlightPassShader = ResourceManager::LoadShader("spotlight");
+    spotlightShadowPassShader = ResourceManager::LoadShader("spotlightShadows");
 }
 
 void RenderSystem::LinesSetup()

@@ -166,6 +166,14 @@ private:
         Shader* shader = nullptr
     );
 
+    void RenderSpotLightShadowMaps(
+        std::unordered_map<unsigned long long, Spotlight>& spotlights,
+        std::unordered_map<unsigned long long, Animator*>& animators,
+        std::unordered_map<unsigned long long, Transform>& transforms,
+        std::unordered_map<unsigned long long, ModelRenderer>& renderers,
+        std::unordered_set<unsigned long long> animatedRenderered
+    );
+
     void RenderPointLights(
         std::unordered_map<unsigned long long, PointLight>& pointLights,
         std::unordered_map<unsigned long long, Transform>& transforms,
@@ -218,6 +226,7 @@ private:
     Shader* ambientPassShader = nullptr;
     Shader* pointLightPassShader = nullptr;
     Shader* spotlightPassShader = nullptr;
+    Shader* spotlightShadowPassShader = nullptr;
     void LightPassSetup();
     void RenderAmbientPass();
 

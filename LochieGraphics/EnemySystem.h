@@ -46,11 +46,11 @@ private:
 	bool saveAs = false;
 	bool drawForceLines = false;
 
-	std::unordered_map<std::string, int> enemyTags;
 	int enemyFrameIndex = 0;
 	int frameCountMin = 6;
 	int frameCount;
 public:
+	std::unordered_map<std::string, int> enemyTags;
 	bool aiUpdating = false;
 	int nfmDensity = 20;
 	int maxNormalInfluence = 1024;

@@ -8,7 +8,10 @@ namespace toml {
         class table;
     }
 }
+
 class Spotlight : public PointLight {
+private:
+    static int SHADOW_DIMENSIONS;
 public:
     glm::vec3 direction = { -1.0f,0.0f,0.0f };
     float cutOff;
@@ -16,13 +19,25 @@ public:
 
     bool castsShadows = true;
 
-    int frameBuffer = 0;
-    int depthbuffer = 0;
-    glm::mat4 viewProj = glm::zero<glm::mat4>();
+    unsigned int frameBuffer = 0;
+    unsigned int depthBuffer = 0;
 
-    Spotlight() {};
+    Spotlight();
     Spotlight(toml::table table);
+    ~Spotlight();
+
+    Spotlight(const Spotlight& other) = delete;
+    Spotlight& operator=(const Spotlight& other) = delete;
+
+    Spotlight(Spotlight&& other);
+    Spotlight& operator=(Spotlight&& other);
+    
+    void Initialise();
+
     void GUI() override;
+
+    glm::mat4 getProj();
+    glm::mat4 getView(glm::mat4 globalTransform);
 
     toml::table Serialise(unsigned long long guid)const override;
 };

@@ -32,6 +32,7 @@ void TriggerSystem::Start(
 	std::unordered_map<unsigned long long, Triggerable>& triggerables
 )
 {
+	TriggerSystem::triggerables.clear();
 	for (auto& spawnPair : spawnManagers)
 	{
 		TriggerSystem::triggerables.insert({ spawnPair.second.triggerTag, spawnPair.first });
