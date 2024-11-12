@@ -351,7 +351,7 @@ void LevelEditor::Update(float delta)
 		enemySystem.aiUpdating = true;
 
 		enemySystem.SpawnEnemiesInScene(enemies, transforms);
-
+		enemySystem.enemyTags.clear();
 		camera->state = Camera::targetingPlayersPerspective;
 		dabSystem.Start(transforms, doors);
 		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards, triggerables);
