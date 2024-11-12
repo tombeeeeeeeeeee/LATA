@@ -9,6 +9,7 @@
 #include "Sync.h"
 #include "Health.h"
 #include "SceneManager.h"
+#include "Directional2dAnimator.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
@@ -44,6 +45,8 @@ bool Ecco::Update(
 	glm::vec3 forward = transform.forward();
 	glm::vec2 moveInput = inputDevice.getMove();
 
+	Directional2dAnimator* animator = (Directional2dAnimator*)SceneManager::scene->sceneObjects.at(GUID)->animator();
+
 	//Reading joystick input as wheel direction
 	if (glm::length(moveInput) > deadZone)
 	{
@@ -64,6 +67,7 @@ bool Ecco::Update(
 			//Determine angle for wheel change
 			float turnAmount = glm::dot(glm::vec2(forward.x, forward.z), moveInput);
 			turnAmount = glm::clamp(turnAmount, 0.0f, 1.0f);
+			// TODO: There is just a sign function if want to use that
 			float sign = glm::dot({ right.x, right.z }, moveInput) < 0.0f ? -1.0f : 1.0f;
 			float desiredAngle = (glm::acos(turnAmount)) * sign;
 			float maxWheelAngleAfterSpeed;
@@ -81,6 +85,13 @@ bool Ecco::Update(
 			c = cosf(desiredAngle);
 			s = sinf(desiredAngle);
 			desiredWheelDirection = { forward.x * c - forward.z * s, forward.z * c + forward.x * s };
+
+			// TODO: make a get 2d directions like right
+			if (animator) {
+				glm::vec2 right2D = glm::normalize(glm::vec2(transform.right().x, transform.right().z));
+				animator->leftRightLerpAmount = glm::dot(wheelDirection, right2D) * 0.5f + 0.5f;
+			}
+
 
 		}
 		else
@@ -209,6 +220,19 @@ bool Ecco::Update(
 		timeSinceHealButtonPressed = 0.0f;
 	}
 	//TODO add skidding.
+
+	if (animator) {
+		glm::vec2 forward = glm::normalize(glm::vec2{ transform.forward().x, transform.forward().z });
+		float forwardVelocity = glm::dot(rigidBody.vel, forward);
+		if (forwardVelocity <= 0) {
+			float backwardsPercent = -forwardVelocity / maxReverseSpeed;
+			animator->downUpLerpAmount = -backwardsPercent / 2 + 0.5f;
+		}
+		else {
+			animator->downUpLerpAmount = glm::clamp((forwardVelocity / (maxCarMoveSpeed * 1.5f)) / 2 + 0.5f, 0.5f, 1.0f);
+		}
+	}
+
 	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
 

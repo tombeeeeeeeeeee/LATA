@@ -1,3 +1,11 @@
+[animator]
+currentAnimationGUID = '15148335964655446906'
+downAnimationGUID = '15148335964655446904'
+guid = '2091576976424546894'
+rightAnimationGUID = '15148335964655446905'
+type = '2'
+upAnimationGUID = '15148335964655446903'
+
 [ecco]
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
@@ -17,14 +25,15 @@ sidewaysFrictionCoef = 65.0
 speedBoost = 12500.0
 speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
-speedBoostHPCost = 1
+speedBoostHPCost = 0
 speedBoostInDirectionOfBody = false
 speedDamage = 25
 speedReductionAfterDamaging = 200.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
 turningCircleScalar = 0.05999999865889549
-wheelDirection = [ 0.4155019521713257, -0.9095922708511353 ]
+turningCircleScalarBoosting = 0.05999999865889549
+wheelDirection = [ 0.3579700291156769, -0.9337331056594849 ]
 wheelTurnSpeed = 4.0
 
     [ecco.boostUI]
@@ -40,19 +49,19 @@ wheelTurnSpeed = 4.0
     scale = [ 0.37299999594688416, 0.09000000357627869 ]
 
 [health]
-currHealth = 5
+currHealth = 1
 guid = '2091576976424546894'
 maxHealth = 10
 
 [modelRenderer]
 guid = '2091576976424546894'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '2129808855546110652', '15449259407003476463', '15449352838481615396' ]
-modelGuid = '15070486382632221399'
+materials = [ '15449259407003476463', '15449352838481615396' ]
+modelGuid = '2140790440003113620'
 
 [rigidBody]
 accel = [ 0.0, 0.0 ]
-angularVel = 0.0
+angularVel = -0.0
 elasticicty = 0.0
 guid = '2091576976424546894'
 invMass = 0.10000000149011612
@@ -61,8 +70,8 @@ isStatic = false
 netDepen = [ 0.0, 0.0 ]
 netForce = [ 0.0, 0.0 ]
 vel = [
-    -1.0172364528268568e-23,
-    2.2265384479696838e-23
+    -8.310501330653178e-24,
+    2.6263940547975757e-23
 ]
 
     [[rigidBody.colliders]]
@@ -86,15 +95,15 @@ children = [ '2120176559991300301' ]
 guid = '2091576976424546894'
 name = 'Ecco'
 parent = '0'
-parts = 330
+parts = 334
 prefabBase = '2091576976424546894'
 prefabStatus = 1
 
 [transform]
-euler = [ -179.99942016601562, 24.55651092529297, -899.9985961914062 ]
+euler = [ -179.99940490722656, -25.994375228881836, -899.9991455078125 ]
 guid = '2091576976424546894'
-position = [ 2123.5732421875, 0.0, -819.8364868164062 ]
-quaternion = [ -0.21265996992588043, 1.0991744602506515e-05, -0.9771244525909424, 2.362733084737556e-06 ]
+position = [ 2282.0400390625, 0.0, -1735.219482421875 ]
+quaternion = [ 0.2249041050672531, 8.930544026952703e-06, -0.9743772745132446, 6.829676749475766e-06 ]
 scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
 
 [[children]]
