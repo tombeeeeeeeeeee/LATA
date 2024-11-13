@@ -26,6 +26,8 @@ public:
 	glm::vec3 min = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 max = { 0.0f, 0.0f, 0.0f };
 
+	glm::vec3* GetOOB(glm::mat4 modelMatrix);
+
 	std::string path = "";
 
 	std::unordered_map<std::string, BoneInfo> boneInfoMap;
@@ -57,5 +59,7 @@ public:
 
 	toml::table Serialise() const;
 	void SaveAsAsset() const;
+
+	
 };
 
