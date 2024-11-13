@@ -21,7 +21,7 @@ struct Frustum
 	Frustum() {};
 	Frustum(glm::vec3 pos, float fov, float aspect, float nearClip, float farClip,
 		glm::vec3 up, glm::vec3 forward, glm::vec3 right);
-	bool IsOnFrustum(Frustum frustum, glm::vec3 OOBB[8]);
+	bool IsOnFrustum(glm::vec3 OOBB[8]);
 	bool IsInFrontOfPlane(Plane plane ,glm::vec3 OOBB[8]);
 
 };

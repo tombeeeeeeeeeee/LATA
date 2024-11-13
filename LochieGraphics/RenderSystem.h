@@ -20,6 +20,7 @@ class Texture;
 class Particle;
 class PointLight;
 class Spotlight;
+struct Frustum;
 
 struct bloomMip
 {
@@ -163,7 +164,8 @@ private:
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
         std::unordered_set<unsigned long long> animatedRenderered,
-        Shader* shader = nullptr
+        Frustum frustum,
+        Shader* shader = nullptr 
     );
 
     void RenderSpotLightShadowMaps(

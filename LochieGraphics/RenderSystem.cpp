@@ -15,6 +15,7 @@
 #include "FrameBuffer.h"
 #include "ParticleSystem.h"
 #include "Paths.h"
+#include "Frustum.h"
 
 #include "Utilities.h"
 #include "EditorGUI.h"
@@ -394,7 +395,18 @@ void RenderSystem::Update(
 
     glDrawBuffers(3, deferredAttachments);
 
-    DrawAllRenderers(animators, transforms, renders, animatedRenderered);
+    Frustum cameraFrustum = Frustum(
+        camera->transform.getGlobalPosition(),
+        glm::radians(camera->fov),
+        SCREEN_WIDTH/SCREEN_HEIGHT,
+        camera->nearPlane,
+        camera->farPlane,
+        glm::normalize(camera->transform.up()),
+        glm::normalize(camera->transform.forward()),
+        glm::normalize(camera->transform.right())
+    );
+
+    DrawAllRenderers(animators, transforms, renders, animatedRenderered, cameraFrustum);
     RenderSpotLightShadowMaps(spotlights, animators, transforms, renders, animatedRenderered);
 
     RenderSSAO();
@@ -743,6 +755,7 @@ void RenderSystem::DrawAllRenderers(
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, ModelRenderer>& renderers,
     std::unordered_set<unsigned long long> animatedRenderered,
+    Frustum frustum,
     Shader* givenShader)
 {
     //Material* previousMaterial = nullptr;
@@ -750,7 +763,9 @@ void RenderSystem::DrawAllRenderers(
     for (auto& i : renderers)
     {
         Transform* transform = &transforms.at(i.first);
-        i.second.Draw(transform->getGlobalMatrix(), givenShader);
+        glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
+        if(frustum.IsOnFrustum(OOB))
+            i.second.Draw(transform->getGlobalMatrix(), givenShader);
     }
 }
 
@@ -823,7 +838,22 @@ void RenderSystem::RenderSpotLightShadowMaps(
         glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
         glClear(GL_DEPTH_BUFFER_BIT);
         
-        DrawAllRenderers(animators, transforms, renderers, animatedRenderered, spotlightShadowPassShader);
+        glm::vec3 spotlightDir = glm::normalize(transforms[pair.first].getGlobalMatrix() * glm::vec4(pair.second.direction, 0.0f));
+        glm::vec3 right = glm::cross(spotlightDir, { 0.0f,1.0f,0.0f });
+        glm::vec3 up = glm::cross(right, spotlightDir);
+        right = glm::cross(spotlightDir, up);
+
+
+        Frustum spotlightFrustum = Frustum(
+            transforms[pair.first].getGlobalPosition(),
+            glm::radians(120.0f), 1.0f,
+            1.0f, 2000.0f,
+            up,
+            spotlightDir,
+            right
+        );
+
+        DrawAllRenderers(animators, transforms, renderers, animatedRenderered, spotlightFrustum, spotlightShadowPassShader);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }

@@ -258,14 +258,14 @@ glm::vec3* Model::GetOOB(glm::mat4 modelMatrix)
 {
 	glm::vec3 OOBB[8] =
 	{
-		modelMatrix * glm::vec4(min, 1),
-		modelMatrix * glm::vec4(min.x, min.y, max.z, 1),
-		modelMatrix * glm::vec4(min.x, max.y, min.z, 1),
-		modelMatrix * glm::vec4(min.x, max.y, max.z, 1),
-		modelMatrix * glm::vec4(max.x, min.y, min.z, 1),
-		modelMatrix * glm::vec4(max.x, min.y, max.z, 1),
-		modelMatrix * glm::vec4(max.x, max.y, min.z, 1),
-		modelMatrix * glm::vec4(max, 1),
+		modelMatrix * glm::vec4(min, 1.0f),
+		modelMatrix * glm::vec4(min.x, min.y, max.z, 1.0f),
+		modelMatrix * glm::vec4(min.x, max.y, min.z, 1.0f),
+		modelMatrix * glm::vec4(min.x, max.y, max.z, 1.0f),
+		modelMatrix * glm::vec4(max.x, min.y, min.z, 1.0f),
+		modelMatrix * glm::vec4(max.x, min.y, max.z, 1.0f),
+		modelMatrix * glm::vec4(max.x, max.y, min.z, 1.0f),
+		modelMatrix * glm::vec4(max, 1.0f),
 	};
 
 	return OOBB;

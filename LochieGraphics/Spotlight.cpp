@@ -179,14 +179,14 @@ void Spotlight::GUI()
 
 glm::mat4 Spotlight::getProj()
 {
-	return glm::perspective(glm::radians(120.0f), 1.0f, 1.0f, 20000.0f);
+	return glm::perspective(glm::radians(120.0f), 1.0f, 1.0f, 2000.0f);
 }
 
 glm::mat4 Spotlight::getView(glm::mat4 globalTransform)
 {
 	glm::vec3 pos = globalTransform[3];
-	glm::vec3 up = glm::vec3(glm::normalize(globalTransform[1]));
 	glm::vec3 globalDir = globalTransform * glm::vec4(direction, 0.0f);
+	glm::vec3 up = glm::cross(glm::cross(globalDir, {0.0f, 1.0f, 0.0f}), globalDir);
 	return glm::lookAt(pos, pos + globalDir, up);
 }
 
