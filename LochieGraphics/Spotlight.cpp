@@ -29,6 +29,24 @@ Spotlight::~Spotlight()
 }
 
 
+Spotlight& Spotlight::operator=(const Spotlight& other)
+{
+	linear = other.linear;
+	quadratic = other.quadratic;
+	range = other.range;
+	on = other.on;
+	canBeTriggered = other.canBeTriggered;
+	triggerTag = other.triggerTag;
+	colour = other.colour;
+	effect = other.effect;
+	direction = other.direction;
+	cutOff = other.cutOff;
+	outerCutOff = other.outerCutOff;
+	castsShadows = other.castsShadows;
+	intensity = other.intensity;
+	Initialise();
+}
+
 Spotlight::Spotlight(Spotlight&& other)
 {
 	/*Copy the actual boring variables*/
