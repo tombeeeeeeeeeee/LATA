@@ -2,7 +2,7 @@
 
 Frustum::Frustum(glm::vec3 pos, float fov, float aspect, float nearClip, float farClip, glm::vec3 up, glm::vec3 forward, glm::vec3 right)
 {
-    const float halfVSide = farClip * tanf((fov + 2.0f) / 2.0f);
+    const float halfVSide = farClip * tanf(fov * 0.5f);
     const float halfHSide = halfVSide * aspect;
     const glm::vec3 frontMultFar = farClip * forward;
 

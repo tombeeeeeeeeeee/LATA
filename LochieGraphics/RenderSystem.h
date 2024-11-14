@@ -62,9 +62,9 @@ public:
     glm::vec2 mapDelta = { 0.0f, 0.0f };
     int frameCountInSixteen = 0;
     int sssSteps = 32;
-    float sssMaxRayDistance = 0.5;
-    float sssThickness = 0.05;
-    float sssMaxDepthDelta = 0.005;
+    float sssMaxRayDistance = 0.5f;
+    float sssThickness = 0.05f;
+    float sssMaxDepthDelta = 0.005f;
 
 
     void Start(unsigned int _skyboxTexture);
@@ -165,7 +165,7 @@ private:
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
         std::unordered_set<unsigned long long> animatedRenderered,
         Frustum frustum,
-        Shader* shader = nullptr 
+        Shader* shader = nullptr
     );
 
     void RenderSpotLightShadowMaps(

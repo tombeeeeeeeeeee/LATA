@@ -10,12 +10,14 @@ int Spotlight::SHADOW_DIMENSIONS = 1024;
 
 Spotlight::Spotlight()
 {
+	SetRange(100.0f);
+	cutOff = 0.2f;
+	outerCutOff = 0.2f;
 	Initialise();
 }
 
 Spotlight::Spotlight(toml::table table) : PointLight::PointLight(table)
 {
-	direction = Serialisation::LoadAsVec3(table["direction"], {1.0f,0.0f,0.0f});
 	cutOff = Serialisation::LoadAsFloat(table["cutOff"]);
 	outerCutOff = Serialisation::LoadAsFloat(table["outerCutOff"]);
 	castsShadows = Serialisation::LoadAsBool(table["castsShadows"]);
@@ -39,12 +41,12 @@ Spotlight& Spotlight::operator=(const Spotlight& other)
 	triggerTag = other.triggerTag;
 	colour = other.colour;
 	effect = other.effect;
-	direction = other.direction;
 	cutOff = other.cutOff;
 	outerCutOff = other.outerCutOff;
 	castsShadows = other.castsShadows;
 	intensity = other.intensity;
 	Initialise();
+	return *this;
 }
 
 Spotlight::Spotlight(Spotlight&& other)
@@ -58,7 +60,6 @@ Spotlight::Spotlight(Spotlight&& other)
 	triggerTag = other.triggerTag;
 	colour = other.colour;
 	effect = other.effect;
-	direction = other.direction;
 	cutOff = other.cutOff;
 	outerCutOff = other.outerCutOff;
 	castsShadows = other.castsShadows;
@@ -83,7 +84,6 @@ Spotlight& Spotlight::operator=(Spotlight&& other)
 	triggerTag = other.triggerTag;
 	colour = other.colour;
 	effect = other.effect;
-	direction = other.direction;
 	cutOff = other.cutOff;
 	outerCutOff = other.outerCutOff;
 	castsShadows = other.castsShadows;
@@ -164,10 +164,6 @@ void Spotlight::GUI()
 			}
 			ImGui::EndCombo();
 		}
-		if (ImGui::DragFloat3(("Direction" + tag).c_str(), &direction[0]))
-		{
-			direction = glm::normalize(direction);
-		}
 		ImGui::InputText(("Trigger ID##" + tag).c_str(), &triggerTag);
 		ImGui::Checkbox(("Can Be Triggered##" + tag).c_str(), &canBeTriggered);
 		ImGui::Checkbox(("Casts Shadows##" + tag).c_str(), &castsShadows);
@@ -185,9 +181,9 @@ glm::mat4 Spotlight::getProj()
 glm::mat4 Spotlight::getView(glm::mat4 globalTransform)
 {
 	glm::vec3 pos = globalTransform[3];
-	glm::vec3 globalDir = globalTransform * glm::vec4(direction, 0.0f);
-	glm::vec3 up = glm::cross(glm::cross(globalDir, {0.0f, 1.0f, 0.0f}), globalDir);
-	return glm::lookAt(pos, pos + globalDir, up);
+	glm::vec3 up = glm::normalize(globalTransform[1]);
+	glm::vec3 forward = glm::normalize(globalTransform[2]);
+	return glm::lookAt(pos, pos + forward, up);
 }
 
 toml::table Spotlight::Serialise(unsigned long long guid) const
@@ -201,7 +197,6 @@ toml::table Spotlight::Serialise(unsigned long long guid) const
 		{ "triggerTag", triggerTag },
 		{ "on", on },
 		{ "canBeTriggered", canBeTriggered },
-		{ "direction",Serialisation::SaveAsVec3(direction) },
 		{ "cutOff", cutOff },
 		{ "outerCutOff", outerCutOff },
 		{ "castsShadows", castsShadows },

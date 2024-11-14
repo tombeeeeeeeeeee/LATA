@@ -13,7 +13,6 @@ class Spotlight : public PointLight {
 private:
     static int SHADOW_DIMENSIONS;
 public:
-    glm::vec3 direction = { -1.0f,0.0f,0.0f };
     float cutOff;
     float outerCutOff;
 

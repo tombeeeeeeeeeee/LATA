@@ -398,7 +398,7 @@ void RenderSystem::Update(
     Frustum cameraFrustum = Frustum(
         camera->transform.getGlobalPosition(),
         glm::radians(camera->fov),
-        SCREEN_WIDTH/SCREEN_HEIGHT,
+        (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT,
         camera->nearPlane,
         camera->farPlane,
         glm::normalize(camera->transform.up()),
@@ -697,8 +697,8 @@ void RenderSystem::RenderSpotlights(
         spotlightPassShader->setFloat("quad", pair.second.quadratic);
         spotlightPassShader->setFloat("cutOff", pair.second.cutOff);
         spotlightPassShader->setFloat("outerCutOff", 1.0f - pair.second.outerCutOff);
-        glm::vec4 globalDir = transforms[pair.first].getGlobalMatrix() * glm::vec4(pair.second.direction.x, pair.second.direction.y, pair.second.direction.z, 0.0);
-        spotlightPassShader->setVec3("direction", {globalDir.x, globalDir.y, globalDir.z});
+        glm::vec3 globalDir = transforms[pair.first].forward();
+        spotlightPassShader->setVec3("direction", globalDir);
         spotlightPassShader->setMat4("lightMat", pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
 
         glActiveTexture(GL_TEXTURE0 + 5);
@@ -764,9 +764,12 @@ void RenderSystem::DrawAllRenderers(
     {
         Transform* transform = &transforms.at(i.first);
         glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
-        if(frustum.IsOnFrustum(OOB))
+        if (frustum.IsOnFrustum(OOB))
+        {
             i.second.Draw(transform->getGlobalMatrix(), givenShader);
+        }
     }
+   
 }
 
 void RenderSystem::ActivateFlaggedVariables(
@@ -838,11 +841,9 @@ void RenderSystem::RenderSpotLightShadowMaps(
         glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
         glClear(GL_DEPTH_BUFFER_BIT);
         
-        glm::vec3 spotlightDir = glm::normalize(transforms[pair.first].getGlobalMatrix() * glm::vec4(pair.second.direction, 0.0f));
-        glm::vec3 right = glm::cross(spotlightDir, { 0.0f,1.0f,0.0f });
-        glm::vec3 up = glm::cross(right, spotlightDir);
-        right = glm::cross(spotlightDir, up);
-
+        glm::vec3 spotlightDir = transforms[pair.first].forward();
+        glm::vec3 right = transforms[pair.first].right();
+        glm::vec3 up = transforms[pair.first].up();
 
         Frustum spotlightFrustum = Frustum(
             transforms[pair.first].getGlobalPosition(),

@@ -32,7 +32,7 @@ public:
     float timeInType = 0.0f;
     PointLightEffect effect = PointLightEffect::On;
 
-    PointLight() {};
+    PointLight() { SetRange(100.0f); };
     PointLight(toml::table table);
     PointLight(PointLightEffect _effect) : effect(_effect) {};
     virtual void GUI();
