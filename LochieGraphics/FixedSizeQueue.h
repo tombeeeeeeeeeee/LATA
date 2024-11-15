@@ -15,6 +15,7 @@ public:
 
 	size_t getSize();
 	T getMean() const;
+	T Front() const;
 
 	T operator [](unsigned int i);
 };
@@ -27,10 +28,11 @@ inline void FixedSizeQueue<T, size>::Push(T value)
 	position = (position + 1) % size;
 }
 
+// TODO: Make sure this works correctly
 template<typename T, size_t size>
 inline T FixedSizeQueue<T, size>::operator[](unsigned int i)
 {
-	return elements[(position - i) & size];
+	return elements[(position - i) % size];
 }
 
 template<typename T, size_t size>
@@ -49,4 +51,10 @@ inline T FixedSizeQueue<T, size>::getMean() const
 		total += elements[i];
 	}
 	return total /= count;
+}
+
+template<typename T, size_t size>
+inline T FixedSizeQueue<T, size>::Front() const
+{
+	return elements[(position - 1 + size) % size];
 }
