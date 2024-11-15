@@ -762,6 +762,7 @@ void RenderSystem::DrawAllRenderers(
 
     for (auto& i : renderers)
     {
+        if (!i.second.model) { continue; }
         Transform* transform = &transforms.at(i.first);
         glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
         if (frustum.IsOnFrustum(OOB))
