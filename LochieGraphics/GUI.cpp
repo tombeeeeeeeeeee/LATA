@@ -344,7 +344,12 @@ void GUI::SceneObjectMenu()
 	else if (modelHierarchySelected) {
 		if (lastSelected) {
 			if (lastSelected->parts & Parts::modelRenderer && lastSelected->renderer()->model) {
-				modelHierarchySelected->GUI(false, &lastSelected->renderer()->model->boneInfoMap);
+				if (lastSelected->parts & Parts::animator) {
+					modelHierarchySelected->GUI(false, &lastSelected->renderer()->model->boneInfoMap, lastSelected->animator());
+				}
+				else {
+					modelHierarchySelected->GUI(false, &lastSelected->renderer()->model->boneInfoMap);
+				}
 			}
 			else {
 				modelHierarchySelected->GUI(false);

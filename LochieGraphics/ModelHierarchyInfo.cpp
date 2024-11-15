@@ -1,12 +1,13 @@
 #include "ModelHierarchyInfo.h"
 
+#include "Animator.h"
 #include "BoneInfo.h"
 
 #include "Utilities.h"
 
 #include "ExtraEditorGUI.h"
 
-void ModelHierarchyInfo::GUI(bool header, std::unordered_map<std::string, BoneInfo>* boneInfoMap)
+void ModelHierarchyInfo::GUI(bool header, std::unordered_map<std::string, BoneInfo>* boneInfoMap, Animator* animator)
 {
 	std::string tag = Utilities::PointerToString(this);
 
@@ -22,10 +23,19 @@ void ModelHierarchyInfo::GUI(bool header, std::unordered_map<std::string, BoneIn
 	if (boneInfoMap) {
 		auto search = boneInfoMap->find(name);
 		if (search != boneInfoMap->end()) {
-			if (ImGui::CollapsingHeader(("Bone Transform##" + tag).c_str())) {
+			if (ImGui::CollapsingHeader(("Bone Info Transform##" + tag).c_str())) {
 				ImGui::Indent();
-				ExtraEditorGUI::Mat4Input(tag, &search->second.offset);
+				ExtraEditorGUI::Mat4Input(tag + "bone info transform", &search->second.offset);
 				ImGui::Unindent();
+			}
+			if (animator) {
+				auto& boneMatrices = animator->getNonConstFinalBoneMatrices();
+				
+				if (ImGui::CollapsingHeader(("Animated Bone Transform##" + tag).c_str())) {
+					ImGui::Indent();
+					ExtraEditorGUI::Mat4Input(tag + "animated bone transform", &boneMatrices.at(search->second.ID));
+				}
+
 			}
 		}
 		else {
@@ -52,15 +62,15 @@ void ModelHierarchyInfo::GUI(bool header, std::unordered_map<std::string, BoneIn
 	ImGui::Unindent();
 }
 
-bool ModelHierarchyInfo::ModelMatrixOfMesh(unsigned int meshIndex, glm::mat4& matrix)
+bool ModelHierarchyInfo::ModelHierarchyInfoOfMesh(unsigned int meshIndex, ModelHierarchyInfo** info)
 {
 	if (std::find(meshes.begin(), meshes.end(), meshIndex) != meshes.end()) {
-		matrix = transform.getGlobalMatrix();
+		*info = this;
 		return true;
 	}
 	for (auto i : children)
 	{
-		if (i->ModelMatrixOfMesh(meshIndex, matrix)) {
+		if (i->ModelHierarchyInfoOfMesh(meshIndex, info)) {
 			return true;
 		}
 	}

@@ -78,7 +78,12 @@ void Animator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 
     }
 }
 
-const std::vector<glm::mat4>& Animator::getFinalBoneMatrices()
+const std::vector<glm::mat4>& Animator::getFinalBoneMatrices() const
+{
+    return finalBoneMatrices;
+}
+
+std::vector<glm::mat4>& Animator::getNonConstFinalBoneMatrices()
 {
     return finalBoneMatrices;
 }
