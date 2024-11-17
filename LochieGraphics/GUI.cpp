@@ -46,7 +46,7 @@ void GUI::Update()
 	// TODO: Rebind-able key
 	if (glfwGetKey(SceneManager::window, GLFW_KEY_DELETE) && !ImGui::GetIO().WantCaptureKeyboard) {
 		if (sceneObjectSelected) {
-			scene->DeleteSceneObject(sceneObjectSelected->GUID);
+			scene->DeleteSceneObjectAndChildren(sceneObjectSelected->GUID);
 		}
 	}
 
@@ -456,7 +456,7 @@ void GUI::HierarchyMenu()
 		{
 			// TODO: Maybe error here
 			// TODO: Maybe shouldn't be here, there is something similar near the end of load all sceneObjects in scene
-			scene->DeleteSceneObject(i.first); continue;
+			scene->DeleteSceneObjectKeepChildren(i.first); continue;
 		}
 		if (i.second->transform()->getParent()) { continue; }
 

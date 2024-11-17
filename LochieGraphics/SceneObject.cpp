@@ -239,7 +239,7 @@ void SceneObject::MenuGUI()
 	std::string tag = Utilities::PointerToString(this);
 
 	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
-		scene->DeleteSceneObject(GUID);
+		scene->DeleteSceneObjectAndChildren(GUID);
 	}
 	if (ImGui::MenuItem((("Duplicate##RightClick") + tag).c_str())) {
 		Duplicate();
@@ -289,7 +289,7 @@ void SceneObject::MultiMenuGUI(std::set<SceneObject*> multiSelectedSceneObjects,
 	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
 		for (auto i : multiSelectedSceneObjects)
 		{
-			SceneManager::scene->DeleteSceneObject(i->GUID);
+			SceneManager::scene->DeleteSceneObjectAndChildren(i->GUID);
 		}
 		*setNullSelect = true;
 	}
@@ -819,7 +819,7 @@ void SceneObject::LoadWithPartsSafeAndChildren(toml::table table)
 	// Clear extra children
 	for (size_t i = loadingChildren->size(); i < previousChildren.size(); i++)
 	{
-		scene->DeleteSceneObject(previousChildren.at(i)->so->GUID);
+		scene->DeleteSceneObjectAndChildren(previousChildren.at(i)->so->GUID);
 	}
 }
 

@@ -255,7 +255,7 @@ void EnemySystem::AbilityCheck(
                         }
                     }
                     SceneManager::scene->audio.PlaySound(Audio::enemyExplode);
-                    SceneManager::scene->DeleteSceneObject(enemyPair.first);
+                    SceneManager::scene->DeleteSceneObjectAndChildren(enemyPair.first);
                 }
                 break;
             case (int)EnemyType::melee:
@@ -496,7 +496,7 @@ void EnemySystem::Steering(
             if (health != healths.end() && healths[enemyPair.first].currHealth <= 0)
             {
                 enemyTags.at(enemyPair.second.tag)--;
-                SceneManager::scene->DeleteSceneObject(enemyPair.first);
+                SceneManager::scene->DeleteSceneObjectAndChildren(enemyPair.first);
             }
         }
     }
