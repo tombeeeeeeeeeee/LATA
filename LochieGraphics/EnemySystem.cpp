@@ -186,7 +186,7 @@ void EnemySystem::LineOfSightAndTargetCheck(
     {
         if (frameCount != pair.second.frameForCheck) continue;
         glm::vec2 pos = transforms[pair.first].get2DGlobalPosition();
-        float distanceToSync = glm::length(syncPos - pos);
+        float distanceToSync = glm::length(syncPos - pos); 
         float distanceToEcco = glm::length(eccoPos - pos);
 
         std::vector<Hit> eccoHits;

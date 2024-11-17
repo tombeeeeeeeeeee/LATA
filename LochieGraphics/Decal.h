@@ -1,7 +1,23 @@
+#pragma once
 
-class decal
+class Material;
+
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
+
+class Decal
 {
 public:
-	float angleOfTolerance;
+	float depthOfDecal;
+	float scale;
 
+	Material* mat;
+
+	Decal() {};
+	Decal(toml::table table);
+	void GUI();
+	toml::table Serialise(unsigned long long guid);
 };

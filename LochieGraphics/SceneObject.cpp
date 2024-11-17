@@ -134,6 +134,7 @@ void SceneObject::GUI()
 	if (parts & Parts::triggerable) { scene->triggerables[GUID].GUI(); }
 	if (parts & Parts::pointLight) { scene->pointLights[GUID].GUI(); }
 	if (parts & Parts::spotlight) { scene->spotlights[GUID].GUI(); }
+	if (parts & Parts::decal) { scene->decals[GUID].GUI(); }
 
 	if (parts & Parts::ecco)
 	{
@@ -173,6 +174,9 @@ void SceneObject::GUI()
 		AddPartGUI(animator, setAnimator, BlendedAnimator(), ("Blended Animator##Add part" + tag).c_str());
 		AddPartGUI(animator, setAnimator, Directional2dAnimator(), ("Directional 2D Animator##Add part" + tag).c_str());
 		AddPartGUI(bollard, setBollard, Bollard, ("Bollard ##Add part" + tag).c_str());
+
+		AddPartGUI(decal, setDecal, Decal, ("Decal##Add part" + tag).c_str());
+
 		AddPartGUI(door, setDoor, Door, ("Door ##Add part" + tag).c_str());
 		if (ecco() == nullptr && scene->ecco->GUID == 0) {
 			if (ImGui::MenuItem(("Ecco##Add part" + tag).c_str())) {
@@ -207,6 +211,7 @@ void SceneObject::GUI()
 		RemovePartGUI(animator, setAnimator, ("Animator##Remove part" + tag).c_str());
 		RemovePartGUI(bollard, setBollard, ("Bollard##Remove part" + tag).c_str());
 		RemovePartGUI(collider, setCollider, ("Collider##Remove part" + tag).c_str());
+		RemovePartGUI(decal, setDecal, ("Decal##Remove part" + tag).c_str());
 		RemovePartGUI(door, setDoor, ("Door##Remove part" + tag).c_str());
 		if (parts & Parts::ecco) {
 			if (ImGui::MenuItem(("Ecco##Remove part" + tag).c_str())) {
@@ -437,6 +442,7 @@ toml::table SceneObject::SerialiseWithParts() const
 	SavePart("bollard", bollard, bollards);
 	SavePart("triggerable", triggerable, triggerables);
 	SavePart("spotlight", spotlight, spotlights);
+	SavePart("decal", decal, decals);
 	SavePart("pointLight", pointLight, pointLights);
 
 
@@ -526,6 +532,7 @@ SetAndGetForPart(Door, doors, Parts::door, Door, door)
 SetAndGetForPart(Bollard, bollards, Parts::bollard, Bollard, bollard)
 SetAndGetForPart(Triggerable, triggerables, Parts::triggerable, Triggerable, triggerable)
 SetAndGetForPart(PointLight, pointLights, Parts::pointLight, PointLight, pointLight)
+SetAndGetForPart(Decal, decals, Parts::decal, Decal, decal);
 void SceneObject::setSpotlight(Spotlight* part) {
 	if (part) {
 		parts |= Parts::spotlight; scene->spotlights[GUID] = std::move(*part);
@@ -638,6 +645,7 @@ void SceneObject::ClearParts(unsigned int toDelete)
 	if (toDelete & parts & Parts::triggerable)   { scene->triggerables.erase(GUID);	 parts &= ~(Parts::triggerable);}	
 	if (toDelete & parts & Parts::pointLight)    { scene->pointLights.erase(GUID);	 parts &= ~(Parts::pointLight);}	
 	if (toDelete & parts & Parts::spotlight)	 { scene->spotlights.erase(GUID);	 parts &= ~(Parts::spotlight);}	
+	if (toDelete & parts & Parts::decal)		 { scene->decals.erase(GUID);	     parts &= ~(Parts::decal);}	
 }
 
 void SceneObject::ClearParts()
@@ -691,6 +699,7 @@ void SceneObject::LoadWithParts(toml::table table)
 	LoadPart("triggerable", triggerable, setTriggerable, Triggerable);
 	LoadPart("spotlight", spotlight, setSpotlight, Spotlight);
 	LoadPart("pointLight", pointLight, setPointLight, PointLight);
+	LoadPart("decal", decal, setDecal, Decal);
 
 	if (intendedParts & Parts::collider) {
 		setCollider(Collider::Load(*table["collider"].as_table()));

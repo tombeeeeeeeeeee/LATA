@@ -5,6 +5,7 @@
 #include "DirectionalLight.h"
 #include "Spotlight.h"
 #include "PointLight.h"
+#include "Decal.h"
 #include "ResourceManager.h"
 #include "Light.h"
 #include "Transform.h"
@@ -95,6 +96,7 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
     explodingLightTexture = ResourceManager::LoadTexture("images/ExplosionLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
     flickeringLightTexture = ResourceManager::LoadTexture("images/FlickeringLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
     lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
+    decalShader = ResourceManager::LoadShader("decal");
 }
 
 void RenderSystem::LevelLoad()
@@ -356,6 +358,7 @@ void RenderSystem::Update(
     std::unordered_map<unsigned long long, Animator*>& animators,
     std::unordered_map<unsigned long long, PointLight>& pointLights,
     std::unordered_map<unsigned long long, Spotlight>& spotlights,
+    std::unordered_map<unsigned long long, Decal>& decals,
     Camera* camera,
     float delta,
     std::vector<Particle*> particles
@@ -561,6 +564,60 @@ void RenderSystem::ScreenResize(int width, int height)
     BloomUpdate();
 }
 
+void RenderSystem::RenderDecals(
+    std::unordered_map<unsigned long long, Decal>& decals,
+    std::unordered_map<unsigned long long, Transform>& transforms,
+    Frustum frustum
+)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_GREATER);
+    glCullFace(GL_FRONT);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendEquation(GL_FUNC_ADD);
+
+    decalShader->Use();
+    decalShader->setInt("depthMap", 7);
+    glActiveTexture(GL_TEXTURE7);
+    glBindTexture(GL_TEXTURE_2D, depthBuffer);
+
+    for (auto& pair : decals)
+    {
+        glm::mat4 model = transforms[pair.first].getGlobalMatrix();
+        glm::vec3 OOBB[8] =
+        {
+            model * glm::vec4(-pair.second.scale, -pair.second.scale, -pair.second.scale, 1.0f),
+            model * glm::vec4(-pair.second.scale, -pair.second.scale,  pair.second.scale, 1.0f),
+            model * glm::vec4(-pair.second.scale,  pair.second.scale, -pair.second.scale, 1.0f),
+            model * glm::vec4(-pair.second.scale,  pair.second.scale,  pair.second.scale, 1.0f),
+            model * glm::vec4( pair.second.scale, -pair.second.scale, -pair.second.scale, 1.0f),
+            model * glm::vec4( pair.second.scale, -pair.second.scale,  pair.second.scale, 1.0f),
+            model * glm::vec4( pair.second.scale,  pair.second.scale, -pair.second.scale, 1.0f),
+            model * glm::vec4( pair.second.scale,  pair.second.scale,  pair.second.scale, 1.0f),
+        };
+
+        if (frustum.IsOnFrustum(OOBB))
+        {
+            decalShader->setFloat("depthPenertration", pair.second.depthOfDecal);
+            decalShader->setVec3("decalCentre", transforms[pair.first].getGlobalPosition());
+
+            pair.second.mat->Use(decalShader);
+
+            //DRAW CUBE
+        }
+    }
+
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
+    glDisable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glCullFace(GL_BACK);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 
 void RenderSystem::RenderPointLights(
 std::unordered_map<unsigned long long, PointLight>& pointLights,
@@ -763,10 +820,13 @@ void RenderSystem::DrawAllRenderers(
     for (auto& i : renderers)
     {
         Transform* transform = &transforms.at(i.first);
-        glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
-        if (frustum.IsOnFrustum(OOB))
+        if (i.second.model)
         {
-            i.second.Draw(transform->getGlobalMatrix(), givenShader);
+            glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
+            if (frustum.IsOnFrustum(OOB))
+            {
+                i.second.Draw(transform->getGlobalMatrix(), givenShader);
+            }
         }
     }
    
