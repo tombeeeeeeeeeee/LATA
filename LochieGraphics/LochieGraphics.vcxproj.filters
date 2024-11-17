@@ -78,6 +78,9 @@
     <Filter Include="Source Files\Third-Party\soloud\core">
       <UniqueIdentifier>{9ae7af90-7bca-491e-a511-14745b6a322d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Rendering\Animation\State Machine">
+      <UniqueIdentifier>{ad950109-6b02-49b9-bf6e-d2af7c11fd75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -410,20 +413,26 @@
     <ClCompile Include="Bollard.cpp">
       <Filter>Source Files\Parts</Filter>
     </ClCompile>
-    <ClCompile Include="Triggerable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ImguiMathsGLM.cpp">
       <Filter>Source Files\Third-Party</Filter>
     </ClCompile>
-    <ClCompile Include="UiElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Directional2dAnimator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Frustum.cpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="StateMachine.cpp">
+      <Filter>Source Files\Rendering\Animation\State Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Source Files\Rendering\Animation\State Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="Directional2dAnimator.cpp">
+      <Filter>Source Files\Rendering\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Triggerable.cpp">
+      <Filter>Source Files\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="UiElement.cpp">
+      <Filter>Source Files\Misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -742,14 +751,32 @@
     <ClInclude Include="Bollard.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="Triggerable.h" />
     <ClInclude Include="ImguiMathsGLM.h">
       <Filter>Source Files\Third-Party</Filter>
     </ClInclude>
-    <ClInclude Include="UiElement.h" />
-    <ClInclude Include="Directional2dAnimator.h" />
     <ClInclude Include="Frustum.h">
       <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="StateMachine.h">
+      <Filter>Source Files\Rendering\Animation\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Source Files\Rendering\Animation\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="Condition.h">
+      <Filter>Source Files\Rendering\Animation\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour.h">
+      <Filter>Source Files\Rendering\Animation\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="Directional2dAnimator.h">
+      <Filter>Source Files\Rendering\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Triggerable.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="UiElement.h">
+      <Filter>Source Files\Misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -912,13 +939,6 @@
     <None Include="..\Shaders\ambient.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\healthBar.frag" />
-    <None Include="..\Shaders\healthBar.vert" />
-    <None Include="..\Shaders\composite.frag" />
-    <None Include="..\Shaders\pointLight.frag" />
-    <None Include="..\Shaders\pointLight.vert" />
-    <None Include="..\Shaders\defaultWithNormal.vert" />
-    <None Include="..\Shaders\simpleTexturedWithCutout.frag" />
     <None Include="..\Shaders\spotlight.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -929,6 +949,27 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\spotlightShadows.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\healthBar.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\healthBar.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\pointLight.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\pointLight.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\composite.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\defaultWithNormal.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\simpleTexturedWithCutout.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
