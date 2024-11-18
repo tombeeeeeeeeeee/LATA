@@ -43,10 +43,14 @@ void main()
     vec3 screenPosition = clipPos.xyz / clipPos.w;
     vec3 worldPos = (invV * vec4(screenPosition, 1.0)).xyz;
 
-    vec4 objPos = invM * vec4(worldPos, 1.0);
+    vec4 objPos = invM *  vec4(worldPos, 1.0);
+
+    if(0.5 - objPos.x < 0) discard;
+    if(0.5 - objPos.y < 0) discard;
+    if(0.5 - objPos.z < 0) discard;
 
 
-    vec2 decalTexCoords = texCoords;
+    vec2 decalTexCoords = objPos.xz + 0.5;
 
     TBN = mat3(normalize(fragmentTangent), -normalize(fragmentBitangent), -normalize(fragmentNormal));
     vec3 tangentNormal = texture(material.normal, decalTexCoords).rgb;
@@ -55,7 +59,7 @@ void main()
 
     vec3 trueNormal = TBN * tangentNormal;
     vec4 trueAlbedo = texture(material.albedo, decalTexCoords);
-    vec3 albedo3 = trueAlbedo.rgb * fragmentColour;
+    vec3 albedo3 = trueAlbedo.rgb;
     vec3 PBR = texture(material.PBR, decalTexCoords).rgb;
     vec3 emission3 = texture(material.emission, decalTexCoords).rgb;
 

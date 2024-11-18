@@ -630,7 +630,7 @@ void RenderSystem::RenderDecals(
             pair.second.mat->Use(decalShader);
 
             decalShader->setMat4("model", modelMatrix);
-            decalShader->setMat4("invM", glm::inverse(projection * viewMatrix * modelMatrix));
+            decalShader->setMat4("invM", glm::inverse(modelMatrix));
             decalCube->meshes[0]->Draw();
         }
     }
