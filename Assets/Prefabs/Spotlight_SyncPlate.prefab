@@ -1,0 +1,49 @@
+[sceneObject]
+children = [ '4369321852668399470' ]
+guid = '4369321853082488228'
+name = 'Spotlight_SyncPlate'
+parent = '0'
+parts = 0
+prefabBase = '4368822498252396479'
+prefabStatus = 1
+
+[transform]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '4369321853082488228'
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+children = []
+
+    [children.sceneObject]
+    children = []
+    guid = '4369321852668399470'
+    name = 'spotlight'
+    parent = '4369321853082488228'
+    parts = 2048
+    prefabBase = '4368822498304440585'
+    prefabStatus = 0
+
+    [children.spotlight]
+    canBeTriggered = false
+    castsShadows = true
+    colour = [ 0.07065218687057495, 1.0, 0.09085530042648315 ]
+    cutOff = 1.0
+    effect = 0
+    guid = '4369321852668399470'
+    intensity = 50.0
+    linear = 0.9187856912612915
+    on = true
+    outerCutOff = 0.05299999937415123
+    quadratic = 4.352499961853027
+    range = 1.8949999809265137
+    triggerTag = ''
+
+    [children.transform]
+    euler = [ 89.9999771118164, 0.0, -0.0 ]
+    guid = '4369321852668399470'
+    position = [ 0.0, 459.4969177246094, 0.0 ]
+    quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
+    scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
