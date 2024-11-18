@@ -11,6 +11,7 @@
 #include "RenderSystem.h"
 #include "UserPreferences.h"
 #include "PrefabManager.h"
+#include "RayAgainstOBB.h"
 
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
@@ -18,76 +19,6 @@
 #include <fstream>
 #include <iostream>
 #include <filesystem>
-
-void LevelEditor::RefreshWalls()
-{
-	//auto walls = wallTileParent->transform()->getChildren();
-
-	//while (walls.size())
-	//{
-	//	// TODO: Should be using a delete sceneobject function
-	//	unsigned long long GUID = walls.front()->getSceneObject()->GUID;
-	//	
-	//	delete sceneObjects[GUID];
-	//	sceneObjects.erase(GUID);
-	//	
-	//	walls.erase(walls.begin());
-	//}
-	//wallCount = 0;
-
-	//RefreshMinMaxes();
-
-	//for (int x = gridMinX - 1; x <= gridMaxX + 1; x++)
-	//{
-	//	for (int z = gridMinZ - 1; z <= gridMaxZ + 1; z++)
-	//	{
-	//		bool upRight = CellAt((float)x, (float)z);
-	//		bool downRight = CellAt((float)x, (float)z - 1.0f);
-	//		bool downLeft = CellAt((float)x - 1.0f, (float)z - 1.0f);
-	//		bool upLeft = CellAt((float)x - 1.0f, (float)z);
-	//		unsigned char directions = (upRight << 3) + (downRight << 2) + (downLeft << 1) + upLeft;
-	//		glm::vec2 pos = { x * gridSize - gridSize / 2, z * gridSize - gridSize / 2 };
-	//		switch (directions)
-	//		{
-	//		case 0b1111:
-	//		case 0b0000:
-	//			break;
-	//		case 0b0001:
-	//		case 0b1110:
-	//			//PlaceWallAt(pos.x, pos.y, -90.0f, wallCornerPrefab);
-	//			break;
-	//		case 0b0010:
-	//		case 0b1101:
-	//			//PlaceWallAt(pos.x, pos.y, 180.0f, wallCornerPrefab);
-	//			break;
-	//		case 0b0100:
-	//		case 0b1011:
-	//			//PlaceWallAt(pos.x, pos.y, 90.0f, wallCornerPrefab);
-	//			break;
-	//		case 0b1000:
-	//		case 0b0111:
-	//			//PlaceWallAt(pos.x, pos.y, 0.0f, wallCornerPrefab);
-	//			break;
-	//		case 0b0101:
-	//		case 0b1010:
-	//			// TODO: Need a + plus shaped wall
-	//			//PlaceWallAt(pos.x, pos.y, 0.0f, wallCornerPrefab);
-	//			//PlaceWallAt(pos.x, pos.y, 180.0f, wallCornerPrefab);
-	//			break;
-	//		case 0b0011:
-	//		case 0b1100:
-	//			//PlaceWallAt(pos.x, pos.y, 90.0f, wallSidePrefab);
-	//			break;
-	//		case 0b0110:
-	//		case 0b1001:
-	//			//PlaceWallAt(pos.x, pos.y, 0.0f, wallSidePrefab);
-	//			break;
-	//		default:
-	//			break;
-	//		}
-	//	}
-	//}
-}
 
 void LevelEditor::RefreshMinMaxes()
 {
@@ -134,18 +65,6 @@ SceneObject* LevelEditor::CellAt(int x, int z)
 	if (tile == tiles.end()) { return nullptr; }
 	else { return tile->second; }
 }
-
-//SceneObject* LevelEditor::PlaceWallAt(float x, float z, float direction, unsigned long long prefab)
-//{
-//	SceneObject* newWall = new SceneObject(this, "newWall" + std::to_string(++wallCount));
-//	newWall->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(prefab));
-//
-//	newWall->transform()->setPosition({ x, 0.0f, z });
-//	newWall->transform()->setEulerRotation({ 0.0f, direction, 0.0f });
-//	newWall->transform()->setParent(wallTileParent->transform());
-//
-//	return newWall;
-//}
 
 SceneObject* LevelEditor::PlaceTileAt(float x, float z)
 {
@@ -211,7 +130,6 @@ void LevelEditor::Start()
 	camera->nearPlane = 10.0f;
 
 	ground = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
-	//wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Wall" + Paths::modelExtension);
 
 	syncSo = new SceneObject(this, "Sync");
 	eccoSo = new SceneObject(this, "Ecco");
@@ -291,9 +209,6 @@ void LevelEditor::Start()
 
 void LevelEditor::Update(float delta)
 {
-
-
-
 	directionalLight.colour = { 0.0f, 0.0f, 0.0f };
 	bool playerDied = false;
 	if (showGrid) {
@@ -665,97 +580,6 @@ void LevelEditor::GUI()
 	input.GUI();
 }
 
-bool RayAgainstOBB(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3 aabbMin, glm::vec3 aabbMax, glm::mat4 model, float& intersectionDistance) {
-	float tMin = 0.0f;
-	float tMax = FLT_MAX;
-
-	glm::vec3 OBBpositionWorldspace(model[3].x, model[3].y, model[3].z);
-
-	glm::vec3 delta = OBBpositionWorldspace - rayOrigin;
-
-	{
-		glm::vec3 xAxis(model[0].x, model[0].y, model[0].z);
-		float e = glm::dot(xAxis, delta);
-		float f = glm::dot(rayDirection, xAxis);
-		// Ray basically parallel
-		/*if (f < 0.001f && -e + aabbMin.x > 0.0f || -e + aabbMax.x < 0.0f) {
-			return false;
-		}*/
-		float t1 = (e + aabbMax.x) / f;
-		float t2 = (e + aabbMin.x) / f;
-		if (t1 > t2) {
-			// Swap em
-			float w = t1;
-			t1 = t2;
-			t2 = w;
-		}
-		if (t2 < tMax) {
-			tMax = t2;
-		}
-		if (t1 > tMin) {
-			tMin = t1;
-		}
-		if (tMax < tMin) {
-			return false;
-		}
-	}
-	{
-		glm::vec3 yAxis(model[1].x, model[1].y, model[1].z);
-		float e = glm::dot(yAxis, delta);
-		float f = glm::dot(rayDirection, yAxis);
-		// Ray basically parallel
-		/*if (f < 0.001f && -e + aabbMin.y > 0.0f || -e + aabbMax.y < 0.0f) {
-			return false;
-		}*/
-		float t1 = (e + aabbMax.y) / f;
-		float t2 = (e + aabbMin.y) / f;
-		if (t1 > t2) {
-			// Swap em
-			float w = t1;
-			t1 = t2;
-			t2 = w;
-		}
-		if (t2 < tMax) {
-			tMax = t2;
-		}
-		if (t1 > tMin) {
-			tMin = t1;
-		}
-		if (tMax < tMin) {
-			return false;
-		}
-	}
-	{
-		glm::vec3 zAxis(model[2].x, model[2].y, model[2].z);
-		float e = glm::dot(zAxis, delta);
-		float f = glm::dot(rayDirection, zAxis);
-		// Ray basically parallel
-		/*if (f < 0.001f && -e + aabbMin.z > 0.0f || -e + aabbMax.z < 0.0f) {
-			return false;
-		}*/
-		float t1 = (e + aabbMax.z) / f;
-		float t2 = (e + aabbMin.z) / f;
-		if (t1 > t2) {
-			// Swap em
-			float w = t1;
-			t1 = t2;
-			t2 = w;
-		}
-		if (t2 < tMax) {
-			tMax = t2;
-		}
-		if (t1 > tMin) {
-			tMin = t1;
-		}
-		if (tMax < tMin) {
-			return false;
-		}
-	}
-	intersectionDistance = tMin;
-	return true;
-
-}
-
 void LevelEditor::OnMouseDown()
 {
 	if (state == BrushState::modelPlacer && assetPlacer != nullptr) {
@@ -781,58 +605,9 @@ void LevelEditor::OnMouseDown()
 
 	if (camera->state == Camera::State::editorMode && state == BrushState::none) {
 
-
-		// Select here
-		/*
-		
-
-		camera->transform.forward
-
-		cursorPos
-
-		
-		camera->fov
-
-		// Click pos
-		worldPosNearPlane = inv vp by newCur
-
-		// WAS this supposed ot be cam pos
-		direction = worldPosNear - newCur
-
-
-		cam.y - ray.y * t = 0
-
-		t = cam.y / ray.y
-
-		2d click pos = cam.xz + ray.xz * (cam.y / ray.y);
-
-
-
-		glm::vec2 newCur = cursorPos
-
-		*/
-
-		//
-		////glm::vec3 camForward = camera->transform.forward();
-		//glm::vec2 cursorPosNDC = (*cursorPos * 2.0f) - glm::vec2(1.0f, 1.0f);
-		////glm::vec3 rayDir
-
-
-		//glm::vec3 worldPosNearPlane = glm::inverse(SceneManager::viewProjection) * glm::vec4{ cursorPosNDC.x, cursorPosNDC.y, -1.0f, 1.0f };
-
-		//glm::vec3 direction = worldPosNearPlane - camera->transform.getGlobalPosition();
-
-		//glm::vec3 ray = camera->transform.getGlobalPosition() + direction;
-
-
-		//glm::vec2 camXZ = camera->transform.get2DGlobalPosition();
-		//
-		//glm::vec2 clickPos = camXZ + glm::vec2(ray.x, ray.z) * (camera->transform.getGlobalPosition().y / ray.y);
-
-
 		glm::vec2 cursorPosNDC = (*cursorPos * 2.0f) - glm::vec2(1.0f, 1.0f);
 
-		glm::vec4 clipPos = glm::inverse(SceneManager::projection) * glm::vec4{ cursorPosNDC.x, cursorPosNDC.y, -0.99f, 1.0f };
+		glm::vec4 clipPos = glm::inverse(SceneManager::projection) * glm::vec4{ cursorPosNDC.x, cursorPosNDC.y, -1.0f, 1.0f };
 
 		glm::vec3 screenPos = glm::vec3(clipPos) / clipPos.w;
 		glm::vec4 worldPosNearPlanevec4 = (glm::inverse(SceneManager::view) * glm::vec4(screenPos, 1.0f));
@@ -844,24 +619,29 @@ void LevelEditor::OnMouseDown()
 
 		glm::vec3 clickPos = camera->transform.getGlobalPosition() + direction * t;
 
-		//std::cout << clickPos.x << ", " << clickPos.y << '\n';
-		//std::cout << screenPos.x << ", " << screenPos.y << ", " screenPos.z<< '\n';
-		//std::cout << clickPos.x << ", " << clickPos.y << '\n';
-		//std::cout << clickPos.x << ", " << clickPos.y << '\n';
-
-		//std::cout << clickPos.x << ", " << clickPos.y << '\n';
-
 		Selector(glm::vec2(clickPos.x, clickPos.z));
 
 		//float shortest = FLT_MAX;
 		//SceneObject* toSelect = nullptr;
 		//for (auto& i : sceneObjects)
 		//{
-		//	if (!(i.second->parts & Parts::modelRenderer)) { continue; }
-		//	Model* model = i.second->renderer()->model;
-		//	if (!model) { continue; }
+		//	if (gui.getSelected() == i.second) { continue; }
+		//	glm::vec3 selectMin;
+		//	glm::vec3 selectMax;
+		//	Model* model = nullptr;
+		//	if (i.second->parts & Parts::modelRenderer) { 
+		//		Model* model = i.second->renderer()->model;
+		//	}
+		//	if (model) {
+		//		selectMin = model->min;
+		//		selectMax = model->max;
+		//	}
+		//	else {
+		//		selectMin = glm::vec3(-selectSize, -selectSize, -selectSize);
+		//		selectMax = glm::vec3(selectSize, selectSize, selectSize);
+		//	}
 		//	float distance = 0.0f;
-		//	if (RayAgainstOBB(camera->transform.getGlobalPosition(), camera->transform.forward(), model->min, model->max, i.second->transform()->getGlobalMatrix(), distance)) {
+		//	if (RayAgainstOBB::RayAgainstOBB(camera->transform.getGlobalPosition(), glm::normalize(direction), selectMin, selectMax, i.second->transform()->getGlobalMatrix(), distance)) {
 		//		if (distance < shortest) {
 		//			toSelect = i.second;
 		//			shortest = distance;
