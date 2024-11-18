@@ -18,6 +18,7 @@ class Shader;
 class Transform;
 class Texture;
 class Particle;
+class Decal;
 class PointLight;
 class Spotlight;
 struct Frustum;
@@ -96,6 +97,7 @@ public:
         std::unordered_map<unsigned long long, Animator*>& animators,
         std::unordered_map<unsigned long long, PointLight>& pointLights,
         std::unordered_map<unsigned long long, Spotlight>& spotlights,
+        std::unordered_map<unsigned long long, Decal>& decals,
         Camera* camera,
         float delta,
         std::vector<Particle*> particles = {}
@@ -168,6 +170,14 @@ private:
         Shader* shader = nullptr
     );
 
+    Shader* decalShader;
+    Model* decalCube;
+    void RenderDecals(
+        std::unordered_map<unsigned long long, Decal>& decals,
+        std::unordered_map<unsigned long long, Transform>& transforms,
+        Frustum frustum
+    );
+
     void RenderSpotLightShadowMaps(
         std::unordered_map<unsigned long long, Spotlight>& spotlights,
         std::unordered_map<unsigned long long, Animator*>& animators,
@@ -219,6 +229,7 @@ private:
     unsigned int normalBuffer = 0;
     unsigned int albedoBuffer = 0;
     unsigned int emissionBuffer = 0;
+    unsigned int pbrBuffer = 0;
     unsigned int depthBuffer = 0;
     unsigned int deferredFBO = 0;
     void DeferredSetup();

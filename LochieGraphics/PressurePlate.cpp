@@ -41,6 +41,7 @@ void PressurePlate::GUI()
 			ImGui::EndCombo();
 		}
 		ImGui::InputText("Trigger ID", &triggerTag);
+		ImGui::Unindent();
 	}
 }
 

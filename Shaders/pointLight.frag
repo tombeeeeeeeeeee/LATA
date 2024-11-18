@@ -25,6 +25,7 @@ uniform int frameCount;
 uniform sampler2D albedo;
 uniform sampler2D normal;
 uniform sampler2D depth;
+uniform sampler2D pbr;
 uniform sampler2D lightLerp;
 
 vec3 trueNormal;
@@ -71,11 +72,12 @@ void main()
     texCoords *= invViewPort;
 	vec4 albedo4 = texture(albedo, texCoords);
 	vec4 normal4 = texture(normal, texCoords);
+    vec4 pbr4 = texture(pbr, texCoords);
 
 	trueNormal = normal4.xyz;
 	trueAlbedo = albedo4.xyz;
-	metallic = albedo4.w;
-	roughness = normal4.w;
+	metallic = pbr4.r;
+	roughness =  pbr4.g;
 
 	float depthValue = texture(depth, texCoords).r;
 

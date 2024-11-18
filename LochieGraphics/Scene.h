@@ -10,6 +10,7 @@
 #include "SpawnManager.h"
 #include "PressurePlate.h"
 #include "Door.h"
+#include "Decal.h"
 #include "Bollard.h"
 #include "Triggerable.h"
 #include "PointLight.h"
@@ -70,6 +71,7 @@ public:
 	std::unordered_map<unsigned long long, Triggerable> triggerables = {};
 	std::unordered_map<unsigned long long, PointLight> pointLights = {};
 	std::unordered_map<unsigned long long, Spotlight> spotlights = {};
+	std::unordered_map<unsigned long long, Decal> decals = {};
 
 	DirectionalLight directionalLight;
 

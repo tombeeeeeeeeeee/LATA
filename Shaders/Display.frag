@@ -7,6 +7,7 @@ uniform sampler2D colour;
 uniform sampler2D albedo;
 uniform sampler2D normal;
 uniform sampler2D emission;
+uniform sampler2D pbr;
 uniform sampler2D SSAO;
 uniform sampler2D bloomBlur;
 uniform sampler2D lightBuffer;
@@ -60,28 +61,25 @@ void main()
 
         //PBR
         case 4:
-        float r = texture(normal, texCoords).a;
-        float m = texture(albedo, texCoords).a;
-        float a = texture(emission, texCoords).a;
-        FragColor = vec4(r, m, a, 1.0);
+        FragColor =  vec4(texture(pbr, texCoords).rgb, 1.0);
 
         break;
 
         // Roughness
         case 5:
-        float roughness = texture(normal, texCoords).a;
-        FragColor = vec4(roughness.xxx, 1.0);
+        float roughness = texture(pbr, texCoords).g;
+        FragColor = vec4(roughness.rrr, 1.0);
         break;
         
         // Metallic
         case 6:
-        float metallic = texture(albedo, texCoords).a;
+        float metallic = texture(pbr, texCoords).r;
         FragColor = vec4(metallic.xxx, 1.0);
         break;
         
         // AO
         case 7:
-        float ao = texture(emission, texCoords).a;
+        float ao =  texture(pbr, texCoords).b;
         FragColor = vec4(ao.xxx, 1.0);
         break;
 

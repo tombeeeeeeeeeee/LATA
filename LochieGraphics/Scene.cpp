@@ -134,6 +134,9 @@ void Scene::DeleteAllSceneObjectsAndParts()
 	spotlights.clear();
 	partsChecker &= ~Parts::spotlight;
 
+	decals.clear();
+	partsChecker &= ~Parts::decal;
+
 	pointLights.clear();
 	partsChecker &= ~Parts::pointLight;
 
@@ -191,6 +194,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 	SavePart(triggerables);
 	SavePart(pointLights);
 	SavePart(spotlights);
+	SavePart(decals);
 
 	return toml::table{
 		{ "SceneObjects", savedSceneObjects },
@@ -211,6 +215,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 		{ "Triggerables", savedtriggerables},
 		{ "PointLights", savedpointLights},
 		{ "Spotlights", savedspotlights},
+		{ "Decals", saveddecals},
 	};
 
 	// TODO: Make sure save all parts, put a checker here
@@ -301,6 +306,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(triggerables, "Triggerables", Triggerable);
 	LoadPart(pointLights, "PointLights", PointLight);
 	LoadPart(spotlights, "Spotlights", Spotlight);
+	LoadPart(decals, "Decals", Decal);
 	// TODO: Fix for colliders
 
 	toml::array* loadingColliders = data["Colliders"].as_array(); 
