@@ -394,7 +394,7 @@ void EnemySystem::Steering(
             }
             if (drawForceLines)
             RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + enemyPair.second.influenceThisFrame * 10.0f, { 0,0,1 }, 100);
-            float enemyLOSNormalMultiplier = 100.0f;
+            float enemyLOSNormalMultiplier = 10.0f;
             if (enemyPair.second.hasLOS)
             {
                 enemyLOSNormalMultiplier = 1.0f;
