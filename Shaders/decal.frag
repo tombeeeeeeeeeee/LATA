@@ -63,7 +63,7 @@ void main()
     albedo = vec4(albedo3, trueAlbedo.a);
 
     //Normal packed with PBR Roughness
-    normal = vec4(trueNormal, 1.0);
+    normal = vec4(trueNormal, texture(material.normal, decalTexCoords).a);
 
     //Emission packed with PBR AO
     emission = vec4(emission3, 1.0);
