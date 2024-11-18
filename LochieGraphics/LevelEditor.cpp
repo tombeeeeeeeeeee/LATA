@@ -605,6 +605,7 @@ void LevelEditor::OnMouseDown()
 
 	if (camera->state == Camera::State::editorMode && state == BrushState::none) {
 
+
 		glm::vec2 cursorPosNDC = (*cursorPos * 2.0f) - glm::vec2(1.0f, 1.0f);
 
 		glm::vec4 clipPos = glm::inverse(SceneManager::projection) * glm::vec4{ cursorPosNDC.x, cursorPosNDC.y, -1.0f, 1.0f };
@@ -617,38 +618,46 @@ void LevelEditor::OnMouseDown()
 
 		float t = -camera->transform.getGlobalPosition().y / direction.y;
 
-		glm::vec3 clickPos = camera->transform.getGlobalPosition() + direction * t;
+		glm::vec3 clickPosGround = camera->transform.getGlobalPosition() + direction * t;
 
-		Selector(glm::vec2(clickPos.x, clickPos.z));
+		//Selector(glm::vec2(clickPosGround.x, clickPosGround.z));
 
-		//float shortest = FLT_MAX;
-		//SceneObject* toSelect = nullptr;
-		//for (auto& i : sceneObjects)
-		//{
-		//	if (gui.getSelected() == i.second) { continue; }
-		//	glm::vec3 selectMin;
-		//	glm::vec3 selectMax;
-		//	Model* model = nullptr;
-		//	if (i.second->parts & Parts::modelRenderer) { 
-		//		Model* model = i.second->renderer()->model;
-		//	}
-		//	if (model) {
-		//		selectMin = model->min;
-		//		selectMax = model->max;
-		//	}
-		//	else {
-		//		selectMin = glm::vec3(-selectSize, -selectSize, -selectSize);
-		//		selectMax = glm::vec3(selectSize, selectSize, selectSize);
-		//	}
-		//	float distance = 0.0f;
-		//	if (RayAgainstOBB::RayAgainstOBB(camera->transform.getGlobalPosition(), glm::normalize(direction), selectMin, selectMax, i.second->transform()->getGlobalMatrix(), distance)) {
-		//		if (distance < shortest) {
-		//			toSelect = i.second;
-		//			shortest = distance;
-		//		}
-		//	}
-		//}
-		//gui.setSelected(toSelect);
+		float shortest = FLT_MAX;
+		SceneObject* toSelect = nullptr;
+		for (auto& i : sceneObjects)
+		{
+			if (gui.getSelected() == i.second) { continue; }
+			glm::vec3 selectMin;
+			glm::vec3 selectMax;
+			Model* model = nullptr;
+			if (i.second->parts & Parts::modelRenderer) { 
+				model = i.second->renderer()->model;
+			}
+			if (model) {
+				selectMin = model->min;
+				selectMax = model->max;
+			}
+			else {
+				selectMin = glm::vec3(-selectSize, -selectSize, -selectSize);
+				selectMax = glm::vec3(selectSize, selectSize, selectSize);
+			}
+			float distance = 0.0f;
+			if (RayAgainstOBB::RayAgainstOBB(camera->transform.getGlobalPosition(), glm::normalize(direction), selectMin, selectMax, i.second->transform()->getGlobalMatrix(), distance)) {
+				Transform* parent = i.second->transform()->getParent();
+				if (parent) {
+					if (parent->getSceneObject() == groundTileParent) {
+						continue;
+					}
+				}
+				if (i.second == groundTileParent) { continue; }
+
+				if (distance < shortest) {
+					toSelect = i.second;
+					shortest = distance;
+				}
+			}
+		}
+		gui.setSelected(toSelect);
 	}
 }
 
@@ -873,7 +882,7 @@ void LevelEditor::Selector(glm::vec2 targetPos)
 				continue;
 			}
 		}
-		if (i.second.getSceneObject() == groundTileParent)
+		if (i.second.getSceneObject() == groundTileParent) { continue; }
 		if (i.second.getSceneObject() == gui.getSelected()) { continue; }
 		glm::vec2 pos = i.second.get2DGlobalPosition();
 		if (glm::length(pos - targetPos) < selectSize) {
