@@ -118,7 +118,8 @@ public:
 	virtual void Save() {};
 	virtual void Load() {};
 
-	void DeleteSceneObject(unsigned long long GUID);
+	void DeleteSceneObjectAndChildren(unsigned long long GUID);
+	void DeleteSceneObjectKeepChildren(unsigned long long GUID);
 	void DeleteSceneObjectsMarkedForDelete();
 protected:
 

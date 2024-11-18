@@ -69,7 +69,9 @@ public:
 	/// Returns a reference to the bone matrices.
 	/// </summary>
 	/// <returns>const reference vector of the bone transforms</returns>
-	const std::vector<glm::mat4>& getFinalBoneMatrices();
+	const std::vector<glm::mat4>& getFinalBoneMatrices() const;
+
+	std::vector<glm::mat4>& getNonConstFinalBoneMatrices();
 
 	virtual toml::table Serialise(unsigned long long GUID) const;
 

@@ -852,6 +852,7 @@ void RenderSystem::DrawAllRenderers(
 
     for (auto& i : renderers)
     {
+        if (!i.second.model) { continue; }
         Transform* transform = &transforms.at(i.first);
         if (i.second.model)
         {

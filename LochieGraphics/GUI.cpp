@@ -46,7 +46,7 @@ void GUI::Update()
 	// TODO: Rebind-able key
 	if (glfwGetKey(SceneManager::window, GLFW_KEY_DELETE) && !ImGui::GetIO().WantCaptureKeyboard) {
 		if (sceneObjectSelected) {
-			scene->DeleteSceneObject(sceneObjectSelected->GUID);
+			scene->DeleteSceneObjectAndChildren(sceneObjectSelected->GUID);
 		}
 	}
 
@@ -281,10 +281,12 @@ void GUI::ResourceMenu()
 
 	// TODO: Make this graph better, have lines and stuff for specific frame rates
 	// Graph range top is 20fps
-	ImGui::PlotLines("Time per frame", SceneManager::frameTimes.elements, IM_ARRAYSIZE(SceneManager::frameTimes.elements), (int)SceneManager::frameTimes.position, nullptr, 0.00f, 0.05f, ImVec2(400.f, 80.0f));
+	ImGui::PlotLines("Time per frame", SceneManager::frameTimes.elements, IM_ARRAYSIZE(SceneManager::frameTimes.elements), (int)SceneManager::frameTimes.position, nullptr, 0.00f, 0.05f, ImVec2(400.f, 100.0f));
 	auto averageFrameTime = SceneManager::frameTimes.getMean();
 	ImGui::Text(("Average Frame Time: " + std::to_string(averageFrameTime)).c_str());
 	ImGui::Text(("Average FPS: " + std::to_string(1 / averageFrameTime)).c_str());
+	ImGui::Text(("Last Frame Time: " + std::to_string(SceneManager::frameTimes.Front())).c_str());
+	ImGui::Text(("Last Frame FPS: " + std::to_string(1 / SceneManager::frameTimes.Front())).c_str());
 
 	ImGui::End();
 }
@@ -342,7 +344,12 @@ void GUI::SceneObjectMenu()
 	else if (modelHierarchySelected) {
 		if (lastSelected) {
 			if (lastSelected->parts & Parts::modelRenderer && lastSelected->renderer()->model) {
-				modelHierarchySelected->GUI(false, &lastSelected->renderer()->model->boneInfoMap);
+				if (lastSelected->parts & Parts::animator) {
+					modelHierarchySelected->GUI(false, &lastSelected->renderer()->model->boneInfoMap, lastSelected->animator());
+				}
+				else {
+					modelHierarchySelected->GUI(false, &lastSelected->renderer()->model->boneInfoMap);
+				}
 			}
 			else {
 				modelHierarchySelected->GUI(false);
@@ -449,7 +456,7 @@ void GUI::HierarchyMenu()
 		{
 			// TODO: Maybe error here
 			// TODO: Maybe shouldn't be here, there is something similar near the end of load all sceneObjects in scene
-			scene->DeleteSceneObject(i.first); continue;
+			scene->DeleteSceneObjectKeepChildren(i.first); continue;
 		}
 		if (i.second->transform()->getParent()) { continue; }
 

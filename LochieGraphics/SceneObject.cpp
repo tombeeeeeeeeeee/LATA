@@ -244,7 +244,7 @@ void SceneObject::MenuGUI()
 	std::string tag = Utilities::PointerToString(this);
 
 	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
-		scene->DeleteSceneObject(GUID);
+		scene->DeleteSceneObjectAndChildren(GUID);
 	}
 	if (ImGui::MenuItem((("Duplicate##RightClick") + tag).c_str())) {
 		Duplicate();
@@ -263,7 +263,7 @@ void SceneObject::MenuGUI()
 		// Else // TODO: Warning
 	}
 	if (ImGui::MenuItem(("Refresh Prefab Instance##RightClick" + tag).c_str(), nullptr, nullptr, prefabStatus == PrefabStatus::instance)) {
-		LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(prefabBase));
+		RefreshPrefab();
 	}
 	if (ImGui::MenuItem(("Unlink Prefab Instance##RightClick" + tag).c_str(), nullptr, nullptr, prefabStatus == PrefabStatus::instance)) {
 		prefabStatus = PrefabStatus::missing;
@@ -294,7 +294,7 @@ void SceneObject::MultiMenuGUI(std::set<SceneObject*> multiSelectedSceneObjects,
 	if (ImGui::MenuItem(("Delete##RightClick" + tag).c_str())) {
 		for (auto i : multiSelectedSceneObjects)
 		{
-			SceneManager::scene->DeleteSceneObject(i->GUID);
+			SceneManager::scene->DeleteSceneObjectAndChildren(i->GUID);
 		}
 		*setNullSelect = true;
 	}
@@ -308,9 +308,7 @@ void SceneObject::MultiMenuGUI(std::set<SceneObject*> multiSelectedSceneObjects,
 	}
 	if (ImGui::MenuItem(("Refresh Prefab Instances##RightClick" + tag).c_str())) {
 		for (auto i : multiSelectedSceneObjects) {
-			if (i->prefabStatus == SceneObject::PrefabStatus::instance) {
-				i->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(i->prefabBase));
-			}
+			i->RefreshPrefab();
 		}
 	}
 	if (ImGui::MenuItem(("Replace with Prefab##RightClick" + tag).c_str())) {
@@ -828,7 +826,7 @@ void SceneObject::LoadWithPartsSafeAndChildren(toml::table table)
 	// Clear extra children
 	for (size_t i = loadingChildren->size(); i < previousChildren.size(); i++)
 	{
-		scene->DeleteSceneObject(previousChildren.at(i)->so->GUID);
+		scene->DeleteSceneObjectAndChildren(previousChildren.at(i)->so->GUID);
 	}
 }
 
@@ -839,6 +837,17 @@ void SceneObject::LoadFromPrefab(toml::table table)
 	LoadWithPartsSafeAndChildren(table);
 	prefabStatus = PrefabStatus::instance;
 	transform()->setLocalMatrix(originalTransform);
+}
+
+void SceneObject::RefreshPrefab()
+{
+	auto search = PrefabManager::loadedPrefabOriginals.find(prefabBase);
+	if (search != PrefabManager::loadedPrefabOriginals.end()) {
+		LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(prefabBase));
+	}
+	else {
+		prefabStatus = PrefabStatus::missing;
+	}
 }
 
 void SceneObject::UnlinkFromPrefab()

@@ -102,6 +102,7 @@ public:
 	void LoadWithPartsSafe(toml::table table);
 	void LoadWithPartsSafeAndChildren(toml::table table);
 	void LoadFromPrefab(toml::table table);
+	void RefreshPrefab();
 
 	void UnlinkFromPrefab();
 

@@ -28,6 +28,7 @@ struct ScaleKey {
 	float timeStamp;
 };
 
+// TODO: Rethink if want this store the current bone transform, that should probably be apart of the animator
 /// <summary>
 /// Stores the animation data and transform for a specific bone and the current bone transform
 /// </summary>
@@ -39,6 +40,7 @@ public:
 	std::vector<RotKey> rotKeys;
 	std::vector<ScaleKey> scaleKeys;
 
+	// TODO: This shouldn't be stored here, this class should only hold the animation data, there should still be an interpolate/update, but the result should be stored elsewhere, such as on the animator
 	// The local transformation of the bone.
 	glm::mat4 localTransform;
 

@@ -51,13 +51,22 @@ if(loading##type##s){																				       \
 	}																								       \
 }
 
-void Scene::DeleteSceneObject(unsigned long long GUID)
+void Scene::DeleteSceneObjectKeepChildren(unsigned long long GUID)
 {
 	for (std::vector<unsigned long long>::iterator marks = markedForDeletion.begin(); marks != markedForDeletion.end(); marks++)
 	{
 		if (*marks == GUID) return;
 	}
 	markedForDeletion.push_back(GUID);
+}
+
+void Scene::DeleteSceneObjectAndChildren(unsigned long long GUID)
+{
+	DeleteSceneObjectKeepChildren(GUID);
+	for (auto i : sceneObjects.at(GUID)->transform()->getChildren())
+	{
+		DeleteSceneObjectAndChildren(i->so->GUID);
+	}
 }
 
 void Scene::DeleteSceneObjectsMarkedForDelete()
@@ -267,7 +276,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 		}
 		if (marked) {
 			// Delete object
-			DeleteSceneObject(i.first);
+			DeleteSceneObjectKeepChildren(i.first);
 			std::cout << "Error: Found a sceneobject with a broken transform hierarchy, removing object\n";
 		}
 	}
@@ -338,7 +347,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 		if (!i.second)
 		{
 			std::cout << "ERROR: Found sceneobject index containing no sceneobject\n";
-			DeleteSceneObject(i.first);
+			DeleteSceneObjectKeepChildren(i.first);
 		}	
 	}
 	EnsurePartsValueMatchesParts();

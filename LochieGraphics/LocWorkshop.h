@@ -35,7 +35,6 @@ private:
 	Shader* shader;
 
 public:
-
 	LocWorkshop();
 	void Start() override;
 	void Update(float delta) override;

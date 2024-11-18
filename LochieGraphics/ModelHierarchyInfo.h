@@ -7,6 +7,7 @@
 
 class Model;
 struct BoneInfo;
+class Animator;
 
 class ModelHierarchyInfo
 {
@@ -20,7 +21,7 @@ public:
 	// TODO: Actually delete them
 	std::vector<ModelHierarchyInfo*> children;
 
-	void GUI(bool header = true, std::unordered_map<std::string, BoneInfo>* boneInfoMap = nullptr);
+	void GUI(bool header = true, std::unordered_map<std::string, BoneInfo>* boneInfoMap = nullptr, Animator* animator = nullptr);
 
-	bool ModelMatrixOfMesh(unsigned int meshIndex, glm::mat4& matrix);
+	bool ModelHierarchyInfoOfMesh(unsigned int meshIndex, ModelHierarchyInfo** info);
 };

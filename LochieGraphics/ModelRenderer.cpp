@@ -49,11 +49,11 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 		int materialID = mesh->materialID;
 		Material* currentMaterial = nullptr;
 		if (materialID >= materials.size()) continue;
-		if (materialID >= model->materialIDs || materials[materialID] == nullptr) {
+		if (materialID >= model->materialIDs || materials.at(materialID) == nullptr) {
 			materialID = 0;
 			std::cout << "Invalid model material ID\n";
 		}
-		currentMaterial = materials[materialID];
+		currentMaterial = materials.at(materialID);
 
 		// Only bind material if using a different material
 		if (currentMaterial != previousMaterial) {
@@ -65,7 +65,7 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 
 		Shader* shader;
 		if (!givenShader) {
-			Material* material = materials[materialID];
+			Material* material = materials.at(materialID);
 			// TODO: Maybe an error / warning
 
 			if (!material) { continue; }
@@ -80,21 +80,35 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 		glm::mat4 subModel = glm::identity<glm::mat4>();
 
 		if (animator) {
-
+			ModelHierarchyInfo* info = nullptr;
+			model->root.ModelHierarchyInfoOfMesh(i, &info);
+			auto search = model->boneInfoMap.find(info->name);
+			if (search == model->boneInfoMap.end()) {
+				subModel = info->transform.getGlobalMatrix();
+			}
+			else {
+				BoneInfo* boneInfo = &search->second;
+				subModel = animator->getFinalBoneMatrices().at(boneInfo->ID);
+			}
 		}
-
-		model->root.ModelMatrixOfMesh(i, subModel);
+		else {
+			ModelHierarchyInfo* info = nullptr;
+			model->root.ModelHierarchyInfoOfMesh(i, &info);
+			subModel = info->transform.getGlobalMatrix();;
+		}
+		
+		
 		shader->setMat4("model", modelMatrix * subModel);
-		SceneManager::scene->renderSystem.ActivateFlaggedVariables(shader, materials[materialID]);
+		SceneManager::scene->renderSystem.ActivateFlaggedVariables(shader, materials.at(materialID));
 
-		glm::vec3 overallColour = materials[materialID]->colour * GetMaterialOverlayColour();
+		glm::vec3 overallColour = materials.at(materialID)->colour * GetMaterialOverlayColour();
 		shader->setVec3("materialColour", overallColour);
 
 		if (animator) {
 			std::vector<glm::mat4> boneMatrices = animator->getFinalBoneMatrices();
 			for (int i = 0; i < boneMatrices.size(); i++)
 			{
-				shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
+				shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices.at(i));
 			}
 		}
 		mesh->Draw();

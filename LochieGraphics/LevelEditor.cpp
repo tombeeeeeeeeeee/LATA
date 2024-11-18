@@ -178,7 +178,7 @@ void LevelEditor::Eraser(glm::vec2 targetCell)
 	if (!alreadyPlaced) {
 		return;
 	}
-	DeleteSceneObject(alreadyPlaced->GUID);
+	DeleteSceneObjectAndChildren(alreadyPlaced->GUID);
 	tiles.erase({ (int)targetCell.x, (int)targetCell.y });
 }
 
