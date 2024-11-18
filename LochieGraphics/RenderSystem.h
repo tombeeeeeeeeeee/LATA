@@ -171,7 +171,7 @@ private:
     );
 
     Shader* decalShader;
-    Model* decalSquare;
+    Model* decalCube;
     void RenderDecals(
         std::unordered_map<unsigned long long, Decal>& decals,
         std::unordered_map<unsigned long long, Transform>& transforms,
@@ -229,6 +229,7 @@ private:
     unsigned int normalBuffer = 0;
     unsigned int albedoBuffer = 0;
     unsigned int emissionBuffer = 0;
+    unsigned int pbrBuffer = 0;
     unsigned int depthBuffer = 0;
     unsigned int deferredFBO = 0;
     void DeferredSetup();

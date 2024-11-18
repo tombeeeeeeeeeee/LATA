@@ -15,6 +15,7 @@ in vec3 fragmentColour;
 layout (location = 0) out vec4 normal;
 layout (location = 1) out vec4 albedo;
 layout (location = 2) out vec4 emission;
+layout (location = 3) out vec4 pbr;
 
 // Normals
 in vec3 fragmentNormal;
@@ -36,13 +37,15 @@ void main()
     vec3 emission3 = texture(material.emission, texCoords).rgb;
 
     //Albedo packed with PBR metallic
-    albedo = vec4(albedo3, PBR.r);
+    albedo = vec4(albedo3, 1.0);
 
     //Normal packed with PBR Roughness
-    normal = vec4(trueNormal, PBR.g);
+    normal = vec4(trueNormal, 1.0);
 
     //Emission packed with PBR AO
-    emission = vec4(emission3, PBR.b);
+    emission = vec4(emission3, 1.0);
+
+    pbr = vec4(PBR, 1.0);
 }
 
     

@@ -97,6 +97,7 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
     flickeringLightTexture = ResourceManager::LoadTexture("images/FlickeringLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
     lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
     decalShader = ResourceManager::LoadShader("decal");
+    decalCube = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_DefaultCube" + Paths::modelExtension);
 }
 
 void RenderSystem::LevelLoad()
@@ -211,6 +212,13 @@ void RenderSystem::DeferredUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+    glBindTexture(GL_TEXTURE_2D, pbrBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
     glBindTexture(GL_TEXTURE_2D, depthBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -222,6 +230,7 @@ void RenderSystem::DeferredUpdate()
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, albedoBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, emissionBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, pbrBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
 
     auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -375,7 +384,7 @@ void RenderSystem::Update(
     if (SCREEN_WIDTH <= 64 || SCREEN_HEIGHT <= 64) { return; }
 
     // TODO: rather then constanty reloading the framebuffer, the texture could link to the framebuffers that need assoisiate with it? or maybe just refresh all framebuffers when a texture is loaded?
-    unsigned int deferredAttachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    unsigned int deferredAttachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -396,7 +405,7 @@ void RenderSystem::Update(
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    glDrawBuffers(3, deferredAttachments);
+    glDrawBuffers(4, deferredAttachments);
 
     Frustum cameraFrustum = Frustum(
         camera->transform.getGlobalPosition(),
@@ -410,6 +419,7 @@ void RenderSystem::Update(
     );
 
     DrawAllRenderers(animators, transforms, renders, animatedRenderered, cameraFrustum);
+    RenderDecals(decals, transforms, cameraFrustum);
     RenderSpotLightShadowMaps(spotlights, animators, transforms, renders, animatedRenderered);
 
     RenderSSAO();
@@ -464,6 +474,7 @@ void RenderSystem::Update(
     ResourceManager::screen->setInt("SSAO", 5);
     ResourceManager::screen->setInt("bloomBlur", 6);
     ResourceManager::screen->setInt("lightBuffer", 7);
+    ResourceManager::screen->setInt("pbr", 8);
 
 
     glActiveTexture(GL_TEXTURE1);
@@ -486,6 +497,9 @@ void RenderSystem::Update(
 
     glActiveTexture(GL_TEXTURE7);
     glBindTexture(GL_TEXTURE_2D, lightPassBuffer);
+
+    glActiveTexture(GL_TEXTURE8);
+    glBindTexture(GL_TEXTURE_2D, pbrBuffer);
 
 
     ResourceManager::screen->setFloat("exposure", exposure);
@@ -574,29 +588,38 @@ void RenderSystem::RenderDecals(
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_GREATER);
     glCullFace(GL_FRONT);
-    glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
+    glDepthMask(GL_FALSE);
 
     decalShader->Use();
+    decalShader->setMat4("invV", glm::inverse(viewMatrix));
+    decalShader->setMat4("invP", glm::inverse(projection));
+    decalShader->setVec2("invViewPort", {1.0f/(float)SCREEN_WIDTH, 1.0f / (float)SCREEN_HEIGHT});
+    decalShader->setMat4("vp", projection * viewMatrix);
+
     decalShader->setInt("depthMap", 7);
     glActiveTexture(GL_TEXTURE7);
     glBindTexture(GL_TEXTURE_2D, depthBuffer);
 
     for (auto& pair : decals)
     {
-        glm::mat4 model = transforms[pair.first].getGlobalMatrix();
+        Transform model = Transform();
+        model.setPosition(transforms[pair.first].getGlobalPosition());
+        model.setEulerRotation(transforms[pair.first].getEulerRotation());
+        model.setScale(pair.second.scale);
+        glm::mat4 modelMatrix = model.getGlobalMatrix();
         glm::vec3 OOBB[8] =
         {
-            model * glm::vec4(-pair.second.scale, -pair.second.scale, -pair.second.scale, 1.0f),
-            model * glm::vec4(-pair.second.scale, -pair.second.scale,  pair.second.scale, 1.0f),
-            model * glm::vec4(-pair.second.scale,  pair.second.scale, -pair.second.scale, 1.0f),
-            model * glm::vec4(-pair.second.scale,  pair.second.scale,  pair.second.scale, 1.0f),
-            model * glm::vec4( pair.second.scale, -pair.second.scale, -pair.second.scale, 1.0f),
-            model * glm::vec4( pair.second.scale, -pair.second.scale,  pair.second.scale, 1.0f),
-            model * glm::vec4( pair.second.scale,  pair.second.scale, -pair.second.scale, 1.0f),
-            model * glm::vec4( pair.second.scale,  pair.second.scale,  pair.second.scale, 1.0f),
+            modelMatrix * glm::vec4(-pair.second.scale, -pair.second.scale, -pair.second.scale, 1.0f),
+            modelMatrix * glm::vec4(-pair.second.scale, -pair.second.scale,  pair.second.scale, 1.0f),
+            modelMatrix * glm::vec4(-pair.second.scale,  pair.second.scale, -pair.second.scale, 1.0f),
+            modelMatrix * glm::vec4(-pair.second.scale,  pair.second.scale,  pair.second.scale, 1.0f),
+            modelMatrix * glm::vec4( pair.second.scale, -pair.second.scale, -pair.second.scale, 1.0f),
+            modelMatrix * glm::vec4( pair.second.scale, -pair.second.scale,  pair.second.scale, 1.0f),
+            modelMatrix * glm::vec4( pair.second.scale,  pair.second.scale, -pair.second.scale, 1.0f),
+            modelMatrix * glm::vec4( pair.second.scale,  pair.second.scale,  pair.second.scale, 1.0f),
         };
 
         if (frustum.IsOnFrustum(OOBB))
@@ -606,7 +629,9 @@ void RenderSystem::RenderDecals(
 
             pair.second.mat->Use(decalShader);
 
-            //DRAW CUBE
+            decalShader->setMat4("model", modelMatrix);
+            decalShader->setMat4("invM", glm::inverse(projection * viewMatrix * modelMatrix));
+            decalCube->meshes[0]->Draw();
         }
     }
 
@@ -643,7 +668,8 @@ float delta
     pointLightPassShader->setInt("albedo", 1);
     pointLightPassShader->setInt("normal", 2);
     pointLightPassShader->setInt("depth", 3);
-    pointLightPassShader->setInt("lightLerp", 4);
+    pointLightPassShader->setInt("pbr", 4);
+    pointLightPassShader->setInt("lightLerp", 5);
     pointLightPassShader->setInt("frameCount", frameCountInSixteen);
 
     glActiveTexture(GL_TEXTURE0 + 1);
@@ -654,6 +680,9 @@ float delta
 
     glActiveTexture(GL_TEXTURE0 + 3);
     glBindTexture(GL_TEXTURE_2D, depthBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 4);
+    glBindTexture(GL_TEXTURE_2D, pbrBuffer);
 
     for (auto& pair : pointLights)
     {
@@ -672,14 +701,14 @@ float delta
         case PointLightEffect::On:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOn);
             lerpAmount = pair.second.timeInType / lightTimeToOn;
-            glActiveTexture(GL_TEXTURE0 + 4);
+            glActiveTexture(GL_TEXTURE0 + 5);
             glBindTexture(GL_TEXTURE_2D, onLightTexture->GLID);
             break;
 
         case PointLightEffect::Off:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOff);
             lerpAmount = pair.second.timeInType / lightTimeToOff;
-            glActiveTexture(GL_TEXTURE0 + 4);
+            glActiveTexture(GL_TEXTURE0 + 5);
             glBindTexture(GL_TEXTURE_2D, offLightTexture->GLID);
             break;
 
@@ -687,19 +716,19 @@ float delta
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToExplode);
             //if (pair.second.timeInType >= lightTimeToExplode) SceneManager::scene->DeleteSceneObject(pair.first);
             lerpAmount = pair.second.timeInType / lightTimeToExplode;
-            glActiveTexture(GL_TEXTURE0 + 4);
+            glActiveTexture(GL_TEXTURE0 + 5);
             glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
             break;
 
         case PointLightEffect::Flickering:
             pair.second.timeInType = fmod(pair.second.timeInType, lightTimeToFlicker);
             lerpAmount = fmod(pair.second.timeInType + (pair.first % 100)/100.0f, lightTimeToFlicker) / lightTimeToFlicker;
-            glActiveTexture(GL_TEXTURE0 + 4);
+            glActiveTexture(GL_TEXTURE0 + 5);
             glBindTexture(GL_TEXTURE_2D, flickeringLightTexture->GLID);
             break;
 
         case PointLightEffect::SyncsGun:
-            glActiveTexture(GL_TEXTURE0 + 4);
+            glActiveTexture(GL_TEXTURE0 + 5);
             glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
         }
         pointLightPassShader->setFloat("lerpAmount", glm::clamp(lerpAmount, 0.0f, 1.0f));
@@ -730,8 +759,9 @@ void RenderSystem::RenderSpotlights(
     spotlightPassShader->setInt("albedo", 1);
     spotlightPassShader->setInt("normal", 2);
     spotlightPassShader->setInt("depth", 3);
-    spotlightPassShader->setInt("lightLerp", 4);
-    spotlightPassShader->setInt("shadowMap", 5);
+    spotlightPassShader->setInt("pbr", 4);
+    spotlightPassShader->setInt("lightLerp", 5);
+    spotlightPassShader->setInt("shadowMap", 6);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, albedoBuffer);
@@ -741,6 +771,9 @@ void RenderSystem::RenderSpotlights(
 
     glActiveTexture(GL_TEXTURE0 + 3);
     glBindTexture(GL_TEXTURE_2D, depthBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 4);
+    glBindTexture(GL_TEXTURE_2D, pbrBuffer);
 
     for (auto& pair : spotlights)
     {
@@ -758,7 +791,7 @@ void RenderSystem::RenderSpotlights(
         spotlightPassShader->setVec3("direction", globalDir);
         spotlightPassShader->setMat4("lightMat", pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
 
-        glActiveTexture(GL_TEXTURE0 + 5);
+        glActiveTexture(GL_TEXTURE0 + 6);
         glBindTexture(GL_TEXTURE_2D, pair.second.depthBuffer);
 
         pair.second.timeInType += delta;
@@ -768,14 +801,14 @@ void RenderSystem::RenderSpotlights(
         case PointLightEffect::On:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOn);
             lerpAmount = pair.second.timeInType / lightTimeToOn;
-            glActiveTexture(GL_TEXTURE0 + 4);
+            glActiveTexture(GL_TEXTURE0 + 5);
             glBindTexture(GL_TEXTURE_2D, onLightTexture->GLID);
             break;
 
         case PointLightEffect::Off:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOff);
             lerpAmount = pair.second.timeInType / lightTimeToOff;
-            glActiveTexture(GL_TEXTURE0 + 4);
+            glActiveTexture(GL_TEXTURE0 + 5);
             glBindTexture(GL_TEXTURE_2D, offLightTexture->GLID);
             break;
 
@@ -783,19 +816,19 @@ void RenderSystem::RenderSpotlights(
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToExplode);
             //if (pair.second.timeInType >= lightTimeToExplode) SceneManager::scene->DeleteSceneObject(pair.first);
             lerpAmount = pair.second.timeInType / lightTimeToExplode;
-            glActiveTexture(GL_TEXTURE0 + 4);
+            glActiveTexture(GL_TEXTURE0 + 5);
             glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
             break;
 
         case PointLightEffect::Flickering:
             pair.second.timeInType = fmod(pair.second.timeInType, lightTimeToFlicker);
             lerpAmount = fmod(pair.second.timeInType + (pair.first % 100) / 100.0f, lightTimeToFlicker) / lightTimeToFlicker;
-            glActiveTexture(GL_TEXTURE0 + 4);
+            glActiveTexture(GL_TEXTURE0 + 5);
             glBindTexture(GL_TEXTURE_2D, flickeringLightTexture->GLID);
             break;
 
         case PointLightEffect::SyncsGun:
-            glActiveTexture(GL_TEXTURE0 + 4);
+            glActiveTexture(GL_TEXTURE0 + 5);
             glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
         }
         spotlightPassShader->setFloat("lerpAmount", glm::clamp(lerpAmount, 0.0f, 1.0f));
@@ -1112,6 +1145,7 @@ void RenderSystem::DeferredSetup()
     glGenTextures(1, &normalBuffer);
     glGenTextures(1, &albedoBuffer);
     glGenTextures(1, &emissionBuffer);
+    glGenTextures(1, &pbrBuffer);
     glGenTextures(1, &depthBuffer);
     glGenFramebuffers(1, &deferredFBO);
     DeferredUpdate();

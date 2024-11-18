@@ -23,6 +23,8 @@ void Decal::GUI()
 		ImGui::DragFloat(("Decal Depth##" + tag).c_str(), &depthOfDecal);
 		ImGui::DragFloat(("Scale##" + tag).c_str(), &scale);
 		ResourceManager::MaterialSelector("Material ", &mat, ResourceManager::defaultShader, true);
+		if(mat)
+			mat->GUI();
 		ImGui::Unindent();
 	}
 }
