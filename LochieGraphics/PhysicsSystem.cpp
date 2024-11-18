@@ -479,6 +479,11 @@ toml::table PhysicsSystem::Serialise() const
 /// <returns> whether it hit anything</returns>
 bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>& hits, float length, int layerMask, bool ignoreTriggers)
 {
+	return RayCastRadiusExpansion(pos, direction, hits, 0.0f, length, layerMask, ignoreTriggers);
+}
+
+bool PhysicsSystem::RayCastRadiusExpansion(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>& hits,float radiusExpansion, float length, int layerMask, bool ignoreTriggers)
+{
 	std::vector<CollisionPacket> collisions;
 	hits.clear();
 	if (glm::length(direction) == 0.0f)
@@ -500,7 +505,8 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 			{
 				CollisionPacket collision = RayCastAgainstCollider(
 					pos, direction,
-					(*transformsInScene)[rigidBody.first], collider
+					(*transformsInScene)[rigidBody.first], collider,
+					radiusExpansion
 				);
 
 				if (collision.depth >= 0.0f && collision.depth < length)
@@ -523,7 +529,8 @@ bool PhysicsSystem::RayCast(glm::vec2 pos, glm::vec2 direction, std::vector<Hit>
 		{
 			CollisionPacket collision = RayCastAgainstCollider(
 				pos, direction,
-				(*transformsInScene)[collider->first], collider->second
+				(*transformsInScene)[collider->first], collider->second,
+				radiusExpansion
 			);
 
 			if (collision.depth >= 0.0f && collision.depth < length)
@@ -671,7 +678,7 @@ std::vector<Hit> PhysicsSystem::CircleCast(glm::vec2 pos, float radius, int laye
 	return hits;
 }
 
-CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 direction, Transform& transform, Collider* collider)
+CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 direction, Transform& transform, Collider* collider, float radiusExpansion)
 {
 	// COLLISION BODY A is the target COLLISION BODY B SHOULD BE NULL
 	CollisionPacket collision;
@@ -706,7 +713,8 @@ CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 d
 			float a = direction.x * direction.x + direction.y * direction.y;
 			float b = f.x * direction.x + f.y * direction.y;
 			b *= 2.0f;
-			float c = f.x * f.x + f.y * f.y - poly->radius * poly->radius;
+			float radius = poly->radius + radiusExpansion;
+			float c = f.x * f.x + f.y * f.y - radius * radius;
 			float t;
 			float discriminant = b * b - 4.0f * a * c;
 			if (discriminant == 0.0f)

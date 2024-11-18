@@ -49,6 +49,7 @@ public:
 	float windowOfTimeForHealPressed = 0.2f;
 	glm::vec3 globalBarrelOffset = {};
 	glm::vec3 barrelOffset = { -80.0f, 70.0f, 5.0f };
+	float shotWidth = 10.0f;
 
 	float chargedDuration = 0.0f;
 	float overclockChargeTime = 0.3f;

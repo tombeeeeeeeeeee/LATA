@@ -53,6 +53,7 @@ Sync::Sync(toml::table table)
 	rainbowDimming = Serialisation::LoadAsFloat(table["rainbowDimming"], 1.0f);
 	overclockBounceDamage = Serialisation::LoadAsInt(table["overclockBounceDamage"]);
 	rainbowRebounding = Serialisation::LoadAsBool(table["rainbowRebounding"]);
+	shotWidth = Serialisation::LoadAsFloat(table["shotWidth"], 10.0f);
 }
 
 void Sync::Start()
@@ -231,6 +232,7 @@ void Sync::GUI()
 	}
 
 	ImGui::DragFloat3(("Barrel Offset##" + tag).c_str(), &barrelOffset[0]);
+	ImGui::DragFloat(("Shot Width" + tag).c_str(), &shotWidth);
 
 	if (ImGui::CollapsingHeader(("Misfire Properties##" + tag).c_str()))
 	{
@@ -302,6 +304,7 @@ toml::table Sync::Serialise() const
 		{ "rainbowRebounding", rainbowRebounding },
 		{ "overclockBounceDamage", overclockBounceDamage },
 		{ "knockBackForce", knockBackForce },
+		{ "shotWidth", shotWidth},
 	};
 }
 
@@ -325,7 +328,7 @@ void Sync::ShootMisfire(glm::vec3 pos)
 void Sync::ShootSniper(glm::vec3 pos)
 {
 	std::vector<Hit> hits;
-	if (PhysicsSystem::RayCast({ pos.x, pos.z }, fireDirection, hits, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::ecco | Collider::transparentLayers)))
+	if (PhysicsSystem::RayCastRadiusExpansion({ pos.x, pos.z }, fireDirection, hits, shotWidth, FLT_MAX, ~((int)CollisionLayers::sync | (int)CollisionLayers::ecco | Collider::transparentLayers)))
 	{
 		Hit hit = hits[0];
 		blasts.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
@@ -348,7 +351,7 @@ void Sync::ShootOverClocked(glm::vec3 pos)
 void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour)
 {
 	std::vector<Hit> hits;
-	if (PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::ecco | (int)CollisionLayers::ecco | Collider::transparentLayers)))
+	if (PhysicsSystem::RayCastRadiusExpansion({ pos.x, pos.z }, dir, hits, shotWidth, FLT_MAX, ~((int)CollisionLayers::ecco | (int)CollisionLayers::ecco | Collider::transparentLayers)))
 	{
 		Hit hit = hits[0];
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
@@ -417,7 +420,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 void Sync::OverclockRaindowShot(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour, bool rebound)
 {
 	std::vector<Hit> hits;
-	PhysicsSystem::RayCast({ pos.x, pos.z }, dir, hits, FLT_MAX, ~((int)CollisionLayers::ecco | (int)CollisionLayers::reflectiveSurface | Collider::transparentLayers));
+	PhysicsSystem::RayCastRadiusExpansion({ pos.x, pos.z }, dir, hits, shotWidth, FLT_MAX, ~((int)CollisionLayers::ecco | (int)CollisionLayers::reflectiveSurface | Collider::transparentLayers));
 	Hit hit = hits[0];
 
 	if(hit.collider->collisionLayer & (int)CollisionLayers::enemy)

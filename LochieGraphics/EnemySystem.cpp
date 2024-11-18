@@ -394,7 +394,7 @@ void EnemySystem::Steering(
             }
             if (drawForceLines)
             RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + enemyPair.second.influenceThisFrame * 10.0f, { 0,0,1 }, 100);
-            float enemyLOSNormalMultiplier = 100.0f;
+            float enemyLOSNormalMultiplier = 10.0f;
             if (enemyPair.second.hasLOS)
             {
                 enemyLOSNormalMultiplier = 1.0f;
@@ -481,7 +481,14 @@ void EnemySystem::Steering(
         glm::vec2 velocityDelta = enemyPair.second.boidVelocity - curVel;
         glm::vec2 forceThisFrame = velocityDelta / delta;
         rigidBodies[enemyPair.first].netForce += forceThisFrame;
-        enemyPair.second.aim = Utilities::Lerp(enemyPair.second.aim, enemyPair.second.boidVelocity, 0.1f);
+        if (enemyPair.second.inAbility)
+        {
+            enemyPair.second.aim = Utilities::Lerp(enemyPair.second.aim, glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition()), 0.1f);
+        }
+        else
+        {
+            enemyPair.second.aim = Utilities::Lerp(enemyPair.second.aim, glm::normalize(enemyPair.second.boidVelocity), 0.1f);
+        }
 
         float angle = atan2f(enemyPair.second.aim.x, enemyPair.second.aim.y) * 180.0f / PI;
         if (isnan(angle)) continue;
