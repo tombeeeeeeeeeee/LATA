@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Maths.h"
+
 #include <vector>
 #include <set>
 #include <string>
@@ -25,6 +27,13 @@ private:
 	std::string hierarchyMenuSearch = "";
 
 	bool focusSceneObjectMenu = false;
+
+
+	std::vector<glm::mat4> selectedObjectLocalMatrixHistory = {};
+	unsigned int selectedObjectHistoryIndex = 0;
+	bool gizmoChanged = false;
+
+	bool zPressed = false;
 
 public:
 	Scene* scene = nullptr;

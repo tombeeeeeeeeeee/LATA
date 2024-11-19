@@ -184,7 +184,27 @@ void GUI::Update()
 		glfwGetWindowPos(SceneManager::window, &xOffset, &yOffset);
 		ImGuizmo::SetOrthographic(scene->camera->InOrthoMode());
 		ImGuizmo::SetRect((float)xOffset, (float)yOffset, io.DisplaySize.x, io.DisplaySize.y);
-		sceneObjectSelected->transform()->Gizmo(SceneManager::view, SceneManager::projection, transformGizmoOperation, transformGizmoMode);
+		
+		bool previousGizmoChanged = gizmoChanged;
+		gizmoChanged = sceneObjectSelected->transform()->Gizmo(SceneManager::view, SceneManager::projection, transformGizmoOperation, transformGizmoMode);
+
+		if (!gizmoChanged && previousGizmoChanged) {
+			selectedObjectLocalMatrixHistory.push_back(sceneObjectSelected->transform()->getLocalMatrix());
+			selectedObjectHistoryIndex++;
+			// TODO: Clear
+			selectedObjectLocalMatrixHistory.resize(selectedObjectHistoryIndex + 1);
+		}
+		bool zPressedPrevious = zPressed;
+		zPressed = glfwGetKey(SceneManager::window, GLFW_KEY_Z);
+		if (glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_CONTROL) && zPressed && !zPressedPrevious) {
+			if (glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_SHIFT)) {
+				selectedObjectHistoryIndex = std::min((unsigned int)(selectedObjectLocalMatrixHistory.size() - 1), selectedObjectHistoryIndex + 1);
+			}
+			else {
+				selectedObjectHistoryIndex = std::max(0, (int)selectedObjectHistoryIndex - 1);
+			}
+			sceneObjectSelected->transform()->setLocalMatrix(selectedObjectLocalMatrixHistory.at(selectedObjectHistoryIndex));
+		}
 	}
 }
 
@@ -202,12 +222,16 @@ void GUI::setSelected(SceneObject* so)
 {
 	sceneObjectSelected = so;
 	lastSelected = so;
+	selectedObjectLocalMatrixHistory.clear();
+	selectedObjectHistoryIndex = 0;
 	if (so) {
 		modelHierarchySelected = nullptr;
 		focusSceneObjectMenu = true;
+		selectedObjectLocalMatrixHistory.push_back(sceneObjectSelected->transform()->getLocalMatrix());
 	}
 
 	multiSelectedSceneObjects.clear();
+
 }
 
 void GUI::setSelected(std::vector<SceneObject*> sceneObjects)
