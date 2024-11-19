@@ -17,6 +17,7 @@
 #include "ParticleSystem.h"
 #include "Paths.h"
 #include "Frustum.h"
+#include "SceneObject.h"
 
 #include "Utilities.h"
 #include "EditorGUI.h"
@@ -420,7 +421,7 @@ void RenderSystem::Update(
 
     DrawAllRenderers(animators, transforms, renders, animatedRenderered, cameraFrustum);
     RenderDecals(decals, transforms, cameraFrustum);
-    RenderSpotLightShadowMaps(spotlights, animators, transforms, renders, animatedRenderered);
+    RenderSpotLightShadowMaps(spotlights, animators, transforms, renders, animatedRenderered, cameraFrustum);
 
     RenderSSAO();
 
@@ -922,37 +923,72 @@ void RenderSystem::RenderSpotLightShadowMaps(
     std::unordered_map<unsigned long long, Animator*>& animators,
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-    std::unordered_set<unsigned long long> animatedRenderered
+    std::unordered_set<unsigned long long> animatedRenderered,
+    Frustum frustum
 )
 {
     glCullFace(GL_FRONT);
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, 1024, 1024);
     spotlightShadowPassShader->Use();
+    int count = 0;
     for (auto& pair : spotlights)
     {
         if (!pair.second.castsShadows) continue;
-        spotlightShadowPassShader->setMat4("vp",pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
-        glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
-        glClear(GL_DEPTH_BUFFER_BIT);
-        
+        if (!frustum.IsOnFrustum(transforms[pair.first].getGlobalPosition(), pair.second.range * 900.0f)) continue;
+
         glm::vec3 spotlightDir = transforms[pair.first].forward();
         glm::vec3 right = transforms[pair.first].right();
         glm::vec3 up = transforms[pair.first].up();
 
         Frustum spotlightFrustum = Frustum(
             transforms[pair.first].getGlobalPosition(),
-            glm::radians(120.0f), 1.0f,
+            glm::radians(70.0f), 1.0f,
             1.0f, 2000.0f,
             up,
             spotlightDir,
             right
         );
 
+        bool hasRBThisFrame = false;
+        for (auto& i : renderers)
+        {
+            if (!i.second.model) { continue; }
+            Transform* transform = &transforms.at(i.first);
+            if (i.second.model)
+            {
+                glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
+                if (spotlightFrustum.IsOnFrustum(OOB))
+                {
+                    if (i.second.animator ||
+                        (transform->getSceneObject()->parts & Parts::rigidBody && !transform->getSceneObject()->rigidbody()->isStatic))
+                    {
+                        hasRBThisFrame = true; 
+                        pair.second.hadRigidBodiesLastFrame = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!hasRBThisFrame)
+        {
+            bool temp = !pair.second.hadRigidBodiesLastFrame;
+            pair.second.hadRigidBodiesLastFrame = false;
+            if(temp) continue;
+        }
+
+        count++;
+        spotlightShadowPassShader->setMat4("vp",pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
+        glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
+        glClear(GL_DEPTH_BUFFER_BIT);
+
         DrawAllRenderers(animators, transforms, renderers, animatedRenderered, spotlightFrustum, spotlightShadowPassShader);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+    std::cout << "Spotlights in scene: " << spotlights.size() << std::endl;
+    std::cout << "Spotlights that rendered shadows: " << count << std::endl;
+
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glDisable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);

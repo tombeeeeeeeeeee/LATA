@@ -16,6 +16,7 @@ public:
     float cutOff;
     float outerCutOff;
 
+    bool hadRigidBodiesLastFrame = true;
     bool castsShadows = true;
 
     unsigned int frameBuffer = 0;

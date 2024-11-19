@@ -183,7 +183,8 @@ private:
         std::unordered_map<unsigned long long, Animator*>& animators,
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-        std::unordered_set<unsigned long long> animatedRenderered
+        std::unordered_set<unsigned long long> animatedRenderered,
+        Frustum frustum
     );
 
     void RenderPointLights(

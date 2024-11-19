@@ -19,6 +19,30 @@ Frustum::Frustum(glm::vec3 pos, float fov, float aspect, float nearClip, float f
     bottomFace = { bottomNormal, glm::dot(pos, bottomNormal) };
 }
 
+bool Frustum::IsOnFrustum(glm::vec3 point)
+{
+    if (!IsInFrontOfPlane(leftFace, point)) return false;
+    if (!IsInFrontOfPlane(rightFace, point)) return false;
+    if (!IsInFrontOfPlane(topFace, point)) return false;
+    if (!IsInFrontOfPlane(bottomFace, point)) return false;
+    if (!IsInFrontOfPlane(farFace, point)) return false;
+    if (!IsInFrontOfPlane(nearFace, point)) return false;
+
+    return true;
+}
+
+bool Frustum::IsOnFrustum(glm::vec3 centre, float radius)
+{
+    if (!IsInFrontOfPlane(leftFace, centre, radius)) return false;
+    if (!IsInFrontOfPlane(rightFace, centre, radius)) return false;
+    if (!IsInFrontOfPlane(topFace, centre, radius)) return false;
+    if (!IsInFrontOfPlane(bottomFace, centre, radius)) return false;
+    if (!IsInFrontOfPlane(farFace, centre, radius)) return false;
+    if (!IsInFrontOfPlane(nearFace, centre, radius)) return false;
+
+    return true;
+}
+
 bool Frustum::IsOnFrustum(glm::vec3 OOBB[8])
 {
     if (!IsInFrontOfPlane(leftFace, OOBB)) return false;
@@ -39,4 +63,16 @@ bool Frustum::IsInFrontOfPlane(Plane plane, glm::vec3 OOBB[8])
         if (distance - plane.distance >= 0) return true;
     }
     return false;
+}
+
+bool Frustum::IsInFrontOfPlane(Plane plane, glm::vec3 point)
+{
+    float distance = glm::dot(plane.normal, point);
+    return (distance - plane.distance >= 0);
+}
+
+bool Frustum::IsInFrontOfPlane(Plane plane, glm::vec3 centre, float radius)
+{
+    float distance = glm::dot(plane.normal, centre);
+    return (distance - plane.distance >= -radius);
 }
