@@ -7,6 +7,8 @@ type = '2'
 upAnimationGUID = '15148335964655446903'
 
 [ecco]
+boostDamage = 200
+boostKnockback = 250.0
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
 carReverseMoveSpeed = 3000.0
@@ -14,9 +16,10 @@ controlState = false
 deadZone = 0.6000000238418579
 exceedingSlowIntensity = 3.5
 guid = '2091576976424546894'
-healingFromDamage = 1
+healCooldown = 1.0
+healingFromDamage = 25
 maxCarMoveSpeed = 565.0
-maxHealth = 10
+maxHealth = 200
 maxReverseSpeed = 300.0
 maxWheelAngle = 60.0
 minSpeedDamageThreshold = 300.0
@@ -28,6 +31,7 @@ speedBoostDuration = 0.15000000596046448
 speedBoostHPCost = 1
 speedBoostInDirectionOfBody = false
 speedDamage = 25
+speedKnockback = 150.0
 speedReductionAfterDamaging = 200.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
@@ -49,9 +53,9 @@ wheelTurnSpeed = 4.400000095367432
     scale = [ 0.37299999594688416, 0.09000000357627869 ]
 
 [health]
-currHealth = 10
+currHealth = 200
 guid = '2091576976424546894'
-maxHealth = 10
+maxHealth = 200
 
 [modelRenderer]
 guid = '2091576976424546894'
