@@ -39,7 +39,7 @@ public:
 	glm::vec2 wheelDirection = { 0.0f, 0.0f };	
 
 	int currHealth = 10;
-	int maxHealth = 10;
+	int maxHealth = 200;
 
 	float windowOfTimeForHealPressed = 0.2f;
 
@@ -78,8 +78,12 @@ private:
 	int speedDamage = 0;
 	int healingFromDamage = 0;
 	float speedReductionAfterDamaging = 0.0f;
-
 	float timeSinceHealButtonPressed = 0.0f;
+	int boostDamage = 10;
+	float speedKnockback = 10.0f;
+	float boostKnockback = 10.0f;
+	float healCooldown = 1.0f;
+	float timeSinceLastHeal = FLT_MAX;
 
 	//TESTING VALUES
 	bool speedBoostInDirectionOfBody = true;

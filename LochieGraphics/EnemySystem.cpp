@@ -543,13 +543,13 @@ void EnemySystem::Steering(
                     switch (enemyType)
                     {
                     case 0:
-                        SpawnExplosive(transforms[spawnPair.first].getGlobalPosition(), spawner->enemyTriggerTag);
+                        SpawnExplosive(transforms[spawnPair.first].getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
                         break;
                     case 1:
-                        SpawnMelee(transforms[spawnPair.first].getGlobalPosition(), spawner->enemyTriggerTag);
+                        SpawnMelee(transforms[spawnPair.first].getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
                         break;
                     case 2:
-                        SpawnRanged(transforms[spawnPair.first].getGlobalPosition(), spawner->enemyTriggerTag);
+                        SpawnRanged(transforms[spawnPair.first].getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
                         break;
                     }
                     for (auto& child : transforms[spawnPair.first].getChildren())
@@ -557,13 +557,13 @@ void EnemySystem::Steering(
                         switch (enemyType)
                         {
                         case 0:
-                            SpawnExplosive(child->getGlobalPosition(), spawner->enemyTriggerTag);
+                            SpawnExplosive(child->getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
                             break;
                         case 1:
-                            SpawnMelee(child->getGlobalPosition(), spawner->enemyTriggerTag);
+                            SpawnMelee(child->getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
                             break;
                         case 2:
-                            SpawnRanged(child->getGlobalPosition(), spawner->enemyTriggerTag);
+                            SpawnRanged(child->getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
                             break;
                         }
                     }

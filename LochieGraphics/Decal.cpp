@@ -19,12 +19,12 @@ void Decal::GUI()
 	if (ImGui::CollapsingHeader(("Decal##" + tag).c_str()))
 	{
 		ImGui::Indent();
-
-		ImGui::DragFloat(("Decal Depth##" + tag).c_str(), &depthOfDecal);
-		ImGui::DragFloat(("Scale##" + tag).c_str(), &scale);
 		ResourceManager::MaterialSelector("Material ", &mat, ResourceManager::defaultShader, true);
-		if(mat)
-			mat->GUI();
+		if (!mat)ImGui::BeginDisabled();
+		ImGui::DragFloat(("Decal Depth##" + tag).c_str(), &depthOfDecal);
+		ImGui::SliderFloat(("Angle Tolerance##" + tag).c_str(), &angleTolerance, 0.0f, 1.0f);
+		ImGui::DragFloat(("Scale##" + tag).c_str(), &scale);
+		if (!mat)ImGui::EndDisabled();
 		ImGui::Unindent();
 	}
 }
@@ -35,6 +35,7 @@ toml::table Decal::Serialise(unsigned long long guid)
 		{"guid", Serialisation::SaveAsUnsignedLongLong(guid)},
 		{"matGUID", Serialisation::SaveAsUnsignedLongLong(mat->GUID)},
 		{"depthOfDecal", depthOfDecal},
+		{"angleTolerance", angleTolerance},
 		{"scale", scale},
 	};
 }

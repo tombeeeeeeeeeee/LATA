@@ -5,6 +5,8 @@
 #include "EditorGUI.h"
 #include "Serialisation.h"
 
+float Health::cooldown = 0.0f;
+
 Health::Health()
 {
 
@@ -18,12 +20,17 @@ void Health::addHealth(int addition)
 	currHealth = glm::clamp(currHealth, 0, maxHealth);
 }
 
-void Health::subtractHealth(int subtraction)
+bool Health::subtractHealth(int subtraction)
 {
-	timeSinceLastChange = 0.0f;
-	lastChangeAmount = -subtraction;
-	currHealth -= subtraction;
-	currHealth = glm::clamp(currHealth, 0, maxHealth);
+	if (timeSinceLastChange > cooldown)
+	{
+		timeSinceLastChange = 0.0f;
+		lastChangeAmount = -subtraction;
+		currHealth -= subtraction;
+		currHealth = glm::clamp(currHealth, 0, maxHealth);
+		return true;
+	}
+	return false;
 }
 
 void Health::setMaxHealth(int max)
@@ -58,8 +65,6 @@ void Health::GUI()
 	if (ImGui::CollapsingHeader(("Health##" + tag).c_str())) {
 		ImGui::DragInt(("Current##" + tag).c_str(), &currHealth);
 		ImGui::DragFloat(("Time Since Last Change##" + tag).c_str(), &timeSinceLastChange);
-		ImGui::BeginDisabled();
 		ImGui::DragInt(("Max Health##" + tag).c_str(), &maxHealth);
-		ImGui::EndDisabled();
 	}
 }

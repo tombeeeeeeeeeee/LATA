@@ -31,6 +31,7 @@ void HealthSystem::Load(toml::table table)
 	timeBetweenPulses = Serialisation::LoadAsFloat(table["timeBetweenPulses"]);
 	healDistance = Serialisation::LoadAsFloat(table["healDistance"]);
 	losToleranceTime = Serialisation::LoadAsFloat(table["losToleranceTime"]);
+	Health::cooldown = Serialisation::LoadAsFloat(table["cooldown"]);
 	abilityUI.Load(table["abilityUI"].as_table());
 }
 
@@ -46,6 +47,7 @@ toml::table HealthSystem::Serialise()
 		{ "timeBetweenPulses", timeBetweenPulses},
 		{ "healDistance", healDistance},
 		{ "losToleranceTime", losToleranceTime},
+		{ "cooldown", Health::cooldown},
 		{ "abilityUI", abilityUI.Serialise() },
 	};
 }
@@ -199,7 +201,7 @@ void HealthSystem::GUI()
 
 
 	SaveAsGUI();
-
+	ImGui::DragFloat("Cooldown for damage", &Health::cooldown, 0.02f, 0.0f);
 	ImGui::ColorEdit3("Health Colour", &healColour[0]);
 	ImGui::ColorEdit3("Damage Colour", &damageColour[0]);
 	ImGui::DragFloat("Health Colour Time", &colourTime, 0.02f, 0);

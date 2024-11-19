@@ -608,7 +608,7 @@ void RenderSystem::RenderDecals(
         Transform model = Transform();
         model.setPosition(transforms[pair.first].getGlobalPosition());
         model.setEulerRotation(transforms[pair.first].getEulerRotation());
-        model.setScale(pair.second.scale);
+        model.setScale({ pair.second.scale, 10.0f, pair.second.scale });
         glm::mat4 modelMatrix = model.getGlobalMatrix();
         glm::vec3 OOBB[8] =
         {
@@ -624,8 +624,9 @@ void RenderSystem::RenderDecals(
 
         if (frustum.IsOnFrustum(OOBB))
         {
-            decalShader->setFloat("depthPenertration", pair.second.depthOfDecal);
-            decalShader->setVec3("decalCentre", transforms[pair.first].getGlobalPosition());
+            decalShader->setFloat("depthPenertration", pair.second.depthOfDecal/1000.0f);
+            decalShader->setFloat("angleTolerance", pair.second.angleTolerance);
+            decalShader->setVec3("decalDirection", transforms[pair.first].up());
 
             pair.second.mat->Use(decalShader);
 

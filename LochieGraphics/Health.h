@@ -13,13 +13,15 @@ namespace toml { inline namespace v3 {
 class Health
 {
 public:
+	static float cooldown;
+
 	int currHealth = 0;
 	float timeSinceLastChange = 1.0f;
 	int lastChangeAmount = 0;
 	Health();
 
 	void addHealth(int addition);
-	void subtractHealth(int subtraction);
+	bool subtractHealth(int subtraction);
 
 	void setMaxHealth(int max);
 	int getMaxHealth();

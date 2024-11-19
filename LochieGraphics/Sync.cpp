@@ -49,7 +49,8 @@ Sync::Sync(toml::table table)
 	chargeUI.Load(table["chargeUI"].as_table());
 	startSlowTime = Serialisation::LoadAsFloat(table["startSlowTime"], 0.5f);
 	stopSlowTime = Serialisation::LoadAsFloat(table["stopSlowTime"], 1.5f);
-	knockBackForce = Serialisation::LoadAsFloat(table["knockBackForce"], 1.0f);
+	knockBackForceOverclock = Serialisation::LoadAsFloat(table["knockBackForceOverclock"], 1.0f);
+	knockBackForceSnipe = Serialisation::LoadAsFloat(table["knockBackForceSnipe"], 10.0f);
 	rainbowDimming = Serialisation::LoadAsFloat(table["rainbowDimming"], 1.0f);
 	overclockBounceDamage = Serialisation::LoadAsInt(table["overclockBounceDamage"]);
 	rainbowRebounding = Serialisation::LoadAsBool(table["rainbowRebounding"]);
@@ -181,12 +182,13 @@ bool Sync::Update(
 		if (chargedDuration >= overclockChargeTime)
 		{
 			ShootOverClocked(globalBarrelOffset);
-			rigidBody.AddImpulse(-fireDirection * knockBackForce);
+			rigidBody.AddImpulse(-fireDirection * knockBackForceOverclock);
 			SceneManager::scene->audio.PlaySound(Audio::railgunShotFirstCharged);
 		}
 		else if (chargedDuration >= sniperChargeTime)
 		{
 			ShootSniper(globalBarrelOffset);
+			rigidBody.AddImpulse(-fireDirection * knockBackForceSnipe);
 			SceneManager::scene->audio.PlaySound(Audio::railgunShotSecondCharged);
 		}
 		else
@@ -232,7 +234,7 @@ void Sync::GUI()
 	}
 
 	ImGui::DragFloat3(("Barrel Offset##" + tag).c_str(), &barrelOffset[0]);
-	ImGui::DragFloat(("Shot Width" + tag).c_str(), &shotWidth);
+	ImGui::DragFloat(("Shot Width##" + tag).c_str(), &shotWidth);
 
 	if (ImGui::CollapsingHeader(("Misfire Properties##" + tag).c_str()))
 	{
@@ -245,6 +247,7 @@ void Sync::GUI()
 		ImGui::DragFloat(("Sniper Charge Time##" + tag).c_str(), &sniperChargeTime);
 		ImGui::DragFloat(("Sniper Beam life span##" + tag).c_str(), &sniperBeamLifeSpan);
 		ImGui::ColorEdit3(("Sniper Beam Colour##" + tag).c_str(), &sniperBeamColour[0]);
+		ImGui::DragFloat(("Knock Back Force Snipe##" + tag).c_str(), &knockBackForceSnipe);
 	}
 	if (ImGui::CollapsingHeader(("Overclock Shot Properties##" + tag).c_str()))
 	{
@@ -252,14 +255,14 @@ void Sync::GUI()
 		ImGui::DragFloat(("Charge Time##" + tag).c_str(), &overclockChargeTime);
 		ImGui::DragFloat(("Beam life span##" + tag).c_str(), &overclockBeamLifeSpan);
 		ImGui::ColorEdit3(("Beam Colour##" + tag).c_str(), &overclockBeamColour[0]);
-		ImGui::DragFloat(("Knock Back Force##" + tag).c_str(), &knockBackForce);
+		ImGui::DragFloat(("Knock Back Force Overclock##" + tag).c_str(), &knockBackForceOverclock);
 		ImGui::DragInt(("Max Enemy Pierce Count##" + tag).c_str(), &enemyPierceCount);
 		ImGui::DragInt(("Rebound Count##" + tag).c_str(), &overclockReboundCount);
 		ImGui::DragInt(("Refraction Beams Off Ecco##" + tag).c_str(), &eccoRefractionCount);
 		ImGui::DragFloat(("Refraction Beams Angle##" + tag).c_str(), &eccoRefractionAngle);
 		ImGui::Checkbox(("Rainbow Shots Rebound##" + tag).c_str(), &rainbowRebounding);
-		ImGui::DragFloat(("Rainbow Rebound Dimming" + tag).c_str(), &rainbowDimming);
-		ImGui::DragInt(("Rainbow Rebound Damage" + tag).c_str(), &overclockBounceDamage);
+		ImGui::DragFloat(("Rainbow Rebound Dimming##" + tag).c_str(), &rainbowDimming);
+		ImGui::DragInt(("Rainbow Rebound Damage##" + tag).c_str(), &overclockBounceDamage);
 	}
 	if (ImGui::CollapsingHeader(("Health UI##" + tag).c_str())) {
 		healthUI.GUI();
@@ -303,7 +306,8 @@ toml::table Sync::Serialise() const
 		{ "rainbowDimming", rainbowDimming },
 		{ "rainbowRebounding", rainbowRebounding },
 		{ "overclockBounceDamage", overclockBounceDamage },
-		{ "knockBackForce", knockBackForce },
+		{ "knockBackForceOverclock", knockBackForceOverclock },
+		{ "knockBackForceSnipe", knockBackForceSnipe },
 		{ "shotWidth", shotWidth},
 	};
 }

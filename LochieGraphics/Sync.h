@@ -44,7 +44,7 @@ public:
 	void misfireShotOnCollision(Collision collision);
 
 	int currHealth = 5;
-	int maxHealth = 5;
+	int maxHealth = 100;
 
 	float windowOfTimeForHealPressed = 0.2f;
 	glm::vec3 globalBarrelOffset = {};
@@ -74,13 +74,14 @@ private:
 	float sniperChargeTime = 0.1f;
 	float sniperBeamLifeSpan = 0.5f;
 	glm::vec3 sniperBeamColour = { 0.5f,0.5f,1.0f };
+	float knockBackForceSnipe = 10.0f;
 
 	int overclockDamage = 1;
 	float overclockBeamLifeSpan = 1.0f;
 	glm::vec3 overclockBeamColour = { 1.0f,1.0f,0.5f };
 	int enemyPierceCount = 99;
 	int overclockReboundCount = 5;
-	float knockBackForce = 10.0f;
+	float knockBackForceOverclock = 10.0f;
 
 	float eccoRefractionAngle = 30.0f;
 	int eccoRefractionCount = 5;

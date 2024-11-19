@@ -8,7 +8,8 @@ struct Material {
 }; 
 
 uniform Material material;
-uniform vec3 decalCentre;
+uniform vec3 decalDirection;
+uniform float angleTolerance;
 uniform float depthPenertration;
 uniform sampler2D depthMap;
 uniform mat4 invV;
@@ -52,7 +53,17 @@ void main()
 
     vec2 decalTexCoords = objPos.xz + 0.5;
 
-    TBN = mat3(normalize(fragmentTangent), -normalize(fragmentBitangent), -normalize(fragmentNormal));
+    vec3 ddxWp = dFdx(worldPos);
+    vec3 ddyWp = dFdy(worldPos);
+    vec3 n = normalize(cross(ddyWp, ddxWp));
+
+    float d = dot(-n, decalDirection);
+	if(d - angleTolerance < 0) discard;
+
+    vec3 b = normalize(ddxWp);
+    vec3 t = normalize(ddxWp);
+
+    TBN = mat3(t, b, -n);
     vec3 tangentNormal = texture(material.normal, decalTexCoords).rgb;
 
     tangentNormal = normalize(tangentNormal * 2.0 - 1.0);

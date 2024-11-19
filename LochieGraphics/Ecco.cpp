@@ -172,11 +172,23 @@ bool Ecco::Update(
 			force += wheelDirection * abs(sidewaysMagnitude) * sidewaysFrictionCoef * (portionOfSidewaysSpeedKept / 100.0f) * (inputDevice.getLeftTrigger() > 0.001f ? -1.0f : 1.0f);
 	}
 
-	rigidBody.angularVel = 
-		(!boosting ? -turningCircleScalar : -turningCircleScalarBoosting)					 //scalar that represents wheel distance apart
-		* acos(wheelInDirectionOfForward)							 //angle wheel makes with forward vector
-		* (glm::min (glm::length(rigidBody.vel), maxCarMoveSpeed))								 //units per second
-		* glm::sign(glm::dot({ right.x, right.z }, wheelDirection)); //reflects based off of left or right
+	float speed = glm::length(rigidBody.vel);
+	if (speed > maxCarMoveSpeed)
+	{
+		rigidBody.angularVel =
+			-turningCircleScalarBoosting								//scalar that represents wheel distance apart
+			* acos(wheelInDirectionOfForward)							//angle wheel makes with forward vector
+			* (glm::min(speed * delta, maxCarMoveSpeed))				//units per second
+			* glm::sign(glm::dot({ right.x, right.z }, wheelDirection));//reflects based off of left or right
+	}
+	else
+	{
+		rigidBody.angularVel = 
+			-turningCircleScalar										//scalar that represents wheel distance apart
+			* acos(wheelInDirectionOfForward)							//angle wheel makes with forward vector
+			* (glm::min (speed * delta, maxCarMoveSpeed))				//units per second
+			* glm::sign(glm::dot({ right.x, right.z }, wheelDirection));//reflects based off of left or right
+	}
 
 	//Update rigidBody
 	rigidBody.netForce += force;
@@ -243,12 +255,26 @@ void Ecco::OnCollision(Collision collision)
 		RigidBody* rb = collision.self->rigidbody();
 		if (glm::dot(rb->vel, collision.normal) > 0.2f)
 		{
-			if (glm::length(rb->vel) > minSpeedDamageThreshold)
+			float speed = glm::length(rb->vel);
+			if (speed > maxCarMoveSpeed)
 			{
-				collision.sceneObject->health()->subtractHealth(speedDamage);
-				SceneManager::scene->audio.PlaySound(Audio::eccoEnemyHit);
-				collision.self->health()->addHealth(healingFromDamage);
-				collision.self->rigidbody()->AddImpulse(collision.normal * -speedReductionAfterDamaging);
+				if (collision.sceneObject->health()->subtractHealth(boostDamage))
+				{
+					collision.rigidBody->AddImpulse(glm::normalize(rb->vel) * boostKnockback);
+					SceneManager::scene->audio.PlaySound(Audio::eccoEnemyHit);
+					collision.self->health()->addHealth(healingFromDamage);
+					collision.self->rigidbody()->AddImpulse(collision.normal * -speedReductionAfterDamaging);
+				}
+			}
+			else if (glm::length(rb->vel) > minSpeedDamageThreshold)
+			{
+				if (collision.sceneObject->health()->subtractHealth(speedDamage))
+				{
+					collision.rigidBody->AddImpulse(glm::normalize(rb->vel) * speedKnockback);
+					SceneManager::scene->audio.PlaySound(Audio::eccoEnemyHit);
+					collision.self->health()->addHealth(healingFromDamage);
+					collision.self->rigidbody()->AddImpulse(collision.normal * -speedReductionAfterDamaging);
+				}
 			}
 		}
 	}
@@ -281,7 +307,11 @@ void Ecco::GUI()
 		ImGui::DragFloat(("Speed Boost Cooldown##" + tag).c_str(), &speedBoostCooldown);
 		ImGui::DragFloat(("Minimum damaging speed##" + tag).c_str(), &minSpeedDamageThreshold);
 		ImGui::DragInt(("On Collision Damage##" + tag).c_str(), &speedDamage);
+		ImGui::DragInt(("On Collision Damage BOOSTING##" + tag).c_str(), &boostDamage);
 		ImGui::DragInt(("On Collision Heal##" + tag).c_str(), &healingFromDamage);
+		ImGui::DragFloat(("Siphon Cooldown##" + tag).c_str(), &healCooldown);
+		ImGui::DragFloat(("Speeding Knock Back##" + tag).c_str(), &speedKnockback);
+		ImGui::DragFloat(("Boosting Knock Back##" + tag).c_str(), &boostKnockback);
 		ImGui::DragFloat(("Speed reduction after damage##" + tag).c_str(), &speedReductionAfterDamaging);
 		ImGui::DragInt(("Max Health##" + tag).c_str(), &maxHealth);
 		if (ImGui::DragFloat(("Heal Button Tolerance##" + tag).c_str(), &windowOfTimeForHealPressed))
@@ -338,6 +368,10 @@ toml::table Ecco::Serialise()
 		{ "speedBoostInDirectionOfBody", speedBoostInDirectionOfBody },
 		{ "healthUI", healthUI.Serialise() },
 		{ "boostUI", boostUI.Serialise() },
+		{ "boostDamage", boostDamage },
+		{ "boostKnockback", boostKnockback },
+		{ "speedKnockback", speedKnockback },
+		{ "healCooldown", healCooldown },
 	};
 }
 
@@ -376,6 +410,11 @@ Ecco::Ecco(toml::table table)
 	speedBoostDuration = Serialisation::LoadAsFloat(table["speedBoostDuration"]);
 	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
 	speedBoostInDirectionOfBody = Serialisation::LoadAsInt(table["speedBoostInDirectionOfBody"]);
+	boostDamage = Serialisation::LoadAsInt(table["boostDamage"]);
+	speedKnockback = Serialisation::LoadAsFloat(table["speedKnockback"], 10.0f);
+	boostKnockback = Serialisation::LoadAsFloat(table["boostKnockback"], 10.0f);
+	healCooldown = Serialisation::LoadAsFloat(table["healCooldown"], 1.0f);
+
 	healthUI.Load(table["healthUI"].as_table());
 	boostUI.Load(table["boostUI"].as_table());
 }

@@ -11,8 +11,9 @@ namespace toml {
 class Decal
 {
 public:
-	float depthOfDecal;
-	float scale;
+	float depthOfDecal = 0.002f;
+	float angleTolerance = 1.0f;
+	float scale = 1.0f;
 
 	Material* mat;
 
