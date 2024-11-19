@@ -1,0 +1,49 @@
+[sceneObject]
+children = [ '4796209133611206605' ]
+guid = '4796321444862506679'
+name = 'SpotlightLarge'
+parent = '0'
+parts = 0
+prefabBase = '0'
+prefabStatus = 1
+
+[transform]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '4796321444862506679'
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+children = []
+
+    [children.sceneObject]
+    children = []
+    guid = '4796209133611206605'
+    name = 'Spotlight_Large'
+    parent = '4796321444862506679'
+    parts = 2048
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.spotlight]
+    canBeTriggered = false
+    castsShadows = true
+    colour = [ 1.0, 1.0, 1.0 ]
+    cutOff = 0.6060000061988831
+    effect = 0
+    guid = '4796209133611206605'
+    intensity = 903.0
+    linear = 0.8414285778999329
+    on = true
+    outerCutOff = 0.5910000205039978
+    quadratic = 3.4499998092651367
+    range = 3.700000047683716
+    triggerTag = ''
+
+    [children.transform]
+    euler = [ 90.0, 0.0, 0.0 ]
+    guid = '4796209133611206605'
+    position = [ 0.0, 1443.0, 0.0 ]
+    quaternion = [ 0.7071067690849304, 0.7071067690849304, 0.0, 0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]
