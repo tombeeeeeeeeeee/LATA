@@ -33,7 +33,7 @@ speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
 turningCircleScalar = 0.12999999523162842
 turningCircleScalarBoosting = 0.05999999865889549
-wheelDirection = [ -0.34567156434059143, -0.9383555054664612 ]
+wheelDirection = [ -0.9689220190048218, -0.24736644327640533 ]
 wheelTurnSpeed = 4.400000095367432
 
     [Ecco.boostUI]
@@ -384,6 +384,14 @@ verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ]
 
 [[Colliders]]
 collisionLayer = 1
+guid = '5097405589192306108'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 74.0, 313.0 ], [ 72.0, -268.0 ], [ -81.0, -271.0 ], [ -79.0, 312.0 ] ]
+
+[[Colliders]]
+collisionLayer = 1
 guid = '12833488896650870561'
 isTrigger = false
 radius = 0.0
@@ -421,14 +429,6 @@ isTrigger = false
 radius = 0.0
 type = 1
 verts = [ [ 23.0, 30.0 ], [ 23.0, -30.0 ], [ -23.0, -30.0 ], [ -23.0, 30.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '15163581248678240335'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 65.0, 115.0 ], [ 65.0, -115.0 ], [ -65.0, -115.0 ], [ -65.0, 115.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
@@ -941,14 +941,6 @@ isTrigger = false
 radius = 0.0
 type = 1
 verts = [ [ 50.0, 62.0 ], [ 50.0, -62.0 ], [ -50.0, -62.0 ], [ -50.0, 62.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '15163622458032874591'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 65.0, 115.0 ], [ 65.0, -115.0 ], [ -65.0, -115.0 ], [ -65.0, 115.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
@@ -7585,12 +7577,6 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '13209041787110401431'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
-modelGuid = '17947855742307503041'
-
-[[Renderers]]
 guid = '171336543876323967'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -9763,12 +9749,6 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '2801537406893826467'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
-modelGuid = '17947855742307503041'
-
-[[Renderers]]
 guid = '18110816580964066803'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -9799,16 +9779,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '4794841020496194418'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
-modelGuid = '17947756827678234668'
-
-[[Renderers]]
 guid = '15155025499694156543'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 modelGuid = '17947855742307503041'
+
+[[Renderers]]
+guid = '4794841020496194418'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '11557720335555147721' ]
+modelGuid = '17947756827678234668'
 
 [[Renderers]]
 guid = '15933745342137142268'
@@ -9851,12 +9831,6 @@ guid = '1505552976592477014'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
 modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '2801596604419049724'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
-modelGuid = '17947855742307503041'
 
 [[Renderers]]
 guid = '1504332962233932606'
@@ -10283,12 +10257,6 @@ guid = '15152876052709142499'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 modelGuid = '17947836312446160282'
-
-[[Renderers]]
-guid = '15157701821206282737'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
-modelGuid = '17947855742307503041'
 
 [[Renderers]]
 guid = '1506146183646118228'
@@ -11761,16 +11729,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1504185294951344182'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '4770273010050390626'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 modelGuid = '17947855742307503041'
+
+[[Renderers]]
+guid = '1504185294951344182'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777316586600630394' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '203079930401128849'
@@ -12499,12 +12467,6 @@ materials = [ '1777316586600630394' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
-guid = '2801497319198096414'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
-modelGuid = '17947855742307503041'
-
-[[Renderers]]
 guid = '4773839921387894309'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -12575,12 +12537,6 @@ guid = '15153177474452190258'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 modelGuid = '17947836312446160282'
-
-[[Renderers]]
-guid = '15154942277743904130'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
-modelGuid = '17947855742307503041'
 
 [[Renderers]]
 guid = '15155418683076695452'
@@ -13655,12 +13611,6 @@ guid = '1505332570885365413'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
 modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '2801572270417511880'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
-modelGuid = '17947855742307503041'
 
 [[Renderers]]
 guid = '4749731006667120196'
@@ -17040,6 +16990,48 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 modelGuid = '17948350466954700839'
 
+[[Renderers]]
+guid = '2801497319198096414'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '11557720335555147721' ]
+modelGuid = '17947855742307503041'
+
+[[Renderers]]
+guid = '2801537406893826467'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '11557720335555147721' ]
+modelGuid = '17947855742307503041'
+
+[[Renderers]]
+guid = '2801572270417511880'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '11557720335555147721' ]
+modelGuid = '17947855742307503041'
+
+[[Renderers]]
+guid = '2801596604419049724'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '11557720335555147721' ]
+modelGuid = '17947855742307503041'
+
+[[Renderers]]
+guid = '13209041787110401431'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '11557720335555147721' ]
+modelGuid = '17947855742307503041'
+
+[[Renderers]]
+guid = '15154942277743904130'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '11557720335555147721' ]
+modelGuid = '17947855742307503041'
+
+[[Renderers]]
+guid = '15157701821206282737'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '11557720335555147721' ]
+modelGuid = '17947855742307503041'
+
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
@@ -17101,7 +17093,7 @@ netForce = [ 0.0, 0.0 ]
 vel = [ 0.0, 0.0 ]
 
     [[RigidBodies.colliders]]
-    collisionLayer = 1
+    collisionLayer = 256
     guid = '2801537406893826467'
     isTrigger = false
     radius = 0.0
@@ -17109,12 +17101,12 @@ vel = [ 0.0, 0.0 ]
     verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
 
     [[RigidBodies.colliders]]
-    collisionLayer = 1
+    collisionLayer = 256
     guid = '2801537406893826467'
     isTrigger = false
     radius = 0.0
     type = 1
-    verts = [ [ 30.0, 40.0 ], [ 30.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
+    verts = [ [ 142.0, 40.0 ], [ 142.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -17157,7 +17149,7 @@ netForce = [ 0.0, 0.0 ]
 vel = [ 0.0, 0.0 ]
 
     [[RigidBodies.colliders]]
-    collisionLayer = 1
+    collisionLayer = 256
     guid = '15155025499694156543'
     isTrigger = false
     radius = 0.0
@@ -17165,12 +17157,12 @@ vel = [ 0.0, 0.0 ]
     verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
 
     [[RigidBodies.colliders]]
-    collisionLayer = 1
+    collisionLayer = 256
     guid = '15155025499694156543'
     isTrigger = false
     radius = 0.0
     type = 1
-    verts = [ [ 30.0, 40.0 ], [ 30.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
+    verts = [ [ 142.0, 40.0 ], [ 142.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -18364,6 +18356,34 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
+guid = '4770273010050390626'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '4770273010050390626'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '4770273010050390626'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 40.0 ], [ 142.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
 guid = '1505381785775108052'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -18387,34 +18407,6 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '4770273010050390626'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '4770273010050390626'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '4770273010050390626'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 30.0, 40.0 ], [ 30.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -19036,146 +19028,6 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
-guid = '2801497319198096414'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2801497319198096414'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2801497319198096414'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 30.0, 40.0 ], [ 30.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2801596604419049724'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2801596604419049724'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2801596604419049724'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 30.0, 40.0 ], [ 30.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '13209041787110401431'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '13209041787110401431'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '13209041787110401431'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 30.0, 40.0 ], [ 30.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '15154942277743904130'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '15154942277743904130'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '15154942277743904130'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 30.0, 40.0 ], [ 30.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '15157701821206282737'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '15157701821206282737'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '15157701821206282737'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 30.0, 40.0 ], [ 30.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
 guid = '1895349674825472022'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -19546,7 +19398,7 @@ vel = [ 0.0, 0.0 ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
-angularVel = -0.0
+angularVel = 0.0
 elasticicty = 0.0
 guid = '18133337474269889811'
 invMass = 0.10000000149011612
@@ -20776,34 +20628,6 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
-guid = '2801572270417511880'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2801572270417511880'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2801572270417511880'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 30.0, 40.0 ], [ 30.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
 guid = '4748707855314825620'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -21947,6 +21771,174 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ -100.0, 15.0 ], [ -100.0, -15.0 ], [ -150.0, -15.0 ], [ -150.0, 15.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2801497319198096414'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '2801497319198096414'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '2801497319198096414'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 40.0 ], [ 142.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2801572270417511880'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '2801572270417511880'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '2801572270417511880'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 40.0 ], [ 142.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2801596604419049724'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '2801596604419049724'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '2801596604419049724'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 40.0 ], [ 142.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '13209041787110401431'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '13209041787110401431'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '13209041787110401431'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 40.0 ], [ 142.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '15154942277743904130'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '15154942277743904130'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '15154942277743904130'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 40.0 ], [ 142.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '15157701821206282737'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '15157701821206282737'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 205.0 ], [ 142.0, -72.0 ], [ 30.0, -72.0 ], [ 30.0, 205.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 256
+    guid = '15157701821206282737'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 142.0, 40.0 ], [ 142.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
 
 [[SceneObjects]]
 children = []
@@ -37101,7 +37093,7 @@ prefabStatus = 0
 children = []
 guid = '5096519958153479751'
 name = 'Pipe stack collider'
-parent = '0'
+parent = '5097576866981141190'
 parts = 32
 prefabBase = '0'
 prefabStatus = 0
@@ -37110,8 +37102,26 @@ prefabStatus = 0
 children = []
 guid = '5096845001188795697'
 name = 'Pipe stack collider 2'
-parent = '0'
+parent = '5097576866981141190'
 parts = 32
+prefabBase = '0'
+prefabStatus = 0
+
+[[SceneObjects]]
+children = []
+guid = '5097405589192306108'
+name = 'Pipe stack collider 3'
+parent = '5097576866981141190'
+parts = 32
+prefabBase = '0'
+prefabStatus = 0
+
+[[SceneObjects]]
+children = [ '5096519958153479751', '5096845001188795697', '5097405589192306108' ]
+guid = '5097576866981141190'
+name = 'Colliders'
+parent = '0'
+parts = 0
 prefabBase = '0'
 prefabStatus = 0
 
@@ -38348,7 +38358,7 @@ children = []
 guid = '15163581248678240335'
 name = 'W_Pipestack'
 parent = '1484840550353489091'
-parts = 34
+parts = 2
 prefabBase = '15063375736972026198'
 prefabStatus = 2
 
@@ -38357,7 +38367,7 @@ children = []
 guid = '15163622458032874591'
 name = 'W_Pipestack'
 parent = '1484840550353489091'
-parts = 34
+parts = 2
 prefabBase = '15063375736972026198'
 prefabStatus = 2
 
@@ -48282,10 +48292,10 @@ quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -179.9999237060547, -26.958242416381836, -179.99996948242188 ]
+euler = [ -179.9999237060547, -27.30850601196289, -179.99996948242188 ]
 guid = '18133337474269889811'
-position = [ -2486.845703125, -0.00827309675514698, -707.416259765625 ]
-quaternion = [ -0.23309099674224854, -4.083765077211865e-07, 0.9724549651145935, -6.65865456994652e-07 ]
+position = [ -2487.441650390625, -0.00827309675514698, -707.2882690429688 ]
+quaternion = [ -0.23606234788894653, -4.06339296432634e-07, 0.9717379212379456, -6.671107826150546e-07 ]
 scale = [ 0.9979211688041687, 1.0, 0.9979211688041687 ]
 
 [[Transforms]]
@@ -52965,6 +52975,13 @@ quaternion = [ 0.9728400111198425, 0.0, 0.23147842288017273, 0.0 ]
 scale = [ 0.9999996423721313, 1.0, 0.9999996423721313 ]
 
 [[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '5097576866981141190'
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
 euler = [ 0.0, -45.544281005859375, 0.0 ]
 guid = '4779395842301458894'
 position = [ 4375.0, 0.0, -4825.0 ]
@@ -54188,6 +54205,13 @@ guid = '12833443235776524961'
 position = [ 4950.0, 0.0, -6600.0 ]
 quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
 scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '5097405589192306108'
+position = [ 1741.1395263671875, 0.0, -1369.0648193359375 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 89.9999771118164, 0.0 ]
