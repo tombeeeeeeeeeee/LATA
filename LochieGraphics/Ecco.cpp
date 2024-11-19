@@ -226,6 +226,7 @@ bool Ecco::Update(
 		speedBoostUnactuated = true;
 	}
 
+	timeSinceLastHeal += delta;
 	timeSinceHealButtonPressed += delta;
 	if (inputDevice.getButton2())
 	{
@@ -260,9 +261,13 @@ void Ecco::OnCollision(Collision collision)
 			{
 				if (collision.sceneObject->health()->subtractHealth(boostDamage))
 				{
-					collision.rigidBody->AddImpulse(glm::normalize(rb->vel) * boostKnockback);
+					collision.rigidBody->AddImpulse(collision.normal * boostKnockback);
 					SceneManager::scene->audio.PlaySound(Audio::eccoEnemyHit);
-					collision.self->health()->addHealth(healingFromDamage);
+					if(timeSinceLastHeal <= healCooldown)
+					{
+						collision.self->health()->addHealth(healingFromDamage);
+						timeSinceLastHeal = 0.0f;
+					}
 					collision.self->rigidbody()->AddImpulse(collision.normal * -speedReductionAfterDamaging);
 				}
 			}
@@ -270,9 +275,13 @@ void Ecco::OnCollision(Collision collision)
 			{
 				if (collision.sceneObject->health()->subtractHealth(speedDamage))
 				{
-					collision.rigidBody->AddImpulse(glm::normalize(rb->vel) * speedKnockback);
+					collision.rigidBody->AddImpulse(collision.normal * speedKnockback);
 					SceneManager::scene->audio.PlaySound(Audio::eccoEnemyHit);
-					collision.self->health()->addHealth(healingFromDamage);
+					if (timeSinceLastHeal <= healCooldown)
+					{
+						collision.self->health()->addHealth(healingFromDamage);
+						timeSinceLastHeal = 0.0f;
+					}
 					collision.self->rigidbody()->AddImpulse(collision.normal * -speedReductionAfterDamaging);
 				}
 			}
