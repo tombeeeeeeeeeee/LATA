@@ -71,7 +71,7 @@ void main()
     vec3 trueNormal = TBN * tangentNormal;
     vec4 trueAlbedo = texture(material.albedo, decalTexCoords);
     vec3 albedo3 = trueAlbedo.rgb;
-    vec3 PBR = texture(material.PBR, decalTexCoords).rgb;
+    vec4 PBR = texture(material.PBR, decalTexCoords);
     vec3 emission3 = texture(material.emission, decalTexCoords).rgb;
 
     //Albedo packed with PBR metallic
@@ -83,7 +83,7 @@ void main()
     //Emission packed with PBR AO
     emission = vec4(emission3, 1.0);
 
-    pbr = vec4(PBR, 1.0);
+    pbr = vec4(PBR);
 }
 
     

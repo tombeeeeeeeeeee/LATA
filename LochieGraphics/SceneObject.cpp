@@ -196,6 +196,11 @@ void SceneObject::GUI()
 			}, 0.0f), ("Polygon Collider##Add part" + tag).c_str());
 		AddPartGUI(rigidbody, setRigidBody, RigidBody(), ("Rigid Body##Add part" + tag).c_str());
 		AddPartGUI(renderer, setRenderer, ModelRenderer(), ("Model Renderer##Add part" + tag).c_str());
+		if (shadowWall() == nullptr) {
+			if (ImGui::MenuItem(("Shadow Wall##Add part" + tag).c_str())) {
+				setShadowWall(new ShadowWall());
+			}
+		};
 		AddPartGUI(spawnManager, setSpawnManager, SpawnManager, ("Spawn Manager ##Add part" + tag).c_str());
 		AddPartGUI(spotlight, setSpotlight, Spotlight, ("Spotlight ##Add part" + tag).c_str());
 		if (sync() == nullptr && scene->sync->GUID == 0) {
@@ -225,6 +230,11 @@ void SceneObject::GUI()
 		RemovePartGUI(plate, setPressurePlate, ("Pressure Plate##Remove part" + tag).c_str());
 		RemovePartGUI(pointLight, setPointLight, ("Point Light##Remove part" + tag).c_str());
 		RemovePartGUI(rigidBody, setRigidBody, ("Rigid Body##Remove part" + tag).c_str());
+		if (parts & Parts::shadowWall) {
+			if (ImGui::MenuItem(("Shadow Wall##Remove part" + tag).c_str())) {
+				setShadowWall(nullptr);
+			}
+		};
 		RemovePartGUI(spawnManager, setSpawnManager, ("Spawn Manager ##Remove part" + tag).c_str());
 		RemovePartGUI(spotlight, setSpotlight, ("Spotlight ##Remove part" + tag).c_str());
 		if (parts & Parts::sync) {
@@ -531,6 +541,7 @@ SetAndGetForPart(Bollard, bollards, Parts::bollard, Bollard, bollard)
 SetAndGetForPart(Triggerable, triggerables, Parts::triggerable, Triggerable, triggerable)
 SetAndGetForPart(PointLight, pointLights, Parts::pointLight, PointLight, pointLight)
 SetAndGetForPart(Decal, decals, Parts::decal, Decal, decal);
+SetAndGetForPart(ShadowWall, shadowWalls, Parts::shadowWall, ShadowWall, shadowWall);
 void SceneObject::setSpotlight(Spotlight* part) {
 	if (part) {
 		parts |= Parts::spotlight; scene->spotlights[GUID] = std::move(*part);
@@ -644,6 +655,7 @@ void SceneObject::ClearParts(unsigned int toDelete)
 	if (toDelete & parts & Parts::pointLight)    { scene->pointLights.erase(GUID);	 parts &= ~(Parts::pointLight);}	
 	if (toDelete & parts & Parts::spotlight)	 { scene->spotlights.erase(GUID);	 parts &= ~(Parts::spotlight);}	
 	if (toDelete & parts & Parts::decal)		 { scene->decals.erase(GUID);	     parts &= ~(Parts::decal);}	
+	if (toDelete & parts & Parts::shadowWall)	 { scene->shadowWalls.erase(GUID);	 parts &= ~(Parts::shadowWalls);}	
 }
 
 void SceneObject::ClearParts()
@@ -698,6 +710,7 @@ void SceneObject::LoadWithParts(toml::table table)
 	LoadPart("spotlight", spotlight, setSpotlight, Spotlight);
 	LoadPart("pointLight", pointLight, setPointLight, PointLight);
 	LoadPart("decal", decal, setDecal, Decal);
+	LoadPart("shadowWall", shadowWall, setShadowWall, ShadowWall);
 
 	if (intendedParts & Parts::collider) {
 		setCollider(Collider::Load(*table["collider"].as_table()));

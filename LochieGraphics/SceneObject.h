@@ -25,6 +25,8 @@ class PointLight;
 class Spotlight;
 class Decal;
 struct Enemy;
+struct ShadowWall;
+
 namespace toml {
 	inline namespace v3 {
 		class table;
@@ -52,7 +54,8 @@ enum Parts : unsigned int
 	bollard		 =	1 << 15,
 	triggerable	 =	1 << 16,
 	decal		 =  1 << 17,
-	ALL = (1 << 18) - 1 - 1,
+	shadowWall	 =  1 << 18,
+	ALL = (1 << 19) - 1 - 1,
 }; // NOTE: The all has a minus 1 because it needs to be flipped to be all 1s, and another minus one as there is no part with the number 1
 
 class Scene;
@@ -164,6 +167,9 @@ public:
 
 	void setTriggerable(Triggerable* triggerable);
 	Triggerable* triggerable();
+
+	void setShadowWall(ShadowWall* shadowWall);
+	ShadowWall* shadowWall();
 
 #pragma endregion
 

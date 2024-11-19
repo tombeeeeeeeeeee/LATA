@@ -927,10 +927,10 @@ void RenderSystem::RenderSpotLightShadowMaps(
     Frustum frustum
 )
 {
-    glCullFace(GL_FRONT);
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, 1024, 1024);
     spotlightShadowPassShader->Use();
+    glCullFace(GL_FRONT);
     int count = 0;
     for (auto& pair : spotlights)
     {
@@ -989,9 +989,11 @@ void RenderSystem::RenderSpotLightShadowMaps(
     std::cout << "Spotlights in scene: " << spotlights.size() << std::endl;
     std::cout << "Spotlights that rendered shadows: " << count << std::endl;
 
+    glCullFace(GL_BACK);
+    //Render inviswalls
+
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glDisable(GL_DEPTH_TEST);
-    glCullFace(GL_BACK);
 }
 
 void RenderSystem::OutputBufferSetUp()
