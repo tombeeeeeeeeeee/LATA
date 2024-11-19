@@ -87,7 +87,6 @@ private:
 	bool multiSelecting = false;
 	glm::vec2 multiSelectingPos = { 0.0f, 0.0f };
 
-	void RefreshWalls();
 	void RefreshMinMaxes();
 
 	SceneObject* CellAt(float x, float z);
