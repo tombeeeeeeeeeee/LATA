@@ -18,12 +18,12 @@ exceedingSlowIntensity = 3.5
 guid = '2091576976424546894'
 healCooldown = 1.0
 healingFromDamage = 25
-maxCarMoveSpeed = 565.0
+maxCarMoveSpeed = 630.0
 maxHealth = 200
 maxReverseSpeed = 300.0
 maxWheelAngle = 60.0
 minSpeedDamageThreshold = 300.0
-portionOfSidewaysSpeedKept = 80.0
+portionOfSidewaysSpeedKept = 60.0
 sidewaysFrictionCoef = 65.0
 speedBoost = 12500.0
 speedBoostCooldown = 1.5
@@ -35,9 +35,9 @@ speedKnockback = 150.0
 speedReductionAfterDamaging = 200.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
-turningCircleScalar = 0.12999999523162842
-turningCircleScalarBoosting = 0.05999999865889549
-wheelDirection = [ 0.645524263381958, -0.7637396454811096 ]
+turningCircleScalar = 3.9000000953674316
+turningCircleScalarBoosting = 1.0
+wheelDirection = [ -0.29633763432502747, -0.9550833106040955 ]
 wheelTurnSpeed = 4.400000095367432
 
     [ecco.boostUI]
@@ -53,7 +53,7 @@ wheelTurnSpeed = 4.400000095367432
     scale = [ 0.37299999594688416, 0.09000000357627869 ]
 
 [health]
-currHealth = 200
+currHealth = 179
 guid = '2091576976424546894'
 maxHealth = 200
 
@@ -74,8 +74,8 @@ isStatic = false
 netDepen = [ 0.0, 0.0 ]
 netForce = [ 0.0, 0.0 ]
 vel = [
-    -2.0762519258273047e-23,
-    2.4564772023453148e-23
+    -8.447033826254757e-25,
+    1.8129258169295522e-24
 ]
 
     [[rigidBody.colliders]]
@@ -104,10 +104,14 @@ prefabBase = '2091576976424546894'
 prefabStatus = 1
 
 [transform]
-euler = [ -179.9993133544922, 40.204345703125, -899.9984130859375 ]
+euler = [ -179.99908447265625, -54.22438430786133, -899.9996337890625 ]
 guid = '2091576976424546894'
-position = [ 2051.318359375, 0.0, -1405.8125 ]
-quaternion = [ -0.3436970114707947, 1.1210974662390072e-05, -0.9390765428543091, 8.444289392173232e-07 ]
+position = [
+    -2.1685975611142868e-22,
+    0.0,
+    152.11578369140625
+]
+quaternion = [ 0.4557362496852875, 6.995349849603372e-06, -0.8901121020317078, 8.801400326774456e-06 ]
 scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
 
 [[children]]
