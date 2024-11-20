@@ -10,9 +10,8 @@ namespace toml {
 }
 
 class Spotlight : public PointLight {
-private:
-    static int SHADOW_DIMENSIONS;
 public:
+    static int SHADOW_DIMENSIONS;
     float cutOff;
     float outerCutOff;
 

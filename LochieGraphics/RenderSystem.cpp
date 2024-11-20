@@ -933,7 +933,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
 )
 {
     glEnable(GL_DEPTH_TEST);
-    glViewport(0, 0, 1024, 1024);
+    glViewport(0, 0, Spotlight::SHADOW_DIMENSIONS, Spotlight::SHADOW_DIMENSIONS);
     spotlightShadowPassShader->Use();
     int count = 0;
     for (auto& pair : spotlights)
@@ -947,7 +947,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
 
         Frustum spotlightFrustum = Frustum(
             transforms[pair.first].getGlobalPosition(),
-            glm::radians(70.0f), 1.0f,
+            2.0f * acosf(pair.second.outerCutOff), 1.0f,
             1.0f, 2000.0f,
             up,
             spotlightDir,
@@ -957,7 +957,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
         if (SceneManager::scene->inPlay)
         {
 
-            glCullFace(GL_FRONT);
+            glCullFace(GL_BACK);
 
             bool hasRBThisFrame = false;
             for (auto& i : renderers)

@@ -6,7 +6,7 @@
 #include "EditorGUI.h"
 #include "Serialisation.h"
 
-int Spotlight::SHADOW_DIMENSIONS = 1024;
+int Spotlight::SHADOW_DIMENSIONS = 2048;
 
 Spotlight::Spotlight()
 {

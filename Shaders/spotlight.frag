@@ -61,8 +61,8 @@ float ShadowCalculation();
 float ScreenSpaceShadows();
 float InterleavedGradientNoise(vec2 position_screen);
 
-float sssMaxRayDistance = 50.0f;
-float sssThickness = 0.05f;
+float sssMaxRayDistance = 5.0f;
+float sssThickness = 5.0f;
 int sssSteps = 8;
 
 #define PI 3.1415926535
@@ -105,6 +105,7 @@ void main()
 	), 0, 1);
     Lo *= texture(lightLerp, lerpAmount.rr).rgb;
     Lo *= ShadowCalculation();
+    Lo *= ScreenSpaceShadows();
 	finalColour = vec4(Lo, 1.0);
 	return;
 }
@@ -202,7 +203,7 @@ float ShadowCalculation()
     // calculate bias (based on depth map resolution and slope)
     vec3 n = normalize(trueNormal);
     vec3 lightDir = normalize(posToLight);
-    float bias = 0.00005;
+    float bias = 0.0000005;
 
     // check whether current frag pos is in shadow
     // PCF
@@ -223,7 +224,7 @@ float ShadowCalculation()
         shadow = 1.0;
     }
 
-    return 1.0 - shadow;
+    return clamp(1.0 - shadow, 0.0, 1.0);
 }
 
 float ScreenSpaceShadows()

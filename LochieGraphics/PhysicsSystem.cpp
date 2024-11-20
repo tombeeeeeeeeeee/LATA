@@ -63,6 +63,7 @@ void PhysicsSystem::DepenertrationStep(std::unordered_map<unsigned long long, Tr
 	{
 		if (i.second.isStatic) continue;
 		transforms[i.first].setPosition(transforms[i.first].getPosition() + glm::vec3(i.second.netDepen.x, 0.0f, i.second.netDepen.y));
+		i.second.netDepen = { 0.0f, 0.0f };
 	}
 }
 
