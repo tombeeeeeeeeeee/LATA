@@ -453,7 +453,7 @@ toml::table SceneObject::SerialiseWithParts() const
 	SavePart("door", door, doors);
 	SavePart("bollard", bollard, bollards);
 	SavePart("triggerable", triggerable, triggerables);
-	SavePart("spotlight", spotlight, spotlights);
+	SavePart("spotlight", spotlight, spotlights); 
 	SavePart("decal", decal, decals);
 	SavePart("pointLight", pointLight, pointLights);
 	SavePart("shadowWall", shadowWall, shadowWalls);

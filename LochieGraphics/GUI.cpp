@@ -294,6 +294,11 @@ void GUI::MultiSceneObjectRightClickMenu()
 	}
 }
 
+bool GUI::isObjectSelectedOrMultiSelected(SceneObject* so) const
+{
+	return sceneObjectSelected == so || std::find(multiSelectedSceneObjects.begin(), multiSelectedSceneObjects.end(), so) != multiSelectedSceneObjects.end();
+}
+
 void GUI::ResourceMenu()
 {
 	if (!ImGui::Begin("Resource Menu", &showResourceMenu, defaultWindowFlags)) {
@@ -525,7 +530,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	}
 	std::string tag = std::to_string(sceneObject->GUID);
 	ImGuiTreeNodeFlags nodeFlags = baseNodeFlags;
-	if (sceneObjectSelected == sceneObject || std::find(multiSelectedSceneObjects.begin(), multiSelectedSceneObjects.end(), sceneObject) != multiSelectedSceneObjects.end()) {
+	if (isObjectSelectedOrMultiSelected(sceneObject)) {
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
 	bool hasChildren = sceneObject->transform()->HasChildren() || (sceneObject->parts & Parts::modelRenderer && sceneObject->renderer()->model && UserPreferences::showModelHierarchy);
@@ -551,7 +556,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	ImGui::PopStyleColor();
 	
 	
-	if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsItemToggledOpen()) {
+	if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered()&& !ImGui::IsItemToggledOpen()) {
 		bool shift = glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_SHIFT);
 		bool ctrl = glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_CONTROL);
 
@@ -575,7 +580,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 
 	std::string sceneObjectPopUpID = "SceneObjectRightClickPopUp##" + tag;
 
-	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+	if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered()) {
 		if (multiSelectedSceneObjects.find(sceneObject) == multiSelectedSceneObjects.end()) {
 			setSelected(sceneObject);
 			ImGui::OpenPopup(sceneObjectPopUpID.c_str());
@@ -684,8 +689,14 @@ void GUI::TransformTree(SceneObject* so, ModelHierarchyInfo* info)
 
 void GUI::TransformDragDrop(SceneObject* sceneObject)
 {
+
+
+
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 	{
+		if (!isObjectSelectedOrMultiSelected(sceneObject)) {
+			setSelected(sceneObject);
+		}
 		Transform* transform = sceneObject->transform();
 		ImGui::SetDragDropPayload("Transform", &transform, sizeof(transform));
 		ImGui::Text(("Transform of: " + sceneObject->name).c_str());

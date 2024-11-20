@@ -67,6 +67,8 @@ public:
 	void setSelected(SceneObject* so);
 	void setSelected(std::vector<SceneObject*> sceneObjects);
 
+	bool isObjectSelectedOrMultiSelected(SceneObject* so) const;
+
 private:
 
 	// ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize
@@ -106,5 +108,6 @@ private:
 	void AddFromToSelection(SceneObject* from, SceneObject* to);
 	void UpdateSelection();
 	void MultiSceneObjectRightClickMenu();
+
 };
 
