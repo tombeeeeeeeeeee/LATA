@@ -22,6 +22,7 @@ class Decal;
 class PointLight;
 class Spotlight;
 struct Frustum;
+struct ShadowWall;
 
 struct bloomMip
 {
@@ -98,6 +99,7 @@ public:
         std::unordered_map<unsigned long long, PointLight>& pointLights,
         std::unordered_map<unsigned long long, Spotlight>& spotlights,
         std::unordered_map<unsigned long long, Decal>& decals,
+        std::unordered_map<unsigned long long, ShadowWall>& shadowWalls,
         Camera* camera,
         float delta,
         std::vector<Particle*> particles = {}
@@ -178,12 +180,14 @@ private:
         Frustum frustum
     );
 
+    Model* wall;
     void RenderSpotLightShadowMaps(
         std::unordered_map<unsigned long long, Spotlight>& spotlights,
         std::unordered_map<unsigned long long, Animator*>& animators,
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
         std::unordered_set<unsigned long long> animatedRenderered,
+        std::unordered_map<unsigned long long, ShadowWall>& shadowWalls,
         Frustum frustum
     );
 

@@ -178,7 +178,7 @@ bool Ecco::Update(
 		rigidBody.angularVel =
 			-turningCircleScalarBoosting								//scalar that represents wheel distance apart
 			* acos(wheelInDirectionOfForward)							//angle wheel makes with forward vector
-			* (glm::min(speed * delta, maxCarMoveSpeed))				//units per second
+			* (glm::min(speed, maxCarMoveSpeed))				//units per second
 			* glm::sign(glm::dot({ right.x, right.z }, wheelDirection));//reflects based off of left or right
 	}
 	else
@@ -186,7 +186,7 @@ bool Ecco::Update(
 		rigidBody.angularVel = 
 			-turningCircleScalar										//scalar that represents wheel distance apart
 			* acos(wheelInDirectionOfForward)							//angle wheel makes with forward vector
-			* (glm::min (speed * delta, maxCarMoveSpeed))				//units per second
+			* (glm::min (speed, maxCarMoveSpeed))				//units per second
 			* glm::sign(glm::dot({ right.x, right.z }, wheelDirection));//reflects based off of left or right
 	}
 

@@ -450,6 +450,7 @@ void LevelEditor::Draw(float delta)
 		pointLights,
 		spotlights,
 		decals,
+		shadowWalls,
 		camera,
 		delta,
 		particleSystem.particles

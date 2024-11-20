@@ -37,7 +37,7 @@ void PhysicsSystem::UpdateRigidBodies(
 
 		RigidBody* rb = &i->second;
 
-		glm::vec2 pos = rb->netDepen;
+		glm::vec2 pos = {0.0f, 0.0f};
 		rb->accel = rb->netForce * rb->invMass;
 		rb->vel =  rb->vel + rb->accel * deltaTime;
 		pos += rb->vel * deltaTime;
@@ -54,6 +54,15 @@ void PhysicsSystem::UpdateRigidBodies(
 			*
 			glm::rotate(glm::identity<glm::quat>(), rb->angularVel * deltaTime, {0.0f,1.0f,0.0f})
 		);
+	}
+}
+
+void PhysicsSystem::DepenertrationStep(std::unordered_map<unsigned long long, Transform>& transforms, std::unordered_map<unsigned long long, RigidBody>& rigidBodies)
+{
+	for (auto& i : rigidBodies)
+	{
+		if (i.second.isStatic) continue;
+		transforms[i.first].setPosition(transforms[i.first].getPosition() + glm::vec3(i.second.netDepen.x, 0.0f, i.second.netDepen.y));
 	}
 }
 
@@ -98,6 +107,8 @@ void PhysicsSystem::CollisionCheckPhase(
 		{
 			CollisisonResolution(collisions[i]);
 		}
+
+		DepenertrationStep(transforms, rigidBodies);
 	}
 
 	if (displayAllColliders)

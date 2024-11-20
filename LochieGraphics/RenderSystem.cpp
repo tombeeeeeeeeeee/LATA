@@ -99,6 +99,7 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
     lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
     decalShader = ResourceManager::LoadShader("decal");
     decalCube = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_DefaultCube" + Paths::modelExtension);
+    wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Wall" + Paths::modelExtension);
 }
 
 void RenderSystem::LevelLoad()
@@ -369,6 +370,7 @@ void RenderSystem::Update(
     std::unordered_map<unsigned long long, PointLight>& pointLights,
     std::unordered_map<unsigned long long, Spotlight>& spotlights,
     std::unordered_map<unsigned long long, Decal>& decals,
+    std::unordered_map<unsigned long long, ShadowWall>& shadowWalls,
     Camera* camera,
     float delta,
     std::vector<Particle*> particles
@@ -421,7 +423,7 @@ void RenderSystem::Update(
 
     DrawAllRenderers(animators, transforms, renders, animatedRenderered, cameraFrustum);
     RenderDecals(decals, transforms, cameraFrustum);
-    RenderSpotLightShadowMaps(spotlights, animators, transforms, renders, animatedRenderered, cameraFrustum);
+    RenderSpotLightShadowMaps(spotlights, animators, transforms, renders, animatedRenderered, shadowWalls, cameraFrustum);
 
     RenderSSAO();
 
@@ -755,6 +757,8 @@ void RenderSystem::RenderSpotlights(
     spotlightPassShader->setMat4("invVP", glm::inverse(projection * viewMatrix));
     spotlightPassShader->setMat4("invV", glm::inverse(viewMatrix));
     spotlightPassShader->setMat4("invP", glm::inverse(projection));
+    spotlightPassShader->setMat4("view", viewMatrix);
+    spotlightPassShader->setMat4("proj", projection);
     spotlightPassShader->setVec2("invViewPort", glm::vec2(1.0f / SCREEN_WIDTH, 1.0f / SCREEN_HEIGHT));
     spotlightPassShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
     spotlightPassShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
@@ -924,19 +928,19 @@ void RenderSystem::RenderSpotLightShadowMaps(
     std::unordered_map<unsigned long long, Transform>& transforms,
     std::unordered_map<unsigned long long, ModelRenderer>& renderers,
     std::unordered_set<unsigned long long> animatedRenderered,
+    std::unordered_map<unsigned long long, ShadowWall>& shadowWalls,
     Frustum frustum
 )
 {
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, 1024, 1024);
     spotlightShadowPassShader->Use();
-    glCullFace(GL_FRONT);
     int count = 0;
     for (auto& pair : spotlights)
     {
         if (!pair.second.castsShadows) continue;
         if (!frustum.IsOnFrustum(transforms[pair.first].getGlobalPosition(), pair.second.range * 900.0f)) continue;
-
+        
         glm::vec3 spotlightDir = transforms[pair.first].forward();
         glm::vec3 right = transforms[pair.first].right();
         glm::vec3 up = transforms[pair.first].up();
@@ -950,47 +954,78 @@ void RenderSystem::RenderSpotLightShadowMaps(
             right
         );
 
-        bool hasRBThisFrame = false;
-        for (auto& i : renderers)
+        if (SceneManager::scene->inPlay)
         {
-            if (!i.second.model) { continue; }
-            Transform* transform = &transforms.at(i.first);
-            if (i.second.model)
+
+            glCullFace(GL_FRONT);
+
+            bool hasRBThisFrame = false;
+            for (auto& i : renderers)
             {
-                glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
-                if (spotlightFrustum.IsOnFrustum(OOB))
+                if (!i.second.model) { continue; }
+                Transform* transform = &transforms.at(i.first);
+                if (i.second.model)
                 {
-                    if (i.second.animator ||
-                        (transform->getSceneObject()->parts & Parts::rigidBody && !transform->getSceneObject()->rigidbody()->isStatic))
+                    glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
+                    if (spotlightFrustum.IsOnFrustum(OOB))
                     {
-                        hasRBThisFrame = true; 
-                        pair.second.hadRigidBodiesLastFrame = true;
-                        break;
+                        if (i.second.animator ||
+                            (transform->getSceneObject()->parts & Parts::rigidBody && !transform->getSceneObject()->rigidbody()->isStatic))
+                        {
+                            hasRBThisFrame = true;
+                            pair.second.hadRigidBodiesLastFrame = true;
+                            break;
+                        }
                     }
                 }
             }
+            if (!hasRBThisFrame)
+            {
+                bool temp = !pair.second.hadRigidBodiesLastFrame;
+                pair.second.hadRigidBodiesLastFrame = false;
+                if (temp) continue;
+            }
         }
-        if (!hasRBThisFrame)
-        {
-            bool temp = !pair.second.hadRigidBodiesLastFrame;
-            pair.second.hadRigidBodiesLastFrame = false;
-            if(temp) continue;
-        }
-
-        count++;
+        
         spotlightShadowPassShader->setMat4("vp",pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
         glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
         glClear(GL_DEPTH_BUFFER_BIT);
 
         DrawAllRenderers(animators, transforms, renderers, animatedRenderered, spotlightFrustum, spotlightShadowPassShader);
 
+        glCullFace(GL_BACK);
+        Transform shadowTransform = Transform();
+        for (auto& i : shadowWalls)
+        {
+            shadowTransform.setPosition(transforms[i.first].getGlobalPosition() + glm::vec3{ 0.0f, 300.0f, 0.0f });
+            shadowTransform.setEulerRotation(transforms[i.first].getEulerRotation());
+            shadowTransform.setScale({ 1.0f, 3000.0f,1.0f });
+
+            if (i.second.hasLocalMesh)
+            {
+                if (renderers.count(i.first) > 0)
+                {
+                    glm::mat4 model = shadowTransform.getGlobalMatrix();
+
+                    if (spotlightFrustum.IsOnFrustum(renderers.at(i.first).model->GetOOB(transforms[i.first].getGlobalMatrix())))
+                    {
+                        spotlightShadowPassShader->setMat4("model", model);
+                        renderers.at(i.first).model->meshes[0]->Draw();
+                    }
+                }
+            }
+            else
+            {
+                glm::mat4 model = shadowTransform.getGlobalMatrix();
+                spotlightShadowPassShader->setMat4("model", model);
+                wall->meshes[0]->Draw();
+            }
+        }
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
-    std::cout << "Spotlights in scene: " << spotlights.size() << std::endl;
-    std::cout << "Spotlights that rendered shadows: " << count << std::endl;
-
     glCullFace(GL_BACK);
-    //Render inviswalls
+
 
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glDisable(GL_DEPTH_TEST);

@@ -1,11 +1,18 @@
 #pragma once
-#include "Serialisation.h"
+
+namespace toml {
+	inline namespace v3 {
+		class table;
+	}
+}
 
 struct ShadowWall
 {
+
+	bool hasLocalMesh = false; 
 	void GUI();
 	ShadowWall() {};
-	ShadowWall(toml::table table) {};
+	ShadowWall(toml::table table);
 
-	toml::table Serialise(unsigned long long guid) { return toml::table{ {"guid", guid} }; };
+	toml::table Serialise(unsigned long long guid);
 };

@@ -137,6 +137,9 @@ void Scene::DeleteAllSceneObjectsAndParts()
 	decals.clear();
 	partsChecker &= ~Parts::decal;
 
+	shadowWalls.clear();
+	partsChecker &= ~Parts::shadowWall;
+
 	pointLights.clear();
 	partsChecker &= ~Parts::pointLight;
 
@@ -195,6 +198,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 	SavePart(pointLights);
 	SavePart(spotlights);
 	SavePart(decals);
+	SavePart(shadowWalls);
 
 	return toml::table{
 		{ "SceneObjects", savedSceneObjects },
@@ -216,6 +220,7 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 		{ "PointLights", savedpointLights},
 		{ "Spotlights", savedspotlights},
 		{ "Decals", saveddecals},
+		{ "ShadowWalls", savedshadowWalls},
 	};
 
 	// TODO: Make sure save all parts, put a checker here
@@ -307,6 +312,7 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(pointLights, "PointLights", PointLight);
 	LoadPart(spotlights, "Spotlights", Spotlight);
 	LoadPart(decals, "Decals", Decal);
+	LoadPart(shadowWalls, "ShadowWalls", ShadowWall);
 	// TODO: Fix for colliders
 
 	toml::array* loadingColliders = data["Colliders"].as_array(); 
@@ -375,6 +381,7 @@ void Scene::EnsureAllPartsHaveSceneObject()
 	//EnsurePartSafety(transforms);
 	EnsurePartSafety(renderers);
 	EnsurePartSafety(rigidBodies);
+	EnsurePartSafety(shadowWalls);
 }
 
 #define EnsurePartValueMatchesParts(partsType, container)                                                  \
@@ -399,6 +406,7 @@ void Scene::EnsurePartsValueMatchesParts()
 		EnsurePartValueMatchesParts(Parts::rigidBody, rigidBodies);
 		EnsurePartValueMatchesParts(Parts::collider, colliders);
 		EnsurePartValueMatchesParts(Parts::modelRenderer, renderers);
+		EnsurePartValueMatchesParts(Parts::shadowWall, shadowWalls);
 	}
 }
 

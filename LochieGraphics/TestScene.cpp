@@ -229,6 +229,7 @@ void TestScene::Draw(float delta)
 		pointLights,
 		spotlights,
 		decals,
+		shadowWalls,
 		camera,
 		delta
 	);

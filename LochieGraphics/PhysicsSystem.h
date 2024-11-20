@@ -21,6 +21,12 @@ public:
 		float deltaTime
 	);
 
+	void DepenertrationStep(
+		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, RigidBody>& rigidBodies
+	);
+
+
 	void CollisionCheckPhase
 	(
 		std::unordered_map<unsigned long long, Transform>& transforms,
