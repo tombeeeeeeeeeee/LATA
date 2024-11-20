@@ -12,6 +12,7 @@ class PressurePlate;
 class Bollard;
 class Triggerable;
 class Transform;
+class Spotlight;
 
 class TriggerSystem
 {
@@ -28,7 +29,8 @@ public:
 		std::unordered_map<unsigned long long, SpawnManager>& spawnManagers,
 		std::unordered_map<unsigned long long, Door>& doors,
 		std::unordered_map<unsigned long long, Bollard>& bollards,
-		std::unordered_map<unsigned long long, Triggerable>& triggerables
+		std::unordered_map<unsigned long long, Triggerable>& triggerables,
+		std::unordered_map<unsigned long long, Spotlight>& spotlights
 	);
 
 	void Update(

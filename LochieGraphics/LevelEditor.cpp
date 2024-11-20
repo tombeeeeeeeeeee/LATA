@@ -263,7 +263,7 @@ void LevelEditor::Update(float delta)
 		enemySystem.enemyTags.clear();
 		camera->state = Camera::targetingPlayersPerspective;
 		dabSystem.Start(transforms, doors);
-		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards, triggerables);
+		triggerSystem.Start(rigidBodies, plates, spawnManagers, doors, bollards, triggerables, spotlights);
 		for (auto& pair : exits) pair.second.Initialise(sceneObjects[pair.first]);
 
 		renderSystem.PlayStart(pointLights, spotlights);

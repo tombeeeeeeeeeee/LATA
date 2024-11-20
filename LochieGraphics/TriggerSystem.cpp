@@ -8,6 +8,7 @@
 #include "Collision.h"
 #include "Transform.h"
 #include "Triggerable.h"
+#include "Spotlight.h"
 #include "PressurePlate.h"
 #include <iostream>
 
@@ -29,7 +30,8 @@ void TriggerSystem::Start(
 	std::unordered_map<unsigned long long, SpawnManager>& spawnManagers,
 	std::unordered_map<unsigned long long, Door>& doors,
 	std::unordered_map<unsigned long long, Bollard>& bollards,
-	std::unordered_map<unsigned long long, Triggerable>& triggerables
+	std::unordered_map<unsigned long long, Triggerable>& triggerables,
+	std::unordered_map<unsigned long long, Spotlight>& spotlights
 )
 {
 	TriggerSystem::triggerables.clear();
@@ -64,6 +66,10 @@ void TriggerSystem::Start(
 		}
 		rigidbodies[pair.first].onTrigger.push_back(
 			[pair](Collision collision) { SceneManager::scene->triggerables[pair.first].OnTrigger(collision.collisionMask); });
+	}
+	for (auto& pair : spotlights)
+	{
+		TriggerSystem::triggerables.insert({ pair.second.triggerTag, pair.first });
 	}
 }
 
