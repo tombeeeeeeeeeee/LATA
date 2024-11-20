@@ -81,7 +81,7 @@ public:
 	void setGlobalMatrix(const glm::mat4& m);
 
 	void GUI();
-	void Gizmo(const glm::mat4& view, const glm::mat4& projection, unsigned int operation, unsigned int mode);
+	bool Gizmo(const glm::mat4& view, const glm::mat4& projection, unsigned int operation, unsigned int mode);
 
 	toml::table Serialise(unsigned long long GUID) const;
 	void Load(toml::table& table);

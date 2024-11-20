@@ -410,13 +410,15 @@ void Transform::GUI()
 	}
 }
 
-void Transform::Gizmo(const glm::mat4& view, const glm::mat4& projection, unsigned int operation, unsigned int mode)
+bool Transform::Gizmo(const glm::mat4& view, const glm::mat4& projection, unsigned int operation, unsigned int mode)
 {
 	glm::mat4 editMatrix;
 	editMatrix = getGlobalMatrix();
 	if (ImGuizmo::Manipulate(&view[0][0], &projection[0][0], (ImGuizmo::OPERATION)operation, (ImGuizmo::MODE)mode, &editMatrix[0][0])) {
 		setGlobalMatrix(editMatrix);
+		return true;
 	}
+	return false;
 }
 
 toml::table Transform::Serialise(unsigned long long GUID) const

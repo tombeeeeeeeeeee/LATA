@@ -33,7 +33,24 @@ void main()
     vec3 trueNormal = TBN * tangentNormal;
 
     vec3 albedo3 = texture(material.albedo, texCoords).rgb * fragmentColour;
+    
     vec3 PBR = texture(material.PBR, texCoords).rgb;
+    //vec2 mipAccessed = textureQueryLod(material.albedo, texCoords);
+    //
+    //float mipValue = max(mipAccessed.x, mipAccessed.y);
+    //
+    //vec3 debugColours[6] = {vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0), vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), vec3(0.0, 1.0, 1.0), vec3(1.0, 1.0, 1.0)};
+    //
+    //float fractional = fract(mipValue);
+    //
+    //
+    //vec3 lower = debugColours[int(mipValue)];
+    //vec3 upper = debugColours[min(int(mipValue) + 1, 5)];
+    //vec3 debugColour = mix(lower, upper, fractional);
+    ////if (mipValue < 1.0) debugColour = vec3(0.5, 0.0, 0.5);
+    //if (mipValue < 1.0) debugColour = vec3(1.0, 0.0, 1.0);
+    //albedo3 = debugColour;
+    
     vec3 emission3 = texture(material.emission, texCoords).rgb;
 
     //Albedo packed with PBR metallic

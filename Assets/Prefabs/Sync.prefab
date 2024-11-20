@@ -1,7 +1,7 @@
 [health]
-currHealth = 5
+currHealth = 100
 guid = '2091576977596946314'
-maxHealth = 5
+maxHealth = 100
 
 [rigidBody]
 accel = [ 0.0, 0.0 ]
@@ -38,7 +38,8 @@ eccoRefractionAngle = 70.0
 eccoRefractionCount = 5
 enemyPierceCount = 99
 guid = '2091576977596946314'
-knockBackForce = 800.0
+knockBackForceOverclock = 1.0
+knockBackForceSnipe = 10.0
 lookDeadZone = 0.4000000059604645
 maxMoveForce = 4000.0
 maxStopForce = 4000.0
@@ -55,6 +56,7 @@ overclockDamage = 100
 overclockReboundCount = 1
 rainbowDimming = 2.5
 rainbowRebounding = true
+shotWidth = 10.0
 sniperBeamColour = [ 0.5641789436340332, 1.0, 0.5353982448577881 ]
 sniperBeamLifeSpan = 0.5
 sniperChargeTime = 0.30000001192092896
