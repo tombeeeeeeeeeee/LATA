@@ -456,7 +456,7 @@ toml::table SceneObject::SerialiseWithParts() const
 	SavePart("spotlight", spotlight, spotlights);
 	SavePart("decal", decal, decals);
 	SavePart("pointLight", pointLight, pointLights);
-
+	SavePart("shadowWall", shadowWall, shadowWalls);
 
 	if (Parts::collider & parts) {
 		table.emplace("collider", scene->colliders.at(GUID)->Serialise(GUID));
