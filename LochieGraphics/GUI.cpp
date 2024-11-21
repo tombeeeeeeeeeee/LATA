@@ -465,9 +465,7 @@ void GUI::HierarchyMenu()
 	if (ImGui::IsItemClicked()) {
 		setSelected(nullptr);
 	}
-	ImGui::Indent();
 
-	ImGui::BeginChild("Hierarchy List");
 
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Transform"))
@@ -477,8 +475,19 @@ void GUI::HierarchyMenu()
 			std::cout << "Stopped dragging transform:  " << droppedTransform << "\n";
 			droppedTransform->setParent(nullptr);
 		}
+		else if (ImGui::AcceptDragDropPayload("Multiselected")) {
+			for (auto s : multiSelectedSceneObjects)
+			{
+				s->transform()->setParent(nullptr);
+			}
+		}
 		ImGui::EndDragDropTarget();
 	}
+	ImGui::Indent();
+
+	ImGui::BeginChild("Hierarchy List");
+	draggingSceneObject = draggingCheck;
+	draggingCheck = false;
 	for (auto& i : scene->sceneObjects)
 	{
 		if (!i.second) 
@@ -491,7 +500,7 @@ void GUI::HierarchyMenu()
 
 		TransformTree(i.second);
 	}
-
+	
 	ImGui::Unindent();
 	ImGui::TreeNodeEx(("+ NEW SCENEOBJECT##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
 	if (ImGui::IsItemClicked()) {
@@ -556,7 +565,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	ImGui::PopStyleColor();
 	
 	
-	if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered()&& !ImGui::IsItemToggledOpen()) {
+	if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered()&& !ImGui::IsItemToggledOpen() && !draggingSceneObject) {
 		bool shift = glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_SHIFT);
 		bool ctrl = glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_CONTROL);
 
@@ -690,16 +699,23 @@ void GUI::TransformTree(SceneObject* so, ModelHierarchyInfo* info)
 void GUI::TransformDragDrop(SceneObject* sceneObject)
 {
 
-
-
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 	{
 		if (!isObjectSelectedOrMultiSelected(sceneObject)) {
 			setSelected(sceneObject);
 		}
-		Transform* transform = sceneObject->transform();
-		ImGui::SetDragDropPayload("Transform", &transform, sizeof(transform));
-		ImGui::Text(("Transform of: " + sceneObject->name).c_str());
+		if (sceneObjectSelected == sceneObject) {
+			Transform* transform = sceneObject->transform();
+			ImGui::SetDragDropPayload("Transform", &transform, sizeof(transform));
+			ImGui::Text(("Transform of: " + sceneObject->name).c_str());
+		}
+		// Else is only reached if the object is multiselected
+		else {
+			// Don't actually need to pass any data, as we know its just all the multiselected objects
+			ImGui::SetDragDropPayload("Multiselected", nullptr, 0);
+			ImGui::Text("Multiselected SceneObjects");
+			draggingCheck = true;
+		}
 		ImGui::EndDragDropSource();
 	}
 	if (ImGui::BeginDragDropTarget()) {
@@ -707,6 +723,14 @@ void GUI::TransformDragDrop(SceneObject* sceneObject)
 		{
 			Transform* droppedTransform = *(Transform**)payload->Data;
 			droppedTransform->setParent(sceneObject->transform());
+			draggingCheck = true;
+		}
+		// Don't need to store payload information as we know its the already multiselected objects
+		else if (ImGui::AcceptDragDropPayload("Multiselected")) {
+			for (auto s : multiSelectedSceneObjects)
+			{
+				s->transform()->setParent(sceneObject->transform());
+			}
 		}
 		ImGui::EndDragDropTarget();
 	}

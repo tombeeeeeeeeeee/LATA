@@ -71,6 +71,9 @@ public:
 
 private:
 
+	bool draggingSceneObject = false;
+	bool draggingCheck = false;
+
 	// ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize
 	int defaultWindowFlags = 64;
 
