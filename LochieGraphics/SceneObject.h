@@ -91,6 +91,8 @@ public:
 	void MenuGUI();
 	static void MultiMenuGUI(std::set<SceneObject*> multiSelectedSceneObjects, bool* setNullSelect);
 
+	static bool PartsFilterSelector(const std::string& label, unsigned int& parts);
+
 	void DebugDraw();
 
 	void TriggerCall(std::string tag, bool toggle);
@@ -173,7 +175,6 @@ public:
 
 #pragma endregion
 
-	// Make this take a mask for stuff to delete
 	void ClearParts();
 	void ClearParts(unsigned int toDelete);
 };

@@ -112,5 +112,7 @@ private:
 	void UpdateSelection();
 	void MultiSceneObjectRightClickMenu();
 
+	unsigned int multiSceneObjectEditorPartsFilter = 0;
+	void MultiSceneObjectEditor();
 };
 

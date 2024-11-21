@@ -294,6 +294,20 @@ void GUI::MultiSceneObjectRightClickMenu()
 	}
 }
 
+void GUI::MultiSceneObjectEditor()
+{
+	SceneObject::PartsFilterSelector("Parts to delete", multiSceneObjectEditorPartsFilter);
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(multiSceneObjectEditorPartsFilter).c_str());
+
+	if (ImGui::Button("Clear selected parts on objects")) {
+		for (auto i : multiSelectedSceneObjects)
+		{
+			i->ClearParts(multiSceneObjectEditorPartsFilter);
+		}
+	}
+}
+
 bool GUI::isObjectSelectedOrMultiSelected(SceneObject* so) const
 {
 	return sceneObjectSelected == so || std::find(multiSelectedSceneObjects.begin(), multiSelectedSceneObjects.end(), so) != multiSelectedSceneObjects.end();
@@ -365,7 +379,7 @@ void GUI::SceneObjectMenu()
 	focusSceneObjectMenu = false;
 
 	if (multiSelectedSceneObjects.size() > 0) {
-		ImGui::Text("Multi Object Editing not yet supported");
+		MultiSceneObjectEditor();
 	}
 	else if (sceneObjectSelected) {
 		sceneObjectSelected->GUI();
@@ -423,42 +437,12 @@ void GUI::HierarchyMenu()
 		ImGui::EndTooltip();
 	}
 	ImGui::SameLine();
-	std::string partsFilterPopupID = "partsFilterPopUp";
 	if (partsFilter) {
 		// TODO: Variable for the colour
 		ImGui::PushStyleColor(0, { 0.7f, 0.3f, 0.1f, 1.0f });
 	}
 	std::string partsFilterLetter = partsFilter ? "F" : "A";
-	bool partsFilterOpen = ImGui::Button((partsFilterLetter + "##Parts filter").c_str());
-	if (partsFilter) {
-		ImGui::PopStyleColor();
-	}
-	if (ImGui::BeginItemTooltip()) {
-		ImGui::Text("Parts Filter");
-		ImGui::EndTooltip();
-	}
-	if (partsFilterOpen) {
-		ImGui::OpenPopup(partsFilterPopupID.c_str());
-	}
-	if (ImGui::BeginPopup(partsFilterPopupID.c_str())) {
-
-		ImGui::CheckboxFlags("Animator##Parts Filter", &partsFilter, Parts::animator);
-		ImGui::CheckboxFlags("Bollard##Parts Filter", &partsFilter, Parts::bollard);
-		ImGui::CheckboxFlags("PointLight##Parts Filter", &partsFilter, Parts::pointLight);
-		ImGui::CheckboxFlags("Collider##Parts Filter", &partsFilter, Parts::collider);
-		ImGui::CheckboxFlags("Door##Parts Filter", &partsFilter, Parts::door);
-		ImGui::CheckboxFlags("Ecco##Parts Filter", &partsFilter, Parts::ecco);
-		ImGui::CheckboxFlags("Enemy##Parts Filter", &partsFilter, Parts::enemy);
-		ImGui::CheckboxFlags("Exit Elevator##Parts Filter", &partsFilter, Parts::exitElevator);
-		ImGui::CheckboxFlags("Plate##Parts Filter", &partsFilter, Parts::plate);
-		ImGui::CheckboxFlags("PointLight##Parts Filter", &partsFilter, Parts::pointLight);
-		ImGui::CheckboxFlags("RigidBody##Parts Filter", &partsFilter, Parts::rigidBody);
-		ImGui::CheckboxFlags("Spawn Manager##Parts Filter", &partsFilter, Parts::spawnManager);
-		ImGui::CheckboxFlags("Spotlight##Parts Filter", &partsFilter, Parts::spotlight);
-		ImGui::CheckboxFlags("Sync##Parts Filter", &partsFilter, Parts::sync);
-
-		ImGui::EndPopup();
-	}
+	SceneObject::PartsFilterSelector(partsFilterLetter, partsFilter);
 
 	ImGui::Unindent();
 	ImGui::TreeNodeEx(("Root##" + PointerToString(this)).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);

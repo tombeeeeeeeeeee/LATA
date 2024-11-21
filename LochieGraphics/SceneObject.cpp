@@ -343,6 +343,43 @@ void SceneObject::MultiMenuGUI(std::set<SceneObject*> multiSelectedSceneObjects,
 	ImGui::EndPopup();
 }
 
+bool SceneObject::PartsFilterSelector(const std::string& label, unsigned int& parts)
+{
+	std::string tag = Utilities::PointerToString(&parts);
+	bool partsFilterOpen = ImGui::Button((label + "##Parts filter" + tag).c_str());
+	std::string partsFilterPopupID = "partsFilterPopUp" + tag;
+	if (parts) {
+		ImGui::PopStyleColor();
+	}
+	if (ImGui::BeginItemTooltip()) {
+		ImGui::Text("Parts Filter");
+		ImGui::EndTooltip();
+	}
+	if (partsFilterOpen) {
+		ImGui::OpenPopup(partsFilterPopupID.c_str());
+	}
+	if (!ImGui::BeginPopup(partsFilterPopupID.c_str())) {
+		return false;
+	}
+
+	ImGui::CheckboxFlags("Animator##Parts Filter", &parts, Parts::animator);
+	ImGui::CheckboxFlags("Bollard##Parts Filter", &parts, Parts::bollard);
+	ImGui::CheckboxFlags("Collider##Parts Filter", &parts, Parts::collider);
+	ImGui::CheckboxFlags("Door##Parts Filter", &parts, Parts::door);
+	ImGui::CheckboxFlags("Ecco##Parts Filter", &parts, Parts::ecco);
+	ImGui::CheckboxFlags("Enemy##Parts Filter", &parts, Parts::enemy);
+	ImGui::CheckboxFlags("Exit Elevator##Parts Filter", &parts, Parts::exitElevator);
+	ImGui::CheckboxFlags("Plate##Parts Filter", &parts, Parts::plate);
+	ImGui::CheckboxFlags("PointLight##Parts Filter", &parts, Parts::pointLight);
+	ImGui::CheckboxFlags("RigidBody##Parts Filter", &parts, Parts::rigidBody);
+	ImGui::CheckboxFlags("Spawn Manager##Parts Filter", &parts, Parts::spawnManager);
+	ImGui::CheckboxFlags("Spotlight##Parts Filter", &parts, Parts::spotlight);
+	ImGui::CheckboxFlags("Sync##Parts Filter", &parts, Parts::sync);
+
+	ImGui::EndPopup();
+	return true;
+}
+
 void SceneObject::DebugDraw()
 {
 	Transform* t = &scene->transforms.at(GUID);
@@ -643,6 +680,7 @@ Sync* SceneObject::sync() const
 void SceneObject::ClearParts(unsigned int toDelete)
 {
 	if (toDelete & parts & Parts::modelRenderer) { scene->renderers.erase(GUID);     parts &= ~(Parts::modelRenderer); }
+	// TODO: If animator removed the model render needs to know about it
 	if (toDelete & parts & Parts::animator)      { scene->animators.erase(GUID);     parts &= ~(Parts::animator);}
 	if (toDelete & parts & Parts::rigidBody)     { scene->rigidBodies.erase(GUID);   parts &= ~(Parts::rigidBody);}
 	if (toDelete & parts & Parts::collider)      { scene->colliders.erase(GUID);     parts &= ~(Parts::collider);}
