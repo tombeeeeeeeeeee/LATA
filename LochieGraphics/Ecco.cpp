@@ -175,10 +175,12 @@ bool Ecco::Update(
 	float speed = glm::length(rigidBody.vel);
 	if (speed > maxCarMoveSpeed)
 	{
+		float turningScale = Utilities::Lerp(turningCircleScalar, turningCircleScalarBoosting, (speed - maxCarMoveSpeed) / (speedBoost - maxCarMoveSpeed));
+
 		rigidBody.angularVel =
-			-turningCircleScalarBoosting								//scalar that represents wheel distance apart
+			-turningScale												//scalar that represents wheel distance apart
 			* acos(wheelInDirectionOfForward)							//angle wheel makes with forward vector
-			* (glm::min(speed, maxCarMoveSpeed))				//units per second
+			* (glm::min(speed, maxCarMoveSpeed))						//units per second
 			* glm::sign(glm::dot({ right.x, right.z }, wheelDirection));//reflects based off of left or right
 	}
 	else
@@ -186,7 +188,7 @@ bool Ecco::Update(
 		rigidBody.angularVel = 
 			-turningCircleScalar										//scalar that represents wheel distance apart
 			* acos(wheelInDirectionOfForward)							//angle wheel makes with forward vector
-			* (glm::min (speed, maxCarMoveSpeed))				//units per second
+			* (glm::min (speed, maxCarMoveSpeed))						//units per second
 			* glm::sign(glm::dot({ right.x, right.z }, wheelDirection));//reflects based off of left or right
 	}
 
@@ -263,7 +265,7 @@ void Ecco::OnCollision(Collision collision)
 				{
 					collision.rigidBody->AddImpulse(collision.normal * boostKnockback);
 					SceneManager::scene->audio.PlaySound(Audio::eccoEnemyHit);
-					if(timeSinceLastHeal <= healCooldown)
+					if(timeSinceLastHeal >= healCooldown)
 					{
 						collision.self->health()->addHealth(healingFromDamage);
 						timeSinceLastHeal = 0.0f;
@@ -277,7 +279,7 @@ void Ecco::OnCollision(Collision collision)
 				{
 					collision.rigidBody->AddImpulse(collision.normal * speedKnockback);
 					SceneManager::scene->audio.PlaySound(Audio::eccoEnemyHit);
-					if (timeSinceLastHeal <= healCooldown)
+					if (timeSinceLastHeal >= healCooldown)
 					{
 						collision.self->health()->addHealth(healingFromDamage);
 						timeSinceLastHeal = 0.0f;
@@ -391,6 +393,7 @@ float Ecco::getSpeedBoostCooldownPercent() const
 
 Ecco::Ecco(toml::table table)
 {
+	timeSinceLastHeal = FLT_MAX;
 	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
 	wheelDirection = Serialisation::LoadAsVec2(table["wheelDirection"]);
 	carMoveSpeed = Serialisation::LoadAsFloat(table["carMoveSpeed"]);

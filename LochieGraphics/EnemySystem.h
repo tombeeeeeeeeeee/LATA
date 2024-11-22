@@ -47,7 +47,7 @@ private:
 	bool drawForceLines = false;
 
 	int enemyFrameIndex = 0;
-	int frameCountMin = 6;
+	int frameCountMin = 12;
 	int frameCount;
 public:
 	std::unordered_map<std::string, int> enemyTags;

@@ -476,9 +476,10 @@ void EnemySystem::Steering(
         }
         enemyPair.second.influenceThisFrame = {0.0f, 0.0f};
 
-
         glm::vec2 curVel = rigidBodies[enemyPair.first].vel;
-        glm::vec2 velocityDelta = enemyPair.second.boidVelocity - curVel;
+        glm::vec2 compositeVel = 0.9f * curVel + 0.1f * enemyPair.second.boidVelocity;
+
+        glm::vec2 velocityDelta = compositeVel - curVel;
         glm::vec2 forceThisFrame = velocityDelta / delta;
         rigidBodies[enemyPair.first].netForce += forceThisFrame;
         if (enemyPair.second.inAbility)

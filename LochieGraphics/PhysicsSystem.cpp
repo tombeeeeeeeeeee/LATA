@@ -362,7 +362,7 @@ void PhysicsSystem::CollisisonResolution(CollisionPacket collision)
 
 	float totalInverseMass = (collision.rigidBodyA->invMass + collision.rigidBodyB->invMass);
 
-	float j = -(1.0f + glm::max(collision.rigidBodyA->elasticicty, collision.rigidBodyB->elasticicty)) 
+	float j = -(1.0f + glm::max(glm::max(collision.rigidBodyA->elasticicty, collision.rigidBodyB->elasticicty), 0.2f))
 		* glm::dot(relativeVelocity, collision.normal) / (totalInverseMass);// +(float)pow(glm::dot(radiusPerpA, collision.normal), 2) * collision.rigidBodyA->invMomentOfInertia
 			//+ (float)pow(glm::dot(radiusPerpB, collision.normal), 2) * collision.rigidBodyB->invMomentOfInertia);
 
