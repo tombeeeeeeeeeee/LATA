@@ -261,6 +261,20 @@ void Transform::setPosition(glm::vec3 pos)
 	UpdateGlobalMatrixCascading();
 }
 
+bool Transform::getStatic() const
+{
+	return isStatic;
+}
+
+void Transform::setStatic(bool staticness)
+{
+	isStatic = staticness;
+	for (auto& i : children)
+	{
+		setStatic(staticness);
+	}
+}
+
 glm::vec3 Transform::forward() const
 {
 	return glm::vec3(glm::normalize(globalMatrix[2]));
@@ -385,7 +399,7 @@ void Transform::GUI()
 		ImGui::DragFloat4(("Translation##globalMatrix" + tag).c_str(), &globalMatrix[3].x);
 		ImGui::EndDisabled();
 	}
-
+	ImGui::Checkbox(("Static##" + tag).c_str(), &isStatic);
 
 	if(ImGui::DragFloat3(("Position##transform" + tag).c_str(), &position[0], 0.1f))
 	{
@@ -430,6 +444,7 @@ toml::table Transform::Serialise(unsigned long long GUID) const
 		{ "euler", Serialisation::SaveAsVec3(euler)},
 		{ "position", Serialisation::SaveAsVec3(position)},
 		{ "scale", Serialisation::SaveAsVec3(scale)},
+		{ "isStatic", isStatic},
 		});
 }
 
@@ -439,6 +454,7 @@ void Transform::Load(toml::table& table)
 	euler = Serialisation::LoadAsVec3(table["euler"]);
 	position = Serialisation::LoadAsVec3(table["position"]);
 	scale = Serialisation::LoadAsVec3(table["scale"]);
+	isStatic = Serialisation::LoadAsBool(table["isStatic"], true);
 
 	UpdateGlobalMatrixCascading();
 

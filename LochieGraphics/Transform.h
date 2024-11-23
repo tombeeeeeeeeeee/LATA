@@ -21,6 +21,7 @@ private:
 	glm::vec3 position = glm::zero<glm::vec3>();
 	glm::vec3 scale = {1,1,1};
 	glm::mat4 globalMatrix = glm::identity<glm::mat4>();
+	bool isStatic = true;
 
 public:
 	SceneObject* getSceneObject() const;
@@ -53,6 +54,9 @@ public:
 	glm::vec2 get2DGlobalPosition() const;
 	glm::vec2 get2DPosition() const;
 	void setPosition(glm::vec3 pos);
+
+	bool getStatic() const;
+	void setStatic(bool staticness);
 
 	glm::vec3 forward() const;
 	glm::vec3 right() const;

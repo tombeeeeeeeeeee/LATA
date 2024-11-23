@@ -9,6 +9,7 @@ Decal::Decal(toml::table table)
 {
 	depthOfDecal = Serialisation::LoadAsFloat(table["depthOfDecal"], 0.1f);
 	scale = Serialisation::LoadAsFloat(table["scale"], 1.0f);
+	angleTolerance = Serialisation::LoadAsFloat(table["angleTolerance"], 1.0f);
 	unsigned long long matGUID = Serialisation::LoadAsUnsignedLongLong(table["matGUID"]);
 	mat = ResourceManager::GetMaterial(matGUID);
 }

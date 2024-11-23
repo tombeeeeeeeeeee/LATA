@@ -172,6 +172,7 @@ private:
         std::unordered_map<unsigned long long, ModelRenderer>& renderers,
         std::unordered_set<unsigned long long> animatedRenderered,
         Frustum frustum,
+        int staticPass = 2,
         Shader* shader = nullptr
     );
 

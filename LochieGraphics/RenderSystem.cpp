@@ -425,8 +425,11 @@ void RenderSystem::Update(
         glm::normalize(camera->transform.right())
     );
 
-    DrawAllRenderers(animators, transforms, renders, animatedRenderered, cameraFrustum);
+    //Render Static Objects
+    DrawAllRenderers(animators, transforms, renders, animatedRenderered, cameraFrustum, 1);
     RenderDecals(decals, transforms, cameraFrustum);
+    DrawAllRenderers(animators, transforms, renders, animatedRenderered, cameraFrustum, 0);
+
     RenderSpotLightShadowMaps(spotlights, animators, transforms, renders, animatedRenderered, shadowWalls, cameraFrustum);
 
     RenderSSAO();
@@ -614,6 +617,7 @@ void RenderSystem::RenderDecals(
 
     for (auto& pair : decals)
     {
+        if (!pair.second.mat) continue;
         Transform model = Transform();
         model.setPosition(transforms[pair.first].getGlobalPosition());
         model.setEulerRotation(transforms[pair.first].getEulerRotation());
@@ -647,10 +651,8 @@ void RenderSystem::RenderDecals(
 
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
-    glDisable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glCullFace(GL_BACK);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
@@ -858,6 +860,7 @@ void RenderSystem::DrawAllRenderers(
     std::unordered_map<unsigned long long, ModelRenderer>& renderers,
     std::unordered_set<unsigned long long> animatedRenderered,
     Frustum frustum,
+    int staticPass,
     Shader* givenShader)
 {
     //Material* previousMaterial = nullptr;
@@ -866,6 +869,10 @@ void RenderSystem::DrawAllRenderers(
     {
         if (!i.second.model) { continue; }
         Transform* transform = &transforms.at(i.first);
+        if (staticPass <= 1)
+        {
+            if ((int)transform->getStatic() != staticPass) {continue; }
+        }
         if (i.second.model)
         {
             glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
@@ -962,10 +969,9 @@ void RenderSystem::RenderSpotLightShadowMaps(
 
         if (SceneManager::scene->inPlay)
         {
-
             glCullFace(GL_BACK);
 
-            bool hasRBThisFrame = false;
+            bool hasNSThisFrame = false;
             for (auto& i : renderers)
             {
                 if (!i.second.model) { continue; }
@@ -975,20 +981,19 @@ void RenderSystem::RenderSpotLightShadowMaps(
                     glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
                     if (spotlightFrustum.IsOnFrustum(OOB))
                     {
-                        if (i.second.animator ||
-                            (transform->getSceneObject()->parts & Parts::rigidBody && !transform->getSceneObject()->rigidbody()->isStatic))
+                        if (i.second.animator || !transform->getStatic())
                         {
-                            hasRBThisFrame = true;
-                            pair.second.hadRigidBodiesLastFrame = true;
+                            hasNSThisFrame = true;
+                            pair.second.hadNonStaticsLastFrame = true;
                             break;
                         }
                     }
                 }
             }
-            if (!hasRBThisFrame)
+            if (!hasNSThisFrame)
             {
-                bool temp = !pair.second.hadRigidBodiesLastFrame;
-                pair.second.hadRigidBodiesLastFrame = false;
+                bool temp = !pair.second.hadNonStaticsLastFrame;
+                pair.second.hadNonStaticsLastFrame = false;
                 if (temp) continue;
             }
         }
@@ -997,7 +1002,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
         glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        DrawAllRenderers(animators, transforms, renderers, animatedRenderered, spotlightFrustum, spotlightShadowPassShader);
+        DrawAllRenderers(animators, transforms, renderers, animatedRenderered, spotlightFrustum, 2, spotlightShadowPassShader);
 
         glCullFace(GL_BACK);
         Transform shadowTransform = Transform();
