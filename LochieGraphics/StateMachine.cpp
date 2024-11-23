@@ -4,7 +4,8 @@
 #include "Condition.h"
 
 StateMachine::StateMachine(State* state) :
-	currentState(state)
+	currentState(state),
+	initialState(state)
 {
 }
 
@@ -18,6 +19,17 @@ StateMachine::~StateMachine()
 	{
 		delete c;
 	}
+}
+
+void StateMachine::setInitialState(State* state)
+{
+	initialState = state;
+	currentState = state;
+}
+
+State* StateMachine::getInitialState() const
+{
+	return initialState;
 }
 
 void StateMachine::AddState(State* state)

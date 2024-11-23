@@ -32,4 +32,3 @@ public:
 	void Update(SceneObject* so, float delta);
 	void Exit(SceneObject* so);
 };
-

@@ -16,12 +16,17 @@ private:
 	// TODO: Don't like how the state machine itself needs to own the conditions, should the transitions just own them
 	std::vector<Condition*> conditions;
 	State* currentState;
+	State* initialState = nullptr;
 
 public:
 	
 	StateMachine(State* state);
+	StateMachine() = default;
 	~StateMachine();
 
+	// Note: Only use for setup
+	void setInitialState(State* state);
+	State* getInitialState() const;
 	void AddState(State* state);
 	void AddCondition(Condition* condition);
 
