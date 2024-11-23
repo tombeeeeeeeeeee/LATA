@@ -48,6 +48,16 @@ void Animator::PlayAnimation(Animation* animation)
     currentTime = 0.0f;
 }
 
+const Animation* Animator::getAnimation() const
+{
+    return currentAnimation;
+}
+
+float Animator::getTime() const
+{
+    return currentTime;
+}
+
 void Animator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 parentTransform)
 {
     std::string nodeName = node->name;

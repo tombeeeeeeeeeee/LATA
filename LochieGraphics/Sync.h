@@ -2,6 +2,8 @@
 
 #include "UiElement.h"
 #include "Input.h"
+#include "StateMachine.h"
+#include "SyncChargeLevel.h"
 
 #include <string>
 
@@ -10,6 +12,7 @@ class RigidBody;
 class LineRenderer;
 class ModelRenderer;
 class Shader;
+class SceneObject;
 struct Collision;
 
 namespace toml {
@@ -23,13 +26,15 @@ class Sync
 public:
 	unsigned long long GUID = 0;
 
-	Sync() {};
+	Sync();
 	Sync(toml::table table);
+	void Load(toml::table table);
 
-	void Start();
+
+	void Start(SceneObject* sceneObjectWithAnimator);
 
 	bool Update(
-		Input::InputDevice& inputDevice, Transform& transform,
+		SceneObject* sceneObjectWithAnimator, Input::InputDevice& inputDevice, Transform& transform,
 		RigidBody& rigidBody, LineRenderer* lines,
 		float delta, float cameraAngleOffset
 	);
@@ -43,6 +48,8 @@ public:
 	void OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour);
 	void OverclockRaindowShot(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour, bool rebound);
 	void misfireShotOnCollision(Collision collision);
+
+	void LevelLoad();
 
 	int currHealth = 5;
 	int maxHealth = 100;
@@ -59,7 +66,14 @@ public:
 	UiElement chargeUI;
 	UiElement healthUI;
 
+	bool chargingShot = false;
+	ChargeLevel lastShotLevel = ChargeLevel::none;
+
 private:
+
+	StateMachine animatorStateMachine;
+	bool stateMachineSetup = false;
+
 
 	std::vector<unsigned long long> misfireShots;
 
@@ -86,7 +100,6 @@ private:
 	float eccoRefractionAngle = 30.0f;
 	int eccoRefractionCount = 5;
 
-	bool chargingShot = false;
 
 	glm::vec2 fireDirection = {1.0f, 0.0f};
 
@@ -100,14 +113,15 @@ private:
 	float maxMoveForce = 1.0f;
 	float maxStopForce = 1.0f;
 
-	bool playedReachCharge1 = false;
-	bool playedReachCharge2 = false;
-
 	float stopSlowTime = 10.0f;
 	float startSlowTime = 5.0f;
-	
 
 	bool rainbowRebounding = true;
 	float rainbowDimming = 1.0f;
 	int overclockBounceDamage = 10;
+	
+	bool reachedCharge1 = false;
+	bool reachedCharge2 = false;
+
+	
 };

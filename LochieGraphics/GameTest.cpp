@@ -90,7 +90,7 @@ void GameTest::Start()
 	r->name = "Ecco";
 	h->name = "Sync";
 
-	sync->Start();
+	sync->Start(h);
 
 	SceneObject* newSceneObject = new SceneObject(this, "Walls");
 	RigidBody* newRigidBody = new RigidBody(0.0f, 0.0f, {}, true);
@@ -160,6 +160,7 @@ void GameTest::Update(float delta)
 			if (targettingP1)
 			{
 				sync->Update(
+					h,
 					*input.inputDevices[0],
 					*h->transform(),
 					*h->rigidbody(),
@@ -197,6 +198,7 @@ void GameTest::Update(float delta)
 			if (input.inputDevices.size() > 1)
 			{
 				sync->Update(
+					h,
 					*input.inputDevices[1],
 					*h->transform(),
 					*h->rigidbody(),

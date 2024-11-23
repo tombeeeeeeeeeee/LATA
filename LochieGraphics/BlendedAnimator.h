@@ -7,9 +7,21 @@ class BlendedAnimator : public Animator
     unsigned long long otherCurrentAnimationGUID = 0;
     float currentTimeOther = 0.f;
 public:
+
+    // TODO: implement in all the types of animators
+    bool loopCurrent = true;
+    bool loopOtherCurrent = true;
+
     float lerpAmount = 0.f;
     BlendedAnimator() = default;
     BlendedAnimator(Animation* one, Animation* two);
+
+    void PlayOtherAnimation(Animation* animation);
+    void SwitchToAnimation(Animation* animation);
+
+    const Animation* getOtherAnimation() const;
+
+    float getOtherTime() const;
 
     void UpdateAnimation(float delta) override;
     void CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 parentTransform) override;

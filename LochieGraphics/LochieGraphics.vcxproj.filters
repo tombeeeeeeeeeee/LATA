@@ -78,6 +78,15 @@
     <Filter Include="Source Files\Third-Party\soloud\core">
       <UniqueIdentifier>{9ae7af90-7bca-491e-a511-14745b6a322d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\State Machine">
+      <UniqueIdentifier>{063a5d90-af5e-473f-8de3-8a4eb4e70c97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\State Machine\Conditions">
+      <UniqueIdentifier>{7719d5ed-bbe2-45cc-a166-33d80072769b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\State Machine\Behaviours">
+      <UniqueIdentifier>{02dab582-2c47-4621-b13d-4e1634e7a6d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -410,17 +419,8 @@
     <ClCompile Include="Bollard.cpp">
       <Filter>Source Files\Parts</Filter>
     </ClCompile>
-    <ClCompile Include="Triggerable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ImguiMathsGLM.cpp">
       <Filter>Source Files\Third-Party</Filter>
-    </ClCompile>
-    <ClCompile Include="UiElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Directional2dAnimator.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -428,11 +428,41 @@
     <ClCompile Include="Decal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RayAgainstOBB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InvisibleWall.cpp">
       <Filter>Source Files\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="StateMachine.cpp">
+      <Filter>Source Files\State Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Source Files\State Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="RayAgainstOBB.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Directional2dAnimator.cpp">
+      <Filter>Source Files\Rendering\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="UiElement.cpp">
+      <Filter>Source Files\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Triggerable.cpp">
+      <Filter>Source Files\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="VelocityCondition.cpp">
+      <Filter>Source Files\State Machine\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="SyncChargingCondition.cpp">
+      <Filter>Source Files\State Machine\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="SyncChargeLevelCondition.cpp">
+      <Filter>Source Files\State Machine\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimateBehaviour.cpp">
+      <Filter>Source Files\State Machine\Behaviours</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationFinishedCondition.cpp">
+      <Filter>Source Files\State Machine\Conditions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -751,22 +781,58 @@
     <ClInclude Include="Bollard.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="Triggerable.h" />
     <ClInclude Include="ImguiMathsGLM.h">
       <Filter>Source Files\Third-Party</Filter>
     </ClInclude>
-    <ClInclude Include="UiElement.h" />
-    <ClInclude Include="Directional2dAnimator.h" />
     <ClInclude Include="Frustum.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Decal.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="RayAgainstOBB.h" />
     <ClInclude Include="InvisibleWall.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
+    <ClInclude Include="Condition.h">
+      <Filter>Source Files\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Source Files\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="StateMachine.h">
+      <Filter>Source Files\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour.h">
+      <Filter>Source Files\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="RayAgainstOBB.h">
+      <Filter>Source Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Directional2dAnimator.h">
+      <Filter>Source Files\Rendering\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="UiElement.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Triggerable.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="VelocityCondition.h">
+      <Filter>Source Files\State Machine\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="SyncChargeLevelCondition.h">
+      <Filter>Source Files\State Machine\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="SyncChargingCondition.h">
+      <Filter>Source Files\State Machine\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimateBehaviour.h">
+      <Filter>Source Files\State Machine\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="SyncChargeLevel.h">
+      <Filter>Source Files\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationFinishedCondition.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -928,13 +994,6 @@
     <None Include="..\Shaders\ambient.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\healthBar.frag" />
-    <None Include="..\Shaders\healthBar.vert" />
-    <None Include="..\Shaders\composite.frag" />
-    <None Include="..\Shaders\pointLight.frag" />
-    <None Include="..\Shaders\pointLight.vert" />
-    <None Include="..\Shaders\defaultWithNormal.vert" />
-    <None Include="..\Shaders\simpleTexturedWithCutout.frag" />
     <None Include="..\Shaders\spotlight.frag">
       <Filter>Shaders</Filter>
     </None>

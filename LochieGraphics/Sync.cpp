@@ -16,13 +16,28 @@
 #include "ResourceManager.h"
 #include "Utilities.h"
 #include "Ecco.h"
+#include "VelocityCondition.h"
+#include "SyncChargingCondition.h"
+#include "SyncChargeLevelCondition.h"
+#include "AnimateBehaviour.h"
+#include "State.h"
+#include "AnimationFinishedCondition.h"
 #include "BlastLine.h"
 
 #include "EditorGUI.h"
 
 #include "Serialisation.h"
 
-Sync::Sync(toml::table table)
+Sync::Sync()
+{
+}
+
+Sync::Sync(toml::table table) : Sync()
+{
+	Load(table);
+}
+
+void Sync::Load(toml::table table)
 {
 	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
 	moveSpeed = Serialisation::LoadAsFloat(table["moveSpeed"]);
@@ -58,15 +73,67 @@ Sync::Sync(toml::table table)
 	shotWidth = Serialisation::LoadAsFloat(table["shotWidth"], 10.0f);
 }
 
-void Sync::Start()
+void Sync::Start(SceneObject* sceneObjectWithAnimator)
 {
 	Model* misfireModel = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + misfireModelPath + Paths::modelExtension);
 	Material* misfireMaterial = ResourceManager::defaultMaterial;
 	misfireModelRender = new ModelRenderer(misfireModel, misfireMaterial);
+
+
+
+	VelocityCondition* movingEnoughToRun = new VelocityCondition(1.0f, FLT_MAX);
+	animatorStateMachine.AddCondition(movingEnoughToRun);
+	VelocityCondition* standingStill = new VelocityCondition(0.0, 1.0f);
+	animatorStateMachine.AddCondition(standingStill);
+	SyncChargingCondition* charging = new SyncChargingCondition();
+	animatorStateMachine.AddCondition(charging);
+	SyncChargingCondition* notCharging = new SyncChargingCondition(true);
+	animatorStateMachine.AddCondition(notCharging);
+	SyncChargeLevelCondition* noCharge = new SyncChargeLevelCondition(ChargeLevel::none, false);
+	animatorStateMachine.AddCondition(noCharge);
+	SyncChargeLevelCondition* snipeCharge = new SyncChargeLevelCondition(ChargeLevel::sniper, false);
+	animatorStateMachine.AddCondition(snipeCharge);
+	SyncChargeLevelCondition* overclockCharge = new SyncChargeLevelCondition(ChargeLevel::overclock, false);
+	animatorStateMachine.AddCondition(overclockCharge);
+	AnimationFinishedCondition* animationFinished = new AnimationFinishedCondition(AnimationFinishedCondition::Check::current);
+
+	State* idle = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncIdle" + Paths::animationExtension), true));
+	animatorStateMachine.AddState(idle);
+	State* run = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncRun" + Paths::animationExtension), true));
+	animatorStateMachine.AddState(run);
+	State* shootCharge = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootCharge" + Paths::animationExtension), false));
+	animatorStateMachine.AddState(shootCharge);
+	State* shootHold = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootHold" + Paths::animationExtension), true));
+	animatorStateMachine.AddState(shootHold);
+	State* shootSnipe = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootSnipe" + Paths::animationExtension), false));
+	animatorStateMachine.AddState(shootSnipe);
+	State* shootOverclock = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootOverclock" + Paths::animationExtension), false));
+	animatorStateMachine.AddState(shootOverclock);
+
+	State* start = idle;
+
+	idle->AddTransition(movingEnoughToRun, run);
+	idle->AddTransition(charging, shootCharge);
+	run->AddTransition(standingStill, start);
+	run->AddTransition(charging, shootCharge);
+	shootCharge->AddTransition(animationFinished, shootHold);
+	shootCharge->AddTransition(noCharge, start);
+	shootCharge->AddTransition(snipeCharge, shootSnipe);
+	shootCharge->AddTransition(overclockCharge, shootOverclock);
+	shootSnipe->AddTransition(animationFinished, start);
+	shootOverclock->AddTransition(animationFinished, start);
+
+	// TODO: Death
+
+	animatorStateMachine.setInitialState(start);
+	if (sceneObjectWithAnimator) {
+		animatorStateMachine.Enter(sceneObjectWithAnimator);
+	}
+	stateMachineSetup = true;
 }
 
 bool Sync::Update(
-	Input::InputDevice& inputDevice, Transform& transform,
+	SceneObject* sceneObjectWithAnimator, Input::InputDevice& inputDevice, Transform& transform,
 	RigidBody& rigidBody, LineRenderer* lines, 
 	float delta, float cameraAngleOffset
 )
@@ -150,16 +217,16 @@ bool Sync::Update(
 			if (chargedDuration + delta >= sniperChargeTime && chargedDuration < sniperChargeTime)
 			{
 				//At this time the charge is enough to shoot the sniper.
-				if (!playedReachCharge1) {
-					playedReachCharge1 = true;
+				if (!reachedCharge1) {
+					reachedCharge1 = true;
 					SceneManager::scene->audio.PlaySound(Audio::railgunFirstChargeReached);
 				}
 			}
 			else if (chargedDuration + delta >= overclockChargeTime && chargedDuration < overclockChargeTime)
 			{
 				//At this time the charge is enough to shoot the reflecting shot
-				if (!playedReachCharge2) {
-					playedReachCharge2 = true;
+				if (!reachedCharge2) {
+					reachedCharge2 = true;
 					SceneManager::scene->audio.PlaySound(Audio::railgunSecondChargeReached);
 				}
 			}
@@ -176,8 +243,8 @@ bool Sync::Update(
 	else if (chargingShot)
 	{
 		chargingShot = false;
-		playedReachCharge1 = false;
-		playedReachCharge2 = false;
+		reachedCharge1 = false;
+		reachedCharge2 = false;
 
 
 		if (chargedDuration >= overclockChargeTime)
@@ -185,20 +252,32 @@ bool Sync::Update(
 			ShootOverClocked(globalBarrelOffset);
 			rigidBody.AddImpulse(-fireDirection * knockBackForceOverclock);
 			SceneManager::scene->audio.PlaySound(Audio::railgunShotFirstCharged);
+			lastShotLevel = ChargeLevel::overclock;
 		}
 		else if (chargedDuration >= sniperChargeTime)
 		{
 			ShootSniper(globalBarrelOffset);
 			rigidBody.AddImpulse(-fireDirection * knockBackForceSnipe);
 			SceneManager::scene->audio.PlaySound(Audio::railgunShotSecondCharged);
+			lastShotLevel = ChargeLevel::sniper;
 		}
 		else
 		{
+			lastShotLevel = ChargeLevel::none;
 			//DO NOT FIRING STUFF
 		}
 		chargedDuration = 0;
 	}
 
+	if (sceneObjectWithAnimator) {
+		if (!stateMachineSetup) {
+			animatorStateMachine.setInitialState(animatorStateMachine.getInitialState());
+			animatorStateMachine.Enter(sceneObjectWithAnimator);
+			stateMachineSetup = true;
+		}
+		animatorStateMachine.Update(sceneObjectWithAnimator, delta);
+	}
+	
 	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
 
@@ -478,5 +557,11 @@ void Sync::misfireShotOnCollision(Collision collision)
 	SceneManager::scene->sceneObjects.erase(GUID);
 
 	SceneManager::scene->audio.PlaySound(Audio::railgunHitEnemy);
+}
+
+void Sync::LevelLoad()
+{
+	// TODO: Just move to the load
+	stateMachineSetup = false;
 }
 

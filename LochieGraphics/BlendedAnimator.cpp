@@ -14,15 +14,58 @@ BlendedAnimator::BlendedAnimator(Animation* one, Animation* two) : Animator(one)
 {
 }
 
+void BlendedAnimator::PlayOtherAnimation(Animation* animation)
+{
+    otherCurrentAnimation = animation;
+    otherCurrentAnimationGUID = animation->GUID;
+    currentTimeOther = 0.0f;
+}
+
+void BlendedAnimator::SwitchToAnimation(Animation* animation)
+{
+    otherCurrentAnimation = currentAnimation;
+    otherCurrentAnimationGUID = currentAnimationGUID;
+    currentTimeOther = currentTime;
+    loopOtherCurrent = loopCurrent;
+    PlayAnimation(animation);
+}
+
+const Animation* BlendedAnimator::getOtherAnimation() const
+{
+    return otherCurrentAnimation;
+}
+
+float BlendedAnimator::getOtherTime() const
+{
+    return currentTimeOther;
+}
+
 void BlendedAnimator::UpdateAnimation(float delta)
 {
-    if (!currentAnimation) {
+    if (!currentAnimation && !otherCurrentAnimation) {
         return;
     }
+    // TODO: Don't know this is what we want
+    if (currentAnimation && !otherCurrentAnimation) {
+        otherCurrentAnimation = currentAnimation;
+    }
+    if (!currentAnimation && otherCurrentAnimation) {
+        currentAnimation = otherCurrentAnimation;
+    }
     currentTime += currentAnimation->getTicksPerSecond() * delta;
-    currentTime = fmodf(currentTime, currentAnimation->getDuration());
     currentTimeOther += otherCurrentAnimation->getTicksPerSecond() * delta;
-    currentTimeOther = fmodf(currentTimeOther, otherCurrentAnimation->getDuration());
+    if (loopCurrent) {
+        currentTime = fmodf(currentTime, currentAnimation->getDuration());
+    }
+    else {
+        currentTime = fminf(currentTime, currentAnimation->getDuration());
+    }
+    if (loopOtherCurrent) {
+        currentTimeOther = fmodf(currentTimeOther, otherCurrentAnimation->getDuration());
+    }
+    else {
+        currentTimeOther = fminf(currentTimeOther, currentAnimation->getDuration());
+    }
     CalculateBoneTransform(currentAnimation->getRootNode(), glm::mat4(1.0f));
 }
 

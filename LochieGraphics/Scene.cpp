@@ -325,7 +325,8 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(exits, "Exits", ExitElevator);
 
 	*ecco = Ecco(*data["Ecco"].as_table());
-	*sync = Sync(*data["Sync"].as_table());
+	// Sync specifically loads here is it needs to keep some stuff
+	sync->Load(*data["Sync"].as_table());
 
 	// Load Hierarchy Data
 	for (int i = 0; i < loadingSceneObjects->size(); i++)

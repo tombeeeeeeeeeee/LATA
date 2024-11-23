@@ -132,6 +132,8 @@ void LevelEditor::Start()
 	ground = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
 
 	syncSo = new SceneObject(this, "Sync");
+	syncAnimatorSo = new SceneObject(this, "Sync Model and Animator");
+	syncAnimatorSo->transform()->setParent(syncSo->transform());
 	eccoSo = new SceneObject(this, "Ecco");
 	sync->GUID = syncSo->GUID;
 	ecco->GUID = eccoSo->GUID;
@@ -172,7 +174,7 @@ void LevelEditor::Start()
 
 	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension), (unsigned long long)0));
 
-	sync->Start();
+	sync->Start(syncAnimatorSo);
 
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 
@@ -387,6 +389,7 @@ void LevelEditor::Update(float delta)
 		if (singlePlayer == 1)
 		{
 			syncHealPressed = sync->Update(
+				syncAnimatorSo,
 				*input.inputDevices[0],
 				*syncSo->transform(),
 				*syncSo->rigidbody(),
@@ -411,6 +414,7 @@ void LevelEditor::Update(float delta)
 			if (input.inputDevices.size() > 1)
 			{
 				syncHealPressed = sync->Update(
+					syncAnimatorSo,
 					*input.inputDevices[1],
 					*syncSo->transform(),
 					*syncSo->rigidbody(),
@@ -790,6 +794,13 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 
 	groundTileParent = FindSceneObjectOfName("Ground Tiles");
 	syncSo = FindSceneObjectOfName("Sync");
+	auto syncChildren = syncSo->transform()->getChildren();
+	if (syncChildren.size() > 0) {
+		syncAnimatorSo = syncChildren.front()->so;
+	}
+	else {
+		syncAnimatorSo = nullptr;
+	}
 	eccoSo = FindSceneObjectOfName("Ecco");
 
 	// Refresh the tiles collection
@@ -834,6 +845,9 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	RefreshMinMaxes();
 	renderSystem.LevelLoad();
 	syncSo->transform()->setEulerRotation({ 0.0f, 0.0f, 0.0f });
+
+	sync->LevelLoad();
+
 }
 
 void LevelEditor::ModelPlacer(glm::vec2 targetPos)

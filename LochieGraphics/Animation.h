@@ -16,14 +16,14 @@ namespace toml {
 
 class Animation
 {
-public:
+protected:
 	// TODO: This comment might be wrong, unit might be ticks
 	// The duration of the animation, how long the animation goes for in seconds.
 	float duration = 0;
-
 	// How many ticks/'frames per second' for this animation.
 	float ticksPerSecond = 0.f;
 
+public:
 	// The animation bones with animation key data
 	std::vector<Bone> bones = {};
 

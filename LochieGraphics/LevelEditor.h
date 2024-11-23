@@ -61,6 +61,7 @@ private:
 	float syncRadius = 10.0f;
 
 	SceneObject* syncSo = nullptr;
+	SceneObject* syncAnimatorSo = nullptr;
 	SceneObject* eccoSo = nullptr;
 
 	int singlePlayer = 0;

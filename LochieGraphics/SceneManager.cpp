@@ -167,6 +167,7 @@ SceneManager::SceneManager(Scene* _scene)
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 	ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoLeanLeft.model")->root.transform.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
+	ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Sync.model")->root.transform.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
 
 	for (auto& i : std::filesystem::directory_iterator(Paths::animationsSaveLocation)) {
 		ResourceManager::LoadAnimationAsset(i.path().string());

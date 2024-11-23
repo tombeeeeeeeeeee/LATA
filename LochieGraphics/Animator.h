@@ -58,6 +58,10 @@ public:
 	/// <param name="animation">The new animation to play</param>
 	void PlayAnimation(Animation* animation);
 
+	const Animation* getAnimation() const;
+
+	float getTime() const;
+
 	/// <summary>
 	/// Calculates the bone transform of a node and it's children.
 	/// </summary>
