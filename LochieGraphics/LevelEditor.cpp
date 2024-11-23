@@ -135,7 +135,7 @@ void LevelEditor::Start()
 	eccoSo = new SceneObject(this, "Ecco");
 	sync->GUID = syncSo->GUID;
 	ecco->GUID = eccoSo->GUID;
-
+	syncSo->transform()->setEulerRotation({0.0f, 0.0f, 0.0f});
 
 	RigidBody* hRb = new RigidBody();
 	hRb->setMass(1.0f);
@@ -833,7 +833,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 
 	RefreshMinMaxes();
 	renderSystem.LevelLoad();
-
+	syncSo->transform()->setEulerRotation({ 0.0f, 0.0f, 0.0f });
 }
 
 void LevelEditor::ModelPlacer(glm::vec2 targetPos)

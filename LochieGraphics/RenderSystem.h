@@ -23,6 +23,7 @@ class PointLight;
 class Spotlight;
 struct Frustum;
 struct ShadowWall;
+struct BlastLine;
 
 struct bloomMip
 {
@@ -131,6 +132,8 @@ public:
         Shader* shader,
         Material* mat
     );
+
+    static std::vector<BlastLine> beams;
 
 private:
 
@@ -256,6 +259,12 @@ private:
     void RenderParticles(
         std::vector<Particle*> particles
     );
+
+    Shader* beamShader;
+    Model* unitPlane;
+    float tileLength = 50.0f;
+    void RenderBeams(float delta);
+
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;

@@ -1,5 +1,5 @@
 #pragma once
-#include "BlastLine.h"
+
 #include "UiElement.h"
 #include "Input.h"
 
@@ -11,6 +11,7 @@ class LineRenderer;
 class ModelRenderer;
 class Shader;
 struct Collision;
+
 namespace toml {
 	inline namespace v3 {
 		class table;
@@ -61,7 +62,6 @@ public:
 private:
 
 	std::vector<unsigned long long> misfireShots;
-	std::vector<BlastLine> blasts;
 
 	float moveSpeed = 1.0f;
 	float lookDeadZone = 0.03f;

@@ -1,5 +1,6 @@
 #include "RenderSystem.h"
 
+#include "BlastLine.h"
 #include "SceneManager.h"
 #include "Scene.h"
 #include "DirectionalLight.h"
@@ -26,6 +27,7 @@
 
 LineRenderer RenderSystem::lines;
 LineRenderer RenderSystem::debugLines;
+std::vector<BlastLine> RenderSystem::beams = {};
 
 void RenderSystem::Start(unsigned int _skyboxTexture)
 {
@@ -98,6 +100,8 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
     flickeringLightTexture = ResourceManager::LoadTexture("images/FlickeringLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
     lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
     decalShader = ResourceManager::LoadShader("decal");
+    beamShader = ResourceManager::LoadShader("beam");
+    //unitPlane = ResourceManager::LoadModel(Paths::modelSaveLocation + "SM_Plane" + Paths::modelExtension);
     decalCube = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_DefaultCube" + Paths::modelExtension);
     wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Wall" + Paths::modelExtension);
 }
@@ -444,6 +448,8 @@ void RenderSystem::Update(
     glCullFace(GL_BACK);
 
     RenderParticles(particles);
+
+    RenderBeams(delta);
 
     RenderLinePass();
 
@@ -1248,7 +1254,6 @@ void RenderSystem::LinesSetup()
 void RenderSystem::RenderLinePass()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
-    glClear(GL_COLOR_BUFFER_BIT);
     ResourceManager::lines->Use();
     lines.Draw();
 
@@ -1393,6 +1398,45 @@ void RenderSystem::RenderParticles(
     glDisable(GL_CULL_FACE);
     glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
     ParticleSystem::Draw(particles);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void RenderSystem::RenderBeams(float delta)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    beamShader->Use();
+    beamShader->setMat4("vp", projection * viewMatrix);
+
+    for (auto i = beams.begin(); i != beams.end();)
+    {
+        Transform transform = Transform();
+        glm::vec3 displacement = (i->startPosition + i->endPosition) / 2.0f;
+        glm::vec3 difference = displacement - i->startPosition;
+        float length = glm::length(difference);
+        transform.setPosition(displacement);
+        transform.setScale({100.0f, 0.01f,length * 2.0f});
+        transform.setEulerRotation({ 0.0f, 180.0f * atan2f(difference.x, difference.z) / PI, 0.0f });
+        beamShader->setMat4("model",transform.getGlobalMatrix());
+        beamShader->setFloat("percentage", i->timeElapsed/i->lifeSpan);
+        beamShader->setFloat("uvMult", length / tileLength);
+
+        i->timeElapsed += delta;
+        float r = 1.5f * i->colour.x - i->colour.x * i->timeElapsed / i->lifeSpan;
+        float g = 1.5f * i->colour.y - i->colour.y * i->timeElapsed / i->lifeSpan;
+        float b = 1.5f * i->colour.z - i->colour.z * i->timeElapsed / i->lifeSpan;
+        beamShader->setVec3("colour", {r,g,b});
+
+        decalCube->meshes[0]->Draw();
+
+        if (i->timeElapsed > i->lifeSpan)
+            i = beams.erase(i);
+        else
+            ++i;
+    }
+    glDisable(GL_BLEND);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
