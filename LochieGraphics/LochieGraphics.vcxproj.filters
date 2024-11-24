@@ -425,9 +425,6 @@
     <ClCompile Include="Frustum.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Decal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InvisibleWall.cpp">
       <Filter>Source Files\Parts</Filter>
     </ClCompile>
@@ -463,6 +460,9 @@
     </ClCompile>
     <ClCompile Include="AnimationFinishedCondition.cpp">
       <Filter>Source Files\State Machine\Conditions</Filter>
+    </ClCompile>
+    <ClCompile Include="Decal.cpp">
+      <Filter>Source Files\Parts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -832,7 +832,9 @@
     <ClInclude Include="SyncChargeLevel.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="AnimationFinishedCondition.h" />
+    <ClInclude Include="AnimationFinishedCondition.h">
+      <Filter>Source Files\State Machine\Conditions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -1016,6 +1018,27 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\beam.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\composite.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\defaultWithNormal.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\healthBar.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\pointLight.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\pointLight.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\healthBar.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\simpleTexturedWithCutout.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

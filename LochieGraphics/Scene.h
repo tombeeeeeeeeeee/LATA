@@ -39,7 +39,7 @@ class Skybox;
 class Scene
 {
 public:
-	std::string windowName = "Lochie's Scene";
+	std::string windowName = "Sync & Ecco";
 
 	
 	bool inPlay = false;
