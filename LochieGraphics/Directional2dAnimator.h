@@ -35,6 +35,6 @@ public:
 
 protected:
 
-    void BaseGUI();
+    void BaseGUI() override;
 };
 

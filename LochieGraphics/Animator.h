@@ -87,6 +87,6 @@ public:
 
 protected:
 
-	void BaseGUI();
+	virtual void BaseGUI();
 };
 

@@ -3,6 +3,8 @@
 #include "State.h"
 #include "Condition.h"
 
+#include <iostream>
+
 StateMachine::StateMachine(State* state) :
 	currentState(state),
 	initialState(state)
@@ -44,6 +46,14 @@ void StateMachine::AddCondition(Condition* condition)
 
 void StateMachine::Update(SceneObject* so, float delta)
 {
+	if (!currentState) {
+		currentState = initialState;
+	}
+	if (!currentState) {
+		std::cout << "Error: State machine has not state active\n";
+		return;
+	}
+
 	State* newState = nullptr;
 
 	for (State::Transition t : currentState->getTransitions())
@@ -68,6 +78,13 @@ void StateMachine::Update(SceneObject* so, float delta)
 
 void StateMachine::Enter(SceneObject* so)
 {
+	if (!currentState) {
+		currentState = initialState;
+	}
+	if (!currentState) {
+		std::cout << "Error: State machine has not state active\n";
+		return;
+	}
 	currentState->Enter(so);
 }
 

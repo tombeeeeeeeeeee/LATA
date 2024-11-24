@@ -71,6 +71,8 @@ void Sync::Load(toml::table table)
 	overclockBounceDamage = Serialisation::LoadAsInt(table["overclockBounceDamage"]);
 	rainbowRebounding = Serialisation::LoadAsBool(table["rainbowRebounding"]);
 	shotWidth = Serialisation::LoadAsFloat(table["shotWidth"], 10.0f);
+
+	stateMachineSetup = false;
 }
 
 void Sync::Start(SceneObject* sceneObjectWithAnimator)
@@ -120,10 +122,12 @@ void Sync::Start(SceneObject* sceneObjectWithAnimator)
 	shootCharge->AddTransition(noCharge, start);
 	shootCharge->AddTransition(snipeCharge, shootSnipe);
 	shootCharge->AddTransition(overclockCharge, shootOverclock);
+	shootHold->AddTransition(snipeCharge, shootSnipe);
+	shootHold->AddTransition(overclockCharge, shootOverclock);
 	shootSnipe->AddTransition(animationFinished, start);
 	shootOverclock->AddTransition(animationFinished, start);
 
-	// TODO: Death
+	// TODO: Death animations
 
 	animatorStateMachine.setInitialState(start);
 	if (sceneObjectWithAnimator) {
@@ -561,7 +565,5 @@ void Sync::misfireShotOnCollision(Collision collision)
 
 void Sync::LevelLoad()
 {
-	// TODO: Just move to the load
-	stateMachineSetup = false;
 }
 
