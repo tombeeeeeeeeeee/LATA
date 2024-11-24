@@ -7,10 +7,18 @@ out vec4 FragColour;
 uniform float healthPercent;
 uniform vec3 healthColour;
 uniform vec3 backgroundColour;
+uniform bool horizontal;
 
 void main()
 {
-	if (texCoords.x < healthPercent) {
+	bool check;
+	if (horizontal) {
+		check = texCoords.x < healthPercent;
+	}
+	else {
+		check = texCoords.y < healthPercent;
+	}
+	if (check) {
 		FragColour = vec4(healthColour, 1.0);
 	}
 	else {

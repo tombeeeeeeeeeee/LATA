@@ -58,6 +58,7 @@ void UiElement::GUI()
 
 	ImGui::ColorEdit3(("backgroundColour##" + tag).c_str(), &backgroundColour.x);
 	ImGui::ColorEdit3(("foregroundColour##" + tag).c_str(), &foregroundColour.x);
+	ImGui::Checkbox(("Horizontal##" + tag).c_str(), &horizontal);
 }
 
 void UiElement::ApplyToShader(Shader* shader, float percent) const
@@ -67,7 +68,7 @@ void UiElement::ApplyToShader(Shader* shader, float percent) const
 	shader->setFloat("healthPercent", percent);
 	shader->setVec3("backgroundColour", backgroundColour);
 	shader->setVec3("healthColour", foregroundColour);
-
+	shader->setBool("horizontal", horizontal);
 }
 
 toml::table UiElement::Serialise() const
@@ -77,6 +78,7 @@ toml::table UiElement::Serialise() const
 		{ "scale", Serialisation::SaveAsVec2(scale)},
 		{ "backgroundColour", Serialisation::SaveAsVec3(backgroundColour) },
 		{ "foregroundColour", Serialisation::SaveAsVec3(foregroundColour) },
+		{ "horizontal", horizontal },
 	};
 	return table;
 }
@@ -87,6 +89,7 @@ void UiElement::Load(toml::table table)
 	scale = Serialisation::LoadAsVec2(table["scale"]);
 	backgroundColour = Serialisation::LoadAsVec3(table["backgroundColour"], glm::vec3(0.3f, 0.3f, 0.3f));
 	foregroundColour = Serialisation::LoadAsVec3(table["foregroundColour"], glm::vec3(0.3f, 1.0f, 0.3f));
+	horizontal = Serialisation::LoadAsBool(table["horizontal"], true);
 }
 
 void UiElement::Load(toml::table* table)
@@ -100,4 +103,5 @@ void UiElement::Load(toml::table* table)
 
 UiElement::UiElement(toml::table table)
 {
+	Load(table);
 }

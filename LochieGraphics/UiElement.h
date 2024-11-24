@@ -15,12 +15,14 @@ private:
 	void setLeftRight(float left, float right);
 	void setDownUp(float down, float up);
 
-public:
 	glm::vec2 offset = { 0.0f, 0.0f };
 	glm::vec2 scale = { 0.5f, 0.5f };
 	glm::vec3 backgroundColour{};
 	glm::vec3 foregroundColour{};
 
+	bool horizontal = true;
+
+public:
 	void GUI();
 
 	void ApplyToShader(Shader* shader, float percent) const;
