@@ -5,8 +5,11 @@
 #include "BoneInfo.h"
 #include "Model.h"
 #include "ResourceManager.h"
+#include "Utilities.h"
 
 #include "Serialisation.h"
+
+#include "EditorGUI.h"
 
 BlendedAnimator::BlendedAnimator(Animation* one, Animation* two) : Animator(one),
     otherCurrentAnimation(two),
@@ -149,4 +152,36 @@ toml::table BlendedAnimator::Serialise(unsigned long long GUID) const
 
     table.emplace("otherCurrentAnimationGUID", Serialisation::SaveAsUnsignedLongLong(otherCurrentAnimationGUID));
     return table;
+}
+
+void BlendedAnimator::GUI()
+{
+    std::string tag = Utilities::PointerToString(this);
+    if (ImGui::CollapsingHeader(("Blended Animator##" + tag).c_str())) {
+        ImGui::Indent();
+        BaseGUI();
+        ImGui::Unindent();
+    }
+}
+
+void BlendedAnimator::BaseGUI()
+{
+    Animator::BaseGUI();
+
+    if (ResourceManager::AnimationSelector("Other animation", &otherCurrentAnimation, true)) {
+        if (otherCurrentAnimation) {
+            otherCurrentAnimationGUID = otherCurrentAnimation->GUID;
+        }
+        else {
+            otherCurrentAnimationGUID = 0ull;
+        }
+    }
+    
+    ImGui::DragFloat("Current other time", &currentTimeOther);
+
+    ImGui::Checkbox("Loop current", &loopCurrent);
+    ImGui::Checkbox("Loop other current", &loopOtherCurrent);
+
+    ImGui::SliderFloat("Lerp Amount", &lerpAmount, 0.0f, 1.0f);
+
 }

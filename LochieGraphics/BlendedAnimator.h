@@ -30,5 +30,9 @@ public:
 
     BlendedAnimator(toml::table table);
     toml::table Serialise(unsigned long long GUID) const;
+
+    void GUI() override;
+
+    void BaseGUI() override;
 };
 
