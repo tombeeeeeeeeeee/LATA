@@ -38,8 +38,8 @@ eccoRefractionAngle = 70.0
 eccoRefractionCount = 5
 enemyPierceCount = 99
 guid = '2091576977596946314'
-knockBackForceOverclock = 1.0
-knockBackForceSnipe = 10.0
+knockBackForceOverclock = 1300.0
+knockBackForceSnipe = 400.0
 lookDeadZone = 0.4000000059604645
 maxMoveForce = 4000.0
 maxStopForce = 4000.0
@@ -67,21 +67,23 @@ stopSlowTime = 1.5
     [sync.chargeUI]
     backgroundColour = [ 0.12156862765550613, 0.3529411852359772, 0.10196078568696976 ]
     foregroundColour = [ 0.10196078568696976, 1.0, 0.0 ]
+    horizontal = true
     offset = [ 0.5, -0.9399999976158142 ]
     scale = [ 0.3779999911785126, 0.03799999877810478 ]
 
     [sync.healthUI]
     backgroundColour = [ 0.42352941632270813, 0.003921568859368563, 0.06666667014360428 ]
     foregroundColour = [ 0.9019607901573181, 0.13725490868091583, 0.16470588743686676 ]
+    horizontal = true
     offset = [ 0.5, -0.8410000205039978 ]
     scale = [ 0.3779999911785126, 0.05299999937415123 ]
 
 [transform]
-euler = [ 0.0, 0.0, 0.0 ]
+euler = [ -360.0, 231.14524841308594, 0.0 ]
 guid = '2091576977596946314'
 isStatic = false
-position = [ 1374.8271484375, -0.016998419538140297, -111.27235412597656 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+position = [ 655.6802978515625, -0.016998419538140297, -177.27113342285156 ]
+quaternion = [ 0.43165475130081177, -3.773645573801332e-08, -0.9020389318466187, -7.885874708790652e-08 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[children]]
@@ -90,7 +92,7 @@ children = []
     [children.animator]
     currentAnimationGUID = '15148335964655264906'
     guid = '2236905023818184222'
-    otherCurrentAnimationGUID = '0'
+    otherCurrentAnimationGUID = '15148335964655264901'
     type = '1'
 
     [children.modelRenderer]
