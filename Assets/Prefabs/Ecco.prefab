@@ -7,8 +7,8 @@ type = '2'
 upAnimationGUID = '15148335964655446903'
 
 [ecco]
-boostDamage = 200
-boostKnockback = 250.0
+boostDamage = 150
+boostKnockback = 1800.0
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
 carReverseMoveSpeed = 3000.0
@@ -16,8 +16,8 @@ controlState = false
 deadZone = 0.6000000238418579
 exceedingSlowIntensity = 3.5
 guid = '2091576976424546894'
-healCooldown = 1.0
-healingFromDamage = 25
+healCooldown = 2.5
+healingFromDamage = 20
 maxCarMoveSpeed = 630.0
 maxHealth = 200
 maxReverseSpeed = 300.0
@@ -28,16 +28,16 @@ sidewaysFrictionCoef = 65.0
 speedBoost = 12500.0
 speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
-speedBoostHPCost = 1
+speedBoostHPCost = 40
 speedBoostInDirectionOfBody = false
-speedDamage = 25
-speedKnockback = 150.0
-speedReductionAfterDamaging = 200.0
+speedDamage = 30
+speedKnockback = 1300.0
+speedReductionAfterDamaging = 450.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
-turningCircleScalar = 3.9000000953674316
-turningCircleScalarBoosting = 1.0
-wheelDirection = [ -0.29633763432502747, -0.9550833106040955 ]
+turningCircleScalar = 0.15000000596046448
+turningCircleScalarBoosting = 0.05999999865889549
+wheelDirection = [ 0.21587586402893066, -0.9764208793640137 ]
 wheelTurnSpeed = 4.400000095367432
 
     [ecco.boostUI]
@@ -53,7 +53,7 @@ wheelTurnSpeed = 4.400000095367432
     scale = [ 0.37299999594688416, 0.09000000357627869 ]
 
 [health]
-currHealth = 179
+currHealth = 79
 guid = '2091576976424546894'
 maxHealth = 200
 
@@ -74,8 +74,8 @@ isStatic = false
 netDepen = [ 0.0, 0.0 ]
 netForce = [ 0.0, 0.0 ]
 vel = [
-    -8.447033826254757e-25,
-    1.8129258169295522e-24
+    5.736093209509667e-24,
+    -2.5944764270279714e-23
 ]
 
     [[rigidBody.colliders]]
@@ -104,14 +104,11 @@ prefabBase = '2091576976424546894'
 prefabStatus = 1
 
 [transform]
-euler = [ -179.99908447265625, -54.22438430786133, -899.9996337890625 ]
+euler = [ -179.9994659423828, 12.460491180419922, -899.9987182617188 ]
 guid = '2091576976424546894'
-position = [
-    -2.1685975611142868e-22,
-    0.0,
-    152.11578369140625
-]
-quaternion = [ 0.4557362496852875, 6.995349849603372e-06, -0.8901121020317078, 8.801400326774456e-06 ]
+isStatic = false
+position = [ 2276.78466796875, 0.0, -291.2608337402344 ]
+quaternion = [ 0.10852492600679398, -1.0681524145184085e-05, 0.9940866231918335, -3.507683004499995e-06 ]
 scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
 
 [[children]]
@@ -129,6 +126,7 @@ children = []
     [children.transform]
     euler = [ 0.0, 0.0, 0.0 ]
     guid = '2120176559991300301'
+    isStatic = true
     position = [ 0.0, 0.0, 0.0 ]
     quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
     scale = [ 1.0, 1.0, 1.0 ]
