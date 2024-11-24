@@ -95,5 +95,9 @@ public:
 
 	bool windowOpen = true;
 	void GUI();
+
+	// Might not work correctly if keyboard or non controllers connected
+	// Percents are expected to be within 0 - 100
+	void SetVibrationOfControllerIndex(unsigned int i, float leftPercent, float rightPercent);
 };
 

@@ -9,6 +9,19 @@
 
 #include <iostream>
 
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#if (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/)
+#include <XInput.h>
+#pragma comment(lib,"xinput.lib")
+#else
+#include <XInput.h>
+#pragma comment(lib,"xinput9_1_0.lib")
+#endif
+
+
 Input* Input::input = nullptr;
 
 void Input::Initialise()
@@ -99,8 +112,9 @@ void Input::GUI()
 		}
 	}
 	
-	for (int i = 0; i < inputDevices.size(); i++)
+	for (unsigned long i = 0; i < inputDevices.size(); i++)
 	{
+		std::string tag = Utilities::PointerToString(inputDevices[i]);
 		if (ImGui::CollapsingHeader(("#" + std::to_string(i)).c_str())) {
 			glm::vec2 move = inputDevices[i]->getMove();
 			glm::vec2 look = inputDevices[i]->getLook();
@@ -109,15 +123,47 @@ void Input::GUI()
 
 			ImGui::BeginDisabled();
 
-			ImGui::DragFloat2(("Move##" + Utilities::PointerToString(inputDevices[i])).c_str(), &(move.x));
-			ImGui::DragFloat2(("Look##" + Utilities::PointerToString(inputDevices[i])).c_str(), &(look.x));
-			ImGui::DragFloat(("Left Trigger##" + Utilities::PointerToString(inputDevices[i])).c_str(), &leftTrigger);
-			ImGui::DragFloat(("Right Trigger##" + Utilities::PointerToString(inputDevices[i])).c_str(), &rightTrigger);
+			ImGui::DragFloat2(("Move##" + tag).c_str(), &(move.x));
+			ImGui::DragFloat2(("Look##" + tag).c_str(), &(look.x));
+			ImGui::DragFloat(("Left Trigger##" + tag).c_str(), &leftTrigger);
+			ImGui::DragFloat(("Right Trigger##" + tag).c_str(), &rightTrigger);
 				
 			ImGui::EndDisabled();
+
+			if (ImGui::Button(("Test Vibration for input index##" + tag).c_str())) {
+				SetVibrationOfControllerIndex(i, 100.0f, 100.0f);
+			}
+			ImGui::SameLine();
+			if (ImGui::Button(("Stop  Vibration for input index##" + tag).c_str())) {
+				SetVibrationOfControllerIndex(i, 0.0f, 0.0f);
+			}
+
 		}
 	}
 	ImGui::End();
+}
+
+void Input::SetVibrationOfControllerIndex(unsigned int i, float leftPercent, float rightPercent)
+{
+	DWORD dwResult;
+
+	XINPUT_STATE state;
+	ZeroMemory(&state, sizeof(XINPUT_STATE));
+
+	// Simply get the state of the controller from XInput.
+	dwResult = XInputGetState(i, &state);
+
+	if (dwResult != ERROR_SUCCESS)
+	{
+		return;
+	}
+
+	XINPUT_VIBRATION vibration;
+	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
+	vibration.wLeftMotorSpeed = leftPercent / 100.0f * 65535; // use any value between 0-65535 here
+	vibration.wRightMotorSpeed = rightPercent / 100.0f * 65535; // use any value between 0-65535 here
+	XInputSetState(i, &vibration);
+
 }
 
 void Input::AddGamepad(int id)
