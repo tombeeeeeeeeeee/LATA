@@ -27,23 +27,13 @@ float RigidBody::AddRotationalImpulse(float impulse)
 	return angularVel;
 }
 
-glm::vec2 RigidBody::AddDepen(glm::vec2 depen)
+glm::vec2 RigidBody::AddDepen(glm::vec2 depenNormal, float depth)
 {
-	if (abs(depen.x) + abs(depen.y) <= 0.000001f) return netDepen;
-	if (glm::dot(depen, netDepen) <= 0.000001f)
+	float amountAlreadyDepened = glm::dot(depenNormal, netDepen);
+	float changeInNet = depth - amountAlreadyDepened;
+	if (changeInNet > 0)
 	{
-		netDepen = depen + netDepen;
-	}
-	else
-	{
-		glm::vec2 normalNet = glm::normalize(netDepen);
-		float amountAlreadyDepened = glm::dot(normalNet, depen);
-		glm::vec2 changeInNet = netDepen - amountAlreadyDepened * normalNet;
-		if (glm::dot(changeInNet, netDepen) < 0)
-		{
-			netDepen = depen;
-		}
-		else netDepen = changeInNet + depen;
+		netDepen += depenNormal * changeInNet;
 	}
 	return netDepen;
 }
@@ -108,6 +98,7 @@ void RigidBody::GUI()
 		ImGui::BeginDisabled();
 		ImGui::DragFloat2("Velocity", &vel[0]);
 		ImGui::DragFloat2("Accel", &accel[0]);
+		ImGui::DragFloat2("Depen", &netDepen[0]);
 		ImGui::EndDisabled();
 		if (ImGui::Button("Kill Movement")) vel = accel = {0.0f,0.0f};
 
