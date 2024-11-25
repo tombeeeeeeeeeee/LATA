@@ -105,7 +105,6 @@ void main()
 	), 0, 1);
     Lo *= texture(lightLerp, lerpAmount.rr).rgb;
     Lo *= ShadowCalculation();
-    Lo *= ScreenSpaceShadows();
 	finalColour = vec4(Lo, 1.0);
 	return;
 }

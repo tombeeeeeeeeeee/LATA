@@ -76,41 +76,41 @@ void PhysicsSystem::CollisionCheckPhase(
 	transformsInScene = &transforms;
 	rigidBodiesInScene = &rigidBodies;
 	collidersInScene = &colliders;
-	
-	for (int iteratorNumber = 0; iteratorNumber < collisionItterations; iteratorNumber++)
+
+	std::vector<CollisionPacket> collisions;
+	for (auto i = rigidBodies.begin(); i != rigidBodies.end(); i++)
 	{
-		std::vector<CollisionPacket> collisions;
-		for (auto i = rigidBodies.begin(); i != rigidBodies.end(); i++)
+		if ((*i).second.isStatic) continue;
+		for (auto j = rigidBodies.begin(); j != rigidBodies.end(); j++)
 		{
-			if((*i).second.isStatic) continue;
-			for (auto j = rigidBodies.begin(); j != rigidBodies.end(); j++)
+			GetCollisions(
+				&i->second, &j->second,
+				&transforms[i->first], &transforms[j->first],
+				collisions);
+		}
+
+		if (!i->second.isStatic)
+		{
+			for (auto k = colliders.begin(); k != colliders.end(); k++)
 			{
-				if (i->second.isStatic && j->second.isStatic) continue;
 				GetCollisions(
-					&i->second, &j->second,
-					&transforms[i->first], &transforms[j->first],
+					&i->second, k->second,
+					&transforms[i->first], &transforms[k->first],
 					collisions);
 			}
-
-			if (!i->second.isStatic)
-			{
-				for (auto k = colliders.begin(); k != colliders.end(); k++)
-				{
-					GetCollisions(
-						&i->second, k->second,
-						&transforms[i->first], &transforms[k->first],
-						collisions);
-				}
-			}
 		}
+	}
 
-		for (int i = 0; i < collisions.size(); i++)
+	for (int iteratorNumber = 0; iteratorNumber < collisionItterations; iteratorNumber++)
+	{
+		for (auto& i : collisions)
 		{
-			CollisisonResolution(collisions[i]);
+			CollisisonResolution(i);
 		}
-
 		DepenertrationStep(transforms, rigidBodies);
 	}
+
+
 
 	if (displayAllColliders)
 	{
@@ -132,6 +132,7 @@ void PhysicsSystem::GetCollisions(
 {
 	float collidableDistance = a->maxVertDistance + b->maxVertDistance;
 	collidableDistance *= collidableDistance;
+	collidableDistance += 10.0f;
 	if (glm::dot(transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition(), transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition()) > collidableDistance ) return;
 	std::vector<Collider*> aCols = (*a->getColliders());
 	std::vector<Collider*> bCols = (*b->getColliders());
@@ -151,7 +152,7 @@ void PhysicsSystem::GetCollisions(
 						(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
 						a, b, transformA, transformB
 					);
-					if (collision.depth >= 0) collisions.push_back(collision);
+					if (collision.depth >= -10) collisions.push_back(collision);
 				}
 				else if (colliderB->getType() == ColliderType::plane)
 				{
@@ -159,7 +160,7 @@ void PhysicsSystem::GetCollisions(
 						(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
 						a, b, transformA, transformB
 					);
-					if (collision.depth >= 0) collisions.push_back(collision);
+					if (collision.depth >= -10) collisions.push_back(collision);
 				}
 				else if (colliderB->getType() == ColliderType::polygon)
 				{
@@ -167,7 +168,7 @@ void PhysicsSystem::GetCollisions(
 						(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
 						a, b, transformA, transformB
 					);
-					if (collision.depth >= 0) collisions.push_back(collision);
+					if (collision.depth >= -10) collisions.push_back(collision);
 				}
 			}
 			else if (colliderA->getType() == ColliderType::plane)
@@ -178,7 +179,7 @@ void PhysicsSystem::GetCollisions(
 						(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
 						b, a, transformB, transformA
 					);
-					if (collision.depth >= 0) collisions.push_back(collision);
+					if (collision.depth >= -10) collisions.push_back(collision);
 				}
 				else if (colliderB->getType() == ColliderType::polygon)
 				{
@@ -186,7 +187,7 @@ void PhysicsSystem::GetCollisions(
 						(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
 						b, a, transformB, transformA
 					);
-					if (collision.depth >= 0) collisions.push_back(collision);
+					if (collision.depth >= -10) collisions.push_back(collision);
 				}
 			}
 			else if (colliderA->getType() == ColliderType::polygon)
@@ -197,7 +198,7 @@ void PhysicsSystem::GetCollisions(
 						(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
 						a, b, transformA, transformB
 					);
-					if (collision.depth >= 0) collisions.push_back(collision);
+					if (collision.depth >= -10) collisions.push_back(collision);
 				}
 				else if (colliderB->getType() == ColliderType::plane)
 				{
@@ -205,7 +206,7 @@ void PhysicsSystem::GetCollisions(
 						(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
 						a, b, transformA, transformB
 					);
-					if (collision.depth >= 0) collisions.push_back(collision);
+					if (collision.depth >= -10) collisions.push_back(collision);
 				}
 				else if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
 				{
@@ -213,7 +214,7 @@ void PhysicsSystem::GetCollisions(
 						(PolygonCollider*)colliderB, (PolygonCollider*)colliderA,
 						b, a, transformB, transformA
 					);
-					if (collision.depth >= 0) collisions.push_back(collision);
+					if (collision.depth >= -10) collisions.push_back(collision);
 				}
 			}
 		}
@@ -224,7 +225,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 {
 	std::vector<Collider*> aCols = (*a->getColliders());
 	Collider* colliderB = b;
-	if (glm::dot(transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition(), transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition()) > minCollisonDistance * minCollisonDistance) return;
+	if (glm::dot(transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition(), transformA->get2DGlobalPosition() - transformB->get2DGlobalPosition()) > (minCollisonDistance * minCollisonDistance) + 10.0f) return;
 	for (Collider* colliderA : aCols)
 	{
 		if (!GetCollisionLayerBool(colliderA->collisionLayer, colliderB->collisionLayer))
@@ -238,7 +239,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
 					a, &dummyRigidBody, transformA, transformB
 				);
-				if (collision.depth >= 0)
+				if (collision.depth >= -10)
                     collisions.push_back(collision);
 			}
 			else if (colliderB->getType() == ColliderType::plane)
@@ -247,7 +248,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
 					a, &dummyRigidBody, transformA, transformB
 				);
-				if (collision.depth >= 0)
+				if (collision.depth >= -10)
                     collisions.push_back(collision);
 			}
 			else if (colliderB->getType() == ColliderType::polygon)
@@ -256,7 +257,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
 					a, &dummyRigidBody, transformA, transformB
 				);
-				if (collision.depth >= 0)
+				if (collision.depth >= -10)
                     collisions.push_back(collision);
 			}
 		}
@@ -268,7 +269,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
 					&dummyRigidBody, a, transformB, transformA
 				);
-				if (collision.depth >= 0)
+				if (collision.depth >= -10)
                     collisions.push_back(collision);
 			}
 			else if (colliderB->getType() == ColliderType::polygon)
@@ -277,7 +278,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
 					&dummyRigidBody, a, transformB, transformA
 				);
-				if (collision.depth >= 0)
+				if (collision.depth >= -10)
                     collisions.push_back(collision);
 			}
 		}
@@ -289,7 +290,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderA, (PolygonCollider*)colliderB,
 					a, &dummyRigidBody, transformA, transformB
 				);
-				if (collision.depth >= 0)
+				if (collision.depth >= -10)
 					collisions.push_back(collision);
 			}
 			else if (colliderB->getType() == ColliderType::plane)
@@ -298,7 +299,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
 					a, &dummyRigidBody, transformA, transformB
 				);
-				if (collision.depth >= 0)
+				if (collision.depth >= -10)
                     collisions.push_back(collision);
 			}
 			else if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
@@ -307,7 +308,7 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 					(PolygonCollider*)colliderB, (PolygonCollider*)colliderA,
 					&dummyRigidBody, a, transformB, transformA
 				);
-				if (collision.depth >= 0)
+				if (collision.depth >= -10)
                     collisions.push_back(collision);
 			}
 		}

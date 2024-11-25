@@ -73,6 +73,7 @@ public:
 	float playerCoef = 2.5f;
 
 	float slowedPercentage = 99.5f;
+	float enemySpawnHeight = 130.0f;
 
 	int explosiveEnemyHealth = 2;
 	float explosiveEnemyColliderRadius = 35.0f;
@@ -114,7 +115,7 @@ public:
 	void SpawnExplosive(glm::vec3 pos, std::string tag);
 	void SpawnMelee(glm::vec3 pos, std::string tag);
 	void SpawnRanged(glm::vec3 pos, std::string tag);
-
+	void SpawnExplosion(glm::vec3 pos);
 	void Update(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
