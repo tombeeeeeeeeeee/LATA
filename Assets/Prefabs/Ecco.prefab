@@ -28,32 +28,34 @@ sidewaysFrictionCoef = 65.0
 speedBoost = 12500.0
 speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
-speedBoostHPCost = 40
+speedBoostHPCost = 35
 speedBoostInDirectionOfBody = false
-speedDamage = 30
+speedDamage = 50
 speedKnockback = 1300.0
 speedReductionAfterDamaging = 450.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
 turningCircleScalar = 0.15000000596046448
 turningCircleScalarBoosting = 0.05999999865889549
-wheelDirection = [ 0.21587586402893066, -0.9764208793640137 ]
+wheelDirection = [ 0.1518537849187851, -0.9884030222892761 ]
 wheelTurnSpeed = 4.400000095367432
 
     [ecco.boostUI]
     backgroundColour = [ 0.21960784494876862, 0.3907727301120758, 0.4274509847164154 ]
     foregroundColour = [ 0.4503093361854553, 0.8141592741012573, 0.8034577369689941 ]
+    horizontal = true
     offset = [ -0.24999995529651642, -0.9284999966621399 ]
     scale = [ 0.11200003325939178, 0.045499980449676514 ]
 
     [ecco.healthUI]
     backgroundColour = [ 0.21960784494876862, 0.32156863808631897, 0.4274509847164154 ]
     foregroundColour = [ 0.250980406999588, 0.4901960790157318, 1.0 ]
+    horizontal = true
     offset = [ -0.5109999775886536, -0.8840000033378601 ]
     scale = [ 0.37299999594688416, 0.09000000357627869 ]
 
 [health]
-currHealth = 79
+currHealth = 200
 guid = '2091576976424546894'
 maxHealth = 200
 
@@ -65,7 +67,7 @@ modelGuid = '2140790440003113620'
 
 [rigidBody]
 accel = [ 0.0, 0.0 ]
-angularVel = -0.0
+angularVel = 0.0
 elasticicty = 0.0
 guid = '2091576976424546894'
 invMass = 0.10000000149011612
@@ -74,8 +76,8 @@ isStatic = false
 netDepen = [ 0.0, 0.0 ]
 netForce = [ 0.0, 0.0 ]
 vel = [
-    5.736093209509667e-24,
-    -2.5944764270279714e-23
+    2.5667178317228734e-23,
+    -9.990967540834807e-24
 ]
 
     [[rigidBody.colliders]]
@@ -104,11 +106,11 @@ prefabBase = '2091576976424546894'
 prefabStatus = 1
 
 [transform]
-euler = [ -179.9994659423828, 12.460491180419922, -899.9987182617188 ]
+euler = [ -179.99853515625, 68.72657775878906, -899.9974975585938 ]
 guid = '2091576976424546894'
 isStatic = false
-position = [ 2276.78466796875, 0.0, -291.2608337402344 ]
-quaternion = [ 0.10852492600679398, -1.0681524145184085e-05, 0.9940866231918335, -3.507683004499995e-06 ]
+position = [ 2215.199462890625, 0.0, 737.8798828125 ]
+quaternion = [ -0.5644684433937073, 1.107333355321316e-05, -0.8254311084747314, -1.9438605249888496e-06 ]
 scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
 
 [[children]]
