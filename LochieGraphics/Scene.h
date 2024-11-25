@@ -107,6 +107,11 @@ public:
 	virtual void OnKey(int key, int action) {};
 
 	virtual void GUI() {};
+	bool doSteering = true;
+	bool doCollisions = true;
+	bool doLOS = true;
+	bool doBroadphase = true;
+	bool doAnimations = true;
 
 	virtual void OnWindowResize() {};
 

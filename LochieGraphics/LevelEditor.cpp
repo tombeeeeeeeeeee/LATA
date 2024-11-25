@@ -371,7 +371,8 @@ void LevelEditor::Update(float delta)
 	);
 
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
-	physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
+	if(doCollisions)
+		physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 
 	if (input.inputDevices.size() > 0)
 	{
@@ -492,6 +493,8 @@ void LevelEditor::GUI()
 		bool multiplayer = singlePlayer == 0;
 		bool playAsSync = singlePlayer == 1;
 		bool playAsEcco = singlePlayer == 2;
+
+		ImGui::Checkbox("Do Collision Phase", &doCollisions);
 
 		if (ImGui::Checkbox("Play Multiplayer", &multiplayer))
 		{
