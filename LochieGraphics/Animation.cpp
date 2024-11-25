@@ -90,10 +90,10 @@ const ModelHierarchyInfo* Animation::getRootNode() const
 	return &model->root;
 }
 
-void Animation::GUI()
+void Animation::GUI(std::string label)
 {
 	std::string tag = Utilities::PointerToString(this);
-	if (ImGui::CollapsingHeader(("Animation##" + tag).c_str())) {
+	if (ImGui::CollapsingHeader((label + "##" + tag).c_str())) {
 		ImGui::Indent();
 		ImGui::DragFloat(("Duration##" + tag).c_str(), &duration);
 		ImGui::DragFloat(("Ticks Per Second##" + tag).c_str(), &ticksPerSecond);

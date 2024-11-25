@@ -67,7 +67,7 @@ public:
 	/// </summary>
 	/// <param name="node">The node to calculate the transform of</param>
 	/// <param name="parentTransform">The parent transformation</param>
-	virtual void CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 parentTransform);
+	virtual void CalculateBoneTransform(const ModelHierarchyInfo* node, const glm::mat4& parentTransform);
 
 	/// <summary>
 	/// Returns a reference to the bone matrices.

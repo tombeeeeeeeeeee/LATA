@@ -24,7 +24,7 @@ public:
     float getOtherTime() const;
 
     void UpdateAnimation(float delta) override;
-    void CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 parentTransform) override;
+    void CalculateBoneTransform(const ModelHierarchyInfo* node, const glm::mat4& parentTransform) override;
 
     Animator::Type getType() const override;
 

@@ -58,11 +58,10 @@ float Animator::getTime() const
     return currentTime;
 }
 
-void Animator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 parentTransform)
+void Animator::CalculateBoneTransform(const ModelHierarchyInfo* node, const glm::mat4& parentTransform)
 {
-    std::string nodeName = node->name;
     glm::mat4 globalTransformation;
-    Bone* Bone = currentAnimation->FindBone(nodeName);
+    Bone* Bone = currentAnimation->FindBone(node->name);
 
     if (Bone)
     {
@@ -74,12 +73,10 @@ void Animator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 
     }
 
     auto& boneInfoMap = currentAnimation->model->boneInfoMap;
-    auto boneInfo = boneInfoMap.find(nodeName);
+    auto boneInfo = boneInfoMap.find(node->name);
     if (boneInfo != boneInfoMap.end())
     {
-        int index = boneInfo->second.ID;
-        glm::mat4 offset = boneInfo->second.offset;
-        finalBoneMatrices[index] = globalTransformation * offset;
+        finalBoneMatrices[boneInfo->second.ID] = globalTransformation * boneInfo->second.offset;
     }
 
     // Recursively call on children
@@ -180,7 +177,7 @@ void Animator::BaseGUI()
         }
     }
     if (currentAnimation) {
-        currentAnimation->GUI();
+        currentAnimation->GUI("Current Animation");
     }
     ImGui::DragFloat(("Animation Time##" + tag).c_str(), &currentTime);
 

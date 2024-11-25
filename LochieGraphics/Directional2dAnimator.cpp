@@ -51,7 +51,7 @@ void Directional2dAnimator::UpdateAnimation(float delta)
 	CalculateBoneTransform(currentAnimation->getRootNode(), glm::mat4(1.0f));
 }
 
-void Directional2dAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 parentTransform)
+void Directional2dAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, const glm::mat4& parentTransform)
 {
 	// TODO: All bone matrices get updated even if they don't need to
 	std::string nodeName = node->name;

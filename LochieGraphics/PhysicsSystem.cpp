@@ -6,6 +6,7 @@
 #include "Collision.h"
 #include "CollisionPacket.h"
 #include "CollisionFunctions.h"
+#include "RenderSystem.h"
 
 #include "Serialisation.h"
 
@@ -63,6 +64,7 @@ void PhysicsSystem::DepenertrationStep(std::unordered_map<unsigned long long, Tr
 	{
 		if (i.second.isStatic) continue;
 		transforms[i.first].setPosition(transforms[i.first].getPosition() + glm::vec3(i.second.netDepen.x, 0.0f, i.second.netDepen.y));
+		RenderSystem::lines.DrawLineSegment(transforms[i.first].getPosition(), transforms[i.first].getPosition() + 100.0f * glm::vec3(i.second.netDepen.x, 0.0f, i.second.netDepen.y));
 		i.second.netDepen = { 0.0f, 0.0f };
 	}
 }
@@ -83,6 +85,7 @@ void PhysicsSystem::CollisionCheckPhase(
 		if ((*i).second.isStatic) continue;
 		for (auto j = rigidBodies.begin(); j != rigidBodies.end(); j++)
 		{
+			if (i->first == j->first) continue;
 			GetCollisions(
 				&i->second, &j->second,
 				&transforms[i->first], &transforms[j->first],

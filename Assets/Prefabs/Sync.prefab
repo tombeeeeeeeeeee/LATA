@@ -1,5 +1,5 @@
 [health]
-currHealth = 0
+currHealth = 100
 guid = '2091576977596946314'
 maxHealth = 100
 
@@ -24,7 +24,7 @@ vel = [ 0.0, 0.0 ]
     verts = [ [ 0.0, 0.0 ] ]
 
 [sceneObject]
-children = [ '2236905023818184222', '2237067691946253859' ]
+children = [ '2236905023818184222' ]
 guid = '2091576977596946314'
 name = 'Sync'
 parent = '0'
@@ -33,7 +33,7 @@ prefabBase = '2091576977596946314'
 prefabStatus = 1
 
 [sync]
-barrelOffset = [ -75.0, 70.0, 5.0 ]
+barrelOffset = [ -37.0, 96.0, 12.0 ]
 eccoRefractionAngle = 80.0
 eccoRefractionCount = 5
 enemyPierceCount = 99
@@ -79,11 +79,11 @@ stopSlowTime = 1.5
     scale = [ 0.3779999911785126, 0.05299999937415123 ]
 
 [transform]
-euler = [ -360.0, 182.59628295898438, 0.0 ]
+euler = [ -360.0, 123.94510650634766, 0.0 ]
 guid = '2091576977596946314'
 isStatic = false
-position = [ 3454.355712890625, -0.016998419538140297, -386.99072265625 ]
-quaternion = [ 0.022654904052615166, -1.9805546092044324e-09, -0.9997433423995972, -8.740033763388055e-08 ]
+position = [ 2819.580322265625, -0.016998419538140297, -716.98828125 ]
+quaternion = [ -0.4698944687843323, 4.107947759734998e-08, -0.8827226161956787, -7.717006411667171e-08 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[children]]
@@ -92,7 +92,7 @@ children = []
     [children.animator]
     currentAnimationGUID = '15148335964655264906'
     guid = '2236905023818184222'
-    otherCurrentAnimationGUID = '15148335964655264906'
+    otherCurrentAnimationGUID = '0'
     type = '1'
 
     [children.modelRenderer]
@@ -117,29 +117,3 @@ children = []
     position = [ 0.0, 0.0, 0.0 ]
     quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
     scale = [ 1.0, 1.0, 1.0 ]
-
-[[children]]
-children = []
-
-    [children.modelRenderer]
-    guid = '2237067691946253859'
-    materialTint = [ 0.0, 0.32743364572525024, 0.11880327016115189 ]
-    materials = [ '0' ]
-    modelGuid = '2236096697336878089'
-
-    [children.sceneObject]
-    children = []
-    guid = '2237067691946253859'
-    name = 'Gundam'
-    parent = '2091576977596946314'
-    parts = 2
-    prefabBase = '2237067691946253859'
-    prefabStatus = 0
-
-    [children.transform]
-    euler = [ 0.890749990940094, -2.2175400257110596, -21.890897750854492 ]
-    guid = '2237067691946253859'
-    isStatic = true
-    position = [ -22.592910766601562, 1.9634391069412231, -7.275335788726807 ]
-    quaternion = [ 0.9816234707832336, 0.0039562988094985485, -0.0204735416918993, -0.18968532979488373 ]
-    scale = [ 0.9999995231628418, 0.9999975562095642, 0.9999959468841553 ]

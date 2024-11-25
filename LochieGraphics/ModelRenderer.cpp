@@ -105,8 +105,16 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 		shader->setVec3("materialColour", overallColour);
 
 		if (animator) {
-			std::vector<glm::mat4> boneMatrices = animator->getFinalBoneMatrices();
-			for (int i = 0; i < boneMatrices.size(); i++)
+			const std::vector<glm::mat4>& boneMatrices = animator->getFinalBoneMatrices();
+			unsigned int count;
+			if (animator->getAnimation()) {
+				count = animator->getAnimation()->bones.size();
+			}
+			else {
+				count = boneMatrices.size();
+			}
+
+			for (int i = 0; i < count; i++)
 			{
 				shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices.at(i));
 			}
