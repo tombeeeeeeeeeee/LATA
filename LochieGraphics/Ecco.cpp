@@ -421,7 +421,7 @@ Ecco::Ecco(toml::table table)
 	speedReductionAfterDamaging = Serialisation::LoadAsFloat(table["speedReductionAfterDamaging"]);
 	speedBoostDuration = Serialisation::LoadAsFloat(table["speedBoostDuration"]);
 	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
-	speedBoostInDirectionOfBody = Serialisation::LoadAsInt(table["speedBoostInDirectionOfBody"]);
+	speedBoostInDirectionOfBody = Serialisation::LoadAsBool(table["speedBoostInDirectionOfBody"]);
 	boostDamage = Serialisation::LoadAsInt(table["boostDamage"]);
 	speedKnockback = Serialisation::LoadAsFloat(table["speedKnockback"], 10.0f);
 	boostKnockback = Serialisation::LoadAsFloat(table["boostKnockback"], 10.0f);

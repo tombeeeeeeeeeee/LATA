@@ -85,7 +85,10 @@ std::string Serialisation::LoadAsString(toml::node& toml, std::string failedRead
 
 int Serialisation::LoadAsInt(toml::node_view<toml::node> toml)
 {
-    if (!toml) { return 0; }
+    if (!toml) {
+        std::cout << "Failed to load int\n";
+        return 0;
+    }
     auto asInt = toml.as_integer();
     if (!asInt) {
         std::cout << "Failed to load int\n";
