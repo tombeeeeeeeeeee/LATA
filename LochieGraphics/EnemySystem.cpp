@@ -342,12 +342,13 @@ void EnemySystem::Steering(
     float delta
 )
 {
-    if (SceneManager::scene->doSteering)
+    if (false)
     {
         for (auto& enemyPair : enemies)
         {
-            glm::vec3 pos = transforms[enemyPair.first].getGlobalPosition();
-            transforms[enemyPair.first].setPosition({pos.x, enemySpawnHeight, pos.z});
+            glm::vec3 pos = transforms[enemyPair.first].getPosition();
+            //transforms[enemyPair.first].setPosition({pos.x, enemySpawnHeight, pos.z});
+
             if (enemyPair.second.inAbility)
             {
                 if (enemyPair.second.type & (int)EnemyType::explosive)
@@ -474,7 +475,6 @@ void EnemySystem::Steering(
                 }
             }
         }
-    }
 
     for (auto& enemyPair : enemies)
     {
@@ -508,6 +508,7 @@ void EnemySystem::Steering(
         glm::vec3 eulers = transforms[enemyPair.first].getEulerRotation();
         eulers.y = angle;
         transforms[enemyPair.first].setEulerRotation(eulers);
+    }
     }
 
 }

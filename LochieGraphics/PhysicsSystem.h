@@ -11,6 +11,9 @@ struct CollisionPacket;
 
 class PhysicsSystem
 {
+private:
+	float collisionBuffer = 10.0f;
+
 public:
 	PhysicsSystem() {};
 	PhysicsSystem(toml::table table);
@@ -39,7 +42,7 @@ public:
 		Transform* transformA, Transform* transformB,
 		std::vector<CollisionPacket>& collisions
 	);
-
+	 
 	void GetCollisions(
 		RigidBody* a, Collider* b,
 		Transform* transformA, Transform* transformB,
