@@ -1412,6 +1412,7 @@ void RenderSystem::RenderParticles(
 void RenderSystem::RenderBeams(float delta)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
+    glDepthMask(GL_FALSE);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1443,7 +1444,9 @@ void RenderSystem::RenderBeams(float delta)
             i = beams.erase(i);
         else
             ++i;
+
     }
+    glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

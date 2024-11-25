@@ -342,8 +342,7 @@ void EnemySystem::Steering(
     float delta
 )
 {
-    if (false)
-    {
+
         for (auto& enemyPair : enemies)
         {
             glm::vec3 pos = transforms[enemyPair.first].getPosition();
@@ -508,7 +507,6 @@ void EnemySystem::Steering(
         glm::vec3 eulers = transforms[enemyPair.first].getEulerRotation();
         eulers.y = angle;
         transforms[enemyPair.first].setEulerRotation(eulers);
-    }
     }
 
 }
