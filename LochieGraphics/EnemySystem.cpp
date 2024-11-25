@@ -65,6 +65,8 @@ void EnemySystem::Load(toml::table table)
     distanceToFlee = Serialisation::LoadAsFloat(table["distanceToFlee"]);
     rangedEnemyModel = Serialisation::LoadAsString(table["rangedEnemyModel"]);
     rangedEnemyMaterialPath = Serialisation::LoadAsString(table["rangedEnemyMaterialPath"]);
+
+    enemySpawnHeight = Serialisation::LoadAsFloat(table["enemySpawnHeight"], 135.0f);
 }
 
 void EnemySystem::Start(
@@ -125,7 +127,7 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos, std::string tag)
     );
     enemy->setAnimator(new Animator(explosiveEnemyIdle));
     enemy->transform()->setParent(nullptr);
-    enemy->transform()->setPosition(pos);
+    enemy->transform()->setPosition(pos + glm::vec3{0.0f, enemySpawnHeight, 0.0f});
     enemy->transform()->setStatic(false);
     enemy->health()->currHealth = explosiveEnemyHealth;
     enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy));
@@ -147,7 +149,7 @@ void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
     );
     enemy->setAnimator(new Animator(meleeEnemyIdle));
     enemy->transform()->setParent(nullptr);
-    enemy->transform()->setPosition(pos);
+    enemy->transform()->setPosition(pos + glm::vec3{0.0f, enemySpawnHeight, 0.0f});
     enemy->transform()->setStatic(false);
     enemy->health()->currHealth = meleeEnemyHealth;
     enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) );
@@ -171,12 +173,15 @@ void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
     enemy->setAnimator(new Animator(rangedEnemyIdle));
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setStatic(false);
-    enemy->transform()->setPosition(pos);
+    enemy->transform()->setPosition(pos + glm::vec3{0.0f, enemySpawnHeight, 0.0f});
     enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) );
     enemy->rigidbody()->isStatic = false;
 }
 
+void EnemySystem::SpawnExplosion(glm::vec3 pos)
+{
 
+}
 
 void EnemySystem::LineOfSightAndTargetCheck(
     std::unordered_map<unsigned long long, Enemy>& enemies,
@@ -337,87 +342,73 @@ void EnemySystem::Steering(
     float delta
 )
 {
-    for (auto& enemyPair : enemies)
+    if (SceneManager::scene->doSteering)
     {
-
-        if (enemyPair.second.inAbility)
+        for (auto& enemyPair : enemies)
         {
-            if (enemyPair.second.type & (int)EnemyType::explosive)
+            glm::vec3 pos = transforms[enemyPair.first].getGlobalPosition();
+            transforms[enemyPair.first].setPosition({pos.x, enemySpawnHeight, pos.z});
+            if (enemyPair.second.inAbility)
             {
-                glm::vec2 playerForce = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
-                playerForce *= 100 * playerCoef;
-                enemyPair.second.influenceThisFrame += playerForce;
-                if(drawForceLines) RenderSystem::lines.DrawLineSegement2D(transforms[enemyPair.first].get2DGlobalPosition(), transforms[enemyPair.first].get2DGlobalPosition() + playerForce * 10.0f, { 1,1,0 }, 100);
+                if (enemyPair.second.type & (int)EnemyType::explosive)
+                {
+                    glm::vec2 playerForce = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
+                    playerForce *= 100 * playerCoef;
+                    enemyPair.second.influenceThisFrame += playerForce;
+                    if(drawForceLines) RenderSystem::lines.DrawLineSegement2D(transforms[enemyPair.first].get2DGlobalPosition(), transforms[enemyPair.first].get2DGlobalPosition() + playerForce * 10.0f, { 1,1,0 }, 100);
+                }
+                else
+                {
+                    float length = glm::length(rigidBodies[enemyPair.first].vel);
+                    if (length == 0.0f) continue;
+                    float slowedLength = length * slowedPercentage / 100;
+                    enemyPair.second.influenceThisFrame = -glm::normalize(rigidBodies[enemyPair.first].vel) * fminf(length, slowedLength);
+                }
             }
             else
             {
-                float length = glm::length(rigidBodies[enemyPair.first].vel);
-                if (length == 0.0f) continue;
-                float slowedLength = length * slowedPercentage / 100;
-                enemyPair.second.influenceThisFrame = -glm::normalize(rigidBodies[enemyPair.first].vel) * fminf(length, slowedLength);
-            }
-        }
-        else
-        {
-            if (enemyPair.second.type & (int)EnemyType::spawnSpot) continue;
-            glm::vec2 avgPos = { 0.0f, 0.0f };
-            glm::vec2 avgVel = { 0.0f, 0.0f };
+                if (enemyPair.second.type & (int)EnemyType::spawnSpot) continue;
+                glm::vec2 avgPos = { 0.0f, 0.0f };
+                glm::vec2 avgVel = { 0.0f, 0.0f };
 
-            int totalNeighbours = 0;
+                int totalNeighbours = 0;
 
-            glm::vec2 enemyPos = transforms[enemyPair.first].get2DGlobalPosition();
+                glm::vec2 enemyPos = transforms[enemyPair.first].get2DGlobalPosition();
 
-            for (auto& otherEnemyPair : enemies)
-            {
-                if (otherEnemyPair.second.type & (int)EnemyType::spawnSpot) continue;
-                if (otherEnemyPair.second.inAbility) continue;
-                if (otherEnemyPair.second.fleeing != enemyPair.second.fleeing) continue;
-
-                glm::vec2 otherEnemyPos = transforms[otherEnemyPair.first].get2DGlobalPosition();
-                if (enemyPair.first == otherEnemyPair.first) continue;
-                glm::vec2 displacement = otherEnemyPos - enemyPos;
-                float distanceSq = glm::dot(displacement, displacement);
-
-                if (distanceSq <= perceptionRadius * perceptionRadius)
+                for (auto& otherEnemyPair : enemies)
                 {
-                    avgPos += otherEnemyPos;
-                    avgVel += otherEnemyPair.second.boidVelocity;
+                    if (otherEnemyPair.second.type & (int)EnemyType::spawnSpot) continue;
+                    if (otherEnemyPair.second.inAbility) continue;
+                    if (otherEnemyPair.second.fleeing != enemyPair.second.fleeing) continue;
 
-                    totalNeighbours++;
+                    glm::vec2 otherEnemyPos = transforms[otherEnemyPair.first].get2DGlobalPosition();
+                    if (enemyPair.first == otherEnemyPair.first) continue;
+                    glm::vec2 displacement = otherEnemyPos - enemyPos;
+                    float distanceSq = glm::dot(displacement, displacement);
 
-                    if (distanceSq <= separationRadius * separationRadius && distanceSq != 0)
+                    if (distanceSq <= perceptionRadius * perceptionRadius)
                     {
-                        glm::vec2 otherToSelf = enemyPos - otherEnemyPos;
-                        float distance = glm::length(otherToSelf);
-                        float strength = 1.0f - (distance / separationRadius);
+                        avgPos += otherEnemyPos;
+                        avgVel += otherEnemyPair.second.boidVelocity;
 
-                        enemyPair.second.influenceThisFrame += (otherToSelf / distance) * strength * seperationCoef;
+                        totalNeighbours++;
+
+                        if (distanceSq <= separationRadius * separationRadius && distanceSq != 0)
+                        {
+                            glm::vec2 otherToSelf = enemyPos - otherEnemyPos;
+                            float distance = glm::length(otherToSelf);
+                            float strength = 1.0f - (distance / separationRadius);
+
+                            enemyPair.second.influenceThisFrame += (otherToSelf / distance) * strength * seperationCoef;
+                        }
                     }
                 }
-            }
-            if (drawForceLines)
-            RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + enemyPair.second.influenceThisFrame * 10.0f, { 0,0,1 }, 100);
-            float enemyLOSNormalMultiplier = 10.0f;
-            if (enemyPair.second.hasLOS)
-            {
-                enemyLOSNormalMultiplier = 1.0f;
-                glm::vec2 tooTarget = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
-                if (glm::dot(tooTarget, tooTarget) > 0)
+                if (drawForceLines)
+                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + enemyPair.second.influenceThisFrame * 10.0f, { 0,0,1 }, 100);
+                float enemyLOSNormalMultiplier = 10.0f;
+                if (enemyPair.second.hasLOS)
                 {
-                    glm::vec2 playerForce = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
-                    playerForce *= 100 * playerCoef * (enemyPair.second.fleeing ? -1 : 1);
-                    enemyPair.second.influenceThisFrame += playerForce;
-                    if (drawForceLines)
-                    {
-                        RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + playerForce * 10.0f, { 1,1,0 }, 100);
-                    }
-                }
-
-            }
-            else if(enemyPair.second.hasTarget)
-            {
-                if (glm::length(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition()) > 20.0f)
-                {
+                    enemyLOSNormalMultiplier = 1.0f;
                     glm::vec2 tooTarget = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
                     if (glm::dot(tooTarget, tooTarget) > 0)
                     {
@@ -429,40 +420,58 @@ void EnemySystem::Steering(
                             RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + playerForce * 10.0f, { 1,1,0 }, 100);
                         }
                     }
+
                 }
-                else
+                else if(enemyPair.second.hasTarget)
                 {
-                    enemyPair.second.hasTarget = false;
+                    if (glm::length(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition()) > 20.0f)
+                    {
+                        glm::vec2 tooTarget = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
+                        if (glm::dot(tooTarget, tooTarget) > 0)
+                        {
+                            glm::vec2 playerForce = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
+                            playerForce *= 100 * playerCoef * (enemyPair.second.fleeing ? -1 : 1);
+                            enemyPair.second.influenceThisFrame += playerForce;
+                            if (drawForceLines)
+                            {
+                                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + playerForce * 10.0f, { 1,1,0 }, 100);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        enemyPair.second.hasTarget = false;
+                    }
                 }
-            }
 
-            glm::vec2 normalForce = GetNormalFlowInfluence(enemyPos) * normalCoef * enemyLOSNormalMultiplier;
-            enemyPair.second.influenceThisFrame += normalForce;
+                glm::vec2 normalForce = GetNormalFlowInfluence(enemyPos) * normalCoef * enemyLOSNormalMultiplier;
+                enemyPair.second.influenceThisFrame += normalForce;
 
-            if (drawForceLines)
-            {
-                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + normalForce * 10.0f, { 1,0,0 }, 100);
-            }
-            if (totalNeighbours == 0) continue;
+                if (drawForceLines)
+                {
+                    RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + normalForce * 10.0f, { 1,0,0 }, 100);
+                }
+                if (totalNeighbours == 0) continue;
 
-            avgPos /= totalNeighbours;
-            avgVel /= totalNeighbours;
-            //Todo: enemyPair.second.lastTargetPos
+                avgPos /= totalNeighbours;
+                avgVel /= totalNeighbours;
+                //Todo: enemyPair.second.lastTargetPos
 
-            glm::vec2 alignmentForce = avgVel * alignmentCoef;
-            glm::vec2 cohesionForce = (avgPos - enemyPos) * cohesionCoef;
+                glm::vec2 alignmentForce = avgVel * alignmentCoef;
+                glm::vec2 cohesionForce = (avgPos - enemyPos) * cohesionCoef;
 
-            if (drawForceLines)
-            {
-                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + cohesionForce * 10.0f,  { 0,1,0 }, 100);
-                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + alignmentForce * 10.0f, { 0,1,1 }, 100);
-            }
+                if (drawForceLines)
+                {
+                    RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + cohesionForce * 10.0f,  { 0,1,0 }, 100);
+                    RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + alignmentForce * 10.0f, { 0,1,1 }, 100);
+                }
 
-            enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce;
+                enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce;
 
-            if (isnan(enemyPair.second.influenceThisFrame.x))
-            {
-                std::cout << "Error Here" << std::endl;
+                if (isnan(enemyPair.second.influenceThisFrame.x))
+                {
+                    std::cout << "Error Here" << std::endl;
+                }
             }
         }
     }
@@ -547,13 +556,13 @@ void EnemySystem::Steering(
                     switch (enemyType)
                     {
                     case 0:
-                        SpawnExplosive(transforms[spawnPair.first].getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
+                        SpawnExplosive(transforms[spawnPair.first].getGlobalPosition(), spawner->enemyTriggerTag);
                         break;
                     case 1:
-                        SpawnMelee(transforms[spawnPair.first].getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
+                        SpawnMelee(transforms[spawnPair.first].getGlobalPosition(), spawner->enemyTriggerTag);
                         break;
                     case 2:
-                        SpawnRanged(transforms[spawnPair.first].getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
+                        SpawnRanged(transforms[spawnPair.first].getGlobalPosition(), spawner->enemyTriggerTag);
                         break;
                     }
                     for (auto& child : transforms[spawnPair.first].getChildren())
@@ -561,13 +570,13 @@ void EnemySystem::Steering(
                         switch (enemyType)
                         {
                         case 0:
-                            SpawnExplosive(child->getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
+                            SpawnExplosive(child->getGlobalPosition(), spawner->enemyTriggerTag);
                             break;
                         case 1:
-                            SpawnMelee(child->getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
+                            SpawnMelee(child->getGlobalPosition(), spawner->enemyTriggerTag);
                             break;
                         case 2:
-                            SpawnRanged(child->getGlobalPosition() + glm::vec3(0.0f, 135.0f, 0.0f), spawner->enemyTriggerTag);
+                            SpawnRanged(child->getGlobalPosition(), spawner->enemyTriggerTag);
                             break;
                         }
                     }
@@ -626,6 +635,7 @@ void EnemySystem::Update   (
             eccoPos, syncPos, delta
         );
 
+        if(SceneManager::scene->doLOS)
         LineOfSightAndTargetCheck(
             enemies,
             rigidbodies,
@@ -741,6 +751,7 @@ void EnemySystem::GUI()
     ImGui::DragFloat("Normal Coef", &normalCoef);
     ImGui::DragFloat("Player Coef", &playerCoef);
     ImGui::DragFloat("Slow Down When Not Boiding Percentage", &slowedPercentage);
+    ImGui::DragFloat("Enemy Height", &enemySpawnHeight);
 
     ImGui::DragFloat("Perception Radius", &perceptionRadius);
     ImGui::DragFloat("Separation Radius", &separationRadius);
@@ -810,6 +821,7 @@ toml::table EnemySystem::Serialise() const
                 { "distanceToFlee", distanceToFlee },
                 { "rangedEnemyModel", rangedEnemyModel },
                 { "rangedEnemyMaterialPath", rangedEnemyMaterialPath },
+                { "enemySpawnHeight", enemySpawnHeight },
     };
 }
 void EnemySystem::SaveAsGUI()

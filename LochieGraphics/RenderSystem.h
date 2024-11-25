@@ -211,6 +211,12 @@ private:
     void RenderComposite();
     void OutputBufferSetUp();
 
+    //void FrustumCulling(
+    //    std::unordered_map<unsigned long long, ModelRenderer>& renderers,
+    //    std::unordered_map<unsigned long long, Transform>& transforms,
+    //
+    //);
+
 
     unsigned int compositeFBO = 0;
     unsigned int bloomBuffer = 0;

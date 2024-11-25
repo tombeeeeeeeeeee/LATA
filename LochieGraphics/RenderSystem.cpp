@@ -952,7 +952,10 @@ void RenderSystem::RenderSpotLightShadowMaps(
     for (auto& pair : spotlights)
     {
         if (!pair.second.castsShadows) continue;
-        if (!frustum.IsOnFrustum(transforms[pair.first].getGlobalPosition(), pair.second.range * 900.0f)) continue;
+        if (!frustum.IsOnFrustum(transforms[pair.first].getGlobalPosition(), pair.second.range * 500.0f))
+        {
+            continue;
+        }
         
         glm::vec3 spotlightDir = transforms[pair.first].forward();
         glm::vec3 right = transforms[pair.first].right();
@@ -960,7 +963,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
 
         Frustum spotlightFrustum = Frustum(
             transforms[pair.first].getGlobalPosition(),
-            2.0f * acosf(pair.second.outerCutOff), 1.0f,
+            2.0f * acosf(1.0 - pair.second.outerCutOff), 1.0f,
             1.0f, 2000.0f,
             up,
             spotlightDir,

@@ -284,9 +284,12 @@ void SceneManager::Update()
 			i->DebugDraw();
 		}
 	}
-	for (auto& i : scene->animators)
+	if (scene->doAnimations)
 	{
-		i.second->UpdateAnimation(deltaTime);
+		for (auto& i : scene->animators)
+		{
+			i.second->UpdateAnimation(deltaTime);
+		}
 	}
 	scene->particleSystem.Update(deltaTime);
 
