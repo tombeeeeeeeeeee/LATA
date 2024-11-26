@@ -83,7 +83,7 @@ void main()
     //Emission packed with PBR AO
     emission = vec4(emission3, 1.0);
 
-    pbr = vec4(PBR);
+    pbr = vec4(PBR.rgb, PBR.b);
 }
 
     
