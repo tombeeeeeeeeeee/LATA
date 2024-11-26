@@ -209,6 +209,15 @@ bool Sync::Update(
 
 	if (inputDevice.getRightTrigger())
 	{
+		RenderSystem::syncAiming = true;
+		std::vector<Hit> hits;
+		if (PhysicsSystem::RayCastRadiusExpansion(transform.get2DGlobalPosition(), fireDirection, hits, shotWidth, FLT_MAX, ((int)CollisionLayers::base | (int)CollisionLayers::reflectiveSurface | (int)CollisionLayers::enemy)))
+		{
+			RenderSystem::syncAim.startPosition = { transform.get2DGlobalPosition().x, 5.0f, transform.get2DGlobalPosition().y };
+			RenderSystem::syncAim.endPosition = { hits[0].position.x, 5.0f, hits[0].position.y};
+			RenderSystem::syncAim.lifeSpan = overclockChargeTime;
+			RenderSystem::syncAim.colour = overclockBeamColour;
+		}
 		//Begin Chagrging Shot
 		if (!chargingShot)
 		{
@@ -240,7 +249,6 @@ bool Sync::Update(
 		glm::vec2 pos2D = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), { 0,0 });
 		lines->DrawCircle(glm::vec3(pos2D.x, 0.1f, pos2D.y), 100.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
 		glm::vec2 lineOfShoot = barrelOffset2D + fireDirection * 80.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f);
-		lines->DrawLineSegment(glm::vec3(barrelOffset2D.x, barrelOffset.y, barrelOffset2D.y), glm::vec3(lineOfShoot.x, barrelOffset.y, lineOfShoot.y), {sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z});
 		lines->DrawCircle(glm::vec3(pos2D.x, 0.2f, pos2D.y), 100.0f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
 		// TODO: Max charge sound
 	}
@@ -250,6 +258,7 @@ bool Sync::Update(
 		reachedCharge1 = false;
 		reachedCharge2 = false;
 
+		RenderSystem::syncAiming = false;
 
 		if (chargedDuration >= overclockChargeTime)
 		{
@@ -272,7 +281,7 @@ bool Sync::Update(
 		}
 		chargedDuration = 0;
 	}
-
+	else RenderSystem::syncAiming = false;
 	if (sceneObjectWithAnimator) {
 		if (!stateMachineSetup) {
 			animatorStateMachine.setInitialState(animatorStateMachine.getInitialState());
@@ -281,6 +290,7 @@ bool Sync::Update(
 		}
 		animatorStateMachine.Update(sceneObjectWithAnimator, delta);
 	}
+	RenderSystem::syncAim.timeElapsed = chargedDuration;
 	
 	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }

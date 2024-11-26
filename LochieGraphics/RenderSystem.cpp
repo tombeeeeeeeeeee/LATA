@@ -28,6 +28,8 @@
 LineRenderer RenderSystem::lines;
 LineRenderer RenderSystem::debugLines;
 std::vector<BlastLine> RenderSystem::beams = {};
+BlastLine RenderSystem::syncAim = {};
+bool RenderSystem::syncAiming = false;
 
 void RenderSystem::Start(unsigned int _skyboxTexture)
 {
@@ -92,7 +94,6 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
     colourKey2->mipMapped = false;
     colourKey2->Load();
 
-    
     onLightTexture = ResourceManager::LoadTexture("images/OnLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
     offLightTexture = ResourceManager::LoadTexture("images/OffLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
     syncLightTexture = ResourceManager::LoadTexture("images/SyncLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
@@ -101,7 +102,7 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
     lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
     decalShader = ResourceManager::LoadShader("decal");
     beamShader = ResourceManager::LoadShader("beam");
-    //unitPlane = ResourceManager::LoadModel(Paths::modelSaveLocation + "SM_Plane" + Paths::modelExtension);
+    syncAimShader = ResourceManager::LoadShader("syncAim");
     decalCube = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_DefaultCube" + Paths::modelExtension);
     wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Wall" + Paths::modelExtension);
 }
@@ -1446,6 +1447,40 @@ void RenderSystem::RenderBeams(float delta)
             ++i;
 
     }
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void RenderSystem::RenderSyncAim(float delta)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
+    glDepthMask(GL_FALSE);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    syncAimShader->Use();
+    syncAimShader->setMat4("vp", projection * viewMatrix);
+
+    Transform transform = Transform();
+    glm::vec3 displacement = (syncAim.startPosition + syncAim.endPosition) / 2.0f;
+    glm::vec3 difference = displacement - syncAim.startPosition;
+    float length = glm::length(difference);
+    transform.setPosition(displacement);
+    transform.setScale({ 100.0f, 0.01f,length * 2.0f });
+    transform.setEulerRotation({ 0.0f, 180.0f * atan2f(difference.x, difference.z) / PI, 0.0f });
+    syncAimShader->setMat4("model", transform.getGlobalMatrix());
+    syncAimShader->setFloat("timeInAim", syncAim.timeElapsed);
+    syncAimShader->setFloat("percentage", syncAim.timeElapsed / syncAim.lifeSpan);
+    syncAimShader->setFloat("uvMult", length / tileLength);
+
+    float r = syncAim.colour.x;
+    float g = syncAim.colour.y;
+    float b = syncAim.colour.z;
+    syncAimShader->setVec3("colour", { r,g,b });
+
+    decalCube->meshes[0]->Draw();
+
     glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
