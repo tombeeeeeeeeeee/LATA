@@ -239,16 +239,14 @@ bool Ecco::Update(
 
 	if (animator) {
 		glm::vec2 forward = glm::normalize(glm::vec2{ transform.forward().x, transform.forward().z });
-		float forwardVelocity = glm::dot(rigidBody.vel, forward);
-		if (forwardVelocity <= 0) {
-			float backwardsPercent = -forwardVelocity / maxReverseSpeed;
-			animator->downUpLerpAmount = -backwardsPercent / 2 + 0.5f;
-		}
-		else {
-			animator->downUpLerpAmount = glm::clamp((forwardVelocity / (maxCarMoveSpeed * 1.5f)) / 2 + 0.5f, 0.5f, 1.0f);
-		}
+		float changeInSpeed = -glm::length(rigidBody.vel) + glm::length(lastFrameVelocity);
+		float animationAmount = glm::clamp(changeInSpeed / 100.0f, -1.0f, 1.0f);
+		animationAmount *= 0.5;
+		animationAmount += 0.5;
+		lerpForwardAni = Utilities::Lerp(lerpForwardAni, animationAmount, 0.1f);
+		animator->downUpLerpAmount = lerpForwardAni;
 	}
-
+	lastFrameVelocity = rigidBody.vel;
 	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
 

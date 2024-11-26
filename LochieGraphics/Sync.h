@@ -85,6 +85,7 @@ private:
 	float misfireShotSpeed = 0.1f;
 
 	int sniperDamage = 1;
+	int sniperReboundCount = 0;
 	float sniperChargeTime = 0.1f;
 	float sniperBeamLifeSpan = 0.5f;
 	glm::vec3 sniperBeamColour = { 0.5f,0.5f,1.0f };

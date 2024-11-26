@@ -257,6 +257,8 @@ void LevelEditor::Update(float delta)
 	{
 		SaveLevel();
 
+		glLineWidth(15.0f);
+
 		lastFramePlayState = inPlay;
 		displayGUI = false;
 		enemySystem.aiUpdating = true;
@@ -296,7 +298,8 @@ void LevelEditor::Update(float delta)
 
 		camera->transform.setPosition(gameCamSystem.currentTarget + camera->transform.backward() * 1414.2f);
 
-		renderSystem.exposure = 1.0f;
+		renderSystem.exposure = 1.0f; 
+		glLineWidth(15.0f);
 	}
 
 	lastFramePlayState = inPlay;

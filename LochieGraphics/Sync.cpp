@@ -209,6 +209,15 @@ bool Sync::Update(
 
 	if (inputDevice.getRightTrigger())
 	{
+		RenderSystem::syncAiming = true;
+		std::vector<Hit> hits;
+		if (PhysicsSystem::RayCastRadiusExpansion(transform.get2DGlobalPosition(), fireDirection, hits, shotWidth, FLT_MAX, ((int)CollisionLayers::base | (int)CollisionLayers::reflectiveSurface | (int)CollisionLayers::enemy)))
+		{
+			RenderSystem::syncAim.startPosition = { transform.get2DGlobalPosition().x, 5.0f, transform.get2DGlobalPosition().y };
+			RenderSystem::syncAim.endPosition = { hits[0].position.x, 5.0f, hits[0].position.y};
+			RenderSystem::syncAim.lifeSpan = overclockChargeTime;
+			RenderSystem::syncAim.colour = overclockBeamColour;
+		}
 		//Begin Chagrging Shot
 		if (!chargingShot)
 		{
@@ -240,7 +249,6 @@ bool Sync::Update(
 		glm::vec2 pos2D = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), { 0,0 });
 		lines->DrawCircle(glm::vec3(pos2D.x, 0.1f, pos2D.y), 100.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
 		glm::vec2 lineOfShoot = barrelOffset2D + fireDirection * 80.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f);
-		lines->DrawLineSegment(glm::vec3(barrelOffset2D.x, barrelOffset.y, barrelOffset2D.y), glm::vec3(lineOfShoot.x, barrelOffset.y, lineOfShoot.y), {sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z});
 		lines->DrawCircle(glm::vec3(pos2D.x, 0.2f, pos2D.y), 100.0f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
 		// TODO: Max charge sound
 	}
@@ -250,6 +258,7 @@ bool Sync::Update(
 		reachedCharge1 = false;
 		reachedCharge2 = false;
 
+		RenderSystem::syncAiming = false;
 
 		if (chargedDuration >= overclockChargeTime)
 		{
@@ -272,7 +281,7 @@ bool Sync::Update(
 		}
 		chargedDuration = 0;
 	}
-
+	else RenderSystem::syncAiming = false;
 	if (sceneObjectWithAnimator) {
 		if (!stateMachineSetup) {
 			animatorStateMachine.setInitialState(animatorStateMachine.getInitialState());
@@ -281,6 +290,7 @@ bool Sync::Update(
 		}
 		animatorStateMachine.Update(sceneObjectWithAnimator, delta);
 	}
+	RenderSystem::syncAim.timeElapsed = chargedDuration;
 	
 	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
@@ -307,15 +317,12 @@ void Sync::GUI()
 
 	ImGui::DragFloat3(("Barrel Offset##" + tag).c_str(), &barrelOffset[0]);
 	ImGui::DragFloat(("Shot Width##" + tag).c_str(), &shotWidth);
+	ImGui::DragInt(("Max Enemy Pierce Count##" + tag).c_str(), &enemyPierceCount);
 
-	if (ImGui::CollapsingHeader(("Misfire Properties##" + tag).c_str()))
-	{
-		ImGui::DragInt(("Misfire Damage##" + tag).c_str(), &misfireDamage);
-		ImGui::DragFloat(("Misfire Shot Speed##" + tag).c_str(), &misfireShotSpeed);
-	}
 	if (ImGui::CollapsingHeader(("Sniper Shot Properties##" + tag).c_str()))
 	{
 		ImGui::DragInt(("Sniper Damage##" + tag).c_str(), &sniperDamage);
+		ImGui::DragInt(("Sniper Rebound Count##" + tag).c_str(), &sniperReboundCount);
 		ImGui::DragFloat(("Sniper Charge Time##" + tag).c_str(), &sniperChargeTime);
 		ImGui::DragFloat(("Sniper Beam life span##" + tag).c_str(), &sniperBeamLifeSpan);
 		ImGui::ColorEdit3(("Sniper Beam Colour##" + tag).c_str(), &sniperBeamColour[0]);
@@ -328,8 +335,7 @@ void Sync::GUI()
 		ImGui::DragFloat(("Beam life span##" + tag).c_str(), &overclockBeamLifeSpan);
 		ImGui::ColorEdit3(("Beam Colour##" + tag).c_str(), &overclockBeamColour[0]);
 		ImGui::DragFloat(("Knock Back Force Overclock##" + tag).c_str(), &knockBackForceOverclock);
-		ImGui::DragInt(("Max Enemy Pierce Count##" + tag).c_str(), &enemyPierceCount);
-		ImGui::DragInt(("Rebound Count##" + tag).c_str(), &overclockReboundCount);
+		ImGui::DragInt(("OverClock Rebound Count##" + tag).c_str(), &overclockReboundCount);
 		ImGui::DragInt(("Refraction Beams Off Ecco##" + tag).c_str(), &eccoRefractionCount);
 		ImGui::DragFloat(("Refraction Beams Angle##" + tag).c_str(), &eccoRefractionAngle);
 		ImGui::Checkbox(("Rainbow Shots Rebound##" + tag).c_str(), &rainbowRebounding);
@@ -365,6 +371,7 @@ toml::table Sync::Serialise() const
 		{ "overclockBeamLifeSpan", overclockBeamLifeSpan },
 		{ "overclockBeamColour", Serialisation::SaveAsVec3(overclockBeamColour) },
 		{ "overclockReboundCount", overclockReboundCount },
+		{ "sniperReboundCount", sniperReboundCount },
 		{ "enemyPierceCount", enemyPierceCount },
 		{ "eccoRefractionAngle", eccoRefractionAngle },
 		{ "eccoRefractionCount", eccoRefractionCount },
@@ -416,6 +423,22 @@ void Sync::ShootSniper(glm::vec3 pos)
 		{
 			hit.sceneObject->health()->subtractHealth(sniperDamage);
 			SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
+			for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
+			{
+				hit = hits[i];
+				if (i == enemyPierceCount - 1) return;
+
+				glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
+				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(100, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+				hitFX->explodeStrength = 3.0f;
+				hitFX->Explode();
+				if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+				{
+					hit.sceneObject->health()->subtractHealth(sniperDamage);
+					SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
+				}
+				else break;
+			}
 		}
 	}
 

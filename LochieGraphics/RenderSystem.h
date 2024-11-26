@@ -134,6 +134,8 @@ public:
     );
 
     static std::vector<BlastLine> beams;
+    static bool syncAiming;
+    static BlastLine syncAim;
 
 private:
 
@@ -268,10 +270,10 @@ private:
     );
 
     Shader* beamShader;
-    Model* unitPlane;
+    Shader* syncAimShader;
     float tileLength = 50.0f;
     void RenderBeams(float delta);
-
+    void RenderSyncAim(float delta);
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;

@@ -52,7 +52,7 @@ void main()
 
 
     vec2 decalTexCoords = objPos.xz + 0.5;
-
+    decalTexCoords.x = 1.0 - decalTexCoords.x;
     vec3 ddxWp = dFdx(worldPos);
     vec3 ddyWp = dFdy(worldPos);
     vec3 n = normalize(cross(ddyWp, ddxWp));
@@ -83,7 +83,7 @@ void main()
     //Emission packed with PBR AO
     emission = vec4(emission3, 1.0);
 
-    pbr = vec4(PBR);
+    pbr = vec4(PBR.rgb, PBR.b);
 }
 
     
