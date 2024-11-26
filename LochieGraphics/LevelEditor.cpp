@@ -427,8 +427,22 @@ void LevelEditor::Update(float delta)
 		}
 	}
 
+	prevDied = died;
 	if (playerDied) {
-		LoadLevel(true);
+		died = true;
+	}
+	if (!prevDied && died) {
+		fadeOut = true;
+		fadeTimer = 0.0f;
+	}
+	if (died) {
+		if (renderSystem.exposure <= 0) {
+			LoadLevel(true);
+			renderSystem.exposure = 0.01;
+			fadeOut = false;
+			died = false;
+			prevDied = false;
+		}
 	}
 
 	glm::vec2 targetCell = EditorCamMouseToWorld() / gridSize;
