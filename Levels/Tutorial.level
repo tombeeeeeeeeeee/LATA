@@ -97,18 +97,18 @@ stopSlowTime = 1.5
     scale = [ 0.3779999911785126, 0.05299999937415123 ]
 
 [[Animators]]
-currentAnimationGUID = '15148335964655264906'
-guid = '2242142306771616813'
-otherCurrentAnimationGUID = '0'
-type = '1'
-
-[[Animators]]
 currentAnimationGUID = '15148335964655446906'
 downAnimationGUID = '15148335964655446904'
 guid = '18133337474269889811'
 rightAnimationGUID = '15148335964655446905'
 type = '2'
 upAnimationGUID = '15148335964655446903'
+
+[[Animators]]
+currentAnimationGUID = '15148335964655264906'
+guid = '2242142306771616813'
+otherCurrentAnimationGUID = '0'
+type = '1'
 
 [[Bollards]]
 guid = '1124986868180771974'
@@ -126,14 +126,6 @@ triggerTag = ''
 
 [[Colliders]]
 collisionLayer = 1
-guid = '1116006809795724186'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
-
-[[Colliders]]
-collisionLayer = 1
 guid = '1111502353817691904'
 isTrigger = false
 radius = 0.0
@@ -141,16 +133,8 @@ type = 1
 verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
 
 [[Colliders]]
-collisionLayer = 128
-guid = '4436374499120238666'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
-
-[[Colliders]]
 collisionLayer = 1
-guid = '2117524766330775066'
+guid = '1116006809795724186'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -166,11 +150,19 @@ verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5
 
 [[Colliders]]
 collisionLayer = 1
-guid = '1122189896615090410'
+guid = '2117524766330775066'
 isTrigger = false
 radius = 0.0
 type = 1
-verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+
+[[Colliders]]
+collisionLayer = 128
+guid = '4436374499120238666'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
@@ -181,20 +173,20 @@ type = 1
 verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
 
 [[Colliders]]
-collisionLayer = 256
-guid = '4440785844582491043'
+collisionLayer = 1
+guid = '1122189896615090410'
 isTrigger = false
 radius = 0.0
 type = 1
-verts = [ [ 65.0, 115.0 ], [ 65.0, -115.0 ], [ -65.0, -115.0 ], [ -65.0, 115.0 ] ]
+verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
 
 [[Colliders]]
-collisionLayer = 128
-guid = '4432395218823427217'
+collisionLayer = 1
+guid = '1113602446319070776'
 isTrigger = false
 radius = 0.0
 type = 1
-verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
 
 [[Colliders]]
 collisionLayer = 1
@@ -205,8 +197,24 @@ type = 1
 verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
 
 [[Colliders]]
+collisionLayer = 128
+guid = '4432395218823427217'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
+
+[[Colliders]]
+collisionLayer = 256
+guid = '4440785844582491043'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 65.0, 115.0 ], [ 65.0, -115.0 ], [ -65.0, -115.0 ], [ -65.0, 115.0 ] ]
+
+[[Colliders]]
 collisionLayer = 1
-guid = '1113602446319070776'
+guid = '1119824233425443436'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -222,7 +230,7 @@ verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5
 
 [[Colliders]]
 collisionLayer = 1
-guid = '1119824233425443436'
+guid = '1114772135619262462'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -238,7 +246,15 @@ verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5
 
 [[Colliders]]
 collisionLayer = 1
-guid = '1114772135619262462'
+guid = '1115765886649700480'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '1134261706786130040'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -254,15 +270,7 @@ verts = [ [ 110.0, 15.0 ], [ 110.0, -15.0 ], [ -5.0, -15.0 ], [ -5.0, 15.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '1134261706786130040'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '1115765886649700480'
+guid = '1119793290736527184'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -277,12 +285,12 @@ type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
 
 [[Colliders]]
-collisionLayer = 1
-guid = '1119793290736527184'
+collisionLayer = 128
+guid = '1848013950718202615'
 isTrigger = false
 radius = 0.0
 type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
 
 [[Colliders]]
 collisionLayer = 128
@@ -294,7 +302,7 @@ verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
 
 [[Colliders]]
 collisionLayer = 128
-guid = '1848013950718202615'
+guid = '4439299099810688174'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -310,15 +318,7 @@ verts = [ [ 120.0, 260.0 ], [ 120.0, -260.0 ], [ -120.0, -260.0 ], [ -120.0, 260
 
 [[Colliders]]
 collisionLayer = 128
-guid = '4439299099810688174'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
-
-[[Colliders]]
-collisionLayer = 128
-guid = '4433650615646652340'
+guid = '1847732687184606982'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -334,11 +334,19 @@ verts = [ [ 75.0, 85.0 ], [ 75.0, -85.0 ], [ -75.0, -85.0 ], [ -75.0, 85.0 ] ]
 
 [[Colliders]]
 collisionLayer = 128
-guid = '1847732687184606982'
+guid = '4433650615646652340'
 isTrigger = false
 radius = 0.0
 type = 1
 verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '1113200542216000355'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
 
 [[Colliders]]
 collisionLayer = 256
@@ -350,7 +358,7 @@ verts = [ [ 0.0, 0.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '1113200542216000355'
+guid = '1113224666444720238'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -366,7 +374,7 @@ verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '1113224666444720238'
+guid = '1113495564040555090'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -382,7 +390,7 @@ verts = [ [ 65.0, 115.0 ], [ 65.0, -115.0 ], [ -65.0, -115.0 ], [ -65.0, 115.0 ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '1113495564040555090'
+guid = '1115749423620535649'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -397,12 +405,12 @@ type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ 0.0, -13.0 ], [ 0.0, 13.0 ] ]
 
 [[Colliders]]
-collisionLayer = 1
-guid = '1115749423620535649'
+collisionLayer = 128
+guid = '4432442530341553410'
 isTrigger = false
 radius = 0.0
 type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
 
 [[Colliders]]
 collisionLayer = 256
@@ -414,7 +422,7 @@ verts = [ [ 65.0, 115.0 ], [ 65.0, -115.0 ], [ -65.0, -115.0 ], [ -65.0, 115.0 ]
 
 [[Colliders]]
 collisionLayer = 128
-guid = '4432442530341553410'
+guid = '4436409714135304124'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -429,12 +437,12 @@ type = 1
 verts = [ [ 30.0, 30.0 ], [ 30.0, -30.0 ], [ -30.0, -30.0 ], [ -30.0, 30.0 ] ]
 
 [[Colliders]]
-collisionLayer = 128
-guid = '4436409714135304124'
+collisionLayer = 256
+guid = '4449048527578716635'
 isTrigger = false
 radius = 0.0
 type = 1
-verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
+verts = [ [ 75.0, 85.0 ], [ 75.0, -85.0 ], [ -75.0, -85.0 ], [ -75.0, 85.0 ] ]
 
 [[Colliders]]
 collisionLayer = 256
@@ -443,14 +451,6 @@ isTrigger = false
 radius = 37.0
 type = 1
 verts = [ [ 0.0, 0.0 ] ]
-
-[[Colliders]]
-collisionLayer = 256
-guid = '4449048527578716635'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 75.0, 85.0 ], [ 75.0, -85.0 ], [ -75.0, -85.0 ], [ -75.0, 85.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
@@ -1759,22 +1759,22 @@ verts = [ [ 120.0, 260.0 ], [ 120.0, -260.0 ], [ -120.0, -260.0 ], [ -120.0, 260
 [[Doors]]
 amountToMove = 85.0
 closed = true
-guid = '1929393441292613134'
-ignoresFalse = false
-left = false
-timeToClose = 0.5
-timeToOpen = 0.5
-triggerTag = ''
-
-[[Doors]]
-amountToMove = 85.0
-closed = true
 guid = '1930643659960564368'
 ignoresFalse = false
 left = true
 timeToClose = 0.5
 timeToOpen = 0.5
 triggerTag = 'EccoPressurePlate'
+
+[[Doors]]
+amountToMove = 85.0
+closed = true
+guid = '1929393441292613134'
+ignoresFalse = false
+left = false
+timeToClose = 0.5
+timeToOpen = 0.5
+triggerTag = ''
 
 [[Doors]]
 amountToMove = 85.0
@@ -1789,22 +1789,22 @@ triggerTag = 'AdvancedCombatComplete'
 [[Doors]]
 amountToMove = 85.0
 closed = true
-guid = '1929550822833206343'
-ignoresFalse = false
-left = true
-timeToClose = 0.5
-timeToOpen = 0.5
-triggerTag = 'RefractionShotShowcaseComplete'
-
-[[Doors]]
-amountToMove = 85.0
-closed = true
 guid = '1929736737771432607'
 ignoresFalse = false
 left = false
 timeToClose = 0.5
 timeToOpen = 0.5
 triggerTag = ''
+
+[[Doors]]
+amountToMove = 85.0
+closed = true
+guid = '1929550822833206343'
+ignoresFalse = false
+left = true
+timeToClose = 0.5
+timeToOpen = 0.5
+triggerTag = 'RefractionShotShowcaseComplete'
 
 [[Doors]]
 amountToMove = 85.0
@@ -1909,28 +1909,21 @@ guid = '2120445352354194273'
 levelToLoad = 'MainMenu'
 
 [[Healths]]
-currHealth = 65
-guid = '18133337472315591294'
-maxHealth = 100
-
-[[Healths]]
 currHealth = 200
 guid = '18133337474269889811'
 maxHealth = 200
 
-[[Plates]]
-actuationAmount = 7.0
-atRestHeight = 6.0
-guid = '1780188919923703772'
-smallType = true
-triggerTag = 'LargePressurePlateShowcase'
+[[Healths]]
+currHealth = 100
+guid = '18133337472315591294'
+maxHealth = 100
 
 [[Plates]]
 actuationAmount = 7.0
 atRestHeight = 6.0
-guid = '1779886764846673609'
-smallType = false
-triggerTag = 'LargePressurePlateShowcase'
+guid = '1768625215179676832'
+smallType = true
+triggerTag = 'EccoPressurePlate'
 
 [[Plates]]
 actuationAmount = 7.0
@@ -1942,9 +1935,16 @@ triggerTag = 'CombatEnter1'
 [[Plates]]
 actuationAmount = 7.0
 atRestHeight = 6.0
-guid = '1768625215179676832'
+guid = '1779886764846673609'
+smallType = false
+triggerTag = 'LargePressurePlateShowcase'
+
+[[Plates]]
+actuationAmount = 7.0
+atRestHeight = 6.0
+guid = '1780188919923703772'
 smallType = true
-triggerTag = 'EccoPressurePlate'
+triggerTag = 'LargePressurePlateShowcase'
 
 [[Plates]]
 actuationAmount = 7.0
@@ -1966,13 +1966,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15408094543342345388'
+guid = '1108595792513533164'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1108595792513533164'
+guid = '15408094543342345388'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1990,16 +1990,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '2216017716285731702'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060397206372785124'
-
-[[Renderers]]
 guid = '1108718951230983608'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '2216017716285731702'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15060397206372785124'
 
 [[Renderers]]
 guid = '1116006809795724186'
@@ -2008,28 +2008,28 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
-guid = '15816364844757446098'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
 guid = '15408096119216885282'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '4431971821673146666'
+guid = '15816364844757446098'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060250319744019741'
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '1115559245013958955'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '4431971821673146666'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15060250319744019741'
 
 [[Renderers]]
 guid = '15408096978230528735'
@@ -2068,16 +2068,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '18133337474269889811'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15449259407003476463', '15449352838481615396' ]
-modelGuid = '2140790440003113620'
-
-[[Renderers]]
 guid = '1108846689190566921'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '18133337474269889811'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15449259407003476463', '15449352838481615396' ]
+modelGuid = '2140790440003113620'
 
 [[Renderers]]
 guid = '15408100412076300408'
@@ -2200,25 +2200,25 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1930638152957718370'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1766071748038532778' ]
-modelGuid = '12471265708787363967'
-
-[[Renderers]]
 guid = '15408111577489750555'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1110603089533513809'
+guid = '1930638152957718370'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1766071748038532778' ]
+modelGuid = '12471265708787363967'
+
+[[Renderers]]
+guid = '1109227934815139348'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1109227934815139348'
+guid = '1110603089533513809'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -2254,25 +2254,25 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '4448713293320084487'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15061121900084148500'
-
-[[Renderers]]
 guid = '15408112796676813722'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1108840568143291057'
+guid = '4448713293320084487'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15061121900084148500'
+
+[[Renderers]]
+guid = '15408134489333694504'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15408134489333694504'
+guid = '1108840568143291057'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -2308,13 +2308,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1109643693853834797'
+guid = '15408115085601106003'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15408115085601106003'
+guid = '1109643693853834797'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -2356,19 +2356,25 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1114224228365513124'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060329276109528693'
-
-[[Renderers]]
 guid = '1109646565109421156'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
+guid = '1114224228365513124'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15060329276109528693'
+
+[[Renderers]]
 guid = '15408124248444657317'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15408133121269798071'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -2378,12 +2384,6 @@ guid = '4449727665648594051'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 modelGuid = '17948350466954700839'
-
-[[Renderers]]
-guid = '15408133121269798071'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '15408135418227390074'
@@ -2506,13 +2506,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15815590672800608325'
+guid = '1109644744819359252'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1109644744819359252'
+guid = '15815590672800608325'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -2536,16 +2536,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1113175574747946716'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '15816318957662262558'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1113175574747946716'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '15816319252483143296'
@@ -2596,16 +2596,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '2119065408717968956'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
 guid = '15816364492263469905'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '2119065408717968956'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '15816455832079414052'
@@ -2650,16 +2650,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '4449493578692515784'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060329276109528693'
-
-[[Renderers]]
 guid = '1113495564040555090'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '4449493578692515784'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15060329276109528693'
 
 [[Renderers]]
 guid = '17336397037236970602'
@@ -2674,16 +2674,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1113610185015449772'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '17336398930664406936'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1113610185015449772'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '17336399892725401677'
@@ -2764,16 +2764,16 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
-guid = '1119793290736527184'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '1109637252255867042'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1119793290736527184'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '17337278357065243078'
@@ -2866,16 +2866,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '4434275667182757468'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '17948495782195688886'
-
-[[Renderers]]
 guid = '1109229474340822158'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '4434275667182757468'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '17948495782195688886'
 
 [[Renderers]]
 guid = '1108930285209777757'
@@ -2896,16 +2896,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '4435195987675955227'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060329276109528693'
-
-[[Renderers]]
 guid = '1108840683440207596'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '4435195987675955227'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15060329276109528693'
 
 [[Renderers]]
 guid = '1109210594429599673'
@@ -2938,19 +2938,25 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1113538138995870306'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '1108595893516062866'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
+guid = '1113538138995870306'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
 guid = '1109219862915892152'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1108671731232685254'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -2962,7 +2968,7 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
-guid = '1108671731232685254'
+guid = '1110505740114608669'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -2972,12 +2978,6 @@ guid = '1113514227982344805'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1110505740114608669'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '1108926270747000477'
@@ -2998,16 +2998,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '2118183811486696520'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
 guid = '1108721674105193220'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '2118183811486696520'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '1109014003748417502'
@@ -3052,25 +3052,19 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1929550823745081352'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1766071748038532778', '1777838767709883819' ]
-modelGuid = '12471732002840469521'
-
-[[Renderers]]
 guid = '1115476160469523644'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471826850464180481'
 
 [[Renderers]]
-guid = '1108593087529584852'
+guid = '1929550823745081352'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
+materials = [ '1766071748038532778', '1777838767709883819' ]
+modelGuid = '12471732002840469521'
 
 [[Renderers]]
-guid = '1108595453309929308'
+guid = '1108593087529584852'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -3082,13 +3076,19 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1108721999854830569'
+guid = '1108595453309929308'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '1110593226857957506'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1108721999854830569'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -3130,16 +3130,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1114779076959341815'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '1108682373545323469'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1114779076959341815'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '1108682629971306279'
@@ -3262,28 +3262,28 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '4451591039098170803'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060495917923446592'
-
-[[Renderers]]
 guid = '1119809727575138005'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
-guid = '2116683398613498890'
+guid = '4451591039098170803'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
+materials = [ '15038846507057049718' ]
+modelGuid = '15060495917923446592'
 
 [[Renderers]]
 guid = '1108847519160104391'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '2116683398613498890'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '2119140786714220291'
@@ -3334,13 +3334,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1108916083152767600'
+guid = '1109656128783463200'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1109656128783463200'
+guid = '1108916083152767600'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -3352,16 +3352,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '4433650615646652340'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15061121900084148500'
-
-[[Renderers]]
 guid = '1109637344789594189'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '4433650615646652340'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15061121900084148500'
 
 [[Renderers]]
 guid = '4431266244422720043'
@@ -3466,16 +3466,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1116064545451151140'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '1108932675385057650'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1116064545451151140'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '1109014312765913682'
@@ -3532,16 +3532,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1114772135619262462'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '1109033807872504299'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1114772135619262462'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '1109130317632619994'
@@ -3682,16 +3682,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1119962082558208982'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
 guid = '1109649476255629298'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1119962082558208982'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '1109651137545258730'
@@ -3700,13 +3700,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1109651489047770855'
+guid = '1110493289513596821'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1110493289513596821'
+guid = '1109651489047770855'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -3736,16 +3736,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1112325776156001953'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
 guid = '1110487849151955176'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1112325776156001953'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '1110492903941593351'
@@ -3790,16 +3790,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1115772742378695998'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '1110532634424782455'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1115772742378695998'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '2119315879724214072'
@@ -3814,28 +3814,28 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '2201843269965684696'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471854257770671342'
-
-[[Renderers]]
 guid = '1112120918456745894'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471826850464180481'
 
 [[Renderers]]
-guid = '2118219962900459546'
+guid = '2201843269965684696'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
+modelGuid = '12471854257770671342'
 
 [[Renderers]]
 guid = '1110539600366566851'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '2118219962900459546'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '1110540192879524098'
@@ -3934,16 +3934,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '2216525161629848908'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '17948476418088678547'
-
-[[Renderers]]
 guid = '1114001578443143682'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '2216525161629848908'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '17948476418088678547'
 
 [[Renderers]]
 guid = '1124986869524943060'
@@ -3964,16 +3964,16 @@ materials = [ '15038846507057049718' ]
 modelGuid = '15060329276109528693'
 
 [[Renderers]]
-guid = '4432395218823427217'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15061627272122173222'
-
-[[Renderers]]
 guid = '1116030266154057081'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '4432395218823427217'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15061627272122173222'
 
 [[Renderers]]
 guid = '1929922388057335367'
@@ -3982,13 +3982,13 @@ materials = [ '1766071748038532778' ]
 modelGuid = '12471265708787363967'
 
 [[Renderers]]
-guid = '1134261706786130040'
+guid = '1115765886649700480'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
-guid = '1115765886649700480'
+guid = '1134261706786130040'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
@@ -4018,13 +4018,19 @@ materials = [ '15038846507057049718' ]
 modelGuid = '15061627272122173222'
 
 [[Renderers]]
+guid = '1111629103011225135'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
 guid = '2117524766330775066'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
-guid = '1111629103011225135'
+guid = '1113200542216000355'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
@@ -4034,12 +4040,6 @@ guid = '4452311618763869896'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 modelGuid = '17948476418088678547'
-
-[[Renderers]]
-guid = '1113200542216000355'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '2118234564689922079'
@@ -4060,19 +4060,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '4440925217756802297'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060329276109528693'
-
-[[Renderers]]
 guid = '1115464396155706423'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471826850464180481'
 
 [[Renderers]]
-guid = '4435293117377739570'
+guid = '4440925217756802297'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 modelGuid = '15060329276109528693'
@@ -4084,10 +4078,10 @@ materials = [ '15038846507057049718' ]
 modelGuid = '15061627272122173222'
 
 [[Renderers]]
-guid = '2120347647305215665'
+guid = '4435293117377739570'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
+materials = [ '15038846507057049718' ]
+modelGuid = '15060329276109528693'
 
 [[Renderers]]
 guid = '2119401777197416542'
@@ -4096,10 +4090,10 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
-guid = '4447351655376160860'
-materialTint = [ 1.0, 0.0, 0.0 ]
-materials = [ '1823128414540551919' ]
-modelGuid = '7289854778488251302'
+guid = '2120347647305215665'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '2119836484667932747'
@@ -4108,10 +4102,10 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471826850464180481'
 
 [[Renderers]]
-guid = '4448815802471444296'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060397206372785124'
+guid = '4447351655376160860'
+materialTint = [ 1.0, 0.0, 0.0 ]
+materials = [ '1823128414540551919' ]
+modelGuid = '7289854778488251302'
 
 [[Renderers]]
 guid = '4436409714135304124'
@@ -4120,10 +4114,10 @@ materials = [ '15038846507057049718' ]
 modelGuid = '15061627272122173222'
 
 [[Renderers]]
-guid = '4452174248554239340'
+guid = '4448815802471444296'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
-modelGuid = '17948476418088678547'
+modelGuid = '15060397206372785124'
 
 [[Renderers]]
 guid = '4449048527578716635'
@@ -4132,16 +4126,22 @@ materials = [ '15038846507057049718' ]
 modelGuid = '15060250319744019741'
 
 [[Renderers]]
-guid = '4449851294774915075'
+guid = '4452174248554239340'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
-modelGuid = '15061121900084148500'
+modelGuid = '17948476418088678547'
 
 [[Renderers]]
 guid = '1848013950718202615'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 modelGuid = '15061627272122173222'
+
+[[Renderers]]
+guid = '4449851294774915075'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15061121900084148500'
 
 [[Renderers]]
 guid = '4791899302369343372'
@@ -5467,29 +5467,21 @@ modelGuid = '2234949598158592467'
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
-guid = '2119315879724214072'
+guid = '1844564564683700412'
 invMass = 0.0
 invMomentOfInertia = 0.0
-isStatic = true
+isStatic = false
 netDepen = [ 0.0, 0.0 ]
 netForce = [ 0.0, 0.0 ]
 vel = [ 0.0, 0.0 ]
 
     [[RigidBodies.colliders]]
     collisionLayer = 1
-    guid = '2119315879724214072'
-    isTrigger = false
+    guid = '1844564564683700412'
+    isTrigger = true
     radius = 0.0
     type = 1
-    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2119315879724214072'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+    verts = [ [ 1050.0, 1050.0 ], [ 1050.0, -1050.0 ], [ -1050.0, -1050.0 ], [ -1050.0, 1050.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -5523,27 +5515,7 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
-guid = '1844564564683700412'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1844564564683700412'
-    isTrigger = true
-    radius = 0.0
-    type = 1
-    verts = [ [ 1050.0, 1050.0 ], [ 1050.0, -1050.0 ], [ -1050.0, -1050.0 ], [ -1050.0, 1050.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '1929550823745081352'
+guid = '2119315879724214072'
 invMass = 0.0
 invMomentOfInertia = 0.0
 isStatic = true
@@ -5553,19 +5525,19 @@ vel = [ 0.0, 0.0 ]
 
     [[RigidBodies.colliders]]
     collisionLayer = 1
-    guid = '1929550823745081352'
+    guid = '2119315879724214072'
     isTrigger = false
     radius = 0.0
     type = 1
-    verts = [ [ 150.0, 15.0 ], [ 150.0, -15.0 ], [ 100.0, -15.0 ], [ 100.0, 15.0 ] ]
+    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
 
     [[RigidBodies.colliders]]
     collisionLayer = 1
-    guid = '1929550823745081352'
+    guid = '2119315879724214072'
     isTrigger = false
     radius = 0.0
     type = 1
-    verts = [ [ -100.0, 15.0 ], [ -100.0, -15.0 ], [ -150.0, -15.0 ], [ -150.0, 15.0 ] ]
+    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -5594,6 +5566,34 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '1929550823745081352'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1929550823745081352'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 15.0 ], [ 150.0, -15.0 ], [ 100.0, -15.0 ], [ 100.0, 15.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1929550823745081352'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ -100.0, 15.0 ], [ -100.0, -15.0 ], [ -150.0, -15.0 ], [ -150.0, 15.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -5707,34 +5707,6 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
-guid = '2120398328199193734'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2120398328199193734'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2120398328199193734'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
 guid = '1119626959594994558'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -5754,6 +5726,34 @@ vel = [ 0.0, 0.0 ]
     [[RigidBodies.colliders]]
     collisionLayer = 1
     guid = '1119626959594994558'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2120398328199193734'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2120398328199193734'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2120398328199193734'
     isTrigger = false
     radius = 0.0
     type = 1
@@ -5783,34 +5783,6 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
-guid = '1929736737493284794'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1929736737493284794'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 15.0 ], [ 150.0, -15.0 ], [ 100.0, -15.0 ], [ 100.0, 15.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1929736737493284794'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ -100.0, 15.0 ], [ -100.0, -15.0 ], [ -150.0, -15.0 ], [ -150.0, 15.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
 guid = '1116106440672714874'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -5834,6 +5806,34 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '1929736737493284794'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1929736737493284794'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 15.0 ], [ 150.0, -15.0 ], [ 100.0, -15.0 ], [ 100.0, 15.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1929736737493284794'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ -100.0, 15.0 ], [ -100.0, -15.0 ], [ -150.0, -15.0 ], [ -150.0, 15.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -14663,15 +14663,11 @@ prefabBase = '2091576976424546894'
 prefabStatus = 2
 
 [[ShadowWalls]]
-guid = '1116006809795724186'
-hasLocalMesh = true
-
-[[ShadowWalls]]
 guid = '1111502353817691904'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '2117524766330775066'
+guid = '1116006809795724186'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14679,11 +14675,7 @@ guid = '1111629103011225135'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '2201843269965684696'
-hasLocalMesh = true
-
-[[ShadowWalls]]
-guid = '2119315879724214072'
+guid = '2117524766330775066'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14691,7 +14683,11 @@ guid = '1112120918456745894'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '2119359755278406651'
+guid = '2119315879724214072'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2201843269965684696'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14699,7 +14695,7 @@ guid = '1112375887835244583'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '2118188179614941468'
+guid = '2119359755278406651'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14707,7 +14703,7 @@ guid = '1113080311614270093'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1122189896615090410'
+guid = '2118188179614941468'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14715,7 +14711,7 @@ guid = '1113114324334011500'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1119779212966152775'
+guid = '1122189896615090410'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14723,7 +14719,7 @@ guid = '1113123875800483650'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1114001578443143682'
+guid = '1119779212966152775'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14731,11 +14727,7 @@ guid = '1113151975205085319'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '2119140786714220291'
-hasLocalMesh = true
-
-[[ShadowWalls]]
-guid = '2118377797307672800'
+guid = '1114001578443143682'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14743,11 +14735,11 @@ guid = '1113224666444720238'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1119830467308839829'
+guid = '2118377797307672800'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1119824233425443436'
+guid = '2119140786714220291'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14755,7 +14747,11 @@ guid = '1113514227982344805'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '2118234564689922079'
+guid = '1119824233425443436'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1119830467308839829'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14763,7 +14759,7 @@ guid = '1113529252927069767'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '2118007366369179520'
+guid = '2118234564689922079'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14771,7 +14767,7 @@ guid = '1113589301288763301'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1116030266154057081'
+guid = '2118007366369179520'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14779,7 +14775,7 @@ guid = '1113602446319070776'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1113797723966480178'
+guid = '1116030266154057081'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14787,7 +14783,7 @@ guid = '1113610185015449772'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1119809727575138005'
+guid = '1113797723966480178'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14795,7 +14791,7 @@ guid = '1113849295211671679'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '2118231133633682406'
+guid = '1119809727575138005'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14803,7 +14799,7 @@ guid = '1114716190034382634'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1119867018745652917'
+guid = '2118231133633682406'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14811,7 +14807,7 @@ guid = '1114772135619262462'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '2117114466062145604'
+guid = '1119867018745652917'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14819,11 +14815,19 @@ guid = '1114825667126320354'
 hasLocalMesh = true
 
 [[ShadowWalls]]
+guid = '2117114466062145604'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1115476160469523644'
+hasLocalMesh = true
+
+[[ShadowWalls]]
 guid = '1929550823745081352'
 hasLocalMesh = false
 
 [[ShadowWalls]]
-guid = '1115476160469523644'
+guid = '1115565074958227969'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14831,7 +14835,7 @@ guid = '1115772742378695998'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1115565074958227969'
+guid = '1115749423620535649'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14839,11 +14843,7 @@ guid = '2117383675630720655'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1115749423620535649'
-hasLocalMesh = true
-
-[[ShadowWalls]]
-guid = '1929922388057335367'
+guid = '1115765886649700480'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14851,7 +14851,11 @@ guid = '1134261706786130040'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1115765886649700480'
+guid = '1929922388057335367'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1116106440672714874'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14859,7 +14863,7 @@ guid = '1929736737493284794'
 hasLocalMesh = false
 
 [[ShadowWalls]]
-guid = '1116106440672714874'
+guid = '1119626959594994558'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14867,7 +14871,7 @@ guid = '2120398328199193734'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1119626959594994558'
+guid = '1119793290736527184'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14875,7 +14879,7 @@ guid = '1122409727108714037'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1119793290736527184'
+guid = '1119859917609576310'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14883,7 +14887,7 @@ guid = '2118205790302849812'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1119859917609576310'
+guid = '1119886719573143119'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14891,7 +14895,7 @@ guid = '1930638150951503142'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1119886719573143119'
+guid = '1779976960109450948'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14899,7 +14903,7 @@ guid = '2119116523871573741'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1779976960109450948'
+guid = '1930638152957718370'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -14907,15 +14911,11 @@ guid = '1930643660882728139'
 hasLocalMesh = false
 
 [[ShadowWalls]]
-guid = '1930638152957718370'
+guid = '2119401777197416542'
 hasLocalMesh = true
 
 [[ShadowWalls]]
 guid = '2120347647305215665'
-hasLocalMesh = true
-
-[[ShadowWalls]]
-guid = '2119401777197416542'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -15652,21 +15652,6 @@ triggerTag = ''
 [[Spotlights]]
 canBeTriggered = false
 castsShadows = true
-colour = [ 1.0, 1.0, 1.0 ]
-cutOff = 1.0
-effect = 0
-guid = '5102449376581934032'
-intensity = 225.0
-linear = 0.9609999656677246
-on = true
-outerCutOff = 0.2290000021457672
-quadratic = 4.845000267028809
-range = 0.9100000262260437
-triggerTag = ''
-
-[[Spotlights]]
-canBeTriggered = false
-castsShadows = true
 colour = [ 0.07065218687057495, 1.0, 0.09085530042648315 ]
 cutOff = 1.0
 effect = 0
@@ -15677,6 +15662,21 @@ on = true
 outerCutOff = 0.05299999937415123
 quadratic = 4.352499961853027
 range = 1.8949999809265137
+triggerTag = ''
+
+[[Spotlights]]
+canBeTriggered = false
+castsShadows = true
+colour = [ 1.0, 1.0, 1.0 ]
+cutOff = 1.0
+effect = 0
+guid = '5102449376581934032'
+intensity = 225.0
+linear = 0.9609999656677246
+on = true
+outerCutOff = 0.2290000021457672
+quadratic = 4.845000267028809
+range = 0.9100000262260437
 triggerTag = ''
 
 [[Spotlights]]
@@ -21022,11 +21022,11 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -2.231179860245902e-05, 180.0, 5.008955668017734e-06 ]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '18133337472315591294'
 isStatic = false
 position = [ 434.23150634765625, 0.0, -11.642112731933594 ]
-quaternion = [ -4.3711395392165286e-08, -4.371137762859689e-08, 1.0, 1.947071694985425e-07 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Triggerables]]
@@ -21045,17 +21045,17 @@ triggerTag = 'RefractionShotShowcaseComplete'
 
 [[Triggerables]]
 bothPlayersNeeded = true
-doesntSendFalseEveryFrame = false
-falseIsTrue = false
-guid = '1857428579694333567'
-triggerTag = 'AdvancedCombatTrigger'
-
-[[Triggerables]]
-bothPlayersNeeded = true
 doesntSendFalseEveryFrame = true
 falseIsTrue = true
 guid = '1859525288535113422'
 triggerTag = 'CombatEnter1'
+
+[[Triggerables]]
+bothPlayersNeeded = true
+doesntSendFalseEveryFrame = false
+falseIsTrue = false
+guid = '1857428579694333567'
+triggerTag = 'AdvancedCombatTrigger'
 
 [[Triggerables]]
 bothPlayersNeeded = true
