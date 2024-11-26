@@ -84,7 +84,8 @@ private:
 	float boostKnockback = 10.0f;
 	float healCooldown = 1.0f;
 	float timeSinceLastHeal = FLT_MAX;
-
+	glm::vec2 lastFrameVelocity = { 0.0f, 0.0f };
+	float lerpForwardAni = 0.0f;
 	//TESTING VALUES
 	bool speedBoostInDirectionOfBody = true;
 

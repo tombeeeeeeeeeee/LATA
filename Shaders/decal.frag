@@ -52,7 +52,7 @@ void main()
 
 
     vec2 decalTexCoords = objPos.xz + 0.5;
-
+    decalTexCoords.x = 1.0 - decalTexCoords.x;
     vec3 ddxWp = dFdx(worldPos);
     vec3 ddyWp = dFdy(worldPos);
     vec3 n = normalize(cross(ddyWp, ddxWp));
