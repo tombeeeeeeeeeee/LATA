@@ -383,6 +383,7 @@ void Scene::EnsureAllPartsHaveSceneObject()
 	EnsurePartSafety(renderers);
 	EnsurePartSafety(rigidBodies);
 	EnsurePartSafety(shadowWalls);
+	EnsurePartSafety(healths);
 }
 
 #define EnsurePartValueMatchesParts(partsType, container)                                                  \
@@ -408,6 +409,7 @@ void Scene::EnsurePartsValueMatchesParts()
 		EnsurePartValueMatchesParts(Parts::collider, colliders);
 		EnsurePartValueMatchesParts(Parts::modelRenderer, renderers);
 		EnsurePartValueMatchesParts(Parts::shadowWall, shadowWalls);
+		EnsurePartValueMatchesParts(Parts::health, healths);
 	}
 }
 
@@ -419,7 +421,6 @@ void Scene::InitialiseLayers()
 	////sync
 	SceneObject* syncSO = sceneObjects[sync->GUID];
 	//if (!syncSO->health()) syncSO->setHealth(new Health());
-	syncSO->health()->currHealth = sync->currHealth;
 	syncSO->rigidbody()->vel = { 0.0f, 0.0f };
 
 	for (int i = 1; i < (int)CollisionLayers::count; i *= 2)

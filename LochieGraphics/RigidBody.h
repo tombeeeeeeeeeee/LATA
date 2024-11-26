@@ -49,7 +49,7 @@ public:
 	glm::vec2 AddImpulse(glm::vec2 impulse);
 	float AddRotationalImpulse(float impulse);
 
-	glm::vec2 AddDepen(glm::vec2 depen);
+	glm::vec2 AddDepen(glm::vec2 depen, float depth);
 
 	void addCollider(Collider* collider);
 	std::vector<Collider*>* getColliders();

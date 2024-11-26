@@ -44,7 +44,6 @@ void LocWorkshop::Start()
 	animationTestPackets.emplace_back("sync shoot snipe",          Paths::importModelLocation + "ANIM_Sync_Shoot_Snipe.dae");
 	animationTestPackets.emplace_back("sync shoot charge",         Paths::importModelLocation + "ANIM_Sync_Shoot_Charge.dae");
 	animationTestPackets.emplace_back("sync shoot hold",           Paths::importModelLocation + "ANIM_Sync_Shoot_Hold.dae");
-	animationTestPackets.emplace_back("sync shoot snipe",          Paths::importModelLocation + "ANIM_Sync_Shoot_Snipe.dae");
 	animationTestPackets.emplace_back("ecco lean back",            Paths::importModelLocation + "SM_EccoLeanBack.dae");
 	animationTestPackets.emplace_back("ecco lead forward",         Paths::importModelLocation + "SM_EccoLeanForward.dae");
 	animationTestPackets.emplace_back("ecco lean left",            Paths::importModelLocation + "SM_EccoLeanLeft.dae");

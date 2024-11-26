@@ -67,12 +67,12 @@ void BlendedAnimator::UpdateAnimation(float delta)
         currentTimeOther = fmodf(currentTimeOther, otherCurrentAnimation->getDuration());
     }
     else {
-        currentTimeOther = fminf(currentTimeOther, currentAnimation->getDuration());
+        currentTimeOther = fminf(currentTimeOther, otherCurrentAnimation->getDuration());
     }
     CalculateBoneTransform(currentAnimation->getRootNode(), glm::mat4(1.0f));
 }
 
-void BlendedAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, glm::mat4 parentTransform)
+void BlendedAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, const glm::mat4& parentTransform)
 {
     std::string nodeName = node->name;
     glm::mat4 globalTransformation;
@@ -175,6 +175,9 @@ void BlendedAnimator::BaseGUI()
         else {
             otherCurrentAnimationGUID = 0ull;
         }
+    }
+    if (otherCurrentAnimation) {
+        otherCurrentAnimation->GUI("Other Current Animation");
     }
     
     ImGui::DragFloat("Current other time", &currentTimeOther);

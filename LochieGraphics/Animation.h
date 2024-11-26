@@ -58,7 +58,7 @@ public:
 
 	const ModelHierarchyInfo* getRootNode() const;
 
-	void GUI();
+	void GUI(std::string label = "Animation");
 
 	toml::table Serialise() const;
 

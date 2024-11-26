@@ -1,14 +1,17 @@
-Animators = []
 Bollards = []
+Decals = []
 Doors = []
 Enemies = []
 Plates = []
 PointLights = []
+ShadowWalls = []
 SpawnManagers = []
 Spotlights = []
 Triggerables = []
 
 [Ecco]
+boostDamage = 150
+boostKnockback = 1800.0
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
 carReverseMoveSpeed = 3000.0
@@ -16,47 +19,52 @@ controlState = false
 deadZone = 0.6000000238418579
 exceedingSlowIntensity = 3.5
 guid = '18133337474269889811'
-healingFromDamage = 1
-maxCarMoveSpeed = 565.0
-maxHealth = 10
+healCooldown = 1.5
+healingFromDamage = 20
+maxCarMoveSpeed = 630.0
+maxHealth = 200
 maxReverseSpeed = 300.0
 maxWheelAngle = 60.0
 minSpeedDamageThreshold = 300.0
-portionOfSidewaysSpeedKept = 80.0
+portionOfSidewaysSpeedKept = 60.0
 sidewaysFrictionCoef = 65.0
 speedBoost = 12500.0
 speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
-speedBoostHPCost = 1
+speedBoostHPCost = 30
 speedBoostInDirectionOfBody = false
-speedDamage = 25
-speedReductionAfterDamaging = 200.0
+speedDamage = 50
+speedKnockback = 1300.0
+speedReductionAfterDamaging = 450.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
-turningCircleScalar = 0.05999999865889549
+turningCircleScalar = 0.15000000596046448
 turningCircleScalarBoosting = 0.05999999865889549
-wheelDirection = [ 0.8660253882408142, -0.5000000596046448 ]
-wheelTurnSpeed = 4.0
+wheelDirection = [ 0.48051777482032776, -0.8769848942756653 ]
+wheelTurnSpeed = 4.400000095367432
 
     [Ecco.boostUI]
     backgroundColour = [ 0.21960784494876862, 0.3907727301120758, 0.4274509847164154 ]
     foregroundColour = [ 0.4503093361854553, 0.8141592741012573, 0.8034577369689941 ]
+    horizontal = true
     offset = [ -0.24999995529651642, -0.9284999966621399 ]
     scale = [ 0.11200003325939178, 0.045499980449676514 ]
 
     [Ecco.healthUI]
     backgroundColour = [ 0.21960784494876862, 0.32156863808631897, 0.4274509847164154 ]
     foregroundColour = [ 0.250980406999588, 0.4901960790157318, 1.0 ]
+    horizontal = true
     offset = [ -0.5109999775886536, -0.8840000033378601 ]
     scale = [ 0.37299999594688416, 0.09000000357627869 ]
 
 [Sync]
-barrelOffset = [ -75.0, 70.0, 5.0 ]
-eccoRefractionAngle = 70.0
+barrelOffset = [ -37.0, 96.0, 12.0 ]
+eccoRefractionAngle = 80.0
 eccoRefractionCount = 5
 enemyPierceCount = 99
 guid = '18133337472315591294'
-knockBackForce = 1.0
+knockBackForceOverclock = 1200.0
+knockBackForceSnipe = 400.0
 lookDeadZone = 0.4000000059604645
 maxMoveForce = 4000.0
 maxStopForce = 4000.0
@@ -64,33 +72,50 @@ misfireColliderRadius = 0.10000000149011612
 misfireDamage = 0
 misfireShotSpeed = 0.10000000149011612
 moveDeadZone = 0.4000000059604645
-moveSpeed = 400.0
+moveSpeed = 415.0
 overclockBeamColour = [ 0.06395351886749268, 1.0, 0.0 ]
 overclockBeamLifeSpan = 1.5
 overclockBounceDamage = 100
 overclockChargeTime = 1.5
-overclockDamage = 200
+overclockDamage = 100
 overclockReboundCount = 1
 rainbowDimming = 2.5
 rainbowRebounding = true
+shotWidth = 10.0
 sniperBeamColour = [ 0.5641789436340332, 1.0, 0.5353982448577881 ]
 sniperBeamLifeSpan = 0.5
 sniperChargeTime = 0.30000001192092896
-sniperDamage = 100
+sniperDamage = 80
 startSlowTime = 0.5
 stopSlowTime = 1.5
 
     [Sync.chargeUI]
     backgroundColour = [ 0.12156862765550613, 0.3529411852359772, 0.10196078568696976 ]
     foregroundColour = [ 0.10196078568696976, 1.0, 0.0 ]
+    horizontal = true
     offset = [ 0.5, -0.9399999976158142 ]
     scale = [ 0.3779999911785126, 0.03799999877810478 ]
 
     [Sync.healthUI]
     backgroundColour = [ 0.42352941632270813, 0.003921568859368563, 0.06666667014360428 ]
     foregroundColour = [ 0.9019607901573181, 0.13725490868091583, 0.16470588743686676 ]
+    horizontal = true
     offset = [ 0.5, -0.8410000205039978 ]
     scale = [ 0.3779999911785126, 0.05299999937415123 ]
+
+[[Animators]]
+currentAnimationGUID = '15148335964655446906'
+downAnimationGUID = '15148335964655446904'
+guid = '18133337474269889811'
+rightAnimationGUID = '15148335964655446905'
+type = '2'
+upAnimationGUID = '15148335964655446903'
+
+[[Animators]]
+currentAnimationGUID = '15148335964655264906'
+guid = '2242796768069289897'
+otherCurrentAnimationGUID = '0'
+type = '1'
 
 [[Colliders]]
 collisionLayer = 1
@@ -205,12 +230,12 @@ type = 1
 verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
 
 [[Exits]]
-guid = '2424082000208527367'
-levelToLoad = 'KK3'
-
-[[Exits]]
 guid = '2185784294620069167'
 levelToLoad = 'MainMenu'
+
+[[Exits]]
+guid = '2424082000208527367'
+levelToLoad = 'KK3'
 
 [[Exits]]
 guid = '2429031111848239826'
@@ -238,12 +263,12 @@ maxHealth = 0
 
 [[Healths]]
 currHealth = 0
-guid = '2838210537808000711'
+guid = '2056315331888814184'
 maxHealth = 0
 
 [[Healths]]
 currHealth = 0
-guid = '2056315331888814184'
+guid = '2838210537808000711'
 maxHealth = 0
 
 [[Healths]]
@@ -327,11 +352,6 @@ guid = '2059137251082024605'
 maxHealth = 0
 
 [[Healths]]
-currHealth = 10
-guid = '18133337474269889811'
-maxHealth = 10
-
-[[Healths]]
 currHealth = 0
 guid = '2831884389789555394'
 maxHealth = 0
@@ -365,11 +385,6 @@ maxHealth = 0
 currHealth = 0
 guid = '2062006339540391460'
 maxHealth = 0
-
-[[Healths]]
-currHealth = 5
-guid = '18133337472315591294'
-maxHealth = 5
 
 [[Healths]]
 currHealth = 0
@@ -411,6 +426,16 @@ currHealth = 0
 guid = '2112227385406568715'
 maxHealth = 0
 
+[[Healths]]
+currHealth = 200
+guid = '18133337474269889811'
+maxHealth = 200
+
+[[Healths]]
+currHealth = 100
+guid = '18133337472315591294'
+maxHealth = 100
+
 [[Renderers]]
 guid = '15408090532665952479'
 materialTint = [ 1.0, 1.0, 1.0 ]
@@ -434,12 +459,6 @@ guid = '15408099486340683582'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '18133337474269889811'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0', '15449259407003476463', '15449352838481615396' ]
-modelGuid = '15070486382632221399'
 
 [[Renderers]]
 guid = '15408100412076300408'
@@ -712,47 +731,16 @@ materials = [ '1777316586600630394', '1766071748038532778' ]
 modelGuid = '12471765937523797163'
 
 [[Renderers]]
-guid = '2242796768069289897'
+guid = '18133337474269889811'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '2229847150575832532' ]
-modelGuid = '2234949598158592467'
+materials = [ '15449259407003476463', '15449352838481615396' ]
+modelGuid = '2140790440003113620'
 
 [[Renderers]]
-guid = '2242796768663020572'
-materialTint = [ 0.0, 0.32743364572525024, 0.11880327016115189 ]
-materials = [ '0' ]
-modelGuid = '2236096697336878089'
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = -0.0
-elasticicty = 0.0
-guid = '18133337474269889811'
-invMass = 0.10000000149011612
-invMomentOfInertia = 0.20000000298023224
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [
-    2.1566576779972236e-23,
-    7.096973723185444e-24
-]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 16
-    guid = '18133337474269889811'
-    isTrigger = false
-    radius = 71.0
-    type = 1
-    verts = [ [ 0.0, -46.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 4
-    guid = '18133337474269889811'
-    isTrigger = false
-    radius = 60.0
-    type = 1
-    verts = [ [ 1.0, -46.0 ] ]
+guid = '2242796768069289897'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '2229847150575832532', '0' ]
+modelGuid = '2234949598158592467'
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -1013,6 +1001,37 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ 150.0, -60.0 ], [ 150.0, -275.0 ], [ -150.0, -275.0 ], [ -150.0, -60.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = -0.0
+elasticicty = 0.0
+guid = '18133337474269889811'
+invMass = 0.10000000149011612
+invMomentOfInertia = 0.20000000298023224
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [
+    -3.559844092045189e-24,
+    2.369515542736466e-23
+]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 16
+    guid = '18133337474269889811'
+    isTrigger = false
+    radius = 71.0
+    type = 1
+    verts = [ [ 0.0, -46.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 4
+    guid = '18133337474269889811'
+    isTrigger = false
+    radius = 60.0
+    type = 1
+    verts = [ [ 1.0, -46.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -1283,17 +1302,17 @@ children = []
 guid = '2242796768069289897'
 name = 'Sink Model'
 parent = '18133337472315591294'
-parts = 2
+parts = 6
 prefabBase = '2236905023818184222'
 prefabStatus = 0
 
 [[SceneObjects]]
 children = []
-guid = '2242796768663020572'
-name = 'Gundam'
-parent = '18133337472315591294'
-parts = 2
-prefabBase = '2237067691946253859'
+guid = '7328244485627013707'
+name = 'Unnamed Scene Object'
+parent = '18133337474269889811'
+parts = 0
+prefabBase = '2120176559991300301'
 prefabStatus = 0
 
 [[SceneObjects]]
@@ -1558,7 +1577,7 @@ prefabBase = '0'
 prefabStatus = 0
 
 [[SceneObjects]]
-children = [ '2242796768069289897', '2242796768663020572' ]
+children = [ '2242796768069289897' ]
 guid = '18133337472315591294'
 name = 'Sync'
 parent = '0'
@@ -1567,17 +1586,18 @@ prefabBase = '2091576977596946314'
 prefabStatus = 2
 
 [[SceneObjects]]
-children = []
+children = [ '7328244485627013707' ]
 guid = '18133337474269889811'
 name = 'Ecco'
 parent = '0'
-parts = 330
+parts = 334
 prefabBase = '2091576976424546894'
 prefabStatus = 2
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '2180137812714839332'
+isStatic = true
 position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1585,6 +1605,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '2180282839895856472'
+isStatic = true
 position = [ -750.0, 0.0, -1050.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1592,6 +1613,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, -90.0, 0.0 ]
 guid = '2180288061808297064'
+isStatic = true
 position = [ 750.0, 0.0, -1050.0 ]
 quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1599,6 +1621,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 180.0, 0.0 ]
 guid = '2180300441353616350'
+isStatic = true
 position = [ 750.0, 0.0, 450.0 ]
 quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1606,6 +1629,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 90.0, 0.0 ]
 guid = '2180318200893547659'
+isStatic = true
 position = [ -750.0, 0.0, 450.0 ]
 quaternion = [ 0.7071067690849304, 0.0, 0.7071067690849304, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1613,6 +1637,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '2180377466812149364'
+isStatic = true
 position = [ -450.0, 0.0, -1050.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1620,6 +1645,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '2180388420071631261'
+isStatic = true
 position = [ -150.0, 0.0, -1050.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1627,6 +1653,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '2180405170654942844'
+isStatic = true
 position = [ -750.0, 0.0, -750.0 ]
 quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
 scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
@@ -1634,6 +1661,7 @@ scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 [[Transforms]]
 euler = [ 0.0, 89.99999237060547, 0.0 ]
 guid = '2180416266823347149'
+isStatic = true
 position = [ -750.0, 0.0, 150.0 ]
 quaternion = [ 0.7071068286895752, 0.0, 0.7071067094802856, 0.0 ]
 scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
@@ -1641,6 +1669,7 @@ scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
 [[Transforms]]
 euler = [ 0.0, 89.99999237060547, 0.0 ]
 guid = '2180419346120177195'
+isStatic = true
 position = [ -750.0, 0.0, -150.0 ]
 quaternion = [ 0.7071068286895752, 0.0, 0.7071067094802856, 0.0 ]
 scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
@@ -1648,6 +1677,7 @@ scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
 [[Transforms]]
 euler = [ 0.0, 89.99999237060547, 0.0 ]
 guid = '2180421708809655207'
+isStatic = true
 position = [ -750.0, 0.0, -450.0 ]
 quaternion = [ 0.7071068286895752, 0.0, 0.7071067094802856, 0.0 ]
 scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
@@ -1655,6 +1685,7 @@ scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
 [[Transforms]]
 euler = [ 0.0, -89.99999237060547, 0.0 ]
 guid = '2180438023102431564'
+isStatic = true
 position = [ 750.0, 0.0, 150.0 ]
 quaternion = [ 0.7071068286895752, 0.0, -0.7071067094802856, 0.0 ]
 scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
@@ -1662,6 +1693,7 @@ scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
 [[Transforms]]
 euler = [ 0.0, -89.99999237060547, 0.0 ]
 guid = '2180440961794698669'
+isStatic = true
 position = [ 750.0, 0.0, -150.0 ]
 quaternion = [ 0.7071068286895752, 0.0, -0.7071067094802856, 0.0 ]
 scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
@@ -1669,6 +1701,7 @@ scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
 [[Transforms]]
 euler = [ 0.0, -89.99999237060547, 0.0 ]
 guid = '2180443395535598322'
+isStatic = true
 position = [ 750.0, 0.0, -450.0 ]
 quaternion = [ 0.7071068286895752, 0.0, -0.7071067094802856, 0.0 ]
 scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
@@ -1676,6 +1709,7 @@ scale = [ 0.9999999403953552, 1.0, 0.9999999403953552 ]
 [[Transforms]]
 euler = [ 0.0, -89.99998474121094, 0.0 ]
 guid = '2180445828572490808'
+isStatic = true
 position = [ 750.0, 0.0, -750.0 ]
 quaternion = [ 0.70710688829422, 0.0, -0.7071066498756409, 0.0 ]
 scale = [ 0.9999998807907104, 1.0, 0.9999998807907104 ]
@@ -1683,6 +1717,7 @@ scale = [ 0.9999998807907104, 1.0, 0.9999998807907104 ]
 [[Transforms]]
 euler = [ 180.0, -5.008955668017734e-06, 180.0 ]
 guid = '2180469878116336857'
+isStatic = true
 position = [ 450.0, 0.0, 450.0 ]
 quaternion = [ -4.371138118131057e-08, -4.371139183945161e-08, 1.0, -4.371139183945161e-08 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1690,6 +1725,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 180.0, -5.008955668017734e-06, 180.0 ]
 guid = '2180473601086847782'
+isStatic = true
 position = [ 150.0, 0.0, 450.0 ]
 quaternion = [ -4.371138118131057e-08, -4.371139183945161e-08, 1.0, -4.371139183945161e-08 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1697,6 +1733,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 180.0, -5.008955668017734e-06, 180.0 ]
 guid = '2180476677663441142'
+isStatic = true
 position = [ -150.0, 0.0, 450.0 ]
 quaternion = [ -4.371138118131057e-08, -4.371139183945161e-08, 1.0, -4.371139183945161e-08 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1704,6 +1741,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 180.0, -5.008955668017734e-06, 180.0 ]
 guid = '2180479405190021721'
+isStatic = true
 position = [ -450.0, 0.0, 450.0 ]
 quaternion = [ -4.371138118131057e-08, -4.371139183945161e-08, 1.0, -4.371139183945161e-08 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1711,6 +1749,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ -0.0, -0.0, -0.0 ]
 guid = '2185118075681757195'
+isStatic = true
 position = [ 300.0, 0.0, -1200.0 ]
 quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1718,6 +1757,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 2.2311789507512003e-05, -5.008955668017734e-06, 2.2311789507512003e-05 ]
 guid = '2185414217090571663'
+isStatic = true
 position = [ 150.0, 0.0, -1350.0 ]
 quaternion = [ 1.0, 1.9470711265512364e-07, -4.371134565417378e-08, 1.9470711265512364e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1725,6 +1765,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '2185440126880072731'
+isStatic = true
 position = [ 450.0, 0.0, -1350.0 ]
 quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
 scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
@@ -1732,6 +1773,7 @@ scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 [[Transforms]]
 euler = [ 0.0, 180.0, 0.0 ]
 guid = '2185720510420477912'
+isStatic = true
 position = [ 150.0, 0.0, -1050.0 ]
 quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1739,6 +1781,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 90.0, 0.0 ]
 guid = '2185737911793658750'
+isStatic = true
 position = [ 450.0, 0.0, -1050.0 ]
 quaternion = [ 0.7071067690849304, 0.0, 0.7071067690849304, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1746,20 +1789,23 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '2185784294620069167'
+isStatic = true
 position = [ 300.0, 0.0, -1050.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '15408101629913741539'
-position = [ -300.0, 0.0, -300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+euler = [ 0.0, -90.0, 0.0 ]
+guid = '2242796768069289897'
+isStatic = true
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408090532665952479'
+isStatic = true
 position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1767,6 +1813,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408094543342345388'
+isStatic = true
 position = [ -300.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1774,6 +1821,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408099486340683582'
+isStatic = true
 position = [ 300.0, 0.0, -0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1781,20 +1829,23 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408100412076300408'
+isStatic = true
 position = [ 300.0, 0.0, -300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '15408115659639209258'
-position = [ -300.0, 0.0, -600.0 ]
+guid = '15408101629913741539'
+isStatic = true
+position = [ -300.0, 0.0, -300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408103209441175705'
+isStatic = true
 position = [ 0.0, 0.0, -300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1802,6 +1853,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408113223859089951'
+isStatic = true
 position = [ 600.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1809,6 +1861,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408113580563462453'
+isStatic = true
 position = [ 600.0, 0.0, -300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1816,6 +1869,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408114296541975099'
+isStatic = true
 position = [ 600.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1823,6 +1877,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408114801734201196'
+isStatic = true
 position = [ 300.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1830,13 +1885,23 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408115085601106003'
+isStatic = true
 position = [ 0.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '15408115659639209258'
+isStatic = true
+position = [ -300.0, 0.0, -600.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408132913475319645'
+isStatic = true
 position = [ 600.0, 0.0, -900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1844,6 +1909,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408133121269798071'
+isStatic = true
 position = [ 300.0, 0.0, -900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1851,6 +1917,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408133483633563998'
+isStatic = true
 position = [ 0.0, 0.0, -900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1858,6 +1925,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15408133915120237945'
+isStatic = true
 position = [ -300.0, 0.0, -900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1865,6 +1933,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15844888718234908673'
+isStatic = true
 position = [ -600.0, 0.0, -900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1872,6 +1941,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15844888998376260645'
+isStatic = true
 position = [ -600.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1879,6 +1949,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15844889066786861091'
+isStatic = true
 position = [ -600.0, 0.0, -300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1886,6 +1957,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15844889209998121353'
+isStatic = true
 position = [ -600.0, 0.0, -0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1893,6 +1965,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15845108979253513499'
+isStatic = true
 position = [ -600.0, 0.0, 300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1900,6 +1973,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15845111338210249027'
+isStatic = true
 position = [ -300.0, 0.0, 300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1907,6 +1981,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15845111981753634146'
+isStatic = true
 position = [ -0.0, 0.0, 300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1914,6 +1989,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15845112766615037376'
+isStatic = true
 position = [ 300.0, 0.0, 300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1921,6 +1997,7 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '15845113843240142313'
+isStatic = true
 position = [ 600.0, 0.0, 300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
@@ -1928,34 +2005,31 @@ scale = [ 1.0, 1.0, 1.0 ]
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '18133334142995481696'
+isStatic = true
 position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
+euler = [ 179.99996948242188, 180.0, -179.99998474121094 ]
 guid = '18133337472315591294'
+isStatic = false
 position = [ 480.99755859375, 0.0, -362.1824951171875 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+quaternion = [ -1.0, 3.1391647326017846e-07, 4.371144868287047e-08, -1.947071694985425e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ -179.99989318847656, -5.008955668017734e-06, -179.99989318847656 ]
 guid = '18133337474269889811'
+isStatic = false
 position = [ -273.30999755859375, 0.0, 93.05679321289062 ]
 quaternion = [ -4.371055695173709e-08, -9.099629778575036e-07, 1.0, -9.099629778575036e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -90.0, 0.0 ]
-guid = '2242796768069289897'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '7328244485627013707'
+isStatic = true
 position = [ 0.0, 0.0, 0.0 ]
-quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.890749990940094, -2.2175400257110596, -21.890897750854492 ]
-guid = '2242796768663020572'
-position = [ -22.592910766601562, 1.9634391069412231, -7.275335788726807 ]
-quaternion = [ 0.9816234707832336, 0.0039562988094985485, -0.0204735416918993, -0.18968532979488373 ]
-scale = [ 0.9999995231628418, 0.9999975562095642, 0.9999959468841553 ]
