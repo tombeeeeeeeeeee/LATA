@@ -772,6 +772,7 @@ void EnemySystem::GUI()
     ImGui::DragInt("Melee Enemy Damage", &meleeEnemyDamage);
     ImGui::DragFloat("Melee Enemy Collider Radius", &meleeEnemyColliderRadius);
     ImGui::DragFloat("Distance To Start Punching", &distanceToPunch, 25.0f, 0);
+    ImGui::DragFloat("Time To Start Punching", &timeToPunch, 0.02f, 0);
     ImGui::InputText("Melee Enemy Material", &meleeEnemyMaterialPath);
     ImGui::Text("");
     ImGui::Text("RANGED ENEMY STATS");
