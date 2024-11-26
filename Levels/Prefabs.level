@@ -13,8 +13,8 @@ controlState = false
 deadZone = 0.6000000238418579
 exceedingSlowIntensity = 3.5
 guid = '2091576976424546894'
-healCooldown = 1.5
-healingFromDamage = 20
+healCooldown = 1.0
+healingFromDamage = 30
 maxCarMoveSpeed = 630.0
 maxHealth = 200
 maxReverseSpeed = 300.0
@@ -25,7 +25,7 @@ sidewaysFrictionCoef = 65.0
 speedBoost = 12500.0
 speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
-speedBoostHPCost = 30
+speedBoostHPCost = 15
 speedBoostInDirectionOfBody = false
 speedDamage = 50
 speedKnockback = 1300.0
@@ -69,9 +69,9 @@ moveDeadZone = 0.4000000059604645
 moveSpeed = 415.0
 overclockBeamColour = [ 0.06395351886749268, 1.0, 0.0 ]
 overclockBeamLifeSpan = 1.5
-overclockBounceDamage = 100
+overclockBounceDamage = 199
 overclockChargeTime = 1.5
-overclockDamage = 100
+overclockDamage = 199
 overclockReboundCount = 1
 rainbowDimming = 2.5
 rainbowRebounding = true
@@ -108,7 +108,7 @@ upAnimationGUID = '15148335964655446903'
 [[Animators]]
 currentAnimationGUID = '15148335964655264906'
 guid = '2236905023818184222'
-otherCurrentAnimationGUID = '0'
+otherCurrentAnimationGUID = '15148335964655264906'
 type = '1'
 
 [[Bollards]]
@@ -1204,441 +1204,6 @@ guid = '186578577384937060'
 levelToLoad = 'BF2'
 
 [[Healths]]
-currHealth = 0
-guid = '10278726325921806701'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10278726324208397808'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2062006339540391460'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '6250046352164842712'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10276000657697883363'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10198361111672180190'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7571040008241940597'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '6240595268555718230'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10269369042494301237'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10269369042736957926'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10276000656802864507'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7571040007869318260'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2831365801556718216'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10240981367976824841'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7202331049378305848'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2061491281800521077'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10233540805840876539'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10240981368554954397'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7596112393426478150'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10233540803041552714'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2121247268062425558'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7935097545721439563'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2796309523745153790'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10275522617589179968'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10192101085378339169'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2831884389789555394'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10198361108153093094'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10192101081616137415'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2060568086243483538'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '6182542648205860495'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2831365800820841677'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7935097546485898197'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7596112394102408136'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '6240595268078459183'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7656843233945210725'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7202848450194949168'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2419197603791333540'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7656843232445084008'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7293611555455078789'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7293611557556057725'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7202848449535349895'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7283162324130298147'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2059137251082024605'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7283162324578426947'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2059137250595366819'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2791765175404296612'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2056315331888814184'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2838210537808000711'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2829622844265849741'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2838210538867806273'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2796309522656305808'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2829622846030759312'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2791765174745726268'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2766383604514840770'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2121247267699442511'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2419197606041090391'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2060568086226010114'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2766383604041013310'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2831884390664350704'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2061491282485628795'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2778083148230030360'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2057047752541963232'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2112227385368011604'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2057047753110840540'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '0'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2504551623778147250'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2504551622308221867'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2778083147117070049'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2803852468937922633'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '6182542647656045349'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2803852472912349762'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2112227385406568715'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2062006338945910735'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2056315333504042467'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2050837148790761767'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2050837151229920404'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7202331049276336670'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7655030195079029746'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7655030195348689833'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7580804511924852011'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7580804510616202698'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7575233448031717533'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '7575233446742736099'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '6250046355424393871'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10275774722235127359'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10275774723565449298'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '10275522615560280853'
-maxHealth = 0
-
-[[Healths]]
 currHealth = 200
 guid = '2091576976424546894'
 maxHealth = 200
@@ -1765,16 +1330,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1768415953930092518'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777577993317357874' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '6241416022952274406'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1768415953930092518'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777577993317357874' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '15063244529734170502'
@@ -1795,6 +1360,12 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
+guid = '12424626305064909471'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
 guid = '15552269667268684488'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
@@ -1808,12 +1379,6 @@ modelGuid = '17947951532383889196'
 
 [[Renderers]]
 guid = '6241721051460392277'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '12424626305064909471'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1843,6 +1408,12 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
+guid = '6241699630280919497'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
 guid = '15552269664211584833'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777577993317357874' ]
@@ -1855,25 +1426,19 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '6241699630280919497'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
 guid = '6241767371018773662'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '12424696958272162603'
+guid = '12425489096747407224'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '12425489096747407224'
+guid = '12424696958272162603'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1897,13 +1462,13 @@ materials = [ '1777316586600630394' ]
 modelGuid = '12471826850464180481'
 
 [[Renderers]]
-guid = '12425479440903173709'
+guid = '12424698532472091139'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '12424698532472091139'
+guid = '12425479440903173709'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1963,16 +1528,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15552269665608109720'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777996680635659332' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '12424631458385855781'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15552269665608109720'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777996680635659332' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '12424680420160596173'
@@ -2029,13 +1594,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '6241479200721583909'
+guid = '6241442447127229460'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '6241442447127229460'
+guid = '6241479200721583909'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -2161,16 +1726,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1783876022991969686'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777712016902188911' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '6241425568980698362'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1783876022991969686'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777712016902188911' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '6241425806658661504'
@@ -2239,16 +1804,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15552269663671195355'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '6241431533689596860'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15552269663671195355'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '6241431861543822839'
@@ -2455,16 +2020,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15552269663685788695'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '6241441495318213330'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15552269663685788695'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '6241441849810158904'
@@ -2497,13 +2062,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '12425484594717056056'
+guid = '6241698912806408061'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '6241698912806408061'
+guid = '12425484594717056056'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -2527,6 +2092,12 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
+guid = '6241444388780093080'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
 guid = '15552269666501140730'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
@@ -2534,12 +2105,6 @@ modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '12425448798349408390'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '6241444388780093080'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -2563,6 +2128,12 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
+guid = '6241767733531501681'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
 guid = '6241477650118166659'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -2570,12 +2141,6 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '6241742674578272182'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '6241767733531501681'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -2785,13 +2350,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '6241697754020415017'
+guid = '6241741836702542541'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '6241741836702542541'
+guid = '6241697754020415017'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -3037,13 +2602,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '6241721853278674449'
+guid = '12424681638790143779'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '12424681638790143779'
+guid = '6241721853278674449'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -3331,16 +2896,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15552269665862331067'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777577993317357874' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '12424624520298898790'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15552269665862331067'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777577993317357874' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '12425483450825391098'
@@ -3385,16 +2950,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15552269665059923173'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '12424678136487094696'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15552269665059923173'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '12424678635217975336'
@@ -3589,16 +3154,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '12425482800245149277'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
 guid = '12424983719697434504'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 modelGuid = '17948288847197925699'
+
+[[Renderers]]
+guid = '12425482800245149277'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '12425068470001383042'
@@ -3673,16 +3238,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '12425440785545837817'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
 guid = '15064001146988161018'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 modelGuid = '15061627272122173222'
+
+[[Renderers]]
+guid = '12425440785545837817'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '15552269666381451897'
@@ -3697,16 +3262,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '12425444358599390788'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
 guid = '15063342308761907536'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 modelGuid = '15060294060764248073'
+
+[[Renderers]]
+guid = '12425444358599390788'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '12425444570654695088'
@@ -3757,6 +3322,12 @@ materials = [ '1777316586600630394' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
+guid = '12425479721694323953'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
 guid = '15552269666162174104'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
@@ -3767,12 +3338,6 @@ guid = '263450243779483742'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394', '1766071748038532778' ]
 modelGuid = '12471765937523797163'
-
-[[Renderers]]
-guid = '12425479721694323953'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '12425480867222299115'
@@ -4057,16 +3622,16 @@ materials = [ '1766071748038532778' ]
 modelGuid = '12471686768254296210'
 
 [[Renderers]]
-guid = '15552269666227953625'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '1156743744463646758'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1822012501052853337' ]
 modelGuid = '17947608378028088616'
+
+[[Renderers]]
+guid = '15552269666227953625'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777316586600630394' ]
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '1454791153471108163'
@@ -4093,15 +3658,15 @@ materials = [ '1766071748038532778' ]
 modelGuid = '12471265708787363967'
 
 [[Renderers]]
-guid = '15552269665255056699'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777996680635659332' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '15552269663410939131'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '15552269665255056699'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777996680635659332' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
@@ -10425,11 +9990,11 @@ quaternion = [ -0.32506024837493896, 1.119221906265011e-05, -0.944414496421814, 
 scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
 
 [[Transforms]]
-euler = [ 0.0, 62.745147705078125, 0.0 ]
+euler = [ 0.0, -63.56309509277344, 0.0 ]
 guid = '2091576977596946314'
 isStatic = false
 position = [ 2836.251953125, -0.016998419538140297, -692.2213134765625 ]
-quaternion = [ 0.8538000583648682, 0.0, 0.5206010341644287, 0.0 ]
+quaternion = [ 0.850062370300293, 0.0, -0.5266820192337036, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]

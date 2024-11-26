@@ -4,7 +4,6 @@ Doors = []
 Enemies = []
 Plates = []
 PointLights = []
-ShadowWalls = []
 SpawnManagers = []
 Triggerables = []
 
@@ -18,8 +17,8 @@ controlState = false
 deadZone = 0.6000000238418579
 exceedingSlowIntensity = 3.5
 guid = '18133337474269889811'
-healCooldown = 1.5
-healingFromDamage = 20
+healCooldown = 1.0
+healingFromDamage = 30
 maxCarMoveSpeed = 630.0
 maxHealth = 200
 maxReverseSpeed = 300.0
@@ -30,7 +29,7 @@ sidewaysFrictionCoef = 65.0
 speedBoost = 12500.0
 speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
-speedBoostHPCost = 30
+speedBoostHPCost = 15
 speedBoostInDirectionOfBody = false
 speedDamage = 50
 speedKnockback = 1300.0
@@ -39,7 +38,7 @@ speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
 turningCircleScalar = 0.15000000596046448
 turningCircleScalarBoosting = 0.05999999865889549
-wheelDirection = [ -0.5000002980232239, -0.8660252690315247 ]
+wheelDirection = [ -0.8884918093681335, -0.4588926136493683 ]
 wheelTurnSpeed = 4.400000095367432
 
     [Ecco.boostUI]
@@ -74,9 +73,9 @@ moveDeadZone = 0.4000000059604645
 moveSpeed = 415.0
 overclockBeamColour = [ 0.06395351886749268, 1.0, 0.0 ]
 overclockBeamLifeSpan = 1.5
-overclockBounceDamage = 100
+overclockBounceDamage = 199
 overclockChargeTime = 1.5
-overclockDamage = 100
+overclockDamage = 199
 overclockReboundCount = 1
 rainbowDimming = 2.5
 rainbowRebounding = true
@@ -103,12 +102,6 @@ stopSlowTime = 1.5
     scale = [ 0.3779999911785126, 0.05299999937415123 ]
 
 [[Animators]]
-currentAnimationGUID = '15148335964655264906'
-guid = '2242071004623144950'
-otherCurrentAnimationGUID = '0'
-type = '1'
-
-[[Animators]]
 currentAnimationGUID = '15148335964655446906'
 downAnimationGUID = '15148335964655446904'
 guid = '18133337474269889811'
@@ -116,57 +109,23 @@ rightAnimationGUID = '15148335964655446905'
 type = '2'
 upAnimationGUID = '15148335964655446903'
 
+[[Animators]]
+currentAnimationGUID = '15148335964655264906'
+guid = '2242071004623144950'
+otherCurrentAnimationGUID = '0'
+type = '1'
+
 [[Colliders]]
-collisionLayer = 128
-guid = '4383918506486796935'
+collisionLayer = 256
+guid = '4364142197309291870'
 isTrigger = false
 radius = 0.0
 type = 1
-verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '2134584488139684941'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 13.0 ], [ 150.0, -313.0 ], [ 0.0, -313.0 ], [ 0.0, 13.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '1766870518531632128'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '4356416190677288630'
-isTrigger = false
-radius = 37.0
-type = 1
-verts = [ [ 0.0, 0.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '2133250345793367252'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+verts = [ [ 65.0, 115.0 ], [ 65.0, -115.0 ], [ -65.0, -115.0 ], [ -65.0, 115.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
 guid = '2134564730919947058'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 13.0 ], [ 150.0, -313.0 ], [ 0.0, -313.0 ], [ 0.0, 13.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '2134416551236205908'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -182,11 +141,67 @@ verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5
 
 [[Colliders]]
 collisionLayer = 1
-guid = '4364142197309291870'
+guid = '2134416551236205908'
 isTrigger = false
 radius = 0.0
 type = 1
-verts = [ [ 65.0, 115.0 ], [ 65.0, -115.0 ], [ -65.0, -115.0 ], [ -65.0, 115.0 ] ]
+verts = [ [ 150.0, 13.0 ], [ 150.0, -313.0 ], [ 0.0, -313.0 ], [ 0.0, 13.0 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '1766343111488244609'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '2134648056834554253'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 13.0 ], [ 150.0, -313.0 ], [ 0.0, -313.0 ], [ 0.0, 13.0 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '1766676965749542757'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '2133189641299905419'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '4817909311990363839'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '2146742968651364576'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '4817863142650682745'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
 
 [[Colliders]]
 collisionLayer = 1
@@ -229,7 +244,7 @@ type = 1
 verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
 
 [[Colliders]]
-collisionLayer = 1
+collisionLayer = 256
 guid = '4356498940380281347'
 isTrigger = false
 radius = 37.0
@@ -294,22 +309,6 @@ verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5
 
 [[Colliders]]
 collisionLayer = 1
-guid = '2134648056834554253'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 13.0 ], [ 150.0, -313.0 ], [ 0.0, -313.0 ], [ 0.0, 13.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '1766343111488244609'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
-
-[[Colliders]]
-collisionLayer = 1
 guid = '1766347974235490554'
 isTrigger = false
 radius = 0.0
@@ -333,7 +332,7 @@ type = 1
 verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
 
 [[Colliders]]
-collisionLayer = 1
+collisionLayer = 256
 guid = '4363963387074222959'
 isTrigger = false
 radius = 0.0
@@ -365,7 +364,7 @@ type = 1
 verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
 
 [[Colliders]]
-collisionLayer = 1
+collisionLayer = 256
 guid = '4356117331621173549'
 isTrigger = false
 radius = 0.0
@@ -383,30 +382,6 @@ verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5
 [[Colliders]]
 collisionLayer = 1
 guid = '1766665517197021023'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '2133189641299905419'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '4817909311990363839'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '1766676965749542757'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -437,7 +412,31 @@ type = 1
 verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
 
 [[Colliders]]
+collisionLayer = 128
+guid = '4383918506486796935'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 75.0, 35.0 ], [ 75.0, -35.0 ], [ -75.0, -35.0 ], [ -75.0, 35.0 ] ]
+
+[[Colliders]]
 collisionLayer = 1
+guid = '2134584488139684941'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 13.0 ], [ 150.0, -313.0 ], [ 0.0, -313.0 ], [ 0.0, 13.0 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '1766870518531632128'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+
+[[Colliders]]
+collisionLayer = 256
 guid = '4356474820050851698'
 isTrigger = false
 radius = 37.0
@@ -447,6 +446,22 @@ verts = [ [ 0.0, 0.0 ] ]
 [[Colliders]]
 collisionLayer = 1
 guid = '2133199446776535758'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
+
+[[Colliders]]
+collisionLayer = 256
+guid = '4356416190677288630'
+isTrigger = false
+radius = 37.0
+type = 1
+verts = [ [ 0.0, 0.0 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '2133250345793367252'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -493,7 +508,7 @@ type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -313.0 ], [ 0.0, -313.0 ], [ 0.0, 13.0 ] ]
 
 [[Colliders]]
-collisionLayer = 1
+collisionLayer = 256
 guid = '4356027358933592081'
 isTrigger = false
 radius = 0.0
@@ -509,23 +524,7 @@ type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -313.0 ], [ 0.0, -313.0 ], [ 0.0, 13.0 ] ]
 
 [[Colliders]]
-collisionLayer = 1
-guid = '2146742968651364576'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '4817863142650682745'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 12.5 ], [ 150.0, -313.0 ], [ -150.0, -313.0 ], [ -150.0, 12.5 ] ]
-
-[[Colliders]]
-collisionLayer = 1
+collisionLayer = 256
 guid = '4364180928588030295'
 isTrigger = false
 radius = 0.0
@@ -581,7 +580,7 @@ type = 1
 verts = [ [ 33.0, 4.0 ], [ 33.0, -19.0 ], [ -29.0, -19.0 ], [ -29.0, 4.0 ] ]
 
 [[Colliders]]
-collisionLayer = 1
+collisionLayer = 256
 guid = '4356589140660526746'
 isTrigger = false
 radius = 37.0
@@ -729,199 +728,14 @@ guid = '2133655309486230469'
 levelToLoad = 'Level_2_ObnoxiousOffice'
 
 [[Healths]]
-currHealth = 0
-guid = '2868623906678239782'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2829622844265849741'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2838210538867806273'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2868623905031310831'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2056315331888814184'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2838210537808000711'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2829622846030759312'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2766383604514840770'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2121247267699442511'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2419197606041090391'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2060568086226010114'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2831884390664350704'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2766383604041013310'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2419197603791333540'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2061491281800521077'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2061491282485628795'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2057047752541963232'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2112227385368011604'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2057047753110840540'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '0'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2059137250595366819'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2059137251082024605'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2831884389789555394'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2831365801556718216'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2831365800820841677'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2504551623778147250'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2504551622308221867'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2121247268062425558'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2062006339540391460'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2062006338945910735'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2060568086243483538'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2056315333504042467'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2050837148790761767'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2050837151229920404'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2803852468937922633'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2803852472912349762'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 0
-guid = '2112227385406568715'
-maxHealth = 0
-
-[[Healths]]
-currHealth = 100
-guid = '18133337472315591294'
-maxHealth = 100
-
-[[Healths]]
 currHealth = 200
 guid = '18133337474269889811'
 maxHealth = 200
+
+[[Healths]]
+currHealth = 65
+guid = '18133337472315591294'
+maxHealth = 100
 
 [[Renderers]]
 guid = '15842311704894679099'
@@ -972,6 +786,12 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
+guid = '4815235955830871586'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
 guid = '15842330748378683140'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -984,7 +804,7 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471826850464180481'
 
 [[Renderers]]
-guid = '4815235955830871586'
+guid = '15842393457516531315'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -996,7 +816,7 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15842393457516531315'
+guid = '15842398470372239243'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1008,31 +828,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15842398470372239243'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
 guid = '15842371625101325400'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1766686270401818214'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '15842314931315621107'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '15842305907110131764'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1044,19 +846,7 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15842282641172830421'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '15842281286135717848'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '15842247570113861542'
+guid = '15842305907110131764'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1068,7 +858,19 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15842281068212991850'
+guid = '15842247570113861542'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15842281286135717848'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15842282641172830421'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1080,13 +882,7 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15842304405543523256'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '15842315717365784541'
+guid = '15842281068212991850'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1098,7 +894,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15842304549108798612'
+guid = '15842315717365784541'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15842304405543523256'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1110,7 +912,7 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15842304694196635438'
+guid = '15842304549108798612'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1122,7 +924,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15846014292022422799'
+guid = '15842304694196635438'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15842305195027639813'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1134,7 +942,13 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
-guid = '15842305195027639813'
+guid = '15846014292022422799'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15842410563486649167'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1152,7 +966,7 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '4815234167287046898'
+guid = '15842313709780888231'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1164,7 +978,7 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15842313709780888231'
+guid = '4815234167287046898'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1188,19 +1002,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15842397178454176476'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
 guid = '15842318514336216851'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15842385436791878962'
+guid = '15842397178454176476'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1218,13 +1026,7 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471826850464180481'
 
 [[Renderers]]
-guid = '2134739758564997589'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '15842319867973967376'
+guid = '15842385436791878962'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1240,6 +1042,18 @@ guid = '15842396461290575368'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '15842319867973967376'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '2134739758564997589'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '15842326959220875178'
@@ -1272,13 +1086,13 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15842380718888258327'
+guid = '15846014362756135933'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '15846014362756135933'
+guid = '15842380718888258327'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1333,12 +1147,6 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '15842397820487033890'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '15842410563486649167'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
@@ -1404,16 +1212,16 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '4356226430356790608'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '7289830871254251453'
-
-[[Renderers]]
 guid = '15842461962914014573'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '4356226430356790608'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '7289830871254251453'
 
 [[Renderers]]
 guid = '15842442922258096785'
@@ -1518,6 +1326,12 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
+guid = '2131268136514572678'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
 guid = '2133189641299905419'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
@@ -1528,12 +1342,6 @@ guid = '4817909311990363839'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '2131268136514572678'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '2131268424852965369'
@@ -1626,66 +1434,6 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
-guid = '1766384413052974086'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1765955846496463170'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '2134564730919947058'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471854257770671342'
-
-[[Renderers]]
-guid = '4356498940380281347'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '17948476418088678547'
-
-[[Renderers]]
-guid = '1765967014286056369'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1765970091247225399'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1765972455478597844'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '2146691644486822829'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1765975110721584351'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1765990351152505251'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '1766343111488244609'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
@@ -1696,12 +1444,6 @@ guid = '2134648056834554253'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471854257770671342'
-
-[[Renderers]]
-guid = '1766347974235490554'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '1766351265130761968'
@@ -1716,100 +1458,10 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471854257770671342'
 
 [[Renderers]]
-guid = '1766392500896568858'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1766394430198510794'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1766413690829227074'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1766416904167574099'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1766665517197021023'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1766676965749542757'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1766694072502357450'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1766870518531632128'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
 guid = '4815237240474410510'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '2132915612481005301'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '4383659168816718001'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
-modelGuid = '17947984017103158497'
-
-[[Renderers]]
-guid = '2132928784706954964'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '2132951907130709188'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '2132964153265050637'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '4383313638662373527'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060294060764248073'
-
-[[Renderers]]
-guid = '2132979473565928877'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '4815236745304047306'
@@ -1822,24 +1474,6 @@ guid = '2132996577229551384'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '2133199446776535758'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '2133250345793367252'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '2133454581350904376'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
 
 [[Renderers]]
 guid = '2134286412986012882'
@@ -1878,13 +1512,355 @@ materials = [ '0' ]
 modelGuid = '15279751527320231819'
 
 [[Renderers]]
+guid = '4814838673611962890'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '2134584488139684941'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471854257770671342'
+
+[[Renderers]]
+guid = '4383918506486796935'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15061121900084148500'
+
+[[Renderers]]
+guid = '4815238176533428961'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '2133642846877158052'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819', '1766071748038532778' ]
+modelGuid = '12471765937523797163'
+
+[[Renderers]]
+guid = '1766525282526673543'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '4815079549951218438'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '4814839324014747972'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '4383355011632044509'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15060294060764248073'
+
+[[Renderers]]
+guid = '4814840036003077037'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '4383896384513655811'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15061121900084148500'
+
+[[Renderers]]
+guid = '4814837247196942282'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '4814838248719258508'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '4815231736514372549'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '4815233521619275666'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '4815234740242034863'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+guid = '1765733583452040268'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '1765748470859203819'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '1765758994720877066'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '4384520860398356854'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15060495917923446592'
+
+[[Renderers]]
+guid = '1765955846496463170'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1766384413052974086'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1765967014286056369'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '4356498940380281347'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '17948476418088678547'
+
+[[Renderers]]
+guid = '1765970091247225399'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1765972455478597844'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1765975110721584351'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '2146691644486822829'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1765990351152505251'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1766188349203713364'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '1766347974235490554'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1766392500896568858'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1766394430198510794'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1766413690829227074'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1766416904167574099'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1766511324880258366'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '1766528786494104002'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '1766665517197021023'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1766676965749542757'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1766686270401818214'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1766694072502357450'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '1766870518531632128'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '2132915612481005301'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '2132928784706954964'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '4383659168816718001'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '11557720335555147721' ]
+modelGuid = '17947984017103158497'
+
+[[Renderers]]
+guid = '2132951907130709188'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '2132964153265050637'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '2132979473565928877'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '4383313638662373527'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15060294060764248073'
+
+[[Renderers]]
+guid = '2133199446776535758'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '2133250345793367252'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '2133311341907588582'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '2133326796682457802'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
+guid = '2133454581350904376'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '2133651086298366249'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819', '1766071748038532778' ]
+modelGuid = '12471765937523797163'
+
+[[Renderers]]
+guid = '2133655309486230469'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819', '1766071748038532778' ]
+modelGuid = '12471765937523797163'
+
+[[Renderers]]
+guid = '2134442108290842002'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471854257770671342'
+
+[[Renderers]]
 guid = '2134625439236483024'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471854257770671342'
 
 [[Renderers]]
-guid = '2134442108290842002'
+guid = '2134466373195780933'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471854257770671342'
@@ -1900,12 +1876,6 @@ guid = '2134743340097314521'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '2134466373195780933'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471854257770671342'
 
 [[Renderers]]
 guid = '2134476031006640183'
@@ -1932,136 +1902,10 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471854257770671342'
 
 [[Renderers]]
-guid = '4383918506486796935'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15061121900084148500'
-
-[[Renderers]]
-guid = '2134584488139684941'
+guid = '2134564730919947058'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471854257770671342'
-
-[[Renderers]]
-guid = '4814838673611962890'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '4815238176533428961'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '2133642846877158052'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819', '1766071748038532778' ]
-modelGuid = '12471765937523797163'
-
-[[Renderers]]
-guid = '2133651086298366249'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819', '1766071748038532778' ]
-modelGuid = '12471765937523797163'
-
-[[Renderers]]
-guid = '2133655309486230469'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819', '1766071748038532778' ]
-modelGuid = '12471765937523797163'
-
-[[Renderers]]
-guid = '2146742968651364576'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '4817863142650682745'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '2146883777399109979'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060397206372785124'
-
-[[Renderers]]
-guid = '2146902531097986699'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060397206372785124'
-
-[[Renderers]]
-guid = '1765733583452040268'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '1765748470859203819'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '4384520860398356854'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060495917923446592'
-
-[[Renderers]]
-guid = '1765758994720877066'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '1766188349203713364'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '1766511324880258366'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '1766525282526673543'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '4815079549951218438'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '1766528786494104002'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '2133311341907588582'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-guid = '2133326796682457802'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
 
 [[Renderers]]
 guid = '2134704184010188025'
@@ -2088,16 +1932,40 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471826850464180481'
 
 [[Renderers]]
+guid = '2134756290647312769'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471826850464180481'
+
+[[Renderers]]
 guid = '4405814099584986639'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 modelGuid = '15060294060764248073'
 
 [[Renderers]]
-guid = '2134756290647312769'
+guid = '2146742968651364576'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
-modelGuid = '12471826850464180481'
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '4817863142650682745'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+modelGuid = '12471801436435551572'
+
+[[Renderers]]
+guid = '2146883777399109979'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15060397206372785124'
+
+[[Renderers]]
+guid = '2146902531097986699'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+modelGuid = '15060397206372785124'
 
 [[Renderers]]
 guid = '4355464224248715095'
@@ -2160,18 +2028,6 @@ materials = [ '15038846507057049718' ]
 modelGuid = '7289830871254251453'
 
 [[Renderers]]
-guid = '4383355011632044509'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15060294060764248073'
-
-[[Renderers]]
-guid = '4814839324014747972'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
 guid = '4383459661941805905'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
@@ -2188,18 +2044,6 @@ guid = '4383547347980867306'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 modelGuid = '15060397206372785124'
-
-[[Renderers]]
-guid = '4814840036003077037'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '4383896384513655811'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-modelGuid = '15061121900084148500'
 
 [[Renderers]]
 guid = '4384389576502572583'
@@ -2226,40 +2070,10 @@ materials = [ '15038846507057049718' ]
 modelGuid = '15060294060764248073'
 
 [[Renderers]]
-guid = '4814837247196942282'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '4814838248719258508'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
 guid = '4815073672361864849'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
-
-[[Renderers]]
-guid = '4815231736514372549'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '4815233521619275666'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-guid = '4815234740242034863'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-modelGuid = '15279751527320231819'
 
 [[Renderers]]
 guid = '4817893704126145300'
@@ -2298,396 +2112,16 @@ materials = [ '1777838767709883819' ]
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
-guid = '2242071004623144950'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '2229847150575832532', '0' ]
-modelGuid = '2234949598158592467'
-
-[[Renderers]]
 guid = '18133337474269889811'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15449259407003476463', '15449352838481615396' ]
 modelGuid = '2140790440003113620'
 
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2133642846877158052'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2133642846877158052'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 15.0 ], [ 150.0, -15.0 ], [ 100.0, -15.0 ], [ 100.0, 15.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2133642846877158052'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ -100.0, 15.0 ], [ -100.0, -15.0 ], [ -150.0, -15.0 ], [ -150.0, 15.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2133642846877158052'
-    isTrigger = true
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, -65.0 ], [ 150.0, -275.0 ], [ -150.0, -275.0 ], [ -150.0, -65.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2133651086298366249'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2133651086298366249'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 15.0 ], [ 150.0, -15.0 ], [ 100.0, -15.0 ], [ 100.0, 15.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2133651086298366249'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ -100.0, 15.0 ], [ -100.0, -15.0 ], [ -150.0, -15.0 ], [ -150.0, 15.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2133651086298366249'
-    isTrigger = true
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, -65.0 ], [ 150.0, -275.0 ], [ -150.0, -275.0 ], [ -150.0, -65.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '1766188349203713364'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1766188349203713364'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1766188349203713364'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2132915612481005301'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132915612481005301'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132915612481005301'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '1766525282526673543'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1766525282526673543'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1766525282526673543'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2132928784706954964'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132928784706954964'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132928784706954964'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2132964153265050637'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132964153265050637'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132964153265050637'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '1766199078755494374'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1766199078755494374'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1766199078755494374'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2132951907130709188'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132951907130709188'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132951907130709188'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2132883900502902862'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132883900502902862'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132883900502902862'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2132896281295744712'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132896281295744712'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132896281295744712'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2132979473565928877'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132979473565928877'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132979473565928877'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2132996577229551384'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132996577229551384'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2132996577229551384'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+[[Renderers]]
+guid = '2242071004623144950'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '2229847150575832532', '0' ]
+modelGuid = '2234949598158592467'
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -2805,6 +2239,610 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
+guid = '1765748470859203819'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1765748470859203819'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1765748470859203819'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '1765733583452040268'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1765733583452040268'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1765733583452040268'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '1765744466192502156'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1765744466192502156'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1765744466192502156'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '1765758994720877066'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1765758994720877066'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1765758994720877066'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '1766188349203713364'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1766188349203713364'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1766188349203713364'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2133642846877158052'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2133642846877158052'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 15.0 ], [ 150.0, -15.0 ], [ 100.0, -15.0 ], [ 100.0, 15.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2133642846877158052'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ -100.0, 15.0 ], [ -100.0, -15.0 ], [ -150.0, -15.0 ], [ -150.0, 15.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2133642846877158052'
+    isTrigger = true
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, -65.0 ], [ 150.0, -275.0 ], [ -150.0, -275.0 ], [ -150.0, -65.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2133651086298366249'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2133651086298366249'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 15.0 ], [ 150.0, -15.0 ], [ 100.0, -15.0 ], [ 100.0, 15.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2133651086298366249'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ -100.0, 15.0 ], [ -100.0, -15.0 ], [ -150.0, -15.0 ], [ -150.0, 15.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2133651086298366249'
+    isTrigger = true
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, -65.0 ], [ 150.0, -275.0 ], [ -150.0, -275.0 ], [ -150.0, -65.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '1766199078755494374'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1766199078755494374'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1766199078755494374'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2132964153265050637'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132964153265050637'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132964153265050637'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '1766511324880258366'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1766511324880258366'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1766511324880258366'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '1766525282526673543'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1766525282526673543'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1766525282526673543'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2132915612481005301'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132915612481005301'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132915612481005301'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '1766528786494104002'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1766528786494104002'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1766528786494104002'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2132883900502902862'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132883900502902862'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132883900502902862'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2132896281295744712'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132896281295744712'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132896281295744712'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2132928784706954964'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132928784706954964'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132928784706954964'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2132951907130709188'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132951907130709188'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132951907130709188'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2132979473565928877'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132979473565928877'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132979473565928877'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2132996577229551384'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132996577229551384'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 312.5 ], [ 150.0, 12.5 ], [ -12.5, 12.5 ], [ -12.5, 312.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2132996577229551384'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2133311341907588582'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2133311341907588582'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2133311341907588582'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2133326796682457802'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2133326796682457802'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '2133326796682457802'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
 guid = '2133655309486230469'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -2872,230 +2910,6 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ 150.0, -65.0 ], [ 150.0, -275.0 ], [ -150.0, -275.0 ], [ -150.0, -65.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '1766511324880258366'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1766511324880258366'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1766511324880258366'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '1765733583452040268'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1765733583452040268'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1765733583452040268'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '1765744466192502156'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1765744466192502156'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1765744466192502156'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '1765748470859203819'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1765748470859203819'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1765748470859203819'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '1765758994720877066'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1765758994720877066'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1765758994720877066'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '1766528786494104002'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1766528786494104002'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1766528786494104002'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2133311341907588582'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2133311341907588582'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2133311341907588582'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2133326796682457802'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2133326796682457802'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '2133326796682457802'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -3239,26 +3053,6 @@ vel = [ 0.0, 0.0 ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '18133337472315591294'
-invMass = 1.0
-invMomentOfInertia = 0.20000000298023224
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 8
-    guid = '18133337472315591294'
-    isTrigger = false
-    radius = 40.0
-    type = 1
-    verts = [ [ 0.0, 0.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
 angularVel = -0.0
 elasticicty = 0.0
 guid = '18133337474269889811'
@@ -3287,6 +3081,26 @@ vel = [
     radius = 60.0
     type = 1
     verts = [ [ 1.0, -46.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '18133337472315591294'
+invMass = 1.0
+invMomentOfInertia = 0.20000000298023224
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 8
+    guid = '18133337472315591294'
+    isTrigger = false
+    radius = 40.0
+    type = 1
+    verts = [ [ 0.0, 0.0 ] ]
 
 [[SceneObjects]]
 children = [
@@ -3401,7 +3215,7 @@ children = []
 guid = '1765733583452040268'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3410,7 +3224,7 @@ children = []
 guid = '1765744466192502156'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3419,7 +3233,7 @@ children = []
 guid = '1765748470859203819'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3428,7 +3242,7 @@ children = []
 guid = '1765758994720877066'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3437,7 +3251,7 @@ children = []
 guid = '1765955846496463170'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3446,7 +3260,7 @@ children = []
 guid = '1765967014286056369'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3455,7 +3269,7 @@ children = []
 guid = '1765970091247225399'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3464,7 +3278,7 @@ children = []
 guid = '1765972455478597844'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3473,7 +3287,7 @@ children = []
 guid = '1765975110721584351'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3482,7 +3296,7 @@ children = []
 guid = '1765990351152505251'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3491,7 +3305,7 @@ children = []
 guid = '1766188349203713364'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3500,7 +3314,7 @@ children = []
 guid = '1766199078755494374'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3509,7 +3323,7 @@ children = []
 guid = '1766343111488244609'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3518,7 +3332,7 @@ children = []
 guid = '1766347974235490554'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3527,7 +3341,7 @@ children = []
 guid = '1766351265130761968'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3536,7 +3350,7 @@ children = []
 guid = '1766384413052974086'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3545,7 +3359,7 @@ children = []
 guid = '1766388987925660474'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3554,7 +3368,7 @@ children = []
 guid = '1766392500896568858'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3563,7 +3377,7 @@ children = []
 guid = '1766394430198510794'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3572,7 +3386,7 @@ children = []
 guid = '1766410895863482785'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3581,7 +3395,7 @@ children = []
 guid = '1766413690829227074'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3590,7 +3404,7 @@ children = []
 guid = '1766416904167574099'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3599,7 +3413,7 @@ children = []
 guid = '1766511324880258366'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3608,7 +3422,7 @@ children = []
 guid = '1766525282526673543'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3617,7 +3431,7 @@ children = []
 guid = '1766528786494104002'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3626,7 +3440,7 @@ children = []
 guid = '1766665517197021023'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3635,7 +3449,7 @@ children = []
 guid = '1766676965749542757'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3644,7 +3458,7 @@ children = []
 guid = '1766686270401818214'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3653,7 +3467,7 @@ children = []
 guid = '1766694072502357450'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3662,7 +3476,7 @@ children = []
 guid = '1766870518531632128'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3824,7 +3638,7 @@ children = []
 guid = '2132883900502902862'
 name = 'M_Wall_Corner_Warehouse_Outside_Inner'
 parent = '1757789224148769971'
-parts = 10
+parts = 262154
 prefabBase = '1144968436776805587'
 prefabStatus = 2
 
@@ -3833,7 +3647,7 @@ children = []
 guid = '2132896281295744712'
 name = 'M_Wall_Corner_Warehouse_Outside_Inner'
 parent = '1757789224148769971'
-parts = 10
+parts = 262154
 prefabBase = '1144968436776805587'
 prefabStatus = 2
 
@@ -3842,7 +3656,7 @@ children = []
 guid = '2132915612481005301'
 name = 'M_Wall_Corner_Warehouse_Outside_Inner'
 parent = '1757789224148769971'
-parts = 10
+parts = 262154
 prefabBase = '1144968436776805587'
 prefabStatus = 2
 
@@ -3851,7 +3665,7 @@ children = []
 guid = '2132928784706954964'
 name = 'M_Wall_Corner_Warehouse_Outside_Inner'
 parent = '1757789224148769971'
-parts = 10
+parts = 262154
 prefabBase = '1144968436776805587'
 prefabStatus = 2
 
@@ -3860,7 +3674,7 @@ children = []
 guid = '2132951907130709188'
 name = 'M_Wall_Corner_Warehouse_Outside_Inner'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1144968436776805587'
 prefabStatus = 2
 
@@ -3869,7 +3683,7 @@ children = []
 guid = '2132964153265050637'
 name = 'M_Wall_Corner_Warehouse_Outside_Inner'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1144968436776805587'
 prefabStatus = 2
 
@@ -3878,7 +3692,7 @@ children = []
 guid = '2132979473565928877'
 name = 'M_Wall_Corner_Warehouse_Outside_Inner'
 parent = '1757812277307316790'
-parts = 10
+parts = 262154
 prefabBase = '1144968436776805587'
 prefabStatus = 2
 
@@ -3887,7 +3701,7 @@ children = []
 guid = '2132996577229551384'
 name = 'M_Wall_Corner_Warehouse_Outside_Inner'
 parent = '1757812277307316790'
-parts = 10
+parts = 262154
 prefabBase = '1144968436776805587'
 prefabStatus = 2
 
@@ -3896,7 +3710,7 @@ children = []
 guid = '2133189641299905419'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3905,7 +3719,7 @@ children = []
 guid = '2133199446776535758'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3914,7 +3728,7 @@ children = []
 guid = '2133229086925791139'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3923,7 +3737,7 @@ children = []
 guid = '2133250345793367252'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3932,7 +3746,7 @@ children = []
 guid = '2133311341907588582'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3941,7 +3755,7 @@ children = []
 guid = '2133326796682457802'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757812277307316790'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3950,7 +3764,7 @@ children = []
 guid = '2133379851538519880'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -3959,7 +3773,7 @@ children = []
 guid = '2133454581350904376'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -3968,7 +3782,7 @@ children = []
 guid = '2133642846877158052'
 name = 'M_DoorFrame_Lift_Warehouse'
 parent = '2144504961234155054'
-parts = 1034
+parts = 263178
 prefabBase = '12472561450565224966'
 prefabStatus = 2
 
@@ -3977,7 +3791,7 @@ children = []
 guid = '2133651086298366249'
 name = 'M_DoorFrame_Lift_Warehouse'
 parent = '2144504961234155054'
-parts = 1034
+parts = 263178
 prefabBase = '12472561450565224966'
 prefabStatus = 2
 
@@ -3986,7 +3800,7 @@ children = []
 guid = '2133655309486230469'
 name = 'M_DoorFrame_Lift_Warehouse'
 parent = '2144504961234155054'
-parts = 1034
+parts = 263178
 prefabBase = '12472561450565224966'
 prefabStatus = 2
 
@@ -3995,7 +3809,7 @@ children = []
 guid = '2133660179529368262'
 name = 'M_DoorFrame_Lift_Warehouse'
 parent = '2144504961234155054'
-parts = 10
+parts = 262154
 prefabBase = '12472561450565224966'
 prefabStatus = 2
 
@@ -4040,7 +3854,7 @@ children = []
 guid = '2134416551236205908'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4049,7 +3863,7 @@ children = []
 guid = '2134442108290842002'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4058,7 +3872,7 @@ children = []
 guid = '2134466373195780933'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4067,7 +3881,7 @@ children = []
 guid = '2134476031006640183'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4076,7 +3890,7 @@ children = []
 guid = '2134496583263425951'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4085,7 +3899,7 @@ children = []
 guid = '2134511902831770893'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4094,7 +3908,7 @@ children = []
 guid = '2134537599356993502'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4103,7 +3917,7 @@ children = []
 guid = '2134553638929391373'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4112,7 +3926,7 @@ children = []
 guid = '2134564730919947058'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4121,7 +3935,7 @@ children = []
 guid = '2134584488139684941'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4130,7 +3944,7 @@ children = []
 guid = '2134625439236483024'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4139,7 +3953,7 @@ children = []
 guid = '2134648056834554253'
 name = 'M_Wall_Half_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1174194986272758988'
 prefabStatus = 2
 
@@ -4148,7 +3962,7 @@ children = []
 guid = '2134700315103407304'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -4157,7 +3971,7 @@ children = []
 guid = '2134704184010188025'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -4166,7 +3980,7 @@ children = []
 guid = '2134723225505385281'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -4175,7 +3989,7 @@ children = []
 guid = '2134735040678340193'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -4184,7 +3998,7 @@ children = []
 guid = '2134739758564997589'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -4193,7 +4007,7 @@ children = []
 guid = '2134743340097314521'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -4202,7 +4016,7 @@ children = []
 guid = '2134752713784732895'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -4211,7 +4025,7 @@ children = []
 guid = '2134756290647312769'
 name = 'M_Wall_Corner_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 10
+parts = 262154
 prefabBase = '1017984762569573811'
 prefabStatus = 2
 
@@ -4229,7 +4043,7 @@ children = []
 guid = '2146691644486822829'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4238,7 +4052,7 @@ children = []
 guid = '2146742968651364576'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757836321078823602'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4616,7 +4430,7 @@ children = []
 guid = '4815073672361864849'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4625,7 +4439,7 @@ children = []
 guid = '4815079549951218438'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4724,7 +4538,7 @@ children = []
 guid = '4817863142650682745'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4733,7 +4547,7 @@ children = []
 guid = '4817893704126145300'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4742,7 +4556,7 @@ children = []
 guid = '4817909311990363839'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4751,7 +4565,7 @@ children = []
 guid = '4817923273415513006'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4760,7 +4574,7 @@ children = []
 guid = '4817934008109900800'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4769,7 +4583,7 @@ children = []
 guid = '4817945960371966305'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4778,7 +4592,7 @@ children = []
 guid = '4817960637248512839'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4787,7 +4601,7 @@ children = []
 guid = '4817968868904926698'
 name = 'M_Wall_Warehouse_Outside'
 parent = '1757789224148769971'
-parts = 34
+parts = 262178
 prefabBase = '1015466513128029982'
 prefabStatus = 2
 
@@ -4798,7 +4612,7 @@ name = 'SpotlightLarge'
 parent = '5105734646175019023'
 parts = 0
 prefabBase = '4796321444862506679'
-prefabStatus = 2
+prefabStatus = 3
 
 [[SceneObjects]]
 children = []
@@ -4825,7 +4639,7 @@ name = 'Spotlight_Default'
 parent = '5105734646175019023'
 parts = 0
 prefabBase = '4367545864104986707'
-prefabStatus = 2
+prefabStatus = 3
 
 [[SceneObjects]]
 children = []
@@ -4843,7 +4657,7 @@ name = 'Spotlight_Default'
 parent = '5105734646175019023'
 parts = 0
 prefabBase = '4367545864104986707'
-prefabStatus = 2
+prefabStatus = 3
 
 [[SceneObjects]]
 children = [ '5105596546312894572' ]
@@ -4852,7 +4666,7 @@ name = 'SpotlightLarge'
 parent = '5105734646175019023'
 parts = 0
 prefabBase = '4796321444862506679'
-prefabStatus = 2
+prefabStatus = 3
 
 [[SceneObjects]]
 children = []
@@ -4870,7 +4684,7 @@ name = 'SpotlightLarge'
 parent = '5105734646175019023'
 parts = 0
 prefabBase = '4796321444862506679'
-prefabStatus = 2
+prefabStatus = 3
 
 [[SceneObjects]]
 children = []
@@ -5774,6 +5588,334 @@ parts = 334
 prefabBase = '2091576976424546894'
 prefabStatus = 2
 
+[[ShadowWalls]]
+guid = '1765955846496463170'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766384413052974086'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1765975110721584351'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2146691644486822829'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766343111488244609'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134648056834554253'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2132996577229551384'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766351265130761968'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134416551236205908'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2132915612481005301'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '4815079549951218438'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766525282526673543'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766676965749542757'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '4817909311990363839'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2133189641299905419'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134739758564997589'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2133379851538519880'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2133655309486230469'
+hasLocalMesh = false
+
+[[ShadowWalls]]
+guid = '2134625439236483024'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134442108290842002'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2133454581350904376'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1765972455478597844'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134743340097314521'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134700315103407304'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134466373195780933'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '4817863142650682745'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2146742968651364576'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1765733583452040268'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1765744466192502156'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1765748470859203819'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1765758994720877066'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1765967014286056369'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766392500896568858'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1765970091247225399'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1765990351152505251'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2133651086298366249'
+hasLocalMesh = false
+
+[[ShadowWalls]]
+guid = '2133642846877158052'
+hasLocalMesh = false
+
+[[ShadowWalls]]
+guid = '1766188349203713364'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2132964153265050637'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766665517197021023'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766199078755494374'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766347974235490554'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2133229086925791139'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766388987925660474'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766394430198510794'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766410895863482785'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766413690829227074'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2133660179529368262'
+hasLocalMesh = false
+
+[[ShadowWalls]]
+guid = '1766416904167574099'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766511324880258366'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766528786494104002'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766686270401818214'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766694072502357450'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '1766870518531632128'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2132883900502902862'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2132896281295744712'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2132928784706954964'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2132951907130709188'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2132979473565928877'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2133199446776535758'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2133250345793367252'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2133311341907588582'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2133326796682457802'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134476031006640183'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134496583263425951'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134511902831770893'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134537599356993502'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134553638929391373'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134564730919947058'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134584488139684941'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134704184010188025'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134723225505385281'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134735040678340193'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134752713784732895'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '2134756290647312769'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '4815073672361864849'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '4817893704126145300'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '4817923273415513006'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '4817934008109900800'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '4817945960371966305'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '4817960637248512839'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '4817968868904926698'
+hasLocalMesh = true
+
 [[Spotlights]]
 canBeTriggered = false
 castsShadows = true
@@ -5874,7 +6016,7 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -0.0, 89.9999771118164, -0.0 ]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '1765733583452040268'
 isStatic = true
 position = [ -750.0, 0.0, -1350.0 ]
@@ -5890,11 +6032,11 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -0.0, -89.9999771118164, -0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '1765748470859203819'
 isStatic = true
 position = [ 1350.0, 0.0, -3450.0 ]
-quaternion = [ 0.7071069478988647, -0.0, -0.7071066498756409, -0.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
 scale = [ 0.9999998807907104, 1.0, 0.9999998807907104 ]
 
 [[Transforms]]
@@ -5906,43 +6048,43 @@ quaternion = [ -4.371055695173709e-08, -9.099629778575036e-07, 1.0, -9.099629778
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -0.0, -89.9999771118164, -0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '1765955846496463170'
 isStatic = true
 position = [ 1350.0, 0.0, -1950.0 ]
-quaternion = [ 0.7071069478988647, -0.0, -0.7071066498756409, -0.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
 scale = [ 0.9999998807907104, 1.0, 0.9999998807907104 ]
 
 [[Transforms]]
-euler = [ -0.0, -89.9999771118164, -0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '1765967014286056369'
 isStatic = true
 position = [ 1350.0, 0.0, -2250.0 ]
-quaternion = [ 0.7071069478988647, -0.0, -0.7071066498756409, -0.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
 scale = [ 0.9999998807907104, 1.0, 0.9999998807907104 ]
 
 [[Transforms]]
-euler = [ -0.0, -89.9999771118164, -0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '1765970091247225399'
 isStatic = true
 position = [ 1350.0, 0.0, -2550.0 ]
-quaternion = [ 0.7071069478988647, -0.0, -0.7071066498756409, -0.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
 scale = [ 0.9999998807907104, 1.0, 0.9999998807907104 ]
 
 [[Transforms]]
-euler = [ -0.0, -89.9999771118164, -0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '1765972455478597844'
 isStatic = true
 position = [ 1350.0, 0.0, -2850.0 ]
-quaternion = [ 0.7071069478988647, -0.0, -0.7071066498756409, -0.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
 scale = [ 0.9999998807907104, 1.0, 0.9999998807907104 ]
 
 [[Transforms]]
-euler = [ -0.0, -89.9999771118164, -0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '1765975110721584351'
 isStatic = true
 position = [ 1350.0, 0.0, -3150.0 ]
-quaternion = [ 0.7071069478988647, -0.0, -0.7071066498756409, -0.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
 scale = [ 0.9999998807907104, 1.0, 0.9999998807907104 ]
 
 [[Transforms]]
@@ -5970,12 +6112,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -90.0, 0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '2134648056834554253'
 isStatic = true
 position = [ 450.0, 0.0, -5700.0 ]
-quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -5994,12 +6136,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 90.0, 0.0 ]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '2134416551236205908'
 isStatic = true
 position = [ -750.0, 0.0, -4200.0 ]
-quaternion = [ 0.7071067690849304, 0.0, 0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -6050,27 +6192,27 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
+euler = [ -179.9999237060547, -5.008955668017734e-06, -179.9999237060547 ]
 guid = '1766410895863482785'
 isStatic = true
 position = [ -1950.0, 0.0, -1950.0 ]
-quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
+quaternion = [ -4.371093353938704e-08, -6.715443987559411e-07, 1.0, -6.715443987559411e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
+euler = [ -179.9999237060547, -5.008955668017734e-06, -179.9999237060547 ]
 guid = '1766413690829227074'
 isStatic = true
 position = [ -2250.0, 0.0, -1950.0 ]
-quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
+quaternion = [ -4.371093353938704e-08, -6.715443987559411e-07, 1.0, -6.715443987559411e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
+euler = [ -179.9999237060547, -5.008955668017734e-06, -179.9999237060547 ]
 guid = '1766416904167574099'
 isStatic = true
 position = [ -2550.0, 0.0, -1950.0 ]
-quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
+quaternion = [ -4.371093353938704e-08, -6.715443987559411e-07, 1.0, -6.715443987559411e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -6130,12 +6272,12 @@ quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.99998474121094, 0.0 ]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '1766870518531632128'
 isStatic = true
 position = [ -750.0, 0.0, -1950.0 ]
-quaternion = [ 0.70710688829422, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998807907104, 1.0, 0.9999998807907104 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
@@ -6282,44 +6424,44 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -90.0, 0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '2132883900502902862'
 isStatic = true
 position = [ -750.0, 0.0, -2250.0 ]
-quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
-euler = [ 0.0, 180.0, 0.0 ]
+euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
 guid = '2132896281295744712'
 isStatic = true
 position = [ -750.0, 0.0, -3150.0 ]
-quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
+quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 90.0, 0.0 ]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '2132915612481005301'
 isStatic = true
 position = [ 450.0, 0.0, -3450.0 ]
-quaternion = [ 0.7071067690849304, 0.0, 0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
-euler = [ 0.0, 180.0, 0.0 ]
+euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
 guid = '2132928784706954964'
 isStatic = true
 position = [ -450.0, 0.0, -3450.0 ]
-quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
+quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -90.0, 0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '2132951907130709188'
 isStatic = true
 position = [ -450.0, 0.0, -4050.0 ]
-quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -6330,12 +6472,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 90.0, 0.0 ]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '2132979473565928877'
 isStatic = true
 position = [ -1350.0, 0.0, -3150.0 ]
-quaternion = [ 0.7071067690849304, 0.0, 0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -6354,35 +6496,35 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 180.0, 0.0 ]
+euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
 guid = '2133199446776535758'
 isStatic = true
 position = [ -1050.0, 0.0, -2250.0 ]
-quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 180.0, 0.0 ]
-guid = '2133229086925791139'
-isStatic = true
-position = [ -1650.0, 0.0, -1950.0 ]
-quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ -180.0, 180.0, -180.0 ]
-guid = '2133250345793367252'
-isStatic = true
-position = [ -1650.0, 0.0, -3450.0 ]
-quaternion = [ 1.0, -4.371139183945161e-08, -4.371138473402425e-08, -4.371139183945161e-08 ]
+quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
+guid = '2133229086925791139'
+isStatic = true
+position = [ -1650.0, 0.0, -1950.0 ]
+quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ -5.008955668017734e-06, -5.008955668017734e-06, -5.008955668017734e-06 ]
+guid = '2133250345793367252'
+isStatic = true
+position = [ -1650.0, 0.0, -3450.0 ]
+quaternion = [ 1.0, -4.371138828673793e-08, -4.371138118131057e-08, -4.371138828673793e-08 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ -179.9999237060547, -5.008955668017734e-06, -179.9999237060547 ]
 guid = '2133311341907588582'
 isStatic = true
 position = [ -1350.0, 0.0, -1950.0 ]
-quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
+quaternion = [ -4.371093353938704e-08, -6.715443987559411e-07, 1.0, -6.715443987559411e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -6394,20 +6536,20 @@ quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
 scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
-euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
+euler = [ -179.9999237060547, -5.008955668017734e-06, -179.9999237060547 ]
 guid = '2133379851538519880'
 isStatic = true
 position = [ 750.0, 0.0, -4050.0 ]
-quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
+quaternion = [ -4.371093353938704e-08, -6.715443987559411e-07, 1.0, -6.715443987559411e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -90.0, 0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '2133454581350904376'
 isStatic = true
 position = [ 450.0, 0.0, -3750.0 ]
-quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, 89.9999771118164, 0.0 ]
@@ -6482,12 +6624,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 90.0, 0.0 ]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '2134442108290842002'
 isStatic = true
 position = [ -750.0, 0.0, -5250.0 ]
-quaternion = [ 0.7071067690849304, 0.0, 0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -6522,11 +6664,11 @@ quaternion = [ -4.371055695173709e-08, -9.099629778575036e-07, 1.0, -9.099629778
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 180.0, 0.0 ]
+euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
 guid = '2134537599356993502'
 isStatic = true
 position = [ -750.0, 0.0, -4950.0 ]
-quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
+quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -6538,12 +6680,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 90.0, 0.0 ]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '2134564730919947058'
 isStatic = true
 position = [ -450.0, 0.0, -5550.0 ]
-quaternion = [ 0.7071067690849304, 0.0, 0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
@@ -6554,20 +6696,20 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -90.0, 0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '2134584488139684941'
 isStatic = true
 position = [ -150.0, 0.0, -5700.0 ]
-quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
-euler = [ 0.0, 90.0, 0.0 ]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '2134625439236483024'
 isStatic = true
 position = [ 150.0, 0.0, -5550.0 ]
-quaternion = [ 0.7071067690849304, 0.0, 0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -6650,12 +6792,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 90.0, 0.0 ]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '2146742968651364576'
 isStatic = true
 position = [ -750.0, 0.0, -4800.0 ]
-quaternion = [ 0.7071067690849304, 0.0, 0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -14.29998779296875, 0.0 ]
@@ -6746,12 +6888,12 @@ quaternion = [ 0.9995183348655701, 0.0, 0.03103318065404892, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -2.578136920928955, 0.0 ]
+euler = [ 0.0, -2.5781359672546387, 0.0 ]
 guid = '4356117331621173549'
 isStatic = true
 position = [ -655.3526000976562, 0.0, -2044.0401611328125 ]
-quaternion = [ 0.9997469186782837, 0.0, -0.02249659039080143, 0.0 ]
-scale = [ 0.9999982714653015, 1.0, 0.9999982714653015 ]
+quaternion = [ 0.9997469186782837, 0.0, -0.022496582940220833, 0.0 ]
+scale = [ 0.9999980926513672, 1.0, 0.9999980926513672 ]
 
 [[Transforms]]
 euler = [ 0.0, 89.9999771118164, 0.0 ]
@@ -6815,7 +6957,7 @@ guid = '4364142197309291870'
 isStatic = true
 position = [ -1005.717529296875, 0.0, -3055.67822265625 ]
 quaternion = [ 0.6889400482177734, -3.26478470924485e-08, 0.7248182892799377, -3.26478470924485e-08 ]
-scale = [ 0.9999960064888, 1.0, 0.9999960064888 ]
+scale = [ 0.9999958276748657, 1.0, 0.9999958276748657 ]
 
 [[Transforms]]
 euler = [ 0.0, 85.90763854980469, 0.0 ]
@@ -6847,7 +6989,7 @@ guid = '4383355011632044509'
 isStatic = true
 position = [ -680.3306884765625, 12.5, -5468.77880859375 ]
 quaternion = [ 0.9995995163917542, 0.0, 0.02829805016517639, 0.0 ]
-scale = [ 0.9999967813491821, 1.0, 0.9999967813491821 ]
+scale = [ 0.9999966025352478, 1.0, 0.9999966025352478 ]
 
 [[Transforms]]
 euler = [ 0.0, -1.2999995946884155, 0.0 ]
@@ -6858,11 +7000,11 @@ quaternion = [ 0.9999356269836426, 0.0, -0.011344393715262413, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -9.0, 0.0 ]
+euler = [ 0.0, -8.999996185302734, 0.0 ]
 guid = '4383521366423157859'
 isStatic = true
 position = [ -698.6380004882812, 0.0, -5362.63330078125 ]
-quaternion = [ 0.9969173073768616, 0.0, -0.07845909893512726, 0.0 ]
+quaternion = [ 0.9969173073768616, 0.0, -0.07845906168222427, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -6906,12 +7048,12 @@ quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
 scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
-euler = [ 0.0, 90.0, 0.0 ]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '4384496811466623848'
 isStatic = true
 position = [ -737.5, 0.0, -4950.0 ]
-quaternion = [ 0.7071067690849304, 0.0, 0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -6938,11 +7080,11 @@ quaternion = [ 0.999936580657959, 0.0, 0.011259627528488636, 0.0 ]
 scale = [ 0.9999996423721313, 1.0, 0.9999996423721313 ]
 
 [[Transforms]]
-euler = [ 0.0, -1.5873204469680786, 0.0 ]
+euler = [ 0.0, -1.5873197317123413, 0.0 ]
 guid = '4405814099584986639'
 isStatic = true
 position = [ -678.9584350585938, 50.0, -5473.5 ]
-quaternion = [ 0.9999040365219116, 0.0, -0.01385154016315937, 0.0 ]
+quaternion = [ 0.9999040365219116, 0.0, -0.013851534575223923, 0.0 ]
 scale = [ 0.9999976754188538, 1.0, 0.9999976754188538 ]
 
 [[Transforms]]
@@ -7066,51 +7208,51 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 90.0, 0.0 ]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '4817863142650682745'
 isStatic = true
 position = [ -750.0, 0.0, -1650.0 ]
-quaternion = [ 0.7071067690849304, 0.0, 0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
-euler = [ 0.0, 180.0, 0.0 ]
+euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
 guid = '4817893704126145300'
 isStatic = true
 position = [ -450.0, 0.0, -1350.0 ]
-quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
+quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 180.0, 0.0 ]
+euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
 guid = '4817909311990363839'
 isStatic = true
 position = [ 750.0, 0.0, -1350.0 ]
-quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
+quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 180.0, 0.0 ]
+euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
 guid = '4817923273415513006'
 isStatic = true
 position = [ 450.0, 0.0, -1350.0 ]
-quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
+quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 180.0, 0.0 ]
+euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
 guid = '4817934008109900800'
 isStatic = true
 position = [ 150.0, 0.0, -1350.0 ]
-quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
+quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 180.0, 0.0 ]
+euler = [ -179.99996948242188, -5.008955668017734e-06, -179.99996948242188 ]
 guid = '4817945960371966305'
 isStatic = true
 position = [ -150.0, 0.0, -1350.0 ]
-quaternion = [ -4.371138828673793e-08, -0.0, 1.0, -0.0 ]
+quaternion = [ -4.3711285258041244e-08, -3.1391647326017846e-07, 1.0, -3.1391647326017846e-07 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -7122,12 +7264,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -90.0, 0.0 ]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
 guid = '4817968868904926698'
 isStatic = true
 position = [ 1350.0, 0.0, -1650.0 ]
-quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -7842,17 +7984,17 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -49.76795959472656, 0.0 ]
+euler = [ -2.231179860245902e-05, 180.0, 5.008956122765085e-06 ]
 guid = '18133337472315591294'
 isStatic = false
 position = [ 117.6617202758789, 0.0, -1939.198486328125 ]
-quaternion = [ 0.9071617126464844, 0.0, -0.4207821786403656, 0.0 ]
+quaternion = [ -4.3711395392165286e-08, -4.371138118131057e-08, 1.0, 1.947071694985425e-07 ]
 scale = [ 0.9999993443489075, 0.9999998807907104, 0.9999992847442627 ]
 
 [[Transforms]]
-euler = [ 0.0, -89.9999771118164, 0.0 ]
+euler = [ 0.0, -57.31566619873047, 0.0 ]
 guid = '18133337474269889811'
 isStatic = false
-position = [ 916.1295776367188, 0.0, -2440.296630859375 ]
-quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
+position = [ 996.5391235351562, 0.0, -2461.287109375 ]
+quaternion = [ 0.8774993419647217, 0.0, -0.47957783937454224, 0.0 ]
 scale = [ 0.9999755024909973, 1.0, 0.9999755024909973 ]
