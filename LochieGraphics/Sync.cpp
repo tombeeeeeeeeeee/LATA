@@ -247,9 +247,26 @@ bool Sync::Update(
 		}
 		//TODO: add rumble
 		glm::vec2 pos2D = RigidBody::Transform2Din3DSpace(transform.getGlobalMatrix(), { 0,0 });
-		lines->DrawCircle(glm::vec3(pos2D.x, 0.1f, pos2D.y), 100.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
-		glm::vec2 lineOfShoot = barrelOffset2D + fireDirection * 80.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f);
-		lines->DrawCircle(glm::vec3(pos2D.x, 0.2f, pos2D.y), 100.0f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.3f, pos2D.y), 100.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.3f, pos2D.y), 100.5f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.3f, pos2D.y), 101.5f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.3f, pos2D.y), 101.5f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.3f, pos2D.y), 102.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.3f, pos2D.y), 102.5f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.3f, pos2D.y), 103.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.3f, pos2D.y), 103.5f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.3f, pos2D.y), 104.0f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.3f, pos2D.y), 104.5f * glm::clamp(0.0f, chargedDuration / sniperChargeTime, 1.0f), { sniperBeamColour.x, sniperBeamColour.y, sniperBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.4f, pos2D.y), 100.0f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.4f, pos2D.y), 100.5f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.4f, pos2D.y), 101.0f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.4f, pos2D.y), 101.5f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.4f, pos2D.y), 102.0f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.4f, pos2D.y), 102.5f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.4f, pos2D.y), 103.0f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.4f, pos2D.y), 103.5f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.4f, pos2D.y), 104.0f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
+		lines->DrawCircle(glm::vec3(pos2D.x, 0.4f, pos2D.y), 104.5f * glm::clamp(0.0f, (chargedDuration - sniperChargeTime) / (overclockChargeTime - sniperChargeTime), 1.0f), { overclockBeamColour.x, overclockBeamColour.y, overclockBeamColour.z });
 		// TODO: Max charge sound
 	}
 	else if (chargingShot)
