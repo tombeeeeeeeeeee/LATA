@@ -307,15 +307,12 @@ void Sync::GUI()
 
 	ImGui::DragFloat3(("Barrel Offset##" + tag).c_str(), &barrelOffset[0]);
 	ImGui::DragFloat(("Shot Width##" + tag).c_str(), &shotWidth);
+	ImGui::DragInt(("Max Enemy Pierce Count##" + tag).c_str(), &enemyPierceCount);
 
-	if (ImGui::CollapsingHeader(("Misfire Properties##" + tag).c_str()))
-	{
-		ImGui::DragInt(("Misfire Damage##" + tag).c_str(), &misfireDamage);
-		ImGui::DragFloat(("Misfire Shot Speed##" + tag).c_str(), &misfireShotSpeed);
-	}
 	if (ImGui::CollapsingHeader(("Sniper Shot Properties##" + tag).c_str()))
 	{
 		ImGui::DragInt(("Sniper Damage##" + tag).c_str(), &sniperDamage);
+		ImGui::DragInt(("Sniper Rebound Count##" + tag).c_str(), &sniperReboundCount);
 		ImGui::DragFloat(("Sniper Charge Time##" + tag).c_str(), &sniperChargeTime);
 		ImGui::DragFloat(("Sniper Beam life span##" + tag).c_str(), &sniperBeamLifeSpan);
 		ImGui::ColorEdit3(("Sniper Beam Colour##" + tag).c_str(), &sniperBeamColour[0]);
@@ -328,8 +325,7 @@ void Sync::GUI()
 		ImGui::DragFloat(("Beam life span##" + tag).c_str(), &overclockBeamLifeSpan);
 		ImGui::ColorEdit3(("Beam Colour##" + tag).c_str(), &overclockBeamColour[0]);
 		ImGui::DragFloat(("Knock Back Force Overclock##" + tag).c_str(), &knockBackForceOverclock);
-		ImGui::DragInt(("Max Enemy Pierce Count##" + tag).c_str(), &enemyPierceCount);
-		ImGui::DragInt(("Rebound Count##" + tag).c_str(), &overclockReboundCount);
+		ImGui::DragInt(("OverClock Rebound Count##" + tag).c_str(), &overclockReboundCount);
 		ImGui::DragInt(("Refraction Beams Off Ecco##" + tag).c_str(), &eccoRefractionCount);
 		ImGui::DragFloat(("Refraction Beams Angle##" + tag).c_str(), &eccoRefractionAngle);
 		ImGui::Checkbox(("Rainbow Shots Rebound##" + tag).c_str(), &rainbowRebounding);
@@ -365,6 +361,7 @@ toml::table Sync::Serialise() const
 		{ "overclockBeamLifeSpan", overclockBeamLifeSpan },
 		{ "overclockBeamColour", Serialisation::SaveAsVec3(overclockBeamColour) },
 		{ "overclockReboundCount", overclockReboundCount },
+		{ "sniperReboundCount", sniperReboundCount },
 		{ "enemyPierceCount", enemyPierceCount },
 		{ "eccoRefractionAngle", eccoRefractionAngle },
 		{ "eccoRefractionCount", eccoRefractionCount },
@@ -416,6 +413,22 @@ void Sync::ShootSniper(glm::vec3 pos)
 		{
 			hit.sceneObject->health()->subtractHealth(sniperDamage);
 			SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
+			for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
+			{
+				hit = hits[i];
+				if (i == enemyPierceCount - 1) return;
+
+				glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
+				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(100, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+				hitFX->explodeStrength = 3.0f;
+				hitFX->Explode();
+				if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+				{
+					hit.sceneObject->health()->subtractHealth(sniperDamage);
+					SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
+				}
+				else break;
+			}
 		}
 	}
 
