@@ -101,7 +101,6 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
     lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
     decalShader = ResourceManager::LoadShader("decal");
     beamShader = ResourceManager::LoadShader("beam");
-    //unitPlane = ResourceManager::LoadModel(Paths::modelSaveLocation + "SM_Plane" + Paths::modelExtension);
     decalCube = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_DefaultCube" + Paths::modelExtension);
     wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Wall" + Paths::modelExtension);
 }
@@ -952,7 +951,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
     for (auto& pair : spotlights)
     {
         if (!pair.second.castsShadows) continue;
-        if (!frustum.IsOnFrustum(transforms[pair.first].getGlobalPosition(), pair.second.range * 500.0f))
+        if (!frustum.IsOnFrustum(transforms[pair.first].getGlobalPosition(), pair.second.range * 700.0f))
         {
             continue;
         }

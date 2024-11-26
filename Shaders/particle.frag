@@ -15,8 +15,6 @@ in vec2 TexCoord;
 void main()
 {
 	float fakeAlpha = 0.01;
-	//FragColor = vec4(1, 0, 1, 1);
-	vec3 colour = texture(material.albedo, TexCoord).rgb;
-	//vec3 colour = vec3(1, 0, 1);
+	vec3 colour = texture(material.albedo, TexCoord).rgb * material.colour;
 	FragColor = vec4(colour * fakeAlpha, 1);
 }

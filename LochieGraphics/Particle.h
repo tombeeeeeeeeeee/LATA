@@ -36,6 +36,8 @@ public:
 
 	float explodeStrength = 1.0f;
 
+	glm::vec3 colour = { 1.0f, 1.0f, 1.0f };
+
 	glm::mat4 model;
 
 	Particle(unsigned int _count, float _lifetime, Shader* _shader, Texture* _texture, glm::vec3 startingPos);

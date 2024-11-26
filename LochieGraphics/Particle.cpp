@@ -37,7 +37,16 @@ void Particle::Explode()
 	{
 		std::uniform_real_distribution<float> distribution(-10.0f, 10.0f);
 
-		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f });
+		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f }) * 0.5f;
+		if (glm::isnan(i.x)) {
+			i = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+		}
+	}
+	for (auto& i : velocities)
+	{
+		std::uniform_real_distribution<float> distribution(-10.0f, 10.0f);
+
+		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f }) * 0.5f;
 		if (glm::isnan(i.x)) {
 			i = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		}
@@ -131,6 +140,7 @@ void Particle::Draw()
 	shader->setMat4("model", model);
 	texture->Bind(1);
 	shader->setSampler("material.albedo", 1);
+	shader->setVec3("material.colour", colour);
 
 	glBindVertexArray(quadVAO);
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, getCount());

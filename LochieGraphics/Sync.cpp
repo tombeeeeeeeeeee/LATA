@@ -435,19 +435,20 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 	{
 		Hit hit = hits[0];
 		glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
-		Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(100, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
-		hitFX->explodeStrength = 3.0f;
-		hitFX->Explode();
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 		{
 			hit.sceneObject->health()->subtractHealth(overclockDamage);
+			Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(500, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+			hitFX->colour = glm::vec3{ 255.0f, 47.0f, 10.0f } / 255.0f;
+			hitFX->explodeStrength = 3.0f;
+			hitFX->Explode();
 			for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
 			{
 				hit = hits[i];
 				if (i == enemyPierceCount - 1) return;
-
 				glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
-				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(100, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(500, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+				hitFX->colour = glm::vec3{ 255.0f, 47.0f, 10.0f } / 255.0f;
 				hitFX->explodeStrength = 3.0f;
 				hitFX->Explode();
 				if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
@@ -458,6 +459,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 				else break;
 			}
 		}
+
 
 		RenderSystem::beams.push_back({ overclockBeamLifeSpan, 0.0f, colour, pos, {hit.position.x, pos.y, hit.position.y} });
 
@@ -503,6 +505,13 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 				OverclockRebounding({ hit.position.x,pos.y, hit.position.y }, glm::reflect(dir, hit.normal), count + 1, colour);
 			}
 		}
+		else {
+			Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(500, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+			hitFX->colour = overclockBeamColour;
+			hitFX->explodeStrength = 3.0f;
+			hitFX->Explode();
+
+		}
 	}
 }
 
@@ -514,8 +523,9 @@ void Sync::OverclockRaindowShot(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour, 
 		Hit hit = hits[0];
 
 		glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
-		Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(100, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+		Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(500, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
 		hitFX->explodeStrength = 3.0f;
+		hitFX->colour = colour;
 		hitFX->Explode();
 
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
@@ -527,8 +537,9 @@ void Sync::OverclockRaindowShot(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour, 
 				hit = hits[i];
 
 				glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
-				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(100, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(500, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
 				hitFX->explodeStrength = 3.0f;
+				hitFX->colour = colour;
 				hitFX->Explode();
 
 				if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
