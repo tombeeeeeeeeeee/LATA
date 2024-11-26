@@ -1,5 +1,3 @@
-children = []
-
 [collider]
 collisionLayer = 1
 guid = '12425355164734013637'
@@ -8,18 +6,12 @@ radius = 0.0
 type = 1
 verts = [ [ 120.0, 260.0 ], [ 120.0, -260.0 ], [ -120.0, -260.0 ], [ -120.0, 260.0 ] ]
 
-[modelRenderer]
-guid = '12425355164734013637'
-materialTint = [ 1.0, 0.0, 0.0 ]
-materials = [ '1823128414540551919' ]
-modelGuid = '7289854778488251302'
-
 [sceneObject]
-children = []
+children = [ '7400826464096756876' ]
 guid = '12425355164734013637'
 name = 'W_ShippingContainer_Closed'
 parent = '0'
-parts = 34
+parts = 32
 prefabBase = '0'
 prefabStatus = 1
 
@@ -30,3 +22,29 @@ isStatic = true
 position = [ 3402.16796875, 0.0, -1556.402587890625 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+children = []
+
+    [children.modelRenderer]
+    guid = '7400826464096756876'
+    materialTint = [ 1.0, 1.0, 1.0 ]
+    materials = [ '1822012501052853337', '1823128414540551919' ]
+    modelGuid = '7289854778488251302'
+
+    [children.sceneObject]
+    children = []
+    guid = '7400826464096756876'
+    name = 'ContainerClose'
+    parent = '12425355164734013637'
+    parts = 2
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.transform]
+    euler = [ -0.0, -0.0, -0.0 ]
+    guid = '7400826464096756876'
+    isStatic = true
+    position = [ -274.16650390625, 0.0, -0.0 ]
+    quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]

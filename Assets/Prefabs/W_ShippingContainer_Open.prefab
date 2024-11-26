@@ -1,11 +1,3 @@
-children = []
-
-[modelRenderer]
-guid = '12425370768905202218'
-materialTint = [ 0.0, 0.14705896377563477, 1.0 ]
-materials = [ '1823316323732110257' ]
-modelGuid = '1821739004128631266'
-
 [rigidBody]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
@@ -35,11 +27,11 @@ vel = [ 0.0, 0.0 ]
     verts = [ [ 120.0, 260.0 ], [ 120.0, -260.0 ], [ 75.0, -260.0 ], [ 75.0, 260.0 ] ]
 
 [sceneObject]
-children = []
+children = [ '7412239259516743531' ]
 guid = '12425370768905202218'
 name = 'W_ShippingContainer_Open'
 parent = '0'
-parts = 10
+parts = 8
 prefabBase = '0'
 prefabStatus = 1
 
@@ -50,3 +42,29 @@ isStatic = true
 position = [ 3668.482177734375, 0.0, -613.0324096679688 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+children = []
+
+    [children.modelRenderer]
+    guid = '7412239259516743531'
+    materialTint = [ 1.0, 1.0, 1.0 ]
+    materials = [ '1822012501052853337', '1823316323732110257' ]
+    modelGuid = '1821739004128631266'
+
+    [children.sceneObject]
+    children = []
+    guid = '7412239259516743531'
+    name = 'ContainedOpen'
+    parent = '12425370768905202218'
+    parts = 2
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.transform]
+    euler = [ -0.0, -0.0, -0.0 ]
+    guid = '7412239259516743531'
+    isStatic = true
+    position = [ -691.96826171875, 0.0, -0.0 ]
+    quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]
