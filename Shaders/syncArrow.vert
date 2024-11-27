@@ -12,11 +12,13 @@ uniform mat4 vp;
 uniform mat4 model;
 
 out vec2 texCoords;
+out vec3 normal;
 
 void main()
 {
     texCoords = aTexCoords;
     vec4 pos;
     pos = model * vec4(aPos, 1.0);
+    normal = aNormal;
     gl_Position = vp * vec4(pos);
 }

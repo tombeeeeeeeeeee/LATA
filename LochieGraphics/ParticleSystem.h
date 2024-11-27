@@ -8,6 +8,8 @@ class ParticleSystem
 {
 public:
 	Texture* nextParticleTexture;
+	Texture* healthParticleTexture;
+
 	int nextParticleCount = 10;
 	float nextParticleLifetime = 4.0f;
 	glm::vec3 nextStartingPos = { 0.0f, 0.0f, 0.0f };

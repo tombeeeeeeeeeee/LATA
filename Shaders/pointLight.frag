@@ -21,6 +21,7 @@ uniform mat4 invP;
 uniform mat4 invV;
 uniform vec2 invViewPort;
 uniform int frameCount;
+uniform bool castsShadows;
 
 uniform sampler2D albedo;
 uniform sampler2D normal;
@@ -99,7 +100,10 @@ void main()
 	trueNormal, 1, linear, quad, lightColour
 	), 0, 1);
     Lo *= texture(lightLerp, lerpAmount.rr).rgb;
-    Lo *= ScreenSpaceShadows();
+    if(castsShadows)
+    {
+        Lo *= ScreenSpaceShadows();
+    }
 	finalColour = vec4(Lo, 1.0);
 	return;
 }
