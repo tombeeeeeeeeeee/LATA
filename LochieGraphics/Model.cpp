@@ -45,10 +45,6 @@ void Model::LoadModel(std::string _path)
 		std::cout << "Error loading model at: " << path << "\n";
 		throw; // TODO: Do not throw here
 	}
-	else 
-	{
-		std::cout << "Loaded model at: " << path << "\n";
-	}
 
 	//PrintMetaData(scene->mMetaData);
 	float conversionScale = 1;
@@ -212,10 +208,10 @@ void Model::ReadHierarchyData(ModelHierarchyInfo* dest, const aiNode* src)
 	dest->transform.setPosition(AssimpVecToGLM(pos));
 	dest->transform.setRotation(AssimpQuatToGLM(rot));
 	dest->transform.setScale(AssimpVecToGLM(scale));
-	if (dest->name == "RootNode") {
-		std::cout << "t";
-		//dest->transform.setScale(dest->transform.getScale() * 100.0f);
-	}
+	//if (dest->name == "RootNode") {
+	//	std::cout << "t";
+	//	//dest->transform.setScale(dest->transform.getScale() * 100.0f);
+	//}
 	
 	for (size_t i = 0; i < src->mNumMeshes; i++)
 	{

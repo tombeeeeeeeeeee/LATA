@@ -139,6 +139,7 @@ SceneManager::SceneManager(Scene* _scene)
 
 	scene->cursorPos = &cursorPos;
 
+	std::cout << "Loading main Shaders...\n";
 	ResourceManager::skyBoxShader   = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "cubemap"           + Paths::shaderExtension);
 	ResourceManager::shadowMapDepth = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "simpleDepthShader" + Paths::shaderExtension);
 	ResourceManager::shadowDebug    = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "shadowDebug"       + Paths::shaderExtension);
@@ -153,26 +154,34 @@ SceneManager::SceneManager(Scene* _scene)
 	ResourceManager::ssaoBlur       = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssaoBlur"          + Paths::shaderExtension);
 	ResourceManager::prepass        = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prepass"           + Paths::shaderExtension);
 	ResourceManager::super          = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "superDuper"        + Paths::shaderExtension);
+	std::cout << "Loaded main Shaders\n";
 
+	std::cout << "Loading Texture Assets...\n";
 	for (auto& i : std::filesystem::directory_iterator(Paths::textureSaveLocation)) {
 		ResourceManager::LoadTextureAsset(i.path().string());
 	}
+	std::cout << "Loaded Texture Assets\n";
 
+	std::cout << "Loading Material Assets...\n";
 	for (auto& i : std::filesystem::directory_iterator(Paths::materialSaveLocation)) {
 		ResourceManager::LoadMaterialAsset(i.path().string());
 	}
+	std::cout << "Loaded Material Assets\n";
 
+	std::cout << "Loading Model Assets...\n";
 	for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation))
 	{
 		ResourceManager::LoadModelAsset(i.path().string());
 	}
 	ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoLeanLeft.model")->root.transform.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Sync.model")->root.transform.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
+	std::cout << "Loaded Model Assets\n";
 
+	std::cout << "Loading Animation Assets...\n";
 	for (auto& i : std::filesystem::directory_iterator(Paths::animationsSaveLocation)) {
 		ResourceManager::LoadAnimationAsset(i.path().string());
 	}
-
+	std::cout << "Loaded Animations\n";
 
 	//std::array<std::string, 6> skyboxFaces = { "images/skybox/left.jpg", "images/skybox/right.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
 	std::array<std::string, 6> skyboxFaces = { "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png" };
