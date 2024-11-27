@@ -203,7 +203,7 @@ void Texture::DeleteTexture()
 	loaded = false;
 }
 
-void Texture::EditorGUI(std::vector<Texture*>& textures) 
+void Texture::EditorGUI(std::vector<Texture*>& textures)
 {
 	if (ImGui::BeginTable("Resource Textures", 6)) {
 		ImGui::TableNextRow();
@@ -270,6 +270,15 @@ void Texture::EditorGUI(std::vector<Texture*>& textures)
 		}
 		ImGui::EndTable();
 	}
+	if (ImGui::Button("Reload all textures with paths")) {
+		for (auto& i : textures)
+		{
+			if (i->path != "") {
+				i->Load();
+			}
+		}
+	}
+
 }
 
 Texture::operator std::string() const
