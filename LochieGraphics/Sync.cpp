@@ -1,5 +1,7 @@
 #include "Sync.h"
 
+#include <iostream>
+
 #include "Transform.h"
 #include "RigidBody.h"
 #include "SceneObject.h"
@@ -20,8 +22,8 @@
 #include "SyncChargingCondition.h"
 #include "SyncChargeLevelCondition.h"
 #include "AnimateBehaviour.h"
-#include "State.h"
 #include "AnimationFinishedCondition.h"
+#include "State.h"
 #include "BlastLine.h"
 
 #include "EditorGUI.h"
@@ -192,7 +194,9 @@ bool Sync::Update(
 	}
 	fireDirection = glm::normalize(fireDirection);
 
-	float angle = atan2f(fireDirection.x, fireDirection.y) * 180.0f/PI + 90.0f;
+	glm::vec2 direction = chargingShot ? fireDirection : move;
+
+	float angle = atan2f(direction.x, direction.y) * 180.0f/PI + 90.0f;
 	glm::vec3 eulers = transform.getEulerRotation();
 	eulers.y = angle;
 	transform.setEulerRotation(eulers);
@@ -209,15 +213,6 @@ bool Sync::Update(
 
 	if (inputDevice.getRightTrigger())
 	{
-		RenderSystem::syncAiming = true;
-		std::vector<Hit> hits;
-		if (PhysicsSystem::RayCastRadiusExpansion(transform.get2DGlobalPosition(), fireDirection, hits, shotWidth, FLT_MAX, ((int)CollisionLayers::base | (int)CollisionLayers::reflectiveSurface | (int)CollisionLayers::enemy)))
-		{
-			RenderSystem::syncAim.startPosition = { transform.get2DGlobalPosition().x, 5.0f, transform.get2DGlobalPosition().y };
-			RenderSystem::syncAim.endPosition = { hits[0].position.x, 5.0f, hits[0].position.y};
-			RenderSystem::syncAim.lifeSpan = overclockChargeTime;
-			RenderSystem::syncAim.colour = overclockBeamColour;
-		}
 		//Begin Chagrging Shot
 		if (!chargingShot)
 		{
@@ -298,7 +293,7 @@ bool Sync::Update(
 		}
 		chargedDuration = 0;
 	}
-	else RenderSystem::syncAiming = false;
+
 	if (sceneObjectWithAnimator) {
 		if (!stateMachineSetup) {
 			animatorStateMachine.setInitialState(animatorStateMachine.getInitialState());
@@ -307,8 +302,21 @@ bool Sync::Update(
 		}
 		animatorStateMachine.Update(sceneObjectWithAnimator, delta);
 	}
-	RenderSystem::syncAim.timeElapsed = chargedDuration;
 	
+	RenderSystem::syncAim.timeElapsed = chargedDuration;
+	RenderSystem::syncAiming = chargingShot;
+	if (chargingShot)
+	{
+		std::vector<Hit> hits;
+		if (PhysicsSystem::RayCastRadiusExpansion(barrelOffset2D, fireDirection, hits, shotWidth, FLT_MAX, ((int)CollisionLayers::base | (int)CollisionLayers::reflectiveSurface )))
+		{
+			RenderSystem::syncAim.startPosition = { barrelOffset2D.x, 5.0f, barrelOffset2D.y };
+			RenderSystem::syncAim.endPosition = { hits[0].position.x, 5.0f, hits[0].position.y };
+			RenderSystem::syncAim.lifeSpan = overclockChargeTime;
+			RenderSystem::syncAim.colour = overclockBeamColour;
+		}
+	}
+
 	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
 
@@ -432,10 +440,9 @@ void Sync::ShootSniper(glm::vec3 pos)
 	{
 		Hit hit = hits[0];
 		glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
-		Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(100, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+		Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
 		hitFX->explodeStrength = 3.0f;
 		hitFX->Explode();
-		RenderSystem::beams.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 		{
 			hit.sceneObject->health()->subtractHealth(sniperDamage);
@@ -446,7 +453,7 @@ void Sync::ShootSniper(glm::vec3 pos)
 				if (i == enemyPierceCount - 1) return;
 
 				glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
-				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(100, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
 				hitFX->explodeStrength = 3.0f;
 				hitFX->Explode();
 				if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
@@ -457,6 +464,7 @@ void Sync::ShootSniper(glm::vec3 pos)
 				else break;
 			}
 		}
+		RenderSystem::beams.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
 	}
 
 	SceneManager::scene->audio.PlaySound(Audio::railgunShotFirstCharged);
@@ -478,7 +486,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 		{
 			hit.sceneObject->health()->subtractHealth(overclockDamage);
-			Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(500, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+			Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
 			hitFX->colour = glm::vec3{ 255.0f, 47.0f, 10.0f } / 255.0f;
 			hitFX->explodeStrength = 3.0f;
 			hitFX->Explode();
@@ -487,7 +495,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 				hit = hits[i];
 				if (i == enemyPierceCount - 1) return;
 				glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
-				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(500, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
 				hitFX->colour = glm::vec3{ 255.0f, 47.0f, 10.0f } / 255.0f;
 				hitFX->explodeStrength = 3.0f;
 				hitFX->Explode();
@@ -546,7 +554,7 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 			}
 		}
 		else {
-			Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(500, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+			Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
 			hitFX->colour = overclockBeamColour;
 			hitFX->explodeStrength = 3.0f;
 			hitFX->Explode();
@@ -563,7 +571,7 @@ void Sync::OverclockRaindowShot(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour, 
 		Hit hit = hits[0];
 
 		glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
-		Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(500, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+		Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
 		hitFX->explodeStrength = 3.0f;
 		hitFX->colour = colour;
 		hitFX->Explode();
@@ -577,7 +585,7 @@ void Sync::OverclockRaindowShot(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour, 
 				hit = hits[i];
 
 				glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
-				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(500, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
 				hitFX->explodeStrength = 3.0f;
 				hitFX->colour = colour;
 				hitFX->Explode();

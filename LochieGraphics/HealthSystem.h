@@ -8,6 +8,7 @@
 class Health;
 class ModelRenderer;
 struct HealthPacket;
+class SceneObject;
 
 namespace toml {
 	inline namespace v3 {
@@ -57,7 +58,12 @@ public:
 	UiElement abilityUI;
 
 	float timeSinceLastHealingAbility = FLT_MAX;
+
 private:
+
+	SceneObject* eccoHealthLight = nullptr;
+	SceneObject* syncHealthLight = nullptr;
+
 	bool playerHealingAbility = false;
 	int currentPulseCount = 0;
 	float timeSinceLastLOS = 0.0f;

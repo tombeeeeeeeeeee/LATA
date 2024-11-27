@@ -14,6 +14,9 @@
 #include "Paths.h"
 #include "SceneManager.h"
 #include "Scene.h"
+#include "Ecco.h"
+#include "Sync.h"
+#include "SceneObject.h"
 
 #include <iostream>
 #include <filesystem>
@@ -97,6 +100,24 @@ void HealthSystem::PlayerHealingActivate(glm::vec2 eccoPos, glm::vec2 syncPos)
 			timeSinceLastLOS = 0.0f;
 			timeSinceLastPulse = FLT_MAX;
 			currentPulseCount = 0;
+
+			eccoHealthLight = new SceneObject(SceneManager::scene, "eccoLight");
+			eccoHealthLight->transform()->setParent(&SceneManager::scene->transforms[SceneManager::scene->ecco->GUID]);
+			eccoHealthLight->transform()->setPosition({0.0f,300.0f,0.0f});
+			eccoHealthLight->setPointLight(new PointLight(PointLightEffect::On));
+			eccoHealthLight->pointLight()->colour = healColour;
+			eccoHealthLight->pointLight()->castsShadows = false;
+			eccoHealthLight->pointLight()->intensity = 10.0f;
+			eccoHealthLight->pointLight()->SetRange(300.0f);
+
+			syncHealthLight = new SceneObject(SceneManager::scene, "syncLight");
+			syncHealthLight->transform()->setParent(&SceneManager::scene->transforms[SceneManager::scene->sync->GUID]);
+			syncHealthLight->transform()->setPosition({0.0f,300.0f,0.0f});
+			syncHealthLight->setPointLight(new PointLight(PointLightEffect::On));
+			syncHealthLight->pointLight()->colour = healColour;
+			syncHealthLight->pointLight()->castsShadows = false;
+			syncHealthLight->pointLight()->intensity = 10.0f;
+			syncHealthLight->pointLight()->SetRange(300.0f);
 		}
 		SceneManager::scene->audio.PlaySound(Audio::healingAbilityActivate);
 	}
@@ -112,6 +133,15 @@ void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, g
 			syncHealth->addHealth(healPerPulse);
 			currentPulseCount++;
 			timeSinceLastPulse = 0.0f;
+			Particle* syncFX = SceneManager::scene->particleSystem.AddParticle(10, 0.4f, SceneManager::scene->particleSystem.healthParticleTexture, glm::vec3(syncPos.x, 100.0f, syncPos.y));
+			syncFX->explodeStrength = 3.0f;
+			syncFX->colour = healColour;
+			syncFX->Explode();
+
+			Particle* eccoFX = SceneManager::scene->particleSystem.AddParticle(10, 0.4f, SceneManager::scene->particleSystem.healthParticleTexture, glm::vec3(eccoPos.x, 100.0f, eccoPos.y));
+			eccoFX->explodeStrength = 3.0f;
+			eccoFX->colour = healColour;
+			eccoFX->Explode();
 		}
 		else timeSinceLastPulse += delta;
 
@@ -122,14 +152,14 @@ void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, g
 
 		else timeSinceLastLOS += delta; 
 
-		RenderSystem::lines.DrawLineSegement2D(eccoPos, syncPos, {0.0f, 1.2f - timeSinceLastPulse / timeBetweenPulses, 0.0f}, 100.0f);
-
 		//End case;
 		if (timeSinceLastLOS > losToleranceTime|| currentPulseCount > pulses)
 		{
 			playerHealingAbility = false;
 			currentPulseCount = 0;
 			timeSinceLastHealingAbility = 0.0f;
+			SceneManager::scene->DeleteSceneObjectAndChildren(eccoHealthLight->GUID);
+			SceneManager::scene->DeleteSceneObjectAndChildren(syncHealthLight->GUID);
 			SceneManager::scene->audio.PlaySound(Audio::healingAbilityDeactivate);
 		}
 	}

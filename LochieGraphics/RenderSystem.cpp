@@ -102,7 +102,7 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
     lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
     decalShader = ResourceManager::LoadShader("decal");
     beamShader = ResourceManager::LoadShader("beam");
-    syncAimShader = ResourceManager::LoadShader("syncAim");
+    syncAimShader = ResourceManager::LoadShader("syncArrow");
     decalCube = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_DefaultCube" + Paths::modelExtension);
     wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Wall" + Paths::modelExtension);
 }
@@ -455,6 +455,8 @@ void RenderSystem::Update(
 
     RenderBeams(delta);
 
+    if (syncAiming) RenderSyncAim(delta);
+
     RenderLinePass();
 
     RenderComposite();
@@ -707,6 +709,7 @@ float delta
         pointLightPassShader->setVec3("colour", pair.second.colour * pair.second.intensity);
         pointLightPassShader->setFloat("linear", pair.second.linear);
         pointLightPassShader->setFloat("quad", pair.second.quadratic);
+        pointLightPassShader->setBool("castsShadows", pair.second.castsShadows);
         pair.second.timeInType += delta;
         float lerpAmount;
         switch (pair.second.effect)
@@ -1459,6 +1462,7 @@ void RenderSystem::RenderSyncAim(float delta)
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     syncAimShader->Use();
     syncAimShader->setMat4("vp", projection * viewMatrix);
 
@@ -1467,17 +1471,17 @@ void RenderSystem::RenderSyncAim(float delta)
     glm::vec3 difference = displacement - syncAim.startPosition;
     float length = glm::length(difference);
     transform.setPosition(displacement);
-    transform.setScale({ 100.0f, 0.01f,length * 2.0f });
+    transform.setScale({ 10.0f, 0.01f, length * 2.0f });
     transform.setEulerRotation({ 0.0f, 180.0f * atan2f(difference.x, difference.z) / PI, 0.0f });
+
     syncAimShader->setMat4("model", transform.getGlobalMatrix());
     syncAimShader->setFloat("timeInAim", syncAim.timeElapsed);
-    syncAimShader->setFloat("percentage", syncAim.timeElapsed / syncAim.lifeSpan);
-    syncAimShader->setFloat("uvMult", length / tileLength);
+    syncAimShader->setFloat("uvMult", length / 30.0f);
 
     float r = syncAim.colour.x;
     float g = syncAim.colour.y;
     float b = syncAim.colour.z;
-    syncAimShader->setVec3("colour", { r,g,b });
+    syncAimShader->setVec3("colour", { 1.0f,1.0f,1.0f });
 
     decalCube->meshes[0]->Draw();
 

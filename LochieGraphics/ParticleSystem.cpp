@@ -1,13 +1,14 @@
 #include "ParticleSystem.h"
 
 #include "ResourceManager.h"
-
+#include "Paths.h"
 #include "EditorGUI.h"
 
 void ParticleSystem::Initialise(Shader* _shader)
 {
 	shader = _shader;
 	nextParticleTexture = ResourceManager::defaultTexture;
+	healthParticleTexture = ResourceManager::LoadTexture(Paths::importTextureLocation + "healthParticle" + Paths::imageExtension, Texture::Type::count);
 }
 
 void ParticleSystem::Update(float delta)

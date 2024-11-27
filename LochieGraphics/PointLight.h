@@ -26,6 +26,7 @@ public:
 
     bool on = true;
     bool canBeTriggered = false;
+    bool castsShadows = true;
     std::string triggerTag = "";
 
     float range = 1;

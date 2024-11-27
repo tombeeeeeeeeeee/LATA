@@ -20,6 +20,7 @@ PointLight::PointLight(toml::table table)
 	on = Serialisation::LoadAsBool(table["on"]);
 	effect = (PointLightEffect)Serialisation::LoadAsInt(table["effect"]);
 	intensity = Serialisation::LoadAsFloat(table["intensity"], 1.0f);
+	castsShadows = Serialisation::LoadAsBool(table["castsShadows"], true);
 }
 
 void PointLight::GUI()
@@ -30,6 +31,7 @@ void PointLight::GUI()
 		ImGui::Indent();
 		std::string tag = Utilities::PointerToString(this);
 		ImGui::Checkbox(("On##" + tag).c_str(), &on);
+		ImGui::Checkbox(("Casts Shadows##" + tag).c_str(), &castsShadows);
 
 		ImGui::ColorPicker3(("Light Colour##" + tag).c_str(), &colour[0], ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR);
 		float _range = 100.0f * range;
@@ -255,6 +257,7 @@ toml::table PointLight::Serialise(unsigned long long guid) const
 		{ "canBeTriggered", canBeTriggered },
 		{ "effect", (int)effect },
 		{ "intensity", intensity },
+		{ "castsShadows", castsShadows },
 	};
 }
 
