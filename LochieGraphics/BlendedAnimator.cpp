@@ -11,10 +11,16 @@
 
 #include "EditorGUI.h"
 
-BlendedAnimator::BlendedAnimator(Animation* one, Animation* two) : Animator(one),
-    otherCurrentAnimation(two),
-    otherCurrentAnimationGUID(two->GUID)
+BlendedAnimator::BlendedAnimator() : Animator()
 {
+}
+
+BlendedAnimator::BlendedAnimator(Animation* one, Animation* two) : Animator(one),
+    otherCurrentAnimation(two)
+{
+    if (otherCurrentAnimation) {
+        otherCurrentAnimationGUID = otherCurrentAnimation->GUID;
+    }
 }
 
 void BlendedAnimator::PlayOtherAnimation(Animation* animation)
@@ -43,7 +49,7 @@ float BlendedAnimator::getOtherTime() const
     return currentTimeOther;
 }
 
-void BlendedAnimator::UpdateAnimation(float delta)
+void BlendedAnimator::UpdateAnimation(float delta, bool updateBoneTransforms)
 {
     if (!currentAnimation && !otherCurrentAnimation) {
         return;
@@ -69,7 +75,9 @@ void BlendedAnimator::UpdateAnimation(float delta)
     else {
         currentTimeOther = fminf(currentTimeOther, otherCurrentAnimation->getDuration());
     }
-    CalculateBoneTransform(currentAnimation->getRootNode(), glm::mat4(1.0f));
+    if (updateBoneTransforms) {
+        UpdateBoneTransforms();
+    }
 }
 
 void BlendedAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, const glm::mat4& parentTransform)

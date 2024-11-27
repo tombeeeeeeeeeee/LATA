@@ -4,7 +4,7 @@
 class BlendedAnimator : public Animator
 {
     Animation* otherCurrentAnimation = nullptr;
-    unsigned long long otherCurrentAnimationGUID = 0;
+    unsigned long long otherCurrentAnimationGUID = 0ull;
     float currentTimeOther = 0.f;
 public:
 
@@ -13,7 +13,7 @@ public:
     bool loopOtherCurrent = true;
 
     float lerpAmount = 0.f;
-    BlendedAnimator() = default;
+    BlendedAnimator();
     BlendedAnimator(Animation* one, Animation* two);
 
     void PlayOtherAnimation(Animation* animation);
@@ -23,7 +23,7 @@ public:
 
     float getOtherTime() const;
 
-    void UpdateAnimation(float delta) override;
+    void UpdateAnimation(float delta, bool updateBoneTransforms = true) override;
     void CalculateBoneTransform(const ModelHierarchyInfo* node, const glm::mat4& parentTransform) override;
 
     Animator::Type getType() const override;

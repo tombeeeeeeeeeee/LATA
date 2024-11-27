@@ -24,7 +24,7 @@ public:
     Directional2dAnimator(Animation* left, Animation* right, Animation* up, Animation* down);
     Directional2dAnimator(toml::table table);
 
-    void UpdateAnimation(float delta) override;
+    void UpdateAnimation(float delta, bool updateBoneTransforms = true) override;
     void CalculateBoneTransform(const ModelHierarchyInfo* node, const glm::mat4& parentTransform) override;
 
     virtual void GUI() override;

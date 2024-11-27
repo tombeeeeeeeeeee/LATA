@@ -50,7 +50,8 @@ public:
 	/// Updates the animation based on the time passed, this will recalculate all of the bone transformations.
 	/// </summary>
 	/// <param name="delta">time passed</param>
-	virtual void UpdateAnimation(float delta);
+	/// <param name="updateBoneTransforms">Whether or not to update the bone transforms, or just the animation time</param>
+	virtual void UpdateAnimation(float delta, bool updateBoneTransforms = true);
 
 	/// <summary>
 	/// Changes the current animation to the given one, resets the current time back to zero.
@@ -68,6 +69,8 @@ public:
 	/// <param name="node">The node to calculate the transform of</param>
 	/// <param name="parentTransform">The parent transformation</param>
 	virtual void CalculateBoneTransform(const ModelHierarchyInfo* node, const glm::mat4& parentTransform);
+
+	void UpdateBoneTransforms();
 
 	/// <summary>
 	/// Returns a reference to the bone matrices.
