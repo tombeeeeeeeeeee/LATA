@@ -45,6 +45,7 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 
 	for (int i = 0; i < model->meshes.size(); i++)
 	{
+		if (drawSingleMesh && i != meshIndexToDraw) { continue; }
 		Mesh* mesh = model->meshes.at(i);
 		int materialID = mesh->materialID;
 		Material* currentMaterial = nullptr;
@@ -125,7 +126,6 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 
 void ModelRenderer::GUI()
 {
-	//ImGui::Text("");
 	std::string tag = Utilities::PointerToString(this);
 	if (!ImGui::CollapsingHeader(("Model Renderer##" + tag).c_str()))
 	{
@@ -164,6 +164,21 @@ void ModelRenderer::GUI()
 		}
 		Refresh();
 	}
+
+	if (model) {
+		ImGui::Checkbox("Only render single mesh from model", &drawSingleMesh);
+		if (!drawSingleMesh) {
+			ImGui::BeginDisabled();
+		}
+		unsigned int min = 0;
+		unsigned int max = model->meshes.size() - 1u;
+		ImGui::SliderScalar("Mesh to render", ImGuiDataType_U32, &meshIndexToDraw, &min, &max);
+		if (!drawSingleMesh) {
+			ImGui::EndDisabled();
+		}
+	}
+
+
 	ImGui::Unindent();
 }
 
@@ -181,6 +196,8 @@ toml::table ModelRenderer::Serialise(unsigned long long GUID) const
 		{ "modelGuid", Serialisation::SaveAsUnsignedLongLong(modelGUID)},
 		{ "materialTint", Serialisation::SaveAsVec3(materialTint)},
 		{ "materials", savedMaterials },
+		{ "drawSingleMesh", drawSingleMesh },
+		{ "meshIndexToDraw", Serialisation::SaveAsUnsignedInt(meshIndexToDraw) },
 	};
 }
 
@@ -195,6 +212,8 @@ ModelRenderer::ModelRenderer(toml::table table)
 		materialGUIDs.push_back(Serialisation::LoadAsUnsignedLongLong(loadingMaterials->at(i)));
 	}
 	Refresh();
+	drawSingleMesh = Serialisation::LoadAsBool(table["drawSingleMesh"], false);
+	meshIndexToDraw = Serialisation::LoadAsUnsignedInt(table["meshIndexToDraw"]);
 }
 
 glm::vec3 ModelRenderer::GetMaterialOverlayColour()
