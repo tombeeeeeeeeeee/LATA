@@ -23,6 +23,7 @@
 #include "State.h"
 #include "AnimationFinishedCondition.h"
 #include "BlastLine.h"
+#include "BlendedAnimator.h"
 
 #include "EditorGUI.h"
 
@@ -139,7 +140,7 @@ void Sync::Start(SceneObject* sceneObjectWithAnimator)
 bool Sync::Update(
 	SceneObject* sceneObjectWithAnimator, Input::InputDevice& inputDevice, Transform& transform,
 	RigidBody& rigidBody, LineRenderer* lines, 
-	float delta, float cameraAngleOffset
+	float delta, float cameraAngleOffset, Transform* gunTransform
 )
 {
 	glm::vec2 look = inputDevice.getLook();
@@ -308,6 +309,28 @@ bool Sync::Update(
 		animatorStateMachine.Update(sceneObjectWithAnimator, delta);
 	}
 	RenderSystem::syncAim.timeElapsed = chargedDuration;
+
+
+	if (gunTransform && sceneObjectWithAnimator) {
+		// Move gun to the gun bone
+
+		BlendedAnimator* animator = (BlendedAnimator*)sceneObjectWithAnimator->animator();
+		//animator.
+		Model* model = animator->getAnimation()->model;
+
+		glm::mat4 mat;
+		ModelHierarchyInfo* info = nullptr;
+		model->root.ModelHierarchyInfoOfMesh(1, &info);
+		auto search = model->boneInfoMap.find(info->name);
+		if (search == model->boneInfoMap.end()) {
+			mat = info->transform.getGlobalMatrix();
+		}
+		else {
+			BoneInfo* boneInfo = &search->second;
+			mat = animator->getFinalBoneMatrices().at(boneInfo->ID);
+		}
+		gunTransform->setLocalMatrix(mat);
+	}
 	
 	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
