@@ -257,7 +257,9 @@ void LevelEditor::Update(float delta)
 
 	if (!lastFramePlayState && inPlay) //On Play Enter
 	{
-		SaveLevel();
+		if (UserPreferences::saveOnLevelPlay) {
+			SaveLevel();
+		}
 
 		glLineWidth(15.0f);
 

@@ -27,6 +27,7 @@ public:
 	};
 	static ModelSelectMode modelSelectMode;
 
+	static bool saveOnLevelPlay;
 	static bool immortal;
 	static bool loadDefaultLevel;
 	static std::string defaultLevelLoad;
