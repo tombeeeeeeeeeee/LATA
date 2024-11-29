@@ -2,6 +2,7 @@
 
 layout (location = 0) out vec4 FragColor;
 
+uniform float lifeTime;
 
 in vec2 TexCoord;
 
@@ -14,7 +15,6 @@ in vec2 TexCoord;
 
 void main()
 {
-	float fakeAlpha = 0.01;
 	vec3 colour = texture(material.albedo, TexCoord).rgb * material.colour;
-	FragColor = vec4(colour * fakeAlpha, 1);
+	FragColor = vec4(colour * 0.5 * min(1.0, lifeTime), 1.0);
 }

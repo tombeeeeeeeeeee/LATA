@@ -19,7 +19,7 @@ Particle::Particle(unsigned int _count, float _lifetime, Shader* _shader, Textur
 {
 	positions.assign(count, glm::vec4(startingPos.x, startingPos.y, startingPos.z, 0.0f));
 	velocities.resize(count);
-	glm::quat rot = glm::quat(glm::vec3(PI / 2, 0, 0));
+	glm::quat rot = glm::quat(glm::vec3(45.5f, 215.0f, 0.0f)  * PI / 180.0f);
 	model = glm::mat4_cast(rot);
 }
 
@@ -140,6 +140,7 @@ void Particle::Draw()
 	shader->setMat4("model", model);
 	texture->Bind(1);
 	shader->setSampler("material.albedo", 1);
+	shader->setFloat("lifeTime", lifetime);
 	shader->setVec3("material.colour", colour);
 
 	glBindVertexArray(quadVAO);

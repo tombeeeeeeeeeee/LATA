@@ -310,8 +310,8 @@ bool Sync::Update(
 		std::vector<Hit> hits;
 		if (PhysicsSystem::RayCastRadiusExpansion(barrelOffset2D, fireDirection, hits, shotWidth, FLT_MAX, ((int)CollisionLayers::base | (int)CollisionLayers::reflectiveSurface )))
 		{
-			RenderSystem::syncAim.startPosition = { barrelOffset2D.x, 5.0f, barrelOffset2D.y };
-			RenderSystem::syncAim.endPosition = { hits[0].position.x, 5.0f, hits[0].position.y };
+			RenderSystem::syncAim.startPosition = globalBarrelOffset;
+			RenderSystem::syncAim.endPosition = { hits[0].position.x, globalBarrelOffset.y, hits[0].position.y };
 			RenderSystem::syncAim.lifeSpan = overclockChargeTime;
 			RenderSystem::syncAim.colour = overclockBeamColour;
 		}

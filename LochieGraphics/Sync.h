@@ -123,6 +123,4 @@ private:
 	
 	bool reachedCharge1 = false;
 	bool reachedCharge2 = false;
-
-	
 };
