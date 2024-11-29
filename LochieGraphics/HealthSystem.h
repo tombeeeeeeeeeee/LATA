@@ -38,6 +38,8 @@ public:
 		float delta
 	);
 
+	void LevelLoad();
+
 	// TODO: make a util function to do some of this
 	static bool FileSelector(std::string* filename);
 	void GUI();

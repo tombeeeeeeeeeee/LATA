@@ -170,6 +170,17 @@ void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, g
 	else timeSinceLastHealingAbility += delta;
 }
 
+void HealthSystem::LevelLoad()
+{
+	eccoHealthLight = nullptr;
+	syncHealthLight = nullptr;
+	playerHealingAbility = false;
+	currentPulseCount = 0;
+	timeSinceLastLOS = 0.0f;
+	timeSinceLastPulse = 0.0f;
+	timeSinceLastHealingAbility = healingAbilityCooldown;
+}
+
 
 bool HealthSystem::FileSelector(std::string* filename)
 {

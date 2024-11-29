@@ -359,10 +359,10 @@ void Input::FakeInputDevice::GUI()
 	ImGui::DragFloat2(("Look##" + tag).c_str(), &(look.x));
 	ImGui::DragFloat(("Left Trigger##" + tag).c_str(), &leftTrigger);
 	ImGui::DragFloat(("Right Trigger##" + tag).c_str(), &rightTrigger);
-	ImGui::Checkbox(("Button1" + tag).c_str(), &button1);
-	ImGui::Checkbox(("Button2" + tag).c_str(), &button2);
-	ImGui::Checkbox(("Button3" + tag).c_str(), &button3);
-	ImGui::Checkbox(("Button4" + tag).c_str(), &button4);	
+	ImGui::Checkbox(("Button1##" + tag).c_str(), &button1);
+	ImGui::Checkbox(("Button2##" + tag).c_str(), &button2);
+	ImGui::Checkbox(("Button3##" + tag).c_str(), &button3);
+	ImGui::Checkbox(("Button4##" + tag).c_str(), &button4);	
 }
 
 void Input::InputDevice::GUI()

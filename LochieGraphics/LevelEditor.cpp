@@ -870,6 +870,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	InitialiseLayers();
 
 	enemySystem.Start(transforms, rigidBodies, colliders);
+	healthSystem.LevelLoad();
 	previouslySaved = true;
 
 	// TODO: Move the _Ground to a variable or something
