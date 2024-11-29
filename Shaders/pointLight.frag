@@ -28,6 +28,7 @@ uniform sampler2D normal;
 uniform sampler2D depth;
 uniform sampler2D pbr;
 uniform sampler2D lightLerp;
+uniform sampler2D SSAO;
 
 vec3 trueNormal;
 vec3 trueAlbedo;
@@ -54,7 +55,9 @@ vec3 specularIBL(vec3 trueNormal);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight);
 float ScreenSpaceShadows();
+float ScreenSpaceShadowsButSmall();
 float InterleavedGradientNoise(vec2 position_screen);
+float InterleavedGradientNoiseNoFrameEffect(vec2 position_screen);
 
 #define PI 3.1415926535
 
@@ -103,6 +106,10 @@ void main()
     if(castsShadows)
     {
         Lo *= ScreenSpaceShadows();
+    }
+    else
+    {
+        Lo *= ScreenSpaceShadowsButSmall();
     }
 	finalColour = vec4(Lo, 1.0);
 	return;
@@ -231,6 +238,19 @@ float ScreenSpaceShadows()
 
     // Convert to visibility
     return 1.0 - occlusion;
+}
+
+float ScreenSpaceShadowsButSmall()
+{
+    float SSBS = texture(SSAO, texCoords).r;
+    SSBS *= SSBS;
+    return SSBS;
+}
+
+float InterleavedGradientNoiseNoFrameEffect(vec2 screen_pos)
+{
+    vec3 magic = vec3(0.06711056, 0.00583715, 52.9829189);
+    return fract(magic.z * fract(dot(screen_pos, magic.xy)));
 }
 
 float InterleavedGradientNoise(vec2 screen_pos)

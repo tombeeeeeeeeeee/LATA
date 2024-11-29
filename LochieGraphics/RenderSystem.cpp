@@ -685,6 +685,7 @@ float delta
     pointLightPassShader->setInt("depth", 3);
     pointLightPassShader->setInt("pbr", 4);
     pointLightPassShader->setInt("lightLerp", 5);
+    pointLightPassShader->setInt("SSAO", 6);
     pointLightPassShader->setInt("frameCount", frameCountInSixteen);
 
     glActiveTexture(GL_TEXTURE0 + 1);
@@ -699,11 +700,14 @@ float delta
     glActiveTexture(GL_TEXTURE0 + 4);
     glBindTexture(GL_TEXTURE_2D, pbrBuffer);
 
+    glActiveTexture(GL_TEXTURE0 + 6);
+    glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
+
     for (auto& pair : pointLights)
     {
         Transform transform = Transform();
         transform.setPosition(transforms[pair.first].getGlobalPosition());
-        transform.setScale(pair.second.range * 500.0f);
+        transform.setScale(pair.second.range * 900.0f);
         pointLightPassShader->setMat4("model", transform.getGlobalMatrix());
         pointLightPassShader->setVec3("lightPos", transforms[pair.first].getGlobalPosition());
         pointLightPassShader->setVec3("colour", pair.second.colour * pair.second.intensity);
@@ -1459,7 +1463,6 @@ void RenderSystem::RenderSyncAim(float delta)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
     glDepthMask(GL_FALSE);
-    glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

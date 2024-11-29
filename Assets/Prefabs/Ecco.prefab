@@ -97,7 +97,7 @@ vel = [
     verts = [ [ 1.0, -46.0 ] ]
 
 [sceneObject]
-children = [ '2120176559991300301' ]
+children = [ '2120176559991300301', '8456622609404298385' ]
 guid = '2091576976424546894'
 name = 'Ecco'
 parent = '0'
@@ -116,19 +116,72 @@ scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
 [[children]]
 children = []
 
+    [children.pointLight]
+    canBeTriggered = false
+    castsShadows = false
+    colour = [ 1.0, 1.0, 1.0 ]
+    effect = 0
+    guid = '2120176559991300301'
+    intensity = 5.0
+    linear = 0.9571428298950195
+    on = true
+    quadratic = 4.800000190734863
+    range = 1.0
+    triggerTag = ''
+
     [children.sceneObject]
     children = []
     guid = '2120176559991300301'
     name = 'Unnamed Scene Object'
     parent = '2091576976424546894'
-    parts = 0
+    parts = 16
     prefabBase = '0'
     prefabStatus = 0
 
     [children.transform]
-    euler = [ 0.0, 0.0, 0.0 ]
+    euler = [ 1.8238573151752036e-10, -1.7075474261218915e-06, 1.3027551259980896e-10 ]
     guid = '2120176559991300301'
     isStatic = true
-    position = [ 0.0, 0.0, 0.0 ]
-    quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+    position = [ -0.01123046875, 68.19972229003906, 9.155261795967817e-05 ]
+    quaternion = [
+        1.0,
+        1.5916157281026244e-12,
+        -1.4901162970204496e-08,
+        1.136868268795943e-12
+    ]
     scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+children = []
+
+    [children.sceneObject]
+    children = []
+    guid = '8456622609404298385'
+    name = 'Unnamed Scene Object'
+    parent = '2091576976424546894'
+    parts = 2048
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.spotlight]
+    canBeTriggered = false
+    castsShadows = true
+    colour = [ 0.10326087474822998, 0.6783435344696045, 1.0 ]
+    cutOff = 0.8349999785423279
+    effect = 0
+    guid = '8456622609404298385'
+    intensity = 20.0
+    linear = 0.9571428298950195
+    on = true
+    outerCutOff = 0.31299999356269836
+    quadratic = 4.800000190734863
+    range = 1.0
+    triggerTag = ''
+
+    [children.transform]
+    euler = [ 42.3295783996582, -1.596029323991388e-05, -5.298431005940074e-06 ]
+    guid = '8456622609404298385'
+    isStatic = true
+    position = [ 0.0009789485484361649, 118.85688018798828, 35.23514175415039 ]
+    quaternion = [ 0.9325458407402039, 0.3610515594482422, -1.4657895519576414e-07, 7.168583948669038e-09 ]
+    scale = [ 0.9999995231628418, 1.000049352645874, 0.999947190284729 ]

@@ -46,6 +46,7 @@ private:
 	bool saveAs = false;
 	bool drawForceLines = false;
 
+	float syncPriorityFactor = 5.0f;
 	int enemyFrameIndex = 0;
 	int frameCountMin = 12;
 	int frameCount;
@@ -54,6 +55,7 @@ public:
 	bool aiUpdating = false;
 	int nfmDensity = 20;
 	int maxNormalInfluence = 1024;
+	
 
 	EnemySystem() {};
 	void Load(toml::table table);

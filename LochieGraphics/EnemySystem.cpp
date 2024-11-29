@@ -67,6 +67,7 @@ void EnemySystem::Load(toml::table table)
     rangedEnemyMaterialPath = Serialisation::LoadAsString(table["rangedEnemyMaterialPath"]);
 
     enemySpawnHeight = Serialisation::LoadAsFloat(table["enemySpawnHeight"], 135.0f);
+    syncPriorityFactor = Serialisation::LoadAsFloat(table["syncPriorityFactor"], 5.0f);
 }
 
 void EnemySystem::Start(
@@ -212,7 +213,7 @@ void EnemySystem::LineOfSightAndTargetCheck(
         {
             pair.second.hasLOS = true;
             pair.second.hasTarget = true;
-            if (distanceToEcco < distanceToSync)
+            if (distanceToEcco < distanceToSync * (1.0f/syncPriorityFactor))
             {
                 pair.second.target = eccoPos;
             }
@@ -744,6 +745,7 @@ void EnemySystem::GUI()
     ImGui::Checkbox("Draw Force Lines", &drawForceLines);
     ImGui::Text("AI STATS");
     ImGui::DragFloat("Max Speed", &maxSpeed);
+    ImGui::DragFloat("Sync Priority Factor", &syncPriorityFactor);
     ImGui::DragFloat("Alignment Coef", &alignmentCoef);
     ImGui::DragFloat("Cohesion Coef", &cohesionCoef);
     ImGui::DragFloat("Seperation Coef", &seperationCoef);
@@ -822,6 +824,7 @@ toml::table EnemySystem::Serialise() const
                 { "rangedEnemyModel", rangedEnemyModel },
                 { "rangedEnemyMaterialPath", rangedEnemyMaterialPath },
                 { "enemySpawnHeight", enemySpawnHeight },
+                { "syncPriorityFactor", syncPriorityFactor },
     };
 }
 void EnemySystem::SaveAsGUI()
