@@ -160,13 +160,14 @@ void GameTest::Update(float delta)
 			if (targettingP1)
 			{
 				sync->Update(
-					h,
+					nullptr,
 					*input.inputDevices[0],
 					*h->transform(),
 					*h->rigidbody(),
 					&renderSystem.lines,
 					delta,
-					camera->transform.getEulerRotation().y
+					camera->transform.getEulerRotation().y,
+					nullptr
 				);
 			}
 			else
@@ -198,13 +199,14 @@ void GameTest::Update(float delta)
 			if (input.inputDevices.size() > 1)
 			{
 				sync->Update(
-					h,
+					nullptr,
 					*input.inputDevices[1],
 					*h->transform(),
 					*h->rigidbody(),
 					&renderSystem.lines,
 					delta,
-					camera->transform.getEulerRotation().y
+					camera->transform.getEulerRotation().y,
+					nullptr
 				);
 			}
 		}

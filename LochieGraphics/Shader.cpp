@@ -92,10 +92,6 @@ GLuint Shader::CreateProgram(std::vector<GLuint> shaders)
 		glGetProgramInfoLog(GLID, 512, NULL, infoLog);
 		std::cout << "Shader error, program linking failed\n" << infoLog << "\n";
 	}
-	else
-	{
-		std::cout << "Created shader ID: " << GLID << "\n";
-	}	
 
 	return GLID;
 }

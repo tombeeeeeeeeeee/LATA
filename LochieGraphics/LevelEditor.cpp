@@ -134,6 +134,8 @@ void LevelEditor::Start()
 	syncSo = new SceneObject(this, "Sync");
 	syncAnimatorSo = new SceneObject(this, "Sync Model and Animator");
 	syncAnimatorSo->transform()->setParent(syncSo->transform());
+	SceneObject* syncGunSo = new SceneObject(this, "Sync Gun");
+	syncGun = syncGunSo->transform();
 	eccoSo = new SceneObject(this, "Ecco");
 	sync->GUID = syncSo->GUID;
 	ecco->GUID = eccoSo->GUID;
@@ -322,9 +324,7 @@ void LevelEditor::Update(float delta)
 		}
 
 		// TODO: Remove this here and just change the state when the option is switched via the GUI
-		if(singlePlayer == 0) camera->state = Camera::targetingPlayersPerspective;
-		else camera->state = Camera::targetingPositionPerspective;
-
+		
 		if		(singlePlayer == 1) gameCamSystem.target = syncSo->transform()->getGlobalPosition();
 		else if (singlePlayer == 2) gameCamSystem.target = eccoSo->transform()->getGlobalPosition();
 
@@ -399,7 +399,8 @@ void LevelEditor::Update(float delta)
 				*syncSo->rigidbody(),
 				&renderSystem.lines,
 				delta,
-				angle
+				angle,
+				syncGun
 			);
 		}
 		else
@@ -424,7 +425,8 @@ void LevelEditor::Update(float delta)
 					*syncSo->rigidbody(),
 					&renderSystem.lines,
 					delta,
-					angle
+					angle,
+					syncGun
 				);
 			}
 		}
@@ -519,17 +521,26 @@ void LevelEditor::GUI()
 		}
 		if (ImGui::Checkbox("Play As Sync", &playAsSync))
 		{
-			if (playAsSync)
+			if (playAsSync) {
 				singlePlayer = 1;
-			else
+				camera->state = Camera::targetingPositionPerspective;
+			}
+			else {
 				singlePlayer = 0;
+				camera->state = Camera::targetingPlayersPerspective;
+			}
+
 		}
 		if (ImGui::Checkbox("Play As Ecco", &playAsEcco))
 		{
-			if (playAsEcco)
+			if (playAsEcco) {
 				singlePlayer = 2;
-			else
+				camera->state = Camera::targetingPositionPerspective;
+			}
+			else {
 				singlePlayer = 0;
+				camera->state = Camera::targetingPlayersPerspective;
+			}
 		}
 
 		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0Model Placer\0Prefab Placer\0View Select\0\0")) {
@@ -817,9 +828,16 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	auto syncChildren = syncSo->transform()->getChildren();
 	if (syncChildren.size() > 0) {
 		syncAnimatorSo = syncChildren.front()->so;
+		if (syncChildren.size() > 1) {
+			syncGun = syncChildren.at(1);
+		}
+		else {
+			syncGun = nullptr;
+		}
 	}
 	else {
 		syncAnimatorSo = nullptr;
+		syncGun = nullptr;
 	}
 	eccoSo = FindSceneObjectOfName("Ecco");
 

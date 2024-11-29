@@ -62,6 +62,7 @@ private:
 
 	SceneObject* syncSo = nullptr;
 	SceneObject* syncAnimatorSo = nullptr;
+	Transform* syncGun = nullptr;
 	SceneObject* eccoSo = nullptr;
 
 	int singlePlayer = 0;

@@ -31,14 +31,16 @@ Animator::Animator(Animation* animation) : Animator()
     }
 }
 
-void Animator::UpdateAnimation(float delta)
+void Animator::UpdateAnimation(float delta, bool updateBoneTransforms)
 {
     if (!currentAnimation) {
         return;
     }
     currentTime += currentAnimation->getTicksPerSecond() * delta;
     currentTime = fmod(currentTime, currentAnimation->getDuration());
-    CalculateBoneTransform(currentAnimation->getRootNode(), glm::mat4(1.0f));
+    if (updateBoneTransforms) {
+        UpdateBoneTransforms();
+    }
 }
 
 void Animator::PlayAnimation(Animation* animation)
@@ -83,6 +85,11 @@ void Animator::CalculateBoneTransform(const ModelHierarchyInfo* node, const glm:
     for (int i = 0; i < node->children.size(); i++) {
         CalculateBoneTransform(node->children[i], globalTransformation);
     }
+}
+
+void Animator::UpdateBoneTransforms()
+{
+    CalculateBoneTransform(currentAnimation->getRootNode(), glm::mat4(1.0f));
 }
 
 const std::vector<glm::mat4>& Animator::getFinalBoneMatrices() const
@@ -137,7 +144,7 @@ Animator* Animator::Load(toml::table table)
     case Animator::Type::directional2dAnimator:
         return new Directional2dAnimator(table);
     default:
-        std::cout << "Unsupported Collider attempting to load\n";
+        std::cout << "Unsupported Animator attempting to load\n";
         return nullptr;
     }
 }

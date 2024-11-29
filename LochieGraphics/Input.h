@@ -12,7 +12,8 @@ public:
 
 	enum class Type {
 		Keyboard,
-		Controller
+		Controller,
+		Fake,
 	};
 
 	class InputDevice {
@@ -26,6 +27,31 @@ public:
 		virtual bool getButton3() const = 0;
 		virtual bool getButton4() const = 0;
 		virtual Type getType() const = 0;
+		virtual void GUI();
+	};
+
+	class FakeInputDevice : public InputDevice {
+	public:
+		glm::vec2 getMove() const override;
+		glm::vec2 getLook() const override;
+		float getLeftTrigger() const override;
+		float getRightTrigger() const override;
+		bool getButton1() const override;
+		bool getButton2() const override;
+		bool getButton3() const override;
+		bool getButton4() const override;
+		Type getType() const override;
+
+		void GUI() override;
+
+		glm::vec2 move;
+		glm::vec2 look;
+		float leftTrigger;
+		float rightTrigger;
+		bool button1;
+		bool button2;
+		bool button3;
+		bool button4;
 	};
 
 	class Keyboard : public InputDevice {

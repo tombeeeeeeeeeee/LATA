@@ -36,7 +36,7 @@ public:
 	bool Update(
 		SceneObject* sceneObjectWithAnimator, Input::InputDevice& inputDevice, Transform& transform,
 		RigidBody& rigidBody, LineRenderer* lines,
-		float delta, float cameraAngleOffset
+		float delta, float cameraAngleOffset, Transform* gunTransform
 	);
 
 	void GUI();

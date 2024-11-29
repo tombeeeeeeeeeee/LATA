@@ -6,15 +6,25 @@
 
 #include "EditorGUI.h"
 
+#include <vector>
 #include <iostream>
 
 void Audio::CheckForMissingPaths()
 {
+	std::vector<unsigned int> soundsMissing;
 	for (size_t i = 0; i < sounds.size(); i++)
 	{
-		if (sounds[i].filename == "") {
-			std::cout << "Audio path missing for sound " << i << '\n';
+		if (sounds.at(i).filename == "") {
+			soundsMissing.push_back(i);
 		}
+	}
+	if (!soundsMissing.empty()) {
+		std::cout << "Audio path missing for sounds:";
+		for (auto& i : soundsMissing)
+		{
+			std::cout << " " << i;
+		}
+		std::cout << '\n';
 	}
 }
 

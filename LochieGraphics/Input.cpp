@@ -111,24 +111,26 @@ void Input::GUI()
 			inputDevices.erase(keyboard);
 		}
 	}
+
+	if (ImGui::Button("Add fake input device")) {
+		inputDevices.push_back(new FakeInputDevice());
+	}
+	auto firstFakeInput = std::find_if(inputDevices.begin(), inputDevices.end(), [&](const InputDevice* inputDevice) {
+		return inputDevice->getType() == Type::Fake;
+		});
+	if (firstFakeInput != inputDevices.end()) {
+		if (ImGui::Button("Remove fake input device")) {
+			inputDevices.erase(firstFakeInput);
+		}
+	}
 	
 	for (unsigned long i = 0; i < inputDevices.size(); i++)
 	{
-		std::string tag = Utilities::PointerToString(inputDevices[i]);
+		std::string tag = Utilities::PointerToString(this);
 		if (ImGui::CollapsingHeader(("#" + std::to_string(i)).c_str())) {
-			glm::vec2 move = inputDevices[i]->getMove();
-			glm::vec2 look = inputDevices[i]->getLook();
-			float leftTrigger = inputDevices[i]->getLeftTrigger();
-			float rightTrigger = inputDevices[i]->getRightTrigger();
 
-			ImGui::BeginDisabled();
+			inputDevices.at(i)->GUI();
 
-			ImGui::DragFloat2(("Move##" + tag).c_str(), &(move.x));
-			ImGui::DragFloat2(("Look##" + tag).c_str(), &(look.x));
-			ImGui::DragFloat(("Left Trigger##" + tag).c_str(), &leftTrigger);
-			ImGui::DragFloat(("Right Trigger##" + tag).c_str(), &rightTrigger);
-				
-			ImGui::EndDisabled();
 
 			if (ImGui::Button(("Test Vibration for input index##" + tag).c_str())) {
 				SetVibrationOfControllerIndex(i, 100.0f, 100.0f);
@@ -137,8 +139,8 @@ void Input::GUI()
 			if (ImGui::Button(("Stop  Vibration for input index##" + tag).c_str())) {
 				SetVibrationOfControllerIndex(i, 0.0f, 0.0f);
 			}
-
 		}
+
 	}
 	ImGui::End();
 }
@@ -303,4 +305,88 @@ bool Input::Keyboard::getButton4() const
 Input::Type Input::Keyboard::getType() const
 {
 	return Type::Keyboard;
+}
+
+glm::vec2 Input::FakeInputDevice::getMove() const
+{
+	return move;
+}
+
+glm::vec2 Input::FakeInputDevice::getLook() const
+{
+	return look;
+}
+
+float Input::FakeInputDevice::getLeftTrigger() const
+{
+	return leftTrigger;
+}
+
+float Input::FakeInputDevice::getRightTrigger() const
+{
+	return rightTrigger;
+}
+
+bool Input::FakeInputDevice::getButton1() const
+{
+	return button1;
+}
+
+bool Input::FakeInputDevice::getButton2() const
+{
+	return button2;
+}
+
+bool Input::FakeInputDevice::getButton3() const
+{
+	return button3;
+}
+
+bool Input::FakeInputDevice::getButton4() const
+{
+	return button4;
+}
+
+Input::Type Input::FakeInputDevice::getType() const
+{
+	return Type::Fake;
+}
+
+void Input::FakeInputDevice::GUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	ImGui::DragFloat2(("Move##" + tag).c_str(), &(move.x));
+	ImGui::DragFloat2(("Look##" + tag).c_str(), &(look.x));
+	ImGui::DragFloat(("Left Trigger##" + tag).c_str(), &leftTrigger);
+	ImGui::DragFloat(("Right Trigger##" + tag).c_str(), &rightTrigger);
+	ImGui::Checkbox(("Button1" + tag).c_str(), &button1);
+	ImGui::Checkbox(("Button2" + tag).c_str(), &button2);
+	ImGui::Checkbox(("Button3" + tag).c_str(), &button3);
+	ImGui::Checkbox(("Button4" + tag).c_str(), &button4);	
+}
+
+void Input::InputDevice::GUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	glm::vec2 move = getMove();
+	glm::vec2 look = getLook();
+	float leftTrigger = getLeftTrigger();
+	float rightTrigger = getRightTrigger();
+	bool button1 = getButton1();
+	bool button2 = getButton2();
+	bool button3 = getButton3();
+	bool button4 = getButton4();
+
+	ImGui::BeginDisabled();
+
+	ImGui::DragFloat2(("Move##" + tag).c_str(), &(move.x));
+	ImGui::DragFloat2(("Look##" + tag).c_str(), &(look.x));
+	ImGui::DragFloat(("Left Trigger##" + tag).c_str(), &leftTrigger);
+	ImGui::DragFloat(("Right Trigger##" + tag).c_str(), &rightTrigger);
+	ImGui::Checkbox(("Button1##" + tag).c_str(), &button1);
+	ImGui::Checkbox(("Button2##" + tag).c_str(), &button2);
+	ImGui::Checkbox(("Button3##" + tag).c_str(), &button3);
+	ImGui::Checkbox(("Button4##" + tag).c_str(), &button4);
+
+	ImGui::EndDisabled();
 }

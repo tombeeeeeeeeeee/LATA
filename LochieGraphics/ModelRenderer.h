@@ -23,8 +23,11 @@ public:
 
 	std::vector<Material*> materials = {};
 	glm::vec3 materialTint = { 1.0f,1.0f,1.0f };
-	glm::vec3 alternativeMaterialTint = {1.0f, 1.0f, 1.0f};
+	glm::vec3 alternativeMaterialTint = { 1.0f, 1.0f, 1.0f };
 	float tintDelta = 0.0f;
+
+	bool drawSingleMesh = false;
+	unsigned int meshIndexToDraw;
 
 	Animator* animator = nullptr;
 

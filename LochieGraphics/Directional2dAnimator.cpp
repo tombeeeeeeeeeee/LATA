@@ -34,7 +34,7 @@ Directional2dAnimator::Directional2dAnimator(toml::table table) : Animator(table
 	downAnimation = ResourceManager::GetAnimation(downAnimationGUID);
 }
 
-void Directional2dAnimator::UpdateAnimation(float delta)
+void Directional2dAnimator::UpdateAnimation(float delta, bool updateBoneTransforms)
 {
 	if (!currentAnimation || !rightAnimation || !upAnimation || !downAnimation) {
 		return;
@@ -48,7 +48,9 @@ void Directional2dAnimator::UpdateAnimation(float delta)
 	currentTimeDown += downAnimation->getTicksPerSecond() * delta;
 	currentTimeDown = fmodf(currentTimeDown, downAnimation->getDuration());
 
-	CalculateBoneTransform(currentAnimation->getRootNode(), glm::mat4(1.0f));
+	if (updateBoneTransforms) {
+		UpdateBoneTransforms();
+	}
 }
 
 void Directional2dAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, const glm::mat4& parentTransform)
