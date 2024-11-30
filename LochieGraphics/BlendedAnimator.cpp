@@ -150,7 +150,7 @@ Animator::Type BlendedAnimator::getType() const
 
 BlendedAnimator::BlendedAnimator(toml::table table) : Animator(table)
 {
-    otherCurrentAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["otherCurrentAnimationGUID "]);
+    otherCurrentAnimationGUID = Serialisation::LoadAsUnsignedLongLong(table["otherCurrentAnimationGUID"]);
     otherCurrentAnimation = ResourceManager::GetAnimation(otherCurrentAnimationGUID);
 }
 

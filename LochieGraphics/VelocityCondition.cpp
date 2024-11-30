@@ -26,5 +26,5 @@ bool VelocityCondition::IsTrue(SceneObject* so) const
 		}
 	}
 	float mag = glm::length(rb->vel);
-	return (mag > minVel) && (mag < maxVel);
+	return (mag >= minVel) && (mag < maxVel);
 }
