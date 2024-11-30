@@ -1,9 +1,11 @@
 children = []
 
 [modelRenderer]
+drawSingleMesh = false
 guid = '12472536751963613579'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1766071748038532778', '1777838767709883819' ]
+meshIndexToDraw = '0'
 modelGuid = '12471732002840469521'
 
 [rigidBody]
@@ -39,13 +41,9 @@ children = []
 guid = '12472536751963613579'
 name = 'M_DoorFrame_Warehouse'
 parent = '0'
-parts = 262154
+parts = 10
 prefabBase = '0'
 prefabStatus = 1
-
-[shadowWall]
-guid = '12472536751963613579'
-hasLocalMesh = false
 
 [transform]
 euler = [ 0.0, -0.0, 0.0 ]

@@ -3,9 +3,13 @@ children = [ '264497878890832668', '264497880954241996', '1466323787222681078' ]
 guid = '1465940557471102535'
 name = 'M_DoorFrame_WithDoors_Office'
 parent = '0'
-parts = 0
+parts = 262144
 prefabBase = '0'
 prefabStatus = 1
+
+[shadowWall]
+guid = '1465940557471102535'
+hasLocalMesh = false
 
 [transform]
 euler = [ 0.0, 0.0, 0.0 ]
@@ -37,9 +41,11 @@ children = []
     triggerTag = ''
 
     [children.modelRenderer]
+    drawSingleMesh = false
     guid = '264497878890832668'
     materialTint = [ 1.0, 1.0, 1.0 ]
     materials = [ '1766071748038532778' ]
+    meshIndexToDraw = '0'
     modelGuid = '12471686768254296210'
 
     [children.sceneObject]
@@ -47,13 +53,9 @@ children = []
     guid = '264497878890832668'
     name = 'M_Door_Right'
     parent = '1465940557471102535'
-    parts = 278562
+    parts = 16418
     prefabBase = '12472509190243971103'
     prefabStatus = 2
-
-    [children.shadowWall]
-    guid = '264497878890832668'
-    hasLocalMesh = true
 
     [children.transform]
     euler = [ 0.0, -0.0, 0.0 ]
@@ -85,9 +87,11 @@ children = []
     triggerTag = ''
 
     [children.modelRenderer]
+    drawSingleMesh = false
     guid = '264497880954241996'
     materialTint = [ 1.0, 1.0, 1.0 ]
     materials = [ '1766071748038532778' ]
+    meshIndexToDraw = '0'
     modelGuid = '12471265708787363967'
 
     [children.sceneObject]
@@ -95,13 +99,9 @@ children = []
     guid = '264497880954241996'
     name = 'M_Door_Left'
     parent = '1465940557471102535'
-    parts = 278562
+    parts = 16418
     prefabBase = '12472247769792521165'
     prefabStatus = 2
-
-    [children.shadowWall]
-    guid = '264497880954241996'
-    hasLocalMesh = true
 
     [children.transform]
     euler = [ 0.0, -0.0, 0.0 ]
@@ -115,9 +115,11 @@ children = []
 children = []
 
     [children.modelRenderer]
+    drawSingleMesh = false
     guid = '1466323787222681078'
     materialTint = [ 1.0, 1.0, 1.0 ]
     materials = [ '1766071748038532778', '1777316586600630394' ]
+    meshIndexToDraw = '0'
     modelGuid = '12471732002840469521'
 
     [children.rigidBody]
@@ -153,13 +155,9 @@ children = []
     guid = '1466323787222681078'
     name = 'M_DoorFrame_Office'
     parent = '1465940557471102535'
-    parts = 262154
+    parts = 10
     prefabBase = '263493138083085192'
     prefabStatus = 2
-
-    [children.shadowWall]
-    guid = '1466323787222681078'
-    hasLocalMesh = false
 
     [children.transform]
     euler = [ 0.0, -0.0, 0.0 ]

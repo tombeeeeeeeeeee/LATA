@@ -3,9 +3,13 @@ children = [ '1466601407344077622', '1466601408066032604', '1466601408287500814'
 guid = '1466601406390514171'
 name = 'M_DoorFrame_WithDoors_Warehouse'
 parent = '0'
-parts = 0
+parts = 262144
 prefabBase = '1465940557471102535'
 prefabStatus = 1
+
+[shadowWall]
+guid = '1466601406390514171'
+hasLocalMesh = false
 
 [transform]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -37,9 +41,11 @@ children = []
     triggerTag = ''
 
     [children.modelRenderer]
+    drawSingleMesh = false
     guid = '1466601407344077622'
     materialTint = [ 1.0, 1.0, 1.0 ]
     materials = [ '1766071748038532778' ]
+    meshIndexToDraw = '0'
     modelGuid = '12471686768254296210'
 
     [children.sceneObject]
@@ -47,13 +53,9 @@ children = []
     guid = '1466601407344077622'
     name = 'M_Door_Right'
     parent = '1466601406390514171'
-    parts = 278562
+    parts = 16418
     prefabBase = '12472509190243971103'
     prefabStatus = 2
-
-    [children.shadowWall]
-    guid = '1466601407344077622'
-    hasLocalMesh = true
 
     [children.transform]
     euler = [ 0.0, -0.0, 0.0 ]
@@ -67,9 +69,11 @@ children = []
 children = []
 
     [children.modelRenderer]
+    drawSingleMesh = false
     guid = '1466601408066032604'
     materialTint = [ 1.0, 1.0, 1.0 ]
     materials = [ '1766071748038532778', '1777838767709883819' ]
+    meshIndexToDraw = '0'
     modelGuid = '12471732002840469521'
 
     [children.rigidBody]
@@ -105,13 +109,9 @@ children = []
     guid = '1466601408066032604'
     name = 'M_DoorFrame_Warehouse'
     parent = '1466601406390514171'
-    parts = 262154
+    parts = 10
     prefabBase = '12472536751963613579'
     prefabStatus = 2
-
-    [children.shadowWall]
-    guid = '1466601408066032604'
-    hasLocalMesh = false
 
     [children.transform]
     euler = [ 0.0, -0.0, 0.0 ]
@@ -143,9 +143,11 @@ children = []
     triggerTag = ''
 
     [children.modelRenderer]
+    drawSingleMesh = false
     guid = '1466601408287500814'
     materialTint = [ 1.0, 1.0, 1.0 ]
     materials = [ '1766071748038532778' ]
+    meshIndexToDraw = '0'
     modelGuid = '12471265708787363967'
 
     [children.sceneObject]
@@ -153,13 +155,9 @@ children = []
     guid = '1466601408287500814'
     name = 'M_Door_Left'
     parent = '1466601406390514171'
-    parts = 278562
+    parts = 16418
     prefabBase = '12472247769792521165'
     prefabStatus = 2
-
-    [children.shadowWall]
-    guid = '1466601408287500814'
-    hasLocalMesh = true
 
     [children.transform]
     euler = [ 0.0, -0.0, 0.0 ]
