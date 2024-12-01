@@ -160,7 +160,8 @@ void LineRenderer::Draw()
 
 int LineRenderer::GetCircleSegmentCount(float radius) const
 {
-	return glm::clamp((int)(sqrtf(radius * 10.0f/1080.0f) * 32 + 4), 5, 128);
+	return 128;
+	//return glm::clamp((int)(sqrtf(radius * 10.0f/1080.0f) * 32 + 4), 5, 128);
 }
 
 void LineRenderer::DrawCircle(glm::vec3 centre, float size, int segmentCount)

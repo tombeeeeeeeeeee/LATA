@@ -213,11 +213,22 @@ void EnemySystem::LineOfSightAndTargetCheck(
         {
             pair.second.hasLOS = true;
             pair.second.hasTarget = true;
-            if (distanceToEcco < distanceToSync * (1.0f/syncPriorityFactor))
+            if (eccoWasHit && syncWasHit)
+            {
+                if (distanceToEcco < distanceToSync * (1.0f/syncPriorityFactor))
+                {
+                    pair.second.target = eccoPos;
+                }
+                else
+                {
+                    pair.second.target = syncPos;
+                }
+            }
+            else if (eccoWasHit)
             {
                 pair.second.target = eccoPos;
             }
-            else
+            else 
             {
                 pair.second.target = syncPos;
             }

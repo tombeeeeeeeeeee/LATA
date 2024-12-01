@@ -156,6 +156,7 @@ bool Sync::Update(
 			move.x * c - move.y * s,
 			move.x * s + move.y * c
 		};
+		aimDirection = move;
 		float currentMoveSpeed = moveSpeed;
 		if (chargedDuration >= startSlowTime)
 		{
@@ -195,7 +196,7 @@ bool Sync::Update(
 	}
 	fireDirection = glm::normalize(fireDirection);
 
-	glm::vec2 direction = chargingShot ? fireDirection : move;
+	glm::vec2 direction = chargingShot ? fireDirection : aimDirection;
 
 	float angle = atan2f(direction.x, direction.y) * 180.0f/PI + 90.0f;
 	glm::vec3 eulers = transform.getEulerRotation();

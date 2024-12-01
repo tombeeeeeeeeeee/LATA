@@ -960,7 +960,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
     for (auto& pair : spotlights)
     {
         if (!pair.second.castsShadows) continue;
-        if (!frustum.IsOnFrustum(transforms[pair.first].getGlobalPosition(), pair.second.range * 500.0f))
+        if (!frustum.IsOnFrustum(transforms[pair.first].getGlobalPosition(), pair.second.range * 666.0f))
         {
             continue;
         }
@@ -980,7 +980,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
 
         if (SceneManager::scene->inPlay)
         {
-            glCullFace(GL_BACK);
+            glCullFace(GL_NONE);
 
             bool hasNSThisFrame = false;
             for (auto& i : renderers)
