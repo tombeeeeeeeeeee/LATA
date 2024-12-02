@@ -1435,12 +1435,10 @@ void RenderSystem::UpdateEccoFaceAnim(float delta)
     {
         float randPercentage = std::rand() / (float)RAND_MAX;
 
-        std::cout << randPercentage << std::endl;
-
         int index = floor(randPercentage * 5.0f);
         index += 1;
         if (index == 2) index = 8;
-        eccoAnimLifeTime = 1.0f;
+        eccoAnimLifeTime = 15.0f;
         eccoAnimIndex = index;
     }
 }
