@@ -48,19 +48,20 @@ misfireDamage = 0
 misfireShotSpeed = 0.10000000149011612
 moveDeadZone = 0.4000000059604645
 moveSpeed = 415.0
-overclockBeamColour = [ 0.06395351886749268, 1.0, 0.0 ]
+overclockBeamColour = [ 0.28878819942474365, 1.0, 0.24019604921340942 ]
 overclockBeamLifeSpan = 1.5
 overclockBounceDamage = 199
-overclockChargeTime = 1.5
-overclockDamage = 199
-overclockReboundCount = 1
+overclockChargeTime = 1.0
+overclockDamage = 200
+overclockReboundCount = 0
 rainbowDimming = 2.5
-rainbowRebounding = true
-shotWidth = 10.0
+rainbowRebounding = false
+shotWidth = 12.0
 sniperBeamColour = [ 0.5641789436340332, 1.0, 0.5353982448577881 ]
 sniperBeamLifeSpan = 0.5
-sniperChargeTime = 0.30000001192092896
+sniperChargeTime = 0.20000000298023224
 sniperDamage = 80
+sniperReboundCount = 0
 startSlowTime = 0.5
 stopSlowTime = 1.5
 
@@ -68,22 +69,22 @@ stopSlowTime = 1.5
     backgroundColour = [ 0.12156862765550613, 0.3529411852359772, 0.10196078568696976 ]
     foregroundColour = [ 0.10196078568696976, 1.0, 0.0 ]
     horizontal = true
-    offset = [ 0.5, -0.9399999976158142 ]
-    scale = [ 0.3779999911785126, 0.03799999877810478 ]
+    offset = [ -0.6574999690055847, 0.8159999847412109 ]
+    scale = [ 0.14249998331069946, 0.03799998760223389 ]
 
     [sync.healthUI]
     backgroundColour = [ 0.42352941632270813, 0.003921568859368563, 0.06666667014360428 ]
     foregroundColour = [ 0.9019607901573181, 0.13725490868091583, 0.16470588743686676 ]
     horizontal = true
-    offset = [ 0.5, -0.8410000205039978 ]
-    scale = [ 0.3779999911785126, 0.05299999937415123 ]
+    offset = [ -0.6399999856948853, 0.8999999761581421 ]
+    scale = [ 0.2630000114440918, 0.034999996423721313 ]
 
 [transform]
-euler = [ 0.0, 0.0, 0.0 ]
+euler = [ 0.0, -63.66780090332031, 0.0 ]
 guid = '2091576977596946314'
 isStatic = false
-position = [ 2836.251953125, -0.016998419538140297, -692.2213134765625 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+position = [ 2842.982177734375, -0.016998419538140297, -670.0262451171875 ]
+quaternion = [ 0.8495807647705078, 0.0, -0.5274585485458374, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[children]]
@@ -92,13 +93,15 @@ children = []
     [children.animator]
     currentAnimationGUID = '15148335964655264906'
     guid = '2236905023818184222'
-    otherCurrentAnimationGUID = '0'
+    otherCurrentAnimationGUID = '15148335964655264906'
     type = '1'
 
     [children.modelRenderer]
+    drawSingleMesh = false
     guid = '2236905023818184222'
     materialTint = [ 1.0, 1.0, 1.0 ]
     materials = [ '2229847150575832532', '0' ]
+    meshIndexToDraw = '0'
     modelGuid = '2234949598158592467'
 
     [children.sceneObject]
