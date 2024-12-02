@@ -480,15 +480,8 @@ void LevelEditor::Draw(float delta)
 	);
 
 	if (inPlay) {
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBlendEquation(GL_FUNC_ADD);
-		glEnable(GL_BLEND);
 
-		overlayShader->Use();
-		gameUiOverlay->Bind(1);
-		overlayShader->setSampler("material.albedo", 1);
-		overlayMesh.Draw();
-
+		glDisable(GL_BLEND);
 		healthShader->Use();
 
 		ecco->boostUI.ApplyToShader(healthShader, ecco->getSpeedBoostCooldownPercent());
@@ -501,6 +494,17 @@ void LevelEditor::Draw(float delta)
 		healthBar.Draw();
 		healthSystem.abilityUI.ApplyToShader(healthShader, glm::clamp(healthSystem.timeSinceLastHealingAbility / healthSystem.healingAbilityCooldown, 0.0f, 1.0f));
 		healthBar.Draw();
+
+		glDepthFunc(GL_ALWAYS);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendEquation(GL_FUNC_ADD);
+		glEnable(GL_BLEND);
+
+		overlayShader->Use();
+		gameUiOverlay->Bind(1);
+		overlayShader->setSampler("material.albedo", 1);
+		overlayMesh.Draw();
+
 	}
 }
 
