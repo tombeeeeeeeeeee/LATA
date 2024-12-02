@@ -46,6 +46,7 @@ Shader* ResourceManager::ssao = nullptr;
 Shader* ResourceManager::ssaoBlur = nullptr;
 Shader* ResourceManager::prepass = nullptr;
 Shader* ResourceManager::super = nullptr;
+Shader* ResourceManager::eccoFaceAnim = nullptr;
 
 unsigned long long ResourceManager::guidCounter = 100;
 std::random_device ResourceManager::guidRandomiser = {};

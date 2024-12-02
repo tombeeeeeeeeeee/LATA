@@ -42,6 +42,7 @@ public:
 		Animated = 1 << 2,
 		Spec	 = 1 << 3,
 		Painted  = 1 << 4,
+		EccoAnim = 1 << 5,
 	};
 
 	int getFlag() const;

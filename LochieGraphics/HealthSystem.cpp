@@ -132,6 +132,9 @@ void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, g
 
 		if (timeSinceLastPulse >= timeBetweenPulses)
 		{
+			RenderSystem::eccoAnimIndex = 6;
+			RenderSystem::eccoAnimLifeTime = timeBetweenPulses + 0.2f;
+
 			eccoHealth->addHealth(healPerPulse);
 			syncHealth->addHealth(healPerPulse);
 			currentPulseCount++;

@@ -74,6 +74,9 @@ void Sync::Load(toml::table table)
 	overclockBounceDamage = Serialisation::LoadAsInt(table["overclockBounceDamage"]);
 	rainbowRebounding = Serialisation::LoadAsBool(table["rainbowRebounding"]);
 	shotWidth = Serialisation::LoadAsFloat(table["shotWidth"], 10.0f);
+	rainbowDamage = Serialisation::LoadAsInt(table["rainbowDamage"]);
+	canPierceOverclock = Serialisation::LoadAsBool(table["canPierceOverclock"], true);
+	canPierceSnipe = Serialisation::LoadAsBool(table["canPierceSnipe"], false);
 
 	stateMachineSetup = false;
 }
@@ -377,9 +380,12 @@ void Sync::GUI()
 		ImGui::DragFloat(("Sniper Beam life span##" + tag).c_str(), &sniperBeamLifeSpan);
 		ImGui::ColorEdit3(("Sniper Beam Colour##" + tag).c_str(), &sniperBeamColour[0]);
 		ImGui::DragFloat(("Knock Back Force Snipe##" + tag).c_str(), &knockBackForceSnipe);
+		ImGui::Checkbox(("Peirce Shot Snipe##" + tag).c_str(), &canPierceSnipe);
 	}
 	if (ImGui::CollapsingHeader(("Overclock Shot Properties##" + tag).c_str()))
 	{
+		ImGui::DragInt(("Overclock Damage##" + tag).c_str(), &overclockDamage);
+		ImGui::DragInt(("Rainbow Damage##" + tag).c_str(), &rainbowDamage);
 		ImGui::DragInt(("Damage##" + tag).c_str(), &overclockDamage);
 		ImGui::DragFloat(("Charge Time##" + tag).c_str(), &overclockChargeTime);
 		ImGui::DragFloat(("Beam life span##" + tag).c_str(), &overclockBeamLifeSpan);
@@ -391,6 +397,7 @@ void Sync::GUI()
 		ImGui::Checkbox(("Rainbow Shots Rebound##" + tag).c_str(), &rainbowRebounding);
 		ImGui::DragFloat(("Rainbow Rebound Dimming##" + tag).c_str(), &rainbowDimming);
 		ImGui::DragInt(("Rainbow Rebound Damage##" + tag).c_str(), &overclockBounceDamage);
+		ImGui::Checkbox(("Peirce Shot Snipe##" + tag).c_str(), &canPierceOverclock);
 	}
 	if (ImGui::CollapsingHeader(("Health UI##" + tag).c_str())) {
 		healthUI.GUI();
@@ -438,6 +445,9 @@ toml::table Sync::Serialise() const
 		{ "knockBackForceOverclock", knockBackForceOverclock },
 		{ "knockBackForceSnipe", knockBackForceSnipe },
 		{ "shotWidth", shotWidth},
+		{ "rainbowDamage", rainbowDamage},
+		{ "canPierceOverclock", canPierceOverclock},
+		{ "canPierceSnipe", canPierceSnipe},
 	};
 }
 
@@ -472,21 +482,24 @@ void Sync::ShootSniper(glm::vec3 pos)
 		{
 			hit.sceneObject->health()->subtractHealth(sniperDamage);
 			SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
-			for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
+			if (canPierceSnipe)
 			{
-				hit = hits[i];
-				if (i == enemyPierceCount - 1) return;
-
-				glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
-				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
-				hitFX->explodeStrength = 3.0f;
-				hitFX->Explode();
-				if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+				for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
 				{
-					hit.sceneObject->health()->subtractHealth(sniperDamage);
-					SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
+					hit = hits[i];
+					if (i == enemyPierceCount - 1) return;
+
+					glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
+					Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.35f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+					hitFX->explodeStrength = 3.0f;
+					hitFX->Explode();
+					if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+					{
+						hit.sceneObject->health()->subtractHealth(sniperDamage);
+						SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
+					}
+					else break;
 				}
-				else break;
 			}
 		}
 		RenderSystem::beams.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
@@ -515,21 +528,24 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 			hitFX->colour = glm::vec3{ 255.0f, 47.0f, 10.0f } / 255.0f;
 			hitFX->explodeStrength = 3.0f;
 			hitFX->Explode();
-			for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
+			if (canPierceOverclock) 
 			{
-				hit = hits[i];
-				if (i == enemyPierceCount - 1) return;
-				glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
-				Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
-				hitFX->colour = glm::vec3{ 255.0f, 47.0f, 10.0f } / 255.0f;
-				hitFX->explodeStrength = 3.0f;
-				hitFX->Explode();
-				if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+				for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
 				{
-					hit.sceneObject->health()->subtractHealth(overclockDamage);
-					SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
+					hit = hits[i];
+					if (i == enemyPierceCount - 1) return;
+					glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
+					Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.4f, SceneManager::scene->particleSystem.nextParticleTexture, pos3D);
+					hitFX->colour = glm::vec3{ 255.0f, 47.0f, 10.0f } / 255.0f;
+					hitFX->explodeStrength = 3.0f;
+					hitFX->Explode();
+					if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
+					{
+						hit.sceneObject->health()->subtractHealth(overclockDamage);
+						SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
+					}
+					else break;
 				}
-				else break;
 			}
 		}
 
@@ -538,6 +554,9 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 
 		if (hit.collider->collisionLayer & (int)CollisionLayers::reflectiveSurface)
 		{
+			RenderSystem::eccoAnimIndex = 2;
+			RenderSystem::eccoAnimLifeTime = overclockBeamLifeSpan;
+
 			float s = 0.95f;
 			float v = 0.95f;
 			float angle = - eccoRefractionAngle / 2.0f;
@@ -603,7 +622,7 @@ void Sync::OverclockRaindowShot(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour, 
 
 		if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 		{
-			hit.sceneObject->health()->subtractHealth(overclockDamage);
+			hit.sceneObject->health()->subtractHealth(rainbowDamage);
 			SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
 			for (int i = 1; i < hits.size() && i < enemyPierceCount; i++)
 			{
@@ -617,7 +636,7 @@ void Sync::OverclockRaindowShot(glm::vec3 pos, glm::vec2 dir, glm::vec3 colour, 
 
 				if (hit.collider->collisionLayer & (int)CollisionLayers::enemy)
 				{
-					hit.sceneObject->health()->subtractHealth(rebound ? overclockDamage : overclockBounceDamage);
+					hit.sceneObject->health()->subtractHealth(rebound ? rainbowDamage : overclockBounceDamage);
 					SceneManager::scene->audio.PlaySound(Audio::enemyHitByShot);
 				}
 				else break;

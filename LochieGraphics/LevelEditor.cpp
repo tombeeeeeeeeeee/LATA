@@ -308,6 +308,62 @@ void LevelEditor::Update(float delta)
 	input.Update();
 
 
+	if (input.inputDevices.size() > 0)
+	{
+		float camera2DForwardLength = glm::length(glm::vec2(camera->transform.forward().x, camera->transform.forward().z));
+		float angle = 0.0f;
+		if (camera2DForwardLength == 0.0f)
+			angle = camera->transform.getEulerRotation().y;
+		else
+		{
+			angle = atan2f(camera->transform.forward().z, camera->transform.forward().x);
+			angle *= 180.0f / PI;
+			angle += 90.0f;
+		}
+
+		if (singlePlayer == 1)
+		{
+			syncHealPressed = sync->Update(
+				syncAnimatorSo,
+				*input.inputDevices[0],
+				*syncSo->transform(),
+				*syncSo->rigidbody(),
+				&renderSystem.lines,
+				delta,
+				angle,
+				syncGun
+			);
+		}
+		else
+		{
+			eccoHealPressed = ecco->Update(
+				*input.inputDevices[0],
+				*eccoSo->transform(),
+				*eccoSo->rigidbody(),
+				*eccoSo->health(),
+				delta,
+				angle
+			);
+		}
+		if (singlePlayer == 0)
+		{
+			if (input.inputDevices.size() > 1)
+			{
+				syncHealPressed = sync->Update(
+					syncAnimatorSo,
+					*input.inputDevices[1],
+					*syncSo->transform(),
+					*syncSo->rigidbody(),
+					&renderSystem.lines,
+					delta,
+					angle,
+					syncGun
+				);
+			}
+		}
+	}
+
+
 	if (inPlay)
 	{
 		healthSystem.Update(
@@ -375,61 +431,6 @@ void LevelEditor::Update(float delta)
 	physicsSystem.UpdateRigidBodies(transforms, rigidBodies, delta);
 	if(doCollisions)
 		physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
-
-	if (input.inputDevices.size() > 0)
-	{
-		float camera2DForwardLength = glm::length(glm::vec2( camera->transform.forward().x, camera->transform.forward().z ));
-		float angle = 0.0f;
-		if (camera2DForwardLength == 0.0f)
-			angle = camera->transform.getEulerRotation().y;
-		else
-		{
-			angle = atan2f(camera->transform.forward().z, camera->transform.forward().x);
-			angle *= 180.0f / PI;
-			angle += 90.0f;
-		}
-
-		if (singlePlayer == 1)
-		{
-			syncHealPressed = sync->Update(
-				syncAnimatorSo,
-				*input.inputDevices[0],
-				*syncSo->transform(),
-				*syncSo->rigidbody(),
-				&renderSystem.lines,
-				delta,
-				angle,
-				syncGun
-			);
-		}
-		else
-		{
-			eccoHealPressed = ecco->Update(
-				*input.inputDevices[0],
-				*eccoSo->transform(),
-				*eccoSo->rigidbody(),
-				*eccoSo->health(),
-				delta,
-				angle
-			);
-		}
-		if (singlePlayer == 0)
-		{
-			if (input.inputDevices.size() > 1)
-			{
-				syncHealPressed = sync->Update(
-					syncAnimatorSo,
-					*input.inputDevices[1],
-					*syncSo->transform(),
-					*syncSo->rigidbody(),
-					&renderSystem.lines,
-					delta,
-					angle,
-					syncGun
-				);
-			}
-		}
-	}
 
 	prevDied = died;
 	if (playerDied) {

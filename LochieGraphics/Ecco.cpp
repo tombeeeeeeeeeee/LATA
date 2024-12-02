@@ -10,6 +10,7 @@
 #include "Health.h"
 #include "SceneManager.h"
 #include "Directional2dAnimator.h"
+#include "RenderSystem.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
@@ -247,6 +248,19 @@ bool Ecco::Update(
 		animator->downUpLerpAmount = lerpForwardAni;
 	}
 	lastFrameVelocity = rigidBody.vel;
+
+	if (currHealth > health.currHealth) 
+	{
+		RenderSystem::eccoAnimIndex = 7;
+		RenderSystem::eccoAnimLifeTime = 2.0f;
+	}
+	else if (speed > maxCarMoveSpeed + 25.0f) 
+	{
+		RenderSystem::eccoAnimIndex = 0;
+	}
+
+	currHealth = health.currHealth;
+
 	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
 
