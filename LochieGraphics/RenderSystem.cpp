@@ -1022,7 +1022,20 @@ void RenderSystem::RenderSpotLightShadowMaps(
         glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        DrawAllRenderers(animators, transforms, renderers, animatedRenderered, spotlightFrustum, 2, spotlightShadowPassShader);
+        for (auto& i : renderers)
+        {
+            if (!i.second.model) { continue; }
+            if (!i.second.rendersShadows) { continue; }
+            Transform* transform = &transforms.at(i.first);
+            if (i.second.model)
+            {
+                glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
+                if (spotlightFrustum.IsOnFrustum(OOB))
+                {
+                    i.second.Draw(transform->getGlobalMatrix(), spotlightShadowPassShader);
+                }
+            }
+        }
 
         glCullFace(GL_BACK);
         Transform shadowTransform = Transform();
