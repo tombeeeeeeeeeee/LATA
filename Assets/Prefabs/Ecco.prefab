@@ -7,8 +7,8 @@ type = '2'
 upAnimationGUID = '15148335964655446903'
 
 [ecco]
-boostDamage = 150
-boostKnockback = 1800.0
+boostDamage = 75
+boostKnockback = 2800.0
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
 carReverseMoveSpeed = 3000.0
@@ -16,7 +16,7 @@ controlState = false
 deadZone = 0.6000000238418579
 exceedingSlowIntensity = 3.5
 guid = '2091576976424546894'
-healCooldown = 1.0
+healCooldown = 1.5
 healingFromDamage = 30
 maxCarMoveSpeed = 630.0
 maxHealth = 200
@@ -30,8 +30,8 @@ speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
 speedBoostHPCost = 15
 speedBoostInDirectionOfBody = false
-speedDamage = 50
-speedKnockback = 1300.0
+speedDamage = 25
+speedKnockback = 2000.0
 speedReductionAfterDamaging = 450.0
 speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
@@ -44,15 +44,15 @@ wheelTurnSpeed = 4.400000095367432
     backgroundColour = [ 0.21960784494876862, 0.3907727301120758, 0.4274509847164154 ]
     foregroundColour = [ 0.4503093361854553, 0.8141592741012573, 0.8034577369689941 ]
     horizontal = true
-    offset = [ -0.24999995529651642, -0.9284999966621399 ]
-    scale = [ 0.11200003325939178, 0.045499980449676514 ]
+    offset = [ 0.6625000238418579, 0.8250000476837158 ]
+    scale = [ 0.14750000834465027, 0.034999966621398926 ]
 
     [ecco.healthUI]
     backgroundColour = [ 0.21960784494876862, 0.32156863808631897, 0.4274509847164154 ]
     foregroundColour = [ 0.250980406999588, 0.4901960790157318, 1.0 ]
     horizontal = true
-    offset = [ -0.5109999775886536, -0.8840000033378601 ]
-    scale = [ 0.37299999594688416, 0.09000000357627869 ]
+    offset = [ 0.637499988079071, 0.8999999761581421 ]
+    scale = [ 0.26249998807907104, 0.03999999165534973 ]
 
 [health]
 currHealth = 200
@@ -60,9 +60,11 @@ guid = '2091576976424546894'
 maxHealth = 200
 
 [modelRenderer]
+drawSingleMesh = false
 guid = '2091576976424546894'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15449259407003476463', '15449352838481615396' ]
+meshIndexToDraw = '0'
 modelGuid = '2140790440003113620'
 
 [rigidBody]
