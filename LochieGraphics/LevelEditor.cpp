@@ -480,6 +480,9 @@ void LevelEditor::Draw(float delta)
 	);
 
 	if (inPlay) {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendEquation(GL_FUNC_ADD);
+		glEnable(GL_BLEND);
 
 		overlayShader->Use();
 		gameUiOverlay->Bind(1);
