@@ -24,7 +24,7 @@ vel = [ 0.0, 0.0 ]
     verts = [ [ 0.0, 0.0 ] ]
 
 [sceneObject]
-children = [ '2236905023818184222' ]
+children = [ '2236905023818184222', '9636236716190966370' ]
 guid = '2091576977596946314'
 name = 'Sync'
 parent = '0'
@@ -119,4 +119,37 @@ children = []
     isStatic = true
     position = [ 0.0, 0.0, 0.0 ]
     quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+children = []
+
+    [children.pointLight]
+    canBeTriggered = false
+    castsShadows = false
+    colour = [ 1.0, 1.0, 1.0 ]
+    effect = 0
+    guid = '9636236716190966370'
+    intensity = 4.0
+    linear = 0.9571428298950195
+    on = true
+    quadratic = 4.800000190734863
+    range = 1.0
+    triggerTag = ''
+
+    [children.sceneObject]
+    children = []
+    guid = '9636236716190966370'
+    name = 'Unnamed Scene Object'
+    parent = '2091576977596946314'
+    parts = 16
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.transform]
+    euler = [ -0.0, -0.0, -0.0 ]
+    guid = '9636236716190966370'
+    isStatic = true
+    position = [ -0.0, 50.0, -0.0 ]
+    quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
     scale = [ 1.0, 1.0, 1.0 ]
