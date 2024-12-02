@@ -30,9 +30,12 @@ LineRenderer RenderSystem::debugLines;
 std::vector<BlastLine> RenderSystem::beams = {};
 BlastLine RenderSystem::syncAim = {};
 bool RenderSystem::syncAiming = false;
+int RenderSystem::eccoAnimIndex = 1;
+float RenderSystem::eccoAnimLifeTime = 1;
 
 void RenderSystem::Start(unsigned int _skyboxTexture)
 {
+    std::srand(2.0f);
     if (SCREEN_WIDTH == 0)
     {
         int scrWidth, scrHeight;
@@ -382,6 +385,8 @@ void RenderSystem::Update(
 )
 {
     frameCountInSixteen = (frameCountInSixteen + 1) % 16;
+    UpdateEccoFaceAnim(delta);
+
     std::unordered_set<unsigned long long> animatedRenderered = {};
     for (auto& i : animators)
     {
@@ -909,6 +914,10 @@ void RenderSystem::ActivateFlaggedVariables(
         glActiveTexture(GL_TEXTURE0 + 11);
         glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
     }
+    if (flag & Shader::Flags::EccoAnim)
+    {
+        shader->setInt("index", RenderSystem::eccoAnimIndex);
+    }
 }
 
 void RenderSystem::CompositeBufferSetUp()
@@ -980,7 +989,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
 
         if (SceneManager::scene->inPlay)
         {
-            glCullFace(GL_NONE);
+            glCullFace(GL_BACK);
 
             bool hasNSThisFrame = false;
             for (auto& i : renderers)
@@ -1013,7 +1022,20 @@ void RenderSystem::RenderSpotLightShadowMaps(
         glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        DrawAllRenderers(animators, transforms, renderers, animatedRenderered, spotlightFrustum, 2, spotlightShadowPassShader);
+        for (auto& i : renderers)
+        {
+            if (!i.second.model) { continue; }
+            if (!i.second.rendersShadows) { continue; }
+            Transform* transform = &transforms.at(i.first);
+            if (i.second.model)
+            {
+                glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
+                if (spotlightFrustum.IsOnFrustum(OOB))
+                {
+                    i.second.Draw(transform->getGlobalMatrix(), spotlightShadowPassShader);
+                }
+            }
+        }
 
         glCullFace(GL_BACK);
         Transform shadowTransform = Transform();
@@ -1097,6 +1119,8 @@ void RenderSystem::GUI()
         ImGui::End();
         return;
     }
+    ImGui::SliderInt("Ecco Face", &eccoAnimIndex, 0, 8);
+
     if (ImGui::CollapsingHeader("SSAO")) {
         ImGui::DragInt("Kernal Size", &kernelSize);
         ImGui::DragFloat("Radius", &ssaoRadius);
@@ -1415,6 +1439,21 @@ void RenderSystem::RenderParticles(
     glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
     ParticleSystem::Draw(particles);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void RenderSystem::UpdateEccoFaceAnim(float delta)
+{
+    eccoAnimLifeTime -= delta;
+    if (eccoAnimLifeTime <= 0.0)
+    {
+        float randPercentage = std::rand() / (float)RAND_MAX;
+
+        int index = floor(randPercentage * 5.0f);
+        index += 1;
+        if (index == 2) index = 8;
+        eccoAnimLifeTime = 15.0f;
+        eccoAnimIndex = index;
+    }
 }
 
 void RenderSystem::RenderBeams(float delta)

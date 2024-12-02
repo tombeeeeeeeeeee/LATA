@@ -113,5 +113,6 @@ public:
 	static Shader* ssaoBlur;
 	static Shader* prepass;
 	static Shader* super;
+	static Shader* eccoFaceAnim;
 
 };

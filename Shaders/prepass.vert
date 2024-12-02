@@ -33,24 +33,27 @@ void main()
 
     // Animation
     if (aBoneIDs[0] != -1) {
-        mat4 totalPosition = mat4(0.0);
+        mat4 averagedTransform = mat4(0.0);
         for(int i = 0 ; i < MAX_BONE_INFLUENCE ; i++)
         {
             if(aBoneIDs[i] == -1) {
                 continue;
             }     
-            totalPosition += boneMatrices[aBoneIDs[i]] * aBoneWeights[i];
-            vec3 localNormal = mat3(boneMatrices[aBoneIDs[i]]) * aNormal;
+            averagedTransform += boneMatrices[aBoneIDs[i]] * aBoneWeights[i];
+            //vec3 localNormal = mat3(boneMatrices[aBoneIDs[i]]) * aNormal;
         }
-        pos = model * (totalPosition * vec4(aPos, 1.0));
+        pos = model * (averagedTransform * vec4(aPos, 1.0));
+        fragmentNormal = normalize((model * averagedTransform * vec4(aNormal, 0.0)).xyz);
+        fragmentTangent = normalize((model * averagedTransform * vec4(aTangent, 0.0)).xyz);
     }
     else 
     {
         pos = model * vec4(aPos, 1.0);
+        fragmentNormal = normalize((model * vec4(aNormal, 0.0)).xyz);
+        fragmentTangent = normalize((model * vec4(aTangent, 0.0)).xyz);
     }
 
-    fragmentNormal = normalize((model * vec4(aNormal, 0.0)).xyz);
-    fragmentTangent = normalize((model * vec4(aTangent, 0.0)).xyz);
+    
     fragmentTangent = normalize(fragmentTangent - dot(fragmentTangent, fragmentNormal) * fragmentNormal);
     fragmentBitangent = cross(fragmentNormal, fragmentTangent);
 

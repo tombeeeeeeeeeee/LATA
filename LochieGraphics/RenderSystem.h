@@ -110,6 +110,7 @@ public:
 
     void IBLBufferSetup(unsigned int skybox);
 
+
     int SCREEN_WIDTH, SCREEN_HEIGHT = 0;
 
     unsigned int skyboxTexture = 0;
@@ -136,6 +137,8 @@ public:
     static std::vector<BlastLine> beams;
     static bool syncAiming;
     static BlastLine syncAim;
+    static int eccoAnimIndex;
+    static float eccoAnimLifeTime;
 
 private:
 
@@ -213,11 +216,7 @@ private:
     void RenderComposite();
     void OutputBufferSetUp();
 
-    //void FrustumCulling(
-    //    std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-    //    std::unordered_map<unsigned long long, Transform>& transforms,
-    //
-    //);
+    void UpdateEccoFaceAnim(float delta);
 
 
     unsigned int compositeFBO = 0;

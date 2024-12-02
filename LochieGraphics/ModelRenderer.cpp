@@ -139,6 +139,8 @@ void ModelRenderer::GUI()
 	ImGui::DragInt(("Materials##" + tag).c_str(), &mats);
 	ImGui::EndDisabled();
 
+	ImGui::Checkbox(("Renders Shadows##" + tag).c_str(), &rendersShadows);
+
 	ImGui::ColorEdit3(("Material Tint##" + tag).c_str(), &materialTint[0]);
 
 	ImGui::Indent();
@@ -198,6 +200,7 @@ toml::table ModelRenderer::Serialise(unsigned long long GUID) const
 		{ "materials", savedMaterials },
 		{ "drawSingleMesh", drawSingleMesh },
 		{ "meshIndexToDraw", Serialisation::SaveAsUnsignedInt(meshIndexToDraw) },
+		{ "rendersShadows", rendersShadows },
 	};
 }
 
@@ -213,6 +216,7 @@ ModelRenderer::ModelRenderer(toml::table table)
 	}
 	Refresh();
 	drawSingleMesh = Serialisation::LoadAsBool(table["drawSingleMesh"], false);
+	rendersShadows = Serialisation::LoadAsBool(table["rendersShadows"], true);
 	meshIndexToDraw = Serialisation::LoadAsUnsignedInt(table["meshIndexToDraw"]);
 }
 
