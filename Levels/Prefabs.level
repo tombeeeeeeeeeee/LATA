@@ -77,7 +77,7 @@ rainbowRebounding = false
 shotWidth = 12.0
 sniperBeamColour = [ 0.5641789436340332, 1.0, 0.5353982448577881 ]
 sniperBeamLifeSpan = 0.5
-sniperChargeTime = 0.20000000298023224
+sniperChargeTime = 0.15000000596046448
 sniperDamage = 80
 sniperReboundCount = 0
 startSlowTime = 0.5
@@ -112,14 +112,14 @@ otherCurrentAnimationGUID = '15148335964655264906'
 type = '1'
 
 [[Bollards]]
-guid = '15094854743533244076'
+guid = '261111949873993829'
 startsUp = true
 timeToLower = 0.5
 timeToRaise = 0.5
 triggerTag = ''
 
 [[Bollards]]
-guid = '261111949873993829'
+guid = '15094854743533244076'
 startsUp = true
 timeToLower = 0.5
 timeToRaise = 0.5
@@ -165,11 +165,11 @@ verts = [ [ 30.0, 27.0 ], [ 30.0, -27.0 ], [ -18.0, -27.0 ], [ -18.0, 27.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '1768415953930092518'
+guid = '264497880954241996'
 isTrigger = false
 radius = 0.0
 type = 1
-verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+verts = [ [ 110.0, 15.0 ], [ 110.0, -15.0 ], [ -5.0, -15.0 ], [ -5.0, 15.0 ] ]
 
 [[Colliders]]
 collisionLayer = 256
@@ -181,11 +181,11 @@ verts = [ [ 23.0, 30.0 ], [ 23.0, -30.0 ], [ -23.0, -30.0 ], [ -23.0, 30.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '264497880954241996'
+guid = '1768415953930092518'
 isTrigger = false
 radius = 0.0
 type = 1
-verts = [ [ 110.0, 15.0 ], [ 110.0, -15.0 ], [ -5.0, -15.0 ], [ -5.0, 15.0 ] ]
+verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
 
 [[Colliders]]
 collisionLayer = 256
@@ -229,19 +229,19 @@ verts = [ [ 55.0, 8.0 ], [ 55.0, -8.0 ], [ -55.0, -8.0 ], [ -55.0, 8.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '12424912059355495897'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 23.0, -65.0 ], [ -23.0, -65.0 ], [ -44.0, -15.0 ], [ 0.0, 20.0 ], [ 44.0, -15.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
 guid = '15552269670119680101'
 isTrigger = false
 radius = 0.0
 type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '12424912059355495897'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 23.0, -65.0 ], [ -23.0, -65.0 ], [ -44.0, -15.0 ], [ 0.0, 20.0 ], [ 44.0, -15.0 ] ]
 
 [[Colliders]]
 collisionLayer = 256
@@ -325,14 +325,6 @@ verts = [ [ 35.0, -4.0 ], [ 0.0, -20.0 ], [ -35.0, -4.0 ], [ -38.0, 79.0 ], [ 38
 
 [[Colliders]]
 collisionLayer = 1
-guid = '1768475223210357952'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
 guid = '12472247769792521165'
 isTrigger = false
 radius = 0.0
@@ -341,11 +333,11 @@ verts = [ [ 110.0, 15.0 ], [ 110.0, -15.0 ], [ -5.0, -15.0 ], [ -5.0, 15.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '12472509190243971103'
+guid = '1768475223210357952'
 isTrigger = false
 radius = 0.0
 type = 1
-verts = [ [ 5.0, 15.0 ], [ 5.0, -15.0 ], [ -110.0, -15.0 ], [ -110.0, 15.0 ] ]
+verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
@@ -354,6 +346,14 @@ isTrigger = false
 radius = 0.0
 type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '12472509190243971103'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 5.0, 15.0 ], [ 5.0, -15.0 ], [ -110.0, -15.0 ], [ -110.0, 15.0 ] ]
 
 [[Colliders]]
 collisionLayer = 256
@@ -365,19 +365,19 @@ verts = [ [ 75.0, 85.0 ], [ 75.0, -85.0 ], [ -75.0, -85.0 ], [ -75.0, 85.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '12472624942175045712'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ 0.0, -13.0 ], [ 0.0, 13.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
 guid = '15552269666837563320'
 isTrigger = false
 radius = 0.0
 type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '12472624942175045712'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ 0.0, -13.0 ], [ 0.0, 13.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
@@ -452,20 +452,20 @@ type = 1
 verts = [ [ 39.0, 35.0 ], [ 39.0, -41.0 ], [ -25.0, -41.0 ], [ -25.0, 35.0 ] ]
 
 [[Colliders]]
-collisionLayer = 256
-guid = '12424386930815040256'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 123.0, 35.0 ], [ 123.0, -46.0 ], [ 54.0, -46.0 ], [ 54.0, 35.0 ] ]
-
-[[Colliders]]
 collisionLayer = 1
 guid = '15552269667268684488'
 isTrigger = false
 radius = 0.0
 type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+
+[[Colliders]]
+collisionLayer = 256
+guid = '12424386930815040256'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 123.0, 35.0 ], [ 123.0, -46.0 ], [ 54.0, -46.0 ], [ 54.0, 35.0 ] ]
 
 [[Colliders]]
 collisionLayer = 256
@@ -493,7 +493,7 @@ verts = [ [ 65.0, 115.0 ], [ 65.0, -115.0 ], [ -65.0, -115.0 ], [ -65.0, 115.0 ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '15552269663410939131'
+guid = '15552269665255056699'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -501,7 +501,7 @@ verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '15552269665255056699'
+guid = '15552269663410939131'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -532,6 +532,14 @@ type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
 
 [[Colliders]]
+collisionLayer = 1
+guid = '15552269666227953625'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+
+[[Colliders]]
 collisionLayer = 128
 guid = '1156743744463646758'
 isTrigger = false
@@ -541,7 +549,7 @@ verts = [ [ 0.0, 0.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '15552269666227953625'
+guid = '15552269666162174104'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -557,7 +565,7 @@ verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '15552269666162174104'
+guid = '15552269671886105635'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -570,14 +578,6 @@ isTrigger = false
 radius = 0.0
 type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -313.0 ], [ 0.0, -313.0 ], [ 0.0, 13.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
-guid = '15552269671886105635'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
 
 [[Colliders]]
 collisionLayer = 1
@@ -620,20 +620,20 @@ type = 1
 verts = [ [ 0.0, 0.0 ] ]
 
 [[Colliders]]
-collisionLayer = 128
-guid = '261504909491167900'
-isTrigger = false
-radius = 30.0
-type = 1
-verts = [ [ 0.0, 0.0 ] ]
-
-[[Colliders]]
 collisionLayer = 1
 guid = '15552269666873914537'
 isTrigger = false
 radius = 0.0
 type = 1
 verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+
+[[Colliders]]
+collisionLayer = 128
+guid = '261504909491167900'
+isTrigger = false
+radius = 30.0
+type = 1
+verts = [ [ 0.0, 0.0 ] ]
 
 [[Colliders]]
 collisionLayer = 256
@@ -717,14 +717,6 @@ verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '15552269666707991348'
-isTrigger = false
-radius = 0.0
-type = 1
-verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
-
-[[Colliders]]
-collisionLayer = 1
 guid = '15552269663834544652'
 isTrigger = false
 radius = 0.0
@@ -733,7 +725,7 @@ verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '15552269666800783099'
+guid = '15552269666707991348'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -742,6 +734,14 @@ verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ]
 [[Colliders]]
 collisionLayer = 1
 guid = '15552269663861151004'
+isTrigger = false
+radius = 0.0
+type = 1
+verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+
+[[Colliders]]
+collisionLayer = 1
+guid = '15552269666800783099'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -917,7 +917,7 @@ verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '15552269671077292219'
+guid = '15552269665851143200'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -925,7 +925,7 @@ verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ]
 
 [[Colliders]]
 collisionLayer = 1
-guid = '15552269665851143200'
+guid = '15552269671077292219'
 isTrigger = false
 radius = 0.0
 type = 1
@@ -1319,19 +1319,19 @@ modelGuid = '1821508158489599619'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241420884761986831'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12424875846845106531'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 meshIndexToDraw = '0'
 modelGuid = '17948024945756673037'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241420884761986831'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -1343,19 +1343,19 @@ modelGuid = '15060590053292903953'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12472247769792521165'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1766071748038532778' ]
-meshIndexToDraw = '0'
-modelGuid = '12471265708787363967'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12425486594777809137'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12472247769792521165'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1766071748038532778' ]
+meshIndexToDraw = '0'
+modelGuid = '12471265708787363967'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -1391,14 +1391,6 @@ modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '10197213073443753886'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '6241699154762208166'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -1407,7 +1399,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241416022952274406'
+guid = '10197213073443753886'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1423,11 +1415,11 @@ modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15063244529734170502'
+guid = '6241416022952274406'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
+materials = [ '0' ]
 meshIndexToDraw = '0'
-modelGuid = '15059499060800388981'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -1436,6 +1428,14 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1766071748038532778' ]
 meshIndexToDraw = '0'
 modelGuid = '12471265708787363967'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '15063244529734170502'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+meshIndexToDraw = '0'
+modelGuid = '15059499060800388981'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -1471,14 +1471,6 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424626305064909471'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269667268684488'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
@@ -1487,11 +1479,11 @@ modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424386930815040256'
+guid = '12424626305064909471'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
+materials = [ '0' ]
 meshIndexToDraw = '0'
-modelGuid = '17947951532383889196'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -1503,15 +1495,15 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241692529223151086'
+guid = '12424386930815040256'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
+materials = [ '11557720335555147721' ]
 meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
+modelGuid = '17947951532383889196'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241699630280919497'
+guid = '6241692529223151086'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1524,6 +1516,14 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777577993317357874' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241699630280919497'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -1551,7 +1551,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425489096747407224'
+guid = '12424696958272162603'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1559,7 +1559,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424696958272162603'
+guid = '12425489096747407224'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1583,7 +1583,7 @@ modelGuid = '12471826850464180481'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424698532472091139'
+guid = '12425479440903173709'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1591,7 +1591,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425479440903173709'
+guid = '12424698532472091139'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1687,19 +1687,19 @@ modelGuid = '2140790440003113620'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424631458385855781'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269665608109720'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777996680635659332' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12424631458385855781'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -1759,7 +1759,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241442447127229460'
+guid = '6241479200721583909'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1767,7 +1767,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241479200721583909'
+guid = '6241442447127229460'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1871,19 +1871,19 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15063265791033735270'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-meshIndexToDraw = '0'
-modelGuid = '15060162199356581410'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '6241422379754173152'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '15063265791033735270'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+meshIndexToDraw = '0'
+modelGuid = '15060162199356581410'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -1935,19 +1935,19 @@ modelGuid = '12471732002840469521'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '1783876022991969686'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777712016902188911' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '6241425568980698362'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '1783876022991969686'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777712016902188911' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -1975,7 +1975,7 @@ modelGuid = '17948561943578888234'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424697598516303179'
+guid = '6241428104545186575'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1983,7 +1983,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241428104545186575'
+guid = '12424697598516303179'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2039,6 +2039,14 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '6241431533689596860'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '15552269663671195355'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
@@ -2047,7 +2055,7 @@ modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241431533689596860'
+guid = '6241431861543822839'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2060,14 +2068,6 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1766071748038532778', '1777316586600630394' ]
 meshIndexToDraw = '0'
 modelGuid = '12471732002840469521'
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '6241431861543822839'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -2111,7 +2111,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241722033118443491'
+guid = '6241434426393478262'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2119,7 +2119,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241434426393478262'
+guid = '6241722033118443491'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2239,19 +2239,19 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241447253307009330'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12425124232308384853'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718', '15038846507057049718' ]
 meshIndexToDraw = '0'
 modelGuid = '17948539119481233371'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241447253307009330'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -2287,11 +2287,11 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424912059355495897'
+guid = '15552269670119680101'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
+materials = [ '1777996680635659332' ]
 meshIndexToDraw = '0'
-modelGuid = '17948048760644617976'
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -2303,11 +2303,11 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269670119680101'
+guid = '12424912059355495897'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777996680635659332' ]
+materials = [ '11557720335555147721' ]
 meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
+modelGuid = '17948048760644617976'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -2327,19 +2327,19 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269663685788695'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '6241441495318213330'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '15552269663685788695'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -2367,7 +2367,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425484594717056056'
+guid = '6241698912806408061'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2375,7 +2375,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241698912806408061'
+guid = '12425484594717056056'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2431,19 +2431,19 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269666501140730'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '6241444388780093080'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '15552269666501140730'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777316586600630394' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -2471,7 +2471,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241742674578272182'
+guid = '6241767733531501681'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2487,7 +2487,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241767733531501681'
+guid = '6241742674578272182'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2519,19 +2519,19 @@ modelGuid = '17948332231983131029'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241480362592612274'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '1147203846942011839'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
 meshIndexToDraw = '0'
 modelGuid = '12471826850464180481'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241480362592612274'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -2607,14 +2607,6 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241720183688888094'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12425444216512005965'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -2623,7 +2615,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '10197220092907410568'
+guid = '6241720183688888094'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2639,6 +2631,14 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '10197220092907410568'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '12425160381660208905'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
@@ -2647,7 +2647,7 @@ modelGuid = '7289830871254251453'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241690920676687281'
+guid = '6241688742969293698'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2655,7 +2655,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241688742969293698'
+guid = '6241690920676687281'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2767,7 +2767,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241697754020415017'
+guid = '6241741836702542541'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2775,7 +2775,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241741836702542541'
+guid = '6241697754020415017'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2943,7 +2943,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241709890244007748'
+guid = '12425446655588816889'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2951,7 +2951,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425446655588816889'
+guid = '6241709890244007748'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2975,19 +2975,19 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '7400826464096756876'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1822012501052853337', '1823128414540551919' ]
-meshIndexToDraw = '0'
-modelGuid = '7289854778488251302'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '6241716989913701317'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '7400826464096756876'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1822012501052853337', '1823128414540551919' ]
+meshIndexToDraw = '0'
+modelGuid = '7289854778488251302'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -3103,7 +3103,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241721853278674449'
+guid = '12424681638790143779'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3111,7 +3111,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424681638790143779'
+guid = '6241721853278674449'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3143,7 +3143,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424705472712591704'
+guid = '6241729336939950958'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3151,7 +3151,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241729336939950958'
+guid = '12424705472712591704'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3503,19 +3503,19 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269665862331067'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777577993317357874' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12424624520298898790'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '15552269665862331067'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777577993317357874' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -3575,19 +3575,19 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269665059923173'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12424678136487094696'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
 modelGuid = '15279751527320231819'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '15552269665059923173'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -3631,14 +3631,6 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424695457060137310'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12424693733241264777'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -3647,7 +3639,7 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424693812224100512'
+guid = '12424695457060137310'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3656,6 +3648,14 @@ modelGuid = '15279751527320231819'
 [[Renderers]]
 drawSingleMesh = false
 guid = '12425485239360760131'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12424693812224100512'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3823,19 +3823,19 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424713421714719533'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269666707991348'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12424713421714719533'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -3847,19 +3847,19 @@ modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425482800245149277'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12424983719697434504'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 meshIndexToDraw = '0'
 modelGuid = '17948288847197925699'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12425482800245149277'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -3943,19 +3943,19 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425440785545837817'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15064001146988161018'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 meshIndexToDraw = '0'
 modelGuid = '15061627272122173222'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12425440785545837817'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -3975,19 +3975,19 @@ modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425444358599390788'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15063342308761907536'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 meshIndexToDraw = '0'
 modelGuid = '15060294060764248073'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12425444358599390788'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -4047,11 +4047,11 @@ modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '263450243779483742'
+guid = '12425479721694323953'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394', '1766071748038532778' ]
+materials = [ '0' ]
 meshIndexToDraw = '0'
-modelGuid = '12471765937523797163'
+modelGuid = '15279751527320231819'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -4063,11 +4063,11 @@ modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425479721694323953'
+guid = '263450243779483742'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
+materials = [ '1777316586600630394', '1766071748038532778' ]
 meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
+modelGuid = '12471765937523797163'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -4263,19 +4263,19 @@ modelGuid = '15060329276109528693'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12472608399756090578'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-meshIndexToDraw = '0'
-modelGuid = '12471826850464180481'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '1466601407344077622'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1766071748038532778' ]
 meshIndexToDraw = '0'
 modelGuid = '12471686768254296210'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12472608399756090578'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+meshIndexToDraw = '0'
+modelGuid = '12471826850464180481'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -4455,19 +4455,19 @@ modelGuid = '1821508158489599619'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269666227953625'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '1156743744463646758'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1822012501052853337' ]
 meshIndexToDraw = '0'
 modelGuid = '17947608378028088616'
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '15552269666227953625'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777316586600630394' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
@@ -4487,17 +4487,17 @@ modelGuid = '17948003540865066006'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269665255056699'
+guid = '15552269663410939131'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777996680635659332' ]
+materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269663410939131'
+guid = '15552269665255056699'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
+materials = [ '1777996680635659332' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
 
@@ -5137,34 +5137,6 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
-guid = '15552269671063842923'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '15552269671063842923'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -12.5 ], [ -12.5, -12.5 ], [ 12.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '15552269671063842923'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, 12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
 guid = '1466323787222681078'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -5188,6 +5160,34 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ -100.0, 15.0 ], [ -100.0, -15.0 ], [ -150.0, -15.0 ], [ -150.0, 15.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '15552269671063842923'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '15552269671063842923'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -12.5 ], [ -12.5, -12.5 ], [ 12.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '15552269671063842923'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, 12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -10036,19 +10036,19 @@ guid = '263185903108981891'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '15552269671077292219'
-hasLocalMesh = true
-
-[[ShadowWalls]]
 guid = '15552269665851143200'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '15552269666231552302'
+guid = '15552269671077292219'
 hasLocalMesh = true
 
 [[ShadowWalls]]
 guid = '15552269664016435084'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '15552269666231552302'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -10080,11 +10080,11 @@ guid = '277151567833061709'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '15552269663834544652'
+guid = '15552269666707991348'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '15552269666707991348'
+guid = '15552269663834544652'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -10124,11 +10124,11 @@ guid = '1147203846942011839'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '1172879629583884864'
+guid = '15552269671886105635'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '15552269671886105635'
+guid = '1172879629583884864'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -10172,24 +10172,24 @@ guid = '1783981036533591201'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '12472624942175045712'
-hasLocalMesh = true
-
-[[ShadowWalls]]
 guid = '15552269666837563320'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '263450243779483742'
-hasLocalMesh = false
+guid = '12472624942175045712'
+hasLocalMesh = true
+
+[[ShadowWalls]]
+guid = '15552269666162174104'
+hasLocalMesh = true
 
 [[ShadowWalls]]
 guid = '15552269665864449687'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '15552269666162174104'
-hasLocalMesh = true
+guid = '263450243779483742'
+hasLocalMesh = false
 
 [[ShadowWalls]]
 guid = '15552269663502668717'
@@ -10200,11 +10200,11 @@ guid = '12472561450565224966'
 hasLocalMesh = false
 
 [[ShadowWalls]]
-guid = '15552269663410939131'
+guid = '15552269665255056699'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '15552269665255056699'
+guid = '15552269663410939131'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -10212,11 +10212,11 @@ guid = '15552269664211584833'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '15552269663861151004'
+guid = '15552269666800783099'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '15552269666800783099'
+guid = '15552269663861151004'
 hasLocalMesh = true
 
 [[ShadowWalls]]
@@ -10284,12 +10284,12 @@ guid = '15552269665437864561'
 hasLocalMesh = true
 
 [[ShadowWalls]]
-guid = '15552269665508244341'
-hasLocalMesh = true
-
-[[ShadowWalls]]
 guid = '1465940557471102535'
 hasLocalMesh = false
+
+[[ShadowWalls]]
+guid = '15552269665508244341'
+hasLocalMesh = true
 
 [[ShadowWalls]]
 guid = '15552269665588425780'
@@ -10523,54 +10523,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12423383987824314724'
-isStatic = true
-position = [ -900.0, 0.0, -600.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241710190130963270'
-isStatic = true
-position = [ 3300.0, 0.0, -1500.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 89.9999771118164, 0.0, -0.0 ]
-guid = '4365912566506412290'
-isStatic = true
-position = [ 0.0, 606.4920043945312, 0.0 ]
-quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
-scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12472247769792521165'
-isStatic = true
-position = [ -1450.0, 0.0, -1100.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425486594777809137'
-isStatic = true
-position = [ 5100.0, 0.0, 900.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1768475223210357952'
-isStatic = true
-position = [ -400.0, 0.0, -750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ -0.0, -0.0, -0.0 ]
 guid = '260520896594080692'
 isStatic = true
@@ -10580,81 +10532,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
-guid = '261523939781336746'
-isStatic = true
-position = [ 75.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 89.9999771118164, 0.0, -0.0 ]
-guid = '4369321852668399470'
-isStatic = true
-position = [ 0.0, 459.4969177246094, 0.0 ]
-quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
-scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424626446709793039'
-isStatic = true
-position = [ 2700.0, 0.0, -1800.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241436542321632049'
-isStatic = true
-position = [ -0.0, 0.0, -1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
 guid = '261058320472689460'
 isStatic = true
 position = [ -75.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425445719946873731'
-isStatic = true
-position = [ 5100.0, 0.0, -1800.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241716694988000718'
-isStatic = true
-position = [ 2100.0, 0.0, 600.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '4367545864104986707'
-isStatic = true
-position = [ 0.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ -0.0, -0.0, -0.0 ]
-guid = '7418878960837586518'
-isStatic = true
-position = [ -274.16650390625, 0.0, -0.0 ]
-quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1156743746146833032'
-isStatic = true
-position = [ 550.0, 0.0, 100.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -10668,30 +10548,6 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
-guid = '263185903108981891'
-isStatic = true
-position = [ 2500.0, 0.0, -500.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269666873914537'
-isStatic = true
-position = [ 450.0, 0.0, -1950.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425437132881180881'
-isStatic = true
-position = [ 4200.0, 0.0, -1800.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
 guid = '261504909491167900'
 isStatic = true
 position = [ 0.0, 0.0, 0.0 ]
@@ -10699,10 +10555,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241431142360356085'
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '261523939781336746'
 isStatic = true
-position = [ 900.0, 0.0, 0.0 ]
+position = [ 75.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -10716,35 +10572,11 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
-guid = '1768693838588127057'
+guid = '263185903108981891'
 isStatic = true
-position = [ 500.0, 0.0, -750.0 ]
+position = [ 2500.0, 0.0, -500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425479440903173709'
-isStatic = true
-position = [ 4200.0, 0.0, 1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424698532472091139'
-isStatic = true
-position = [ 3900.0, 0.0, 900.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -89.9999771118164, 0.0 ]
-guid = '1144853985045057653'
-isStatic = true
-position = [ -750.0, 0.0, 1050.0 ]
-quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -10759,22 +10591,6 @@ euler = [ 0.0, -0.0, 0.0 ]
 guid = '15552269666162174104'
 isStatic = true
 position = [ 4650.0, 0.0, -1950.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269665864449687'
-isStatic = true
-position = [ 3150.0, 0.0, 1650.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425479721694323953'
-isStatic = true
-position = [ 4200.0, 0.0, 1500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -10803,55 +10619,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269670119680101'
-isStatic = true
-position = [ 5250.0, 0.0, 750.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12424912059355495897'
-isStatic = true
-position = [ 1528.71484375, 0.0, -1732.1710205078125 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241702554049651821'
-isStatic = true
-position = [ 2700.0, 0.0, -1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241440541673878028'
-isStatic = true
-position = [ -900.0, 0.0, -1500.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [
-    1.8238573151752036e-10,
-    -1.7075474261218915e-06,
-    1.3027551259980896e-10
-]
-guid = '2120176559991300301'
-isStatic = true
-position = [ -0.01123046875, 68.19972229003906, 9.155261795967817e-05 ]
-quaternion = [
-    1.0,
-    1.5916157281026244e-12,
-    -1.4901162970204496e-08,
-    1.136868268795943e-12
-]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '264497878890832668'
 isStatic = true
@@ -10868,60 +10635,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241416022952274406'
-isStatic = true
-position = [ 300.0, 0.0, -300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '264497880954241996'
 isStatic = true
 position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1768415953930092518'
-isStatic = true
-position = [ -100.0, 0.0, -750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241741929425014905'
-isStatic = true
-position = [ 300.0, 0.0, 1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241428373364603044'
-isStatic = true
-position = [ -900.0, 0.0, 300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -5.008955668017734e-06, 0.0 ]
-guid = '1015466513128029982'
-isStatic = true
-position = [ -900.0, 0.0, 630.2191772460938 ]
-quaternion = [ 1.0, 0.0, -4.371138473402425e-08, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269671860513489'
-isStatic = true
-position = [ 5250.0, 0.0, 150.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
@@ -10937,30 +10656,6 @@ guid = '265813382626728744'
 isStatic = true
 position = [ 0.0, 1.79949951171875, 0.0 ]
 quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424697316953510893'
-isStatic = true
-position = [ 3600.0, 0.0, 300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1017984762569573811'
-isStatic = true
-position = [ -1050.0, 0.0, 1050.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12472509190243971103'
-isStatic = true
-position = [ -1200.0, 0.0, -1050.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -10988,14 +10683,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '2091574045743166536'
-isStatic = true
-position = [ 0.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '687135787427594997'
 isStatic = true
@@ -11004,11 +10691,11 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424703758578775351'
+euler = [ 0.0, -5.008955668017734e-06, 0.0 ]
+guid = '1015466513128029982'
 isStatic = true
-position = [ 3900.0, 0.0, -1800.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+position = [ -900.0, 0.0, 630.2191772460938 ]
+quaternion = [ 1.0, 0.0, -4.371138473402425e-08, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -11020,20 +10707,20 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241718481880018438'
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1017984762569573811'
 isStatic = true
-position = [ 3000.0, 0.0, 600.0 ]
+position = [ -1050.0, 0.0, 1050.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '1454549635261575709'
+euler = [ 0.0, -89.9999771118164, 0.0 ]
+guid = '1144853985045057653'
 isStatic = true
-position = [ 0.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+position = [ -750.0, 0.0, 1050.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -89.9999771118164, 0.0 ]
@@ -11061,14 +10748,6 @@ scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269666227953625'
-isStatic = true
-position = [ -150.0, 0.0, 1650.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
 guid = '1156743744463646758'
 isStatic = true
 position = [ 0.0, 0.0, 0.0 ]
@@ -11076,12 +10755,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269671886105635'
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1156743746146833032'
 isStatic = true
-position = [ 5250.0, 0.0, 1350.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+position = [ 550.0, 0.0, 100.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -11101,9 +10780,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241714278156849239'
+guid = '1454549635261575709'
 isStatic = true
-position = [ 2700.0, 0.0, 300.0 ]
+position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11116,36 +10795,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12424306546007263687'
-isStatic = true
-position = [ 626.9839477539062, 0.0, -1746.8099365234375 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 13.987143516540527, 0.0 ]
 guid = '1454788406223976217'
 isStatic = true
 position = [ -20.025720596313477, 0.0, -19.07685089111328 ]
 quaternion = [ 0.9925597906112671, 0.0, 0.12175798416137695, 0.0 ]
 scale = [ 0.9999989867210388, 1.0, 0.9999989867210388 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1768687030254954338'
-isStatic = true
-position = [ 800.0, 0.0, -750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 4.099996089935303, 0.0 ]
-guid = '1454850599453058693'
-isStatic = true
-position = [ 10.310548782348633, 86.88601684570312, 12.066671371459961 ]
-quaternion = [ 0.9993599653244019, 0.0, 0.035771582275629044, 0.0 ]
-scale = [ 0.999998927116394, 1.0, 0.999998927116394 ]
 
 [[Transforms]]
 euler = [ 0.0, -22.175994873046875, 0.0 ]
@@ -11156,12 +10811,12 @@ quaternion = [ 0.9813329577445984, 0.0, -0.19231639802455902, 0.0 ]
 scale = [ 0.9999990463256836, 1.0, 0.9999990463256836 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '10197212792051632357'
+euler = [ 0.0, 4.099996089935303, 0.0 ]
+guid = '1454850599453058693'
 isStatic = true
-position = [ -600.0, 0.0, 600.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+position = [ 10.310548782348633, 86.88601684570312, 12.066671371459961 ]
+quaternion = [ 0.9993599653244019, 0.0, 0.035771582275629044, 0.0 ]
+scale = [ 0.999998927116394, 1.0, 0.999998927116394 ]
 
 [[Transforms]]
 euler = [ -179.99989318847656, 2.1999940872192383, -179.99989318847656 ]
@@ -11172,82 +10827,10 @@ quaternion = [ 0.019197391346096992, -8.923263408178173e-07, 0.9998157024383545,
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269665508244341'
-isStatic = true
-position = [ -1650.0, 0.0, -150.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425484019035348259'
-isStatic = true
-position = [ 4800.0, 0.0, 1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425480795558291604'
-isStatic = true
-position = [ 4500.0, 0.0, 300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '1465940557471102535'
 isStatic = true
 position = [ 1100.0, 0.0, -750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425444570654695088'
-isStatic = true
-position = [ 4800.0, 0.0, -1800.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 89.9999771118164, 0.0, -0.0 ]
-guid = '4368822498304440585'
-isStatic = true
-position = [ 0.0, 459.4969177246094, 0.0 ]
-quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
-scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241692325430468167'
-isStatic = true
-position = [ 1800.0, 0.0, -1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '1783900294725637053'
-isStatic = true
-position = [ -1200.0, 0.0, 750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ -179.99989318847656, -5.008955668017734e-06, -179.99989318847656 ]
-guid = '15552269671063842923'
-isStatic = true
-position = [ 5250.0, 0.0, 1650.0 ]
-quaternion = [ -4.371055695173709e-08, -9.099629778575036e-07, 1.0, -9.099629778575036e-07 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424704758809912009'
-isStatic = true
-position = [ 3900.0, 0.0, -1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11264,22 +10847,6 @@ euler = [ 0.0, -0.0, 0.0 ]
 guid = '1466601406390514171'
 isStatic = true
 position = [ 1400.0, 0.0, -750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241425568980698362'
-isStatic = true
-position = [ 600.0, 0.0, -300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1783876022991969686'
-isStatic = true
-position = [ -1200.0, 0.0, 504.5697021484375 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11316,6 +10883,54 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1768415953930092518'
+isStatic = true
+position = [ -100.0, 0.0, -750.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1768475223210357952'
+isStatic = true
+position = [ -400.0, 0.0, -750.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1768687030254954338'
+isStatic = true
+position = [ 800.0, 0.0, -750.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1768693838588127057'
+isStatic = true
+position = [ 500.0, 0.0, -750.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1783876022991969686'
+isStatic = true
+position = [ -1200.0, 0.0, 504.5697021484375 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '1783900294725637053'
+isStatic = true
+position = [ -1200.0, 0.0, 750.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
 euler = [ 0.0, -5.008955668017734e-06, 0.0 ]
 guid = '1783958921167663177'
 isStatic = true
@@ -11340,18 +10955,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '2091574056071042475'
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1829175009167040230'
 isStatic = true
-position = [ 0.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241720421032312541'
-isStatic = true
-position = [ 1800.0, 0.0, 900.0 ]
+position = [ 168.0, 0.0, -150.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11365,25 +10972,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241742047963114539'
+guid = '2091574045743166536'
 isStatic = true
-position = [ 0.0, 0.0, 1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1829175009167040230'
-isStatic = true
-position = [ 168.0, 0.0, -150.0 ]
+position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424680420160596173'
+guid = '2091574056071042475'
 isStatic = true
-position = [ 1500.0, 0.0, 600.0 ]
+position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11404,6 +11003,31 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241702554049651821'
+isStatic = true
+position = [ 2700.0, 0.0, -1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [
+    1.8238573151752036e-10,
+    -1.7075474261218915e-06,
+    1.3027551259980896e-10
+]
+guid = '2120176559991300301'
+isStatic = true
+position = [ -0.01123046875, 68.19972229003906, 9.155261795967817e-05 ]
+quaternion = [
+    1.0,
+    1.5916157281026244e-12,
+    -1.4901162970204496e-08,
+    1.136868268795943e-12
+]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
 euler = [ 0.0, -90.0, 0.0 ]
 guid = '2236905023818184222'
 isStatic = true
@@ -11413,17 +11037,25 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269666501140730'
+guid = '12423383987824314724'
 isStatic = true
-position = [ 2250.0, 0.0, 1650.0 ]
+position = [ -900.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425448798349408390'
+euler = [ 89.9999771118164, 0.0, -0.0 ]
+guid = '4365912566506412290'
 isStatic = true
-position = [ 4500.0, 0.0, -600.0 ]
+position = [ 0.0, 606.4920043945312, 0.0 ]
+quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
+scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '4367545864104986707'
+isStatic = true
+position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11444,12 +11076,20 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241445673014778373'
+euler = [ 89.9999771118164, 0.0, -0.0 ]
+guid = '4368822498304440585'
 isStatic = true
-position = [ -1200.0, 0.0, 300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+position = [ 0.0, 459.4969177246094, 0.0 ]
+quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
+scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
+
+[[Transforms]]
+euler = [ 89.9999771118164, 0.0, -0.0 ]
+guid = '4369321852668399470'
+isStatic = true
+position = [ 0.0, 459.4969177246094, 0.0 ]
+quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
+scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -11484,14 +11124,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12472561450565224966'
-isStatic = true
-position = [ 3200.0, 0.0, 750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 90.0, 0.0, 0.0 ]
 guid = '5121252164433345398'
 isStatic = true
@@ -11504,14 +11136,6 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241412592375998136'
 isStatic = true
 position = [ 0.0, 0.0, -300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269664775784825'
-isStatic = true
-position = [ 4050.0, 0.0, -1950.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11541,17 +11165,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241416469707485099'
+guid = '6241416022952274406'
 isStatic = true
-position = [ 300.0, 0.0, -0.0 ]
+position = [ 300.0, 0.0, -300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241424406883388532'
+guid = '6241416469707485099'
 isStatic = true
-position = [ 600.0, 0.0, -0.0 ]
+position = [ 300.0, 0.0, -0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11581,14 +11205,6 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
-guid = '15063948681679477590'
-isStatic = true
-position = [ 4936.93505859375, 0.0, -607.3177490234375 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
 guid = '12424875846845106531'
 isStatic = true
 position = [ 1416.2149658203125, 0.0, -1762.259521484375 ]
@@ -11600,14 +11216,6 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241420884761986831'
 isStatic = true
 position = [ -600.0, 0.0, 300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241750876605003429'
-isStatic = true
-position = [ 3300.0, 0.0, 1500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11645,14 +11253,6 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241719824433722200'
-isStatic = true
-position = [ 3000.0, 0.0, 1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241422734452935867'
 isStatic = true
 position = [ -300.0, 0.0, -600.0 ]
@@ -11668,22 +11268,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269664814853427'
-isStatic = true
-position = [ 3450.0, 0.0, -1950.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241436395171144075'
-isStatic = true
-position = [ -300.0, 0.0, -1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241423389677586987'
 isStatic = true
@@ -11692,10 +11276,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12472536751963613579'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241424406883388532'
 isStatic = true
-position = [ -850.0, 0.0, -1050.0 ]
+position = [ 600.0, 0.0, -0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11709,17 +11293,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241425806658661504'
+guid = '6241425568980698362'
 isStatic = true
-position = [ 600.0, 0.0, -600.0 ]
+position = [ 600.0, 0.0, -300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12425417798986867025'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241425806658661504'
 isStatic = true
-position = [ 3126.22607421875, 0.0, -1750.0 ]
+position = [ 600.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11757,6 +11341,14 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241428373364603044'
+isStatic = true
+position = [ -900.0, 0.0, 300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241430428755932085'
 isStatic = true
 position = [ 900.0, 0.0, 300.0 ]
@@ -11764,10 +11356,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269663671195355'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241431142360356085'
 isStatic = true
-position = [ 750.0, 0.0, -1950.0 ]
+position = [ 900.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11781,14 +11373,6 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241437137727848785'
-isStatic = true
-position = [ 600.0, 0.0, -1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241433469857973877'
 isStatic = true
 position = [ 900.0, 0.0, -900.0 ]
@@ -11797,33 +11381,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425479224585851417'
-isStatic = true
-position = [ 4200.0, 0.0, 900.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241433856126411702'
 isStatic = true
 position = [ 600.0, 0.0, -900.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15094854743533244076'
-isStatic = true
-position = [ -900.0, 0.0, -600.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241696796543573832'
-isStatic = true
-position = [ 2100.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11868,28 +11428,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15063330284186506850'
-isStatic = true
-position = [ 4627.72509765625, 0.0, -1302.14501953125 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241434872526193755'
 isStatic = true
 position = [ -900.0, 0.0, -900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269664785281097'
-isStatic = true
-position = [ -1650.0, 0.0, -750.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
@@ -11909,9 +11453,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241439734731895968'
+guid = '6241436395171144075'
 isStatic = true
-position = [ 0.0, 0.0, -1500.0 ]
+position = [ -300.0, 0.0, -1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241436542321632049'
+isStatic = true
+position = [ -0.0, 0.0, -1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11925,6 +11477,14 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241437137727848785'
+isStatic = true
+position = [ 600.0, 0.0, -1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241437975557766674'
 isStatic = true
 position = [ 900.0, 0.0, -1200.0 ]
@@ -11933,41 +11493,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241737988401335248'
-isStatic = true
-position = [ -300.0, 0.0, 900.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241477945949593651'
-isStatic = true
-position = [ 1200.0, 0.0, -600.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241438272381471980'
 isStatic = true
 position = [ 900.0, 0.0, -1500.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12425124232308384853'
-isStatic = true
-position = [ 2684.75927734375, 0.0, -1750.2005615234375 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241447253307009330'
-isStatic = true
-position = [ -1500.0, 0.0, -1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11988,10 +11516,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269663764820475'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241439734731895968'
 isStatic = true
-position = [ 2550.0, 0.0, -1950.0 ]
+position = [ 0.0, 0.0, -1500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12012,18 +11540,34 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241441372980761855'
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269670119680101'
 isStatic = true
-position = [ -1200.0, 0.0, -1500.0 ]
+position = [ 5250.0, 0.0, 750.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12424912059355495897'
+isStatic = true
+position = [ 1528.71484375, 0.0, -1732.1710205078125 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269663685788695'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241440541673878028'
 isStatic = true
-position = [ 2250.0, 0.0, -1950.0 ]
+position = [ -900.0, 0.0, -1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241441372980761855'
+isStatic = true
+position = [ -1200.0, 0.0, -1500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12061,14 +11605,6 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241479200721583909'
-isStatic = true
-position = [ 1200.0, 0.0, -1500.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241442447127229460'
 isStatic = true
 position = [ -1500.0, 0.0, -300.0 ]
@@ -12077,41 +11613,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425484594717056056'
-isStatic = true
-position = [ 4800.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425445791121071112'
-isStatic = true
-position = [ 5100.0, 0.0, -1500.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241698912806408061'
-isStatic = true
-position = [ 2400.0, 0.0, -600.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241442719799685602'
 isStatic = true
 position = [ -1500.0, 0.0, -0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269666033463921'
-isStatic = true
-position = [ 4650.0, 0.0, 1650.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12128,6 +11632,30 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241444237331939898'
 isStatic = true
 position = [ -1200.0, 0.0, -300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241445673014778373'
+isStatic = true
+position = [ -1200.0, 0.0, 300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12425124232308384853'
+isStatic = true
+position = [ 2684.75927734375, 0.0, -1750.2005615234375 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241447253307009330'
+isStatic = true
+position = [ -1500.0, 0.0, -1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12157,14 +11685,6 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241767733531501681'
-isStatic = true
-position = [ -1200.0, 0.0, 1500.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241742674578272182'
 isStatic = true
 position = [ -300.0, 0.0, 1200.0 ]
@@ -12181,9 +11701,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424695531403318866'
+guid = '6241477945949593651'
 isStatic = true
-position = [ 3600.0, 0.0, -1800.0 ]
+position = [ 1200.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12192,22 +11712,6 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241478271234008696'
 isStatic = true
 position = [ 1200.0, 0.0, -900.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269664211584833'
-isStatic = true
-position = [ -1650.0, 0.0, 1050.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241699630280919497'
-isStatic = true
-position = [ 2700.0, 0.0, -0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12221,17 +11725,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241479912233769083'
+guid = '6241479200721583909'
 isStatic = true
-position = [ 900.0, 0.0, -1800.0 ]
+position = [ 1200.0, 0.0, -1500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12425048428250250224'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241479912233769083'
 isStatic = true
-position = [ 2253.455810546875, 0.0, -1771.9940185546875 ]
+position = [ 900.0, 0.0, -1800.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12240,14 +11744,6 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241480333875717271'
 isStatic = true
 position = [ 600.0, 0.0, -1800.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241744733458990975'
-isStatic = true
-position = [ 1200.0, 0.0, 1500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12264,14 +11760,6 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241480662279400587'
 isStatic = true
 position = [ -300.0, 0.0, -1800.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241481046263097268'
-isStatic = true
-position = [ -1500.0, 0.0, -1800.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12301,9 +11789,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241704583326769440'
+guid = '6241481046263097268'
 isStatic = true
-position = [ 3000.0, 0.0, -300.0 ]
+position = [ -1500.0, 0.0, -1800.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12332,14 +11820,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12425160381660208905'
-isStatic = true
-position = [ 2931.28857421875, 44.26713562011719, -1735.1563720703125 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241690920676687281'
 isStatic = true
@@ -12357,17 +11837,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241692529223151086'
+guid = '6241692325430468167'
 isStatic = true
-position = [ 1800.0, 0.0, -1500.0 ]
+position = [ 1800.0, 0.0, -1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12425022010571385332'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241692529223151086'
 isStatic = true
-position = [ 2105.238525390625, 0.0, -1759.6046142578125 ]
+position = [ 1800.0, 0.0, -1500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12380,26 +11860,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269670790329320'
-isStatic = true
-position = [ 5250.0, 0.0, 450.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241693666187153081'
 isStatic = true
 position = [ 1800.0, 0.0, -300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269663502668717'
-isStatic = true
-position = [ 4350.0, 0.0, 1650.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12429,9 +11893,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241708998600462214'
+guid = '6241696796543573832'
 isStatic = true
-position = [ 3300.0, 0.0, -300.0 ]
+position = [ 2100.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12448,14 +11912,6 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241697332040028574'
 isStatic = true
 position = [ 2100.0, 0.0, -1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241741836702542541'
-isStatic = true
-position = [ 600.0, 0.0, 1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12493,9 +11949,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425439637286756689'
+guid = '6241698912806408061'
 isStatic = true
-position = [ 4500.0, 0.0, -900.0 ]
+position = [ 2400.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12504,14 +11960,6 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241698942063077302'
 isStatic = true
 position = [ 2700.0, 0.0, -600.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269667314960882'
-isStatic = true
-position = [ 1350.0, 0.0, -1950.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12528,6 +11976,14 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241699154762208166'
 isStatic = true
 position = [ 2700.0, 0.0, -300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241699630280919497'
+isStatic = true
+position = [ 2700.0, 0.0, -0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12557,14 +12013,6 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241765523173655533'
-isStatic = true
-position = [ -600.0, 0.0, 1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241703064481127012'
 isStatic = true
 position = [ 2700.0, 0.0, -1500.0 ]
@@ -12580,14 +12028,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269665483110697'
-isStatic = true
-position = [ -450.0, 0.0, 1650.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241704312118016848'
 isStatic = true
@@ -12597,9 +12037,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '10197214866994041270'
+guid = '6241704583326769440'
 isStatic = true
-position = [ -1500.0, 0.0, 600.0 ]
+position = [ 3000.0, 0.0, -300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12628,14 +12068,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269666907710297'
-isStatic = true
-position = [ -1650.0, 0.0, 1350.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241708641895937054'
 isStatic = true
@@ -12645,9 +12077,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241748255130380127'
+guid = '6241708998600462214'
 isStatic = true
-position = [ 1500.0, 0.0, 1500.0 ]
+position = [ 3300.0, 0.0, -300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12685,9 +12117,33 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241710190130963270'
+isStatic = true
+position = [ 3300.0, 0.0, -1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241713051523161676'
 isStatic = true
 position = [ 2400.0, 0.0, 300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241714278156849239'
+isStatic = true
+position = [ 2700.0, 0.0, 300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241716694988000718'
+isStatic = true
+position = [ 2100.0, 0.0, 600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12724,10 +12180,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269666030232734'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241718481880018438'
 isStatic = true
-position = [ -750.0, 0.0, -1950.0 ]
+position = [ 3000.0, 0.0, 600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12757,6 +12213,14 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241719824433722200'
+isStatic = true
+position = [ 3000.0, 0.0, 1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241720007645418470'
 isStatic = true
 position = [ 2700.0, 0.0, 1200.0 ]
@@ -12764,26 +12228,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -0.0, -0.0, -0.0 ]
-guid = '9636236716190966370'
-isStatic = true
-position = [ -0.0, 50.0, -0.0 ]
-quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241720090244080875'
 isStatic = true
 position = [ 2400.0, 0.0, 1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241721133637308452'
-isStatic = true
-position = [ 2100.0, 0.0, 1500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12813,25 +12261,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241720841133352975'
+guid = '6241720421032312541'
 isStatic = true
-position = [ 1800.0, 0.0, 1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269667268684488'
-isStatic = true
-position = [ 4050.0, 0.0, 1650.0 ]
+position = [ 1800.0, 0.0, 900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424626305064909471'
+guid = '6241720841133352975'
 isStatic = true
-position = [ 2400.0, 0.0, -1800.0 ]
+position = [ 1800.0, 0.0, 1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12853,17 +12293,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424681638790143779'
+guid = '6241721133637308452'
 isStatic = true
-position = [ 2100.0, 0.0, 300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241743659501050922'
-isStatic = true
-position = [ -0.0, 0.0, 1500.0 ]
+position = [ 2100.0, 0.0, 1500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12916,14 +12348,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15063923267201518588'
-isStatic = true
-position = [ 4950.0, 0.0, -700.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241733693939470637'
 isStatic = true
@@ -12940,10 +12364,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269665753053470'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241737988401335248'
 isStatic = true
-position = [ 3750.0, 0.0, 1650.0 ]
+position = [ -300.0, 0.0, 900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13005,9 +12429,41 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241741836702542541'
+isStatic = true
+position = [ 600.0, 0.0, 1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241741929425014905'
+isStatic = true
+position = [ 300.0, 0.0, 1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241742047963114539'
+isStatic = true
+position = [ 0.0, 0.0, 1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241743597552557199'
 isStatic = true
 position = [ -300.0, 0.0, 1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241743659501050922'
+isStatic = true
+position = [ -0.0, 0.0, 1500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13037,6 +12493,14 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241744733458990975'
+isStatic = true
+position = [ 1200.0, 0.0, 1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241747088106758599'
 isStatic = true
 position = [ 1500.0, 0.0, 1200.0 ]
@@ -13045,9 +12509,33 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241748255130380127'
+isStatic = true
+position = [ 1500.0, 0.0, 1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241750876605003429'
+isStatic = true
+position = [ 3300.0, 0.0, 1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241765225183253923'
 isStatic = true
 position = [ -600.0, 0.0, 1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241765523173655533'
+isStatic = true
+position = [ -600.0, 0.0, 1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13085,6 +12573,14 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241767733531501681'
+isStatic = true
+position = [ -1200.0, 0.0, 1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241767761938263655'
 isStatic = true
 position = [ -900.0, 0.0, 1500.0 ]
@@ -13116,14 +12612,6 @@ quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424678708046192868'
-isStatic = true
-position = [ 1500.0, 0.0, 300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '7418812670793685382'
 isStatic = true
@@ -13132,16 +12620,16 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269663720561448'
+euler = [ -0.0, -0.0, -0.0 ]
+guid = '7418812675311635710'
 isStatic = true
-position = [ 4950.0, 0.0, 1650.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+position = [ -274.16650390625, 0.0, -0.0 ]
+quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ -0.0, -0.0, -0.0 ]
-guid = '7418812675311635710'
+guid = '7418878960837586518'
 isStatic = true
 position = [ -274.16650390625, 0.0, -0.0 ]
 quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
@@ -13156,14 +12644,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425478722916060170'
-isStatic = true
-position = [ 4200.0, 0.0, -0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 42.32947540283203, 6.562272119481349e-06, -1.4811198525421787e-05 ]
 guid = '8456622609404298385'
 isStatic = true
@@ -13172,10 +12652,18 @@ quaternion = [ 0.9325461983680725, 0.36105072498321533, 6.73721700650276e-09, -1
 scale = [ 0.9999998807907104, 1.0000492334365845, 0.9999468922615051 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12425139416854319463'
+euler = [ -0.0, -0.0, -0.0 ]
+guid = '9636236716190966370'
 isStatic = true
-position = [ 2825.7197265625, 0.0, -1750.2005615234375 ]
+position = [ -0.0, 50.0, -0.0 ]
+quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '10197212792051632357'
+isStatic = true
+position = [ -600.0, 0.0, 600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13184,6 +12672,14 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '10197213436585111480'
 isStatic = true
 position = [ -1200.0, 0.0, 600.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '10197214866994041270'
+isStatic = true
+position = [ -1500.0, 0.0, 600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13200,14 +12696,6 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '10197219948308420620'
 isStatic = true
 position = [ 600.0, 0.0, 600.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424672405723061620'
-isStatic = true
-position = [ -1500.0, 0.0, 1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13244,28 +12732,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425482297353586558'
-isStatic = true
-position = [ 4500.0, 0.0, 1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '12423804747836280307'
 isStatic = true
 position = [ -734.9591674804688, 0.0, -1732.56689453125 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269667506925198'
-isStatic = true
-position = [ -1650.0, 0.0, 750.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -13296,6 +12768,14 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '12424168893377199175'
 isStatic = true
 position = [ 404.8240966796875, 0.0, -1737.9854736328125 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12424306546007263687'
+isStatic = true
+position = [ 626.9839477539062, 0.0, -1746.8099365234375 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13332,14 +12812,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269665862331067'
-isStatic = true
-position = [ -1650.0, 0.0, 450.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '12424624520298898790'
 isStatic = true
@@ -13349,9 +12821,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425483450825391098'
+guid = '12424626305064909471'
 isStatic = true
-position = [ 4800.0, 0.0, 1500.0 ]
+position = [ 2400.0, 0.0, -1800.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12424626446709793039'
+isStatic = true
+position = [ 2700.0, 0.0, -1800.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13372,14 +12852,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15063981536615834396'
-isStatic = true
-position = [ 4933.5185546875, 0.0, -505.72430419921875 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '12424630246379041607'
 isStatic = true
@@ -13388,26 +12860,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269665608109720'
-isStatic = true
-position = [ 5250.0, 0.0, -1650.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '12424631458385855781'
 isStatic = true
 position = [ 1800.0, 0.0, -1800.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425448438706796837'
-isStatic = true
-position = [ 5100.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13428,10 +12884,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269665059923173'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12424672405723061620'
 isStatic = true
-position = [ 1050.0, 0.0, -1950.0 ]
+position = [ -1500.0, 0.0, 1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13453,17 +12909,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424678776620732341'
+guid = '12424678708046192868'
 isStatic = true
-position = [ 1500.0, 0.0, 900.0 ]
+position = [ 1500.0, 0.0, 300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15063406588356611114'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12424678776620732341'
 isStatic = true
-position = [ 4926.68505859375, 0.0, -888.5142822265625 ]
+position = [ 1500.0, 0.0, 900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13477,17 +12933,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425480723383775224'
+guid = '12424680420160596173'
 isStatic = true
-position = [ 4500.0, 0.0, 900.0 ]
+position = [ 1500.0, 0.0, 600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424686149651553123'
+guid = '12424681638790143779'
 isStatic = true
-position = [ 3000.0, 0.0, 300.0 ]
+position = [ 2100.0, 0.0, 300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13496,6 +12952,14 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '12424683642363833590'
 isStatic = true
 position = [ 3300.0, 0.0, 300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12424686149651553123'
+isStatic = true
+position = [ 3000.0, 0.0, 300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13533,17 +12997,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424696669594891065'
+guid = '12424695531403318866'
 isStatic = true
-position = [ 3600.0, 0.0, -1200.0 ]
+position = [ 3600.0, 0.0, -1800.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12424831600591706460'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12424696669594891065'
 isStatic = true
-position = [ 1272.171630859375, 5.960464477539063e-08, -1752.546875 ]
+position = [ 3600.0, 0.0, -1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13557,25 +13021,9 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425486238268386728'
-isStatic = true
-position = [ 5100.0, 0.0, 300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
 guid = '12424696813431483556'
 isStatic = true
 position = [ 3600.0, 0.0, -600.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425489096747407224'
-isStatic = true
-position = [ 4800.0, 0.0, -300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13597,17 +13045,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424697748061768763'
+guid = '12424697316953510893'
 isStatic = true
-position = [ 3600.0, 0.0, 900.0 ]
+position = [ 3600.0, 0.0, 300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425487526678445722'
+guid = '12424697748061768763'
 isStatic = true
-position = [ 5100.0, 0.0, 1500.0 ]
+position = [ 3600.0, 0.0, 900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13620,18 +13068,34 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269666842204690'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12424698532472091139'
 isStatic = true
-position = [ -1650.0, 0.0, -1050.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+position = [ 3900.0, 0.0, 900.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12424703758578775351'
+isStatic = true
+position = [ 3900.0, 0.0, -1800.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '12424704257113414685'
 isStatic = true
 position = [ 3900.0, 0.0, -1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12424704758809912009'
+isStatic = true
+position = [ 3900.0, 0.0, -1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13684,14 +13148,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269663834544652'
-isStatic = true
-position = [ -150.0, 0.0, -1950.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '12424713421714719533'
 isStatic = true
@@ -13701,17 +13157,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
-guid = '12424942199605308496'
+guid = '12424831600591706460'
 isStatic = true
-position = [ 1692.7510986328125, 0.0, -1830.401123046875 ]
+position = [ 1272.171630859375, 5.960464477539063e-08, -1752.546875 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425482800245149277'
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12424942199605308496'
 isStatic = true
-position = [ 4500.0, 0.0, 1500.0 ]
+position = [ 1692.7510986328125, 0.0, -1830.401123046875 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13725,9 +13181,41 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
+guid = '12425022010571385332'
+isStatic = true
+position = [ 2105.238525390625, 0.0, -1759.6046142578125 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12425048428250250224'
+isStatic = true
+position = [ 2253.455810546875, 0.0, -1771.9940185546875 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
 guid = '12425068470001383042'
 isStatic = true
 position = [ 2393.534423828125, 0.0, -1762.8856201171875 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12425139416854319463'
+isStatic = true
+position = [ 2825.7197265625, 0.0, -1750.2005615234375 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12425160381660208905'
+isStatic = true
+position = [ 2931.28857421875, 44.26713562011719, -1735.1563720703125 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13748,6 +13236,22 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12425417798986867025'
+isStatic = true
+position = [ 3126.22607421875, 0.0, -1750.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425437132881180881'
+isStatic = true
+position = [ 4200.0, 0.0, -1800.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '12425437846951637521'
 isStatic = true
@@ -13764,18 +13268,18 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269666209488055'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425438489558349765'
 isStatic = true
-position = [ 1050.0, 0.0, 1650.0 ]
+position = [ 4200.0, 0.0, -900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425438489558349765'
+guid = '12425439637286756689'
 isStatic = true
-position = [ 4200.0, 0.0, -900.0 ]
+position = [ 4500.0, 0.0, -900.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13796,14 +13300,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15064001146988161018'
-isStatic = true
-position = [ 4950.0, 0.0, -400.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '12425440785545837817'
 isStatic = true
@@ -13812,26 +13308,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269666381451897'
-isStatic = true
-position = [ 2850.0, 0.0, -1950.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '12425444001390624236'
 isStatic = true
 position = [ 4800.0, 0.0, -900.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15063342308761907536'
-isStatic = true
-position = [ 4629.43359375, 0.0, -1095.3297119140625 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13845,6 +13325,30 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425444570654695088'
+isStatic = true
+position = [ 4800.0, 0.0, -1800.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425445719946873731'
+isStatic = true
+position = [ 5100.0, 0.0, -1800.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425445791121071112'
+isStatic = true
+position = [ 5100.0, 0.0, -1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '12425446865701423298'
 isStatic = true
 position = [ 5100.0, 0.0, -900.0 ]
@@ -13853,9 +13357,25 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425448438706796837'
+isStatic = true
+position = [ 5100.0, 0.0, -600.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '12425448584780168354'
 isStatic = true
 position = [ 4800.0, 0.0, -600.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425448798349408390'
+isStatic = true
+position = [ 4500.0, 0.0, -600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13877,6 +13397,14 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425478722916060170'
+isStatic = true
+position = [ 4200.0, 0.0, -0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '12425478862708786464'
 isStatic = true
 position = [ 4200.0, 0.0, 300.0 ]
@@ -13888,6 +13416,46 @@ euler = [ 0.0, 0.0, 0.0 ]
 guid = '12425478937172005536'
 isStatic = true
 position = [ 4200.0, 0.0, 600.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425479224585851417'
+isStatic = true
+position = [ 4200.0, 0.0, 900.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425479440903173709'
+isStatic = true
+position = [ 4200.0, 0.0, 1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425479721694323953'
+isStatic = true
+position = [ 4200.0, 0.0, 1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425480723383775224'
+isStatic = true
+position = [ 4500.0, 0.0, 900.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425480795558291604'
+isStatic = true
+position = [ 4500.0, 0.0, 300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13908,18 +13476,42 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269663655840582'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425482013755494700'
 isStatic = true
-position = [ 750.0, 0.0, 1650.0 ]
+position = [ 4500.0, 0.0, 600.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425482013755494700'
+guid = '12425482297353586558'
 isStatic = true
-position = [ 4500.0, 0.0, 600.0 ]
+position = [ 4500.0, 0.0, 1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425482800245149277'
+isStatic = true
+position = [ 4500.0, 0.0, 1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425483450825391098'
+isStatic = true
+position = [ 4800.0, 0.0, 1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425484019035348259'
+isStatic = true
+position = [ 4800.0, 0.0, 1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13949,9 +13541,25 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425484594717056056'
+isStatic = true
+position = [ 4800.0, 0.0, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '12425485091989750358'
 isStatic = true
 position = [ 5100.0, 0.0, -0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425486238268386728'
+isStatic = true
+position = [ 5100.0, 0.0, 300.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13965,6 +13573,22 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '12472247769792521165'
+isStatic = true
+position = [ -1450.0, 0.0, -1100.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425486594777809137'
+isStatic = true
+position = [ 5100.0, 0.0, 900.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '12425486886299360030'
 isStatic = true
 position = [ 5100.0, 0.0, 1200.0 ]
@@ -13972,10 +13596,42 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269666837563320'
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425487526678445722'
 isStatic = true
-position = [ 2550.0, 0.0, 1650.0 ]
+position = [ 5100.0, 0.0, 1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425489096747407224'
+isStatic = true
+position = [ 4800.0, 0.0, -300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12472509190243971103'
+isStatic = true
+position = [ -1200.0, 0.0, -1050.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12472536751963613579'
+isStatic = true
+position = [ -850.0, 0.0, -1050.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12472561450565224966'
+isStatic = true
+position = [ 3200.0, 0.0, 750.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -13997,6 +13653,22 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
+guid = '15063330284186506850'
+isStatic = true
+position = [ 4627.72509765625, 0.0, -1302.14501953125 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15063342308761907536'
+isStatic = true
+position = [ 4629.43359375, 0.0, -1095.3297119140625 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
 guid = '15063375736972026198'
 isStatic = true
 position = [ 4632.0, 0.0, -780.0 ]
@@ -14004,18 +13676,90 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269665255056699'
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15063406588356611114'
 isStatic = true
-position = [ 5250.0, 0.0, -1350.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+position = [ 4926.68505859375, 0.0, -888.5142822265625 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15063923267201518588'
+isStatic = true
+position = [ 4950.0, 0.0, -700.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15063948681679477590'
+isStatic = true
+position = [ 4936.93505859375, 0.0, -607.3177490234375 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15063981536615834396'
+isStatic = true
+position = [ 4933.5185546875, 0.0, -505.72430419921875 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15064001146988161018'
+isStatic = true
+position = [ 4950.0, 0.0, -400.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15094854743533244076'
+isStatic = true
+position = [ -900.0, 0.0, -600.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '15552269663410939131'
 isStatic = true
 position = [ -1050.0, 0.0, -1950.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269663502668717'
+isStatic = true
+position = [ 4350.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269663655840582'
+isStatic = true
+position = [ 750.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269663671195355'
+isStatic = true
+position = [ 750.0, 0.0, -1950.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269663685788695'
+isStatic = true
+position = [ 2250.0, 0.0, -1950.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -14029,6 +13773,14 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269663720561448'
+isStatic = true
+position = [ 4950.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
 guid = '15552269663731814662'
 isStatic = true
 position = [ 1650.0, 0.0, -1950.0 ]
@@ -14037,9 +13789,17 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
-guid = '15552269666800783099'
+guid = '15552269663764820475'
 isStatic = true
-position = [ 1950.0, 0.0, -1950.0 ]
+position = [ 2550.0, 0.0, -1950.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269663834544652'
+isStatic = true
+position = [ -150.0, 0.0, -1950.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -14060,14 +13820,6 @@ quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
 scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269666231552302'
-isStatic = true
-position = [ -1650.0, 0.0, 1650.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
-
-[[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '15552269664016435084'
 isStatic = true
@@ -14082,6 +13834,14 @@ isStatic = true
 position = [ 150.0, 0.0, 1650.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269664211584833'
+isStatic = true
+position = [ -1650.0, 0.0, 1050.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, 89.9999771118164, 0.0 ]
@@ -14117,6 +13877,30 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269664775784825'
+isStatic = true
+position = [ 4050.0, 0.0, -1950.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269664785281097'
+isStatic = true
+position = [ -1650.0, 0.0, -750.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269664814853427'
+isStatic = true
+position = [ 3450.0, 0.0, -1950.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
 guid = '15552269664844249418'
 isStatic = true
 position = [ 3150.0, 0.0, -1950.0 ]
@@ -14130,6 +13914,22 @@ isStatic = true
 position = [ -1350.0, 0.0, 1650.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269665059923173'
+isStatic = true
+position = [ 1050.0, 0.0, -1950.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269665255056699'
+isStatic = true
+position = [ 5250.0, 0.0, -1350.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -14149,11 +13949,35 @@ scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269665483110697'
+isStatic = true
+position = [ -450.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269665508244341'
+isStatic = true
+position = [ -1650.0, 0.0, -150.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
 guid = '15552269665588425780'
 isStatic = true
 position = [ 3450.0, 0.0, 1650.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269665608109720'
+isStatic = true
+position = [ 5250.0, 0.0, -1650.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -14164,18 +13988,34 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269671077292219'
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269665753053470'
 isStatic = true
-position = [ 5250.0, 0.0, 1050.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+position = [ 3750.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '15552269665851143200'
 isStatic = true
 position = [ -750.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269665862331067'
+isStatic = true
+position = [ -1650.0, 0.0, 450.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269665864449687'
+isStatic = true
+position = [ 3150.0, 0.0, 1650.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -14205,6 +14045,22 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269666030232734'
+isStatic = true
+position = [ -750.0, 0.0, -1950.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269666033463921'
+isStatic = true
+position = [ 4650.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
 guid = '15552269666036534990'
 isStatic = true
 position = [ -450.0, 0.0, -1950.0 ]
@@ -14221,9 +14077,105 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269666209488055'
+isStatic = true
+position = [ 1050.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269666227953625'
+isStatic = true
+position = [ -150.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269666231552302'
+isStatic = true
+position = [ -1650.0, 0.0, 1650.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269666381451897'
+isStatic = true
+position = [ 2850.0, 0.0, -1950.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269666501140730'
+isStatic = true
+position = [ 2250.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269666800783099'
+isStatic = true
+position = [ 1950.0, 0.0, -1950.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269666837563320'
+isStatic = true
+position = [ 2550.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269666842204690'
+isStatic = true
+position = [ -1650.0, 0.0, -1050.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269666873914537'
+isStatic = true
+position = [ 450.0, 0.0, -1950.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269666907710297'
+isStatic = true
+position = [ -1650.0, 0.0, 1350.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
 guid = '15552269666909202601'
 isStatic = true
 position = [ 1350.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269667268684488'
+isStatic = true
+position = [ 4050.0, 0.0, 1650.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '15552269667314960882'
+isStatic = true
+position = [ 1350.0, 0.0, -1950.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -14234,6 +14186,14 @@ isStatic = true
 position = [ -1650.0, 0.0, -1950.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269667506925198'
+isStatic = true
+position = [ -1650.0, 0.0, 750.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, 89.9999771118164, 0.0 ]
@@ -14256,5 +14216,45 @@ euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '15552269670461506147'
 isStatic = true
 position = [ 5250.0, 0.0, -150.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269670790329320'
+isStatic = true
+position = [ 5250.0, 0.0, 450.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ -179.99989318847656, -5.008955668017734e-06, -179.99989318847656 ]
+guid = '15552269671063842923'
+isStatic = true
+position = [ 5250.0, 0.0, 1650.0 ]
+quaternion = [ -4.371055695173709e-08, -9.099629778575036e-07, 1.0, -9.099629778575036e-07 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269671077292219'
+isStatic = true
+position = [ 5250.0, 0.0, 1050.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269671860513489'
+isStatic = true
+position = [ 5250.0, 0.0, 150.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269671886105635'
+isStatic = true
+position = [ 5250.0, 0.0, 1350.0 ]
 quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
 scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
