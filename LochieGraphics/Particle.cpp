@@ -10,17 +10,25 @@
 
 std::random_device Particle::random = {};
 
-Particle::Particle(unsigned int _count, float _lifetime, Shader* _shader, Texture* _texture, glm::vec3 startingPos) :
+Particle::Particle(unsigned int _count, float _lifetime, Shader* _shader, Texture* _texture, glm::vec3 startingPos, float scaleDelta) :
 	count(_count),
 	lifetime(_lifetime),
 	shader(_shader),
 	texture(_texture),
 	initialised(false)
 {
-	positions.assign(count, glm::vec4(startingPos.x, startingPos.y, startingPos.z, 0.0f));
+	positions.assign(count, glm::vec4(startingPos.x, startingPos.y, startingPos.z, sizeStart));
 	velocities.resize(count);
+	scales.resize(count);
+	for (int i = 0; i < count; i++)
+	{
+		std::uniform_real_distribution<float> distribution(-scaleDelta, scaleDelta);
+		scales.at(i) = distribution(random);
+	}
 	glm::quat rot = glm::quat(glm::vec3(45.5f, 215.0f, 0.0f)  * PI / 180.0f);
 	model = glm::mat4_cast(rot);
+	lifeSpan = lifetime;
+	colourOverTime = texture;
 }
 
 void Particle::Spread()
@@ -37,7 +45,7 @@ void Particle::Explode()
 	{
 		std::uniform_real_distribution<float> distribution(-10.0f, 10.0f);
 
-		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f }) * 0.5f;
+		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f } + velEncouragement) * 0.5f;
 		if (glm::isnan(i.x)) {
 			i = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		}
@@ -46,7 +54,7 @@ void Particle::Explode()
 	{
 		std::uniform_real_distribution<float> distribution(-10.0f, 10.0f);
 
-		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f }) * 0.5f;
+		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f } + velEncouragement) * 0.5f;
 		if (glm::isnan(i.x)) {
 			i = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		}
@@ -65,7 +73,7 @@ void Particle::Reset()
 {
 	for (auto& i : positions)
 	{
-		i = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		i = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 	for (auto& i : velocities)
 	{
@@ -123,7 +131,10 @@ void Particle::Update(float delta)
 {
 	for (size_t i = 0; i < count; i++)
 	{
-		positions.at(i) += velocities.at(i);
+
+		positions.at(i) += velocities.at(i) + glm::vec4{0.0f, gravity, 0.0f, 0.0f};
+		positions.at(i).w += (sizeEnd - (sizeStart + scales.at(i))) * delta /lifeSpan;
+		std::cout << positions.at(i).w << std::endl;
 	}
 	lifetime -= delta;
 }
@@ -139,8 +150,11 @@ void Particle::Draw()
 	
 	shader->setMat4("model", model);
 	texture->Bind(1);
+	colourOverTime->Bind(2);
+	shader->setSampler("colourOverTime", 2);
 	shader->setSampler("material.albedo", 1);
 	shader->setFloat("lifeTime", lifetime);
+	shader->setFloat("lifeSpan", lifeSpan);
 	shader->setVec3("material.colour", colour);
 
 	glBindVertexArray(quadVAO);

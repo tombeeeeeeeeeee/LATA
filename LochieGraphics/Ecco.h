@@ -88,5 +88,5 @@ private:
 	float lerpForwardAni = 0.0f;
 	//TESTING VALUES
 	bool speedBoostInDirectionOfBody = true;
-
+	glm::vec3 headSpot;
 };

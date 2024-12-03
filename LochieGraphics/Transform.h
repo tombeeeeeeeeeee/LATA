@@ -79,7 +79,7 @@ public:
 	);
 
 	glm::mat4 getLocalMatrix() const;
-	void setLocalMatrix(const glm::mat4& m);
+	void setLocalMatrix(const glm::mat4& m, glm::vec3 posDelta = {0.0f,0.0f,0.0f}, float scaleDelta = 0.0f);
 	glm::mat4 getGlobalMatrix() const;
 	// Changes the local matrix to match the given global matrix
 	void setGlobalMatrix(const glm::mat4& m);
