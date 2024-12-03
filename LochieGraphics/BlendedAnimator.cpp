@@ -34,7 +34,7 @@ void BlendedAnimator::SwitchToAnimation(Animation* animation)
 {
     otherCurrentAnimation = currentAnimation;
     otherCurrentAnimationGUID = currentAnimationGUID;
-    currentTimeOther = currentTime;
+    currentTimeOther = 0.0f;
     loopOtherCurrent = loopCurrent;
     PlayAnimation(animation);
 }

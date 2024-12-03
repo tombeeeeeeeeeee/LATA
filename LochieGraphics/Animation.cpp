@@ -49,7 +49,9 @@ void Animation::Load()
 
 	// Get animation info from the aiAnimation in the scene
 	aiAnimation* animation = scene->mAnimations[0];
-	duration = (float)animation->mDuration;
+	// TODO: Perhaps do this in another way
+	// Minus a single millisecond as the being at end of the duration can cause visual glitches
+	duration = (float)animation->mDuration - 0.001f;
 	ticksPerSecond = (float)animation->mTicksPerSecond;
 
 	//aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
