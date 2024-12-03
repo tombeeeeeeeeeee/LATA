@@ -11,6 +11,7 @@
 #include "SceneManager.h"
 #include "Directional2dAnimator.h"
 #include "RenderSystem.h"
+#include "Model.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
@@ -246,6 +247,18 @@ bool Ecco::Update(
 		animationAmount += 0.5;
 		lerpForwardAni = Utilities::Lerp(lerpForwardAni, animationAmount, 0.1f);
 		animator->downUpLerpAmount = lerpForwardAni;
+
+		//animator.
+		Model* model = animator->getAnimation()->model;
+		
+		glm::mat4 mat;
+		auto search = model->boneInfoMap.find("Waist_JNT");
+		BoneInfo* boneInfo = &search->second;
+		mat = animator->getFinalBoneMatrices().at(boneInfo->ID);
+		if (transform.getChildren().size() > 2) 
+		{
+			transform.getChildren()[2]->setLocalMatrix(mat, {0.0f, -7.0f, 2.0f}, 0.05f);
+		}
 	}
 	lastFrameVelocity = rigidBody.vel;
 

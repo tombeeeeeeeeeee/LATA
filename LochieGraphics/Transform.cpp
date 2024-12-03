@@ -155,13 +155,13 @@ glm::mat4 Transform::getLocalMatrix() const
 	return translation * rot * scaling;
 }
 
-void Transform::setLocalMatrix(const glm::mat4& m)
+void Transform::setLocalMatrix(const glm::mat4& m, glm::vec3 posDelta, float scaleDelta)
 {
 	glm::vec3 newPos{}, newRot{}, newScale{};
 	// TODO: Use own function
 	ImGuizmo::DecomposeMatrixToComponents(&m[0][0], &newPos.x, &newRot.x, &newScale.x);
-	position = newPos;
-	scale = newScale;
+	position = newPos + posDelta;
+	scale = newScale + scaleDelta;
 	setEulerRotation(newRot); // setting the rotation updates the matrices
 }
 

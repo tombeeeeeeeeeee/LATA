@@ -10,7 +10,7 @@ uniform mat4 model;
 uniform mat4 vp;
 
 struct Particle {
-	vec3 pos;
+	vec4 pos;
 };
 
 layout(std430, binding = 3) buffer Particles
@@ -21,6 +21,11 @@ layout(std430, binding = 3) buffer Particles
 void main()
 {	
 	TexCoord = aTexCoord;
-	gl_Position = vp * vec4(vec3(model * vec4(aPos, 1.0)) + data[gl_InstanceID].pos, 1.0);
+	mat4 scale = mat4(0.0);
+	scale[0][0] = data[gl_InstanceID].pos.w;
+	scale[1][1] = data[gl_InstanceID].pos.w;
+	scale[2][2] = data[gl_InstanceID].pos.w;
+	scale[3][3] = 1.0;
+	gl_Position = vp * vec4(vec3(scale * model * vec4(aPos, 1.0)) + data[gl_InstanceID].pos.rgb, 1.0);
 	
 }
