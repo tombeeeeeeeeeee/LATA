@@ -45,7 +45,7 @@ void Particle::Explode()
 	{
 		std::uniform_real_distribution<float> distribution(-10.0f, 10.0f);
 
-		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f } + velEncouragement) * 0.5f;
+		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f } + 10.0f * velEncouragement) * 0.5f;
 		if (glm::isnan(i.x)) {
 			i = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		}
@@ -54,7 +54,7 @@ void Particle::Explode()
 	{
 		std::uniform_real_distribution<float> distribution(-10.0f, 10.0f);
 
-		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f } + velEncouragement) * 0.5f;
+		i += explodeStrength * glm::normalize(glm::vec4{ distribution(random), distribution(random), distribution(random), 0.0f } + 10.0f * velEncouragement) * 0.5f;
 		if (glm::isnan(i.x)) {
 			i = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		}
@@ -132,7 +132,7 @@ void Particle::Update(float delta)
 	for (size_t i = 0; i < count; i++)
 	{
 		positions.at(i) += velocities.at(i) + glm::vec4{0.0f, gravity, 0.0f, 0.0f};
-		positions.at(i).w += (sizeEnd - (sizeStart + scales.at(i))) * delta /lifeSpan;
+		positions.at(i).w = Utilities::Lerp(sizeStart + scales.at(i), sizeEnd, 1.0f - lifetime/lifeSpan);
 	}
 	lifetime -= delta;
 }

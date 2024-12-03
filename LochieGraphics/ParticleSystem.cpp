@@ -41,7 +41,7 @@ void ParticleSystem::Draw(std::vector<Particle*>& particles)
 	}
 }
 
-Particle* ParticleSystem::AddParticle(unsigned int _count, float _lifetime, Texture* _texture, glm::vec3 startingPos)
+Particle* ParticleSystem::AddParticle(unsigned int _count, float _lifetime, Texture* _texture, glm::vec3 startingPos, float scaleDelta)
 {
 	particles.emplace_back(new Particle(_count, _lifetime, shader, _texture, startingPos));
 	particles.back()->Initialise();
