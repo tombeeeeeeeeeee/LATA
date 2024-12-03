@@ -132,51 +132,27 @@ void LevelEditor::Start()
 	ground = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
 
 	syncSo = new SceneObject(this, "Sync");
-	syncAnimatorSo = new SceneObject(this, "Sync Model and Animator");
-	syncAnimatorSo->transform()->setParent(syncSo->transform());
-	SceneObject* syncGunSo = new SceneObject(this, "Sync Gun");
-	syncGun = syncGunSo->transform();
+	syncSo->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(2091576977596946314ull));
+	auto syncChildren = syncSo->transform()->getChildren();
+	if (syncChildren.size() > 0) {
+		syncAnimatorSo = syncChildren.front()->so;
+		if (syncChildren.size() > 1) {
+			syncGun = syncChildren.at(1);
+		}
+		else {
+			syncGun = nullptr;
+		}
+	}
+	else {
+		syncAnimatorSo = nullptr;
+		syncGun = nullptr;
+	}
+	sync->Start(syncAnimatorSo);
 	eccoSo = new SceneObject(this, "Ecco");
-	sync->GUID = syncSo->GUID;
-	ecco->GUID = eccoSo->GUID;
-	syncSo->transform()->setEulerRotation({0.0f, 0.0f, 0.0f});
-
-	RigidBody* hRb = new RigidBody();
-	hRb->setMass(1.0f);
-	hRb->addCollider({ new PolygonCollider({{0.0f, 0.0f}}, syncRadius, CollisionLayers::sync) });
-	hRb->setMomentOfInertia(5.0f);
-
-	RigidBody* rRb = new RigidBody();
-	float eccoColliderSize = 75.0f;
-	rRb->addCollider({ new PolygonCollider(
-		{
-			{eccoColliderSize, eccoColliderSize},
-			{eccoColliderSize, -eccoColliderSize},
-			{-eccoColliderSize, -eccoColliderSize},
-			{-eccoColliderSize, eccoColliderSize},
-		}, 0.0f, CollisionLayers::ecco) }
-	);
-	rRb->setMass(0.1f);
-	rRb->setMomentOfInertia(5.0f);
-
-	syncSo->transform()->setPosition({ 1.0f,0.0f,1.0f });
-
-	input.Initialise();
-
-	syncSo->setRigidBody(hRb);
-	eccoSo->setRigidBody(rRb);
-
-	hRb = &rigidBodies[sync->GUID];
-	rRb = &rigidBodies[ecco->GUID];
-	syncSo->setSync(sync);
-	eccoSo->setEcco(ecco);
-	ecco->wheelDirection = { eccoSo->transform()->left().x, eccoSo->transform()->left().y };
+	eccoSo->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(2091576976424546894ull));
 
 	gameCamSystem.cameraPositionDelta = { -150.0f, 100.0f, 150.0f };
 
-	eccoSo->setRenderer(new ModelRenderer(ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_EccoRotated" + Paths::modelExtension), (unsigned long long)0));
-
-	sync->Start(syncAnimatorSo);
 
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 
