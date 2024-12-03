@@ -153,6 +153,9 @@ bool Sync::Update(
 
 	if (glm::length(move) > moveDeadZone)
 	{
+		if (glm::length(move) > 1.0f) {
+			move = glm::normalize(move);
+		}
 		float c = cosf(cameraAngleOffset * PI / 180.0f);
 		float s = sinf(cameraAngleOffset * PI / 180.0f);
 		move = {

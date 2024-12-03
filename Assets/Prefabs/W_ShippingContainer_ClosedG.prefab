@@ -19,7 +19,7 @@ prefabStatus = 1
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '7418878961649649092'
 isStatic = true
-position = [ 3953.73291015625, 0.0, -1547.54443359375 ]
+position = [ 3950.0, 0.0, -1550.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -27,10 +27,13 @@ scale = [ 1.0, 1.0, 1.0 ]
 children = []
 
     [children.modelRenderer]
+    drawSingleMesh = false
     guid = '7418878960837586518'
     materialTint = [ 1.0, 1.0, 1.0 ]
     materials = [ '1822012501052853337', '1820008414540500919' ]
+    meshIndexToDraw = '0'
     modelGuid = '7289854778488251302'
+    rendersShadows = true
 
     [children.sceneObject]
     children = []
