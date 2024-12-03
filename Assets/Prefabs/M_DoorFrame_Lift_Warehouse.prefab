@@ -1,10 +1,11 @@
-children = []
-
 [modelRenderer]
+drawSingleMesh = false
 guid = '12472561450565224966'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819', '1766071748038532778' ]
+meshIndexToDraw = '0'
 modelGuid = '12471765937523797163'
+rendersShadows = true
 
 [rigidBody]
 accel = [ 0.0, 0.0 ]
@@ -43,7 +44,7 @@ vel = [ 0.0, 0.0 ]
     verts = [ [ 150.0, -65.0 ], [ 150.0, -275.0 ], [ -150.0, -275.0 ], [ -150.0, -65.0 ] ]
 
 [sceneObject]
-children = []
+children = [ '9937928391738571252' ]
 guid = '12472561450565224966'
 name = 'M_DoorFrame_Lift_Warehouse'
 parent = '0'
@@ -62,3 +63,115 @@ isStatic = true
 position = [ 3200.0, 0.0, 750.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+
+    [children.modelRenderer]
+    drawSingleMesh = false
+    guid = '9937928391738571252'
+    materialTint = [ 1.0, 1.0, 1.0 ]
+    materials = [ '9920200978339208425', '9920200978339208425' ]
+    meshIndexToDraw = '0'
+    modelGuid = '9920718423721739425'
+    rendersShadows = true
+
+    [children.sceneObject]
+    children = [ '9937928391983702319', '9937928394314645770', '9937928395083016033' ]
+    guid = '9937928391738571252'
+    name = 'SM_Lift'
+    parent = '12472561450565224966'
+    parts = 2
+    prefabBase = '9929051907878898439'
+    prefabStatus = 2
+
+    [children.transform]
+    euler = [ -0.0, -0.0, -0.0 ]
+    guid = '9937928391738571252'
+    isStatic = true
+    position = [ 0.0, 0.0, 0.0 ]
+    quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]
+
+    [[children.children]]
+    children = []
+
+        [children.children.collider]
+        collisionLayer = 1
+        guid = '9937928391983702319'
+        isTrigger = false
+        radius = 0.0
+        type = 1
+        verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+
+        [children.children.sceneObject]
+        children = []
+        guid = '9937928391983702319'
+        name = 'M_Wall_Office'
+        parent = '9937928391738571252'
+        parts = 32
+        prefabBase = '9936322573322852744'
+        prefabStatus = 2
+
+        [children.children.transform]
+        euler = [ -0.0, 89.9999771118164, -0.0 ]
+        guid = '9937928391983702319'
+        isStatic = true
+        position = [ 150.0, 0.0, -150.0 ]
+        quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+        scale = [ 1.0, 1.0, 1.0 ]
+
+    [[children.children]]
+    children = []
+
+        [children.children.collider]
+        collisionLayer = 1
+        guid = '9937928394314645770'
+        isTrigger = false
+        radius = 0.0
+        type = 1
+        verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+
+        [children.children.sceneObject]
+        children = []
+        guid = '9937928394314645770'
+        name = 'M_Wall_Office'
+        parent = '9937928391738571252'
+        parts = 32
+        prefabBase = '9936308758089442872'
+        prefabStatus = 2
+
+        [children.children.transform]
+        euler = [ -0.0, 89.9999771118164, -0.0 ]
+        guid = '9937928394314645770'
+        isStatic = true
+        position = [ -150.0, 0.0, -150.0 ]
+        quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+        scale = [ 1.0, 1.0, 1.0 ]
+
+    [[children.children]]
+    children = []
+
+        [children.children.collider]
+        collisionLayer = 1
+        guid = '9937928395083016033'
+        isTrigger = false
+        radius = 0.0
+        type = 1
+        verts = [ [ 150.0, 13.0 ], [ 150.0, -13.0 ], [ -150.0, -13.0 ], [ -150.0, 13.0 ] ]
+
+        [children.children.sceneObject]
+        children = []
+        guid = '9937928395083016033'
+        name = 'M_Wall_Office'
+        parent = '9937928391738571252'
+        parts = 32
+        prefabBase = '9936298953919186135'
+        prefabStatus = 2
+
+        [children.children.transform]
+        euler = [ -0.0, -0.0, -0.0 ]
+        guid = '9937928395083016033'
+        isStatic = true
+        position = [ 0.0, 0.0, -300.0 ]
+        quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
+        scale = [ 1.0, 1.0, 1.0 ]

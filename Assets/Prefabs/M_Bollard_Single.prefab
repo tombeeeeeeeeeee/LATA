@@ -1,8 +1,11 @@
 [modelRenderer]
+drawSingleMesh = false
 guid = '1156743746146833032'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1822012501052853337' ]
+meshIndexToDraw = '0'
 modelGuid = '1821508158489599619'
+rendersShadows = true
 
 [sceneObject]
 children = [ '1156743744463646758' ]
@@ -40,10 +43,13 @@ children = []
     verts = [ [ 0.0, 0.0 ] ]
 
     [children.modelRenderer]
+    drawSingleMesh = false
     guid = '1156743744463646758'
     materialTint = [ 1.0, 1.0, 1.0 ]
     materials = [ '1822012501052853337' ]
+    meshIndexToDraw = '0'
     modelGuid = '17947608378028088616'
+    rendersShadows = true
 
     [children.sceneObject]
     children = []
