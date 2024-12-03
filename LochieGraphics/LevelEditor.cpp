@@ -108,6 +108,8 @@ LevelEditor::LevelEditor() :
 
 void LevelEditor::Start()
 {
+	input.Initialise();
+
 	directionalLight.colour = { 0.0f, 0.0f, 0.0f };
 	gameUiOverlay = ResourceManager::LoadTexture("images/gameUiOverlay.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
 	overlayMesh.InitialiseQuad(1.0f);
