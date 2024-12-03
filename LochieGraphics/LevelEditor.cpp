@@ -867,7 +867,10 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 		if ((float)i.first.second > max.y) { max.y = (float)i.first.second; };
 
 
-		i.second->renderer()->materials[0] = groundMaterial;
+		ModelRenderer* tileRenderer = i.second->renderer();
+		if (tileRenderer) {
+			tileRenderer->materials[0] = groundMaterial;
+		}
 	}
 	groundShader->Use();
 	groundShader->setVec2("worldMin", (min - glm::vec2(1, 1)) * gridSize);
