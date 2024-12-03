@@ -27,10 +27,13 @@ scale = [ 1.0, 1.0, 1.0 ]
 children = []
 
     [children.modelRenderer]
+    drawSingleMesh = false
     guid = '7400826464096756876'
     materialTint = [ 1.0, 1.0, 1.0 ]
     materials = [ '1822012501052853337', '1823128414540551919' ]
+    meshIndexToDraw = '0'
     modelGuid = '7289854778488251302'
+    rendersShadows = true
 
     [children.sceneObject]
     children = []

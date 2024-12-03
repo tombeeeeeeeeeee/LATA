@@ -24,7 +24,7 @@ vel = [ 0.0, 0.0 ]
     verts = [ [ 0.0, 0.0 ] ]
 
 [sceneObject]
-children = [ '2236905023818184222', '9636236716190966370' ]
+children = [ '2236905023818184222', '9938489986732075800', '9938561493637042058' ]
 guid = '2091576977596946314'
 name = 'Sync'
 parent = '0'
@@ -34,8 +34,10 @@ prefabStatus = 1
 
 [sync]
 barrelOffset = [ -37.0, 96.0, 12.0 ]
-eccoRefractionAngle = 110.0
-eccoRefractionCount = 11
+canPierceOverclock = true
+canPierceSnipe = false
+eccoRefractionAngle = 120.0
+eccoRefractionCount = 6
 enemyPierceCount = 99
 guid = '2091576977596946314'
 knockBackForceOverclock = 1200.0
@@ -52,8 +54,9 @@ overclockBeamColour = [ 0.28878819942474365, 1.0, 0.24019604921340942 ]
 overclockBeamLifeSpan = 1.5
 overclockBounceDamage = 199
 overclockChargeTime = 1.0
-overclockDamage = 200
+overclockDamage = 199
 overclockReboundCount = 0
+rainbowDamage = 200
 rainbowDimming = 2.5
 rainbowRebounding = false
 shotWidth = 12.0
@@ -83,7 +86,7 @@ stopSlowTime = 1.5
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '2091576977596946314'
 isStatic = false
-position = [ 2842.982177734375, -0.016998419538140297, -670.0262451171875 ]
+position = [ 2850.0, -0.016998419538140297, -650.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -100,9 +103,10 @@ children = []
     drawSingleMesh = false
     guid = '2236905023818184222'
     materialTint = [ 1.0, 1.0, 1.0 ]
-    materials = [ '2229847150575832532', '0' ]
+    materials = [ '2229847150575832532', '7419820402882411030' ]
     meshIndexToDraw = '0'
     modelGuid = '2234949598158592467'
+    rendersShadows = true
 
     [children.sceneObject]
     children = []
@@ -124,12 +128,32 @@ children = []
 [[children]]
 children = []
 
+    [children.sceneObject]
+    children = []
+    guid = '9938489986732075800'
+    name = 'Unnamed Scene Object'
+    parent = '2091576977596946314'
+    parts = 0
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.transform]
+    euler = [ 0.0, 0.0, 0.0 ]
+    guid = '9938489986732075800'
+    isStatic = true
+    position = [ 0.0, 0.0, 0.0 ]
+    quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+    scale = [ 1.0, 1.0, 1.0 ]
+
+[[children]]
+children = []
+
     [children.pointLight]
     canBeTriggered = false
     castsShadows = false
-    colour = [ 1.0, 1.0, 1.0 ]
+    colour = [ 0.5538160800933838, 1.0, 0.5489130020141602 ]
     effect = 0
-    guid = '9636236716190966370'
+    guid = '9938561493637042058'
     intensity = 4.0
     linear = 0.9571428298950195
     on = true
@@ -139,8 +163,8 @@ children = []
 
     [children.sceneObject]
     children = []
-    guid = '9636236716190966370'
-    name = 'Unnamed Scene Object'
+    guid = '9938561493637042058'
+    name = 'Light'
     parent = '2091576977596946314'
     parts = 16
     prefabBase = '0'
@@ -148,8 +172,8 @@ children = []
 
     [children.transform]
     euler = [ -0.0, -0.0, -0.0 ]
-    guid = '9636236716190966370'
+    guid = '9938561493637042058'
     isStatic = true
-    position = [ -0.0, 50.0, -0.0 ]
+    position = [ 0.0, 22.56317901611328, 0.0 ]
     quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
     scale = [ 1.0, 1.0, 1.0 ]

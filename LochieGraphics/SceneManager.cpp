@@ -154,6 +154,7 @@ SceneManager::SceneManager(Scene* _scene)
 	ResourceManager::ssaoBlur       = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "ssaoBlur"          + Paths::shaderExtension);
 	ResourceManager::prepass        = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "prepass"           + Paths::shaderExtension);
 	ResourceManager::super          = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "superDuper"        + Paths::shaderExtension);
+	ResourceManager::eccoFaceAnim   = ResourceManager::LoadShaderAsset(Paths::shadersSaveLocation + "eccoFaceAnim"      + Paths::shaderExtension);
 	std::cout << "Loaded main Shaders\n";
 
 	std::cout << "Loading Texture Assets...\n";

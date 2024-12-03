@@ -308,6 +308,62 @@ void LevelEditor::Update(float delta)
 	input.Update();
 
 
+	if (input.inputDevices.size() > 0)
+	{
+		float camera2DForwardLength = glm::length(glm::vec2(camera->transform.forward().x, camera->transform.forward().z));
+		float angle = 0.0f;
+		if (camera2DForwardLength == 0.0f)
+			angle = camera->transform.getEulerRotation().y;
+		else
+		{
+			angle = atan2f(camera->transform.forward().z, camera->transform.forward().x);
+			angle *= 180.0f / PI;
+			angle += 90.0f;
+		}
+
+		if (singlePlayer == 1)
+		{
+			syncHealPressed = sync->Update(
+				syncAnimatorSo,
+				*input.inputDevices[0],
+				*syncSo->transform(),
+				*syncSo->rigidbody(),
+				&renderSystem.lines,
+				delta,
+				angle,
+				syncGun
+			);
+		}
+		else
+		{
+			eccoHealPressed = ecco->Update(
+				*input.inputDevices[0],
+				*eccoSo->transform(),
+				*eccoSo->rigidbody(),
+				*eccoSo->health(),
+				delta,
+				angle
+			);
+		}
+		if (singlePlayer == 0)
+		{
+			if (input.inputDevices.size() > 1)
+			{
+				syncHealPressed = sync->Update(
+					syncAnimatorSo,
+					*input.inputDevices[1],
+					*syncSo->transform(),
+					*syncSo->rigidbody(),
+					&renderSystem.lines,
+					delta,
+					angle,
+					syncGun
+				);
+			}
+		}
+	}
+
+
 	if (inPlay)
 	{
 		healthSystem.Update(
@@ -376,61 +432,6 @@ void LevelEditor::Update(float delta)
 	if(doCollisions)
 		physicsSystem.CollisionCheckPhase(transforms, rigidBodies, colliders);
 
-	if (input.inputDevices.size() > 0)
-	{
-		float camera2DForwardLength = glm::length(glm::vec2( camera->transform.forward().x, camera->transform.forward().z ));
-		float angle = 0.0f;
-		if (camera2DForwardLength == 0.0f)
-			angle = camera->transform.getEulerRotation().y;
-		else
-		{
-			angle = atan2f(camera->transform.forward().z, camera->transform.forward().x);
-			angle *= 180.0f / PI;
-			angle += 90.0f;
-		}
-
-		if (singlePlayer == 1)
-		{
-			syncHealPressed = sync->Update(
-				syncAnimatorSo,
-				*input.inputDevices[0],
-				*syncSo->transform(),
-				*syncSo->rigidbody(),
-				&renderSystem.lines,
-				delta,
-				angle,
-				syncGun
-			);
-		}
-		else
-		{
-			eccoHealPressed = ecco->Update(
-				*input.inputDevices[0],
-				*eccoSo->transform(),
-				*eccoSo->rigidbody(),
-				*eccoSo->health(),
-				delta,
-				angle
-			);
-		}
-		if (singlePlayer == 0)
-		{
-			if (input.inputDevices.size() > 1)
-			{
-				syncHealPressed = sync->Update(
-					syncAnimatorSo,
-					*input.inputDevices[1],
-					*syncSo->transform(),
-					*syncSo->rigidbody(),
-					&renderSystem.lines,
-					delta,
-					angle,
-					syncGun
-				);
-			}
-		}
-	}
-
 	prevDied = died;
 	if (playerDied) {
 		died = true;
@@ -480,15 +481,8 @@ void LevelEditor::Draw(float delta)
 	);
 
 	if (inPlay) {
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBlendEquation(GL_FUNC_ADD);
-		glEnable(GL_BLEND);
 
-		overlayShader->Use();
-		gameUiOverlay->Bind(1);
-		overlayShader->setSampler("material.albedo", 1);
-		overlayMesh.Draw();
-
+		glDisable(GL_BLEND);
 		healthShader->Use();
 
 		ecco->boostUI.ApplyToShader(healthShader, ecco->getSpeedBoostCooldownPercent());
@@ -501,6 +495,17 @@ void LevelEditor::Draw(float delta)
 		healthBar.Draw();
 		healthSystem.abilityUI.ApplyToShader(healthShader, glm::clamp(healthSystem.timeSinceLastHealingAbility / healthSystem.healingAbilityCooldown, 0.0f, 1.0f));
 		healthBar.Draw();
+
+		glDepthFunc(GL_ALWAYS);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendEquation(GL_FUNC_ADD);
+		glEnable(GL_BLEND);
+
+		overlayShader->Use();
+		gameUiOverlay->Bind(1);
+		overlayShader->setSampler("material.albedo", 1);
+		overlayMesh.Draw();
+
 	}
 }
 

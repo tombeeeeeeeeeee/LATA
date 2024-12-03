@@ -28,7 +28,7 @@ public:
 
 	bool drawSingleMesh = false;
 	unsigned int meshIndexToDraw;
-
+	bool rendersShadows = true;
 	Animator* animator = nullptr;
 
 	std::vector<unsigned long long> materialGUIDs = {};

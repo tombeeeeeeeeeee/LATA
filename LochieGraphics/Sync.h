@@ -90,13 +90,16 @@ private:
 	float sniperBeamLifeSpan = 0.5f;
 	glm::vec3 sniperBeamColour = { 0.5f,0.5f,1.0f };
 	float knockBackForceSnipe = 10.0f;
+	bool canPierceSnipe = true;
 
 	int overclockDamage = 1;
+	int rainbowDamage = 1;
 	float overclockBeamLifeSpan = 1.0f;
 	glm::vec3 overclockBeamColour = { 1.0f,1.0f,0.5f };
 	int enemyPierceCount = 99;
 	int overclockReboundCount = 5;
 	float knockBackForceOverclock = 10.0f;
+	bool canPierceOverclock = true;
 
 	float eccoRefractionAngle = 30.0f;
 	int eccoRefractionCount = 5;

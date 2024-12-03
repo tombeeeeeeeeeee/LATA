@@ -7,7 +7,7 @@ type = '2'
 upAnimationGUID = '15148335964655446903'
 
 [ecco]
-boostDamage = 75
+boostDamage = 80
 boostKnockback = 2800.0
 boostWheelTurnInfluence = 25.0
 carMoveSpeed = 6000.0
@@ -30,7 +30,7 @@ speedBoostCooldown = 1.5
 speedBoostDuration = 0.15000000596046448
 speedBoostHPCost = 15
 speedBoostInDirectionOfBody = false
-speedDamage = 25
+speedDamage = 40
 speedKnockback = 2000.0
 speedReductionAfterDamaging = 450.0
 speedWheelTurnInfluence = 50.0
@@ -66,6 +66,7 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15449259407003476463', '15449352838481615396' ]
 meshIndexToDraw = '0'
 modelGuid = '2140790440003113620'
+rendersShadows = true
 
 [rigidBody]
 accel = [ 0.0, 0.0 ]
@@ -115,7 +116,7 @@ vel = [
     verts = [ [ 60.0, -100.0 ] ]
 
 [sceneObject]
-children = [ '2120176559991300301', '8456622609404298385' ]
+children = [ '2120176559991300301', '8456622609404298385', '9932971396798460196' ]
 guid = '2091576976424546894'
 name = 'Ecco'
 parent = '0'
@@ -127,7 +128,7 @@ prefabStatus = 1
 euler = [ -179.99932861328125, 37.87807846069336, -899.9984130859375 ]
 guid = '2091576976424546894'
 isStatic = false
-position = [ 1293.566162109375, 0.0, 1501.8006591796875 ]
+position = [ 1300.0, 0.0, 1500.0 ]
 quaternion = [ -0.32506024837493896, 1.119221906265011e-05, -0.944414496421814, 1.0601885378491716e-06 ]
 scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
 
@@ -150,7 +151,7 @@ children = []
     [children.sceneObject]
     children = []
     guid = '2120176559991300301'
-    name = 'Unnamed Scene Object'
+    name = 'Ecco Light'
     parent = '2091576976424546894'
     parts = 16
     prefabBase = '0'
@@ -175,7 +176,7 @@ children = []
     [children.sceneObject]
     children = []
     guid = '8456622609404298385'
-    name = 'Unnamed Scene Object'
+    name = 'Ecco Light'
     parent = '2091576976424546894'
     parts = 2048
     prefabBase = '0'
@@ -203,3 +204,41 @@ children = []
     position = [ 0.007605164777487516, 127.6583023071289, 31.603681564331055 ]
     quaternion = [ 0.9325461983680725, 0.36105072498321533, 6.73721700650276e-09, -1.412096963804288e-07 ]
     scale = [ 0.9999998807907104, 1.0000492334365845, 0.9999468922615051 ]
+
+[[children]]
+children = []
+
+    [children.modelRenderer]
+    drawSingleMesh = false
+    guid = '9932971396798460196'
+    materialTint = [ 1.0, 1.0, 1.0 ]
+    materials = [ '9558329198640248404' ]
+    meshIndexToDraw = '0'
+    modelGuid = '9554982897410321528'
+    rendersShadows = true
+
+    [children.sceneObject]
+    children = []
+    guid = '9932971396798460196'
+    name = 'Face'
+    parent = '2091576976424546894'
+    parts = 2
+    prefabBase = '0'
+    prefabStatus = 0
+
+    [children.transform]
+    euler = [
+        1.9639032622364994e-09,
+        3.769689849190026e-20,
+        -1.0997858179706554e-09
+    ]
+    guid = '9932971396798460196'
+    isStatic = true
+    position = [ 0.0009814453078433871, 2.5999999046325684, 20.09904670715332 ]
+    quaternion = [
+        1.0,
+        1.713828905181014e-11,
+        1.644837591387248e-22,
+        -9.59744176493027e-12
+    ]
+    scale = [ 1.0049999952316284, 1.0049999952316284, 1.0049999952316284 ]
