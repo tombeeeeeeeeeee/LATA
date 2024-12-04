@@ -105,17 +105,17 @@ void Sync::Start(SceneObject* sceneObjectWithAnimator)
 	animatorStateMachine.AddCondition(overclockCharge);
 	AnimationFinishedCondition* animationFinished = new AnimationFinishedCondition(AnimationFinishedCondition::Check::current);
 
-	State* idle = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncIdle" + Paths::animationExtension), true));
+	State* idle = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncIdle" + Paths::animationExtension), true, true));
 	animatorStateMachine.AddState(idle);
-	State* run = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncRun" + Paths::animationExtension), true));
+	State* run = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncRun" + Paths::animationExtension), true, true));
 	animatorStateMachine.AddState(run);
-	State* shootCharge = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootCharge" + Paths::animationExtension), false));
+	State* shootCharge = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootCharge" + Paths::animationExtension), false, true));
 	animatorStateMachine.AddState(shootCharge);
-	State* shootHold = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootHold" + Paths::animationExtension), true));
+	State* shootHold = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootHold" + Paths::animationExtension), true, false));
 	animatorStateMachine.AddState(shootHold);
-	State* shootSnipe = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootSnipe" + Paths::animationExtension), false));
+	State* shootSnipe = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootSnipe" + Paths::animationExtension), false, false));
 	animatorStateMachine.AddState(shootSnipe);
-	State* shootOverclock = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootOverclock" + Paths::animationExtension), false));
+	State* shootOverclock = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootOverclock" + Paths::animationExtension), false, false));
 	animatorStateMachine.AddState(shootOverclock);
 
 	State* start = idle;
