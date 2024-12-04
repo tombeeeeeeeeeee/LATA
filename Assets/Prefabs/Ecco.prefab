@@ -109,12 +109,12 @@ prefabBase = '2091576976424546894'
 prefabStatus = 1
 
 [transform]
-euler = [ -179.9993133544922, 39.967247009277344, -899.9984130859375 ]
+euler = [ -179.99929809570312, 40.173336029052734, -179.99835205078125 ]
 guid = '2091576976424546894'
 isStatic = false
 position = [ 2952.042724609375, 0.0, -315.3601989746094 ]
-quaternion = [ -0.3422921895980835, 1.1209738659090362e-05, -0.9383059144020081, 8.551519385946449e-07 ]
-scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
+quaternion = [ 0.3434411585330963, -1.1391960470064078e-05, 0.9391741752624512, -8.418842298851814e-07 ]
+scale = [ 0.995530903339386, 1.0, 0.995530903339386 ]
 
 [[children]]
 children = []
@@ -122,23 +122,23 @@ children = []
     [children.pointLight]
     canBeTriggered = false
     castsShadows = false
-    colour = [ 1.0, 1.0, 1.0 ]
+    colour = [ 0.2554348111152649, 0.46585577726364136, 1.0 ]
     effect = 0
     guid = '2120176559991300301'
-    intensity = 5.0
-    linear = 0.9571428298950195
+    intensity = 1.25
+    linear = 0.9142857193946838
     on = true
-    quadratic = 4.800000190734863
-    range = 1.0
+    quadratic = 4.300000190734863
+    range = 2.0
     triggerTag = ''
 
     [children.sceneObject]
     children = []
     guid = '2120176559991300301'
-    name = 'Ecco Light'
+    name = 'Ecco Base Light'
     parent = '2091576976424546894'
     parts = 16
-    prefabBase = '0'
+    prefabBase = '2120176559991300301'
     prefabStatus = 0
 
     [children.transform]
@@ -160,10 +160,10 @@ children = []
     [children.sceneObject]
     children = []
     guid = '8456622609404298385'
-    name = 'Ecco Light'
+    name = 'Ecco Front Light'
     parent = '2091576976424546894'
     parts = 2048
-    prefabBase = '0'
+    prefabBase = '8456622609404298385'
     prefabStatus = 0
 
     [children.spotlight]
@@ -207,13 +207,13 @@ children = []
     name = 'Face'
     parent = '2091576976424546894'
     parts = 2
-    prefabBase = '0'
+    prefabBase = '9932971396798460196'
     prefabStatus = 0
 
     [children.transform]
-    euler = [ -5.313757419586182, 10.410225868225098, -0.948540210723877 ]
+    euler = [ -8.2433500289917, 6.800557457609102e-06, 7.94126208347734e-06 ]
     guid = '9932971396798460196'
     isStatic = true
-    position = [ 3.4001619815826416, -6.613502502441406, 5.403831481933594 ]
-    quaternion = [ 0.9948064684867859, -0.045411787927150726, 0.0910029411315918, -0.004029267001897097 ]
-    scale = [ 1.0500001907348633, 1.0499999523162842, 1.0500001907348633 ]
+    position = [ -9.640934877097607e-07, -6.185356140136719, 7.829076766967773 ]
+    quaternion = [ 0.9974136352539062, -0.07187477499246597, 5.421160409468939e-08, 7.338683616353592e-08 ]
+    scale = [ 1.0500000715255737, 1.0499999523162842, 1.0500001907348633 ]
