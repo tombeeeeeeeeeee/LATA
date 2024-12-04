@@ -11,6 +11,8 @@ void ParticleSystem::Initialise(Shader* _shader)
 	healthParticleTexture = ResourceManager::LoadTexture(Paths::importTextureLocation + "healthParticle" + Paths::imageExtension, Texture::Type::count);
 	dustParticleTexture = ResourceManager::LoadTexture(Paths::importTextureLocation + "T_Dust_BaseColour.tga", Texture::Type::count);
 	sparkParticleTexture = ResourceManager::LoadTexture(Paths::importTextureLocation + "T_Sparks_BaseColour.tga", Texture::Type::count);
+	robotBits1ParticleTexture = ResourceManager::LoadTexture(Paths::importTextureLocation + "T_Screw_BaseColour.tga", Texture::Type::count);
+	robotBits2ParticleTexture = ResourceManager::LoadTexture(Paths::importTextureLocation + "T_RobotBit_BaseColour.tga", Texture::Type::count);
 }
 
 void ParticleSystem::Update(float delta)

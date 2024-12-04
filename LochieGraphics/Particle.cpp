@@ -130,7 +130,7 @@ void Particle::Update(float delta)
 {
 	for (size_t i = 0; i < count; i++)
 	{
-		positions.at(i) += velocities.at(i) + glm::vec4{0.0f, gravity, 0.0f, 0.0f};
+		positions.at(i) += velocities.at(i) - glm::vec4{0.0f, gravity, 0.0f, 0.0f};
 		positions.at(i).w = Utilities::Lerp(sizeStart + scales.at(i), sizeEnd, 1.0f - lifetime/lifeSpan);
 	}
 	lifetime -= delta;

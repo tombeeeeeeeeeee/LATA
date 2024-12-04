@@ -183,7 +183,30 @@ void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
 
 void EnemySystem::SpawnExplosion(glm::vec3 pos)
 {
+    SceneObject* explosion = new SceneObject(SceneManager::scene, "explosion");
+    explosion->transform()->setPosition(pos);
+    PointLight* point = new PointLight();
+    point->range = 1000.0f;
+    point->colour = {1.0f, 1.0f, 0.8f};
+    point->SetRange(1000.0f);
+    point->timeInType = 0.0f;
+    point->effect = PointLightEffect::Explosion;
+    point->castsShadows = true;
+    point->intensity = 500.0f;
+    explosion->setPointLight(point);
+    Particle* bolts = SceneManager::scene->particleSystem.AddParticle(10, 1.0f, SceneManager::scene->particleSystem.robotBits1ParticleTexture, pos, 0.5f);
+    bolts->gravity = 3.0f;
+    bolts->sizeStart = 1.0f;
+    bolts->sizeEnd = 1.0f;
+    bolts->explodeStrength = 4.0f;
+    bolts->Explode();
 
+    Particle* bits = SceneManager::scene->particleSystem.AddParticle(10, 1.0f, SceneManager::scene->particleSystem.robotBits2ParticleTexture, pos, 0.5f);
+    bits->gravity = 3.0f;
+    bits->sizeStart = 1.0f;
+    bits->sizeEnd = 1.0f;
+    bits->explodeStrength = 3.0f;
+    bits->Explode();
 }
 
 void EnemySystem::LineOfSightAndTargetCheck(
@@ -525,7 +548,11 @@ void EnemySystem::Steering(
 
 }
 
-    void EnemySystem::HealthCheck(std::unordered_map<unsigned long long, Enemy>& enemies, std::unordered_map<unsigned long long, Health>& healths)
+    void EnemySystem::HealthCheck(
+        std::unordered_map<unsigned long long, Enemy>& enemies,
+        std::unordered_map<unsigned long long, Transform>& tranforms,
+        std::unordered_map<unsigned long long, Health>& healths
+    )
     {
         for (auto& enemyPair : enemies)
         {
@@ -536,6 +563,7 @@ void EnemySystem::Steering(
             {
                 enemyTags.at(enemyPair.second.tag)--;
                 SceneManager::scene->DeleteSceneObjectAndChildren(enemyPair.first);
+                SpawnExplosion(tranforms[enemyPair.first].getGlobalPosition());
             }
         }
     }
@@ -664,7 +692,7 @@ void EnemySystem::Update   (
             delta
         );
         
-        HealthCheck(enemies, healths);
+        HealthCheck(enemies, transforms, healths);
         
         for (auto& triggerTag : enemyTags)
         {

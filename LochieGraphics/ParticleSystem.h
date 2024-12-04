@@ -11,6 +11,8 @@ public:
 	Texture* healthParticleTexture;
 	Texture* dustParticleTexture;
 	Texture* sparkParticleTexture;
+	Texture* robotBits1ParticleTexture;
+	Texture* robotBits2ParticleTexture;
 
 	int nextParticleCount = 10;
 	float nextParticleLifetime = 4.0f;
