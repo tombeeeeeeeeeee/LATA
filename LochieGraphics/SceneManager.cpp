@@ -256,6 +256,7 @@ void SceneManager::Update()
 {
 	float currentFrame = static_cast<float>(glfwGetTime());
 	deltaTime = currentFrame - lastFrame;
+	deltaTime = fminf(0.018f, deltaTime);
 	lastFrame = currentFrame;          
 	frameTimes.Push(deltaTime);
 
