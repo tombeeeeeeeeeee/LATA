@@ -37,25 +37,25 @@ speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
 turningCircleScalar = 0.15000000596046448
 turningCircleScalarBoosting = 0.05999999865889549
-wheelDirection = [ 0.48051777482032776, -0.8769848942756653 ]
+wheelDirection = [ 0.644957423210144, -0.7642184495925903 ]
 wheelTurnSpeed = 4.400000095367432
 
     [ecco.boostUI]
-    backgroundColour = [ 0.21960784494876862, 0.3907727301120758, 0.4274509847164154 ]
-    foregroundColour = [ 0.4503093361854553, 0.8141592741012573, 0.8034577369689941 ]
+    backgroundColour = [ 0.45098039507865906, 0.3960784375667572, 0.19607843458652496 ]
+    foregroundColour = [ 1.0, 0.7058823704719543, 0.0 ]
     horizontal = true
-    offset = [ 0.6625000238418579, 0.8250000476837158 ]
-    scale = [ 0.14750000834465027, 0.034999966621398926 ]
+    offset = [ 0.6625000238418579, 0.7984999418258667 ]
+    scale = [ 0.14750000834465027, 0.02950003743171692 ]
 
     [ecco.healthUI]
-    backgroundColour = [ 0.21960784494876862, 0.32156863808631897, 0.4274509847164154 ]
-    foregroundColour = [ 0.250980406999588, 0.4901960790157318, 1.0 ]
+    backgroundColour = [ 0.21960784494876862, 0.3686274588108063, 0.43529412150382996 ]
+    foregroundColour = [ 0.1764705926179886, 0.6431372761726379, 0.886274516582489 ]
     horizontal = true
-    offset = [ 0.637499988079071, 0.8999999761581421 ]
-    scale = [ 0.26249998807907104, 0.03999999165534973 ]
+    offset = [ 0.637499988079071, 0.8840000033378601 ]
+    scale = [ 0.26249998807907104, 0.04500001668930054 ]
 
 [health]
-currHealth = 200
+currHealth = 185
 guid = '2091576976424546894'
 maxHealth = 200
 
@@ -79,8 +79,8 @@ isStatic = false
 netDepen = [ 0.0, 0.0 ]
 netForce = [ 0.0, 0.0 ]
 vel = [
-    -3.559844092045189e-24,
-    -4.739032978739105e-24
+    2.0165032853215032e-23,
+    -2.3893755893419482e-23
 ]
 
     [[rigidBody.colliders]]
@@ -109,12 +109,12 @@ prefabBase = '2091576976424546894'
 prefabStatus = 1
 
 [transform]
-euler = [ -179.99932861328125, 37.87807846069336, -899.9984130859375 ]
+euler = [ -179.99929809570312, 40.173336029052734, -179.99835205078125 ]
 guid = '2091576976424546894'
 isStatic = false
-position = [ 1300.0, 0.0, 1500.0 ]
-quaternion = [ -0.32506024837493896, 1.119221906265011e-05, -0.944414496421814, 1.0601885378491716e-06 ]
-scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
+position = [ 2952.042724609375, 0.0, -315.3601989746094 ]
+quaternion = [ 0.3434411585330963, -1.1391960470064078e-05, 0.9391741752624512, -8.418842298851814e-07 ]
+scale = [ 0.995530903339386, 1.0, 0.995530903339386 ]
 
 [[children]]
 children = []
@@ -122,23 +122,23 @@ children = []
     [children.pointLight]
     canBeTriggered = false
     castsShadows = false
-    colour = [ 1.0, 1.0, 1.0 ]
+    colour = [ 0.2554348111152649, 0.46585577726364136, 1.0 ]
     effect = 0
     guid = '2120176559991300301'
-    intensity = 5.0
-    linear = 0.9571428298950195
+    intensity = 1.25
+    linear = 0.9142857193946838
     on = true
-    quadratic = 4.800000190734863
-    range = 1.0
+    quadratic = 4.300000190734863
+    range = 2.0
     triggerTag = ''
 
     [children.sceneObject]
     children = []
     guid = '2120176559991300301'
-    name = 'Ecco Light'
+    name = 'Ecco Base Light'
     parent = '2091576976424546894'
     parts = 16
-    prefabBase = '0'
+    prefabBase = '2120176559991300301'
     prefabStatus = 0
 
     [children.transform]
@@ -160,10 +160,10 @@ children = []
     [children.sceneObject]
     children = []
     guid = '8456622609404298385'
-    name = 'Ecco Light'
+    name = 'Ecco Front Light'
     parent = '2091576976424546894'
     parts = 2048
-    prefabBase = '0'
+    prefabBase = '8456622609404298385'
     prefabStatus = 0
 
     [children.spotlight]
@@ -199,7 +199,7 @@ children = []
     materials = [ '9558329198640248404' ]
     meshIndexToDraw = '0'
     modelGuid = '9554982897410321528'
-    rendersShadows = true
+    rendersShadows = false
 
     [children.sceneObject]
     children = []
@@ -207,18 +207,13 @@ children = []
     name = 'Face'
     parent = '2091576976424546894'
     parts = 2
-    prefabBase = '0'
+    prefabBase = '9932971396798460196'
     prefabStatus = 0
 
     [children.transform]
-    euler = [ 1.8238573151752036e-10, -1.7075474261218915e-06, 1.3027551259980896e-10 ]
+    euler = [ -8.243352890014648, 2.3298764062928967e-05, -6.888902134960517e-06 ]
     guid = '9932971396798460196'
     isStatic = true
-    position = [ -0.01269464660435915, 4.359301328804577e-07, -22.36419677734375 ]
-    quaternion = [
-        1.0,
-        1.5916157281026244e-12,
-        -1.4901162970204496e-08,
-        1.136868268795943e-12
-    ]
-    scale = [ 1.0, 1.0, 1.0 ]
+    position = [ 2.0958618733857293e-06, -6.1853485107421875, 7.829076766967773 ]
+    quaternion = [ 0.9974136352539062, -0.07187479734420776, 2.0711510728688154e-07, -4.5347931632022664e-08 ]
+    scale = [ 1.0499999523162842, 1.0499999523162842, 1.0500000715255737 ]

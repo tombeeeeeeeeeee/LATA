@@ -37,18 +37,18 @@ wheelDirection = [ 0.644957423210144, -0.7642184495925903 ]
 wheelTurnSpeed = 4.400000095367432
 
     [Ecco.boostUI]
-    backgroundColour = [ 0.21960784494876862, 0.3907727301120758, 0.4274509847164154 ]
-    foregroundColour = [ 0.4503093361854553, 0.8141592741012573, 0.8034577369689941 ]
+    backgroundColour = [ 0.45098039507865906, 0.3960784375667572, 0.19607843458652496 ]
+    foregroundColour = [ 1.0, 0.7058823704719543, 0.0 ]
     horizontal = true
-    offset = [ 0.6625000238418579, 0.8250000476837158 ]
-    scale = [ 0.14750000834465027, 0.034999966621398926 ]
+    offset = [ 0.6625000238418579, 0.7984999418258667 ]
+    scale = [ 0.14750000834465027, 0.02950003743171692 ]
 
     [Ecco.healthUI]
-    backgroundColour = [ 0.21960784494876862, 0.32156863808631897, 0.4274509847164154 ]
-    foregroundColour = [ 0.250980406999588, 0.4901960790157318, 1.0 ]
+    backgroundColour = [ 0.21960784494876862, 0.3686274588108063, 0.43529412150382996 ]
+    foregroundColour = [ 0.1764705926179886, 0.6431372761726379, 0.886274516582489 ]
     horizontal = true
-    offset = [ 0.637499988079071, 0.8999999761581421 ]
-    scale = [ 0.26249998807907104, 0.03999999165534973 ]
+    offset = [ 0.637499988079071, 0.8840000033378601 ]
+    scale = [ 0.26249998807907104, 0.04500001668930054 ]
 
 [Sync]
 barrelOffset = [ -37.0, 96.0, 12.0 ]
@@ -87,18 +87,24 @@ startSlowTime = 0.5
 stopSlowTime = 1.5
 
     [Sync.chargeUI]
-    backgroundColour = [ 0.12156862765550613, 0.3529411852359772, 0.10196078568696976 ]
-    foregroundColour = [ 0.10196078568696976, 1.0, 0.0 ]
+    backgroundColour = [ 0.27843138575553894, 0.4274509847164154, 0.21568627655506134 ]
+    foregroundColour = [ 0.34117648005485535, 0.8235294222831726, 0.14509804546833038 ]
     horizontal = true
-    offset = [ -0.6574999690055847, 0.8159999847412109 ]
-    scale = [ 0.14249998331069946, 0.03799998760223389 ]
+    offset = [ -0.6574999690055847, 0.8000000715255737 ]
+    scale = [ 0.14249998331069946, 0.03299996256828308 ]
 
     [Sync.healthUI]
-    backgroundColour = [ 0.42352941632270813, 0.003921568859368563, 0.06666667014360428 ]
-    foregroundColour = [ 0.9019607901573181, 0.13725490868091583, 0.16470588743686676 ]
+    backgroundColour = [ 0.43529412150382996, 0.2078431397676468, 0.2078431397676468 ]
+    foregroundColour = [ 0.95686274766922, 0.08627451211214066, 0.08627451211214066 ]
     horizontal = true
-    offset = [ -0.6399999856948853, 0.8999999761581421 ]
-    scale = [ 0.2630000114440918, 0.034999996423721313 ]
+    offset = [ -0.6399999856948853, 0.8831499814987183 ]
+    scale = [ 0.2630000114440918, 0.040850043296813965 ]
+
+[[Animators]]
+currentAnimationGUID = '15148335964655264906'
+guid = '2236905023818184222'
+otherCurrentAnimationGUID = '15148335964655264906'
+type = '1'
 
 [[Animators]]
 currentAnimationGUID = '15148335964655446906'
@@ -107,12 +113,6 @@ guid = '2091576976424546894'
 rightAnimationGUID = '15148335964655446905'
 type = '2'
 upAnimationGUID = '15148335964655446903'
-
-[[Animators]]
-currentAnimationGUID = '15148335964655264906'
-guid = '2236905023818184222'
-otherCurrentAnimationGUID = '15148335964655264901'
-type = '1'
 
 [[Bollards]]
 guid = '15094854743533244076'
@@ -1227,7 +1227,7 @@ triggerTag = ''
 [[Doors]]
 amountToMove = 85.0
 closed = true
-guid = '12472509190243971103'
+guid = '264497878890832668'
 ignoresFalse = false
 left = true
 timeToClose = 0.5
@@ -1237,7 +1237,7 @@ triggerTag = ''
 [[Doors]]
 amountToMove = 85.0
 closed = true
-guid = '264497878890832668'
+guid = '12472509190243971103'
 ignoresFalse = false
 left = true
 timeToClose = 0.5
@@ -1295,14 +1295,14 @@ guid = '186578577384937060'
 levelToLoad = 'BF2'
 
 [[Healths]]
-currHealth = 185
-guid = '2091576976424546894'
-maxHealth = 200
-
-[[Healths]]
 currHealth = 100
 guid = '2091576977596946314'
 maxHealth = 100
+
+[[Healths]]
+currHealth = 185
+guid = '2091576976424546894'
+maxHealth = 200
 
 [[Plates]]
 actuationAmount = 7.0
@@ -1321,50 +1321,32 @@ triggerTag = '555'
 [[PointLights]]
 canBeTriggered = false
 castsShadows = false
-colour = [ 1.0, 1.0, 1.0 ]
+colour = [ 0.5538160800933838, 1.0, 0.5489130020141602 ]
 effect = 0
-guid = '2120176559991300301'
-intensity = 5.0
-linear = 0.9571428298950195
+guid = '9938561493637042058'
+intensity = 1.0
+linear = 0.9357143044471741
 on = true
-quadratic = 4.800000190734863
-range = 1.0
+quadratic = 4.550000190734863
+range = 1.5
 triggerTag = ''
 
 [[PointLights]]
 canBeTriggered = false
 castsShadows = false
-colour = [ 0.5538160800933838, 1.0, 0.5489130020141602 ]
+colour = [ 0.2554348111152649, 0.46585577726364136, 1.0 ]
 effect = 0
-guid = '9938561493637042058'
-intensity = 4.0
-linear = 0.9571428298950195
+guid = '2120176559991300301'
+intensity = 1.25
+linear = 0.9142857193946838
 on = true
-quadratic = 4.800000190734863
-range = 1.0
+quadratic = 4.300000190734863
+range = 2.0
 triggerTag = ''
 
 [[Renderers]]
 drawSingleMesh = false
 guid = '6241743869829521065'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '12425480795558291604'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '12425484019035348259'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1382,7 +1364,16 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241710190130963270'
+guid = '12425484019035348259'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12425480795558291604'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1396,6 +1387,24 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1822012501052853337' ]
 meshIndexToDraw = '0'
 modelGuid = '1821508158489599619'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241710190130963270'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '15063948681679477590'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '15038846507057049718' ]
+meshIndexToDraw = '0'
+modelGuid = '15060590053292903953'
 rendersShadows = true
 
 [[Renderers]]
@@ -1418,11 +1427,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15063948681679477590'
+guid = '1768475223210357952'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
+materials = [ '1777712016902188911' ]
 meshIndexToDraw = '0'
-modelGuid = '15060590053292903953'
+modelGuid = '12471801436435551572'
 rendersShadows = true
 
 [[Renderers]]
@@ -1445,24 +1454,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '1768475223210357952'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777712016902188911' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '6241437137727848785'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '6241433469857973877'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -1472,11 +1463,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269667314960882'
+guid = '6241437137727848785'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
+materials = [ '0' ]
 meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -1499,20 +1490,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '1768415953930092518'
+guid = '15552269667314960882'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777577993317357874' ]
+materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '6241416022952274406'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -1535,7 +1517,16 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424628093277648598'
+guid = '1768415953930092518'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777577993317357874' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241416022952274406'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1544,7 +1535,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241417693949765255'
+guid = '12424628093277648598'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1562,7 +1553,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241421808839399299'
+guid = '6241417693949765255'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1571,16 +1562,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269667268684488'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '12424626305064909471'
+guid = '6241421808839399299'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1607,7 +1589,34 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '15552269667268684488'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777316586600630394' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12424626305064909471'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '6241692529223151086'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241478604310752769'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1626,15 +1635,6 @@ rendersShadows = true
 [[Renderers]]
 drawSingleMesh = false
 guid = '6241699630280919497'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '6241478604310752769'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1688,15 +1688,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '1144853985045057653'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394' ]
-meshIndexToDraw = '0'
-modelGuid = '12471826850464180481'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12425479440903173709'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -1715,7 +1706,16 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241709384494455758'
+guid = '1144853985045057653'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777316586600630394' ]
+meshIndexToDraw = '0'
+modelGuid = '12471826850464180481'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241748255130380127'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1724,7 +1724,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241748255130380127'
+guid = '6241709384494455758'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1742,15 +1742,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424679709533226064'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15063406588356611114'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
@@ -1760,7 +1751,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241722631761933390'
+guid = '12424679709533226064'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1769,7 +1760,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241478271234008696'
+guid = '6241722631761933390'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1787,7 +1778,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241713051523161676'
+guid = '6241478271234008696'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1796,16 +1787,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '9938011645875047147'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '9920200978339208425', '9920200978339208425' ]
-meshIndexToDraw = '0'
-modelGuid = '9920718423721739425'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '12424680420160596173'
+guid = '6241713051523161676'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1819,6 +1801,24 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15449352838481615396', '15449259407003476463' ]
 meshIndexToDraw = '0'
 modelGuid = '2140790440003113620'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12424680420160596173'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '9938011645875047147'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '9920200978339208425', '9920200978339208425' ]
+meshIndexToDraw = '0'
+modelGuid = '9920718423721739425'
 rendersShadows = true
 
 [[Renderers]]
@@ -1850,6 +1850,15 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '6241422734452935867'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '6241719824433722200'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -1859,7 +1868,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241422734452935867'
+guid = '6241714278156849239'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1877,7 +1886,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241714278156849239'
+guid = '12424697316953510893'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1891,15 +1900,6 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
 modelGuid = '12471826850464180481'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '12424697316953510893'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -1922,7 +1922,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241433856126411702'
+guid = '12425479224585851417'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1931,7 +1931,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425479224585851417'
+guid = '6241433856126411702'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -1949,20 +1949,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241413305740100419'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269664775784825'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241413305740100419'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -2012,7 +2012,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241421508580778568'
+guid = '6241750876605003429'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2021,7 +2021,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241750876605003429'
+guid = '6241421508580778568'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2057,11 +2057,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241436395171144075'
+guid = '15552269664814853427'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
+materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
+modelGuid = '12471801436435551572'
 rendersShadows = true
 
 [[Renderers]]
@@ -2075,16 +2075,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269664814853427'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '6241424730804607647'
+guid = '6241436395171144075'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2098,6 +2089,15 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1766071748038532778', '1777838767709883819' ]
 meshIndexToDraw = '0'
 modelGuid = '12471732002840469521'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241424730804607647'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -2129,20 +2129,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241427718242174174'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12425417798986867025'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 meshIndexToDraw = '0'
 modelGuid = '17948561943578888234'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241427718242174174'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -2174,11 +2174,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '1015466513128029982'
+guid = '6241741929425014905'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
+materials = [ '0' ]
 meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -2192,11 +2192,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241741929425014905'
+guid = '1015466513128029982'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
+materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
+modelGuid = '12471801436435551572'
 rendersShadows = true
 
 [[Renderers]]
@@ -2255,7 +2255,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241696796543573832'
+guid = '6241434008720184254'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2273,7 +2273,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241434008720184254'
+guid = '6241696796543573832'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2318,15 +2318,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241434872526193755'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15063330284186506850'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
@@ -2336,7 +2327,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241435800805888053'
+guid = '6241434872526193755'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2354,25 +2345,16 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '6241435800805888053'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '6241436214708402929'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '6241436542321632049'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '12424626446709793039'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2390,7 +2372,16 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241436751663509966'
+guid = '12424626446709793039'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241436542321632049'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2408,16 +2399,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241737988401335248'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '6241477945949593651'
+guid = '6241436751663509966'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2435,7 +2417,16 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241439408736303732'
+guid = '6241477945949593651'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241737988401335248'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2462,7 +2453,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241439586591993533'
+guid = '6241439408736303732'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2471,7 +2462,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241439885714837795'
+guid = '6241439586591993533'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2489,7 +2480,25 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '6241439885714837795'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '6241440125815577000'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241702554049651821'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2521,15 +2530,6 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777996680635659332' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '6241702554049651821'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -2588,6 +2588,24 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '12425445791121071112'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241442719799685602'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '6241698912806408061'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -2606,20 +2624,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241442719799685602'
+guid = '15552269666033463921'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
+materials = [ '1777316586600630394' ]
 meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '12425445791121071112'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
+modelGuid = '12471801436435551572'
 rendersShadows = true
 
 [[Renderers]]
@@ -2633,25 +2642,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269666033463921'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '6241444237331939898'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '12425448798349408390'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2674,6 +2665,15 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12425448798349408390'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -2741,20 +2741,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241480333875717271'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12425048428250250224'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 meshIndexToDraw = '0'
 modelGuid = '17948332231983131029'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241480333875717271'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -2777,7 +2777,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241480541951144828'
+guid = '6241744733458990975'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2786,7 +2786,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241744733458990975'
+guid = '6241480541951144828'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2804,7 +2804,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241480750988241000'
+guid = '6241481046263097268'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2813,7 +2813,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241481046263097268'
+guid = '6241480750988241000'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2840,7 +2840,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241483402953050043'
+guid = '6241704583326769440'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2849,7 +2849,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241704583326769440'
+guid = '6241483402953050043'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2894,15 +2894,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425160381660208905'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '15038846507057049718' ]
-meshIndexToDraw = '0'
-modelGuid = '7289830871254251453'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '6241690920676687281'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -2921,11 +2912,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '1783900294725637053'
+guid = '12425160381660208905'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777577993317357874' ]
+materials = [ '15038846507057049718' ]
 meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
+modelGuid = '7289830871254251453'
 rendersShadows = true
 
 [[Renderers]]
@@ -2939,11 +2930,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241693428759239037'
+guid = '1783900294725637053'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
+materials = [ '1777577993317357874' ]
 meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
+modelGuid = '12471801436435551572'
 rendersShadows = true
 
 [[Renderers]]
@@ -2957,7 +2948,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241693666187153081'
+guid = '6241693428759239037'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2975,7 +2966,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241693935772361364'
+guid = '6241693666187153081'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -2989,6 +2980,15 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241693935772361364'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -3011,7 +3011,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241708998600462214'
+guid = '6241696974785594335'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3020,7 +3020,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241696974785594335'
+guid = '6241708998600462214'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3083,7 +3083,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425439637286756689'
+guid = '6241698942063077302'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3092,7 +3092,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241698942063077302'
+guid = '12425439637286756689'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3128,7 +3128,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241703064481127012'
+guid = '6241765523173655533'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3137,7 +3137,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241765523173655533'
+guid = '6241703064481127012'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3155,15 +3155,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241704312118016848'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269665483110697'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
@@ -3173,7 +3164,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241705835226523341'
+guid = '6241704312118016848'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3183,6 +3174,15 @@ rendersShadows = true
 [[Renderers]]
 drawSingleMesh = false
 guid = '10197214866994041270'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241705835226523341'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3209,20 +3209,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241708641895937054'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269666907710297'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777577993317357874' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241708641895937054'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -3254,7 +3254,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241716694988000718'
+guid = '12425445719946873731'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3263,7 +3263,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425445719946873731'
+guid = '6241716694988000718'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3317,20 +3317,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241718599633756369'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269666030232734'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241718599633756369'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -3371,15 +3371,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241721133637308452'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '6241720153395357048'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -3389,7 +3380,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241720421032312541'
+guid = '6241721133637308452'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3407,7 +3398,25 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '6241720421032312541'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '6241720841133352975'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241743659501050922'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3426,15 +3435,6 @@ rendersShadows = true
 [[Renderers]]
 drawSingleMesh = false
 guid = '6241721853278674449'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '6241743659501050922'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3488,20 +3488,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241733693939470637'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15063923267201518588'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 meshIndexToDraw = '0'
 modelGuid = '15060495917923446592'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241733693939470637'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -3515,20 +3515,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241738471199256478'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269665753053470'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241738471199256478'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -3587,20 +3587,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '6241742047963114539'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '1829175009167040230'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1822012501052853337' ]
 meshIndexToDraw = '0'
 modelGuid = '1821859757872728656'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '6241742047963114539'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -3704,15 +3704,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '10197212792051632357'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '1455224587316580005'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
@@ -3722,7 +3713,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '10197213436585111480'
+guid = '10197212792051632357'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3736,6 +3727,15 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '15038846507057049718' ]
 meshIndexToDraw = '0'
 modelGuid = '7289805026291849292'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '10197213436585111480'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -3758,6 +3758,15 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '12424672405723061620'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '10197220234441147040'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -3767,7 +3776,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424672405723061620'
+guid = '12425482297353586558'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3781,15 +3790,6 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 meshIndexToDraw = '0'
 modelGuid = '17947733566429021212'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '12425482297353586558'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -3812,15 +3812,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12423983273674864162'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
-meshIndexToDraw = '0'
-modelGuid = '17947756827678234668'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269667506925198'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777577993317357874' ]
@@ -3830,11 +3821,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424306546007263687'
+guid = '12423983273674864162'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 meshIndexToDraw = '0'
-modelGuid = '17947877610510866244'
+modelGuid = '17947756827678234668'
 rendersShadows = true
 
 [[Renderers]]
@@ -3844,6 +3835,15 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '11557720335555147721' ]
 meshIndexToDraw = '0'
 modelGuid = '17947756827678234668'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12424306546007263687'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '11557720335555147721' ]
+meshIndexToDraw = '0'
+modelGuid = '17947877610510866244'
 rendersShadows = true
 
 [[Renderers]]
@@ -3884,6 +3884,15 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '12425483450825391098'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '12424626734985286926'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -3893,7 +3902,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425483450825391098'
+guid = '12424630246379041607'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3911,7 +3920,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424630246379041607'
+guid = '12425448438706796837'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3921,15 +3930,6 @@ rendersShadows = true
 [[Renderers]]
 drawSingleMesh = false
 guid = '12424669969921709322'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '12425448438706796837'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -3983,7 +3983,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424686149651553123'
+guid = '12425480723383775224'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -4001,7 +4001,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425480723383775224'
+guid = '12424686149651553123'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -4046,15 +4046,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424831600591706460'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '11557720335555147721' ]
-meshIndexToDraw = '0'
-modelGuid = '17948003540865066006'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12424696739793200048'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -4064,7 +4055,16 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424696813431483556'
+guid = '12424831600591706460'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '11557720335555147721' ]
+meshIndexToDraw = '0'
+modelGuid = '17948003540865066006'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12425486238268386728'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -4073,7 +4073,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425486238268386728'
+guid = '12424696813431483556'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -4100,15 +4100,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424697891086581801'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12425487526678445722'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -4118,7 +4109,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424703758578775351'
+guid = '12424697891086581801'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -4136,7 +4127,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424704257113414685'
+guid = '12424703758578775351'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
@@ -4154,11 +4145,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12424704758809912009'
+guid = '12424704257113414685'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
 meshIndexToDraw = '0'
 modelGuid = '15279751527320231819'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '1466323787222681078'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1766071748038532778', '1777316586600630394' ]
+meshIndexToDraw = '0'
+modelGuid = '12471732002840469521'
 rendersShadows = true
 
 [[Renderers]]
@@ -4172,11 +4172,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '1466323787222681078'
+guid = '12424704758809912009'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1766071748038532778', '1777316586600630394' ]
+materials = [ '0' ]
 meshIndexToDraw = '0'
-modelGuid = '12471732002840469521'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -4226,6 +4226,15 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '15552269663834544652'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '12424713421714719533'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -4236,15 +4245,6 @@ rendersShadows = true
 [[Renderers]]
 drawSingleMesh = false
 guid = '15552269666707991348'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '15552269663834544652'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
@@ -4280,11 +4280,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425437132881180881'
+guid = '15552269666873914537'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
+materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
+modelGuid = '12471801436435551572'
 rendersShadows = true
 
 [[Renderers]]
@@ -4298,11 +4298,11 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269666873914537'
+guid = '12425437132881180881'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
+materials = [ '0' ]
 meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -4325,20 +4325,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425438489558349765'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269666209488055'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12425438489558349765'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -4379,20 +4379,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425444001390624236'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269666381451897'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12425444001390624236'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -4478,6 +4478,15 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '15552269665864449687'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777316586600630394' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '12425479721694323953'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -4505,15 +4514,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269665864449687'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12425480867222299115'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '0' ]
@@ -4532,20 +4532,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12425482013755494700'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '0' ]
-meshIndexToDraw = '0'
-modelGuid = '15279751527320231819'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269663655840582'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12425482013755494700'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '0' ]
+meshIndexToDraw = '0'
+modelGuid = '15279751527320231819'
 rendersShadows = true
 
 [[Renderers]]
@@ -4604,20 +4604,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '277096354566649465'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '12472509190243971103'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1766071748038532778' ]
 meshIndexToDraw = '0'
 modelGuid = '12471686768254296210'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '277096354566649465'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
 rendersShadows = true
 
 [[Renderers]]
@@ -4631,20 +4631,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '12472624942175045712'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-meshIndexToDraw = '0'
-modelGuid = '12471854257770671342'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269666837563320'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '12472624942175045712'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+meshIndexToDraw = '0'
+modelGuid = '12471854257770671342'
 rendersShadows = true
 
 [[Renderers]]
@@ -4739,6 +4739,15 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '15552269671860513489'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777996680635659332' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '265813382285790478'
 materialTint = [ 0.406862735748291, 0.8081034421920776, 1.0 ]
 materials = [ '1822012501052853337' ]
@@ -4748,7 +4757,7 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269671860513489'
+guid = '15552269671886105635'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777996680635659332' ]
 meshIndexToDraw = '0'
@@ -4762,15 +4771,6 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777316586600630394' ]
 meshIndexToDraw = '0'
 modelGuid = '12471854257770671342'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '15552269671886105635'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777996680635659332' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
 rendersShadows = true
 
 [[Renderers]]
@@ -4883,15 +4883,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '1156743746146833032'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1822012501052853337' ]
-meshIndexToDraw = '0'
-modelGuid = '1821508158489599619'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '7418878960837586518'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1822012501052853337', '1820008414540500919' ]
@@ -4901,20 +4892,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '1156743746146833032'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1822012501052853337' ]
+meshIndexToDraw = '0'
+modelGuid = '1821508158489599619'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '1829159544342332355'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1822012501052853337' ]
 meshIndexToDraw = '0'
 modelGuid = '1821890330811516545'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '2236905023818184222'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '2229847150575832532', '7419820402882411030' ]
-meshIndexToDraw = '0'
-modelGuid = '2234949598158592467'
 rendersShadows = true
 
 [[Renderers]]
@@ -5000,15 +4991,6 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269663720561448'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '7418812675311635710'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1822012501052853337', '1823128414540500919' ]
@@ -5018,7 +5000,25 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
+guid = '15552269663720561448'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777316586600630394' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
 guid = '15552269663731814662'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777838767709883819' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '15552269666800783099'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
@@ -5036,27 +5036,9 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269666800783099'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777838767709883819' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '15552269663867106837'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777577993317357874' ]
-meshIndexToDraw = '0'
-modelGuid = '12471801436435551572'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
-guid = '15552269664016435084'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
 rendersShadows = true
@@ -5068,6 +5050,15 @@ materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1777838767709883819' ]
 meshIndexToDraw = '0'
 modelGuid = '12471826850464180481'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '15552269664016435084'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '1777316586600630394' ]
+meshIndexToDraw = '0'
+modelGuid = '12471801436435551572'
 rendersShadows = true
 
 [[Renderers]]
@@ -5171,18 +5162,18 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269665851143200'
+guid = '15552269671077292219'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777316586600630394' ]
+materials = [ '1777996680635659332' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
 rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '15552269671077292219'
+guid = '15552269665851143200'
 materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '1777996680635659332' ]
+materials = [ '1777316586600630394' ]
 meshIndexToDraw = '0'
 modelGuid = '12471801436435551572'
 rendersShadows = true
@@ -5324,21 +5315,30 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '9932971396798460196'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '9558329198640248404' ]
-meshIndexToDraw = '0'
-modelGuid = '9554982897410321528'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '9937928391738571252'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '9920200978339208425', '9920200978339208425' ]
 meshIndexToDraw = '0'
 modelGuid = '9920718423721739425'
 rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '2236905023818184222'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '2229847150575832532', '7419820402882411030' ]
+meshIndexToDraw = '0'
+modelGuid = '2234949598158592467'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '9932971396798460196'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '9558329198640248404' ]
+meshIndexToDraw = '0'
+modelGuid = '9554982897410321528'
+rendersShadows = false
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -5436,34 +5436,6 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
-guid = '12425370768905202218'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '12425370768905202218'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ -75.0, 260.0 ], [ -75.0, -260.0 ], [ -120.0, -260.0 ], [ -120.0, 260.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '12425370768905202218'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 120.0, 260.0 ], [ 120.0, -260.0 ], [ 75.0, -260.0 ], [ 75.0, 260.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
 guid = '1147203846942011839'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -5487,6 +5459,34 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ 312.5, 150.0 ], [ 312.5, -12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '12425370768905202218'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '12425370768905202218'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ -75.0, 260.0 ], [ -75.0, -260.0 ], [ -120.0, -260.0 ], [ -120.0, 260.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '12425370768905202218'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 120.0, 260.0 ], [ 120.0, -260.0 ], [ 75.0, -260.0 ], [ 75.0, 260.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -5556,6 +5556,26 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
+guid = '265813382285790478'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '265813382285790478'
+    isTrigger = true
+    radius = 0.0
+    type = 1
+    verts = [ [ 120.0, 95.0 ], [ 120.0, -147.0 ], [ -120.0, -147.0 ], [ -120.0, 95.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
 guid = '12424168893377199175'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -5579,26 +5599,6 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ 142.0, 40.0 ], [ 142.0, -72.0 ], [ -135.0, -72.0 ], [ -135.0, 40.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '265813382285790478'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '265813382285790478'
-    isTrigger = true
-    radius = 0.0
-    type = 1
-    verts = [ [ 120.0, 95.0 ], [ 120.0, -147.0 ], [ -120.0, -147.0 ], [ -120.0, 95.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -5632,34 +5632,6 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
-guid = '1144853985045057653'
-invMass = 0.0
-invMomentOfInertia = 0.0
-isStatic = true
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1144853985045057653'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 1
-    guid = '1144853985045057653'
-    isTrigger = false
-    radius = 0.0
-    type = 1
-    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
 guid = '15552269666231552302'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -5683,6 +5655,34 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ 12.5, 150.0 ], [ 12.5, 12.5 ], [ -12.5, -12.5 ], [ -12.5, 150.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '1144853985045057653'
+invMass = 0.0
+invMomentOfInertia = 0.0
+isStatic = true
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1144853985045057653'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 150.0, 12.5 ], [ 150.0, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 12.5 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 1
+    guid = '1144853985045057653'
+    isTrigger = false
+    radius = 0.0
+    type = 1
+    verts = [ [ 12.5, 150.0 ], [ 12.5, -312.5 ], [ -312.5, -312.5 ], [ -312.5, 150.0 ] ]
 
 [[RigidBodies]]
 accel = [ 0.0, 0.0 ]
@@ -5884,57 +5884,6 @@ vel = [ 0.0, 0.0 ]
 accel = [ 0.0, 0.0 ]
 angularVel = 0.0
 elasticicty = 0.0
-guid = '2091576976424546894'
-invMass = 0.10000000149011612
-invMomentOfInertia = 0.20000000298023224
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [
-    2.0165032853215032e-23,
-    -2.3893755893419482e-23
-]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 16
-    guid = '2091576976424546894'
-    isTrigger = false
-    radius = 71.0
-    type = 1
-    verts = [ [ 0.0, -28.0 ] ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 4
-    guid = '2091576976424546894'
-    isTrigger = false
-    radius = 60.0
-    type = 1
-    verts = [ [ 1.0, -13.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
-guid = '2091576977596946314'
-invMass = 1.0
-invMomentOfInertia = 0.20000000298023224
-isStatic = false
-netDepen = [ 0.0, 0.0 ]
-netForce = [ 0.0, 0.0 ]
-vel = [ 0.0, 0.0 ]
-
-    [[RigidBodies.colliders]]
-    collisionLayer = 8
-    guid = '2091576977596946314'
-    isTrigger = false
-    radius = 40.0
-    type = 1
-    verts = [ [ 0.0, 0.0 ] ]
-
-[[RigidBodies]]
-accel = [ 0.0, 0.0 ]
-angularVel = 0.0
-elasticicty = 0.0
 guid = '15552269665437864561'
 invMass = 0.0
 invMomentOfInertia = 0.0
@@ -6014,6 +5963,57 @@ vel = [ 0.0, 0.0 ]
     radius = 0.0
     type = 1
     verts = [ [ -100.0, 15.0 ], [ -100.0, -15.0 ], [ -150.0, -15.0 ], [ -150.0, 15.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2091576977596946314'
+invMass = 1.0
+invMomentOfInertia = 0.20000000298023224
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [ 0.0, 0.0 ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 8
+    guid = '2091576977596946314'
+    isTrigger = false
+    radius = 40.0
+    type = 1
+    verts = [ [ 0.0, 0.0 ] ]
+
+[[RigidBodies]]
+accel = [ 0.0, 0.0 ]
+angularVel = 0.0
+elasticicty = 0.0
+guid = '2091576976424546894'
+invMass = 0.10000000149011612
+invMomentOfInertia = 0.20000000298023224
+isStatic = false
+netDepen = [ 0.0, 0.0 ]
+netForce = [ 0.0, 0.0 ]
+vel = [
+    2.0165032853215032e-23,
+    -2.3893755893419482e-23
+]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 16
+    guid = '2091576976424546894'
+    isTrigger = false
+    radius = 71.0
+    type = 1
+    verts = [ [ 0.0, -28.0 ] ]
+
+    [[RigidBodies.colliders]]
+    collisionLayer = 4
+    guid = '2091576976424546894'
+    isTrigger = false
+    radius = 60.0
+    type = 1
+    verts = [ [ 1.0, -13.0 ] ]
 
 [[SceneObjects]]
 children = []
@@ -6870,10 +6870,10 @@ prefabStatus = 1
 [[SceneObjects]]
 children = []
 guid = '2120176559991300301'
-name = 'Ecco Light'
+name = 'Ecco Base Light'
 parent = '2091576976424546894'
 parts = 16
-prefabBase = '0'
+prefabBase = '2120176559991300301'
 prefabStatus = 0
 
 [[SceneObjects]]
@@ -8607,10 +8607,10 @@ prefabStatus = 1
 [[SceneObjects]]
 children = []
 guid = '8456622609404298385'
-name = 'Ecco Light'
+name = 'Ecco Front Light'
 parent = '2091576976424546894'
 parts = 2048
-prefabBase = '0'
+prefabBase = '8456622609404298385'
 prefabStatus = 0
 
 [[SceneObjects]]
@@ -8628,7 +8628,7 @@ guid = '9932971396798460196'
 name = 'Face'
 parent = '2091576976424546894'
 parts = 2
-prefabBase = '0'
+prefabBase = '9932971396798460196'
 prefabStatus = 0
 
 [[SceneObjects]]
@@ -8736,7 +8736,7 @@ guid = '9938489986732075800'
 name = 'Unnamed Scene Object'
 parent = '2091576977596946314'
 parts = 0
-prefabBase = '0'
+prefabBase = '9938489986732075800'
 prefabStatus = 0
 
 [[SceneObjects]]
@@ -8745,7 +8745,7 @@ guid = '9938561493637042058'
 name = 'Light'
 parent = '2091576977596946314'
 parts = 16
-prefabBase = '0'
+prefabBase = '9938561493637042058'
 prefabStatus = 0
 
 [[SceneObjects]]
@@ -11089,21 +11089,6 @@ triggerTag = ''
 canBeTriggered = false
 castsShadows = true
 colour = [ 1.0, 1.0, 1.0 ]
-cutOff = 1.0
-effect = 0
-guid = '4365912566506412290'
-intensity = 249.0
-linear = 0.9609999656677246
-on = true
-outerCutOff = 0.2290000021457672
-quadratic = 4.845000267028809
-range = 0.9100000262260437
-triggerTag = ''
-
-[[Spotlights]]
-canBeTriggered = false
-castsShadows = true
-colour = [ 1.0, 1.0, 1.0 ]
 cutOff = 0.9020000100135803
 effect = 0
 guid = '5121188025037251016'
@@ -11118,16 +11103,16 @@ triggerTag = ''
 [[Spotlights]]
 canBeTriggered = false
 castsShadows = true
-colour = [ 0.03260868787765503, 0.49527424573898315, 1.0 ]
+colour = [ 1.0, 1.0, 1.0 ]
 cutOff = 1.0
 effect = 0
-guid = '4368822498304440585'
-intensity = 143.0
-linear = 0.9187856912612915
+guid = '4365912566506412290'
+intensity = 249.0
+linear = 0.9609999656677246
 on = true
-outerCutOff = 0.1120000034570694
-quadratic = 4.352499961853027
-range = 1.8949999809265137
+outerCutOff = 0.2290000021457672
+quadratic = 4.845000267028809
+range = 0.9100000262260437
 triggerTag = ''
 
 [[Spotlights]]
@@ -11143,6 +11128,21 @@ on = true
 outerCutOff = 0.31299999356269836
 quadratic = 4.800000190734863
 range = 1.0
+triggerTag = ''
+
+[[Spotlights]]
+canBeTriggered = false
+castsShadows = true
+colour = [ 0.03260868787765503, 0.49527424573898315, 1.0 ]
+cutOff = 1.0
+effect = 0
+guid = '4368822498304440585'
+intensity = 143.0
+linear = 0.9187856912612915
+on = true
+outerCutOff = 0.1120000034570694
+quadratic = 4.352499961853027
+range = 1.8949999809265137
 triggerTag = ''
 
 [[Spotlights]]
@@ -11184,76 +11184,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12423383987824314724'
-isStatic = true
-position = [ -900.0, 0.0, -600.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241710190130963270'
-isStatic = true
-position = [ 3300.0, 0.0, -1500.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 89.9999771118164, 0.0, -0.0 ]
-guid = '4365912566506412290'
-isStatic = true
-position = [ 0.0, 606.4920043945312, 0.0 ]
-quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
-scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12472247769792521165'
-isStatic = true
-position = [ -1450.0, 0.0, -1100.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425486594777809137'
-isStatic = true
-position = [ 5100.0, 0.0, 900.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1768475223210357952'
-isStatic = true
-position = [ -400.0, 0.0, -750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ -0.0, -0.0, -0.0 ]
 guid = '260520896594080692'
 isStatic = true
 position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '261523939781336746'
-isStatic = true
-position = [ 75.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 89.9999771118164, 0.0, -0.0 ]
-guid = '4369321852668399470'
-isStatic = true
-position = [ 0.0, 459.4969177246094, 0.0 ]
-quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
-scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
@@ -11276,46 +11212,6 @@ euler = [ 0.0, -0.0, 0.0 ]
 guid = '261058320472689460'
 isStatic = true
 position = [ -75.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425445719946873731'
-isStatic = true
-position = [ 5100.0, 0.0, -1800.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241716694988000718'
-isStatic = true
-position = [ 2100.0, 0.0, 600.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '4367545864104986707'
-isStatic = true
-position = [ 0.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ -0.0, -0.0, -0.0 ]
-guid = '7418878960837586518'
-isStatic = true
-position = [ -274.16650390625, 0.0, -0.0 ]
-quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1156743746146833032'
-isStatic = true
-position = [ 550.0, 0.0, 100.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11352,6 +11248,22 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
+euler = [ 89.9999771118164, 0.0, -0.0 ]
+guid = '4369321852668399470'
+isStatic = true
+position = [ 0.0, 459.4969177246094, 0.0 ]
+quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
+scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '261523939781336746'
+isStatic = true
+position = [ 75.0, 0.0, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '6241431142360356085'
 isStatic = true
@@ -11374,38 +11286,6 @@ isStatic = true
 position = [ 2500.0, 0.0, -500.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1768693838588127057'
-isStatic = true
-position = [ 500.0, 0.0, -750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425479440903173709'
-isStatic = true
-position = [ 4200.0, 0.0, 1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424698532472091139'
-isStatic = true
-position = [ 3900.0, 0.0, 900.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -89.9999771118164, 0.0 ]
-guid = '1144853985045057653'
-isStatic = true
-position = [ -750.0, 0.0, 1050.0 ]
-quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
@@ -11464,55 +11344,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 89.9999771118164, 0.0 ]
-guid = '15552269670119680101'
-isStatic = true
-position = [ 5250.0, 0.0, 750.0 ]
-quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
-scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '12424912059355495897'
-isStatic = true
-position = [ 1528.71484375, 0.0, -1732.1710205078125 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241702554049651821'
-isStatic = true
-position = [ 2700.0, 0.0, -1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241440541673878028'
-isStatic = true
-position = [ -900.0, 0.0, -1500.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [
-    1.8238573151752036e-10,
-    -1.7075474261218915e-06,
-    1.3027551259980896e-10
-]
-guid = '2120176559991300301'
-isStatic = true
-position = [ -0.01123046875, 68.19972229003906, 9.155261795967817e-05 ]
-quaternion = [
-    1.0,
-    1.5916157281026244e-12,
-    -1.4901162970204496e-08,
-    1.136868268795943e-12
-]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '264497878890832668'
 isStatic = true
@@ -11538,14 +11369,6 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
-guid = '264497880954241996'
-isStatic = true
-position = [ 0.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
 guid = '1768415953930092518'
 isStatic = true
 position = [ -100.0, 0.0, -750.0 ]
@@ -11553,27 +11376,11 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241741929425014905'
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '264497880954241996'
 isStatic = true
-position = [ 300.0, 0.0, 1200.0 ]
+position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241428373364603044'
-isStatic = true
-position = [ -900.0, 0.0, 300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -5.008955668017734e-06, 0.0 ]
-guid = '1015466513128029982'
-isStatic = true
-position = [ -900.0, 0.0, 630.2191772460938 ]
-quaternion = [ 1.0, 0.0, -4.371138473402425e-08, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -11598,22 +11405,6 @@ guid = '265813382626728744'
 isStatic = true
 position = [ 0.0, 1.79949951171875, 0.0 ]
 quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12424697316953510893'
-isStatic = true
-position = [ 3600.0, 0.0, 300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1017984762569573811'
-isStatic = true
-position = [ -1050.0, 0.0, 1050.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -11649,19 +11440,35 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '2091574045743166536'
-isStatic = true
-position = [ 0.0, 0.0, 0.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
 guid = '687135787427594997'
 isStatic = true
 position = [ -1237.20068359375, 0.0, -361.6632385253906 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241741929425014905'
+isStatic = true
+position = [ 300.0, 0.0, 1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241428373364603044'
+isStatic = true
+position = [ -900.0, 0.0, 300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -5.008955668017734e-06, 0.0 ]
+guid = '1015466513128029982'
+isStatic = true
+position = [ -900.0, 0.0, 630.2191772460938 ]
+quaternion = [ 1.0, 0.0, -4.371138473402425e-08, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -11682,19 +11489,43 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241718481880018438'
+guid = '12424697316953510893'
 isStatic = true
-position = [ 3000.0, 0.0, 600.0 ]
+position = [ 3600.0, 0.0, 300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1017984762569573811'
+isStatic = true
+position = [ -1050.0, 0.0, 1050.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
-guid = '1454549635261575709'
+guid = '12425479440903173709'
 isStatic = true
-position = [ 0.0, 0.0, 0.0 ]
+position = [ 4200.0, 0.0, 1200.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12424698532472091139'
+isStatic = true
+position = [ 3900.0, 0.0, 900.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -89.9999771118164, 0.0 ]
+guid = '1144853985045057653'
+isStatic = true
+position = [ -750.0, 0.0, 1050.0 ]
+quaternion = [ 0.7071069478988647, 0.0, -0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
 
 [[Transforms]]
 euler = [ 0.0, -89.9999771118164, 0.0 ]
@@ -11737,6 +11568,22 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
+euler = [ -0.0, -0.0, -0.0 ]
+guid = '7418878960837586518'
+isStatic = true
+position = [ -274.16650390625, 0.0, -0.0 ]
+quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1156743746146833032'
+isStatic = true
+position = [ 550.0, 0.0, 100.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
 euler = [ 0.0, 89.9999771118164, 0.0 ]
 guid = '15552269671886105635'
 isStatic = true
@@ -11757,6 +11604,22 @@ euler = [ 0.0, -0.0, 0.0 ]
 guid = '1174194986272758988'
 isStatic = true
 position = [ -150.0, 0.0, 750.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241718481880018438'
+isStatic = true
+position = [ 3000.0, 0.0, 600.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '1454549635261575709'
+isStatic = true
+position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11793,12 +11656,12 @@ quaternion = [ 0.9925597906112671, 0.0, 0.12175798416137695, 0.0 ]
 scale = [ 0.9999989867210388, 1.0, 0.9999989867210388 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1768687030254954338'
+euler = [ 0.0, -22.175994873046875, 0.0 ]
+guid = '1454791153471108163'
 isStatic = true
-position = [ 800.0, 0.0, -750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
+position = [ 54.8362922668457, 0.0, -14.642556190490723 ]
+quaternion = [ 0.9813329577445984, 0.0, -0.19231639802455902, 0.0 ]
+scale = [ 0.9999990463256836, 1.0, 0.9999990463256836 ]
 
 [[Transforms]]
 euler = [ 0.0, 4.099996089935303, 0.0 ]
@@ -11807,14 +11670,6 @@ isStatic = true
 position = [ 10.310548782348633, 86.88601684570312, 12.066671371459961 ]
 quaternion = [ 0.9993599653244019, 0.0, 0.035771582275629044, 0.0 ]
 scale = [ 0.999998927116394, 1.0, 0.999998927116394 ]
-
-[[Transforms]]
-euler = [ 0.0, -22.175994873046875, 0.0 ]
-guid = '1454791153471108163'
-isStatic = true
-position = [ 54.8362922668457, 0.0, -14.642556190490723 ]
-quaternion = [ 0.9813329577445984, 0.0, -0.19231639802455902, 0.0 ]
-scale = [ 0.9999990463256836, 1.0, 0.9999990463256836 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
@@ -11865,38 +11720,6 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '12425444570654695088'
-isStatic = true
-position = [ 4800.0, 0.0, -1800.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 89.9999771118164, 0.0, -0.0 ]
-guid = '4368822498304440585'
-isStatic = true
-position = [ 0.0, 459.4969177246094, 0.0 ]
-quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
-scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241692325430468167'
-isStatic = true
-position = [ 1800.0, 0.0, -1200.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '1783900294725637053'
-isStatic = true
-position = [ -1200.0, 0.0, 750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ -179.99989318847656, -5.008955668017734e-06, -179.99989318847656 ]
 guid = '15552269671063842923'
 isStatic = true
@@ -11925,22 +11748,6 @@ euler = [ 0.0, -0.0, 0.0 ]
 guid = '1466601406390514171'
 isStatic = true
 position = [ 1400.0, 0.0, -750.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241425568980698362'
-isStatic = true
-position = [ 600.0, 0.0, -300.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1783876022991969686'
-isStatic = true
-position = [ -1200.0, 0.0, 504.5697021484375 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -11977,6 +11784,78 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12472247769792521165'
+isStatic = true
+position = [ -1450.0, 0.0, -1100.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425486594777809137'
+isStatic = true
+position = [ 5100.0, 0.0, 900.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1768475223210357952'
+isStatic = true
+position = [ -400.0, 0.0, -750.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1768687030254954338'
+isStatic = true
+position = [ 800.0, 0.0, -750.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1768693838588127057'
+isStatic = true
+position = [ 500.0, 0.0, -750.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241425568980698362'
+isStatic = true
+position = [ 600.0, 0.0, -300.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1783876022991969686'
+isStatic = true
+position = [ -1200.0, 0.0, 504.5697021484375 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241692325430468167'
+isStatic = true
+position = [ 1800.0, 0.0, -1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '1783900294725637053'
+isStatic = true
+position = [ -1200.0, 0.0, 750.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
 euler = [ 0.0, -5.008955668017734e-06, 0.0 ]
 guid = '1783958921167663177'
 isStatic = true
@@ -11993,14 +11872,6 @@ quaternion = [ 1.0, 0.0, -4.371138473402425e-08, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.0 ]
-guid = '1829159544342332355'
-isStatic = true
-position = [ 240.0, 0.0, -150.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
 guid = '2091574056071042475'
 isStatic = true
@@ -12009,18 +11880,10 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
-guid = '6241720421032312541'
-isStatic = true
-position = [ 1800.0, 0.0, 900.0 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 1.0, 1.0, 1.0 ]
-
-[[Transforms]]
 euler = [ 0.0, -0.0, 0.0 ]
-guid = '1829186235950201939'
+guid = '1829159544342332355'
 isStatic = true
-position = [ 213.1993408203125, 0.0, -150.0 ]
+position = [ 240.0, 0.0, -150.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
@@ -12042,6 +11905,30 @@ scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241720421032312541'
+isStatic = true
+position = [ 1800.0, 0.0, 900.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '1829186235950201939'
+isStatic = true
+position = [ 213.1993408203125, 0.0, -150.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '2091574045743166536'
+isStatic = true
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
 guid = '12424680420160596173'
 isStatic = true
 position = [ 1500.0, 0.0, 600.0 ]
@@ -12057,19 +11944,73 @@ quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -179.9993133544922, 39.967247009277344, -899.9984130859375 ]
+euler = [ -179.99929809570312, 40.173336029052734, -179.99835205078125 ]
 guid = '2091576976424546894'
 isStatic = false
 position = [ 2952.042724609375, 0.0, -315.3601989746094 ]
-quaternion = [ -0.3422921895980835, 1.1209738659090362e-05, -0.9383059144020081, 8.551519385946449e-07 ]
-scale = [ 0.9997969269752502, 1.0, 0.9997969269752502 ]
+quaternion = [ 0.3434411585330963, -1.1391960470064078e-05, 0.9391741752624512, -8.418842298851814e-07 ]
+scale = [ 0.995530903339386, 1.0, 0.995530903339386 ]
 
 [[Transforms]]
-euler = [ -360.0, 236.85714721679688, 0.0 ]
+euler = [ -360.0, 180.0, 0.0 ]
 guid = '2091576977596946314'
 isStatic = false
 position = [ 3054.886962890625, -0.016404680907726288, -924.3604125976562 ]
-quaternion = [ 0.47606274485588074, -4.161872624308671e-08, -0.8794113397598267, -7.688058190069569e-08 ]
+quaternion = [
+    4.371138828673793e-08,
+    -3.82137093032941e-15,
+    -1.0,
+    -8.742277657347586e-08
+]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 89.9999771118164, 0.0 ]
+guid = '15552269670119680101'
+isStatic = true
+position = [ 5250.0, 0.0, 750.0 ]
+quaternion = [ 0.7071069478988647, 0.0, 0.7071066498756409, 0.0 ]
+scale = [ 0.9999998211860657, 1.0, 0.9999998211860657 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12424912059355495897'
+isStatic = true
+position = [ 1528.71484375, 0.0, -1732.1710205078125 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241702554049651821'
+isStatic = true
+position = [ 2700.0, 0.0, -1200.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241440541673878028'
+isStatic = true
+position = [ -900.0, 0.0, -1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [
+    1.8238573151752036e-10,
+    -1.7075474261218915e-06,
+    1.3027551259980896e-10
+]
+guid = '2120176559991300301'
+isStatic = true
+position = [ -0.01123046875, 68.19972229003906, 9.155261795967817e-05 ]
+quaternion = [
+    1.0,
+    1.5916157281026244e-12,
+    -1.4901162970204496e-08,
+    1.136868268795943e-12
+]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -12078,6 +12019,54 @@ guid = '2236905023818184222'
 isStatic = true
 position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 0.7071067690849304, 0.0, -0.7071067690849304, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '12423383987824314724'
+isStatic = true
+position = [ -900.0, 0.0, -600.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241710190130963270'
+isStatic = true
+position = [ 3300.0, 0.0, -1500.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 89.9999771118164, 0.0, -0.0 ]
+guid = '4365912566506412290'
+isStatic = true
+position = [ 0.0, 606.4920043945312, 0.0 ]
+quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
+scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425445719946873731'
+isStatic = true
+position = [ 5100.0, 0.0, -1800.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '6241716694988000718'
+isStatic = true
+position = [ 2100.0, 0.0, 600.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, -0.0, 0.0 ]
+guid = '4367545864104986707'
+isStatic = true
+position = [ 0.0, 0.0, 0.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -12111,6 +12100,22 @@ isStatic = true
 position = [ 0.0, 0.0, 0.0 ]
 quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 0.0, 0.0, 0.0 ]
+guid = '12425444570654695088'
+isStatic = true
+position = [ 4800.0, 0.0, -1800.0 ]
+quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
+scale = [ 1.0, 1.0, 1.0 ]
+
+[[Transforms]]
+euler = [ 89.9999771118164, 0.0, -0.0 ]
+guid = '4368822498304440585'
+isStatic = true
+position = [ 0.0, 459.4969177246094, 0.0 ]
+quaternion = [ 0.7071069478988647, 0.7071066498756409, 0.0, -0.0 ]
+scale = [ 1.0, 0.9999998807907104, 0.9999998807907104 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
@@ -13841,12 +13846,12 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -5.313757419586182, 10.410225868225098, -0.948540210723877 ]
+euler = [ -8.2433500289917, 7.234782970044762e-06, 9.146060619968921e-06 ]
 guid = '9932971396798460196'
 isStatic = true
-position = [ 3.4001619815826416, -6.613502502441406, 5.403831481933594 ]
-quaternion = [ 0.9948064684867859, -0.045411787927150726, 0.0910029411315918, -0.004029267001897097 ]
-scale = [ 1.0500001907348633, 1.0499999523162842, 1.0500001907348633 ]
+position = [ 7.846838343539275e-07, -6.1853485107421875, 7.829078674316406 ]
+quaternion = [ 0.9974136352539062, -0.07187477499246597, 5.723545370983629e-08, 8.414584584670592e-08 ]
+scale = [ 1.0500000715255737, 1.0499999523162842, 1.0500001907348633 ]
 
 [[Transforms]]
 euler = [ -0.0, -0.0, -0.0 ]
@@ -13961,11 +13966,11 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.6161133646965027 ]
+euler = [ 0.0, -0.0, 0.6161134839057922 ]
 guid = '9938489986732075800'
 isStatic = true
-position = [ 1.1867551803588867, 1.656602382659912, 0.6603288650512695 ]
-quaternion = [ 0.9999855756759644, 0.0, 0.0, 0.005376577377319336 ]
+position = [ 1.0329465866088867, 0.919804036617279, 0.20214249193668365 ]
+quaternion = [ 0.9999855756759644, 0.0, 0.0, 0.0053765783086419106 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
