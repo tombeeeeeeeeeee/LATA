@@ -9,6 +9,8 @@ class ParticleSystem
 public:
 	Texture* nextParticleTexture;
 	Texture* healthParticleTexture;
+	Texture* dustParticleTexture;
+	Texture* sparkParticleTexture;
 
 	int nextParticleCount = 10;
 	float nextParticleLifetime = 4.0f;

@@ -40,7 +40,7 @@ void PointLight::GUI()
 			SetRange(_range);
 
 		const char* effects[] = {
-			"On", "Off", "Flickering", "SyncGun"
+			"On", "Off", "Flickering", "SpawnSpotLight"
 		};
 		const char* currType = effects[(int)effect];
 		ImGui::PushItemWidth(180);
@@ -52,6 +52,7 @@ void PointLight::GUI()
 				if (ImGui::Selectable(effects[i], isSelected))
 				{
 					effect = (PointLightEffect)i;
+					if (effect == PointLightEffect::Explosion) effect = PointLightEffect::SpotLightSpawnRoom;
 					timeInType = 0.0f;
 				}
 				if (isSelected) ImGui::SetItemDefaultFocus();

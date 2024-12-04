@@ -11,6 +11,8 @@
 #include "Collider.h"
 #include "ModelRenderer.h"
 #include "Scene.h"
+#include "ParticleSystem.h"
+#include "PointLight.h"
 #include "Collision.h"
 
 #include "Utilities.h"

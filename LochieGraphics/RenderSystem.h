@@ -157,7 +157,7 @@ private:
     Texture* offLightTexture = nullptr;
     Texture* flickeringLightTexture = nullptr;
     Texture* explodingLightTexture = nullptr;
-    Texture* syncLightTexture = nullptr;
+    Texture* spawnRoomLightTexture = nullptr;
     Model* lightSphere = nullptr;
 
     /// <summary>
@@ -213,6 +213,7 @@ private:
     );
 
     Shader* lineLightShader = nullptr;
+    bool lightsForAllLines = false;
     void RenderLineLights();
 
     void CompositeBufferSetUp();

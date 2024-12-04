@@ -14,7 +14,8 @@ enum class PointLightEffect
     Off,
     Flickering,
     Explosion,
-    SyncsGun,
+    SpotLightSpawnRoom,
+    OffDelete,
 };
 
 class PointLight {

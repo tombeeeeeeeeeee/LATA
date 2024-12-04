@@ -9,6 +9,8 @@ void ParticleSystem::Initialise(Shader* _shader)
 	shader = _shader;
 	nextParticleTexture = ResourceManager::defaultTexture;
 	healthParticleTexture = ResourceManager::LoadTexture(Paths::importTextureLocation + "healthParticle" + Paths::imageExtension, Texture::Type::count);
+	dustParticleTexture = ResourceManager::LoadTexture(Paths::importTextureLocation + "T_Dust_BaseColour.tga", Texture::Type::count);
+	sparkParticleTexture = ResourceManager::LoadTexture(Paths::importTextureLocation + "T_Sparks_BaseColour.tga", Texture::Type::count);
 }
 
 void ParticleSystem::Update(float delta)
@@ -44,6 +46,7 @@ void ParticleSystem::Draw(std::vector<Particle*>& particles)
 Particle* ParticleSystem::AddParticle(unsigned int _count, float _lifetime, Texture* _texture, glm::vec3 startingPos, float scaleDelta)
 {
 	particles.emplace_back(new Particle(_count, _lifetime, shader, _texture, startingPos));
+	particles[particles.size() - 1]->colourOverTime = nextParticleTexture;
 	particles.back()->Initialise();
 	return particles.back();
 }
