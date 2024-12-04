@@ -165,8 +165,8 @@ void HealthSystem::PlayerHealingUpdate(Health* eccoHealth, Health* syncHealth, g
 			playerHealingAbility = false;
 			currentPulseCount = 0;
 			timeSinceLastHealingAbility = 0.0f;
-			SceneManager::scene->DeleteSceneObjectAndChildren(eccoHealthLight->GUID);
-			SceneManager::scene->DeleteSceneObjectAndChildren(syncHealthLight->GUID);
+			eccoHealthLight->pointLight()->effect = PointLightEffect::OffDelete;
+			syncHealthLight->pointLight()->effect = PointLightEffect::OffDelete;
 			SceneManager::scene->audio.PlaySound(Audio::healingAbilityDeactivate);
 		}
 	}

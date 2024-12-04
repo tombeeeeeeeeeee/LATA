@@ -202,6 +202,7 @@ private:
 	
 	void HealthCheck(
 		std::unordered_map<unsigned long long, Enemy>& enemies,
+		std::unordered_map<unsigned long long, Transform>& transforms,
 		std::unordered_map<unsigned long long, Health>& healths
 	);
 

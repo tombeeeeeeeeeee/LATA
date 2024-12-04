@@ -54,10 +54,9 @@ public:
 
     bool particleFacingCamera;
 
-
     float lightTimeToOn = 2.5f;
     float lightTimeToOff = 2.5f;
-    float lightTimeToExplode = 0.1f; 
+    float lightTimeToExplode = 0.5f; 
     float lightTimeToFlicker = 5.5f;
     float ambientIntensity = 1.0f;
     bool inOrtho = false;
@@ -157,7 +156,7 @@ private:
     Texture* offLightTexture = nullptr;
     Texture* flickeringLightTexture = nullptr;
     Texture* explodingLightTexture = nullptr;
-    Texture* syncLightTexture = nullptr;
+    Texture* spawnRoomLightTexture = nullptr;
     Model* lightSphere = nullptr;
 
     /// <summary>
@@ -211,6 +210,10 @@ private:
         std::unordered_map<unsigned long long, Transform>& transforms,
         float delta
     );
+
+    Shader* lineLightShader = nullptr;
+    bool lightsForAllLines = false;
+    void RenderLineLights();
 
     void CompositeBufferSetUp();
     void RenderComposite();

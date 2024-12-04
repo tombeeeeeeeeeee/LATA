@@ -28,7 +28,6 @@ Particle::Particle(unsigned int _count, float _lifetime, Shader* _shader, Textur
 	glm::quat rot = glm::quat(glm::vec3(45.5f, 215.0f, 0.0f)  * PI / 180.0f);
 	model = glm::mat4_cast(rot);
 	lifeSpan = lifetime;
-	colourOverTime = texture;
 }
 
 void Particle::Spread()
@@ -131,7 +130,7 @@ void Particle::Update(float delta)
 {
 	for (size_t i = 0; i < count; i++)
 	{
-		positions.at(i) += velocities.at(i) + glm::vec4{0.0f, gravity, 0.0f, 0.0f};
+		positions.at(i) += velocities.at(i) - glm::vec4{0.0f, gravity, 0.0f, 0.0f};
 		positions.at(i).w = Utilities::Lerp(sizeStart + scales.at(i), sizeEnd, 1.0f - lifetime/lifeSpan);
 	}
 	lifetime -= delta;
@@ -145,7 +144,7 @@ void Particle::Draw()
 	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(float) * 4 * getCount(), &positions[0]);
 
 	shader->Use();
-	
+
 	shader->setMat4("model", model);
 	texture->Bind(1);
 	colourOverTime->Bind(2);
