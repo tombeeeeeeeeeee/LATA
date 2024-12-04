@@ -18,6 +18,6 @@ in vec2 TexCoord;
 void main()
 {
 	vec3 colour = texture(material.albedo, TexCoord).rgb * material.colour;
-	colour *= texture(colourOverTime, vec2(lifeTime/lifeSpan, 0.0)).rgb;
+	colour *= texture(colourOverTime, vec2(1.0 - lifeTime/lifeSpan, 0.0)).rgb;
 	FragColor = vec4(colour * 0.5 * min(1.0, lifeTime), 1.0);
 }
