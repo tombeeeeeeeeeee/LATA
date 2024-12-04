@@ -44,4 +44,6 @@ public:
     virtual toml::table Serialise(unsigned long long guid)const;
 
     void TriggerCall(std::string tag, bool toggle);
+
+    static void Attenutation(float range, float& linear, float& quad);
 };

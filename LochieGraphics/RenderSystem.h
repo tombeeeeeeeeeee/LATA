@@ -212,6 +212,9 @@ private:
         float delta
     );
 
+    Shader* lineLightShader = nullptr;
+    void RenderLineLights();
+
     void CompositeBufferSetUp();
     void RenderComposite();
     void OutputBufferSetUp();

@@ -10,23 +10,18 @@ in vec3 fragmentNormal;
 uniform float lerpAmount;
 uniform float linear;
 uniform float quad;
-uniform vec3 lightPos;
+uniform vec3 lightQ;
+uniform vec3 lightP;
+
 uniform vec3 camPos;
-uniform vec3 cameraDelta;
-uniform mat4 view;
-uniform mat4 proj;
-uniform mat4 invVP;
 uniform mat4 invP;
 uniform mat4 invV;
 uniform vec2 invViewPort;
-uniform int frameCount;
-uniform bool castsShadows;
 
 uniform sampler2D albedo;
 uniform sampler2D normal;
 uniform sampler2D depth;
 uniform sampler2D pbr;
-uniform sampler2D lightLerp;
 uniform sampler2D SSAO;
 
 vec3 trueNormal;
@@ -38,6 +33,7 @@ vec3 viewDirection;
 vec3 F0;
 vec3 worldPos;
 vec3 posToLight;
+vec3 lightPos;
 vec2 texCoords;
 
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -53,10 +49,7 @@ vec3 CalcDirectionalLight(vec3 lightDirection, vec3 normal);
 vec3 specularIBL(vec3 trueNormal);
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 float CalcAttenuation(float constant, float linear, float quadratic, float distanceToLight);
-float ScreenSpaceShadows();
-float ScreenSpaceShadowsButSmall();
-float InterleavedGradientNoise(vec2 position_screen);
-float InterleavedGradientNoiseNoFrameEffect(vec2 position_screen);
+
 
 #define PI 3.1415926535
 
@@ -70,7 +63,6 @@ const float RPC_16  = 0.0625f;
 
 void main()
 {
-
     texCoords = gl_FragCoord.xy;
     texCoords *= invViewPort;
 	vec4 albedo4 = texture(albedo, texCoords);
@@ -84,11 +76,26 @@ void main()
 
 	float depthValue = texture(depth, texCoords).r;
 
-
     vec4 NDC = vec4(texCoords * 2.0 - 1.0, depthValue * 2.0 - 1.0, 1.0);
     vec4 clipPos = invP * NDC;
     vec3 screenPosition = clipPos.xyz / clipPos.w;
     worldPos = (invV * vec4(screenPosition, 1.0)).xyz;
+    float lightBar = dot(lightQ - lightP, lightQ - lightP);
+    float t = dot(worldPos - lightP, lightQ - lightP);
+    t /= lightBar;
+
+    if(t <= 0)
+    {
+        lightPos = lightP;
+    }
+    else if(t >= 1)
+    {
+        lightPos = lightQ;
+    }
+    else
+    {
+        lightPos = lightP + t*(lightQ - lightP);
+    }
 
 	posToLight = lightPos - worldPos;
 
@@ -101,15 +108,7 @@ void main()
 	length(posToLight) / 100.0,
 	trueNormal, 1, linear, quad, lightColour
 	), 0, 1);
-    Lo *= texture(lightLerp, lerpAmount.rr).rgb;
-    if(castsShadows)
-    {
-        Lo *= ScreenSpaceShadows();
-    }
-    else
-    {
-        Lo *= ScreenSpaceShadowsButSmall();
-    }
+
 	finalColour = vec4(Lo, 1.0);
 	return;
 }
@@ -185,78 +184,4 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-}
-
-float ScreenSpaceShadows()
-{
-    // Compute ray position and direction (in view-space)
-
-    vec3 ray_pos = worldPos;
-    vec3 ray_dir = normalize(posToLight).xyz;
-    // Compute ray step
-    vec3 ray_step = ray_dir * sssMaxRayDistance / sssSteps;
-	
-    // Ray march towards the light
-    float occlusion = 0.0;
-    vec2 ray_uv   = vec2(0.0);
-    float offset = InterleavedGradientNoise(gl_FragCoord.xy);
-    ray_pos += ray_step * offset;
-    float startingDepth = (view * vec4(worldPos, 1.0)).z;
-    
-
-    for (uint i = 0; i < sssSteps; i++)
-    {
-        // Step the ray
-        if(length(ray_pos - worldPos) > length(posToLight)) break;
-        vec3 viewSpace = (view * vec4(ray_pos, 1.0)).xyz;
-        vec4 clipSpace = proj * vec4(viewSpace,1.0);
-
-        ray_uv  = (clipSpace.xy / clipSpace.w) * 0.5 + 0.5;
-
-        // Ensure the UV coordinates are inside the screen
-        if (ray_uv.x <= 1.0 && ray_uv.x >= 0.0 && ray_uv.y <= 1.0 && ray_uv.y >= 0.0)
-        {
-            // Compute the difference between the ray's and the camera's depth
-            float depth_z     = texture(depth, ray_uv).r;
-            vec4 sampleNDC = vec4(ray_uv.xy * 2.0 - 1.0, depth_z * 2.0 - 1.0, 1.0);
-            vec4 sampleClipPos = invP * sampleNDC;
-            vec3 sampleScreenPos = sampleClipPos.xyz /sampleClipPos.w;
-            float depthDelta = sampleScreenPos.z - viewSpace.z;
-
-            // Check if the camera can't "see" the ray (ray depth must be larger than the camera depth, so positive depth_delta)
-            bool onCam = (depthDelta > 0.0 && depthDelta < sssThickness);
-            if (onCam)
-            {
-                // Mark as occluded
-                occlusion = cos((i/sssSteps * PI) / 2);
-                break;
-            }
-        }
-        ray_pos += ray_step;
-    }
-
-    // Convert to visibility
-    return 1.0 - occlusion;
-}
-
-float ScreenSpaceShadowsButSmall()
-{
-    float SSBS = texture(SSAO, texCoords).r;
-    SSBS *= SSBS;
-    return SSBS;
-}
-
-float InterleavedGradientNoiseNoFrameEffect(vec2 screen_pos)
-{
-    vec3 magic = vec3(0.06711056, 0.00583715, 52.9829189);
-    return fract(magic.z * fract(dot(screen_pos, magic.xy)));
-}
-
-float InterleavedGradientNoise(vec2 screen_pos)
-{
-    float frame_step  = frameCount * RPC_16;
-    screen_pos.x     += frame_step * 4.7526;
-    screen_pos.y     += frame_step * 3.1914;
-    vec3 magic = vec3(0.06711056, 0.00583715, 52.9829189);
-    return fract(magic.z * fract(dot(screen_pos, magic.xy)));
 }

@@ -105,6 +105,7 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
     lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
     decalShader = ResourceManager::LoadShader("decal");
     beamShader = ResourceManager::LoadShader("beam");
+    lineLightShader = ResourceManager::LoadShader("lineLight");
     syncAimShader = ResourceManager::LoadShader("syncArrow");
     decalCube = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_DefaultCube" + Paths::modelExtension);
     wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Wall" + Paths::modelExtension);
@@ -448,6 +449,7 @@ void RenderSystem::Update(
     glDepthMask(GL_FALSE);
 
     RenderPointLights(pointLights, transforms, delta);
+    RenderLineLights();
     RenderSpotlights(spotlights, transforms, delta);
     RenderAmbientPass();
 
@@ -920,6 +922,68 @@ void RenderSystem::ActivateFlaggedVariables(
     }
 }
 
+void RenderSystem::RenderLineLights()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_GREATER);
+    glCullFace(GL_FRONT);
+
+    lineLightShader->Use();
+    lineLightShader->setMat4("vp", projection * viewMatrix);
+    lineLightShader->setMat4("invVP", glm::inverse(projection * viewMatrix));
+    lineLightShader->setMat4("invV", glm::inverse(viewMatrix));
+    lineLightShader->setMat4("invP", glm::inverse(projection));
+    lineLightShader->setVec2("invViewPort", glm::vec2(1.0f / SCREEN_WIDTH, 1.0f / SCREEN_HEIGHT));
+    lineLightShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
+    lineLightShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
+    lineLightShader->setInt("albedo", 1);
+    lineLightShader->setInt("normal", 2);
+    lineLightShader->setInt("depth", 3);
+    lineLightShader->setInt("pbr", 4);
+    lineLightShader->setInt("SSAO", 6);
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, albedoBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glBindTexture(GL_TEXTURE_2D, normalBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 3);
+    glBindTexture(GL_TEXTURE_2D, depthBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 4);
+    glBindTexture(GL_TEXTURE_2D, pbrBuffer);
+
+    glActiveTexture(GL_TEXTURE0 + 6);
+    glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
+
+    for (auto& i : beams)
+    {
+        Transform transform = Transform();
+        glm::vec3 P = i.startPosition;
+        glm::vec3 Q = i.endPosition;
+        float linear, quadratic;
+        PointLight::Attenutation(900.0f, linear, quadratic);
+        transform.setPosition((P + Q)/ 2.0f);
+        glm::vec3 difference = (P + Q) / 2.0f - i.startPosition;
+        float length = glm::length(difference);
+        transform.setScale({ 18000.0f, 18000.0f, length * 10.0f });
+        transform.setEulerRotation({ 0.0f, 180.0f * atan2f(difference.x, difference.z) / PI, 0.0f });
+        lineLightShader->setMat4("model", transform.getGlobalMatrix());
+        lineLightShader->setVec3("lightQ", Q);
+        lineLightShader->setVec3("lightP", P);
+        lineLightShader->setVec3("colour", i.colour * 8.0f * (1.0f - i.timeElapsed / i.lifeSpan) * (1.0f - i.timeElapsed / i.lifeSpan));
+        lineLightShader->setFloat("linear", linear);
+        lineLightShader->setFloat("quad", quadratic);
+        decalCube->meshes[0]->Draw();
+    }
+
+    glDisable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glCullFace(GL_BACK);
+}
+
 void RenderSystem::CompositeBufferSetUp()
 {
     glGenFramebuffers(1, &compositeFBO);
@@ -969,7 +1033,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
     for (auto& pair : spotlights)
     {
         if (!pair.second.castsShadows) continue;
-        if (!frustum.IsOnFrustum(transforms[pair.first].getGlobalPosition(), pair.second.range * 666.0f))
+        if (!frustum.IsOnFrustum(transforms[pair.first].getGlobalPosition(), pair.second.range * 900.0f))
         {
             continue;
         }
