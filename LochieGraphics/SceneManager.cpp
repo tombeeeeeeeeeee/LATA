@@ -30,6 +30,7 @@ glm::vec2 SceneManager::cursorPos = { 0, 0 };
 
 float SceneManager::deltaTime = 0.0f;
 FixedSizeQueue<float, 300> SceneManager::frameTimes;
+float SceneManager::maxFrameTime = 0.018f;
 
 Camera SceneManager::camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float SceneManager::lastX = 600;
@@ -256,9 +257,9 @@ void SceneManager::Update()
 {
 	float currentFrame = static_cast<float>(glfwGetTime());
 	deltaTime = currentFrame - lastFrame;
-	deltaTime = fminf(0.018f, deltaTime);
 	lastFrame = currentFrame;          
 	frameTimes.Push(deltaTime);
+	deltaTime = fminf(maxFrameTime, deltaTime);
 
 	ProcessInput(window);
 	float orthoWidth = camera.getOrthoWidth();

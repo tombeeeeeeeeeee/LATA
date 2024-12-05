@@ -33,6 +33,7 @@ private:
 public:
 	static Camera camera;
 	static FixedSizeQueue<float, 300> frameTimes;
+	static float maxFrameTime;
 
 	static GLFWwindow* window;
 	static Scene* scene;
