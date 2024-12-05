@@ -101,7 +101,6 @@ void GUI::Update()
 		ImGui::EndMainMenuBar();
 	}
 
-	if (showTestMenu) { TestMenu(); }
 	if (showResourceMenu) { ResourceMenu(); }
 	if (showCameraMenu) { CameraMenu(); }
 	if (showSceneObject) { SceneObjectMenu(); }
