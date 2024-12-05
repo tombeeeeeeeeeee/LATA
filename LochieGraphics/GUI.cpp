@@ -78,7 +78,6 @@ void GUI::Update()
 				showHierarchy = showSceneObject;
 			}
 			ImGui::MenuItem("Style Editor Menu", NULL, &showStyleMenu);
-			ImGui::MenuItem("Test Menu", NULL, &showTestMenu);
 			ImGui::MenuItem("User Prefs", NULL, &showUserPrefsMenu);
 
 			ImGui::MenuItem("Imgui Demo", NULL, &showImguiExampleMenu);
@@ -330,21 +329,7 @@ void GUI::ResourceMenu()
 	ImGui::Text(("Average FPS: " + std::to_string(1 / averageFrameTime)).c_str());
 	ImGui::Text(("Last Frame Time: " + std::to_string(SceneManager::frameTimes.Front())).c_str());
 	ImGui::Text(("Last Frame FPS: " + std::to_string(1 / SceneManager::frameTimes.Front())).c_str());
-
-	ImGui::End();
-}
-
-void GUI::TestMenu()
-{
-	if (!ImGui::Begin("Controls Menu", &showTestMenu, defaultWindowFlags)) {
-		ImGui::End();
-		return;
-	}
-
-	ImGui::Text("Look around with the mouse");
-	ImGui::Text("Use keyboard (WASD) to move the camera around");
-	ImGui::Text("Press the ALT key (left) to toggle between moving the mouse / camera");
-	ImGui::Text("Hold right click to also switch moving the mouse/camera");
+	ImGui::DragFloat("Maximum Frame time", &SceneManager::maxFrameTime, 0.001f, 0.0f, FLT_MAX);
 
 	ImGui::End();
 }

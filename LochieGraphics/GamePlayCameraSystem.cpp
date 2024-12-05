@@ -164,7 +164,7 @@ void GameplayCameraSystem::GUI()
 
 	ImGui::DragFloat("Minimum Camera Zoom", &cameraZoomMinimum);
 	ImGui::DragFloat("Maximum Camera Zoom", &cameraZoomMaximum);
-	ImGui::DragFloat("Zoom Intensity While targetting", &cameraZoomScale);
+	ImGui::DragFloat("Zoom Intensity While targeting", &cameraZoomScale);
 	ImGui::DragFloat("Zoom In Speed", &cameraZoomInSpeed);
 	ImGui::DragFloat("Zoom Out Speed", &cameraZoomOutSpeed);
 	ImGui::DragFloat("Camera Move Speed While targetting", &cameraMoveSpeed);
