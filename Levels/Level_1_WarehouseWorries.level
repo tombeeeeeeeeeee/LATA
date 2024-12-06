@@ -32,7 +32,7 @@ speedWheelTurnInfluence = 50.0
 stoppingFrictionCoef = 80.0
 turningCircleScalar = 0.15000000596046448
 turningCircleScalarBoosting = 0.05999999865889549
-wheelDirection = [ 0.866025447845459, 0.4999999701976776 ]
+wheelDirection = [ 0.644957423210144, -0.7642184495925903 ]
 wheelTurnSpeed = 4.400000095367432
 
     [Ecco.boostUI]
@@ -50,7 +50,7 @@ wheelTurnSpeed = 4.400000095367432
     scale = [ 0.26249998807907104, 0.04500001668930054 ]
 
 [Sync]
-barrelOffset = [ -37.0, 96.0, 12.0 ]
+barrelOffset = [ -37.0, 120.0, 12.0 ]
 canPierceOverclock = true
 canPierceSnipe = false
 eccoRefractionAngle = 100.0
@@ -9487,7 +9487,7 @@ guid = '18251280004792080046'
 maxHealth = 100
 
 [[Healths]]
-currHealth = 185
+currHealth = 200
 guid = '18251280005058221518'
 maxHealth = 200
 
@@ -9522,19 +9522,6 @@ triggerTag = 'DoorLeft'
 [[PointLights]]
 canBeTriggered = false
 castsShadows = false
-colour = [ 0.2554348111152649, 0.46585577726364136, 1.0 ]
-effect = 0
-guid = '2141876518643177376'
-intensity = 1.25
-linear = 0.9142857193946838
-on = true
-quadratic = 4.300000190734863
-range = 2.0
-triggerTag = ''
-
-[[PointLights]]
-canBeTriggered = false
-castsShadows = false
 colour = [ 0.5538160800933838, 1.0, 0.5489130020141602 ]
 effect = 0
 guid = '9971336363380109633'
@@ -9543,6 +9530,19 @@ linear = 0.9357143044471741
 on = true
 quadratic = 4.550000190734863
 range = 1.5
+triggerTag = ''
+
+[[PointLights]]
+canBeTriggered = false
+castsShadows = false
+colour = [ 0.2554348111152649, 0.46585577726364136, 1.0 ]
+effect = 0
+guid = '2141876518643177376'
+intensity = 1.25
+linear = 0.9142857193946838
+on = true
+quadratic = 4.300000190734863
+range = 2.0
 triggerTag = ''
 
 [[Renderers]]
@@ -29293,21 +29293,21 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '9971355480874648400'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '9558329198640248404' ]
-meshIndexToDraw = '0'
-modelGuid = '9554982897410321528'
-rendersShadows = false
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '7738191207237560821'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1822012501052853337', '1820008414540500919' ]
 meshIndexToDraw = '0'
 modelGuid = '7289854778488251302'
 rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '9971355480874648400'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '9558329198640248404' ]
+meshIndexToDraw = '0'
+modelGuid = '9554982897410321528'
+rendersShadows = false
 
 [[Renderers]]
 drawSingleMesh = false
@@ -30121,20 +30121,20 @@ rendersShadows = true
 
 [[Renderers]]
 drawSingleMesh = false
-guid = '2243294977866833463'
-materialTint = [ 1.0, 1.0, 1.0 ]
-materials = [ '2229847150575832532', '7419820402882411030' ]
-meshIndexToDraw = '0'
-modelGuid = '2234949598158592467'
-rendersShadows = true
-
-[[Renderers]]
-drawSingleMesh = false
 guid = '10007999632426086993'
 materialTint = [ 1.0, 1.0, 1.0 ]
 materials = [ '1822012501052853337' ]
 meshIndexToDraw = '0'
 modelGuid = '1821859757872728656'
+rendersShadows = true
+
+[[Renderers]]
+drawSingleMesh = false
+guid = '2243294977866833463'
+materialTint = [ 1.0, 1.0, 1.0 ]
+materials = [ '2229847150575832532', '7419820402882411030' ]
+meshIndexToDraw = '0'
+modelGuid = '2234949598158592467'
 rendersShadows = true
 
 [[Renderers]]
@@ -72450,12 +72450,12 @@ quaternion = [ 1.0, -0.0, 0.0, -0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ -8.243348121643066, 6.800557457609102e-06, 7.94126208347734e-06 ]
+euler = [ -8.243346214294434, 7.09004189047846e-06, -1.5008228047008743e-06 ]
 guid = '9971355480874648400'
 isStatic = true
-position = [ -9.640934877097607e-07, -6.185356140136719, 7.829074859619141 ]
-quaternion = [ 0.9974136352539062, -0.07187476009130478, 5.421160764740307e-08, 7.338682905810856e-08 ]
-scale = [ 1.0500000715255737, 1.0499999523162842, 1.0500001907348633 ]
+position = [ -2.5671997718745843e-06, -6.18536376953125, 7.829078674316406 ]
+quaternion = [ 0.997413694858551, -0.07187473773956299, 6.2653619181674e-08, -8.616222402224594e-09 ]
+scale = [ 1.0500003099441528, 1.0499999523162842, 1.0500003099441528 ]
 
 [[Transforms]]
 euler = [ -0.0, -0.0, -0.0 ]
@@ -74035,11 +74035,11 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, -0.0, 0.6161134243011475 ]
+euler = [ 0.0, -0.0, 0.6161134839057922 ]
 guid = '9971336361977595518'
 isStatic = true
-position = [ 1.1918230056762695, 1.206479787826538, 0.6711763739585876 ]
-quaternion = [ 0.9999855756759644, 0.0, 0.0, 0.005376577842980623 ]
+position = [ 1.1374001502990723, -1.4777257442474365, 0.2964376211166382 ]
+quaternion = [ 0.9999855756759644, 0.0, 0.0, 0.0053765783086419106 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
@@ -84366,20 +84366,25 @@ quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
 scale = [ 1.0, 1.0, 1.0 ]
 
 [[Transforms]]
-euler = [ 0.0, 135.0116729736328, 0.0 ]
+euler = [ -360.0, 180.0, 0.0 ]
 guid = '18251280004792080046'
 isStatic = false
 position = [ 3467.09326171875, 0.0, 3376.918701171875 ]
-quaternion = [ 0.3825893700122833, 0.0, 0.9239184856414795, 0.0 ]
-scale = [ 0.9999927282333374, 1.0, 0.9999927282333374 ]
+quaternion = [
+    4.371138828673793e-08,
+    -3.82137093032941e-15,
+    -1.0,
+    -8.742277657347586e-08
+]
+scale = [ 0.9999926686286926, 1.0, 0.9999926686286926 ]
 
 [[Transforms]]
-euler = [ 0.0, 0.0, 0.0 ]
+euler = [ -179.99989318847656, 11.273902893066406, -179.99989318847656 ]
 guid = '18251280005058221518'
 isStatic = false
 position = [ 3318.025390625, -0.1640625, 3415.28369140625 ]
-quaternion = [ 1.0, 0.0, 0.0, 0.0 ]
-scale = [ 0.9985079169273376, 1.0, 0.9985079169273376 ]
+quaternion = [ 0.09822472184896469, -8.161817390828219e-07, 0.9951642751693726, -8.161817390828219e-07 ]
+scale = [ 0.9985060095787048, 1.0, 0.9985060095787048 ]
 
 [[Transforms]]
 euler = [ 0.0, 0.0, 0.0 ]
