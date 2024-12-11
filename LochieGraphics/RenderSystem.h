@@ -44,8 +44,8 @@ public:
     Texture* colourKey1 = nullptr;
     Texture* colourKey2 = nullptr;
     Texture* roomAmbience = nullptr;
-    float postEffectPercent = 0;
-    bool postEffectOn = false;
+    float postEffectPercent = 1.0f;
+    bool postEffectOn = true;
 
     int superSampling = 1;
 

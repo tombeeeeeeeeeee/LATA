@@ -70,13 +70,13 @@ public:
 		eccoDamageTaken,
 		rainbowShot,
 		rainbowShotMiss,
-		enemyDeathRammed,
+		//enemyDeathRammed,
 		enemyRandomNoise,
-		enemyExplode,
+		enemyExplode, // Is just the death sound
 		enemyRangedShot,
 		enemyRangedCharging,
 		enemyStunned,
-		enemyDeathShot,
+		//enemyDeathShot,
 		enemyHitByShot, //TODO: When is this supposed to be played, there is already enemy getting hit by other things
 		dabMove00,
 		dabMove01,

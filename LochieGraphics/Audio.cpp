@@ -82,13 +82,13 @@ void Audio::Initialise()
 	sounds[eccoDamageTaken].filename = "Ecco_Shot.wav";
 	sounds[rainbowShot].filename = "Ecco_Shot_with_Railgun.wav";
 	sounds[rainbowShotMiss].filename = "Ecco_Shot.wav";
-	sounds[enemyDeathRammed].filename = "Ecco_Ram_Enemy_kill.wav";
+	//sounds[enemyDeathRammed].filename = "Ecco_Ram_Enemy_kill.wav";
 	sounds[enemyRandomNoise].filename = "";
-	sounds[enemyExplode].filename = "Explosion_Close_With_Sound_Effects.wav";
+	sounds[enemyExplode].filename = "Enemy_Killed.wav";
 	sounds[enemyRangedShot].filename = "";
 	sounds[enemyRangedCharging].filename = "";
 	sounds[enemyStunned].filename = "";
-	sounds[enemyDeathShot].filename = "Enemy_Killed.wav";
+	//sounds[enemyDeathShot].filename = "Enemy_Killed.wav";
 	sounds[enemyHitByShot].filename = "Enemy_hit_speech.wav";
 	sounds[dabMove00].filename = "Slab_Rotate_01.wav";
 	sounds[dabMove01].filename = "Slab_Rotate_02.wav";
@@ -135,6 +135,8 @@ void Audio::Initialise()
 	testMixer.Init(soloud);
 	musicMixer.Init(soloud);
 	PlaySound(backTrack1, &musicMixer);
+
+	soloud.setVolume(musicMixer.handle, 0.5f);
 
 	soloud.setGlobalVolume(UserPreferences::defaultGlobalVolume);
 

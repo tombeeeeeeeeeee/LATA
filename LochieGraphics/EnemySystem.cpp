@@ -592,6 +592,7 @@ void EnemySystem::Steering(
                 enemyTags.at(enemyPair.second.tag)--;
                 SceneManager::scene->DeleteSceneObjectAndChildren(enemyPair.first);
                 SpawnExplosion(tranforms[enemyPair.first].getGlobalPosition());
+                SceneManager::scene->audio.PlaySound(Audio::SoundIndex::enemyExplode);
             }
         }
     }
