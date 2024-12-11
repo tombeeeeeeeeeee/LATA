@@ -6,9 +6,11 @@ in vec2 texCoords;
 
 struct Material {
 	sampler2D albedo;
+	float alpha;
 };
 
 uniform Material material;
+
 
 // TODO: Rename file
 void main()
@@ -22,5 +24,5 @@ void main()
 	
 	vec3 colour3 = pow(colour.rgb * colour.a, vec3(1/2.2));
 	
-	FragColor = vec4(colour3, colour.a);
+	FragColor = vec4(colour3, colour.a * material.alpha);
 }

@@ -112,6 +112,7 @@ void LevelEditor::Start()
 
 	directionalLight.colour = { 0.0f, 0.0f, 0.0f };
 	gameUiOverlay = ResourceManager::LoadTexture("images/gameUiOverlay.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
+	deathScreen = ResourceManager::LoadTexture("images/DeathScreen1.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
 	overlayMesh.InitialiseQuad(1.0f);
 	overlayShader = ResourceManager::LoadShader("Shaders/defaultWithNormal.vert", "Shaders/simpleTexturedWithCutout.frag");
 
@@ -422,11 +423,17 @@ void LevelEditor::Update(float delta)
 	if (!prevDied && died) {
 		fadeOut = true;
 		fadeTimer = 0.0f;
+		timerShowDeathPicture = timeToShowDeathPicture;
 	}
+	showDeathPicture = false;
 	if (died) {
 		if (renderSystem.exposure <= 0) {
+			timerShowDeathPicture -= delta;
+			showDeathPicture = true;
+		}
+		if (timerShowDeathPicture <= 0) {
 			LoadLevel(true);
-			renderSystem.exposure = 0.01;
+			renderSystem.exposure = 0.01f;
 			fadeOut = false;
 			died = false;
 			prevDied = false;
@@ -491,9 +498,21 @@ void LevelEditor::Draw(float delta)
 
 		overlayShader->Use();
 		gameUiOverlay->Bind(1);
+		overlayShader->setFloat("material.alpha", 1.0f);
 		overlayShader->setSampler("material.albedo", 1);
 		overlayMesh.Draw();
 
+		if (showDeathPicture) {
+			float timer = timeToShowDeathPicture - timerShowDeathPicture;
+			if (timer <= 0.6f) {
+				overlayShader->setFloat("material.alpha", fminf(timer * 2.0f, 1.0f));
+			}
+			else if (timer > 2.5f){
+				overlayShader->setFloat("material.alpha", timerShowDeathPicture * 2.0f);
+			}
+			deathScreen->Bind(1);
+			overlayMesh.Draw();
+		}
 	}
 }
 

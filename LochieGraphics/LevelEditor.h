@@ -117,6 +117,10 @@ private:
 
 	glm::vec2 EditorCamMouseToWorld() const;
 
+	const float timeToShowDeathPicture = 3.0f;
+	float timerShowDeathPicture = 0.0f;
+	bool showDeathPicture = false;
+
 public:
 
 	bool fadeOut = false;
