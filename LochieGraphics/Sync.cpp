@@ -26,6 +26,7 @@
 #include "State.h"
 #include "BlastLine.h"
 #include "BlendedAnimator.h"
+#include "HealthRangeCondition.h"
 
 #include "EditorGUI.h"
 
@@ -104,6 +105,10 @@ void Sync::Start(SceneObject* sceneObjectWithAnimator)
 	SyncChargeLevelCondition* overclockCharge = new SyncChargeLevelCondition(ChargeLevel::overclock, false);
 	animatorStateMachine.AddCondition(overclockCharge);
 	AnimationFinishedCondition* animationFinished = new AnimationFinishedCondition(AnimationFinishedCondition::Check::current);
+	animatorStateMachine.AddCondition(animationFinished);
+	HealthRangeCondition* isDead = new HealthRangeCondition(-INT_MAX, 1);
+	animatorStateMachine.AddCondition(isDead);
+
 
 	State* idle = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncIdle" + Paths::animationExtension), true, true));
 	animatorStateMachine.AddState(idle);
@@ -117,6 +122,8 @@ void Sync::Start(SceneObject* sceneObjectWithAnimator)
 	animatorStateMachine.AddState(shootSnipe);
 	State* shootOverclock = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncShootOverclock" + Paths::animationExtension), false, false));
 	animatorStateMachine.AddState(shootOverclock);
+	State* dead = new State(new AnimateBehaviour(ResourceManager::LoadAnimationAsset(Paths::animationsSaveLocation + "SyncDeath" + Paths::animationExtension), false, true));
+	animatorStateMachine.AddState(dead);
 
 	State* start = idle;
 
@@ -132,6 +139,7 @@ void Sync::Start(SceneObject* sceneObjectWithAnimator)
 	shootHold->AddTransition(overclockCharge, shootOverclock);
 	shootSnipe->AddTransition(animationFinished, start);
 	shootOverclock->AddTransition(animationFinished, start);
+	animatorStateMachine.AddAnyTransition(isDead, dead);
 
 	// TODO: Death animations
 
@@ -145,9 +153,24 @@ void Sync::Start(SceneObject* sceneObjectWithAnimator)
 bool Sync::Update(
 	SceneObject* sceneObjectWithAnimator, Input::InputDevice& inputDevice, Transform& transform,
 	RigidBody& rigidBody, LineRenderer* lines, 
-	float delta, float cameraAngleOffset, Transform* gunTransform
+	float delta, float cameraAngleOffset, Transform* gunTransform, bool dead
 )
 {
+	if (dead) {
+		rigidBody.isStatic = true;
+		rigidBody.invMass = 0;
+		
+		if (sceneObjectWithAnimator) {
+			if (!stateMachineSetup) {
+				animatorStateMachine.setInitialState(animatorStateMachine.getInitialState());
+				animatorStateMachine.Enter(sceneObjectWithAnimator);
+				stateMachineSetup = true;
+			}
+			animatorStateMachine.Update(sceneObjectWithAnimator, delta);
+		}
+
+		return false;
+	}
 	glm::vec2 look = inputDevice.getLook();
 	glm::vec2 move = inputDevice.getMove();
 

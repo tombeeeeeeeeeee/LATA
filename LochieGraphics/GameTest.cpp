@@ -167,7 +167,8 @@ void GameTest::Update(float delta)
 					&renderSystem.lines,
 					delta,
 					camera->transform.getEulerRotation().y,
-					nullptr
+					nullptr,
+					false
 				);
 			}
 			else
@@ -206,7 +207,8 @@ void GameTest::Update(float delta)
 					&renderSystem.lines,
 					delta,
 					camera->transform.getEulerRotation().y,
-					nullptr
+					nullptr,
+					false
 				);
 			}
 		}

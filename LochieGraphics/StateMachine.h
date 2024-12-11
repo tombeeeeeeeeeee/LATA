@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Behaviour.h"
+#include "State.h"
 
 #include <vector>
 
 class SceneObject;
-class State;
 class Condition;
 class StateMachine : public Behaviour
 {
@@ -18,6 +18,8 @@ private:
 	State* currentState;
 	State* initialState = nullptr;
 
+	std::vector<State::Transition> anyTransitions;
+
 public:
 	
 	StateMachine(State* state);
@@ -29,6 +31,7 @@ public:
 	State* getInitialState() const;
 	void AddState(State* state);
 	void AddCondition(Condition* condition);
+	void AddAnyTransition(Condition* condition, State* state);
 
 	void Update(SceneObject* so, float delta) override;
 

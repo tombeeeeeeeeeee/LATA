@@ -44,6 +44,11 @@ void StateMachine::AddCondition(Condition* condition)
 	conditions.push_back(condition);
 }
 
+void StateMachine::AddAnyTransition(Condition* condition, State* state)
+{
+	anyTransitions.push_back({ condition, state });
+}
+
 void StateMachine::Update(SceneObject* so, float delta)
 {
 	if (!currentState) {
@@ -56,10 +61,17 @@ void StateMachine::Update(SceneObject* so, float delta)
 
 	State* newState = nullptr;
 
-	for (State::Transition t : currentState->getTransitions())
+	for (const State::Transition& t : currentState->getTransitions())
 	{
-		if (t.condition->IsTrue(so))
+		if (t.condition->IsTrue(so)) {
 			newState = t.targetState;
+		}
+	}
+	for (const State::Transition& t : anyTransitions)
+	{
+		if (t.condition->IsTrue(so)) {
+			newState = t.targetState;
+		}
 	}
 
 	// State has changed

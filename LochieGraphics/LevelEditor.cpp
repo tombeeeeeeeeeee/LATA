@@ -309,7 +309,8 @@ void LevelEditor::Update(float delta)
 				&renderSystem.lines,
 				delta,
 				angle,
-				syncGun
+				syncGun,
+				died
 			);
 		}
 		else
@@ -335,7 +336,8 @@ void LevelEditor::Update(float delta)
 					&renderSystem.lines,
 					delta,
 					angle,
-					syncGun
+					syncGun,
+					died
 				);
 			}
 		}
