@@ -112,7 +112,7 @@ private:
 	std::string misfireModelPath = "SM_Sphere";
 	std::string misfireMaterialPath;
 
-	float timeSinceHealButtonPressed = 0.0f;
+	float timeSinceHealButtonPressed = FLT_MAX;
 
 	float maxMoveForce = 1.0f;
 	float maxStopForce = 1.0f;
