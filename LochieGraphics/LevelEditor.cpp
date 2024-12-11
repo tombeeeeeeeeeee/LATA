@@ -461,6 +461,11 @@ void LevelEditor::Draw(float delta)
 		particleSystem.particles
 	);
 
+	if (windowName == "MainMenu") {
+		Health* health = eccoSo->health();
+		health->currHealth = health->getMaxHealth();
+		return;
+	}
 	if (inPlay) {
 
 		glDisable(GL_BLEND);
