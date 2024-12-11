@@ -22,6 +22,7 @@ struct Collider;
 struct Node;
 struct Edge;
 struct PolygonCollider;
+class Animator;
 
 namespace toml {
 	inline namespace v3 {
@@ -99,7 +100,9 @@ public:
 	ModelRenderer* meleeEnemyRenderer = nullptr;
 	std::string meleeEnemyModel = "SM_Enemy_Melee";
 	Animation* meleeEnemyIdle;
-	std::string meleeEnemyAnimationPath = "models/SK_Idle(MeleeModel).fbx";
+	Animation* meleeEnemyAttack;
+	std::string meleeEnemyIdleAnimationPath = "models/SK_Idle(MeleeModel).fbx";
+	std::string meleeEnemyAttackAnimationPath = "models/SK_Punch.fbx";
 	std::string meleeEnemyMaterialPath = "images/otherskybox/nx.png";
 
 	int rangedEnemyHealth = 3;
@@ -124,6 +127,7 @@ public:
 		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
 		std::unordered_map<unsigned long long, Health>& healths,
 		std::unordered_map<unsigned long long, SpawnManager>& spawnManagers,
+		std::unordered_map<unsigned long long, Animator*>& animators,
 		glm::vec2 eccoPos, glm::vec2 syncPos,
 		float delta
 	);
@@ -188,6 +192,7 @@ private:
 		std::unordered_map<unsigned long long, Enemy>& enemies,
 		std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
 		std::unordered_map<unsigned long long, Transform>& transforms,
+		std::unordered_map<unsigned long long, Animator*>& animators,
 		glm::vec2 eccoPos, glm::vec2 syncPos,
 		float delta
 	);

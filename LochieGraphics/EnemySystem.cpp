@@ -14,6 +14,7 @@
 #include "ParticleSystem.h"
 #include "PointLight.h"
 #include "Collision.h"
+#include "BlendedAnimator.h"
 
 #include "Utilities.h"
 
@@ -109,7 +110,8 @@ void EnemySystem::Start(
     }
 
     explosiveEnemyIdle = ResourceManager::LoadAnimation(explosiveEnemyAnimationPath, explosiveEnemyRenderer->model);
-    meleeEnemyIdle = ResourceManager::LoadAnimation(meleeEnemyAnimationPath, meleeEnemyRenderer->model);
+    meleeEnemyIdle = ResourceManager::LoadAnimation(meleeEnemyIdleAnimationPath, meleeEnemyRenderer->model);
+    meleeEnemyAttack = ResourceManager::LoadAnimation(meleeEnemyAttackAnimationPath, meleeEnemyRenderer->model);
     rangedEnemyIdle = ResourceManager::LoadAnimation(rangedEnemyAnimationPath, rangedEnemyRenderer->model);
 
     UpdateNormalFlowMap(transforms, rigidbodies, colliders);
@@ -150,7 +152,7 @@ void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
     enemy->setRenderer(
         meleeEnemyRenderer
     );
-    enemy->setAnimator(new Animator(meleeEnemyIdle));
+    enemy->setAnimator(new BlendedAnimator(meleeEnemyIdle, meleeEnemyAttack));
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setPosition(pos + glm::vec3{0.0f, enemySpawnHeight, 0.0f});
     enemy->transform()->setStatic(false);
@@ -265,6 +267,7 @@ void EnemySystem::AbilityCheck(
     std::unordered_map<unsigned long long, Enemy>& enemies,
     std::unordered_map<unsigned long long, RigidBody>& rigidBodies,
     std::unordered_map<unsigned long long, Transform>& transforms,
+    std::unordered_map<unsigned long long, Animator*>& animators,
     glm::vec2 eccoPos, glm::vec2 syncPos,
     float delta
 )
@@ -318,9 +321,19 @@ void EnemySystem::AbilityCheck(
                     for (auto& hit : hits)
                     {
                         Health* health = hit.sceneObject->health();
+                        bool punched = false;
                         if (health)
                         {
                             health->subtractHealth(meleeEnemyDamage);
+
+                            punched = true;
+                        }
+                        BlendedAnimator* animator = (BlendedAnimator*)animators.at(enemyPair.first);
+                        if (punched) {
+                            animator->lerpAmount = 1.0f;
+                        }
+                        else {
+                            animator->lerpAmount = fmaxf(animator->lerpAmount - delta * 2.0f, 0.0f) ;
                         }
                     }
                 }
@@ -339,6 +352,11 @@ void EnemySystem::AbilityCheck(
         else
         {
             int type = enemyPair.second.type;
+
+            BlendedAnimator* animator = nullptr;
+            if (type == (int)EnemyType::melee) {
+                animator = (BlendedAnimator*)animators.at(enemyPair.first);
+            }
             switch (type)
             {
             case (int)EnemyType::explosive:
@@ -352,6 +370,9 @@ void EnemySystem::AbilityCheck(
                 {
                     enemyPair.second.inAbility = true;
                     enemyPair.second.timeInAbility = 0.0f;
+                }
+                if (animator) {
+                    animator->lerpAmount = fmaxf(animator->lerpAmount - delta * 2.0f, 0.0f);
                 }
                 break;
             case (int)EnemyType::ranged:
@@ -662,6 +683,7 @@ void EnemySystem::Update   (
     std::unordered_map<unsigned long long, RigidBody>& rigidbodies,
     std::unordered_map<unsigned long long, Health>& healths,
     std::unordered_map<unsigned long long, SpawnManager>& spawnManagers,
+    std::unordered_map<unsigned long long, Animator*>& animators,
     glm::vec2 eccoPos, glm::vec2 syncPos, float delta
 )
 {
@@ -673,6 +695,7 @@ void EnemySystem::Update   (
             enemies,
             rigidbodies,
             transforms,
+            animators,
             eccoPos, syncPos, delta
         );
 
