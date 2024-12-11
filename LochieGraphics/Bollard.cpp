@@ -1,6 +1,8 @@
 #include "Bollard.h"
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
+#include "SceneManager.h"
+#include "Scene.h"
 
 Bollard::Bollard(toml::table table)
 {
@@ -14,6 +16,13 @@ void Bollard::TriggerCall(std::string tag, bool toggle)
 {
 	if (tag == triggerTag)
 	{
+		if (state != toggle)
+		{
+			float randPercentage = std::rand() / (float)RAND_MAX;
+
+			int index = floor(randPercentage * 26.0f);
+			SceneManager::scene->audio.PlaySound((Audio::SoundIndex)(index + (int)Audio::dabMove00));
+		}
 		state = toggle;
 	}
 }

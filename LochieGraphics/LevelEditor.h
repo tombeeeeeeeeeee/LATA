@@ -66,6 +66,7 @@ private:
 	SceneObject* eccoSo = nullptr;
 
 	int singlePlayer = 0;
+	int syncHPLastFrame = 0;
 
 	std::vector<std::string> loadPaths;
 	std::vector<std::string*> loadPathsPointers;
@@ -121,6 +122,7 @@ public:
 	float fadeTimer = 0.0f;
 	float fadeInTime = 3.5f;
 	float fadeOutTime = 1.5f;
+
 
 	LevelEditor();
 	void Start() override;

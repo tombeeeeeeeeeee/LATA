@@ -104,6 +104,7 @@ private:
 	float eccoRefractionAngle = 30.0f;
 	int eccoRefractionCount = 5;
 
+	float timeSinceStep = FLT_MAX;
 
 	glm::vec2 fireDirection = {1.0f, 0.0f};
 

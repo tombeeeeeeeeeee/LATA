@@ -46,7 +46,6 @@ public:
 	UiElement healthUI;
 	UiElement boostUI;
 
-
 	float getSpeedBoostCooldownPercent() const;
 private:
 	float carMoveSpeed = 0.25f;
@@ -83,6 +82,8 @@ private:
 	float speedKnockback = 10.0f;
 	float boostKnockback = 10.0f;
 	float healCooldown = 1.0f;
+
+	float timeInDrive = FLT_MAX;
 	float timeSinceLastHeal = FLT_MAX;
 	glm::vec2 lastFrameVelocity = { 0.0f, 0.0f };
 	float lerpForwardAni = 0.0f;

@@ -977,7 +977,7 @@ void RenderSystem::RenderLineLights()
         transform.setPosition((P + Q)/ 2.0f);
         glm::vec3 difference = (P + Q) / 2.0f - i.startPosition;
         float length = glm::length(difference);
-        transform.setScale({ 18000.0f, 18000.0f, length * 4.0f + 1800.0f });
+        transform.setScale({ 18000.0f, 18000.0f, length * 4.0f + 1800.0f*2.0f });
         transform.setEulerRotation({ 0.0f, 180.0f * atan2f(difference.x, difference.z) / PI, 0.0f });
         lineLightShader->setMat4("model", transform.getGlobalMatrix());
         lineLightShader->setVec3("lightQ", Q);
@@ -1524,7 +1524,7 @@ void RenderSystem::UpdateEccoFaceAnim(float delta)
         int index = floor(randPercentage * 5.0f);
         index += 1;
         if (index == 2) index = 8;
-        eccoAnimLifeTime = 15.0f;
+        eccoAnimLifeTime = 2.0f;
         eccoAnimIndex = index;
     }
 }

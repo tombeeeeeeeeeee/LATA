@@ -357,6 +357,14 @@ void LevelEditor::Update(float delta)
 				return;
 		}
 
+		if (syncHPLastFrame > healths[sync->GUID].currHealth)
+		{
+			float randPercentage = std::rand() / (float)RAND_MAX;
+
+			int index = floor(randPercentage * 3.0f);
+			SceneManager::scene->audio.PlaySound((Audio::SoundIndex)(index + (int)Audio::syncDamageTaken0));
+		}
+		syncHPLastFrame = healths[sync->GUID].currHealth;
 		// TODO: Remove this here and just change the state when the option is switched via the GUI
 		
 		if		(singlePlayer == 1) gameCamSystem.target = syncSo->transform()->getGlobalPosition();
@@ -441,7 +449,7 @@ void LevelEditor::Update(float delta)
 		Eraser(targetCell);
 	}
 
-	if		(glfwGetKey(SceneManager::window, GLFW_KEY_F1))
+	if(glfwGetKey(SceneManager::window, GLFW_KEY_F1))
 	{
 		LoadLevel(inPlay, "MainMenu");
 	}

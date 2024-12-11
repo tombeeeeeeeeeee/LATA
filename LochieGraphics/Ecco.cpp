@@ -269,6 +269,8 @@ bool Ecco::Update(
 	{
 		RenderSystem::eccoAnimIndex = 7;
 		RenderSystem::eccoAnimLifeTime = 2.0f;
+		if(!boosting)
+		SceneManager::scene->audio.PlaySound(Audio::eccoDamageTaken);
 	}
 	else if (speed > maxCarMoveSpeed + 25.0f) 
 	{
@@ -276,6 +278,24 @@ bool Ecco::Update(
 	}
 
 	currHealth = health.currHealth;
+
+	if (speed > 110.0f)
+	{
+		timeInDrive += delta;
+		if (timeInDrive >= 575.5f)
+		{
+			timeInDrive = 0.0f;
+			SceneManager::scene->eccoCurrHandle = SceneManager::scene->audio.PlaySound(Audio::eccoDrive);
+		}
+	}
+	else if (speed < 50.0f)
+	{
+		SceneManager::scene->audio.soloud.stop(SceneManager::scene->eccoCurrHandle);
+		timeInDrive = FLT_MAX;
+	}
+
+	timeInDrive += delta;
+	
 
 	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
