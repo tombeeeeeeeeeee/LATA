@@ -215,13 +215,13 @@ bool Ecco::Update(
 				timeSinceSpeedBoost = 0.0f;
 				timeInSpeedBoost = 0.0f;
 				SceneManager::scene->audio.PlaySound(Audio::eccoBoost);
-				Particle* boost = SceneManager::scene->particleSystem.AddParticle(50, 0.5f, SceneManager::scene->particleSystem.sparkParticleTexture, transform.getGlobalPosition(), 0.5f);
-				boost->velEncouragement = 0.5f * glm::vec4(-wheelDirection.x, 0.0f, -wheelDirection.y, 0.0f);
+				Particle* boost = SceneManager::scene->particleSystem.AddParticle(20, 0.5f, SceneManager::scene->particleSystem.sparkParticleTexture, transform.getGlobalPosition(), 0.5f);
+				boost->velEncouragement = glm::vec4(-wheelDirection.x, 0.5f, -wheelDirection.y, 0.0f);
 				boost->gravity = -0.5f;
-				boost->sizeStart = 5.0f;
-				boost->sizeEnd = 3.0f;
+				boost->sizeStart = 3.0f;
+				boost->sizeEnd = 0.0f;
 				boost->gravity = -0.5f;
-				boost->explodeStrength = 6.0f;
+				boost->explodeStrength = 4.0f;
 				boost->Explode();
 				boost->Explode();
 			}
