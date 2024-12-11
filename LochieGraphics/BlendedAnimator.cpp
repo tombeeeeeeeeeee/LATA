@@ -106,6 +106,16 @@ void BlendedAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, con
         const glm::mat4& bone2Transform = bone2->getLocalTransform();
         glm::vec3 pos1 = bone1Transform[3];
         glm::vec3 pos2 = bone2Transform[3];
+        glm::vec3 scale1 = glm::vec3{
+            glm::length(glm::vec3(bone1Transform[0][0], bone1Transform[1][0], bone1Transform[2][0])),
+            glm::length(glm::vec3(bone1Transform[0][1], bone1Transform[1][1], bone1Transform[2][1])),
+            glm::length(glm::vec3(bone1Transform[0][2], bone1Transform[1][2], bone1Transform[2][2]))
+        };
+        glm::vec3 scale2 = glm::vec3{
+            glm::length(glm::vec3(bone2Transform[0][0], bone2Transform[1][0], bone2Transform[2][0])),
+            glm::length(glm::vec3(bone2Transform[0][1], bone2Transform[1][1], bone2Transform[2][1])),
+            glm::length(glm::vec3(bone2Transform[0][2], bone2Transform[1][2], bone2Transform[2][2]))
+        };
 
         glm::quat quat1 = glm::quat_cast(bone1Transform);
         glm::quat quat2 = glm::quat_cast(bone2Transform);
@@ -115,11 +125,11 @@ void BlendedAnimator::CalculateBoneTransform(const ModelHierarchyInfo* node, con
         glm::vec3 lerpPos = pos1 * (1.f - lerpAmount) + pos2 * lerpAmount;
         glm::quat slerpQuat = glm::slerp(quat1, quat2, lerpAmount);
         // TODO: Scale
-
+        glm::vec3 lerpScale = scale1 * (1.0f - lerpAmount) + scale2 * lerpAmount;
 
         glm::mat4 m = glm::mat4(1.0f);
         m = glm::translate(m, lerpPos);
-        //m = glm::scale(m, glm::vec3(scale));
+        m =  glm::scale(m, glm::vec3(lerpScale));
         m = m * glm::mat4_cast(slerpQuat);
 
         globalTransformation = parentTransform * m;
