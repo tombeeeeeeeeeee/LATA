@@ -116,10 +116,12 @@ void LevelEditor::Start()
 	overlayShader = ResourceManager::LoadShader("Shaders/defaultWithNormal.vert", "Shaders/simpleTexturedWithCutout.frag");
 
 	groundShader = ResourceManager::LoadShader("Shaders/floorWorld.vert", "Shaders/prepass.frag", Shader::Flags::Spec | Shader::Flags::VPmatrix | Shader::Flags::Lit);
-	groundTexture = ResourceManager::LoadTexture("images/T_MissingTexture.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
-	groundTexture->mipMapped = false;
+	groundTextureAlbedo = ResourceManager::LoadTexture("images/T_MissingTexture.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
+	groundTexturePBR = ResourceManager::LoadTexture("images/T_MissingTexture.png", Texture::Type::PBR, GL_CLAMP_TO_EDGE);
+	groundTexturePBR->mipMapped = false;
+	groundTextureAlbedo->mipMapped = false;
 	groundMaterial = ResourceManager::LoadMaterial("Ground", groundShader);
-	groundMaterial->AddTextures({ groundTexture });
+	groundMaterial->AddTextures({ groundTextureAlbedo, groundTexturePBR });
 
 	gui.showHierarchy = true;
 	gui.showSceneObject = true;
@@ -869,11 +871,18 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	previouslySaved = true;
 
 	// TODO: Move the _Ground to a variable or something
-	groundTexture->path = Paths::levelsPath + windowName + "_Ground.png";
-	groundTexture->Load();
-	if (!groundTexture->loaded) {
-		groundTexture->path = Paths::levelsPath + windowName + ".png";
-		groundTexture->Load();
+	groundTextureAlbedo->path = Paths::levelsPath + windowName + "_Ground.png";
+	groundTextureAlbedo->Load();
+	if (!groundTextureAlbedo->loaded) {
+		groundTextureAlbedo->path = Paths::levelsPath + windowName + ".png";
+		groundTextureAlbedo->Load();
+	}
+
+	groundTexturePBR->path = Paths::levelsPath + windowName + "_PBR.tga";
+	groundTexturePBR->Load();
+	if (!groundTexturePBR->loaded) {
+		groundTexturePBR->path = "images/black.png";
+		groundTexturePBR->Load();
 	}
 
 	RefreshMinMaxes();
