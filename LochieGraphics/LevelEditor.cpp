@@ -187,6 +187,7 @@ void LevelEditor::Start()
 
 	healthBar.InitialiseQuad(1.0f);
 	healthShader = ResourceManager::LoadShader("healthBar");
+	
 }
 
 void LevelEditor::Update(float delta)
@@ -440,6 +441,34 @@ void LevelEditor::Update(float delta)
 		Eraser(targetCell);
 	}
 
+	if		(glfwGetKey(SceneManager::window, GLFW_KEY_F1))
+	{
+		LoadLevel(inPlay, "MainMenu");
+	}
+	else if (glfwGetKey(SceneManager::window, GLFW_KEY_F2))
+	{
+		LoadLevel(inPlay, "Tutorial");
+	}
+	else if (glfwGetKey(SceneManager::window, GLFW_KEY_F3))
+	{
+		LoadLevel(inPlay, "Level_1_WarehouseWorries");
+	}
+	else if (glfwGetKey(SceneManager::window, GLFW_KEY_F4))
+	{
+		LoadLevel(inPlay, "Level_2_ObnoxiousOffice");
+	}
+	else if (glfwGetKey(SceneManager::window, GLFW_KEY_F5))
+	{
+		LoadLevel(inPlay, "Level_3_DesolateDesks");
+	}
+	else if (glfwGetKey(SceneManager::window, GLFW_KEY_F6))
+	{
+		LoadLevel(inPlay, "Level_4_SophisticatedSpaces");
+	}
+	else if (glfwGetKey(SceneManager::window, GLFW_KEY_F7))
+	{
+		LoadLevel(inPlay, "Prefabs");
+	}
 }
 
 void LevelEditor::Draw(float delta)

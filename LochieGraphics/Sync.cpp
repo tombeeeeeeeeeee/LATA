@@ -542,10 +542,9 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 			hitFX->Explode();
 			if (canPierceOverclock) 
 			{
-				for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
+				for (int i = 0; i < hits.size() && i < enemyPierceCount - 1; i++)
 				{
 					hit = hits[i];
-					if (i == enemyPierceCount - 1) return;
 					glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
 					Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.4f, SceneManager::scene->particleSystem.sparkParticleTexture, pos3D, 1.0f);
 					hitFX->sizeStart = 3.0f;
