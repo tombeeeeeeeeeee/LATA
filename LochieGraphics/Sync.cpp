@@ -201,7 +201,14 @@ bool Sync::Update(
 		rigidBody.netForce += force;
 
 		// TODO: Walking sound
+		if (currentMoveSpeed > 0.0f && timeSinceStep > 0.4f)
+		{
+			timeSinceStep = 0.0f;
+			float randPercentage = std::rand() / (float)RAND_MAX;
 
+			int index = floor(randPercentage * 30.0f);
+			SceneManager::scene->audio.PlaySound((Audio::SoundIndex)(index + (int)Audio::syncFootSteps00));
+		}
 		fireDirection = move;
 	}
 	else
@@ -213,7 +220,7 @@ bool Sync::Update(
 		}
 		rigidBody.netForce += force;
 	}
-
+	timeSinceStep += delta;
 	if (glm::length(look) > lookDeadZone)
 	{
 		float c = cosf(cameraAngleOffset * PI / 180.0f);
@@ -248,6 +255,7 @@ bool Sync::Update(
 		if (!chargingShot)
 		{
 			chargingShot = true;
+			SceneManager::scene->syncCurrHandle = SceneManager::scene->audio.PlaySound(Audio::railgunSecondChargeReached);
 			chargedDuration = 0.0f;
 		}
 
@@ -258,7 +266,6 @@ bool Sync::Update(
 				//At this time the charge is enough to shoot the sniper.
 				if (!reachedCharge1) {
 					reachedCharge1 = true;
-					SceneManager::scene->audio.PlaySound(Audio::railgunFirstChargeReached);
 				}
 			}
 			else if (chargedDuration + delta >= overclockChargeTime && chargedDuration < overclockChargeTime)
@@ -266,7 +273,7 @@ bool Sync::Update(
 				//At this time the charge is enough to shoot the reflecting shot
 				if (!reachedCharge2) {
 					reachedCharge2 = true;
-					SceneManager::scene->audio.PlaySound(Audio::railgunSecondChargeReached);
+					SceneManager::scene->audio.PlaySound(Audio::railgunHoldMaxCharge);
 				}
 			}
 			chargedDuration += delta;
@@ -300,7 +307,7 @@ bool Sync::Update(
 		chargingShot = false;
 		reachedCharge1 = false;
 		reachedCharge2 = false;
-
+		SceneManager::scene->audio.soloud.stop(SceneManager::scene->syncCurrHandle);
 		RenderSystem::syncAiming = false;
 
 		if (chargedDuration >= overclockChargeTime)
@@ -320,6 +327,7 @@ bool Sync::Update(
 		else
 		{
 			lastShotLevel = ChargeLevel::none;
+			SceneManager::scene->audio.PlaySound(Audio::railgunHoldMaxCharge);
 			//DO NOT FIRING STUFF
 		}
 		chargedDuration = 0;
@@ -536,14 +544,11 @@ void Sync::ShootSniper(glm::vec3 pos)
 		}
 		RenderSystem::beams.push_back({ sniperBeamLifeSpan, 0.0f, sniperBeamColour, pos, {hit.position.x, pos.y, hit.position.y} });
 	}
-
-	SceneManager::scene->audio.PlaySound(Audio::railgunShotFirstCharged);
 }
 
 void Sync::ShootOverClocked(glm::vec3 pos)
 {
 	OverclockRebounding(pos, fireDirection, 0, overclockBeamColour);
-	SceneManager::scene->audio.PlaySound(Audio::railgunShotSecondCharged);
 }
 
 void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec3 colour)
@@ -565,10 +570,9 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 			hitFX->Explode();
 			if (canPierceOverclock) 
 			{
-				for (int i = 0; i < hits.size() && i < enemyPierceCount; i++)
+				for (int i = 0; i < hits.size() && i < enemyPierceCount - 1; i++)
 				{
 					hit = hits[i];
-					if (i == enemyPierceCount - 1) return;
 					glm::vec3 pos3D = { hit.position.x, pos.y, hit.position.y };
 					Particle* hitFX = SceneManager::scene->particleSystem.AddParticle(10, 0.4f, SceneManager::scene->particleSystem.sparkParticleTexture, pos3D, 1.0f);
 					hitFX->sizeStart = 3.0f;

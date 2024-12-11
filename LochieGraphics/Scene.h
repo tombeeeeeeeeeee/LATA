@@ -83,6 +83,8 @@ public:
 	Sync* sync = nullptr;
 	bool eccoHealPressed = false;
 	bool syncHealPressed = false;
+	SoLoud::handle eccoCurrHandle;
+	SoLoud::handle syncCurrHandle;
 
 	std::vector<int> inputKeyWatch{};
 

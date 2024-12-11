@@ -189,26 +189,33 @@ void EnemySystem::SpawnExplosion(glm::vec3 pos)
     explosion->transform()->setPosition(pos);
     PointLight* point = new PointLight();
     point->range = 1000.0f;
-    point->colour = {1.0f, 1.0f, 0.8f};
+    point->colour = {1.0f, 1.0f, 1.0f};
     point->SetRange(1000.0f);
     point->timeInType = 0.0f;
     point->effect = PointLightEffect::Explosion;
     point->castsShadows = true;
     point->intensity = 500.0f;
     explosion->setPointLight(point);
-    Particle* bolts = SceneManager::scene->particleSystem.AddParticle(10, 1.0f, SceneManager::scene->particleSystem.robotBits1ParticleTexture, pos, 0.5f);
-    bolts->gravity = 3.0f;
-    bolts->sizeStart = 1.0f;
+    Particle* bolts = SceneManager::scene->particleSystem.AddParticle(2, 0.5f, SceneManager::scene->particleSystem.robotBits1ParticleTexture, pos, 0.5f);
+    bolts->gravity = 0.5f;
+    bolts->velEncouragement = { 0.0f, 1.5f, 0.0f , 0.0f};
+    bolts->sizeStart = 3.0f;
     bolts->sizeEnd = 1.0f;
     bolts->explodeStrength = 4.0f;
     bolts->Explode();
 
-    Particle* bits = SceneManager::scene->particleSystem.AddParticle(10, 1.0f, SceneManager::scene->particleSystem.robotBits2ParticleTexture, pos, 0.5f);
-    bits->gravity = 3.0f;
-    bits->sizeStart = 1.0f;
+    Particle* bits = SceneManager::scene->particleSystem.AddParticle(3, 0.5f, SceneManager::scene->particleSystem.robotBits2ParticleTexture, pos, 0.5f);
+    bits->gravity = 0.5f;
+    bits->velEncouragement = { 0.0f, 1.5f, 0.0f , 0.0f};
+    bits->sizeStart = 8.0f;
     bits->sizeEnd = 1.0f;
     bits->explodeStrength = 3.0f;
     bits->Explode();
+
+    Particle* cloud = SceneManager::scene->particleSystem.AddParticle(2, 0.5f, SceneManager::scene->particleSystem.explosionParticleTexture, pos);
+    cloud->sizeStart = 15.0f;
+    cloud->sizeEnd = 20.0f;
+    cloud->gravity = -1.0f;
 }
 
 void EnemySystem::LineOfSightAndTargetCheck(

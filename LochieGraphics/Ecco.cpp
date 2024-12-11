@@ -215,13 +215,13 @@ bool Ecco::Update(
 				timeSinceSpeedBoost = 0.0f;
 				timeInSpeedBoost = 0.0f;
 				SceneManager::scene->audio.PlaySound(Audio::eccoBoost);
-				Particle* boost = SceneManager::scene->particleSystem.AddParticle(50, 0.5f, SceneManager::scene->particleSystem.sparkParticleTexture, transform.getGlobalPosition(), 0.5f);
-				boost->velEncouragement = 0.5f * glm::vec4(-wheelDirection.x, 0.0f, -wheelDirection.y, 0.0f);
+				Particle* boost = SceneManager::scene->particleSystem.AddParticle(20, 0.5f, SceneManager::scene->particleSystem.sparkParticleTexture, transform.getGlobalPosition(), 0.5f);
+				boost->velEncouragement = glm::vec4(-wheelDirection.x, 0.5f, -wheelDirection.y, 0.0f);
 				boost->gravity = -0.5f;
-				boost->sizeStart = 5.0f;
-				boost->sizeEnd = 3.0f;
+				boost->sizeStart = 3.0f;
+				boost->sizeEnd = 0.0f;
 				boost->gravity = -0.5f;
-				boost->explodeStrength = 6.0f;
+				boost->explodeStrength = 4.0f;
 				boost->Explode();
 				boost->Explode();
 			}
@@ -269,6 +269,8 @@ bool Ecco::Update(
 	{
 		RenderSystem::eccoAnimIndex = 7;
 		RenderSystem::eccoAnimLifeTime = 2.0f;
+		if(!boosting)
+		SceneManager::scene->audio.PlaySound(Audio::eccoDamageTaken);
 	}
 	else if (speed > maxCarMoveSpeed + 25.0f) 
 	{
@@ -276,6 +278,24 @@ bool Ecco::Update(
 	}
 
 	currHealth = health.currHealth;
+
+	if (speed > 110.0f)
+	{
+		timeInDrive += delta;
+		if (timeInDrive >= 575.5f)
+		{
+			timeInDrive = 0.0f;
+			SceneManager::scene->eccoCurrHandle = SceneManager::scene->audio.PlaySound(Audio::eccoDrive);
+		}
+	}
+	else if (speed < 50.0f)
+	{
+		SceneManager::scene->audio.soloud.stop(SceneManager::scene->eccoCurrHandle);
+		timeInDrive = FLT_MAX;
+	}
+
+	timeInDrive += delta;
+	
 
 	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }

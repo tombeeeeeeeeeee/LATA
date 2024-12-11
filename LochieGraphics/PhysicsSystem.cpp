@@ -509,7 +509,7 @@ bool PhysicsSystem::RayCastRadiusExpansion(glm::vec2 pos, glm::vec2 direction, s
 {
 	std::vector<CollisionPacket> collisions;
 	hits.clear();
-	if (glm::length(direction) == 0.0f)
+	if (glm::length(direction) == 0.0f || rigidBodiesInScene == nullptr)
 	{
 		return false;
 	}
@@ -706,6 +706,8 @@ CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 d
 	// COLLISION BODY A is the target COLLISION BODY B SHOULD BE NULL
 	CollisionPacket collision;
 	collision.depth = -1.0f;
+	if (rigidBodiesInScene == nullptr) return collision;
+
 
 	if (collider->getType() == ColliderType::plane)
 	{

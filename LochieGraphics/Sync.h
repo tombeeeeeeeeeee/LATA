@@ -104,6 +104,7 @@ private:
 	float eccoRefractionAngle = 30.0f;
 	int eccoRefractionCount = 5;
 
+	float timeSinceStep = FLT_MAX;
 
 	glm::vec2 fireDirection = {1.0f, 0.0f};
 
@@ -112,7 +113,7 @@ private:
 	std::string misfireModelPath = "SM_Sphere";
 	std::string misfireMaterialPath;
 
-	float timeSinceHealButtonPressed = 0.0f;
+	float timeSinceHealButtonPressed = FLT_MAX;
 
 	float maxMoveForce = 1.0f;
 	float maxStopForce = 1.0f;
