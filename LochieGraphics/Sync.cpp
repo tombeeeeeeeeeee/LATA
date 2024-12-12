@@ -629,9 +629,8 @@ void Sync::OverclockRebounding(glm::vec3 pos, glm::vec2 dir, int count, glm::vec
 				};
 
 				OverclockRaindowShot({ hit.position.x, pos.y, hit.position.y }, refractionDirection, refractionColour, rainbowRebounding);
-
-				SceneManager::scene->audio.PlaySound(SceneManager::scene->audio.rainbowShot);
 			}
+			SceneManager::scene->audio.PlaySound(SceneManager::scene->audio.rainbowShot);
 		}
 		else if (count < overclockReboundCount && !(hit.collider->collisionLayer & (int)CollisionLayers::sync))
 		{
