@@ -136,7 +136,7 @@ void Audio::Initialise()
 	musicMixer.Init(soloud);
 	PlaySound(backTrack1, &musicMixer);
 
-	soloud.setVolume(musicMixer.handle, 0.5f);
+	soloud.setVolume(musicMixer.handle, 0.36f);
 
 	soloud.setGlobalVolume(UserPreferences::defaultGlobalVolume);
 
