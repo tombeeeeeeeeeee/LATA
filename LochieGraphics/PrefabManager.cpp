@@ -18,6 +18,7 @@ void PrefabManager::Initialise()
 {
 	for (auto& i : std::filesystem::directory_iterator(Paths::prefabsSaveLocation))
 	{
+		if (i.path().filename().string() == ".FolderNeedsToExist") continue;
 		std::ifstream file(i.path());
 		toml::table temp = toml::parse(file);
 

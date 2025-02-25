@@ -1,7 +1,5 @@
 #include "RigidBody.h"
 
-#include "Collider.h"
-
 #include "Utilities.h"
 
 #include "Serialisation.h"
@@ -36,25 +34,6 @@ glm::vec2 RigidBody::AddDepen(glm::vec2 depenNormal, float depth)
 		netDepen += depenNormal * changeInNet;
 	}
 	return netDepen;
-}
-
-void RigidBody::addCollider(Collider* collider)
-{
-	if (collider->getType() == ColliderType::polygon)
-	{
-		PolygonCollider* poly = (PolygonCollider*)collider;
-		for (int i = 0; i < poly->verts.size(); i++)
-		{
-			maxVertDistance = glm::max(abs(poly->verts[i].x) + poly->radius, maxVertDistance);
-			maxVertDistance = glm::max(abs(poly->verts[i].y) + poly->radius, maxVertDistance);
-		}
-	}
-	colliders.push_back(collider);
-}
-
-std::vector<Collider*>* RigidBody::getColliders()
-{
-	return &colliders;
 }
 
 void RigidBody::setMass(float mass)
@@ -118,53 +97,6 @@ void RigidBody::GUI()
 		}
 		ImGui::Checkbox(("Static##rigidBody" + tag).c_str(), &isStatic);
 		ImGui::DragFloat(("Elasticity##rigidBody" + tag).c_str(), &elasticicty, 0.01f, 0.0f, 1.0f);
-
-		for (auto i = 0; i < colliders.size(); i++)
-		{
-			if (ImGui::CollapsingHeader(("Collider " + std::to_string(i) + "##" + tag).c_str())) {
-				colliders.at(i)->GUI();
-			}
-		}
-		std::string addColliderPopupID = "RigidBodyAddCollider" + tag;
-		std::string removeColliderPopupID = "RigidBodyRemoveCollider" + tag;
-		if (ImGui::Button(("Add Collider##rigidbody" + tag).c_str())) {
-			ImGui::OpenPopup(addColliderPopupID.c_str());
-		}
-		ImGui::SameLine();
-		if (colliders.empty()) {
-			ImGui::BeginDisabled();
-		}
-		if (ImGui::Button(("Remove Collider##rigidbody" + tag).c_str())) {
-			ImGui::OpenPopup(removeColliderPopupID.c_str());
-		}
-		if (colliders.empty()) {
-			ImGui::EndDisabled();
-		}
-
-		if (ImGui::BeginPopup(addColliderPopupID.c_str())) {
-			if (ImGui::MenuItem(("Polygon Collider##" + tag).c_str())) {
-				colliders.push_back(new PolygonCollider({
-					{ +50, +50},
-					{ +50, -50},
-					{ -50, -50},
-					{ -50, +50}
-					}, 0.0f));
-			}
-			ImGui::EndPopup();
-		}
-
-		if (ImGui::BeginPopup(removeColliderPopupID.c_str())) {
-			auto c = colliders.begin();
-			for (size_t i = 0; i < colliders.size(); i++)
-			{
-				if (ImGui::MenuItem(("Collider " + std::to_string(i) + "##" + tag).c_str())) {
-					colliders.erase(c);
-					break;
-				}
-				c++;
-			}
-			ImGui::EndPopup();
-		}
 		
 		ImGui::Unindent();
 	}
@@ -172,19 +104,10 @@ void RigidBody::GUI()
 
 void RigidBody::DebugDraw(Transform* transform)
 {
-	for (Collider* collider : colliders)
-	{
-		collider->DebugDraw(transform);
-	}
 }
 
 toml::table RigidBody::Serialise(unsigned long long GUID) const
 {
-	toml::array savedColliders;
-	for (auto i : colliders)
-	{
-		savedColliders.push_back(i->Serialise(GUID));
-	}
 	// TODO: Ensure function pointers are safe
 	return toml::table{
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID) },
@@ -196,7 +119,6 @@ toml::table RigidBody::Serialise(unsigned long long GUID) const
 		{ "invMomentOfInertia", invMomentOfInertia},
 		{ "invMass", invMass},
 		{ "elasticicty", elasticicty},
-		{ "colliders", savedColliders},
 		{ "isStatic", isStatic},
 	};
 }
@@ -213,12 +135,4 @@ RigidBody::RigidBody(toml::table table)
 	elasticicty = Serialisation::LoadAsFloat(table["elasticicty"]);
 	isStatic = Serialisation::LoadAsBool(table["isStatic"]);
 	toml::array* loadingColliders = table["colliders"].as_array();
-	if (!loadingColliders) {
-		colliders.resize(0);
-		return;
-	}
-	for (size_t i = 0; i < loadingColliders->size(); i++)
-	{
-		addCollider(Collider::Load(*loadingColliders->at(i).as_table()));
-	}
 }

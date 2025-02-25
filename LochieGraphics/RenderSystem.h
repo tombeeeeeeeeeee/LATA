@@ -69,8 +69,6 @@ public:
         std::unordered_map<unsigned long long, Spotlight>& spotlights
         );
 
-    void SetIrradianceMap(unsigned int skybox);
-
     float exposure = 1.0f;
     int bufferIndex = 0;
 
@@ -91,9 +89,6 @@ public:
     );
 
     void ScreenResize(int width, int height);
-
-    void IBLBufferSetup(unsigned int skybox);
-
 
     int SCREEN_WIDTH, SCREEN_HEIGHT = 0;
 
@@ -149,12 +144,6 @@ private:
 
     void RenderPointLights(
         std::unordered_map<unsigned long long, PointLight>& pointLights,
-        std::unordered_map<unsigned long long, Transform>& transforms,
-        float delta
-    );
-
-    void RenderSpotlights(
-        std::unordered_map<unsigned long long, Spotlight>& spotlights,
         std::unordered_map<unsigned long long, Transform>& transforms,
         float delta
     );

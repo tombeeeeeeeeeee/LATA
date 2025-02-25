@@ -6,7 +6,6 @@
 #include <functional>
 
 struct Collision;
-struct Collider;
 class Transform;
 class LineRenderer;
 
@@ -24,12 +23,10 @@ public:
 	RigidBody(
 		float _invMass,
 		float _invMomentOfInertia,
-		std::vector<Collider*> _colliders = {},
 		bool _isStatic = false
 	) :
 		invMass(_invMass),
 		invMomentOfInertia(_invMomentOfInertia),
-		colliders(_colliders),
 		isStatic(_isStatic)
 	{}
 
@@ -50,9 +47,6 @@ public:
 	float AddRotationalImpulse(float impulse);
 
 	glm::vec2 AddDepen(glm::vec2 depen, float depth);
-
-	void addCollider(Collider* collider);
-	std::vector<Collider*>* getColliders();
 
 	void setMass(float mass);
 	float getMass();
@@ -75,6 +69,5 @@ public:
 
 	bool ignoreThisCollision = false;
 private:
-	std::vector<Collider*> colliders = {};
 	
 };

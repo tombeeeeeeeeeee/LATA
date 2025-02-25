@@ -136,7 +136,6 @@ void SceneObject::GUI()
 	}
 
 	if (ImGui::BeginPopup(removePopup.c_str())) {
-		RemovePartGUI(animator, setAnimator, ("Animator##Remove part" + tag).c_str());
 		RemovePartGUI(pointLight, setPointLight, ("Point Light##Remove part" + tag).c_str());
 		RemovePartGUI(rigidBody, setRigidBody, ("Rigid Body##Remove part" + tag).c_str());
 		

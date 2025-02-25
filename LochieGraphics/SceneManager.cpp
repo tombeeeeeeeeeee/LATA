@@ -163,6 +163,7 @@ SceneManager::SceneManager(Scene* _scene)
 
 	std::cout << "Loading Material Assets...\n";
 	for (auto& i : std::filesystem::directory_iterator(Paths::materialSaveLocation)) {
+		if (i.path().filename().string() == ".FolderNeedsToExist") continue;
 		ResourceManager::LoadMaterialAsset(i.path().string());
 	}
 	std::cout << "Loaded Material Assets\n";

@@ -88,9 +88,6 @@ public:
 #pragma region Part Get and Set
 	Transform* transform() const;
 
-	void setAnimator(Animator* animator);
-	Animator* animator();
-
 	void setPointLight(PointLight* pointLight);
 	PointLight* pointLight();
 

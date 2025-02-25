@@ -24,7 +24,7 @@ LineRenderer RenderSystem::debugLines;
 
 void RenderSystem::Start()
 {
-    std::srand(2.0f);
+    std::srand(2);
     if (SCREEN_WIDTH == 0)
     {
         int scrWidth, scrHeight;
@@ -33,7 +33,6 @@ void RenderSystem::Start()
         SCREEN_HEIGHT = scrHeight;
     }
 
-    IBLBufferSetup(skyboxTexture);
     DeferredSetup();
     CompositeBufferSetUp();
     OutputBufferSetUp();
@@ -336,7 +335,6 @@ void RenderSystem::Update(
     glDepthMask(GL_FALSE);
 
     RenderPointLights(pointLights, transforms, delta);
-    RenderSpotlights(spotlights, transforms, delta);
     RenderAmbientPass();
 
     glEnable(GL_DEPTH_TEST);
@@ -637,35 +635,6 @@ void RenderSystem::OutputBufferSetUp()
     OutputBufferUpdate();
 }
 
-void RenderSystem::IBLBufferSetup(unsigned int skybox)
-{
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
-
-    SetIrradianceMap(skybox);
-
-    // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-
-    //glViewport(0, 0, 512, 512);
-
-    //(*shaders)[brdf]->Use();
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //
-    //RenderQuad();
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-    ResourceManager::super->Use();
-
-    int scrWidth, scrHeight;
-    glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
-    glViewport(0, 0, scrWidth, scrHeight);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
-}
 
 void RenderSystem::GUI()
 {
