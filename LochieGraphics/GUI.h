@@ -102,10 +102,6 @@ private:
 	unsigned int transformGizmoOperation = 7;
 	// ImGuizmo::MODE::WORLD
 	unsigned int transformGizmoMode = 1;
-
-	void PhysicsMenu();
-	void EnemyMenu();
-	void HealthMenu();
 	bool disableGUIHeld = false;
 
 	void AddFromToSelection(SceneObject* from, SceneObject* to);

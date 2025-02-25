@@ -78,15 +78,6 @@
     <Filter Include="Source Files\Third-Party\soloud\core">
       <UniqueIdentifier>{9ae7af90-7bca-491e-a511-14745b6a322d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\State Machine">
-      <UniqueIdentifier>{063a5d90-af5e-473f-8de3-8a4eb4e70c97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\State Machine\Conditions">
-      <UniqueIdentifier>{7719d5ed-bbe2-45cc-a166-33d80072769b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\State Machine\Behaviours">
-      <UniqueIdentifier>{02dab582-2c47-4621-b13d-4e1634e7a6d6}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -116,17 +107,8 @@
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelRenderer.cpp">
-      <Filter>Source Files\Parts</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Parts</Filter>
@@ -149,9 +131,6 @@
     <ClCompile Include="SceneObject.cpp">
       <Filter>Source Files\Scene Management</Filter>
     </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Utilities.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
@@ -161,26 +140,11 @@
     <ClCompile Include="ImGuiStyles.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
-    <ClCompile Include="Skybox.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="AssimpMatrixToGLM.cpp">
       <Filter>Source Files\Third-Party</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Source Files\Rendering\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Animator.cpp">
-      <Filter>Source Files\Rendering\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Bone.cpp">
-      <Filter>Source Files\Rendering\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="FrameBuffer.cpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="BlendedAnimator.cpp">
-      <Filter>Source Files\Rendering\Animation</Filter>
     </ClCompile>
     <ClCompile Include="eNetTest.cpp">
       <Filter>Source Files\Networking\eNet</Filter>
@@ -191,56 +155,17 @@
     <ClCompile Include="RigidBody.cpp">
       <Filter>Source Files\Parts</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionFunctions.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="ArtScene.cpp">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="InputTest.cpp">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="TestScene.cpp">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="EmptyScene.cpp">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="LineRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="GameTest.cpp">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="GamePlayCameraSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Sync.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Ecco.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Health.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>Source Files\Physics</Filter>
     </ClCompile>
     <ClCompile Include="Image.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Serialisation.cpp">
       <Filter>Source Files\Misc</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelEditor.cpp">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
       <Filter>Source Files\Parts\Lights</Filter>
@@ -254,12 +179,6 @@
     <ClCompile Include="Spotlight.cpp">
       <Filter>Source Files\Parts\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="EnemySystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
     <ClCompile Include="hashFNV1A.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
@@ -268,15 +187,6 @@
     </ClCompile>
     <ClCompile Include="ImGuizmo.cpp">
       <Filter>Source Files\Third-Party\stb\imguizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="HealthSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="ExitElevator.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="LocWorkshop.cpp">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="UserPreferences.cpp">
       <Filter>Source Files\Misc</Filter>
@@ -316,24 +226,6 @@
     </ClCompile>
     <ClCompile Include="glad.c">
       <Filter>Source Files\Third-Party\GLAD</Filter>
-    </ClCompile>
-    <ClCompile Include="SpawnManager.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="TriggerSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="PressurePlate.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Door.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="DoorAndBollardSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="ModelHierarchyInfo.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -413,56 +305,11 @@
     <ClCompile Include="Audio.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="BoneInfo.cpp">
-      <Filter>Source Files\Rendering\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Bollard.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
     <ClCompile Include="ImguiMathsGLM.cpp">
       <Filter>Source Files\Third-Party</Filter>
     </ClCompile>
-    <ClCompile Include="Frustum.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="InvisibleWall.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="StateMachine.cpp">
-      <Filter>Source Files\State Machine</Filter>
-    </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>Source Files\State Machine</Filter>
-    </ClCompile>
-    <ClCompile Include="RayAgainstOBB.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Directional2dAnimator.cpp">
-      <Filter>Source Files\Rendering\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="UiElement.cpp">
       <Filter>Source Files\Misc</Filter>
-    </ClCompile>
-    <ClCompile Include="Triggerable.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="VelocityCondition.cpp">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="SyncChargingCondition.cpp">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="SyncChargeLevelCondition.cpp">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimateBehaviour.cpp">
-      <Filter>Source Files\State Machine\Behaviours</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimationFinishedCondition.cpp">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="Decal.cpp">
-      <Filter>Source Files\Parts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -487,19 +334,10 @@
     <ClInclude Include="MessengerInterface.h">
       <Filter>Source Files\Networking\Messenger</Filter>
     </ClInclude>
-    <ClInclude Include="ModelRenderer.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
@@ -513,9 +351,6 @@
     </ClInclude>
     <ClInclude Include="SceneObject.h">
       <Filter>Source Files\Scene Management</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Graphics.h">
       <Filter>Source Files\Third-Party</Filter>
@@ -547,101 +382,35 @@
     <ClInclude Include="FixedSizeQueue.h">
       <Filter>Source Files\Misc</Filter>
     </ClInclude>
-    <ClInclude Include="Skybox.h">
-      <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="AssimpMatrixToGLM.h">
       <Filter>Source Files\Third-Party</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Source Files\Rendering\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animator.h">
-      <Filter>Source Files\Rendering\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Bone.h">
-      <Filter>Source Files\Rendering\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="BoneInfo.h">
-      <Filter>Source Files\Rendering\Animation</Filter>
     </ClInclude>
     <ClInclude Include="FrameBuffer.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="BlendedAnimator.h">
-      <Filter>Source Files\Rendering\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="toml.hpp">
       <Filter>Source Files\Third-Party</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderSystem.h">
-      <Filter>Source Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="RigidBody.h">
       <Filter>Source Files\Parts</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsSystem.h">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider.h">
-      <Filter>Source Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionFunctions.h">
-      <Filter>Source Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionPacket.h">
-      <Filter>Source Files\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="ArtScene.h">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="InputTest.h">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="TestScene.h">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="EmptyScene.h">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="LineRenderer.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="GameTest.h">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="stb_image_write.h">
       <Filter>Source Files\Third-Party\stb</Filter>
     </ClInclude>
-    <ClInclude Include="GamePlayCameraSystem.h">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="ModelHierarchyInfo.h">
       <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Sync.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Ecco.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>Source Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Health.h">
-      <Filter>Source Files\Parts</Filter>
     </ClInclude>
     <ClInclude Include="Image.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Serialisation.h">
       <Filter>Source Files\Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelEditor.h">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="DirectionalLight.h">
       <Filter>Source Files\Parts\Lights</Filter>
@@ -658,18 +427,6 @@
     <ClInclude Include="Spotlight.h">
       <Filter>Source Files\Parts\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="BlastLine.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Hit.h">
-      <Filter>Source Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemySystem.h">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
     <ClInclude Include="hashFNV1A.h">
       <Filter>Source Files\Misc</Filter>
     </ClInclude>
@@ -685,17 +442,8 @@
     <ClInclude Include="ImGuizmo.h">
       <Filter>Source Files\Third-Party\stb\imguizmo</Filter>
     </ClInclude>
-    <ClInclude Include="HealthSystem.h">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="ExitElevator.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
     <ClInclude Include="eNetTest.h">
       <Filter>Source Files\Networking\eNet</Filter>
-    </ClInclude>
-    <ClInclude Include="LocWorkshop.h">
-      <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="UserPreferences.h">
       <Filter>Source Files\Misc</Filter>
@@ -745,24 +493,6 @@
     <ClInclude Include="khrplatform.h">
       <Filter>Source Files\Third-Party\GLAD</Filter>
     </ClInclude>
-    <ClInclude Include="SpawnManager.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="TriggerSystem.h">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="PressurePlate.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Door.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="DoorAndBollardSystem.h">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleSystem.h">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\stb_vorbis.h">
       <Filter>Source Files\Third-Party\soloud\audiosource\wav</Filter>
     </ClInclude>
@@ -778,62 +508,14 @@
     <ClInclude Include="Audio.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Bollard.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
     <ClInclude Include="ImguiMathsGLM.h">
       <Filter>Source Files\Third-Party</Filter>
-    </ClInclude>
-    <ClInclude Include="Frustum.h">
-      <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Decal.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="InvisibleWall.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Condition.h">
-      <Filter>Source Files\State Machine</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Source Files\State Machine</Filter>
-    </ClInclude>
-    <ClInclude Include="StateMachine.h">
-      <Filter>Source Files\State Machine</Filter>
-    </ClInclude>
-    <ClInclude Include="Behaviour.h">
-      <Filter>Source Files\State Machine</Filter>
-    </ClInclude>
-    <ClInclude Include="RayAgainstOBB.h">
-      <Filter>Source Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Directional2dAnimator.h">
-      <Filter>Source Files\Rendering\Animation</Filter>
     </ClInclude>
     <ClInclude Include="UiElement.h">
       <Filter>Source Files\Misc</Filter>
     </ClInclude>
-    <ClInclude Include="Triggerable.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="VelocityCondition.h">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="SyncChargeLevelCondition.h">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="SyncChargingCondition.h">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimateBehaviour.h">
-      <Filter>Source Files\State Machine\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="SyncChargeLevel.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimationFinishedCondition.h">
-      <Filter>Source Files\State Machine\Conditions</Filter>
+    <ClInclude Include="RenderSystem.h">
+      <Filter>Source Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

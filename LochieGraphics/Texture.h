@@ -2,9 +2,6 @@
 
 #include "Graphics.h"
 
-#include <assimp/scene.h>
-#include <assimp/cimport.h>
-
 #include <string>
 #include <unordered_map>
 

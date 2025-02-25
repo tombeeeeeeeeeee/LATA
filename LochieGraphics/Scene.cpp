@@ -3,12 +3,7 @@
 #include "SceneObject.h"
 #include "Lights.h"
 #include "Camera.h"
-#include "Ecco.h"
-#include "Sync.h"
 #include "ResourceManager.h"
-#include "Skybox.h"
-#include "Collider.h"
-#include "Collision.h"
 
 #include "EditorGUI.h"
 #include "Serialisation.h"
@@ -20,8 +15,6 @@
 Scene::Scene()
 {
 	gui.scene = this;
-	ecco = new Ecco();
-	sync = new Sync();
 }
 
 Scene::~Scene()
@@ -97,56 +90,17 @@ void Scene::DeleteAllSceneObjectsAndParts()
 
 	transforms.clear();
 
-	renderers.clear();
-	partsChecker &= ~Parts::modelRenderer;
-
-	animators.clear();
-	partsChecker &= ~Parts::animator;
-
 	rigidBodies.clear();
 	partsChecker &= ~Parts::rigidBody;
-
-	colliders.clear();
-	partsChecker &= ~Parts::collider;
-
-	healths.clear();
-	partsChecker &= ~Parts::health;
-
-	enemies.clear();
-	partsChecker &= ~Parts::enemy;
-
-	exits.clear();
-	partsChecker &= ~Parts::exitElevator;
-
-	spawnManagers.clear();
-	partsChecker &= ~Parts::spawnManager;
-
-	plates.clear();
-	partsChecker &= ~Parts::plate;
-
-	doors.clear();
-	partsChecker &= ~Parts::door;
-
-	bollards.clear();
-	partsChecker &= ~Parts::bollard;
 
 	// TODO: Don't like how just setting these flags here but no containers atm
 	spotlights.clear();
 	partsChecker &= ~Parts::spotlight;
 
-	decals.clear();
-	partsChecker &= ~Parts::decal;
-
-	shadowWalls.clear();
-	partsChecker &= ~Parts::shadowWall;
 
 	pointLights.clear();
 	partsChecker &= ~Parts::pointLight;
 
-	partsChecker &= ~Parts::ecco;
-	partsChecker &= ~Parts::sync;
-	triggerables.clear();
-	partsChecker &= ~Parts::triggerable;
 	// TODO: Don't need a whole assert
 	assert(partsChecker == 0);
 }
@@ -165,7 +119,6 @@ SceneObject* Scene::FindSceneObjectOfName(std::string name)
 toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 {
 	// TODO: Maybe force delete the marked for delete here
-
 	auto savedSceneObjects = toml::array();
 	for (auto& i : sceneObjects)
 	{
@@ -177,50 +130,17 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 		if (!i.second) continue;
 		savedSceneObjects.push_back(i.second->Serialise());
 	}
-	SavePart(renderers);
 	SavePart(transforms);
-	auto savedanimators = toml::array(); 
-	for (auto i = animators.begin(); i != animators.end(); i++) {
-		savedanimators.push_back(i->second->Serialise(i->first));
-	};
 	SavePart(rigidBodies);
-	SavePart(enemies);
-	auto savedcolliders = toml::array(); for (auto i = colliders.begin(); i != colliders.end(); i++) {
-		savedcolliders.push_back(i->second->Serialise(i->first));
-	};
-	SavePart(healths);
-	SavePart(exits);
-	SavePart(spawnManagers);
-	SavePart(plates);
-	SavePart(doors);
-	SavePart(bollards);
-	SavePart(triggerables);
 	SavePart(pointLights);
 	SavePart(spotlights);
-	SavePart(decals);
-	SavePart(shadowWalls);
 
 	return toml::table{
 		{ "SceneObjects", savedSceneObjects },
-		{ "Renderers", savedrenderers},
 		{ "Transforms", savedtransforms},
-		{ "Animators", savedanimators},
 		{ "RigidBodies", savedrigidBodies},
-		{ "Colliders", savedcolliders},
-		{ "Enemies", savedenemies},
-		{ "Healths", savedhealths},
-		{ "Exits", savedexits},
-		{ "SpawnManagers", savedspawnManagers},
-		{ "Plates", savedplates},
-		{ "Doors", saveddoors},
-		{ "Bollards", savedbollards},
-		{ "Sync", sync->Serialise() },
-		{ "Ecco", ecco->Serialise() },
-		{ "Triggerables", savedtriggerables},
 		{ "PointLights", savedpointLights},
 		{ "Spotlights", savedspotlights},
-		{ "Decals", saveddecals},
-		{ "ShadowWalls", savedshadowWalls},
 	};
 
 	// TODO: Make sure save all parts, put a checker here
@@ -238,12 +158,6 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 		new SceneObject(this, loadingSceneObject);
 	}
 
-	LoadPart(renderers, "Renderers", ModelRenderer);
-	toml::array* loadingTransforms = data["Transforms"].as_array(); if (loadingTransforms) {
-		for (int i = 0; i < loadingTransforms->size(); i++) {
-			toml::table* loadingTransform = loadingTransforms->at(i).as_table(); transforms[Serialisation::LoadAsUnsignedLongLong((*loadingTransform)["guid"])].Load(*loadingTransform);
-		}
-	};
 
 	// Loading transforms doesn't keep the sceneobject pointer, they need to be refreshed
 	std::vector<unsigned long long> toDeleteOfTransforms;
@@ -286,47 +200,14 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 		}
 	}
 
-	toml::array* loadingAnimators = data["Animators"].as_array(); 
-	if (loadingAnimators) {
-		for (int i = 0; i < loadingAnimators->size(); i++) {
-			toml::table* loadingAnimator = loadingAnimators->at(i).as_table(); 
-			animators[Serialisation::LoadAsUnsignedLongLong((*loadingAnimator)["guid"])] = Animator::Load(*loadingAnimator);
-		}
-	};
 
-	// Renderers need to know if animators exist
-	// TODO: Make it ain't so
-	for (auto& i : animators)
-	{
-		renderers.at(i.first).animator = i.second;
-	}
 
 
 	LoadPart(rigidBodies, "RigidBodies", RigidBody);
-	LoadPart(enemies, "Enemies", Enemy);
-	LoadPart(spawnManagers, "SpawnManagers", SpawnManager);
-	LoadPart(plates, "Plates", PressurePlate);
-	LoadPart(doors, "Doors", Door);
-	LoadPart(bollards, "Bollards", Bollard);
-	LoadPart(triggerables, "Triggerables", Triggerable);
 	LoadPart(pointLights, "PointLights", PointLight);
 	LoadPart(spotlights, "Spotlights", Spotlight);
-	LoadPart(decals, "Decals", Decal);
-	LoadPart(shadowWalls, "ShadowWalls", ShadowWall);
 	// TODO: Fix for colliders
 
-	toml::array* loadingColliders = data["Colliders"].as_array(); 
-	for (int i = 0; i < loadingColliders->size(); i++) {
-		toml::table* loadingCollider = loadingColliders->at(i).as_table();
-		colliders[Serialisation::LoadAsUnsignedLongLong((*loadingCollider)["guid"])] = Collider::Load(*loadingCollider);
-	};
-	
-	LoadPart(healths, "Healths", Health);
-	LoadPart(exits, "Exits", ExitElevator);
-
-	*ecco = Ecco(*data["Ecco"].as_table());
-	// Sync specifically loads here is it needs to keep some stuff
-	sync->Load(*data["Sync"].as_table());
 
 	// Load Hierarchy Data
 	for (int i = 0; i < loadingSceneObjects->size(); i++)
@@ -380,10 +261,7 @@ void Scene::EnsureAllPartsHaveSceneObject()
 
 	// Transform do this themselves on load parts
 	//EnsurePartSafety(transforms);
-	EnsurePartSafety(renderers);
 	EnsurePartSafety(rigidBodies);
-	EnsurePartSafety(shadowWalls);
-	EnsurePartSafety(healths);
 }
 
 #define EnsurePartValueMatchesParts(partsType, container)                                                  \
@@ -406,54 +284,5 @@ void Scene::EnsurePartsValueMatchesParts()
 	for (auto& i : sceneObjects)
 	{
 		EnsurePartValueMatchesParts(Parts::rigidBody, rigidBodies);
-		EnsurePartValueMatchesParts(Parts::collider, colliders);
-		EnsurePartValueMatchesParts(Parts::modelRenderer, renderers);
-		EnsurePartValueMatchesParts(Parts::shadowWall, shadowWalls);
-		EnsurePartValueMatchesParts(Parts::health, healths);
-	}
-}
-
-void Scene::InitialiseLayers()
-{
-	////ecco
-	SceneObject* eccoSO = sceneObjects[ecco->GUID];
-	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { ecco->OnCollision(collision); });
-	////sync
-	SceneObject* syncSO = sceneObjects[sync->GUID];
-	//if (!syncSO->health()) syncSO->setHealth(new Health());
-	syncSO->rigidbody()->vel = { 0.0f, 0.0f };
-
-	for (int i = 1; i < (int)CollisionLayers::count; i *= 2)
-	{
-
-		physicsSystem.SetCollisionLayerMask((int)CollisionLayers::reflectiveSurface, i, false);
-		physicsSystem.SetCollisionLayerMask((int)CollisionLayers::count, i, false);
-		physicsSystem.SetCollisionLayerMask(i, i, false);
-		switch (i)
-		{
-		case (int)CollisionLayers::base:
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::trigger, i, false);
-			break;
-		case (int)CollisionLayers::enemy:
-			physicsSystem.SetCollisionLayerMask(i, i, true);
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
-			break;
-		case (int)CollisionLayers::trigger:
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::enemyProjectile, i, false);
-			break;
-		case (int)CollisionLayers::enemyProjectile:
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
-			break;
-		case (int)CollisionLayers::softCover:
-			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
-			break;
-		default:
-			break;
-		}
 	}
 }

@@ -4,10 +4,6 @@
 #include "Scene.h"
 #include "ResourceManager.h"
 #include "Lights.h"
-#include "Ecco.h"
-#include "Sync.h"
-// Needed for the physics menu
-#include "Collider.h"
 #include "UserPreferences.h"
 #include "PrefabManager.h"
 #include "ImGuiStyles.h"
@@ -63,14 +59,10 @@ void GUI::Update()
 		if (ImGui::BeginMenu("Windows")) {
 			ImGui::MenuItem("Audio Menu", NULL, &showAudioMenu);
 			ImGui::MenuItem("Camera Menu", NULL, &showCameraMenu);
-			ImGui::MenuItem("Enemy System", NULL, &showEnemyMenu);
-			ImGui::MenuItem("Health System", NULL, &showHealthSystemMenu);
 			if (ImGui::MenuItem("Hierarchy", NULL, &showHierarchy)) {
 				showSceneObject = showHierarchy;
 			}
 			ImGui::MenuItem("Light Menu", NULL, &showLightMenu);
-			ImGui::MenuItem("Particle Menu", NULL, &showParticleMenu);
-			ImGui::MenuItem("Physics System", NULL, &showPhysicsMenu);
 			ImGui::MenuItem("Prefabs Menu", NULL, &showPrefabMenu);
 			ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
 			ImGui::MenuItem("Resource Menu", NULL, &showResourceMenu);
@@ -108,9 +100,6 @@ void GUI::Update()
 	if (showLightMenu) { LightMenu(); }
 	if (showHierarchy) { HierarchyMenu(); }
 	else { moveSelection = 0; }
-	if (showPhysicsMenu) { PhysicsMenu(); }
-	if (showEnemyMenu) { EnemyMenu(); }
-	if (showHealthSystemMenu) { HealthMenu(); }
 	if (showImguiExampleMenu) { ImGui::ShowDemoWindow(); }
 	if (showRenderSystemMenu) { scene->renderSystem.GUI(); }
 	if (showPrefabMenu) {
@@ -122,12 +111,6 @@ void GUI::Update()
 	if (showUserPrefsMenu) { 
 		if (ImGui::Begin("User Preferences Menu", &showUserPrefsMenu, defaultWindowFlags)) {
 			UserPreferences::GUI();
-		}
-		ImGui::End();
-	}
-	if (showParticleMenu) {
-		if (ImGui::Begin("Particle Menu", &showParticleMenu, defaultWindowFlags)) {
-			scene->particleSystem.GUI();
 		}
 		ImGui::End();
 	}
@@ -342,10 +325,6 @@ void GUI::CameraMenu()
 
 	scene->camera->GUI();
 
-	scene->gameCamSystem.GUI();
-
-
-
 	ImGui::End();
 }
 
@@ -369,23 +348,7 @@ void GUI::SceneObjectMenu()
 		sceneObjectSelected->GUI();
 	}
 	else if (modelHierarchySelected) {
-		if (lastSelected) {
-			if (lastSelected->parts & Parts::modelRenderer && lastSelected->renderer()->model) {
-				if (lastSelected->parts & Parts::animator) {
-					modelHierarchySelected->GUI(false, &lastSelected->renderer()->model->boneInfoMap, lastSelected->animator());
-				}
-				else {
-					modelHierarchySelected->GUI(false, &lastSelected->renderer()->model->boneInfoMap);
-				}
-			}
-			else {
-				modelHierarchySelected->GUI(false);
-			}
-		}
-		else {
-			std::cout << "Hierarchy selected but no object, infomation might be missing\n";
-			modelHierarchySelected->GUI(false);
-		}
+
 	}
 	else {
 		ImGui::Text("Select a Scene Object in the Hierarchy Menu");
@@ -510,7 +473,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	if (isObjectSelectedOrMultiSelected(sceneObject)) {
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
-	bool hasChildren = sceneObject->transform()->HasChildren() || (sceneObject->parts & Parts::modelRenderer && sceneObject->renderer()->model && UserPreferences::showModelHierarchy);
+	bool hasChildren = sceneObject->transform()->HasChildren();
 	if (!hasChildren) {
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
@@ -581,33 +544,17 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	{
 		TransformTree(child->getSceneObject());
 	}
-	if (sceneObject->parts & Parts::modelRenderer && UserPreferences::showModelHierarchy) {
-		auto model = sceneObject->renderer()->model;
-		if (model) {
-			TransformTree(sceneObject, &model->root);
-		}
-	}
 	ImGui::TreePop();
 }
 
 void GUI::TransformTree(SceneObject* so, ModelHierarchyInfo* info)
 {
-	if (hierarchyMenuSearch != "") {
-		if (Utilities::ToLower(info->name).find(Utilities::ToLower(hierarchyMenuSearch)) == std::string::npos) {
-			return;
-		}
-	}
 	std::string tag = Utilities::PointerToString(info);
 	ImGuiTreeNodeFlags nodeFlags = baseNodeFlags;
 	if (modelHierarchySelected == info /*|| std::find(multiSelectedSceneObjects.begin(), multiSelectedSceneObjects.end(), sceneObject) != multiSelectedSceneObjects.end()*/) {
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
-	bool hasChildren = !info->children.empty();
-	if (!hasChildren) {
-		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-	}
 
-	bool nodeOpen = ImGui::TreeNodeEx((info->name + "##" + tag).c_str(), nodeFlags);
 	//hierarchySceneObjects.push_back(sceneObject);
 
 
@@ -652,15 +599,6 @@ void GUI::TransformTree(SceneObject* so, ModelHierarchyInfo* info)
 	//}
 
 	//TransformDragDrop(sceneObject);
-
-	if (!hasChildren || !nodeOpen) {
-		return;
-	}
-	auto& children = info->children;
-	for (auto child : children)
-	{
-		TransformTree(so, child);
-	}
 	ImGui::TreePop();
 }
 
@@ -702,75 +640,4 @@ void GUI::TransformDragDrop(SceneObject* sceneObject)
 		}
 		ImGui::EndDragDropTarget();
 	}
-}
-
-void GUI::PhysicsMenu()
-{
-	if (!ImGui::Begin("Physics Menu", &showPhysicsMenu, defaultWindowFlags)) {
-		ImGui::End();
-		return;
-	}
-
-	ImGui::DragFloat("Mininmum Collision Distance", &scene->physicsSystem.minCollisonDistance);
-	//TODO SAVE AND LOAD
-	ImGui::Checkbox("Display All Colliders", &scene->physicsSystem.displayAllColliders);
-
-	int flagCount = (int)log2((int)CollisionLayers::count);
-
-	ImGui::Text("0 : base");
-	ImGui::Text("1 : enemy");
-	ImGui::Text("2 : reflectiveSurface");
-	ImGui::Text("3 : sync");
-	ImGui::Text("4 : ecco");
-	ImGui::Text("5 : trigger");
-	ImGui::Text("6 : enemyProjectile");
-	ImGui::Text("7 : softCover");
-	ImGui::Text("8 : halfCover");
-
-	ImGui::Text("");
-	ImGui::Text(" ");
-	for (int i = 0; i < flagCount; i++)
-	{
-		ImGui::SameLine();
-		ImGui::Text((std::to_string(i) + "  ").c_str());
-	}
-	for (int i = 0; i < flagCount; i++)
-	{
-		ImGui::Text(std::to_string(i).c_str());
-		for (int j = 0; j < flagCount; j++)
-		{
-			bool layerToggle = scene->physicsSystem.GetCollisionLayerIndexed(i, j);
-			ImGui::SameLine();
-			if (ImGui::Checkbox(("##" + std::to_string(i) + " " + std::to_string(j) + " collisionLayer").c_str(), &layerToggle))
-			{
-				scene->physicsSystem.SetCollisionLayerMaskIndexed(i, j, layerToggle);
-			}
-		}
-	}
-
-	ImGui::Text("");
-	ImGui::TextColored({ 0.2f,0.8f,0.2f, 1.0f }, "Ask Tom for more collision layers");
-
-	ImGui::DragInt("Collision Itterations", &scene->physicsSystem.collisionItterations, 0.5f, 0);
-	ImGui::End();
-}
-
-void GUI::EnemyMenu()
-{
-	if (!ImGui::Begin("Enemy Menu", &showEnemyMenu, defaultWindowFlags)) {
-		ImGui::End();
-		return;
-	}
-	EnemySystem& es = scene->enemySystem;
-
-	es.GUI();
-}
-
-void GUI::HealthMenu()
-{
-	if(!ImGui::Begin("Health Menu", &showHealthSystemMenu, defaultWindowFlags)) {
-		ImGui::End();
-		return;
-	}
-	scene->healthSystem.GUI();
 }

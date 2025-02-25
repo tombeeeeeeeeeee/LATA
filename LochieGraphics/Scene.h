@@ -1,47 +1,25 @@
 #pragma once
 
-#include "ModelRenderer.h"
 #include "Transform.h"
-#include "Animator.h"
 #include "RigidBody.h"
-#include "Health.h"
-#include "Enemy.h"
-#include "ExitElevator.h"
-#include "SpawnManager.h"
-#include "PressurePlate.h"
-#include "Door.h"
-#include "Decal.h"
-#include "Bollard.h"
-#include "Triggerable.h"
 #include "PointLight.h"
 #include "Spotlight.h"
 #include "DirectionalLight.h"
-#include "InvisibleWall.h"
 
 #include "RenderSystem.h"
-#include "PhysicsSystem.h"
-#include "GamePlayCameraSystem.h"
-#include "HealthSystem.h"
-#include "EnemySystem.h"
-#include "TriggerSystem.h"
-#include "DoorAndBollardSystem.h"
-#include "ParticleSystem.h"
+
 #include "GUI.h"
 #include "Audio.h"
 
 #include <map>
 
 class SceneObject;
-class Ecco;
-class Sync;
-class Skybox;
 
 class Scene
 {
 public:
-	std::string windowName = "Sync & Ecco";
+	std::string windowName = "LATA";
 
-	
 	bool inPlay = false;
 	bool lastFramePlayState = false;
 	bool displayGUI = true;
@@ -50,41 +28,20 @@ public:
 	glm::vec2* cursorPos = nullptr;
 	GUI gui;
 
-	Skybox* skybox = nullptr;
-
 	// TODO: Pretty sure these no longer need to be stored on the heap
 	//std::vector<SceneObject*> sceneObjects = {};
 
 	std::map<unsigned long long, SceneObject*> sceneObjects = {};
-	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};
 	std::unordered_map<unsigned long long, Transform> transforms = {};
 	// TODO: There is types of animators, don't think its safe to store them like this
-	std::unordered_map<unsigned long long, Animator*> animators = {};
 	std::unordered_map<unsigned long long, RigidBody> rigidBodies = {};
 	std::unordered_map<unsigned long long, Collider*> colliders = {};
-	std::unordered_map<unsigned long long, Health> healths = {};
-	std::unordered_map<unsigned long long, Enemy> enemies = {};
-	std::unordered_map<unsigned long long, ExitElevator> exits = {};
-	std::unordered_map<unsigned long long, SpawnManager> spawnManagers = {};
-	std::unordered_map<unsigned long long, PressurePlate> plates = {};
-	std::unordered_map<unsigned long long, Door> doors = {};
-	std::unordered_map<unsigned long long, Bollard> bollards = {};
-	std::unordered_map<unsigned long long, Triggerable> triggerables = {};
 	std::unordered_map<unsigned long long, PointLight> pointLights = {};
 	std::unordered_map<unsigned long long, Spotlight> spotlights = {};
-	std::unordered_map<unsigned long long, Decal> decals = {};
-	std::unordered_map<unsigned long long, ShadowWall> shadowWalls = {};
 
 	DirectionalLight directionalLight;
 
 	std::vector<unsigned long long> markedForDeletion = {};
-
-	Ecco* ecco = nullptr;
-	Sync* sync = nullptr;
-	bool eccoHealPressed = false;
-	bool syncHealPressed = false;
-	SoLoud::handle eccoCurrHandle;
-	SoLoud::handle syncCurrHandle;
 
 	std::vector<int> inputKeyWatch{};
 
@@ -92,13 +49,7 @@ public:
 	unsigned int* windowHeight = 0;
 
 	RenderSystem renderSystem;
-	PhysicsSystem physicsSystem;
-	GameplayCameraSystem gameCamSystem;
-	HealthSystem healthSystem;
-	EnemySystem enemySystem;
-	TriggerSystem triggerSystem;
-	DoorAndBollardSystem dabSystem;
-	ParticleSystem particleSystem;
+
 	Audio audio;
 
 	virtual void Start() {};
@@ -109,11 +60,6 @@ public:
 	virtual void OnKey(int key, int action) {};
 
 	virtual void GUI() {};
-	bool doSteering = true;
-	bool doCollisions = true;
-	bool doLOS = true;
-	bool doBroadphase = true;
-	bool doAnimations = true;
 
 	virtual void OnWindowResize() {};
 
@@ -130,6 +76,7 @@ public:
 	void DeleteSceneObjectAndChildren(unsigned long long GUID);
 	void DeleteSceneObjectKeepChildren(unsigned long long GUID);
 	void DeleteSceneObjectsMarkedForDelete();
+
 protected:
 
 	void DeleteAllSceneObjectsAndParts();
@@ -140,5 +87,4 @@ protected:
 	void LoadSceneObjectsAndParts(toml::table& data);
 	void EnsureAllPartsHaveSceneObject();
 	void EnsurePartsValueMatchesParts();
-	void InitialiseLayers();
 };

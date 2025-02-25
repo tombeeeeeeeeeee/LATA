@@ -1,7 +1,6 @@
 #include "ResourceManager.h"
 
 #include "Paths.h"
-#include "Vertex.h"
 #include "UserPreferences.h"
 
 #include "Utilities.h"
@@ -19,20 +18,13 @@ using Utilities::PointerToString;
 std::unordered_map<unsigned long long, Texture, hashFNV1A> ResourceManager::textures;
 std::unordered_map<unsigned long long, Shader, hashFNV1A> ResourceManager::shaders;
 std::unordered_map<unsigned long long, Material, hashFNV1A> ResourceManager::materials;
-std::unordered_map<unsigned long long, Model, hashFNV1A> ResourceManager::models;
-std::unordered_map<unsigned long long, Mesh, hashFNV1A> ResourceManager::meshes;
-std::unordered_map<unsigned long long, Animation, hashFNV1A> ResourceManager::animations;
 
 
 Texture* ResourceManager::defaultTexture = nullptr;
 Texture* ResourceManager::defaultNormal = nullptr;
 Shader* ResourceManager::defaultShader = nullptr;
 Material* ResourceManager::defaultMaterial = nullptr;
-Model* ResourceManager::defaultModel = nullptr;
-Mesh* ResourceManager::defaultMesh = nullptr;
-Animation* ResourceManager::defaultAnimation = nullptr;
 
-Shader* ResourceManager::skyBoxShader = nullptr;
 Shader* ResourceManager::shadowMapDepth = nullptr;
 Shader* ResourceManager::shadowDebug = nullptr;
 Shader* ResourceManager::screen = nullptr;
@@ -46,7 +38,6 @@ Shader* ResourceManager::ssao = nullptr;
 Shader* ResourceManager::ssaoBlur = nullptr;
 Shader* ResourceManager::prepass = nullptr;
 Shader* ResourceManager::super = nullptr;
-Shader* ResourceManager::eccoFaceAnim = nullptr;
 
 unsigned long long ResourceManager::guidCounter = 100;
 std::random_device ResourceManager::guidRandomiser = {};
@@ -109,55 +100,6 @@ Shader* ResourceManager::LoadShaderAsset(std::string path)
 	LoadResourceAsset(Shader, shaders);
 }
 
-Model* ResourceManager::LoadModel(std::string path)
-{
-	LoadResource(Model, models, path);
-}
-
-Model* ResourceManager::LoadModelAsset(std::string path)
-{
-	LoadResourceAsset(Model, models);
-}
-
-// TODO: Clean
-Model* ResourceManager::LoadModel()
-{
-	Model* newResource = nullptr;
-	auto newGuid = GetNewGuid();
-	auto temp = models.emplace(std::piecewise_construct, std::make_tuple(newGuid), std::make_tuple());
-	return &temp.first->second;
-}
-
-Mesh* ResourceManager::LoadMesh(std::vector<Vertex> vertices, std::vector<GLuint> indices)
-{
-	LoadResource(Mesh, meshes, vertices, indices);
-}
-
-Mesh* ResourceManager::LoadMesh(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, GLuint* indices)
-{
-	LoadResource(Mesh, meshes, vertexCount, vertices, indexCount, indices);
-}
-
-Mesh* ResourceManager::LoadMesh(Mesh::presets preset)
-{
-	LoadResource(Mesh, meshes, preset);
-}
-
-Mesh* ResourceManager::LoadMesh()
-{
-	LoadResource(Mesh, meshes);
-}
-
-Animation* ResourceManager::LoadAnimation(std::string path, Model* model)
-{
-	LoadResource(Animation, animations, path, model);
-}
-
-Animation* ResourceManager::LoadAnimationAsset(std::string path)
-{
-	LoadResourceAsset(Animation, animations);
-}
-
 Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int wrappingMode, bool flipOnLoad)
 {
 	LoadResource(Texture, textures, path, type, wrappingMode, flipOnLoad);
@@ -218,43 +160,6 @@ bool ResourceManager::MaterialSelector(std::string label, Material** material, S
 	ResourceSelector(Material, material, label, LoadDefaultMaterial);
 }
 
-bool ResourceManager::ModelSelector(std::string label, Model** model, bool showNull)
-{
-	if (UserPreferences::modelSelectMode == UserPreferences::ModelSelectMode::loaded) {
-		ResourceSelector(Model, model, label, (Model * (*)())nullptr);
-	}
-	else if (UserPreferences::modelSelectMode == UserPreferences::ModelSelectMode::assets) {
-		std::string tag = Utilities::PointerToString(model);
-		std::vector<std::string> paths;
-		std::vector<std::string*> pointers;
-		std::string* modelPath = nullptr;
-		for (auto& i : std::filesystem::directory_iterator(Paths::modelSaveLocation)) {
-			paths.push_back(Utilities::FilenameFromPath(i.path().string(), false));
-		}
-		for (size_t i = 0; i < paths.size(); i++)
-		{
-			pointers.push_back(&paths.at(i));
-			if (*model) {
-				if (Utilities::FilenameFromPath((*model)->path, false) == paths.at(i)) {
-					modelPath = pointers.back();
-				}
-			}
-		}
-		if (ExtraEditorGUI::InputSearchBox(pointers.begin(), pointers.end(), &modelPath, "Model", tag, false)) {
-			*model = LoadModelAsset(Paths::modelSaveLocation + *modelPath + Paths::modelExtension);
-			return true;
-		}
-		return false;
-	}
-	std::cout << "Unknown Model Selector Type\n";
-	return false;
-}
-
-bool ResourceManager::AnimationSelector(std::string label, Animation** animation, bool showNull)
-{
-	ResourceSelector(Animation, animation, label, (Animation*(*)())nullptr);
-}
-
 #define GetResource(type, collection)                    \
 type* ResourceManager::Get##type(unsigned long long GUID)\
 {                                                        \
@@ -268,9 +173,6 @@ type* ResourceManager::Get##type(unsigned long long GUID)\
 GetResource(Shader, shaders)
 GetResource(Texture, textures)
 GetResource(Material, materials)
-GetResource(Model, models)
-GetResource(Mesh, meshes)
-GetResource(Animation, animations)
 
 ResourceManager::~ResourceManager()
 {
@@ -300,7 +202,6 @@ void ResourceManager::GUI()
 		if (ImGui::Button("Create new Material")) {
 			LoadMaterial("", defaultShader);
 		}
-
 	}
 
 	// TODO: GUI for shader flags, there is a built in imgui thing
@@ -332,6 +233,7 @@ void ResourceManager::GUI()
 			ImGui::TableSetColumnIndex(7);
 			ImGui::Text("Save");
 		}
+
 		for (auto i = shaders.begin(); i != shaders.end(); i++)
 		{
 			std::string tag = Utilities::PointerToString(&i->second);
@@ -357,42 +259,8 @@ void ResourceManager::GUI()
 				i->second.setFlag(Shader::Flags::VPmatrix, vp);
 			}
 
-			ImGui::TableSetColumnIndex(4);
-			ImGui::Text(std::to_string(i->second.GUID).c_str());
-
-			ImGui::TableSetColumnIndex(5);
-			ImGui::Text(std::to_string(i->second.GLID).c_str());
-
-			ImGui::TableSetColumnIndex(6);
-			if (ImGui::Button(("R##" + tag).c_str())) {
-				i->second.Load(); //TODO: When a shader reloads the materials need to also reload
-				BindFlaggedVariables();
-			}
-
-			ImGui::TableSetColumnIndex(7);
-			if (ImGui::Button(("S##" + tag).c_str())) {
-				i->second.SaveAsAsset();
-			}
 		}
-
 		ImGui::EndTable();
-
-		if (ImGui::Button("Create new Shader")) {
-			LoadShader("", "", Shader::Flags::None); //TODO: Use some template shader
-		}
-
-	}
-
-	if (ImGui::CollapsingHeader("Models")) {
-
-		for (auto& model : models)
-		{
-			ImGui::Indent();
-
-			model.second.GUI();
-
-			ImGui::Unindent();
-		}
 	}
 }
 

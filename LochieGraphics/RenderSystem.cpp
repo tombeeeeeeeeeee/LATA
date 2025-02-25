@@ -1,23 +1,17 @@
 #include "RenderSystem.h"
 
-#include "BlastLine.h"
+
 #include "SceneManager.h"
 #include "Scene.h"
 #include "DirectionalLight.h"
 #include "Spotlight.h"
 #include "PointLight.h"
-#include "Decal.h"
 #include "ResourceManager.h"
 #include "Light.h"
 #include "Transform.h"
-#include "ModelRenderer.h"
 #include "Camera.h"
-#include "Skybox.h"
-#include "Animator.h"
 #include "FrameBuffer.h"
-#include "ParticleSystem.h"
 #include "Paths.h"
-#include "Frustum.h"
 #include "SceneObject.h"
 
 #include "Utilities.h"
@@ -27,13 +21,8 @@
 
 LineRenderer RenderSystem::lines;
 LineRenderer RenderSystem::debugLines;
-std::vector<BlastLine> RenderSystem::beams = {};
-BlastLine RenderSystem::syncAim = {};
-bool RenderSystem::syncAiming = false;
-int RenderSystem::eccoAnimIndex = 1;
-float RenderSystem::eccoAnimLifeTime = 1;
 
-void RenderSystem::Start(unsigned int _skyboxTexture)
+void RenderSystem::Start()
 {
     std::srand(2.0f);
     if (SCREEN_WIDTH == 0)
@@ -43,10 +32,6 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
         SCREEN_WIDTH = scrWidth;
         SCREEN_HEIGHT = scrHeight;
     }
-    skyboxTexture = _skyboxTexture;
-
-    cube = ResourceManager::LoadMesh();
-    cube->InitialiseCube(2.0f);
 
     IBLBufferSetup(skyboxTexture);
     DeferredSetup();
@@ -66,9 +51,6 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
 
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
-    screenQuad = ResourceManager::LoadMesh();
-    screenQuad->InitialiseQuad(1.f, 0.0f);
 
     ResourceManager::shadowDebug->Use();
     ResourceManager::shadowDebug->setInt("depthMap", 1);
@@ -96,19 +78,9 @@ void RenderSystem::Start(unsigned int _skyboxTexture)
     colourKey2 = ResourceManager::LoadTexture("images/HueShiftedColourKey.png", Texture::Type::count);
     colourKey2->mipMapped = false;
     colourKey2->Load();
-
-    onLightTexture = ResourceManager::LoadTexture("images/OnLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
-    offLightTexture = ResourceManager::LoadTexture("images/OffLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
-    spawnRoomLightTexture = ResourceManager::LoadTexture("images/SpawnRoomLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
-    explodingLightTexture = ResourceManager::LoadTexture("images/ExplosionLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
-    flickeringLightTexture = ResourceManager::LoadTexture("images/FlickeringLightGradient.png", Texture::Type::count, GL_CLAMP_TO_EDGE);
-    lightSphere = ResourceManager::LoadModel("models/UnitSphere.fbx");
-    decalShader = ResourceManager::LoadShader("decal");
+    
     beamShader = ResourceManager::LoadShader("beam");
-    lineLightShader = ResourceManager::LoadShader("lineLight");
     syncAimShader = ResourceManager::LoadShader("syncArrow");
-    decalCube = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_DefaultCube" + Paths::modelExtension);
-    wall = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_Wall" + Paths::modelExtension);
 }
 
 void RenderSystem::LevelLoad()
@@ -133,68 +105,6 @@ void RenderSystem::PlayStart(std::unordered_map<unsigned long long, PointLight>&
             pair.second.timeInType = 0.0f;
         }
     }
-}
-
-void RenderSystem::SetIrradianceMap(unsigned int textureID)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glGenFramebuffers(1, &captureFBO);
-    glGenRenderbuffers(1, &captureRBO);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-
-    glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
-
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-    //Convert skybox into an irradance version!
-    glGenTextures(1, &irradianceMap);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-    for (unsigned int i = 0; i < 6; ++i)
-    {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
-    }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
-
-    unsigned int currShader = ResourceManager::irradiance->GLID;
-    glUseProgram(currShader);
-    glUniform1i(glGetUniformLocation(currShader, "environmentMap"), 1);
-    glUniformMatrix4fv(glGetUniformLocation(currShader, "projection"), 1, GL_FALSE, &captureProjection[0][0]);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-
-
-    glViewport(0, 0, 32, 32);
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    for (unsigned int i = 0; i < 6; ++i)
-    {
-        glUniformMatrix4fv(glGetUniformLocation(currShader, "view"), 1, GL_FALSE, &captureViews[i][0][0]);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        cube->Draw();
-    }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 
@@ -372,27 +282,17 @@ void RenderSystem::BloomUpdate()
 }
 
 void RenderSystem::Update(
-    std::unordered_map<unsigned long long, ModelRenderer>& renders,
     std::unordered_map<unsigned long long, Transform>& transforms,
-    std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
-    std::unordered_map<unsigned long long, Animator*>& animators,
     std::unordered_map<unsigned long long, PointLight>& pointLights,
     std::unordered_map<unsigned long long, Spotlight>& spotlights,
-    std::unordered_map<unsigned long long, Decal>& decals,
-    std::unordered_map<unsigned long long, ShadowWall>& shadowWalls,
     Camera* camera,
-    float delta,
-    std::vector<Particle*> particles
+    float delta
 )
 {
     frameCountInSixteen = (frameCountInSixteen + 1) % 16;
-    UpdateEccoFaceAnim(delta);
 
     std::unordered_set<unsigned long long> animatedRenderered = {};
-    for (auto& i : animators)
-    {
-        animatedRenderered.emplace(i.first);
-    }
+
 
     // TODO: There are a few issues when the res is too low
     if (SCREEN_WIDTH <= 64 || SCREEN_HEIGHT <= 64) { return; }
@@ -421,23 +321,10 @@ void RenderSystem::Update(
 
     glDrawBuffers(4, deferredAttachments);
 
-    Frustum cameraFrustum = Frustum(
-        camera->transform.getGlobalPosition(),
-        glm::radians(camera->fov),
-        (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT,
-        camera->nearPlane,
-        camera->farPlane,
-        glm::normalize(camera->transform.up()),
-        glm::normalize(camera->transform.forward()),
-        glm::normalize(camera->transform.right())
-    );
+    glCullFace(GL_BACK);
 
-    //Render Static Objects
-    DrawAllRenderers(animators, transforms, renders, animatedRenderered, cameraFrustum, 1);
-    RenderDecals(decals, transforms, cameraFrustum);
-    DrawAllRenderers(animators, transforms, renders, animatedRenderered, cameraFrustum, 0);
-
-    RenderSpotLightShadowMaps(spotlights, animators, transforms, renders, animatedRenderered, shadowWalls, cameraFrustum);
+    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    glDisable(GL_DEPTH_TEST);
 
     RenderSSAO();
 
@@ -449,7 +336,6 @@ void RenderSystem::Update(
     glDepthMask(GL_FALSE);
 
     RenderPointLights(pointLights, transforms, delta);
-    RenderLineLights();
     RenderSpotlights(spotlights, transforms, delta);
     RenderAmbientPass();
 
@@ -458,12 +344,9 @@ void RenderSystem::Update(
     glDepthFunc(GL_LESS);
     glCullFace(GL_BACK);
 
-    RenderParticles(particles);
     glDepthMask(GL_TRUE);
 
     RenderBeams(delta);
-
-    if (syncAiming) RenderSyncAim(delta);
 
     RenderLinePass();
 
@@ -601,71 +484,6 @@ void RenderSystem::ScreenResize(int width, int height)
     BloomUpdate();
 }
 
-void RenderSystem::RenderDecals(
-    std::unordered_map<unsigned long long, Decal>& decals,
-    std::unordered_map<unsigned long long, Transform>& transforms,
-    Frustum frustum
-)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_GREATER);
-    glCullFace(GL_FRONT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendEquation(GL_FUNC_ADD);
-    glDepthMask(GL_FALSE);
-
-    decalShader->Use();
-    decalShader->setMat4("invV", glm::inverse(viewMatrix));
-    decalShader->setMat4("invP", glm::inverse(projection));
-    decalShader->setVec2("invViewPort", {1.0f/(float)SCREEN_WIDTH, 1.0f / (float)SCREEN_HEIGHT});
-    decalShader->setMat4("vp", projection * viewMatrix);
-
-    decalShader->setInt("depthMap", 7);
-    glActiveTexture(GL_TEXTURE7);
-    glBindTexture(GL_TEXTURE_2D, depthBuffer);
-
-    for (auto& pair : decals)
-    {
-        if (!pair.second.mat) continue;
-        Transform model = Transform();
-        model.setPosition(transforms[pair.first].getGlobalPosition());
-        model.setEulerRotation(transforms[pair.first].getEulerRotation());
-        model.setScale({ pair.second.scale, 10.0f, pair.second.scale });
-        glm::mat4 modelMatrix = model.getGlobalMatrix();
-        glm::vec3 OOBB[8] =
-        {
-            modelMatrix * glm::vec4(-pair.second.scale, -pair.second.scale, -pair.second.scale, 1.0f),
-            modelMatrix * glm::vec4(-pair.second.scale, -pair.second.scale,  pair.second.scale, 1.0f),
-            modelMatrix * glm::vec4(-pair.second.scale,  pair.second.scale, -pair.second.scale, 1.0f),
-            modelMatrix * glm::vec4(-pair.second.scale,  pair.second.scale,  pair.second.scale, 1.0f),
-            modelMatrix * glm::vec4( pair.second.scale, -pair.second.scale, -pair.second.scale, 1.0f),
-            modelMatrix * glm::vec4( pair.second.scale, -pair.second.scale,  pair.second.scale, 1.0f),
-            modelMatrix * glm::vec4( pair.second.scale,  pair.second.scale, -pair.second.scale, 1.0f),
-            modelMatrix * glm::vec4( pair.second.scale,  pair.second.scale,  pair.second.scale, 1.0f),
-        };
-
-        if (frustum.IsOnFrustum(OOBB))
-        {
-            decalShader->setFloat("depthPenertration", pair.second.depthOfDecal/1000.0f);
-            decalShader->setFloat("angleTolerance", pair.second.angleTolerance);
-            decalShader->setVec3("decalDirection", transforms[pair.first].up());
-
-            pair.second.mat->Use(decalShader);
-
-            decalShader->setMat4("model", modelMatrix);
-            decalShader->setMat4("invM", glm::inverse(modelMatrix));
-            decalCube->meshes[0]->Draw();
-        }
-    }
-
-    glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
-    glDepthFunc(GL_LESS);
-    glCullFace(GL_BACK);
-}
-
 
 void RenderSystem::RenderPointLights(
 std::unordered_map<unsigned long long, PointLight>& pointLights,
@@ -687,7 +505,6 @@ float delta
     pointLightPassShader->setMat4("invP", glm::inverse(projection));
     pointLightPassShader->setVec2("invViewPort", glm::vec2(1.0f/SCREEN_WIDTH, 1.0f/SCREEN_HEIGHT));
     pointLightPassShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
-    pointLightPassShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
     pointLightPassShader->setInt("albedo", 1);
     pointLightPassShader->setInt("normal", 2);
     pointLightPassShader->setInt("depth", 3);
@@ -729,8 +546,6 @@ float delta
         case PointLightEffect::On:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOn);
             lerpAmount = pair.second.timeInType / lightTimeToOn;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, onLightTexture->GLID);
             break;
 
         case PointLightEffect::OffDelete:
@@ -738,175 +553,30 @@ float delta
         case PointLightEffect::Off:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOff);
             lerpAmount = pair.second.timeInType / lightTimeToOff;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, offLightTexture->GLID);
             break;
 
         case PointLightEffect::Explosion:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToExplode);
             if (pair.second.timeInType >= lightTimeToExplode) SceneManager::scene->DeleteSceneObjectAndChildren(pair.first);
             lerpAmount = pair.second.timeInType / lightTimeToExplode;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
             break;
 
         case PointLightEffect::Flickering:
             pair.second.timeInType = fmod(pair.second.timeInType, lightTimeToFlicker);
             lerpAmount = fmod(pair.second.timeInType + (pair.first % 100) / 100.0f, lightTimeToFlicker) / lightTimeToFlicker;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, flickeringLightTexture->GLID);
             break;
 
         case PointLightEffect::SpotLightSpawnRoom:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOn);
             lerpAmount = pair.second.timeInType / lightTimeToOn;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, spawnRoomLightTexture->GLID);
-        }
         pointLightPassShader->setFloat("lerpAmount", glm::clamp(lerpAmount, 0.0f, 1.0f));
-        lightSphere->getMeshes()[0]->Draw();
     }
     glDisable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glCullFace(GL_BACK);
-}
 
-void RenderSystem::RenderSpotlights(
-    std::unordered_map<unsigned long long, Spotlight>& spotlights,
-    std::unordered_map<unsigned long long, Transform>& transforms,
-    float delta
-)
-{
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_GREATER);
-    glCullFace(GL_FRONT);
-    spotlightPassShader->Use();
-    spotlightPassShader->setMat4("vp", projection * viewMatrix);
-    spotlightPassShader->setMat4("invVP", glm::inverse(projection * viewMatrix));
-    spotlightPassShader->setMat4("invV", glm::inverse(viewMatrix));
-    spotlightPassShader->setMat4("invP", glm::inverse(projection));
-    spotlightPassShader->setMat4("view", viewMatrix);
-    spotlightPassShader->setMat4("proj", projection);
-    spotlightPassShader->setVec2("invViewPort", glm::vec2(1.0f / SCREEN_WIDTH, 1.0f / SCREEN_HEIGHT));
-    spotlightPassShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
-    spotlightPassShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
-    spotlightPassShader->setInt("albedo", 1);
-    spotlightPassShader->setInt("normal", 2);
-    spotlightPassShader->setInt("depth", 3);
-    spotlightPassShader->setInt("pbr", 4);
-    spotlightPassShader->setInt("lightLerp", 5);
-    spotlightPassShader->setInt("shadowMap", 6);
-
-    glActiveTexture(GL_TEXTURE0 + 1);
-    glBindTexture(GL_TEXTURE_2D, albedoBuffer);
-
-    glActiveTexture(GL_TEXTURE0 + 2);
-    glBindTexture(GL_TEXTURE_2D, normalBuffer);
-
-    glActiveTexture(GL_TEXTURE0 + 3);
-    glBindTexture(GL_TEXTURE_2D, depthBuffer);
-
-    glActiveTexture(GL_TEXTURE0 + 4);
-    glBindTexture(GL_TEXTURE_2D, pbrBuffer);
-
-    for (auto& pair : spotlights)
-    {
-        Transform transform = Transform();
-        transform.setPosition(transforms[pair.first].getGlobalPosition());
-        transform.setScale(pair.second.range * 900.0f);
-        spotlightPassShader->setMat4("model", transform.getGlobalMatrix());
-        spotlightPassShader->setVec3("lightPos", transforms[pair.first].getGlobalPosition());
-        spotlightPassShader->setVec3("colour", pair.second.colour  * pair.second.intensity);
-        spotlightPassShader->setFloat("linear", pair.second.linear);
-        spotlightPassShader->setFloat("quad", pair.second.quadratic);
-        spotlightPassShader->setFloat("cutOff", pair.second.cutOff);
-        spotlightPassShader->setFloat("outerCutOff", 1.0f - pair.second.outerCutOff);
-        glm::vec3 globalDir = transforms[pair.first].forward();
-        spotlightPassShader->setVec3("direction", globalDir);
-        spotlightPassShader->setMat4("lightMat", pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
-
-        glActiveTexture(GL_TEXTURE0 + 6);
-        glBindTexture(GL_TEXTURE_2D, pair.second.depthBuffer);
-
-        pair.second.timeInType += delta;
-        float lerpAmount;
-        switch (pair.second.effect)
-        {
-        case PointLightEffect::On:
-            pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOn);
-            lerpAmount = pair.second.timeInType / lightTimeToOn;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, onLightTexture->GLID);
-            break;
-
-        case PointLightEffect::OffDelete:
-            if (pair.second.timeInType >= lightTimeToOff) SceneManager::scene->DeleteSceneObjectAndChildren(pair.first);
-        case PointLightEffect::Off:
-            pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOff);
-            lerpAmount = pair.second.timeInType / lightTimeToOff;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, offLightTexture->GLID);
-            break;
-
-        case PointLightEffect::Explosion:
-            pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToExplode);
-            if (pair.second.timeInType >= lightTimeToExplode) SceneManager::scene->DeleteSceneObjectAndChildren(pair.first);
-            lerpAmount = pair.second.timeInType / lightTimeToExplode;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
-            break;
-
-        case PointLightEffect::Flickering:
-            pair.second.timeInType = fmod(pair.second.timeInType, lightTimeToFlicker);
-            lerpAmount = fmod(pair.second.timeInType + (pair.first % 100) / 100.0f, lightTimeToFlicker) / lightTimeToFlicker;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, flickeringLightTexture->GLID);
-            break;
-
-        case PointLightEffect::SpotLightSpawnRoom:
-            pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOn);
-            lerpAmount = pair.second.timeInType / lightTimeToOn;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, spawnRoomLightTexture->GLID);
-        }
-        spotlightPassShader->setFloat("lerpAmount", glm::clamp(lerpAmount, 0.0f, 1.0f));
-        lightSphere->getMeshes()[0]->Draw();
     }
 
-    glDisable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    glCullFace(GL_BACK);
-}
-
-void RenderSystem::DrawAllRenderers(
-    std::unordered_map<unsigned long long, Animator*>& animators,
-    std::unordered_map<unsigned long long, Transform>& transforms,
-    std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-    std::unordered_set<unsigned long long> animatedRenderered,
-    Frustum frustum,
-    int staticPass,
-    Shader* givenShader)
-{
-    //Material* previousMaterial = nullptr;
-
-    for (auto& i : renderers)
-    {
-        if (!i.second.model) { continue; }
-        Transform* transform = &transforms.at(i.first);
-        if (staticPass <= 1)
-        {
-            if ((int)transform->getStatic() != staticPass) {continue; }
-        }
-        if (i.second.model)
-        {
-            glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
-            if (frustum.IsOnFrustum(OOB))
-            {
-                i.second.Draw(transform->getGlobalMatrix(), givenShader);
-            }
-        }
-    }
-   
 }
 
 void RenderSystem::ActivateFlaggedVariables(
@@ -925,72 +595,6 @@ void RenderSystem::ActivateFlaggedVariables(
         glActiveTexture(GL_TEXTURE0 + 11);
         glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
     }
-    if (flag & Shader::Flags::EccoAnim)
-    {
-        shader->setInt("index", RenderSystem::eccoAnimIndex);
-    }
-}
-
-void RenderSystem::RenderLineLights()
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_GREATER);
-    glCullFace(GL_FRONT);
-
-    lineLightShader->Use();
-    lineLightShader->setMat4("vp", projection * viewMatrix);
-    lineLightShader->setMat4("invVP", glm::inverse(projection * viewMatrix));
-    lineLightShader->setMat4("invV", glm::inverse(viewMatrix));
-    lineLightShader->setMat4("invP", glm::inverse(projection));
-    lineLightShader->setVec2("invViewPort", glm::vec2(1.0f / SCREEN_WIDTH, 1.0f / SCREEN_HEIGHT));
-    lineLightShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
-    lineLightShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
-    lineLightShader->setInt("albedo", 1);
-    lineLightShader->setInt("normal", 2);
-    lineLightShader->setInt("depth", 3);
-    lineLightShader->setInt("pbr", 4);
-    lineLightShader->setInt("SSAO", 6);
-
-    glActiveTexture(GL_TEXTURE0 + 1);
-    glBindTexture(GL_TEXTURE_2D, albedoBuffer);
-
-    glActiveTexture(GL_TEXTURE0 + 2);
-    glBindTexture(GL_TEXTURE_2D, normalBuffer);
-
-    glActiveTexture(GL_TEXTURE0 + 3);
-    glBindTexture(GL_TEXTURE_2D, depthBuffer);
-
-    glActiveTexture(GL_TEXTURE0 + 4);
-    glBindTexture(GL_TEXTURE_2D, pbrBuffer);
-
-    glActiveTexture(GL_TEXTURE0 + 6);
-    glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
-
-    for (auto& i : beams)
-    {
-        Transform transform = Transform();
-        glm::vec3 P = i.startPosition;
-        glm::vec3 Q = i.endPosition;
-        float linear, quadratic;
-        PointLight::Attenutation(800.0f, linear, quadratic);
-        transform.setPosition((P + Q)/ 2.0f);
-        glm::vec3 difference = (P + Q) / 2.0f - i.startPosition;
-        float length = glm::length(difference);
-        transform.setScale({ 18000.0f, 18000.0f, length * 4.0f + 1800.0f*2.0f });
-        transform.setEulerRotation({ 0.0f, 180.0f * atan2f(difference.x, difference.z) / PI, 0.0f });
-        lineLightShader->setMat4("model", transform.getGlobalMatrix());
-        lineLightShader->setVec3("lightQ", Q);
-        lineLightShader->setVec3("lightP", P);
-        lineLightShader->setVec3("colour", i.colour * 12.0f * (1.0f - i.timeElapsed / i.lifeSpan) * (1.0f - i.timeElapsed / i.lifeSpan));
-        lineLightShader->setFloat("linear", linear);
-        lineLightShader->setFloat("quad", quadratic);
-        decalCube->meshes[0]->Draw();
-    }
-
-    glDisable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    glCullFace(GL_BACK);
 }
 
 void RenderSystem::CompositeBufferSetUp()
@@ -1023,129 +627,6 @@ void RenderSystem::RenderComposite()
 
     RenderQuad();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void RenderSystem::RenderSpotLightShadowMaps(
-    std::unordered_map<unsigned long long, Spotlight>& spotlights,
-    std::unordered_map<unsigned long long, Animator*>& animators,
-    std::unordered_map<unsigned long long, Transform>& transforms,
-    std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-    std::unordered_set<unsigned long long> animatedRenderered,
-    std::unordered_map<unsigned long long, ShadowWall>& shadowWalls,
-    Frustum frustum
-)
-{
-    glEnable(GL_DEPTH_TEST);
-    glViewport(0, 0, Spotlight::SHADOW_DIMENSIONS, Spotlight::SHADOW_DIMENSIONS);
-    spotlightShadowPassShader->Use();
-    int count = 0;
-    for (auto& pair : spotlights)
-    {
-        if (!pair.second.castsShadows) continue;
-        if (!frustum.IsOnFrustum(transforms[pair.first].getGlobalPosition(), pair.second.range * 900.0f))
-        {
-            continue;
-        }
-        
-        glm::vec3 spotlightDir = transforms[pair.first].forward();
-        glm::vec3 right = transforms[pair.first].right();
-        glm::vec3 up = transforms[pair.first].up();
-
-        Frustum spotlightFrustum = Frustum(
-            transforms[pair.first].getGlobalPosition(),
-            2.0f * acosf(1.0 - pair.second.outerCutOff), 1.0f,
-            1.0f, 2000.0f,
-            up,
-            spotlightDir,
-            right
-        );
-
-        if (SceneManager::scene->inPlay)
-        {
-            glCullFace(GL_BACK);
-
-            bool hasNSThisFrame = false;
-            for (auto& i : renderers)
-            {
-                if (!i.second.model) { continue; }
-                Transform* transform = &transforms.at(i.first);
-                if (i.second.model)
-                {
-                    glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
-                    if (spotlightFrustum.IsOnFrustum(OOB))
-                    {
-                        if (i.second.animator || !transform->getStatic())
-                        {
-                            hasNSThisFrame = true;
-                            pair.second.hadNonStaticsLastFrame = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!hasNSThisFrame)
-            {
-                bool temp = !pair.second.hadNonStaticsLastFrame;
-                pair.second.hadNonStaticsLastFrame = false;
-                if (temp) continue;
-            }
-        }
-        
-        spotlightShadowPassShader->setMat4("vp",pair.second.getProj() * pair.second.getView(transforms[pair.first].getGlobalMatrix()));
-        glBindFramebuffer(GL_FRAMEBUFFER, pair.second.frameBuffer);
-        glClear(GL_DEPTH_BUFFER_BIT);
-
-        for (auto& i : renderers)
-        {
-            if (!i.second.model) { continue; }
-            if (!i.second.rendersShadows) { continue; }
-            Transform* transform = &transforms.at(i.first);
-            if (i.second.model)
-            {
-                glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
-                if (spotlightFrustum.IsOnFrustum(OOB))
-                {
-                    i.second.Draw(transform->getGlobalMatrix(), spotlightShadowPassShader);
-                }
-            }
-        }
-
-        glCullFace(GL_BACK);
-        Transform shadowTransform = Transform();
-        for (auto& i : shadowWalls)
-        {
-            shadowTransform.setPosition(transforms[i.first].getGlobalPosition() + glm::vec3{ 0.0f, 300.0f, 0.0f });
-            shadowTransform.setEulerRotation(transforms[i.first].getEulerRotation());
-            shadowTransform.setScale({ 1.0f, 3000.0f,1.0f });
-
-            if (i.second.hasLocalMesh)
-            {
-                if (renderers.count(i.first) > 0)
-                {
-                    glm::mat4 model = shadowTransform.getGlobalMatrix();
-
-                    if (spotlightFrustum.IsOnFrustum(renderers.at(i.first).model->GetOOB(transforms[i.first].getGlobalMatrix())))
-                    {
-                        spotlightShadowPassShader->setMat4("model", model);
-                        renderers.at(i.first).model->meshes[0]->Draw();
-                    }
-                }
-            }
-            else
-            {
-                glm::mat4 model = shadowTransform.getGlobalMatrix();
-                spotlightShadowPassShader->setMat4("model", model);
-                wall->meshes[0]->Draw();
-            }
-        }
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
-    glCullFace(GL_BACK);
-
-
-    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    glDisable(GL_DEPTH_TEST);
 }
 
 void RenderSystem::OutputBufferSetUp()
@@ -1192,8 +673,6 @@ void RenderSystem::GUI()
         ImGui::End();
         return;
     }
-    ImGui::SliderInt("Ecco Face", &eccoAnimIndex, 0, 8);
-    ImGui::Checkbox("Light Lines for ALL!", &lightsForAllLines);
     if (ImGui::CollapsingHeader("SSAO")) {
         ImGui::DragInt("Kernal Size", &kernelSize);
         ImGui::DragFloat("Radius", &ssaoRadius);
@@ -1504,30 +983,6 @@ void RenderSystem::RenderAmbientPass()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void RenderSystem::RenderParticles(
-    std::vector<Particle*> particles
-)
-{
-    glDisable(GL_CULL_FACE);
-    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
-    ParticleSystem::Draw(particles);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void RenderSystem::UpdateEccoFaceAnim(float delta)
-{
-    eccoAnimLifeTime -= delta;
-    if (eccoAnimLifeTime <= 0.0)
-    {
-        float randPercentage = std::rand() / (float)RAND_MAX;
-
-        int index = floor(randPercentage * 5.0f);
-        index += 1;
-        if (index == 2) index = 8;
-        eccoAnimLifeTime = 2.0f;
-        eccoAnimIndex = index;
-    }
-}
 
 void RenderSystem::RenderBeams(float delta)
 {
@@ -1538,67 +993,6 @@ void RenderSystem::RenderBeams(float delta)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     beamShader->Use();
     beamShader->setMat4("vp", projection * viewMatrix);
-
-    for (auto i = beams.begin(); i != beams.end();)
-    {
-        Transform transform = Transform();
-        glm::vec3 displacement = (i->startPosition + i->endPosition) / 2.0f;
-        glm::vec3 difference = displacement - i->startPosition;
-        float length = glm::length(difference);
-        transform.setPosition(displacement);
-        transform.setScale({100.0f, 0.01f,length * 2.0f});
-        transform.setEulerRotation({ 0.0f, 180.0f * atan2f(difference.x, difference.z) / PI, 0.0f });
-        beamShader->setMat4("model",transform.getGlobalMatrix());
-        beamShader->setFloat("percentage", i->timeElapsed/i->lifeSpan);
-        beamShader->setFloat("uvMult", length / tileLength);
-
-        i->timeElapsed += delta;
-        float r = 1.5f * i->colour.x - i->colour.x * i->timeElapsed / i->lifeSpan;
-        float g = 1.5f * i->colour.y - i->colour.y * i->timeElapsed / i->lifeSpan;
-        float b = 1.5f * i->colour.z - i->colour.z * i->timeElapsed / i->lifeSpan;
-        beamShader->setVec3("colour", {r,g,b});
-
-        decalCube->meshes[0]->Draw();
-
-        if (i->timeElapsed > i->lifeSpan)
-            i = beams.erase(i);
-        else
-            ++i;
-
-    }
-    glDepthMask(GL_TRUE);
-    glDisable(GL_BLEND);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void RenderSystem::RenderSyncAim(float delta)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
-    glDepthMask(GL_FALSE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    syncAimShader->Use();
-    syncAimShader->setMat4("vp", projection * viewMatrix);
-
-    Transform transform = Transform();
-    glm::vec3 displacement = (syncAim.startPosition + syncAim.endPosition) / 2.0f;
-    glm::vec3 difference = displacement - syncAim.startPosition;
-    float length = glm::length(difference);
-    transform.setPosition(displacement);
-    transform.setScale({ 10.0f, 0.01f, length * 2.0f });
-    transform.setEulerRotation({ 0.0f, 180.0f * atan2f(difference.x, difference.z) / PI, 0.0f });
-
-    syncAimShader->setMat4("model", transform.getGlobalMatrix());
-    syncAimShader->setFloat("timeInAim", syncAim.timeElapsed);
-    syncAimShader->setFloat("uvMult", length / 30.0f);
-
-    float r = syncAim.colour.x;
-    float g = syncAim.colour.y;
-    float b = syncAim.colour.z;
-    syncAimShader->setVec3("colour", { 1.0f,1.0f,1.0f });
-
-    decalCube->meshes[0]->Draw();
 
     glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);

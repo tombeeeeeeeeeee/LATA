@@ -127,22 +127,27 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\lib</LibraryPath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\include</IncludePath>
+    <LibraryPath>
+    </LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-Release\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Third Party\assimp\out\build\x64-Release\lib</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Art Tool|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-Release\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Third Party\assimp\out\build\x64-Release\lib</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
     <TargetName>Art Tool</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Level Editor|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-Release\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Third Party\assimp\out\build\x64-Release\lib</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
     <TargetName>Level Editor</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath />
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -334,33 +339,12 @@
     <ClCompile Include="..\Third Party\soloud\src\core\soloud_misc.cpp" />
     <ClCompile Include="..\Third Party\soloud\src\core\soloud_queue.cpp" />
     <ClCompile Include="..\Third Party\soloud\src\core\soloud_thread.cpp" />
-    <ClCompile Include="AnimateBehaviour.cpp" />
-    <ClCompile Include="AnimationFinishedCondition.cpp" />
     <ClCompile Include="Audio.cpp" />
-    <ClCompile Include="Bollard.cpp" />
-    <ClCompile Include="BoneInfo.cpp" />
-    <ClCompile Include="Decal.cpp" />
-    <ClCompile Include="Directional2dAnimator.cpp" />
-    <ClCompile Include="Door.cpp" />
-    <ClCompile Include="DoorAndBollardSystem.cpp" />
-    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="glad.c" />
-    <ClCompile Include="HealthRangeCondition.cpp" />
     <ClCompile Include="ImguiMathsGLM.cpp" />
-    <ClCompile Include="InvisibleWall.cpp" />
     <ClCompile Include="ModelHierarchyInfo.cpp" />
     <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PrefabManager.cpp" />
-    <ClCompile Include="PressurePlate.cpp" />
-    <ClCompile Include="RayAgainstOBB.cpp" />
-    <ClCompile Include="SpawnManager.cpp" />
-    <ClCompile Include="State.cpp" />
-    <ClCompile Include="StateMachine.cpp" />
-    <ClCompile Include="SyncChargeLevelCondition.cpp" />
-    <ClCompile Include="SyncChargingCondition.cpp" />
-    <ClCompile Include="Triggerable.cpp" />
-    <ClCompile Include="TriggerSystem.cpp" />
     <ClCompile Include="UiElement.cpp" />
     <ClCompile Include="UserPreferences.cpp" />
     <ClInclude Include="..\Third Party\imgui\imconfig.h" />
@@ -377,35 +361,13 @@
     <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\dr_mp3.h" />
     <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\dr_wav.h" />
     <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\stb_vorbis.h" />
-    <ClInclude Include="AnimateBehaviour.h" />
-    <ClInclude Include="AnimationFinishedCondition.h" />
     <ClInclude Include="Audio.h" />
-    <ClInclude Include="Behaviour.h" />
-    <ClInclude Include="Bollard.h" />
-    <ClInclude Include="Condition.h" />
-    <ClInclude Include="Decal.h" />
-    <ClInclude Include="Directional2dAnimator.h" />
-    <ClInclude Include="Door.h" />
-    <ClInclude Include="DoorAndBollardSystem.h" />
-    <ClInclude Include="Frustum.h" />
     <ClInclude Include="glad.h" />
-    <ClInclude Include="HealthRangeCondition.h" />
     <ClInclude Include="ImguiMathsGLM.h" />
-    <ClInclude Include="InvisibleWall.h" />
     <ClInclude Include="khrplatform.h" />
     <ClInclude Include="Particle.h" />
-    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PrefabManager.h" />
-    <ClInclude Include="PressurePlate.h" />
-    <ClInclude Include="RayAgainstOBB.h" />
-    <ClInclude Include="SpawnManager.h" />
-    <ClInclude Include="State.h" />
-    <ClInclude Include="StateMachine.h" />
-    <ClInclude Include="SyncChargeLevel.h" />
-    <ClInclude Include="SyncChargeLevelCondition.h" />
-    <ClInclude Include="SyncChargingCondition.h" />
-    <ClInclude Include="Triggerable.h" />
-    <ClInclude Include="TriggerSystem.h" />
+    <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="UiElement.h" />
     <ClInclude Include="UserPreferences.h" />
     <None Include="..\Shaders\ambient.frag" />
@@ -425,52 +387,29 @@
     <None Include="..\Shaders\paintedNormals.frag">
       <FileType>Document</FileType>
     </None>
-    <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="Animator.cpp" />
-    <ClCompile Include="ArtScene.cpp" />
     <ClCompile Include="AssimpMatrixToGLM.cpp" />
-    <ClCompile Include="BlendedAnimator.cpp" />
-    <ClCompile Include="Bone.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
-    <ClCompile Include="Ecco.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="CollisionFunctions.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="EnemySystem.cpp" />
     <ClCompile Include="eNetTest.cpp" />
-    <ClCompile Include="ExitElevator.cpp" />
     <ClCompile Include="ExtraEditorGUI.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
-    <ClCompile Include="GamePlayCameraSystem.cpp" />
-    <ClCompile Include="GameTest.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="hashFNV1A.cpp" />
-    <ClCompile Include="Health.cpp" />
-    <ClCompile Include="HealthSystem.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImGuiStyles.cpp" />
     <ClCompile Include="ImGuizmo.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="InputTest.cpp" />
-    <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LineRenderer.cpp" />
-    <ClCompile Include="EmptyScene.cpp" />
-    <ClCompile Include="LocWorkshop.cpp" />
     <ClCompile Include="MessengerNetwork.cpp" />
     <ClCompile Include="MessengerClient.cpp" />
     <ClCompile Include="MessengerInterface.cpp" />
     <ClCompile Include="MessengerServer.cpp" />
-    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="ModelRenderer.cpp" />
     <ClCompile Include="Network.cpp" />
-    <ClCompile Include="PhysicsSystem.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="RigidBody.cpp" />
@@ -478,34 +417,20 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="Serialisation.cpp" />
-    <ClInclude Include="BlastLine.h" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="EditorGUI.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemySystem.h" />
-    <ClInclude Include="ExitElevator.h" />
     <ClInclude Include="ExtraEditorGUI.h" />
     <ClInclude Include="hashFNV1A.h" />
-    <ClInclude Include="Health.h" />
-    <ClInclude Include="HealthSystem.h" />
-    <ClInclude Include="Hit.h" />
     <ClInclude Include="ImGuizmo.h" />
-    <ClInclude Include="LevelEditor.h" />
-    <ClInclude Include="LocWorkshop.h" />
     <ClInclude Include="Paths.h" />
     <ClInclude Include="Serialisation.h" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Spotlight.cpp" />
-    <ClCompile Include="Sync.cpp" />
-    <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utilities.cpp" />
-    <ClCompile Include="VelocityCondition.cpp" />
-    <ClCompile Include="Vertex.cpp" />
     <None Include="..\Shaders\particle.frag" />
     <None Include="..\Shaders\particle.vert" />
     <None Include="..\Shaders\pointLight.frag" />
@@ -520,69 +445,44 @@
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animation.h" />
-    <ClInclude Include="Animator.h" />
-    <ClInclude Include="ArtScene.h" />
     <ClInclude Include="AssimpMatrixToGLM.h" />
-    <ClInclude Include="BlendedAnimator.h" />
-    <ClInclude Include="Collision.h" />
     <ClInclude Include="DirectionalLight.h" />
-    <ClInclude Include="Ecco.h" />
-    <ClInclude Include="CollisionFunctions.h" />
-    <ClInclude Include="CollisionPacket.h" />
     <ClInclude Include="eNetTest.h" />
     <ClInclude Include="FrameBuffer.h" />
-    <ClInclude Include="Bone.h" />
-    <ClInclude Include="BoneInfo.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="FixedSizeQueue.h" />
-    <ClInclude Include="GamePlayCameraSystem.h" />
-    <ClInclude Include="GameTest.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GUI.h" />
-    <ClInclude Include="Collider.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImGuiStyles.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="InputTest.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="LineRenderer.h" />
-    <ClInclude Include="EmptyScene.h" />
     <ClInclude Include="MessengerNetwork.h" />
     <ClInclude Include="MessengerClient.h" />
     <ClInclude Include="MessengerInterface.h" />
     <ClInclude Include="MessengerServer.h" />
-    <ClInclude Include="Model.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Maths.h" />
-    <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelHierarchyInfo.h" />
-    <ClInclude Include="ModelRenderer.h" />
     <ClInclude Include="Network.h" />
-    <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="PointLight.h" />
-    <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="Skybox.h" />
     <ClInclude Include="Spotlight.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />
-    <ClInclude Include="Sync.h" />
-    <ClInclude Include="TestScene.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="toml.hpp" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Utilities.h" />
-    <ClInclude Include="VelocityCondition.h" />
-    <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\animate.frag" />

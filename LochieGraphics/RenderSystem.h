@@ -6,24 +6,15 @@
 #include <unordered_map>
 #include <unordered_set>
 
-class Animator;
 class FrameBuffer;
 class Camera;
 class Light;
-class Mesh;
 class Material;
-class ModelRenderer;
-class Model;
 class Shader;
 class Transform;
 class Texture;
-class Particle;
-class Decal;
 class PointLight;
 class Spotlight;
-struct Frustum;
-struct ShadowWall;
-struct BlastLine;
 
 struct bloomMip
 {
@@ -69,7 +60,7 @@ public:
     float sssMaxDepthDelta = 0.005f;
 
 
-    void Start(unsigned int _skyboxTexture);
+    void Start();
 
     void LevelLoad();
 
@@ -92,17 +83,11 @@ public:
     void LinesUpdate();
 
     void Update(
-        std::unordered_map<unsigned long long, ModelRenderer>& renders,
         std::unordered_map<unsigned long long, Transform>& transforms,
-        std::unordered_map<unsigned long long, ModelRenderer>& shadowCasters,
-        std::unordered_map<unsigned long long, Animator*>& animators,
         std::unordered_map<unsigned long long, PointLight>& pointLights,
         std::unordered_map<unsigned long long, Spotlight>& spotlights,
-        std::unordered_map<unsigned long long, Decal>& decals,
-        std::unordered_map<unsigned long long, ShadowWall>& shadowWalls,
         Camera* camera,
-        float delta,
-        std::vector<Particle*> particles = {}
+        float delta
     );
 
     void ScreenResize(int width, int height);
@@ -123,7 +108,6 @@ public:
     /// </summary>
     GLFWwindow* window = nullptr;
 
-
     void GUI();
 
     glm::mat4 viewMatrix = glm::zero<glm::mat4>();
@@ -133,15 +117,8 @@ public:
         Material* mat
     );
 
-    static std::vector<BlastLine> beams;
-    static bool syncAiming;
-    static BlastLine syncAim;
-    static int eccoAnimIndex;
-    static float eccoAnimLifeTime;
 
 private:
-
-    Mesh* screenQuad = nullptr;
 
     Light* shadowCaster = nullptr;
 
@@ -151,13 +128,6 @@ private:
     /// Missing Texture VRAM location
     /// </summary>
     unsigned int missingTextureTexture = 0;
-
-    Texture* onLightTexture = nullptr;
-    Texture* offLightTexture = nullptr;
-    Texture* flickeringLightTexture = nullptr;
-    Texture* explodingLightTexture = nullptr;
-    Texture* spawnRoomLightTexture = nullptr;
-    Model* lightSphere = nullptr;
 
     /// <summary>
     /// Location of the Model Matrix 
@@ -171,32 +141,10 @@ private:
     std::vector<std::vector<unsigned int>> entityShaderOrder;
 
     void DrawAllRenderers(
-        std::unordered_map<unsigned long long, Animator*>& animators,
         std::unordered_map<unsigned long long, Transform>& transforms,
-        std::unordered_map<unsigned long long, ModelRenderer>& renderers,
         std::unordered_set<unsigned long long> animatedRenderered,
-        Frustum frustum,
         int staticPass = 2,
         Shader* shader = nullptr
-    );
-
-    Shader* decalShader;
-    Model* decalCube;
-    void RenderDecals(
-        std::unordered_map<unsigned long long, Decal>& decals,
-        std::unordered_map<unsigned long long, Transform>& transforms,
-        Frustum frustum
-    );
-
-    Model* wall;
-    void RenderSpotLightShadowMaps(
-        std::unordered_map<unsigned long long, Spotlight>& spotlights,
-        std::unordered_map<unsigned long long, Animator*>& animators,
-        std::unordered_map<unsigned long long, Transform>& transforms,
-        std::unordered_map<unsigned long long, ModelRenderer>& renderers,
-        std::unordered_set<unsigned long long> animatedRenderered,
-        std::unordered_map<unsigned long long, ShadowWall>& shadowWalls,
-        Frustum frustum
     );
 
     void RenderPointLights(
@@ -211,16 +159,9 @@ private:
         float delta
     );
 
-    Shader* lineLightShader = nullptr;
-    bool lightsForAllLines = false;
-    void RenderLineLights();
-
     void CompositeBufferSetUp();
     void RenderComposite();
     void OutputBufferSetUp();
-
-    void UpdateEccoFaceAnim(float delta);
-
 
     unsigned int compositeFBO = 0;
     unsigned int bloomBuffer = 0;
@@ -234,7 +175,6 @@ private:
     unsigned int captureRBO = 0;
 
     unsigned int irradianceMap = 0;
-    Texture* paintStrokeTexture = nullptr;
 
     void BloomSetup();
     unsigned int mFBO = 0;
@@ -267,10 +207,6 @@ private:
     void LinesSetup();
     void RenderLinePass();
 
-    void RenderParticles(
-        std::vector<Particle*> particles
-    );
-
     Shader* beamShader;
     Shader* syncAimShader;
     float tileLength = 50.0f;
@@ -291,8 +227,6 @@ private:
     void RenderQuad();
     unsigned int quadVAO = 0;
     unsigned int quadVBO = 0;
-
-    Mesh* cube;
 
     //Captures for CubeMap
     glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);

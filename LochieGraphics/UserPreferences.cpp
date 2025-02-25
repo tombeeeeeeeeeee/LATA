@@ -133,9 +133,6 @@ void UserPreferences::GUI()
 		}
 		if (ImGui::Checkbox("Immortal", &immortal)) { shouldSave = true; }
 		if (ImGui::Checkbox("Save on level play", &saveOnLevelPlay)) { shouldSave = true; }
-		if (GameplayCameraSystem::FileSelector(&defaultCameraSystemLoad)) { shouldSave = true; }
-		if (EnemySystem::FileSelector(&defaultEnemySystemLoad)) { shouldSave = true; }
-		if (HealthSystem::FileSelector(&defaultHealthSystemLoad)) { shouldSave = true; }
 		ImGui::Unindent();
 	}
 	if (shouldSave) {
