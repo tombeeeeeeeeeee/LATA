@@ -14,7 +14,6 @@
 
 bool UserPreferences::escapeCloses = false;
 std::string UserPreferences::filename = "";
-UserPreferences::ModelSelectMode UserPreferences::modelSelectMode = UserPreferences::ModelSelectMode::assets;
 std::string UserPreferences::defaultLevelLoad = "";
 bool UserPreferences::rememberLastLevel = true;
 bool UserPreferences::loadDefaultLevel = true;
@@ -29,18 +28,10 @@ float UserPreferences::camMoveDolly;
 float UserPreferences::camScrollDolly;
 float UserPreferences::orthScrollSpeed;
 bool UserPreferences::saveOnLevelPlay;
-bool UserPreferences::immortal = true;
-std::string UserPreferences::defaultCameraSystemLoad = "";
-std::string UserPreferences::defaultEnemySystemLoad = "";
-std::string UserPreferences::defaultHealthSystemLoad = "";
 std::string UserPreferences::defaultStyleLoad = "OtherStyle";
 bool UserPreferences::clearSearchBar = true;
 bool UserPreferences::advancedTransformInfo = false;
-bool UserPreferences::showModelHierarchy = false;
 bool UserPreferences::showSelectedBox = true;
-
-glm::vec3 UserPreferences::loadedDirectionalLightDirection = {};
-glm::vec3 UserPreferences::loadedDirectionalLightColour = {};
 
 void UserPreferences::GUI()
 {
@@ -69,8 +60,6 @@ void UserPreferences::GUI()
 
 	if (ImGui::Checkbox("Pressing Escape Quits", &escapeCloses)) { shouldSave = true; }
 
-	if (ImGui::Combo("Model Chooser Mode", (int*)&modelSelectMode, "Loaded\0Assets\0\0")) { shouldSave = true; }
-
 	if (ImGui::Combo("Default Windowed Mode", &windowedStartMode, "Windowed\0Borderless Fullscreen\0Maximised\0\0")) { shouldSave = true; }
 
 	if (ImGui::SliderFloat("Default Global Audio Volume", &defaultGlobalVolume, 0.0f, 2.0f)) {
@@ -82,7 +71,6 @@ void UserPreferences::GUI()
 
 	if (ImGui::Checkbox("Show Advanced Transform Information", &advancedTransformInfo)) { shouldSave = true; }
 
-	if (ImGui::Checkbox("Show Model Hierarchy Information", &showModelHierarchy)) { shouldSave = true; }
 
 	if (ImGuiStyles::Selector()) {
 		defaultStyleLoad = ImGuiStyles::filename;
@@ -131,7 +119,6 @@ void UserPreferences::GUI()
 			ImGui::EndDisabled();
 			ImGui::Unindent();
 		}
-		if (ImGui::Checkbox("Immortal", &immortal)) { shouldSave = true; }
 		if (ImGui::Checkbox("Save on level play", &saveOnLevelPlay)) { shouldSave = true; }
 		ImGui::Unindent();
 	}
@@ -144,18 +131,19 @@ void UserPreferences::Initialise()
 {
 	std::ifstream lastUsed(Paths::lastUsedUserPrefsFilePath);
 
-	if (!lastUsed) {
-		return;
-	}
+	std::string newFilename;
 
-	std::string newFilename = Utilities::FileToString(Paths::lastUsedUserPrefsFilePath);
+	if (lastUsed) {
+		newFilename = Utilities::FileToString(Paths::lastUsedUserPrefsFilePath);
+	}
+	else {
+		newFilename = "Default";
+	}
 
 	lastUsed.close();
 	
-	if (newFilename != "") {
-		filename = newFilename;
-		Load();
-	}
+	filename = newFilename;
+	Load();
 
 	// Switching to Preferenced windowed mode is done in SceneManager Start
 
@@ -181,7 +169,6 @@ void UserPreferences::Save()
 
 	toml::table table{
 		{ "escapeCloses", escapeCloses },
-		{ "modelSelectMode", (int)modelSelectMode },
 		{ "loadDefaultLevel", loadDefaultLevel },
 		{ "defaultLevelLoad", defaultLevelLoad },
 		{ "rememberLastLevel", rememberLastLevel },
@@ -195,13 +182,8 @@ void UserPreferences::Save()
 		{ "camMoveDolly", camMoveDolly},
 		{ "camScrollDolly", camScrollDolly},
 		{ "orthScrollSpeed", orthScrollSpeed},
-		{ "immortal", immortal },
-		{ "defaultCameraSystemLoad", defaultCameraSystemLoad },
-		{ "defaultEnemySystemLoad", defaultEnemySystemLoad },
-		{ "defaultHealthSystemLoad", defaultHealthSystemLoad },
 		{ "clearSearchBar", clearSearchBar },
 		{ "advancedTransformInfo", advancedTransformInfo},
-		{ "showModelHierarchy", showModelHierarchy},
 		{ "defaultStyleLoad", defaultStyleLoad },
 		{ "showSelectedBox", showSelectedBox },
 		{ "directionalLightDirection", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.direction)},
@@ -223,13 +205,13 @@ bool UserPreferences::Load()
 	std::ifstream file(Paths::userPrefsSaveLocation + filename + Paths::userPrefsExtension);
 
 	if (!file) {
+		std::cout << "Failed to load any user prefs!\n";
 		return false;
 	}
 
 	toml::table data = toml::parse(file);
 
 	escapeCloses = Serialisation::LoadAsBool(data["escapeCloses"]);
-	modelSelectMode = (ModelSelectMode)Serialisation::LoadAsInt(data["modelSelectMode"]);
 	loadDefaultLevel = Serialisation::LoadAsBool(data["loadDefaultLevel"]);
 	defaultLevelLoad = Serialisation::LoadAsString(data["defaultLevelLoad"]);
 	rememberLastLevel = Serialisation::LoadAsBool(data["rememberLastLevel"]);
@@ -244,19 +226,11 @@ bool UserPreferences::Load()
 	camMoveDolly = Serialisation::LoadAsFloat(data["camMoveDolly"], 0.1f);
 	camScrollDolly = Serialisation::LoadAsFloat(data["camScrollDolly"], 0.1f);
 	orthScrollSpeed = Serialisation::LoadAsFloat(data["orthScrollSpeed"], 200.0f);
-	immortal = Serialisation::LoadAsBool(data["immortal"], true);
-	defaultCameraSystemLoad = Serialisation::LoadAsString(data["defaultCameraSystemLoad"]);
-	defaultEnemySystemLoad = Serialisation::LoadAsString(data["defaultEnemySystemLoad"]);
-	defaultHealthSystemLoad = Serialisation::LoadAsString(data["defaultHealthSystemLoad"]);
 	clearSearchBar = Serialisation::LoadAsBool(data["clearSearchBar"]);
 	advancedTransformInfo = Serialisation::LoadAsBool(data["advancedTransformInfo"], false);
-	showModelHierarchy = Serialisation::LoadAsBool(data["showModelHierarchy"], false);
-	defaultStyleLoad = Serialisation::LoadAsString(data["defaultStyleLoad"], "OtherStyle");
+	defaultStyleLoad = Serialisation::LoadAsString(data["defaultStyleLoad"], "Default");
 	showSelectedBox = Serialisation::LoadAsBool(data["showSelectedBox"], true);
 	saveOnLevelPlay = Serialisation::LoadAsBool(data["saveOnLevelPlay"], true);
-
-	loadedDirectionalLightColour = Serialisation::LoadAsVec3(data["directionalLightColour"], { 0.5f, 0.5f, 0.5f });
-	loadedDirectionalLightDirection = Serialisation::LoadAsVec3(data["directionalLightDirection"], { 0.0f, -1.0f, 0.0f });
 
 	file.close();
 

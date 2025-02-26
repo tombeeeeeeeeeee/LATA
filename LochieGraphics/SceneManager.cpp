@@ -55,6 +55,8 @@ SceneManager::SceneManager(Scene* _scene)
 #if _DEBUG  
 	std::cout << "Running in debug mode!\n";
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#else
+	std::cout << "Running in release mode!\n";
 #endif
 
 	//glfwGetPrimaryMonitor();
@@ -168,17 +170,6 @@ SceneManager::SceneManager(Scene* _scene)
 	}
 	std::cout << "Loaded Material Assets\n";
 
-	std::cout << "Loading Model Assets...\n";
-	
-	std::cout << "Loaded Model Assets\n";
-
-	std::cout << "Loading Animation Assets...\n";
-
-	std::cout << "Loaded Animations\n";
-
-	//std::array<std::string, 6> skyboxFaces = { "images/skybox/left.jpg", "images/skybox/right.jpg", "images/skybox/top.jpg", "images/skybox/bottom.jpg", "images/skybox/front.jpg", "images/skybox/back.jpg" };
-	std::array<std::string, 6> skyboxFaces = { "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png", "images/skybox/black.png" };
-
 	ResourceManager::defaultTexture = ResourceManager::LoadTexture("images/T_DefaultTexture.png", Texture::Type::albedo);
 	ResourceManager::defaultNormal = ResourceManager::LoadTexture("images/T_Normal.png", Texture::Type::normal);
 	ResourceManager::defaultMaterial = ResourceManager::LoadMaterial("Default Material", ResourceManager::super);
@@ -222,9 +213,6 @@ SceneManager::~SceneManager()
 
 	// Textures
 	ResourceManager::UnloadAll();
-
-
-	//TODO: unload meshes properly
 
 	// Close ImGui
 	ImGui_ImplOpenGL3_Shutdown();
