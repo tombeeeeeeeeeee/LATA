@@ -135,13 +135,6 @@ private:
     /// </summary>
     std::vector<std::vector<unsigned int>> entityShaderOrder;
 
-    void DrawAllRenderers(
-        std::unordered_map<unsigned long long, Transform>& transforms,
-        std::unordered_set<unsigned long long> animatedRenderered,
-        int staticPass = 2,
-        Shader* shader = nullptr
-    );
-
     void RenderPointLights(
         std::unordered_map<unsigned long long, PointLight>& pointLights,
         std::unordered_map<unsigned long long, Transform>& transforms,
@@ -200,7 +193,6 @@ private:
     Shader* syncAimShader;
     float tileLength = 50.0f;
     void RenderBeams(float delta);
-    void RenderSyncAim(float delta);
 
     unsigned int ssaoFBO = 0;
     unsigned int ssaoColorBuffer = 0;

@@ -42,9 +42,6 @@
     <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{242ffe14-7501-4c9a-8f83-4572fe6fd244}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Rendering\Animation">
-      <UniqueIdentifier>{4eb9cfad-9498-42ab-a0b9-e9dfdb6bb6d0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Networking\eNet">
       <UniqueIdentifier>{be834839-75de-4247-8b62-241ef958309b}</UniqueIdentifier>
     </Filter>
@@ -308,6 +305,12 @@
     <ClCompile Include="UiElement.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -511,6 +514,10 @@
     <ClInclude Include="RenderSystem.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
