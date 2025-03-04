@@ -42,11 +42,11 @@ Shader* ResourceManager::super = nullptr;
 unsigned long long ResourceManager::guidCounter = 100;
 std::random_device ResourceManager::guidRandomiser = {};
 
-#define LoadResource(type, collection, ...)                                 \
-unsigned long long newGuid = GetNewGuid();                                  \
-type* newResource = &collection.try_emplace(newGuid, __VA_ARGS__).first->second; \
-newResource->GUID = newGuid;                                                 \
-return newResource;                                                        \
+#define LoadResource(type, collection, ...)                                          \
+    unsigned long long newGuid = GetNewGuid();                                       \
+	type* newResource = &collection.try_emplace(newGuid, __VA_ARGS__).first->second; \
+	newResource->GUID = newGuid;                                                     \
+    return newResource;                                                              \
 
 
 #define LoadResourceAsset(type, container)                                                       \
@@ -105,7 +105,7 @@ Texture* ResourceManager::LoadTexture(std::string path, Texture::Type type, int 
 	LoadResource(Texture, textures, path, type, wrappingMode, flipOnLoad);
 }
 
-Texture* ResourceManager::LoadTexture(unsigned int width, unsigned int height, GLenum format, unsigned char* data, GLint wrappingMode, GLenum dataType, bool mipMaps, GLint minFilter, GLint magFilter)
+Texture* ResourceManager::CreateTexture(unsigned int width, unsigned int height, GLenum format, unsigned char* data, GLint wrappingMode, GLenum dataType, bool mipMaps, GLint minFilter, GLint magFilter)
 {
 	LoadResource(Texture, textures, width, height, format, data, wrappingMode, dataType, mipMaps, minFilter, magFilter);
 }

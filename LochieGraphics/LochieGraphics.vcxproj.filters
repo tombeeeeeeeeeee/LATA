@@ -309,7 +309,7 @@
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -517,7 +517,9 @@
     <ClInclude Include="TestScene.h">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh.h">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -740,6 +742,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\lineLight.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\simplePixel.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\simplePixel.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
