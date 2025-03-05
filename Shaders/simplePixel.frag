@@ -23,7 +23,7 @@ void main()
 	int col = int(gridCols * texCoords.x);
 	int row = int(gridRows * texCoords.y);
 	
-	int index = row * gridRows + col;
+	int index = col * gridRows + row;
 	
 	FragColor = vec4(grid[index].colour.rgb, 1.0);
 

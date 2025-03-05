@@ -19,6 +19,12 @@ namespace Utilities {
 	glm::vec2 ClampMag(glm::vec2 v, float min, float max);
 	glm::vec3 ClampMag(glm::vec3 v, float min, float max);
 
+	// TODO: There is probably a better name for specifically this
+	template <typename T> T PositiveMod(T a, T b) 
+	{
+		return (a % b + b) % b;
+	}
+
 	template <typename T> T mapValueTo(T value, T originalMin, T originalMax, T newMin, T newMax)
 	{
 		return (((value - originalMin) / (originalMax - originalMin)) * (newMax - newMin)) + newMin;
