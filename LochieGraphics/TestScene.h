@@ -23,6 +23,7 @@ struct MaterialInfo {
 struct PixelData {
 	glm::vec4 colour = { (float)0xc5 / 0xff, (float)0xde / 0xff, (float)0xe3 / 0xff, 1.0f };
 	unsigned int materialID = 0;
+	bool updated = false;
 
 	void GUI();
 };
@@ -43,6 +44,7 @@ private:
 	bool UpdateSim = true;
 
 	std::array<std::array<PixelData, PIXELS_H>, PIXELS_W> pixels;
+
 	std::array<std::array<GpuPixelData, PIXELS_H>, PIXELS_W> GpuPixels;
 	
 	std::vector<MaterialInfo> materialInfos;
@@ -57,12 +59,27 @@ private:
 	Shader* pixelShader;
 	Mesh quad;
 
-	bool even = true;
+	bool spreadTest = false;
+	bool getSpread();
+
+	bool SwapPixels(PixelData& a, PixelData& b);
+
+	const MaterialInfo& getMat(unsigned int index) const;
+	MaterialInfo& getNonConstMat(unsigned int index);
+
+	void Gravity(PixelData& pixel, const MaterialInfo& mat, unsigned int c, unsigned int r);
+	bool GravityDiagonalHelper(PixelData& pixel, const MaterialInfo& mat, unsigned int c, unsigned int r, bool spread);
 
 	// GUI Stuff
 
+	bool colourSelectedPixel = false;
+
 	glm::vec3 pickerColour;
 	glm::ivec2 guiCursor = { 2, 2 };
+
+	float selectEditRadius = 1.0f;
+
+	unsigned int selectMat;
 
 public:
 	TestScene();

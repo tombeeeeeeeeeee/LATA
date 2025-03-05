@@ -19,13 +19,10 @@ TestScene::TestScene()
 void TestScene::Start()
 {
 	// Would later load and save these to a file so that new materials could be made whenever and don't require a whole rebuild
-	
 	materialInfos = std::vector<MaterialInfo>{
 		{ "air", { 197 / 255.0f, 222 / 255.0f, 227 / 255.0f, 1.0f }, 0.0f, MaterialFlags::neverUpdate},
 		{ "sand", { 212 / 255.0f, 178 / 255.0f, 57 / 255.0f, 1.0f }, 1.0f, MaterialFlags::gravity},
 	};
-
-
 
 
 	for (size_t col = 0; col < PIXELS_W; col++)
@@ -71,7 +68,13 @@ void TestScene::Start()
 }
 
 // TODO: Move this function
-static void SwapPixels(PixelData& a, PixelData& b) {
+bool TestScene::SwapPixels(PixelData& a, PixelData& b) {
+
+	// TODO: this maybe shouldn't be here? 
+	if (a.updated || b.updated) {
+		return false;
+	}
+
 	auto tempID = a.materialID;
 	a.materialID = b.materialID;
 	b.materialID = tempID;
@@ -79,6 +82,66 @@ static void SwapPixels(PixelData& a, PixelData& b) {
 	auto tempColour = a.colour;
 	a.colour = b.colour;
 	b.colour = tempColour;
+
+	a.updated = true & !(getMat(a.materialID).flags & MaterialFlags::neverUpdate);
+	b.updated = true & !(getMat(a.materialID).flags & MaterialFlags::neverUpdate);
+
+	//auto tempUpdated = a.updated;
+	//a.updated = b.updated;
+	//b.updated = tempUpdated;
+
+	return true;
+}
+
+MaterialInfo& TestScene::getNonConstMat(unsigned int index)
+{
+	// TODO: Should there be a debug / not found material info
+	if (index > materialInfos.size()) {
+		return materialInfos.front();
+	}
+	return materialInfos[index];
+}
+
+bool TestScene::getSpread()
+{
+	return spreadTest;
+}
+
+const MaterialInfo& TestScene::getMat(unsigned int index) const
+{
+	// TODO: Should there be a debug / not found material info
+	if (index > materialInfos.size()) {
+		return materialInfos.front();
+	}
+	return materialInfos[index];
+}
+
+bool TestScene::GravityDiagonalHelper(PixelData& pixel, const MaterialInfo& mat, unsigned int c, unsigned int r, bool spread) {
+	auto nextC = c + (spread ? 1 : -1);
+	if (nextC >= 0 && nextC < PIXELS_W) {
+		auto& downNext = pixels[nextC][r - 1];
+		const auto& downNextMat = getMat(downNext.materialID);
+		if (downNextMat.density < mat.density) {
+			if (SwapPixels(pixel, downNext)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+// TODO: Move function
+void TestScene::Gravity(PixelData& pixel, const MaterialInfo& mat, unsigned int c, unsigned int r) {
+	auto& down = pixels[c][r - 1];
+	const auto& downMat = getMat(down.materialID);
+	if (downMat.density < mat.density) {
+		SwapPixels(pixel, down);
+		return;
+	}
+	bool spread = getSpread();
+	if (GravityDiagonalHelper(pixel, mat, c, r, spread)) { return; }
+	//if (GravityDiagonalHelper(pixel, mat, c, r, !spread)) { return; }
+
 }
 
 void TestScene::Update(float delta)
@@ -86,47 +149,64 @@ void TestScene::Update(float delta)
 	if (!UpdateSim) {
 		return;
 	}
-	even = !even;
+
+	spreadTest = !spreadTest;
+
+	// TODO: What are other potential ways can this be done, instead of having each one needing an 'updated'
+	for (auto& r : pixels)
+	{
+		for (auto& i : r)
+		{
+			i.updated = false;
+		}
+	}
+
 	// For now, just don't update border pixels
+	// The way they are updated should be more considered, however this currently gives the desiered behaviour the way I want
+	// Main gravity (just consider down)
 	for (size_t c = 1; c < PIXELS_W - 1; c++)
 	{
 		for (size_t r = 1; r < PIXELS_H - 1; r++)
 		{
 			auto& curr = pixels[c][r];
-			const auto& mat = materialInfos[curr.materialID];
-
+			if (curr.updated) { continue; }
+			const auto& mat = getMat(curr.materialID);
 			if (mat.flags & MaterialFlags::neverUpdate) { continue; }
-
-			if (mat.flags & MaterialFlags::gravity) {
-				auto& down = pixels[c][r - 1];
-				const auto& downMat = materialInfos[down.materialID];
-				if (downMat.density < mat.density) {
-					SwapPixels(curr, down);
-				}
-				else {
-					auto& downNext = pixels[c + ((even) ? 1 : -1)][r - 1];
-					const auto& downNextMat = materialInfos[downNext.materialID];
-					// TODO: Do we want to check the space above it as well to make sure it can "travel" okay
-					if (downNextMat.density < mat.density) {
-						SwapPixels(curr, downNext);
-					}
-					else {
-						auto& downOtherNext = pixels[c - ((even) ? 1 : -1)][r - 1];
-						const auto& downOtherNextMat = materialInfos[downOtherNext.materialID];
-						if (downOtherNextMat.density < mat.density) {
-							SwapPixels(curr, downOtherNext);
-						}
-					}
-				}
-				// Could check other valid spots to move to here
-			}
+			if (mat.flags & MaterialFlags::gravity) { Gravity(curr, mat, c, r); }
 		}
 	}
+	// Extra gravity (falling non directly down, like diagonally)
+	//for (size_t c = 1; c < PIXELS_W - 1; c++)
+	//{
+	//	for (size_t r = 1; r < PIXELS_H - 1; r++)
+	//	{
+	//		//continue;
+	//		auto& curr = pixels[c][r];
+	//		if (curr.updated) { continue; }
+	//		const auto& mat = getMat(curr.materialID);
+	//		if (mat.flags & MaterialFlags::neverUpdate) { continue; }
+	//		if (mat.flags & MaterialFlags::gravity) {
+	//			bool spread = getSpread();
+	//			if (GravityDiagonalHelper(curr, mat, c, r, spread)) { continue; }
+	//			//if (GravityDiagonalHelper(curr, mat, c, r, !spread)) { continue; }
+
+	//		}
+	//	}
+	//}
+
 
 	if (glfwGetKey(renderSystem.window, GLFW_KEY_UP) == GLFW_PRESS) { guiCursor.y += 1; }
 	if (glfwGetKey(renderSystem.window, GLFW_KEY_DOWN) == GLFW_PRESS) { guiCursor.y -= 1; }
 	if (glfwGetKey(renderSystem.window, GLFW_KEY_RIGHT) == GLFW_PRESS) { guiCursor.x += 1; }
 	if (glfwGetKey(renderSystem.window, GLFW_KEY_LEFT) == GLFW_PRESS) { guiCursor.x -= 1; }
+
+	for (auto& r : pixels) {
+		for (auto& i : r)
+		{
+			i.colour = getMat(i.materialID).defaultColour;
+		}
+	}
+
 
 }
 
@@ -169,6 +249,7 @@ void TestScene::Draw(float delta)
 
 	// Unbind framebuffer
 	FrameBuffer::Unbind();
+	// TODO: Is there a rendersystem function for this, if not maybe there should be something similar
 	glViewport(0, 0, renderSystem.SCREEN_WIDTH / renderSystem.superSampling, renderSystem.SCREEN_HEIGHT / renderSystem.superSampling);
 
 
@@ -193,6 +274,39 @@ void TestScene::GUI()
 
 	ImGui::ColorEdit3("Colour to set", &pickerColour.x);
 
+	ImGui::DragFloat("Select Edit Radius", &selectEditRadius);
+
+	ImGui::InputScalar("Material", ImGuiDataType_U32, &selectMat);
+
+	glm::ivec2 cursorPixelPos = { Utilities::PositiveMod(guiCursor.x, PIXELS_W), Utilities::PositiveMod(guiCursor.y, PIXELS_H) };
+
+
+	if (ImGui::Button("Set everything to above material")) {
+		for (auto& r : pixels) {
+			for (auto& i : r)
+			{
+				i.materialID = selectMat;
+			}
+		}
+	}
+
+
+	if (ImGui::Button("Set select to above material")) {
+		for (size_t c = 0; c < PIXELS_W; c++)
+		{
+			for (size_t r = 0; r < PIXELS_H; r++) {
+				if (sqrt(pow((float)c - cursorPixelPos.x, 2) + pow((float)r - cursorPixelPos.y, 2)) <= selectEditRadius) {
+					pixels[c][r].materialID = selectMat;
+				}
+			}
+
+		}
+	}
+
+
+
+
+
 	if (ImGui::Button("Set everything to colour")) {
 		for (auto& r : pixels) {
 			for (auto& i : r)
@@ -206,25 +320,22 @@ void TestScene::GUI()
 		for (auto& r : pixels) {
 			for (auto& i : r)
 			{
-				i.colour = materialInfos[i.materialID].defaultColour;
+				i.colour = getMat(i.materialID).defaultColour;
 			}
 		}
 	}
 
 	ImGui::DragInt2("Gui Cursor", &guiCursor.x);
 
+	if (ImGui::CollapsingHeader("Selected Info")) {
+		ImGui::SeparatorText("Pixel Info");
+		auto& currPixel = pixels[cursorPixelPos.x][cursorPixelPos.y];
 
-	ImGui::SeparatorText("Pixel Info");
-	glm::ivec2 temp = { Utilities::PositiveMod(guiCursor.x, PIXELS_W), Utilities::PositiveMod(guiCursor.y, PIXELS_H) };
-	auto& currPixel = pixels[temp.x][temp.y];
+		currPixel.GUI();
 
-	currPixel.colour.y -= 0.1f;
-
-	currPixel.GUI();
-
-	ImGui::SeparatorText("Pixel Material Info");
-	auto& currMat = materialInfos[currPixel.materialID];
-	currMat.GUI();
+		ImGui::SeparatorText("Pixel Material Info");
+		getNonConstMat(currPixel.materialID).GUI();
+	}
 
 	ImGui::End();
 }
@@ -248,7 +359,7 @@ void MaterialInfo::GUI()
 	ImGui::InputText(("Name##" + tag).c_str(), &name);
 	ImGui::ColorEdit4(("Default Colour##" + tag).c_str(), &defaultColour.x);
 	ImGui::CheckboxFlags(("Never Update##" + tag).c_str(), &flags, MaterialFlags::neverUpdate);
-	ImGui::CheckboxFlags(("Never Update##" + tag).c_str(), &flags, MaterialFlags::gravity);
+	ImGui::CheckboxFlags(("Gravity##" + tag).c_str(), &flags, MaterialFlags::gravity);
 	ImGui::InputFloat(("Density##" + tag).c_str(), &density);
 }
 
