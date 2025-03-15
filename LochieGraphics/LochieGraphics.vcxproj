@@ -194,10 +194,17 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelHierarchyInfo.cpp" />
     <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PrefabManager.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="UiElement.cpp" />
     <ClCompile Include="UserPreferences.cpp" />
+    <ClInclude Include="..\Third Party\box2d\include\box2d\base.h" />
+    <ClInclude Include="..\Third Party\box2d\include\box2d\box2d.h" />
+    <ClInclude Include="..\Third Party\box2d\include\box2d\collision.h" />
+    <ClInclude Include="..\Third Party\box2d\include\box2d\id.h" />
+    <ClInclude Include="..\Third Party\box2d\include\box2d\math_functions.h" />
+    <ClInclude Include="..\Third Party\box2d\include\box2d\types.h" />
     <ClInclude Include="..\Third Party\imgui\imconfig.h" />
     <ClInclude Include="..\Third Party\imgui\imgui.h" />
     <ClInclude Include="..\Third Party\imgui\imgui_impl_glfw.h" />
@@ -218,6 +225,7 @@
     <ClInclude Include="khrplatform.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Particle.h" />
+    <ClInclude Include="Physics.h" />
     <ClInclude Include="PrefabManager.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="TestScene.h" />
