@@ -41,7 +41,7 @@ class TestScene : public Scene
 {
 private:
 
-	bool UpdateSim = true;
+	bool updateSim = true;
 
 	std::array<std::array<PixelData, PIXELS_H>, PIXELS_W> pixels;
 
@@ -72,6 +72,10 @@ private:
 
 	// GUI Stuff
 
+	void SetCircleToMaterial(int x, int y, unsigned int materialID);
+
+	void UpdateSim();
+
 	bool colourSelectedPixel = false;
 
 	glm::vec3 pickerColour;
@@ -79,7 +83,7 @@ private:
 
 	float selectEditRadius = 1.0f;
 
-	unsigned int selectMat;
+	unsigned int selectMat = 1;
 
 public:
 	TestScene();

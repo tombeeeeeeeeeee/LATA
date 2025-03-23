@@ -83,8 +83,8 @@ bool TestScene::SwapPixels(PixelData& a, PixelData& b) {
 	a.colour = b.colour;
 	b.colour = tempColour;
 
-	a.updated = true & !(getMat(a.materialID).flags & MaterialFlags::neverUpdate);
-	b.updated = true & !(getMat(a.materialID).flags & MaterialFlags::neverUpdate);
+	a.updated = getMat(a.materialID).flags != MaterialFlags::neverUpdate;
+	b.updated = getMat(b.materialID).flags != MaterialFlags::neverUpdate;
 
 	//auto tempUpdated = a.updated;
 	//a.updated = b.updated;
@@ -117,41 +117,35 @@ const MaterialInfo& TestScene::getMat(unsigned int index) const
 }
 
 bool TestScene::GravityDiagonalHelper(PixelData& pixel, const MaterialInfo& mat, unsigned int c, unsigned int r, bool spread) {
-	auto nextC = c + (spread ? 1 : -1);
-	if (nextC >= 0 && nextC < PIXELS_W) {
-		auto& downNext = pixels[nextC][r - 1];
-		const auto& downNextMat = getMat(downNext.materialID);
-		if (downNextMat.density < mat.density) {
-			if (SwapPixels(pixel, downNext)) {
-				return true;
-			}
+	auto nextC = c + ((spread) ? 1 : -1);
+	if (nextC < 0 || nextC >= PIXELS_W) {
+		return false;
+	}
+	auto& downNext = pixels[nextC][r - 1];
+	const auto& downNextMat = getMat(downNext.materialID);
+	if (downNextMat.density < mat.density) {
+		if (SwapPixels(pixel, downNext)) {
+			return true;
 		}
 	}
 	return false;
 }
 
-// TODO: Move function
-void TestScene::Gravity(PixelData& pixel, const MaterialInfo& mat, unsigned int c, unsigned int r) {
-	auto& down = pixels[c][r - 1];
-	const auto& downMat = getMat(down.materialID);
-	if (downMat.density < mat.density) {
-		SwapPixels(pixel, down);
-		return;
+void TestScene::SetCircleToMaterial(int x, int y, unsigned int materialID)
+{
+	for (size_t c = 0; c < PIXELS_W; c++)
+	{
+		for (size_t r = 0; r < PIXELS_H; r++) {
+			if (sqrt(pow((float)c - x, 2) + pow((float)r - y, 2)) <= selectEditRadius) {
+				pixels[c][r].materialID = materialID;
+			}
+		}
 	}
-	bool spread = getSpread();
-	if (GravityDiagonalHelper(pixel, mat, c, r, spread)) { return; }
-	//if (GravityDiagonalHelper(pixel, mat, c, r, !spread)) { return; }
-
 }
 
-void TestScene::Update(float delta)
+void TestScene::UpdateSim()
 {
-	if (!UpdateSim) {
-		return;
-	}
-
 	spreadTest = !spreadTest;
-
 	// TODO: What are other potential ways can this be done, instead of having each one needing an 'updated'
 	for (auto& r : pixels)
 	{
@@ -164,7 +158,8 @@ void TestScene::Update(float delta)
 	// For now, just don't update border pixels
 	// The way they are updated should be more considered, however this currently gives the desiered behaviour the way I want
 	// Main gravity (just consider down)
-	for (size_t c = 1; c < PIXELS_W - 1; c++)
+	for (size_t c = (spreadTest) ? 1 : PIXELS_W - 1; (spreadTest) ? c < PIXELS_W - 1 : c > 1; c += spreadTest ? 1 : -1)
+	//for (size_t c = 1; c < PIXELS_W - 1; c++)
 	{
 		for (size_t r = 1; r < PIXELS_H - 1; r++)
 		{
@@ -194,20 +189,40 @@ void TestScene::Update(float delta)
 	//	}
 	//}
 
+}
 
-	if (glfwGetKey(renderSystem.window, GLFW_KEY_UP) == GLFW_PRESS) { guiCursor.y += 1; }
-	if (glfwGetKey(renderSystem.window, GLFW_KEY_DOWN) == GLFW_PRESS) { guiCursor.y -= 1; }
-	if (glfwGetKey(renderSystem.window, GLFW_KEY_RIGHT) == GLFW_PRESS) { guiCursor.x += 1; }
-	if (glfwGetKey(renderSystem.window, GLFW_KEY_LEFT) == GLFW_PRESS) { guiCursor.x -= 1; }
+// TODO: Move function
+void TestScene::Gravity(PixelData& pixel, const MaterialInfo& mat, unsigned int c, unsigned int r) {
+	auto& down = pixels[c][r - 1];
+	const auto& downMat = getMat(down.materialID);
+	if (downMat.density < mat.density) {
+		SwapPixels(pixel, down);
+		return;
+	}
+	bool spread = true;
+	if (GravityDiagonalHelper(pixel, mat, c, r, spread)) { return; }
+	if (GravityDiagonalHelper(pixel, mat, c, r, !spread)) { return; }
 
-	for (auto& r : pixels) {
-		for (auto& i : r)
+}
+
+void TestScene::Update(float delta)
+{
+	if (updateSim) {
+		UpdateSim();
+	}
+
+	
+	guiCursor = glm::ivec2{ cursorPos->x * PIXELS_W, cursorPos->y * PIXELS_H };
+	if (!ImGui::GetIO().WantCaptureMouse && glfwGetMouseButton(renderSystem.window, GLFW_MOUSE_BUTTON_LEFT)) {
+		SetCircleToMaterial(guiCursor.x, guiCursor.y, selectMat);
+	}
+
+	for (auto& c : pixels) {
+		for (auto& i : c)
 		{
 			i.colour = getMat(i.materialID).defaultColour;
 		}
 	}
-
-
 }
 
 void TestScene::Draw(float delta)
@@ -270,7 +285,25 @@ void TestScene::GUI()
 		ImGui::End();
 	}
 
-	ImGui::Checkbox("Update Sim", &UpdateSim);
+	ImGui::Checkbox("Update Sim", &updateSim);
+	ImGui::SameLine();
+	if (ImGui::Button("Update Frame")) {
+		UpdateSim();
+	}
+
+	ImGui::BeginDisabled();
+	
+	int amountOfAir = 0;
+	for (const auto& c : pixels)
+	{
+		for (const auto& i : c)
+		{
+			if (i.materialID == 0) { amountOfAir++; }
+		}
+	}
+	ImGui::InputInt("Amount of Air", &amountOfAir);
+
+	ImGui::EndDisabled();
 
 	ImGui::ColorEdit3("Colour to set", &pickerColour.x);
 
@@ -292,15 +325,7 @@ void TestScene::GUI()
 
 
 	if (ImGui::Button("Set select to above material")) {
-		for (size_t c = 0; c < PIXELS_W; c++)
-		{
-			for (size_t r = 0; r < PIXELS_H; r++) {
-				if (sqrt(pow((float)c - cursorPixelPos.x, 2) + pow((float)r - cursorPixelPos.y, 2)) <= selectEditRadius) {
-					pixels[c][r].materialID = selectMat;
-				}
-			}
-
-		}
+		SetCircleToMaterial(guiCursor.x, guiCursor.y, selectMat);
 	}
 
 
