@@ -1,7 +1,10 @@
 #include "TestScene.h"
 
+#include "Camera.h"
+
 #include "ResourceManager.h"
 #include "FrameBuffer.h"
+#include "SceneManager.h"
 
 #include "Utilities.h"
 
@@ -31,6 +34,8 @@ void TestScene::Start()
 
 	overlayShader = ResourceManager::LoadShader("Shaders/default.vert", "Shaders/simpleTexturedWithCutout.frag");
 
+	simple2dShader = ResourceManager::LoadShader("2dShader");
+
 	// A quad
 	quad.InitialiseQuad(1.0f);
 
@@ -41,6 +46,9 @@ void TestScene::Start()
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(PixelStuff::GpuPixelData) * PIXELS_W * PIXELS_H, pixelStuff.GetGpuPixelToDrawFrom(), GL_DYNAMIC_COPY);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
+	camera->editorOrth = true;
 }
 
 void TestScene::Update(float delta)
@@ -88,21 +96,33 @@ void TestScene::Draw(float delta)
 	pixelShader->Use();
 	quad.Draw();
 
+
 	// Unbind framebuffer
 	FrameBuffer::Unbind();
 	// TODO: Is there a rendersystem function for this, if not maybe there should be something similar
 	glViewport(0, 0, renderSystem.SCREEN_WIDTH / renderSystem.superSampling, renderSystem.SCREEN_HEIGHT / renderSystem.superSampling);
 
 
-	// Draw framebuffer texture to screen
-	overlayShader->Use();
-	overlayShader->setFloat("material.alpha", 1.0f);
+	//// Draw framebuffer texture to screen
+	//overlayShader->Use();
+	//overlayShader->setFloat("material.alpha", 1.0f);
 
+	//texture->Bind(1);
+	//overlayShader->setSampler("material.albedo", 1);
+
+	//quad.Draw();
+
+	simple2dShader->Use();
+	// TODO: Forgot when viewMatrix gets updated, should be using that or just get from the camera, check
+	// renderSystem.viewMatrix
+	// Remove camera include if not needed
+	simple2dShader->setMat4("vp", SceneManager::viewProjection);
+	simple2dShader->setMat4("model", glm::mat4(1000.0f));
 	texture->Bind(1);
-	overlayShader->setSampler("material.albedo", 1);
+	simple2dShader->setSampler("albedo", 1);
+
 
 	quad.Draw();
-
 }
 
 void TestScene::GUI()

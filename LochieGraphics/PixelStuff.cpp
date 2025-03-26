@@ -247,10 +247,10 @@ void PixelStuff::Chunk::Update(PixelStuff& pixelStuff)
 	// For now, just don't update border pixels
 	// The way they are updated should be more considered, however this currently gives the desiered behaviour the way I want
 	// Main gravity (just consider down)
-	for (size_t c = (pixelStuff.spreadTest) ? 1 : PIXELS_W - 1; (pixelStuff.spreadTest) ? c < PIXELS_W - 1 : c > 1; c += pixelStuff.spreadTest ? 1 : -1)
+	for (unsigned int c = (pixelStuff.spreadTest) ? 1 : PIXELS_W - 1; (pixelStuff.spreadTest) ? c < PIXELS_W - 1 : c > 1; c += pixelStuff.spreadTest ? 1 : -1)
 		//for (size_t c = 1; c < PIXELS_W - 1; c++)
 	{
-		for (size_t r = 1; r < PIXELS_H - 1; r++)
+		for (unsigned int r = 1; r < PIXELS_H - 1; r++)
 		{
 			auto& curr = pixels[c][r];
 			if (curr.updated) { continue; }

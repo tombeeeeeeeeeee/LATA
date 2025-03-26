@@ -54,7 +54,7 @@ private:
 	std::vector<MaterialInfo> materialInfos;
 	PixelStuff::Chunk chunk;
 	// TODO: Once there is chunks, we might want this to not be chunk alligned so only the necessary data is uploaded
-	std::array<std::array<GpuPixelData, PIXELS_H>, PIXELS_W> GpuPixels;
+	std::array<std::array<GpuPixelData, PIXELS_H>, PIXELS_W> GpuPixels = {};
 
 	bool getSpread() const;
 

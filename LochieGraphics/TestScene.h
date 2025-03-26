@@ -6,34 +6,28 @@
 #include "PixelStuff.h"
 
 
-
-
-
 class TestScene : public Scene
 {
 private:
-
 	PixelStuff pixelStuff;
 
 	bool updateSim = true;
 
-	
-
-
-	FrameBuffer* frameBuffer;
-	Texture* texture;
+	FrameBuffer* frameBuffer = nullptr;
+	Texture* texture = nullptr;
 
 	unsigned int ssbo;
 
-	Shader* overlayShader;
-	Shader* pixelShader;
+	Shader* overlayShader = nullptr;
+	Shader* pixelShader = nullptr;
+	Shader* simple2dShader = nullptr;
 	Mesh quad;
 
 	// GUI Stuff
 
 	bool colourSelectedPixel = false;
 
-	glm::vec3 pickerColour;
+	glm::vec3 pickerColour = { 1.0f, 1.0f, 1.0f };
 	glm::ivec2 guiCursor = { 2, 2 };
 
 	float selectEditRadius = 1.0f;
