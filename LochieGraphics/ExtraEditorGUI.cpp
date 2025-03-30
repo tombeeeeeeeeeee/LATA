@@ -37,3 +37,14 @@ int ExtraEditorGUI::TextSelected(ImGuiInputTextCallbackData* data)
 	*((bool*)data->UserData) = true;
 	return 0;
 }
+
+bool ExtraEditorGUI::ColourEdit3(std::string tag, glm::u8vec3& col, ImGuiColorEditFlags flags)
+{
+	glm::vec3 editColour = glm::vec3(col) / 255.0f;
+	if (ImGui::ColorEdit3(("Colour##" + tag).c_str(), &editColour.x, flags)) {
+		col = editColour * 255.0f;
+		return true;
+	}
+
+	return false;
+}

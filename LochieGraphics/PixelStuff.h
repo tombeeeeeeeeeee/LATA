@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Maths.h"
+#include "UserDefinedLiterals.h"
 
 #include <string>
 #include <vector>
@@ -18,20 +19,19 @@ private:
 	};
 
 	struct PixelData {
-		// TODO: we'd want this to take up as little space as possible
-		glm::vec3 colour = { (float)0xc5 / 0xff, (float)0xde / 0xff, (float)0xe3 / 0xff };
-		unsigned int materialID = 0;
+		glm::u8vec3 colour = { 0xc5_uc, 0xde_uc, 0xe3_uc };
 		bool updated = false;
+		unsigned int materialID = 0;
 
 		void GUI();
 	};
 
 	struct MaterialInfo {
 		std::string name;
-		glm::vec4 defaultColour;
+		glm::u8vec3 defaultColour;
 		unsigned int flags;
 		float density = 0; // Would we want this to be a float or an int?
-		MaterialInfo(std::string _name, glm::vec4(_colour), float _density, unsigned int _flags);
+		MaterialInfo(std::string _name, glm::u8vec3(_colour), float _density, unsigned int _flags);
 
 		void GUI();
 	};
@@ -45,7 +45,7 @@ public:
 	// TODO: This is only public as this isn't drawing it, confirm what is and if this can be private
 	// This is intended to always be the same as the version for the shader
 	struct GpuPixelData {
-		glm::vec4 colour; // vec4 for easier upload/translation
+		glm::u8vec4 colour; // vec4 for easier upload/translation
 	};
 
 private:

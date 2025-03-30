@@ -84,8 +84,8 @@ void TestScene::Draw(float delta)
 	// Update SSBO, the pixel colour data
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-	// TODO: This shouldn't be a "PixelData" or something, as we wouldn't need to upload everything to the GPU (Probably just the colour)
-	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(PixelStuff::GpuPixelData) * PIXELS_W * PIXELS_H, pixelStuff.GetGpuPixelToDrawFrom());
+	unsigned long long ssboSize = sizeof(PixelStuff::GpuPixelData) * PIXELS_W * PIXELS_H;
+	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, ssboSize, pixelStuff.GetGpuPixelToDrawFrom());
 
 	// Note: The framebuffer is not required for the current set up, is here for the sake of it at the moment
 	// Bind framebuffer for drawing pixels
@@ -184,3 +184,4 @@ void TestScene::GUI()
 TestScene::~TestScene()
 {
 }
+

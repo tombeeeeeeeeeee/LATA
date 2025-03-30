@@ -1,9 +1,8 @@
 #include "PixelStuff.h"
 
-#include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
 
 #include "Utilities.h"
-
 
 bool PixelStuff::SwapPixels(PixelData& a, PixelData& b) {
 	// TODO: Check for being the same pixel swapping with itself somehow?
@@ -118,17 +117,18 @@ void PixelStuff::PrepareDraw()
 	{
 		for (size_t r = 0; r < PIXELS_H; r++)
 		{
-			GpuPixels[c][r].colour = glm::vec4(chunk.pixels[c][r].colour, 1.0f);
+			GpuPixels[c][r].colour = glm::vec4(chunk.pixels[c][r].colour, 255);
 		}
 	}
 }
+
 
 void PixelStuff::SetSimpleMaterials()
 {
 	// Would later load and save these to a file so that new materials could be made whenever and don't require a whole rebuild
 	materialInfos = std::vector<MaterialInfo>{
-		{ "air", { 197 / 255.0f, 222 / 255.0f, 227 / 255.0f, 1.0f }, 0.0f, MaterialFlags::neverUpdate},
-		{ "sand", { 212 / 255.0f, 178 / 255.0f, 57 / 255.0f, 1.0f }, 1.0f, MaterialFlags::gravity},
+		{ "air", { 197_uc, 222_uc, 227_uc }, 0.0f, MaterialFlags::neverUpdate},
+		{ "sand", { 212_uc, 178_uc, 57_uc }, 1.0f, MaterialFlags::gravity},
 	};
 }
 
@@ -139,16 +139,16 @@ void PixelStuff::SetDebugColours()
 		for (size_t row = 0; row < PIXELS_H; row++)
 		{
 			PixelData& pixel = chunk.pixels[col][row];
-			pixel.colour.x = (float)col / (PIXELS_W - 1);
-			pixel.colour.y = (float)row / (PIXELS_H - 1);
-			pixel.colour.z = 0.0f;
-			//pixel.colour = { 0.1f, 0.1f, 0.1f, 1.0f };
+			pixel.colour.x = (unsigned char)(((float)col / (PIXELS_W - 1)) * 255);
+			pixel.colour.y = (unsigned char)(((float)row / (PIXELS_H - 1)) * 255);
+			pixel.colour.z = 0_uc;
+			//pixel.colour = { 25uc, 25uc, 25uc, 25uc };
 		}
 	}
 	// Setting specific pixels colour for reference
-	chunk.pixels[0][0].colour = { 1.0f, 1.0f, 1.0f }; // TODO: Do we want 0,0 do be considered left top or bottom, currently bottom left
-	chunk.pixels[PIXELS_W - 1][0].colour = { 0.5f, 0.5f, 0.5f };
-	chunk.pixels[PIXELS_W - 1][PIXELS_H - 1].colour = { 0.0f, 0.0f, 0.0f };
+	chunk.pixels[0][0].colour = { 255_uc, 255_uc, 255_uc }; // TODO: Do we want 0,0 do be considered left top or bottom, currently bottom left
+	chunk.pixels[PIXELS_W - 1][0].colour = { 126_uc, 126_uc, 126_uc };
+	chunk.pixels[PIXELS_W - 1][PIXELS_H - 1].colour = { 0_uc, 0_uc, 0_uc };
 
 }
 
@@ -167,7 +167,7 @@ void PixelStuff::SetEverythingToColour(const glm::vec3& colour)
 	for (auto& r : chunk.pixels) {
 		for (auto& i : r)
 		{
-			i.colour = glm::vec4(colour, 1.0f);
+			i.colour = glm::vec3(colour * 255.0f);
 		}
 	}
 }
@@ -206,7 +206,7 @@ void PixelStuff::Gravity(PixelData& pixel, const MaterialInfo& mat, unsigned int
 
 }
 
-PixelStuff::MaterialInfo::MaterialInfo(std::string _name, glm::vec4(_colour), float _density, unsigned int _flags) :
+PixelStuff::MaterialInfo::MaterialInfo(std::string _name, glm::u8vec3(_colour), float _density, unsigned int _flags) :
 	name(_name),
 	defaultColour(_colour),
 	density(_density),
@@ -219,7 +219,7 @@ void PixelStuff::MaterialInfo::GUI()
 	std::string tag = Utilities::PointerToString(this);
 
 	ImGui::InputText(("Name##" + tag).c_str(), &name);
-	ImGui::ColorEdit4(("Default Colour##" + tag).c_str(), &defaultColour.x);
+	ExtraEditorGUI::ColourEdit3("Coloadsaur##" + tag, defaultColour);
 	ImGui::CheckboxFlags(("Never Update##" + tag).c_str(), &flags, MaterialFlags::neverUpdate);
 	ImGui::CheckboxFlags(("Gravity##" + tag).c_str(), &flags, MaterialFlags::gravity);
 	ImGui::InputFloat(("Density##" + tag).c_str(), &density);
@@ -228,7 +228,7 @@ void PixelStuff::MaterialInfo::GUI()
 void PixelStuff::PixelData::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
-	ImGui::ColorEdit4(("Colour##" + tag).c_str(), &colour.x);
+	ExtraEditorGUI::ColourEdit3("Colour##" + tag, colour);
 	// TODO: Should be some better GUI option for this
 	ImGui::InputScalar("Material ID", ImGuiDataType_U32, &materialID);
 }

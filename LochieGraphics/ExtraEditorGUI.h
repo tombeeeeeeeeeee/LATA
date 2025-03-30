@@ -20,6 +20,8 @@ public:
 	// Filter is used for the input search box
 	static std::string filter;
 
+	static bool ColourEdit3(std::string tag, glm::u8vec3& col, ImGuiColorEditFlags flags = 0);
+
 	template <class Type, class Iter>
 	static bool InputSearchBox(Iter begin, Iter end, Type** selector, std::string label, std::string tag, bool showNull = false, Type*(*createFunction) (void) = nullptr);
 };

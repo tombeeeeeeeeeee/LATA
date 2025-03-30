@@ -4,18 +4,18 @@ out vec4 FragColor;
 
 in vec2 texCoords;
 
+// TODO: Should these be constants instead
 uniform int gridCols;
 uniform int gridRows;
 
 struct Pixel {
-	vec4 colour;
+	uint colour;
 };
 
 layout(std430, binding = 4) buffer Pixels
 {
-    Pixel grid[];
+	Pixel grid[];
 };
-
 
 
 void main()
@@ -25,13 +25,15 @@ void main()
 	
 	int index = col * gridRows + row;
 	
-	FragColor = vec4(grid[index].colour.rgb, 1.0);
+	uint gridValue = grid[index].colour;
+	vec3 pixelColour = vec3(
+		gridValue >> 0 & 0xFF,
+		gridValue >> 8 & 0xFF,
+		gridValue >> 16 & 0xFF);
 
-	// FragColor = vec4((float(index) / (gridRows * gridCols)).xxx, 1.0);
+	FragColor = vec4(pixelColour / 255.0, 1.0);
 
-	//	FragColor = vec4(float(col) / gridCols, float(row) / gridRows, float(index) / (gridRows * gridCols), 1.0);
-
-	//FragColor = vec4(texCoords, 0.0, 1.0);
-
-
+	// FragColor = vec4(float(col) / gridCols, float(row) / gridRows, float(index) / (gridRows * gridCols), 1.0);
+	// FragColor = vec4(texCoords, 0.0, 1.0);
 }
+
