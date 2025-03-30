@@ -34,6 +34,8 @@ private:
 
 	unsigned int selectMat = 1;
 
+	glm::vec2 previousCursorPos;
+
 public:
 	TestScene();
 	void Start() override;

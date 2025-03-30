@@ -64,7 +64,12 @@ void TestScene::Update(float delta)
 	// Ensure imgui isn't using mouse
 	if (!ImGui::GetIO().WantCaptureMouse && glfwGetMouseButton(renderSystem.window, GLFW_MOUSE_BUTTON_LEFT)) {
 		pixelStuff.SetCircleToMaterial(guiCursor.x, guiCursor.y, selectEditRadius, selectMat);
+		if (glfwGetKey(renderSystem.window, GLFW_KEY_X) == GLFW_PRESS) {
+			glm::vec2 vel = (*cursorPos - previousCursorPos) * 15.0f;
+			pixelStuff.AddVelocityTo(guiCursor.x, guiCursor.y, selectEditRadius, vel);
+		}
 	}
+	previousCursorPos = *cursorPos;
 }
 
 void TestScene::Draw(float delta)

@@ -7,8 +7,8 @@
 #include <vector>
 #include <array>
 
-#define PIXELS_W 64
-#define PIXELS_H 64
+#define PIXELS_W 100
+#define PIXELS_H 100
 
 typedef unsigned short MatID;
 
@@ -62,6 +62,9 @@ private:
 
 	bool getSpread() const;
 
+	static std::vector<glm::ivec2> GeneratePathBetween(glm::ivec2 start, glm::ivec2 end);
+
+	bool MovePixelToward(PixelData& a, glm::ivec2 pos, glm::ivec2 desiredPos);
 	bool SwapPixels(PixelData& a, PixelData& b);
 
 	// TODO: Think about how these functions could and should exist
@@ -84,6 +87,8 @@ public:
 	void SetEverythingTo(MatID materialID);
 	void SetEverythingToColour(const glm::vec3& colour);
 	void SetAllToDefaultColour();
+
+	void AddVelocityTo(int x, int y, float radius, glm::vec2 vel);
 
 	void PixelGUI(int x, int y);
 
