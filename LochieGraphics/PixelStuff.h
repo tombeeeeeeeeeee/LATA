@@ -20,11 +20,11 @@ private:
 		gravity = 1 << 0
 	};
 
+	// Make sure this stays as small as reasonably can
 	struct PixelData {
 		glm::u8vec3 colour = { 0xc5_uc, 0xde_uc, 0xe3_uc };
 		bool updated = false;
 		MatID materialID = 0;
-
 		glm::vec2 velocity = { 0.0f, 0.0f };
 
 		void GUI();
@@ -62,8 +62,6 @@ private:
 
 	bool getSpread() const;
 
-	static std::vector<glm::ivec2> GeneratePathBetween(glm::ivec2 start, glm::ivec2 end);
-
 	bool MovePixelToward(PixelData& a, glm::ivec2 pos, glm::ivec2 desiredPos);
 	bool SwapPixels(PixelData& a, PixelData& b);
 
@@ -75,6 +73,12 @@ private:
 	MaterialInfo& getNonConstMat(MatID index);
 
 public:
+	glm::vec2 gravityForce = { 0.0f, -0.05f };
+	bool testCenterGravity = false;
+
+	static std::vector<glm::ivec2> GeneratePathBetween(glm::ivec2 start, glm::ivec2 end);
+	std::vector<glm::ivec2> GeneratePathFromToward(const PixelData& a, glm::ivec2 start, glm::ivec2 end);
+
 	void SetSimpleMaterials();
 	void PrepareDraw();
 	void UpdateSim();

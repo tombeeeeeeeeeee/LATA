@@ -63,10 +63,15 @@ void TestScene::Update(float delta)
 	guiCursor = glm::ivec2{ cursorPos->x * PIXELS_W, cursorPos->y * PIXELS_H };
 	// Ensure imgui isn't using mouse
 	if (!ImGui::GetIO().WantCaptureMouse && glfwGetMouseButton(renderSystem.window, GLFW_MOUSE_BUTTON_LEFT)) {
-		pixelStuff.SetCircleToMaterial(guiCursor.x, guiCursor.y, selectEditRadius, selectMat);
-		if (glfwGetKey(renderSystem.window, GLFW_KEY_X) == GLFW_PRESS) {
-			glm::vec2 vel = (*cursorPos - previousCursorPos) * 15.0f;
-			pixelStuff.AddVelocityTo(guiCursor.x, guiCursor.y, selectEditRadius, vel);
+		auto prevGuiCursor = glm::ivec2(previousCursorPos.x * PIXELS_W, cursorPos->y * PIXELS_H);
+		auto path = PixelStuff::GeneratePathBetween(prevGuiCursor, guiCursor);
+		for (auto& i : path)
+		{
+			pixelStuff.SetCircleToMaterial(i.x, i.y, selectEditRadius, selectMat);
+			if (glfwGetKey(renderSystem.window, GLFW_KEY_X) != GLFW_PRESS) {
+				glm::vec2 vel = (*cursorPos - previousCursorPos) * 15.0f;
+				pixelStuff.AddVelocityTo(i.x, i.y, selectEditRadius, vel);
+			}
 		}
 	}
 	previousCursorPos = *cursorPos;
@@ -146,10 +151,13 @@ void TestScene::GUI()
 
 	ImGui::BeginDisabled();
 	
-	int amountOfAir = pixelStuff.AmountOf(0);
-	ImGui::InputInt("Amount of Air", &amountOfAir);
+	//int amountOfAir = pixelStuff.AmountOf(0);
+	//ImGui::InputInt("Amount of Air", &amountOfAir);
 
 	ImGui::EndDisabled();
+
+	ImGui::DragFloat2("Gravity", &pixelStuff.gravityForce.x);
+	ImGui::Checkbox("Centre Gravity", &pixelStuff.testCenterGravity);
 
 	ImGui::ColorEdit3("Colour to set", &pickerColour.x);
 

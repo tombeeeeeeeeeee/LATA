@@ -7,21 +7,24 @@
 
 bool PixelStuff::MovePixelToward(PixelData& a, glm::ivec2 pos, glm::ivec2 desiredPos)
 {
-	auto path = GeneratePathBetween(pos, desiredPos);
+	auto path = GeneratePathFromToward(a, pos, desiredPos);
 	bool previousSpace = false;
-	MaterialInfo mat = getMat(a.materialID);
-	unsigned int i = 0;
+	const MaterialInfo& mat = getMat(a.materialID);
+	size_t i = 0;
 	for (; i < path.size(); i++)
 	{
+		if (pos == path[i]) {
+			continue;
+		}
 		// TODO: Should be a better way to get pixel at location
-		PixelData checking = chunk.pixels[path[i].x][path[i].y];
-		MaterialInfo checkingMat = getMat(checking.materialID);
+		const MaterialInfo& checkingMat = getMat(chunk.pixels[path[i].x][path[i].y].materialID);
 		// TODO: Could edit this part to make materials flow through other materials slower
 		// TODO: If we are keeping the density thing, should be a function for this check
+		// TODO: If this is different materials each check could look quite weird, would need to change how the swapping or check works
 		if (checkingMat.density < mat.density) {
 			previousSpace = true;
 		}
-		else if (previousSpace) {
+		else if (previousSpace || (checkingMat.density == mat.density)) {
 			break;
 		}
 	}
@@ -29,7 +32,7 @@ bool PixelStuff::MovePixelToward(PixelData& a, glm::ivec2 pos, glm::ivec2 desire
 		glm::ivec2 to = path[i - 1];
 		// TODO: Change how this works
 		if (i != path.size()) {
-			a.velocity = glm::ivec2(0);
+			//a.velocity *= 0.9f;
 		}
 		SwapPixels(a, chunk.pixels[to.x][to.y]);
 		return true;
@@ -87,30 +90,66 @@ bool PixelStuff::getSpread() const
 
 std::vector<glm::ivec2> PixelStuff::GeneratePathBetween(glm::ivec2 start, glm::ivec2 end)
 {
-	// TODO: reconsider how we want to do this
+	// Always contain the starting position
 	std::vector<glm::ivec2> values = { start };
 	if (start == end) {
+		// Early return if the pixel locations are the same
 		return values;
 	}
 	glm::vec2 checking = start;
-	float checkEvery = 0.5f;
-	glm::vec2 normal = glm::normalize(glm::vec2(end - start));
-	float distance = glm::length(glm::vec2(end - start));
-	bool keepChecking = true;
+	const float checkEvery = 0.5f;
+	const glm::vec2 normal = glm::normalize(glm::vec2(end - start));
+	const float checkDistance = glm::length(glm::vec2(end - start)) - 0.5f;
+	const glm::vec2 offset = normal * checkEvery;
 	bool last = false;
-	// TODO: Clean this up
-	while (true) {
-		if (last) {
-			break;
-		}
-		// Add
-		checking += normal * checkEvery;
-		if (glm::length(checking - glm::vec2(start)) >= distance) {
+	const glm::vec2 startF = glm::vec2(start);
+	for (glm::vec2 checking = startF + offset; !last; checking += offset)
+	{
+		if (glm::length(checking - startF) >= checkDistance) {
 			last = true;
 			checking = end;
 		}
-		// Do check
 		glm::ivec2 checkingPixelPos = glm::ivec2(roundf(checking.x), roundf(checking.y));
+		// Don't insert value if it is already in
+		if (checkingPixelPos != values.back()) {
+			values.push_back(checkingPixelPos);
+		}
+	}
+	return values;
+}
+
+std::vector<glm::ivec2> PixelStuff::GeneratePathFromToward(const PixelData& a, glm::ivec2 start, glm::ivec2 end)
+{
+	// Always contain the starting position
+	std::vector<glm::ivec2> values = { start };
+	if (start == end) {
+		// Early return if the pixel locations are the same
+		return values;
+	}
+	glm::vec2 checking = start;
+	const float checkEvery = 0.9f;
+	const glm::vec2 normal(glm::normalize(glm::vec2(end - start)));
+	const float checkDistance = glm::length(glm::vec2(end - start)) - 0.5f;
+	const glm::vec2 offset = normal * checkEvery;
+	bool last = false;
+	const glm::vec2 startF = glm::vec2(start);
+	const auto& aMat = getMat(a.materialID);
+	for (glm::vec2 checking = startF + offset; !last; checking += offset)
+	{
+
+		if (glm::length(checking - startF) >= checkDistance) {
+			last = true;
+			checking = end;
+		}
+
+		const glm::ivec2 checkingPixelPos(roundf(checking.x), roundf(checking.y));
+
+		const auto& checkingMat = getMat(chunk.pixels[checkingPixelPos.x][checkingPixelPos.y].materialID);
+		if (checkingMat.density >= aMat.density) {
+			break;
+		}
+
+		// Don't insert value if it is already in
 		if (checkingPixelPos != values.back()) {
 			values.push_back(checkingPixelPos);
 		}
@@ -144,9 +183,9 @@ bool PixelStuff::GravityDiagonalHelper(PixelData& pixel, const MaterialInfo& mat
 
 void PixelStuff::SetCircleToMaterial(int x, int y, float radius, MatID materialID)
 {
-	for (size_t c = glm::max(0.0f, x - radius); c < glm::min(x + radius, (float)PIXELS_W); c++)
+	for (size_t c = glm::max(0.0f, x - radius); c < glm::min(x + radius + 1.0f, (float)PIXELS_W); c++)
 	{
-		for (size_t r = glm::max(0.0f, y - radius); r < glm::min(y - radius, (float)PIXELS_H); r++) {
+		for (size_t r = glm::max(0.0f, y - radius); r < glm::min(y + radius + 1.0f, (float)PIXELS_H); r++) {
 			if (sqrt(pow((float)c - x, 2) + pow((float)r - y, 2)) <= radius) {
 				chunk.pixels[c][r].materialID = materialID;
 			}
@@ -256,9 +295,9 @@ void PixelStuff::SetAllToDefaultColour()
 
 void PixelStuff::AddVelocityTo(int x, int y, float radius, glm::vec2 vel)
 {
-	for (size_t c = glm::max(0.0f, x - radius); c < glm::min(x + radius, (float)PIXELS_W); c++)
+	for (size_t c = glm::max(0.0f, x - radius); c < glm::min(x + radius + 1.0f, (float)PIXELS_W); c++)
 	{
-		for (size_t r = glm::max(0.0f, y - radius); r < glm::min(y - radius, (float)PIXELS_H); r++) {
+		for (size_t r = glm::max(0.0f, y - radius); r < glm::min(y + radius + 1.0f, (float)PIXELS_H); r++) {
 			if (sqrt(pow((float)c - x, 2) + pow((float)r - y, 2)) <= radius) {
 				chunk.pixels[c][r].velocity += vel;
 			}
@@ -278,19 +317,33 @@ void PixelStuff::PixelGUI(int x, int y)
 
 // TODO: Move function
 void PixelStuff::Gravity(PixelData& pixel, const MaterialInfo& mat, unsigned int c, unsigned int r) {	
-
-	glm::vec2 pos = { c, r };
-	glm::vec2 testPos = { PIXELS_W / 2, PIXELS_H / 2 };
-	float length = glm::length(testPos - pos);
-	pixel.velocity += glm::normalize(testPos - pos) * 0.9f * (1 / powf(length, 2.0f));
-	//pixel.velocity += glm::vec2{ 0.0f, -0.1f };
+	if (testCenterGravity) {
+		glm::vec2 pos = { c, r };
+		glm::vec2 testPos = { PIXELS_W / 2, PIXELS_H / 2 };
+		float length = glm::length(testPos - pos);
+		glm::vec2 add = glm::normalize(testPos - pos) * 0.1f;
+		// TODO: is there something better then this
+		if (!glm::isnan(add.x) && !glm::isnan(add.y)) {
+			pixel.velocity += add;
+		}
+	}
+	else {
+		pixel.velocity += gravityForce;
+	}
+	if (glm::isnan(pixel.velocity.x)) {
+		do {} while (true);
+	}
 
 	glm::ivec2 desiredPos = { c + pixel.velocity.x + 0.5f, r + pixel.velocity.y + 0.5f };
 	desiredPos = { glm::clamp(desiredPos.x, 0, PIXELS_W - 1), glm::clamp(desiredPos.y, 0, PIXELS_H - 1) };
 	//if (desiredPos.x < 0 || desiredPos.x >= PIXELS_W || desiredPos.y < 0 || desiredPos.y >= PIXELS_H) {
 	//	return;
 	//}
-	MovePixelToward(pixel, { c, r }, desiredPos);
+	// TODO: This function should be slightly different, consider if 2 pixels were clashing (on the x axis) and both pointed a lil up, they would be stuck
+	bool moved = MovePixelToward(pixel, { c, r }, desiredPos);
+	if (!moved) {
+		//pixel.velocity *= 0.9f;
+	}
 	//auto& next = chunk.pixels[desiredPos.x][desiredPos.y];
 	//const auto& nextMat = getMat(next.materialID);
 	//if (nextMat.density < mat.density) {
@@ -325,6 +378,7 @@ void PixelStuff::PixelData::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	ExtraEditorGUI::ColourEdit3("Colour##" + tag, colour);
+	ImGui::DragFloat2(("Velocity##" + tag).c_str(), &velocity.x);
 	// TODO: Should be some better GUI option for this
 	ImGui::InputScalar("Material ID", ImGuiDataType_U16, &materialID);
 }
@@ -343,10 +397,12 @@ void PixelStuff::Chunk::Update(PixelStuff& pixelStuff)
 	// For now, just don't update border pixels
 	// The way they are updated should be more considered, however this currently gives the desiered behaviour the way I want
 	// Main gravity (just consider down)
-	// TODO: This looks way to messy, somehow clean up
-	for (unsigned int c = (pixelStuff.spreadTest) ? 1 : PIXELS_W - 1; (pixelStuff.spreadTest) ? c < PIXELS_W - 1 : c > 1; c += pixelStuff.spreadTest ? 1 : -1)
-		//for (size_t c = 1; c < PIXELS_W - 1; c++)
+	unsigned int start = (pixelStuff.spreadTest) ? 1 : PIXELS_W - 1;
+	short sign = pixelStuff.spreadTest ? 1 : -1;
+	for (unsigned int c = start; (pixelStuff.spreadTest) ? (c < PIXELS_W - 1) : (c > 1); c += sign)
+	//for (size_t c = 1; c < PIXELS_W - 1; c++)
 	{
+		// TODO: Want to do a similar thing for alternating this too
 		for (unsigned int r = 1; r < PIXELS_H - 1; r++)
 		{
 			auto& curr = pixels[c][r];
@@ -356,23 +412,5 @@ void PixelStuff::Chunk::Update(PixelStuff& pixelStuff)
 			if (mat.flags & MaterialFlags::gravity) { pixelStuff.Gravity(curr, mat, c, r); }
 		}
 	}
-	// Extra gravity (falling non directly down, like diagonally)
-	//for (size_t c = 1; c < PIXELS_W - 1; c++)
-	//{
-	//	for (size_t r = 1; r < PIXELS_H - 1; r++)
-	//	{
-	//		//continue;
-	//		auto& curr = pixels[c][r];
-	//		if (curr.updated) { continue; }
-	//		const auto& mat = getMat(curr.materialID);
-	//		if (mat.flags & MaterialFlags::neverUpdate) { continue; }
-	//		if (mat.flags & MaterialFlags::gravity) {
-	//			bool spread = getSpread();
-	//			if (GravityDiagonalHelper(curr, mat, c, r, spread)) { continue; }
-	//			//if (GravityDiagonalHelper(curr, mat, c, r, !spread)) { continue; }
-
-	//		}
-	//	}
-	//}
 }
 
