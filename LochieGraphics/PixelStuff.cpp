@@ -117,7 +117,7 @@ void PixelStuff::PrepareDraw()
 	{
 		for (size_t r = 0; r < PIXELS_H; r++)
 		{
-			GpuPixels[c][r].colour = glm::vec4(chunk.pixels[c][r].colour, 255);
+			GpuPixels[c][r].colour = glm::u8vec4(chunk.pixels[c][r].colour, 255_uc);
 		}
 	}
 }

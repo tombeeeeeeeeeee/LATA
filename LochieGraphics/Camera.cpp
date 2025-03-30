@@ -34,6 +34,18 @@ glm::mat4 Camera::GetViewMatrix() const
     //return glm::inverse(transform.getGlobalMatrix());
 }
 
+glm::mat4 Camera::GetProjectionMatrix(float aspectRatio) const
+{
+    if (InOrthoMode()) {
+        float orthoWidth = orthoScale * aspectRatio;
+        float orthoHeight = orthoScale;
+        return glm::ortho(-orthoWidth / 2.0f, orthoWidth / 2.0f, -orthoHeight / 2.0f, orthoHeight / 2.0f, nearPlane, farPlane);
+    }
+    else {
+        return glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);
+    }
+}
+
 void Camera::ProcessKeyboard(Direction direction, float deltaTime)
 {
     if (state == editorMode) {
@@ -109,6 +121,16 @@ void Camera::ProcessMouseScroll(float yoffset)
     }
 }
 
+float Camera::getOrthoHeight(float ratio) const
+{
+    return orthoScale;
+}
+
+float Camera::getOrthoWidth(float ratio) const
+{
+    return orthoScale;
+}
+
 void Camera::GUI()
 {
     transform.GUI();
@@ -130,7 +152,7 @@ bool Camera::InOrthoMode() const
 {
     return state == State::targetingPlayersOrthographic || 
         state == State::targetingPositionOrthographic || 
-        (state == State::editorMode && editorOrth) ||
+        ((state == State::editorMode) && editorOrth) ||
         state == State::tilePlacing;
 }
 

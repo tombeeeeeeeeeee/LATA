@@ -228,16 +228,13 @@ void SceneManager::Update()
 {
 	float currentFrame = static_cast<float>(glfwGetTime());
 	deltaTime = currentFrame - lastFrame;
-	lastFrame = currentFrame;          
+	lastFrame = currentFrame;
 	frameTimes.Push(deltaTime);
 	deltaTime = fminf(maxFrameTime, deltaTime);
 
 	ProcessInput(window);
-	float orthoWidth = camera.getOrthoWidth();
-	float orthoHeight = camera.getOrthoHeight();
-	projection = camera.InOrthoMode() ?
-		glm::ortho(-orthoWidth/2.0f, orthoWidth / 2.0f, -orthoHeight / 2.0f, orthoHeight / 2.0f, camera.nearPlane, camera.farPlane) :
-		glm::perspective(glm::radians(camera.fov), (float)windowWidth / (float)windowHeight, camera.nearPlane, camera.farPlane);
+	// TODO: The view and projection should be updated after the update, but before the draw
+	projection = camera.GetProjectionMatrix((float)windowWidth / (float)windowHeight);
 	view = camera.GetViewMatrix();
 	viewProjection = projection * view;
 
@@ -246,6 +243,7 @@ void SceneManager::Update()
 
 	//// TODO: Actual draw/update loop
 	scene->renderSystem.projection = projection;
+	scene->renderSystem.viewMatrix = view;
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);

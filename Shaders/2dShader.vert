@@ -10,9 +10,9 @@ uniform mat4 vp;
 
 void main()
 {
-    //FragPos = vec3(model * vec4(aPos, 1.0));
+    FragPos = vec3(model * vec4(aPos, 0.0, 1.0));
     TexCoords = aTexCoords;
 
-    vec4 temp = vp * vec4(aPos, 0.0, 1.0);
+    vec4 temp = vp * vec4(FragPos, 1.0);
     gl_Position = vec4(temp.x, temp.y, 0.0, 1.0);
 }

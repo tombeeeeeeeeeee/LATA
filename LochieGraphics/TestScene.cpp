@@ -13,6 +13,8 @@
 #include "EditorGUI.h"
 
 
+#include <iostream>
+
 TestScene::TestScene()
 {
 }
@@ -71,7 +73,7 @@ void TestScene::Draw(float delta)
 	pixelStuff.PrepareDraw();
 	
 
-	// Note: Not using the render system for anything yet, haven't changed anything with it yet, should be fine either commented or not
+	//// Note: Not using the render system for anything yet, haven't changed anything with it yet, should be fine either commented or not
 	//renderSystem.Update(
 	//	transforms,
 	//	pointLights,
@@ -79,7 +81,7 @@ void TestScene::Draw(float delta)
 	//	camera,
 	//	delta
 	//);
-
+	
 
 	// Update SSBO, the pixel colour data
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo);
@@ -102,7 +104,7 @@ void TestScene::Draw(float delta)
 	// TODO: Is there a rendersystem function for this, if not maybe there should be something similar
 	glViewport(0, 0, renderSystem.SCREEN_WIDTH / renderSystem.superSampling, renderSystem.SCREEN_HEIGHT / renderSystem.superSampling);
 
-
+;
 	//// Draw framebuffer texture to screen
 	//overlayShader->Use();
 	//overlayShader->setFloat("material.alpha", 1.0f);
@@ -117,7 +119,7 @@ void TestScene::Draw(float delta)
 	// renderSystem.viewMatrix
 	// Remove camera include if not needed
 	simple2dShader->setMat4("vp", SceneManager::viewProjection);
-	simple2dShader->setMat4("model", glm::mat4(1000.0f));
+	simple2dShader->setMat4("model", glm::mat4(10.0f));
 	texture->Bind(1);
 	simple2dShader->setSampler("albedo", 1);
 
