@@ -10,6 +10,8 @@
 #define PIXELS_W 64
 #define PIXELS_H 64
 
+typedef unsigned short MatID;
+
 // TODO: temp class name, what should it be called? Pixels?
 class PixelStuff {
 private:
@@ -21,7 +23,9 @@ private:
 	struct PixelData {
 		glm::u8vec3 colour = { 0xc5_uc, 0xde_uc, 0xe3_uc };
 		bool updated = false;
-		unsigned int materialID = 0;
+		MatID materialID = 0;
+
+		glm::vec2 velocity = { 0.0f, 0.0f };
 
 		void GUI();
 	};
@@ -64,20 +68,20 @@ private:
 	void Gravity(PixelData& pixel, const MaterialInfo& mat, unsigned int c, unsigned int r);
 	bool GravityDiagonalHelper(PixelData& pixel, const MaterialInfo& mat, unsigned int c, unsigned int r, bool spread);
 
-	const MaterialInfo& getMat(unsigned int index) const;
-	MaterialInfo& getNonConstMat(unsigned int index);
+	const MaterialInfo& getMat(MatID index) const;
+	MaterialInfo& getNonConstMat(MatID index);
 
 public:
 	void SetSimpleMaterials();
 	void PrepareDraw();
 	void UpdateSim();
 
-	unsigned int AmountOf(unsigned int materialID) const;
+	unsigned int AmountOf(MatID materialID) const;
 	
-	void SetCircleToMaterial(int x, int y, float radius, unsigned int materialID);
+	void SetCircleToMaterial(int x, int y, float radius, MatID materialID);
 	void SetDebugColours();
 	// TODO: Don't like the names of these everything/all functions
-	void SetEverythingTo(unsigned int materialID);
+	void SetEverythingTo(MatID materialID);
 	void SetEverythingToColour(const glm::vec3& colour);
 	void SetAllToDefaultColour();
 

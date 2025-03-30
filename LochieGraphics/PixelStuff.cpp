@@ -28,7 +28,7 @@ bool PixelStuff::SwapPixels(PixelData& a, PixelData& b) {
 	return true;
 }
 
-PixelStuff::MaterialInfo& PixelStuff::getNonConstMat(unsigned int index)
+PixelStuff::MaterialInfo& PixelStuff::getNonConstMat(MatID index)
 {
 	// TODO: Should there be a debug / not found material info
 	if (index > materialInfos.size()) {
@@ -47,7 +47,7 @@ bool PixelStuff::getSpread() const
 	return spreadTest;
 }
 
-const PixelStuff::MaterialInfo& PixelStuff::getMat(unsigned int index) const
+const PixelStuff::MaterialInfo& PixelStuff::getMat(MatID index) const
 {
 	// TODO: Should there be a debug / not found material info
 	if (index > materialInfos.size()) {
@@ -71,7 +71,7 @@ bool PixelStuff::GravityDiagonalHelper(PixelData& pixel, const MaterialInfo& mat
 	return false;
 }
 
-void PixelStuff::SetCircleToMaterial(int x, int y, float radius, unsigned int materialID)
+void PixelStuff::SetCircleToMaterial(int x, int y, float radius, MatID materialID)
 {
 	for (size_t c = 0; c < PIXELS_W; c++)
 	{
@@ -83,7 +83,7 @@ void PixelStuff::SetCircleToMaterial(int x, int y, float radius, unsigned int ma
 	}
 }
 
-unsigned int PixelStuff::AmountOf(unsigned int materialID) const
+unsigned int PixelStuff::AmountOf(MatID materialID) const
 {
 	unsigned int amount = 0;
 	for (const auto& c : chunk.pixels)
@@ -152,7 +152,7 @@ void PixelStuff::SetDebugColours()
 
 }
 
-void PixelStuff::SetEverythingTo(unsigned int materialID)
+void PixelStuff::SetEverythingTo(MatID materialID)
 {
 	for (auto& r : chunk.pixels) {
 		for (auto& i : r)
@@ -230,7 +230,7 @@ void PixelStuff::PixelData::GUI()
 	std::string tag = Utilities::PointerToString(this);
 	ExtraEditorGUI::ColourEdit3("Colour##" + tag, colour);
 	// TODO: Should be some better GUI option for this
-	ImGui::InputScalar("Material ID", ImGuiDataType_U32, &materialID);
+	ImGui::InputScalar("Material ID", ImGuiDataType_U16, &materialID);
 }
 
 void PixelStuff::Chunk::Update(PixelStuff& pixelStuff)
