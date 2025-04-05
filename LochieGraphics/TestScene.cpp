@@ -12,7 +12,6 @@
 
 #include "EditorGUI.h"
 
-
 #include <iostream>
 
 TestScene::TestScene()
@@ -21,9 +20,9 @@ TestScene::TestScene()
 
 void TestScene::Start()
 {
-	// PixelStuff setup
-	pixelStuff.SetSimpleMaterials();
-	pixelStuff.SetDebugColours();
+	// pixelSim setup
+	pixelSim.SetSimpleMaterials();
+	pixelSim.SetDebugColours();
 
 	// Rendering preperations
 	texture = ResourceManager::CreateTexture(PIXELS_W, PIXELS_H, GL_SRGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
@@ -45,7 +44,7 @@ void TestScene::Start()
 	glGenBuffers(1, &ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
 	// TODO: This shouldn't be a "PixelData" or something, as we wouldn't need to upload everything to the GPU (Probably just the colour)
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(PixelStuff::GpuPixelData) * PIXELS_W * PIXELS_H, pixelStuff.GetGpuPixelToDrawFrom(), GL_DYNAMIC_COPY);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Pixels::GpuCell) * PIXELS_W * PIXELS_H, pixelSim.GetGpuPixelToDrawFrom(), GL_DYNAMIC_COPY);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
@@ -56,7 +55,7 @@ void TestScene::Start()
 void TestScene::Update(float delta)
 {
 	if (updateSim) {
-		pixelStuff.UpdateSim();
+		pixelSim.Update();
 	}
 
 	// Convert mouse cursor position to pixelspace
@@ -64,13 +63,13 @@ void TestScene::Update(float delta)
 	// Ensure imgui isn't using mouse
 	if (!ImGui::GetIO().WantCaptureMouse && glfwGetMouseButton(renderSystem.window, GLFW_MOUSE_BUTTON_LEFT)) {
 		auto prevGuiCursor = glm::ivec2(previousCursorPos.x * PIXELS_W, cursorPos->y * PIXELS_H);
-		auto path = PixelStuff::GeneratePathBetween(prevGuiCursor, guiCursor);
+		auto path = Pixels::GeneratePathBetween(prevGuiCursor, guiCursor);
 		for (auto& i : path)
 		{
-			pixelStuff.SetCircleToMaterial(i.x, i.y, selectEditRadius, selectMat);
+			pixelSim.SetCircleToMaterial(i.x, i.y, selectEditRadius, selectMat);
 			if (glfwGetKey(renderSystem.window, GLFW_KEY_X) != GLFW_PRESS) {
 				glm::vec2 vel = (*cursorPos - previousCursorPos) * 15.0f;
-				pixelStuff.AddVelocityTo(i.x, i.y, selectEditRadius, vel);
+				pixelSim.AddVelocityToCircle(i.x, i.y, selectEditRadius, vel);
 			}
 		}
 	}
@@ -80,7 +79,7 @@ void TestScene::Update(float delta)
 void TestScene::Draw(float delta)
 {
 	// Update the gpu version in preperation to send to GPU
-	pixelStuff.PrepareDraw();
+	pixelSim.PrepareDraw();
 	
 
 	//// Note: Not using the render system for anything yet, haven't changed anything with it yet, should be fine either commented or not
@@ -96,8 +95,8 @@ void TestScene::Draw(float delta)
 	// Update SSBO, the pixel colour data
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-	unsigned long long ssboSize = sizeof(PixelStuff::GpuPixelData) * PIXELS_W * PIXELS_H;
-	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, ssboSize, pixelStuff.GetGpuPixelToDrawFrom());
+	unsigned long long ssboSize = sizeof(Pixels::GpuCell) * PIXELS_W * PIXELS_H;
+	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, ssboSize, pixelSim.GetGpuPixelToDrawFrom());
 
 	// Note: The framebuffer is not required for the current set up, is here for the sake of it at the moment
 	// Bind framebuffer for drawing pixels
@@ -146,7 +145,7 @@ void TestScene::GUI()
 	ImGui::Checkbox("Update Sim", &updateSim);
 	ImGui::SameLine();
 	if (ImGui::Button("Update Frame")) {
-		pixelStuff.UpdateSim();
+		pixelSim.Update();
 	}
 
 	ImGui::BeginDisabled();
@@ -156,8 +155,8 @@ void TestScene::GUI()
 
 	ImGui::EndDisabled();
 
-	ImGui::DragFloat2("Gravity", &pixelStuff.gravityForce.x);
-	ImGui::Checkbox("Centre Gravity", &pixelStuff.testCenterGravity);
+	ImGui::DragFloat2("Gravity", &pixelSim.gravityForce.x);
+	ImGui::Checkbox("Centre Gravity", &pixelSim.testCenterGravity);
 
 	ImGui::ColorEdit3("Colour to set", &pickerColour.x);
 
@@ -169,28 +168,28 @@ void TestScene::GUI()
 
 
 	if (ImGui::Button("Set everything to above material")) {
-		pixelStuff.SetEverythingTo(selectMat);
+		pixelSim.SetEverythingTo(selectMat);
 	}
 
 
 	if (ImGui::Button("Set select to above material")) {
-		pixelStuff.SetCircleToMaterial(guiCursor.x, guiCursor.y, selectEditRadius, selectMat);
+		pixelSim.SetCircleToMaterial(guiCursor.x, guiCursor.y, selectEditRadius, selectMat);
 	}
 
 
 	if (ImGui::Button("Set everything to colour")) {
-		pixelStuff.SetEverythingToColour(pickerColour);
+		pixelSim.SetEverythingToColour(pickerColour);
 	}
 
 	if (ImGui::Button("Set everything to default material colours")) {
-		pixelStuff.SetAllToDefaultColour();
+		pixelSim.SetAllToDefaultColour();
 	}
 
 	ImGui::DragInt2("Gui Cursor", &guiCursor.x);
 
 	if (ImGui::CollapsingHeader("Selected Info")) {
 		ImGui::SeparatorText("Pixel Info");
-		pixelStuff.PixelGUI(cursorPixelPos.x, cursorPixelPos.y);
+		pixelSim.PixelGUI(cursorPixelPos.x, cursorPixelPos.y);
 	}
 
 	ImGui::End();

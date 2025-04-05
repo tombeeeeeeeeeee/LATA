@@ -75,6 +75,9 @@
     <Filter Include="Source Files\Third-Party\soloud\core">
       <UniqueIdentifier>{9ae7af90-7bca-491e-a511-14745b6a322d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Pixels">
+      <UniqueIdentifier>{fe25e853-725c-452e-b543-1a7cf617a6a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -311,8 +314,14 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="PixelStuff.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="PixelCell.cpp">
+      <Filter>Source Files\Pixels</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelMaterial.cpp">
+      <Filter>Source Files\Pixels</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelSimulation.cpp">
+      <Filter>Source Files\Pixels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -523,10 +532,18 @@
     <ClInclude Include="Mesh.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="PixelStuff.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="PixelSimulation.h">
+      <Filter>Source Files\Pixels</Filter>
     </ClInclude>
-    <ClInclude Include="UserDefinedLiterals.h" />
+    <ClInclude Include="PixelCell.h">
+      <Filter>Source Files\Pixels</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelMaterial.h">
+      <Filter>Source Files\Pixels</Filter>
+    </ClInclude>
+    <ClInclude Include="UserDefinedLiterals.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">

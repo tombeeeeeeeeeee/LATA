@@ -3,13 +3,13 @@
 
 #include "Mesh.h"
 
-#include "PixelStuff.h"
+#include "PixelSimulation.h"
 
 
 class TestScene : public Scene
 {
 private:
-	PixelStuff pixelStuff;
+	Pixels::Simulation pixelSim;
 
 	bool updateSim = true;
 
