@@ -10,7 +10,6 @@
 
 
 namespace Pixels {
-
 	std::vector<glm::ivec2> GeneratePathBetween(glm::ivec2 start, glm::ivec2 end);
 
 	constexpr short chunkWidth = 64;
@@ -18,8 +17,8 @@ namespace Pixels {
 
 	class Simulation
 	{
+	public:
 		struct Chunk {
-
 			const int x;
 			const int y;
 
@@ -29,6 +28,9 @@ namespace Pixels {
 
 			bool draw = true;
 			bool drawVelocity = false;
+
+			std::array<std::array<GpuCell, chunkHeight>, chunkWidth> GpuCells = {};
+
 
 			void Update(Simulation& pixelStuff);
 
@@ -44,8 +46,8 @@ namespace Pixels {
 
 			// TODO: Once there is chunks, we might want this to not be chunk alligned so only the necessary data is uploaded
 			// TODO: This should not be chunk width/height, should be able to change
-			std::array<std::array<GpuCell, chunkHeight>, chunkWidth> GpuCells = {};
 		};
+	private:
 
 		// TODO: Rename, is for alternating update directions
 		bool spreadTest = false;
@@ -108,6 +110,10 @@ namespace Pixels {
 		void SetDrawVelocity(bool value);
 
 		Simulation();
+
 	};
+
+	inline bool operator< (const Simulation::Chunk& l, const Simulation::Chunk& r);
+	inline bool operator> (const Simulation::Chunk& l, const Simulation::Chunk& r);
 }
 

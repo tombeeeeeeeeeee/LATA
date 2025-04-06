@@ -239,7 +239,7 @@ void Pixels::Simulation::Gravity(Cell& pixel, const Material& mat, int x, int y)
 {
 	if (testCenterGravity) {
 		glm::vec2 pos = { x, y };
-		glm::vec2 testPos = { chunkWidth, chunkHeight };
+		glm::vec2 testPos = { 0.0f, 0.0f };
 		float length = glm::length(testPos - pos);
 		glm::vec2 add = glm::normalize(testPos - pos) * 0.1f;
 		// TODO: is there something better then this
@@ -370,11 +370,34 @@ void Pixels::Simulation::Update()
 {
 	spreadTest = !spreadTest;
 	
-	int existingChunks = chunks.size();
-
-	for (int i = 0; i < existingChunks; i++)
+	std::vector<Chunk*> updateChunks(chunks.size());
+	for (size_t i = 0; i < chunks.size(); i++)
 	{
-		chunks[i].Update(*this);
+		updateChunks[i] = &chunks[i];
+	}
+
+	// TODO: Sort by the updating direction
+	std::qsort(updateChunks.data(), updateChunks.size(), sizeof(Chunk*),
+		[](const void* l, const void* r) 
+		{
+			const Chunk* a = static_cast<const Chunk*>(l);
+			const Chunk* b = static_cast<const Chunk*>(r);
+			if (*a < *b) {
+				return -1;
+			}
+			else if (*b < *a) {
+				return 1;
+			}
+			else {
+				// Shouldn't be able to be here
+				// TODO: error
+				return 0;
+			}
+		});
+
+	for (int i = 0; i < updateChunks.size(); i++)
+	{
+		updateChunks.at(i)->Update(*this);
 	}
 }
 
@@ -497,6 +520,7 @@ std::vector<glm::ivec2> Pixels::GeneratePathBetween(glm::ivec2 start, glm::ivec2
 	return values;
 }
 
+
 bool Pixels::Simulation::isCellAt(int x, int y)
 {
 	return (chunkLookup.find(std::pair<int, int>(floorf((float)x / chunkWidth), floorf((float)y / chunkHeight))) != chunkLookup.end());
@@ -531,5 +555,18 @@ Pixels::Simulation::Simulation()
 {
 	chunks.reserve(maxChunks);
 	theEdge.materialID = 1;
+}
+
+inline bool Pixels::operator<(const Simulation::Chunk& l, const Simulation::Chunk& r)
+{
+	if (l.y == r.y) {
+		return l.x < r.x;
+	}
+	return l.y < r.y;
+}
+
+inline bool Pixels::operator>(const Simulation::Chunk& l, const Simulation::Chunk& r)
+{
+	return r < l;
 }
 
