@@ -22,16 +22,20 @@ void TestScene::Start()
 {
 	// pixelSim setup
 	pixelSim.SetSimpleMaterials();
-	pixelSim.SetDebugColours();
+	pixelSim.SetCircleToMaterial( 1,  1, 0.5f, 3);
+	pixelSim.SetCircleToMaterial( 1, -1, 0.5f, 3);
+	pixelSim.SetCircleToMaterial(-1,  1, 0.5f, 3);
+	pixelSim.SetCircleToMaterial(-1, -1, 0.5f, 3);
+	//pixelSim.SetDebugColours();
 
 	// Rendering preperations
-	texture = ResourceManager::CreateTexture(PIXELS_W, PIXELS_H, GL_SRGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
-	frameBuffer = new FrameBuffer(PIXELS_W, PIXELS_H, texture, nullptr, false);
+	chunkTexture = ResourceManager::CreateTexture(Pixels::chunkWidth, Pixels::chunkHeight, GL_SRGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
+	chunkFrameBuffer = new FrameBuffer(Pixels::chunkWidth, Pixels::chunkHeight, chunkTexture, nullptr, false);
 
 	pixelShader = ResourceManager::LoadShader("simplePixel");
 	pixelShader->Use();
-	pixelShader->setInt("gridCols", PIXELS_W);
-	pixelShader->setInt("gridRows", PIXELS_H);
+	pixelShader->setInt("gridCols", Pixels::chunkWidth);
+	pixelShader->setInt("gridRows", Pixels::chunkHeight);
 
 	overlayShader = ResourceManager::LoadShader("Shaders/default.vert", "Shaders/simpleTexturedWithCutout.frag");
 
@@ -39,14 +43,6 @@ void TestScene::Start()
 
 	// A quad
 	quad.InitialiseQuad(1.0f);
-
-	// Set up pixel colour SSBO, this is how the pixel colours are stored on the GPU
-	glGenBuffers(1, &ssbo);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-	// TODO: This shouldn't be a "PixelData" or something, as we wouldn't need to upload everything to the GPU (Probably just the colour)
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Pixels::GpuCell) * PIXELS_W * PIXELS_H, pixelSim.GetGpuPixelToDrawFrom(), GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
 	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
 	camera->editorOrth = true;
@@ -59,27 +55,34 @@ void TestScene::Update(float delta)
 	}
 
 	// Convert mouse cursor position to pixelspace
-	guiCursor = glm::ivec2{ cursorPos->x * PIXELS_W, cursorPos->y * PIXELS_H };
+	// TODO: A function for ratio or something
+	float ratio = (float)*windowWidth / (float)*windowHeight;
+	glm::vec2 mouse = { 
+		(cursorPos->x - 0.5f) * ratio * camera->orthoScale + camera->transform.getPosition().x,
+		(cursorPos->y - 0.5f)* camera->orthoScale + camera->transform.getPosition().y };
+	guiCursor = glm::ivec2{ mouse.x * Pixels::chunkWidth, mouse.y * Pixels::chunkHeight };
+	if (!pixelSim.isCellAt(guiCursor.x, guiCursor.y)) {
+		//guiCursor = previousGuiCursor;
+	}
 	// Ensure imgui isn't using mouse
 	if (!ImGui::GetIO().WantCaptureMouse && glfwGetMouseButton(renderSystem.window, GLFW_MOUSE_BUTTON_LEFT)) {
-		auto prevGuiCursor = glm::ivec2(previousCursorPos.x * PIXELS_W, cursorPos->y * PIXELS_H);
-		auto path = Pixels::GeneratePathBetween(prevGuiCursor, guiCursor);
+		auto path = Pixels::GeneratePathBetween(previousGuiCursor, guiCursor);
 		for (auto& i : path)
 		{
 			pixelSim.SetCircleToMaterial(i.x, i.y, selectEditRadius, selectMat);
 			if (glfwGetKey(renderSystem.window, GLFW_KEY_X) != GLFW_PRESS) {
-				glm::vec2 vel = (*cursorPos - previousCursorPos) * 15.0f;
+				glm::vec2 vel = (guiCursor - previousGuiCursor) / 10;
 				pixelSim.AddVelocityToCircle(i.x, i.y, selectEditRadius, vel);
 			}
 		}
 	}
-	previousCursorPos = *cursorPos;
+	previousGuiCursor = guiCursor;
 }
 
 void TestScene::Draw(float delta)
 {
 	// Update the gpu version in preperation to send to GPU
-	pixelSim.PrepareDraw();
+	pixelSim.PrepareDraw(camera->transform.getPosition().x, camera->transform.getPosition().y);
 	
 
 	//// Note: Not using the render system for anything yet, haven't changed anything with it yet, should be fine either commented or not
@@ -91,27 +94,42 @@ void TestScene::Draw(float delta)
 	//	delta
 	//);
 	
+	for (auto& i : pixelSim.getChunks())
+	{
+		chunkFrameBuffer->Bind();
+		glViewport(0, 0, Pixels::chunkWidth, Pixels::chunkHeight);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, i.ssbo);
 
-	// Update SSBO, the pixel colour data
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-	unsigned long long ssboSize = sizeof(Pixels::GpuCell) * PIXELS_W * PIXELS_H;
-	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, ssboSize, pixelSim.GetGpuPixelToDrawFrom());
+
+		// Draw pixels
+		pixelShader->Use();
+		quad.Draw();
+
+		FrameBuffer::Unbind();
+		glViewport(0, 0, *windowWidth, *windowHeight);
+
+
+
+		simple2dShader->Use();
+		simple2dShader->setMat4("vp", SceneManager::viewProjection);
+		glm::mat4 model = glm::mat4(0.5f);
+		model = glm::translate(model, glm::vec3(i.x * 2.0f + 1.0f, i.y * 2.0f + 1.0f, 0.0f));
+		simple2dShader->setMat4("model", model);
+		chunkTexture->Bind(1);
+		simple2dShader->setSampler("albedo", 1);
+		quad.Draw();
+
+		
+		//break;
+	}
 
 	// Note: The framebuffer is not required for the current set up, is here for the sake of it at the moment
 	// Bind framebuffer for drawing pixels
-	frameBuffer->Bind();
-	glViewport(0, 0, PIXELS_W, PIXELS_H);
 	
-	// Draw pixels
-	pixelShader->Use();
-	quad.Draw();
 
 
 	// Unbind framebuffer
-	FrameBuffer::Unbind();
 	// TODO: Is there a rendersystem function for this, if not maybe there should be something similar
-	glViewport(0, 0, renderSystem.SCREEN_WIDTH / renderSystem.superSampling, renderSystem.SCREEN_HEIGHT / renderSystem.superSampling);
 
 ;
 	//// Draw framebuffer texture to screen
@@ -122,24 +140,13 @@ void TestScene::Draw(float delta)
 	//overlayShader->setSampler("material.albedo", 1);
 
 	//quad.Draw();
-
-	simple2dShader->Use();
-	// TODO: Forgot when viewMatrix gets updated, should be using that or just get from the camera, check
-	// renderSystem.viewMatrix
-	// Remove camera include if not needed
-	simple2dShader->setMat4("vp", SceneManager::viewProjection);
-	simple2dShader->setMat4("model", glm::mat4(10.0f));
-	texture->Bind(1);
-	simple2dShader->setSampler("albedo", 1);
-
-
-	quad.Draw();
 }
 
 void TestScene::GUI()
 {
 	if (!ImGui::Begin("Test Scene!", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
+		return;
 	}
 
 	ImGui::Checkbox("Update Sim", &updateSim);
@@ -150,10 +157,20 @@ void TestScene::GUI()
 
 	ImGui::BeginDisabled();
 	
+	int chunkCount = pixelSim.getChunkCount();
+	ImGui::InputInt("Chunk count", &chunkCount);
 	//int amountOfAir = pixelStuff.AmountOf(0);
 	//ImGui::InputInt("Amount of Air", &amountOfAir);
 
 	ImGui::EndDisabled();
+
+	if (ImGui::Button("Set debug colours")) {
+		pixelSim.SetDebugColours();
+	}
+
+	if (ImGui::Button("Toggle Draw Velocities")) {
+		pixelSim.SetDrawVelocity(!pixelSim.getChunks()[0].drawVelocity);
+	}
 
 	ImGui::DragFloat2("Gravity", &pixelSim.gravityForce.x);
 	ImGui::Checkbox("Centre Gravity", &pixelSim.testCenterGravity);
@@ -163,9 +180,6 @@ void TestScene::GUI()
 	ImGui::DragFloat("Select Edit Radius", &selectEditRadius);
 
 	ImGui::InputScalar("Material", ImGuiDataType_U32, &selectMat);
-
-	glm::ivec2 cursorPixelPos = { Utilities::PositiveMod(guiCursor.x, PIXELS_W), Utilities::PositiveMod(guiCursor.y, PIXELS_H) };
-
 
 	if (ImGui::Button("Set everything to above material")) {
 		pixelSim.SetEverythingTo(selectMat);
@@ -189,7 +203,7 @@ void TestScene::GUI()
 
 	if (ImGui::CollapsingHeader("Selected Info")) {
 		ImGui::SeparatorText("Pixel Info");
-		pixelSim.PixelGUI(cursorPixelPos.x, cursorPixelPos.y);
+		pixelSim.PixelGUI(guiCursor.x, guiCursor.y);
 	}
 
 	ImGui::End();

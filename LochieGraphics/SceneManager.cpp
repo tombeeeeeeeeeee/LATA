@@ -234,6 +234,7 @@ void SceneManager::Update()
 
 	ProcessInput(window);
 	// TODO: The view and projection should be updated after the update, but before the draw
+	// TODO: Function for gettings the aspectRatio
 	projection = camera.GetProjectionMatrix((float)windowWidth / (float)windowHeight);
 	view = camera.GetViewMatrix();
 	viewProjection = projection * view;

@@ -13,10 +13,11 @@ private:
 
 	bool updateSim = true;
 
-	FrameBuffer* frameBuffer = nullptr;
-	Texture* texture = nullptr;
+	FrameBuffer* chunkFrameBuffer = nullptr;
+	Texture* chunkTexture = nullptr;
 
-	unsigned int ssbo;
+	//FrameBuffer* output = nullptr;
+	//Texture* outputTexture = nullptr;
 
 	Shader* overlayShader = nullptr;
 	Shader* pixelShader = nullptr;
@@ -32,9 +33,9 @@ private:
 
 	float selectEditRadius = 1.0f;
 
-	unsigned int selectMat = 1;
+	unsigned int selectMat = 2;
 
-	glm::vec2 previousCursorPos;
+	glm::ivec2 previousGuiCursor;
 
 public:
 	TestScene();
