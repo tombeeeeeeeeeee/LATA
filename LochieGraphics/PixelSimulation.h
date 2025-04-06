@@ -50,13 +50,13 @@ namespace Pixels {
 	private:
 
 		// TODO: Rename, is for alternating update directions
-		bool spreadTest = false;
+		static bool leftToRight;
 
 		std::vector<Material> materialInfos;
 
 		Cell theEdge;
 
-		unsigned short maxChunks = 32;
+		unsigned short maxChunks = 100;
 
 		std::vector<Simulation::Chunk> chunks;
 		std::unordered_map<std::pair<int, int>, Simulation::Chunk*, hashFNV1A> chunkLookup;
@@ -64,8 +64,6 @@ namespace Pixels {
 		Chunk& AddChunk(int x, int y);
 
 		Cell& getGlobal(int cellX, int cellY);
-
-		bool getSpread() const;
 
 		bool MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 desiredPos);
 		void setCell(int x, int y, MatID matID);
@@ -111,9 +109,7 @@ namespace Pixels {
 
 		Simulation();
 
+		static int ChunkSort(const void* l, const void* r);
 	};
-
-	inline bool operator< (const Simulation::Chunk& l, const Simulation::Chunk& r);
-	inline bool operator> (const Simulation::Chunk& l, const Simulation::Chunk& r);
 }
 

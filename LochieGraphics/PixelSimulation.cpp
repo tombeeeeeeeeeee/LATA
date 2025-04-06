@@ -7,34 +7,27 @@
 // TODO: remove
 #include <iostream>
 
-void Pixels::Simulation::Chunk::Update(Simulation& pixelStuff)
-{
-	// TODO: What are other potential ways can this be done, instead of having each one needing an 'updated'
-	for (auto& r : cells)
-	{
-		for (auto& i : r)
-		{
-			i.updated = false;
-		}
-	}
+bool Pixels::Simulation::leftToRight = false;
 
+void Pixels::Simulation::Chunk::Update(Simulation& sim)
+{
 	// For now, just don't update border pixels
 	// The way they are updated should be more considered, however this currently gives the desiered behaviour the way I want
 	// Main gravity (just consider down)
-	unsigned int start = (pixelStuff.spreadTest) ? 0 : chunkWidth - 1;
-	short sign = pixelStuff.spreadTest ? 1 : -1;
-	for (unsigned int c = start; (pixelStuff.spreadTest) ? (c < chunkWidth) : (c > 0); c += sign)
+	unsigned int start = (sim.leftToRight) ? 0 : chunkWidth - 1;
+	short sign = sim.leftToRight ? 1 : -1;
+	for (unsigned int c = start; (sim.leftToRight) ? (c < chunkWidth) : (c > 0); c += sign)
 	{
 		// TODO: Want to do a similar thing for alternating this too
 		for (unsigned int r = 0; r < chunkHeight - 0; r++)
 		{
 			Cell& curr = getLocal(c, r);
 			if (curr.updated) { continue; }
-			const auto& mat = pixelStuff.getMat(curr.materialID);
+			const auto& mat = sim.getMat(curr.materialID);
 			if (mat.flags & MaterialFlags::neverUpdate) { continue; }
 			int globalX = x * chunkWidth + c;
 			int globalY = y * chunkHeight + r;
-			if (mat.flags & MaterialFlags::gravity) { pixelStuff.Gravity(curr, mat, globalX, globalY); }
+			if (mat.flags & MaterialFlags::gravity) { sim.Gravity(curr, mat, globalX, globalY); }
 		}
 	}
 }
@@ -131,8 +124,8 @@ Pixels::Simulation::Chunk& Pixels::Simulation::AddChunk(int x, int y)
 
 Pixels::Cell& Pixels::Simulation::getGlobal(int cellX, int cellY)
 {
-	int x = floorf((float)cellX / chunkWidth);
-	int y = floorf((float)cellY / chunkHeight);
+	int x = (int)floorf((float)cellX / chunkWidth);
+	int y = (int)floorf((float)cellY / chunkHeight);
 
 	auto search = chunkLookup.find(std::pair<int, int>(x, y));
 	Chunk* chunk = nullptr;
@@ -148,11 +141,6 @@ Pixels::Cell& Pixels::Simulation::getGlobal(int cellX, int cellY)
 		chunk = search->second;
 	}
 	return chunk->getLocal(cellX - (x * chunkWidth), cellY - (y * chunkHeight));
-}
-
-bool Pixels::Simulation::getSpread() const
-{
-	return spreadTest;
 }
 
 bool Pixels::Simulation::MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 desiredPos)
@@ -368,7 +356,7 @@ void Pixels::Simulation::PrepareDraw(int left, int down)
 
 void Pixels::Simulation::Update()
 {
-	spreadTest = !spreadTest;
+	leftToRight = !leftToRight;
 	
 	std::vector<Chunk*> updateChunks(chunks.size());
 	for (size_t i = 0; i < chunks.size(); i++)
@@ -377,23 +365,19 @@ void Pixels::Simulation::Update()
 	}
 
 	// TODO: Sort by the updating direction
-	std::qsort(updateChunks.data(), updateChunks.size(), sizeof(Chunk*),
-		[](const void* l, const void* r) 
+	std::qsort(updateChunks.data(), updateChunks.size(), sizeof(Chunk*), ChunkSort);
+
+	for (int i = 0; i < updateChunks.size(); i++)
+	{
+		// TODO: What are other potential ways can this be done, instead of having each one needing an 'updated'
+		for (auto& r : updateChunks.at(i)->cells)
 		{
-			const Chunk* a = static_cast<const Chunk*>(l);
-			const Chunk* b = static_cast<const Chunk*>(r);
-			if (*a < *b) {
-				return -1;
+			for (auto& i : r)
+			{
+				i.updated = false;
 			}
-			else if (*b < *a) {
-				return 1;
-			}
-			else {
-				// Shouldn't be able to be here
-				// TODO: error
-				return 0;
-			}
-		});
+		}
+	}
 
 	for (int i = 0; i < updateChunks.size(); i++)
 	{
@@ -557,16 +541,27 @@ Pixels::Simulation::Simulation()
 	theEdge.materialID = 1;
 }
 
-inline bool Pixels::operator<(const Simulation::Chunk& l, const Simulation::Chunk& r)
+int Pixels::Simulation::ChunkSort(const void* l, const void* r)
 {
-	if (l.y == r.y) {
-		return l.x < r.x;
-	}
-	return l.y < r.y;
-}
+		const Chunk* a = static_cast<const Chunk*>(l);
+		const Chunk* b = static_cast<const Chunk*>(r);
+		if (a->y < b->y) {
+			return -1;
+		}
+		else if (b->y < a->y) {
+			return 1;
+		}
 
-inline bool Pixels::operator>(const Simulation::Chunk& l, const Simulation::Chunk& r)
-{
-	return r < l;
+		if (a->x < b->x) {
+			return leftToRight ? -1 : 1;
+		}
+		else if (b->x < a->x) {
+			return leftToRight ? 1 : -1;
+		}
+		else {
+			// Shouldn't be able to be here
+			// TODO: error
+			return 0;
+		}
 }
 
