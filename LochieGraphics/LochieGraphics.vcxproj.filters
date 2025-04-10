@@ -78,6 +78,9 @@
     <Filter Include="Source Files\Third-Party\box2d">
       <UniqueIdentifier>{34fb48f3-d8ef-4398-bd20-9cb7f8338880}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Third-Party\box2d\include">
+      <UniqueIdentifier>{8917e0e7-5b5c-4b82-8532-0fde194b7858}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -529,23 +532,26 @@
     <ClInclude Include="Physics.h">
       <Filter>Source Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\Third Party\box2d\include\box2d\collision.h">
+    <ClInclude Include="..\Third Party\box2d\box2cpp\box2cpp.h">
       <Filter>Source Files\Third-Party\box2d</Filter>
     </ClInclude>
-    <ClInclude Include="..\Third Party\box2d\include\box2d\id.h">
-      <Filter>Source Files\Third-Party\box2d</Filter>
+    <ClInclude Include="..\Third Party\box2d\box2d\include\base.h">
+      <Filter>Source Files\Third-Party\box2d\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\Third Party\box2d\include\box2d\math_functions.h">
-      <Filter>Source Files\Third-Party\box2d</Filter>
+    <ClInclude Include="..\Third Party\box2d\box2d\include\box2d.h">
+      <Filter>Source Files\Third-Party\box2d\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\Third Party\box2d\include\box2d\types.h">
-      <Filter>Source Files\Third-Party\box2d</Filter>
+    <ClInclude Include="..\Third Party\box2d\box2d\include\collision.h">
+      <Filter>Source Files\Third-Party\box2d\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\Third Party\box2d\include\box2d\base.h">
-      <Filter>Source Files\Third-Party\box2d</Filter>
+    <ClInclude Include="..\Third Party\box2d\box2d\include\id.h">
+      <Filter>Source Files\Third-Party\box2d\include</Filter>
     </ClInclude>
-    <ClInclude Include="..\Third Party\box2d\include\box2d\box2d.h">
-      <Filter>Source Files\Third-Party\box2d</Filter>
+    <ClInclude Include="..\Third Party\box2d\box2d\include\math_functions.h">
+      <Filter>Source Files\Third-Party\box2d\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Third Party\box2d\box2d\include\types.h">
+      <Filter>Source Files\Third-Party\box2d\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
