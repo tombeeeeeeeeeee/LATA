@@ -8,8 +8,8 @@ typedef unsigned short MatID;
 
 namespace Pixels {
 	enum MaterialFlags {
-		neverUpdate = 0, // Prob just doesn't need to exist? (Could exist as a combo of/lack of flags?)
-		gravity = 1 << 0
+		neverUpdate = 1 << 0,
+		gravity = 2 << 0
 	};
 
 	struct Material {

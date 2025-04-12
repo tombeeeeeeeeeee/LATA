@@ -7,19 +7,23 @@
 // TODO: remove
 #include <iostream>
 
+unsigned char Pixels::Simulation::updateOrder = 0;
 bool Pixels::Simulation::leftToRight = false;
+bool Pixels::Simulation::upToDown = false;
 
 void Pixels::Simulation::Chunk::Update(Simulation& sim)
 {
 	// For now, just don't update border pixels
 	// The way they are updated should be more considered, however this currently gives the desiered behaviour the way I want
 	// Main gravity (just consider down)
-	unsigned int start = (sim.leftToRight) ? 0 : chunkWidth - 1;
-	short sign = sim.leftToRight ? 1 : -1;
-	for (unsigned int c = start; (sim.leftToRight) ? (c < chunkWidth) : (c > 0); c += sign)
+	unsigned int cStart = (sim.leftToRight) ? 0 : chunkWidth - 1;
+	short cSign = sim.leftToRight ? 1 : -1;
+	unsigned int rStart = sim.upToDown ? 0 : chunkHeight - 1;
+	short rSign = sim.upToDown ? 1 : -1;
+	for (signed int c = cStart; (sim.leftToRight) ? (c < chunkWidth) : (c >= 0); c += cSign)
 	{
 		// TODO: Want to do a similar thing for alternating this too
-		for (unsigned int r = 0; r < chunkHeight - 0; r++)
+		for (signed int r = rStart; sim.upToDown ? (r < chunkHeight) : (r >= 0); r += rSign)
 		{
 			Cell& curr = getLocal(c, r);
 			if (curr.updated) { continue; }
@@ -242,6 +246,7 @@ void Pixels::Simulation::Gravity(Cell& pixel, const Material& mat, int x, int y)
 		do {} while (true);
 	}
 
+	// TODO: Just use round instead of floor+.5
 	glm::ivec2 desiredPos = { floorf(x + pixel.velocity.x + 0.5f), floorf(y + pixel.velocity.y + 0.5f) };
 	//desiredPos = { glm::clamp(desiredPos.x, 0, PIXELS_W - 1), glm::clamp(desiredPos.y, 0, PIXELS_H - 1) };
 	//if (desiredPos.x < 0 || desiredPos.x >= PIXELS_W || desiredPos.y < 0 || desiredPos.y >= PIXELS_H) {
@@ -356,7 +361,11 @@ void Pixels::Simulation::PrepareDraw(int left, int down)
 
 void Pixels::Simulation::Update()
 {
-	leftToRight = !leftToRight;
+	updateOrder++;
+	updateOrder %= 4;
+	
+	leftToRight = updateOrder % 2 == 0;
+	upToDown = updateOrder < 2;
 	
 	std::vector<Chunk*> updateChunks(chunks.size());
 	for (size_t i = 0; i < chunks.size(); i++)

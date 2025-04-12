@@ -50,9 +50,10 @@ namespace Pixels {
 	private:
 
 		// TODO: Rename, is for alternating update directions
-		static bool leftToRight;
+		static unsigned char updateOrder;
 
-		std::vector<Material> materialInfos;
+		static bool leftToRight;
+		static bool upToDown;
 
 		Cell theEdge;
 
@@ -78,6 +79,7 @@ namespace Pixels {
 	public:
 		glm::vec2 gravityForce = { 0.0f, -0.05f };
 		bool testCenterGravity = false;
+		std::vector<Material> materialInfos;
 
 		std::vector<glm::ivec2> GeneratePathFromToward(const Cell& a, glm::ivec2 start, glm::ivec2 end);
 

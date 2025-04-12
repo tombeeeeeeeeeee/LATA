@@ -164,6 +164,14 @@ void TestScene::GUI()
 
 	ImGui::EndDisabled();
 
+	if (ImGui::CollapsingHeader("Materials")) {
+		for (auto& i : pixelSim.materialInfos)
+		{
+			i.GUI();
+			ImGui::Separator();
+		}
+	}
+
 	if (ImGui::Button("Set debug colours")) {
 		pixelSim.SetDebugColours();
 	}
