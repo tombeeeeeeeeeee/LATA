@@ -254,8 +254,28 @@ void Pixels::Simulation::Gravity(Cell& pixel, const Material& mat, int x, int y)
 	//}
 	// TODO: This function should be slightly different, consider if 2 pixels were clashing (on the x axis) and both pointed a lil up, they would be stuck
 	bool moved = MovePixelToward(pixel, { x, y }, desiredPos);
+	glm::vec2 pos(x, y);
+	glm::vec2 originalDesPos(x + pixel.velocity.x, y + pixel.velocity.y);
+	glm::vec2 originalOffset = originalDesPos - pos;
+	glm::vec2 direction = glm::normalize(originalOffset);
+	if (glm::isnan(direction.x)) {
+		return;
+	}
+	float length = glm::length(originalOffset);
+	float originalDesAngle = std::atan2f(direction.y, direction.x);
 	if (!moved) {
-		//pixel.velocity *= 0.9f;
+		float angle = originalDesAngle + ((leftToRight ? -1 : 1) * mat.halfAngleSpread);
+		glm::vec2 desiredNormal(cosf(angle), sinf(angle));
+		glm::vec2 newDesiredPos = pos + (desiredNormal * length);
+		desiredPos = { floorf(newDesiredPos.x + 0.5f), floorf(newDesiredPos.y + 0.5f) };
+		moved = MovePixelToward(pixel, { x, y }, desiredPos);
+	}
+	if (!moved) {
+		float angle = originalDesAngle + ((leftToRight ? 1 : -1) * mat.halfAngleSpread);
+		glm::vec2 desiredNormal(cosf(angle), sinf(angle));
+		glm::vec2 newDesiredPos = pos + (desiredNormal * length);
+		desiredPos = { floorf(newDesiredPos.x + 0.5f), floorf(newDesiredPos.y + 0.5f) };
+		moved = MovePixelToward(pixel, { x, y }, desiredPos);
 	}
 	//auto& next = chunk.pixels[desiredPos.x][desiredPos.y];
 	//const auto& nextMat = getMat(next.materialID);

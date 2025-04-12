@@ -20,4 +20,5 @@ void Pixels::Material::GUI()
 	ImGui::CheckboxFlags(("Never Update##" + tag).c_str(), &flags, MaterialFlags::neverUpdate);
 	ImGui::CheckboxFlags(("Gravity##" + tag).c_str(), &flags, MaterialFlags::gravity);
 	ImGui::InputFloat(("Density##" + tag).c_str(), &density);
+	ImGui::SliderFloat(("Half Angle Spread##" + tag).c_str(), &halfAngleSpread, 0.0f, PI / 2);
 }
