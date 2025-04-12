@@ -155,6 +155,8 @@ void TestScene::GUI()
 		pixelSim.Update();
 	}
 
+	ImGui::Checkbox("Multithreaded", &pixelSim.multithreaded);
+
 	ImGui::BeginDisabled();
 	
 	int chunkCount = pixelSim.getChunkCount();

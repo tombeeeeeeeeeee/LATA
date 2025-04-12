@@ -13,17 +13,15 @@ bool Pixels::Simulation::upToDown = false;
 
 void Pixels::Simulation::Chunk::Update(Simulation& sim)
 {
-	// For now, just don't update border pixels
-	// The way they are updated should be more considered, however this currently gives the desiered behaviour the way I want
-	// Main gravity (just consider down)
-	unsigned int cStart = (sim.leftToRight) ? 0 : chunkWidth - 1;
+	int cStart = (sim.leftToRight) ? 0 : chunkWidth - 1;
 	short cSign = sim.leftToRight ? 1 : -1;
-	unsigned int rStart = sim.upToDown ? 0 : chunkHeight - 1;
-	short rSign = sim.upToDown ? 1 : -1;
+
+	int rStart = (sim.upToDown) ? chunkHeight - 1 : 0;
+	short rSign = (sim.upToDown) ? -1 : 1;	
+
 	for (signed int c = cStart; (sim.leftToRight) ? (c < chunkWidth) : (c >= 0); c += cSign)
 	{
-		// TODO: Want to do a similar thing for alternating this too
-		for (signed int r = rStart; sim.upToDown ? (r < chunkHeight) : (r >= 0); r += rSign)
+		for (signed int r = rStart; (sim.upToDown) ? (r >= 0) : (r < chunkHeight); r += rSign)
 		{
 			Cell& curr = getLocal(c, r);
 			if (curr.updated) { continue; }
@@ -45,13 +43,6 @@ Pixels::Simulation::Chunk::Chunk(int _x, int _y) :
 	x(_x),
 	y(_y)
 {
-	// Set up pixel colour SSBO, this is how the pixel colours are stored on the GPU
-	glGenBuffers(1, &ssbo);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-	// TODO: This shouldn't be a "PixelData" or something, as we wouldn't need to upload everything to the GPU (Probably just the colour)
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Pixels::GpuCell) * Pixels::chunkWidth * Pixels::chunkHeight, GetGpuPixelToDrawFrom(), GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 void Pixels::Simulation::Chunk::SetDebugColours()
@@ -75,6 +66,17 @@ void Pixels::Simulation::Chunk::SetDebugColours()
 
 void Pixels::Simulation::Chunk::PrepareDraw()
 {
+	if (!ssboGenerated) {
+		ssboGenerated = true;
+		// Set up pixel colour SSBO, this is how the pixel colours are stored on the GPU
+		glGenBuffers(1, &ssbo);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+		// TODO: This shouldn't be a "PixelData" or something, as we wouldn't need to upload everything to the GPU (Probably just the colour)
+		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Pixels::GpuCell) * Pixels::chunkWidth * Pixels::chunkHeight, GetGpuPixelToDrawFrom(), GL_DYNAMIC_COPY);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+	}
 	for (int c = 0; c < chunkWidth; c++)
 	{
 		for (int r = 0; r < chunkHeight; r++)
@@ -112,6 +114,7 @@ const Pixels::GpuCell* Pixels::Simulation::Chunk::GetGpuPixelToDrawFrom() const
 
 Pixels::Simulation::Chunk& Pixels::Simulation::AddChunk(int x, int y)
 {
+	std::lock_guard<std::mutex> lock(chunkLock);
 	auto search = chunkLookup.find(std::pair<int, int>(x, y));
 	if (search != chunkLookup.end()) {
 		return *search->second;
@@ -227,6 +230,35 @@ bool Pixels::Simulation::SwapPixels(Cell& a, Cell& b)
 	return true;
 }
 
+void Pixels::Simulation::UpdateChunks(glm::ivec2 check, const std::vector<Chunk*>& updateChunks)
+{
+	for (int i = 0; i < updateChunks.size(); i++)
+	{
+		Simulation& ref = *this;
+		Chunk* chunk = updateChunks.at(i);
+		if (abs(chunk->x % 2) == check.x && abs(chunk->y % 2) == check.y) {
+			//threads.push_back(new std::thread(UpdateChunk, chunk, std::ref(ref)));
+			threadPool.DoJob(std::bind(UpdateChunk, chunk, std::ref(ref)));
+		}
+	}
+	while (threadPool.getJobsWaiting() > 0)
+	{
+		// Waiting for threads
+	}
+	//for (size_t i = 0; i < threads.size(); i++)
+	//{
+	//	threads.at(i)->join();
+	//}
+	//for (auto i : threads) {
+	//	delete i;
+	//}
+}
+
+void Pixels::Simulation::UpdateChunk(Chunk* chunk, Simulation& sim)
+{
+	chunk->Update(sim);
+}
+
 void Pixels::Simulation::Gravity(Cell& pixel, const Material& mat, int x, int y)
 {
 	if (testCenterGravity) {
@@ -330,7 +362,13 @@ std::vector<glm::ivec2> Pixels::Simulation::GeneratePathFromToward(const Cell& a
 	glm::vec2 checking = start;
 	const float checkEvery = 0.9f;
 	const glm::vec2 normal(glm::normalize(glm::vec2(end - start)));
-	const float checkDistance = glm::length(glm::vec2(end - start)) - 0.5f;
+	float checkDistance = glm::length(glm::vec2(end - start)) - 0.5f;
+	if (checkDistance > maxTravelDistance) {
+		// Minus 0.5f to ensure rounding doesn't cause distance past maxTravelDistance
+		glm::vec2 temp = normal * (maxTravelDistance - 0.5f);
+		end = start + glm::ivec2(roundf(temp.x), roundf(temp.y));
+		checkDistance = glm::length(glm::vec2(end - start)) - 0.5f;
+	}
 	const glm::vec2 offset = normal * checkEvery;
 	bool last = false;
 	const glm::vec2 startF = glm::vec2(start);
@@ -408,9 +446,17 @@ void Pixels::Simulation::Update()
 		}
 	}
 
-	for (int i = 0; i < updateChunks.size(); i++)
-	{
-		updateChunks.at(i)->Update(*this);
+	if (multithreaded) {
+		UpdateChunks({ 0, 0 }, updateChunks);
+		UpdateChunks({ 0, 1 }, updateChunks);
+		UpdateChunks({ 1, 0 }, updateChunks);
+		UpdateChunks({ 1, 1 }, updateChunks);
+	}
+	else {
+		for (size_t i = 0; i < updateChunks.size(); i++)
+		{
+			updateChunks.at(i)->Update(*this);
+		}
 	}
 }
 
@@ -564,9 +610,10 @@ void Pixels::Simulation::SetDrawVelocity(bool value)
 	}
 }
 
-Pixels::Simulation::Simulation()
+Pixels::Simulation::Simulation() : threadPool(2)
 {
 	chunks.reserve(maxChunks);
+	chunkLookup.reserve(maxChunks);
 	theEdge.materialID = 1;
 }
 
@@ -575,10 +622,10 @@ int Pixels::Simulation::ChunkSort(const void* l, const void* r)
 		const Chunk* a = static_cast<const Chunk*>(l);
 		const Chunk* b = static_cast<const Chunk*>(r);
 		if (a->y < b->y) {
-			return -1;
+			return upToDown ? -1 : 1;
 		}
 		else if (b->y < a->y) {
-			return 1;
+			return upToDown ? 1 : -1;
 		}
 
 		if (a->x < b->x) {

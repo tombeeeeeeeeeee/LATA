@@ -4,9 +4,13 @@
 
 #include "hashFNV1A.h"
 
+#include "ThreadPool.h"
+
 #include <array>
 #include <vector>
 #include <unordered_map>
+#include <mutex>
+
 
 
 namespace Pixels {
@@ -14,6 +18,8 @@ namespace Pixels {
 
 	constexpr short chunkWidth = 64;
 	constexpr short chunkHeight = 64;
+
+	constexpr float maxTravelDistance = 32.0f;
 
 	class Simulation
 	{
@@ -24,7 +30,8 @@ namespace Pixels {
 
 			std::array<std::array<Cell, chunkHeight>, chunkWidth> cells;
 
-			unsigned int ssbo;
+			bool ssboGenerated = false;
+			unsigned int ssbo = 0;
 
 			bool draw = true;
 			bool drawVelocity = false;
@@ -57,10 +64,14 @@ namespace Pixels {
 
 		Cell theEdge;
 
-		unsigned short maxChunks = 100;
+		unsigned short maxChunks = 64;
 
 		std::vector<Simulation::Chunk> chunks;
 		std::unordered_map<std::pair<int, int>, Simulation::Chunk*, hashFNV1A> chunkLookup;
+
+		//std::vector<std::thread*> threads;
+		std::mutex chunkLock;
+		ThreadPool threadPool;
 
 		Chunk& AddChunk(int x, int y);
 
@@ -70,6 +81,8 @@ namespace Pixels {
 		void setCell(int x, int y, MatID matID);
 		bool SwapPixels(Cell& a, Cell& b);
 
+		void UpdateChunks(glm::ivec2 check, const std::vector<Chunk*>& updateChunks);
+		static void UpdateChunk(Chunk* chunk, Simulation& sim);
 		// TODO: Think about how these functions could and should exist
 		void Gravity(Cell& pixel, const Material& mat, int x, int y);
 		bool GravityDiagonalHelper(Cell& pixel, const Material& mat, unsigned int c, unsigned int r, bool spread);
@@ -77,6 +90,7 @@ namespace Pixels {
 		const Material& getMat(MatID index) const;
 		Material& getNonConstMat(MatID index);
 	public:
+		bool multithreaded = true;
 		glm::vec2 gravityForce = { 0.0f, -0.05f };
 		bool testCenterGravity = false;
 		std::vector<Material> materialInfos;
