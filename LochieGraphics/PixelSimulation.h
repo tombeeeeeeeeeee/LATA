@@ -50,13 +50,8 @@ namespace Pixels {
 			void PrepareDraw();
 
 			const GpuCell* GetGpuPixelToDrawFrom() const;
-
-			// TODO: Once there is chunks, we might want this to not be chunk alligned so only the necessary data is uploaded
-			// TODO: This should not be chunk width/height, should be able to change
 		};
 	private:
-
-		// TODO: Rename, is for alternating update directions
 		static unsigned char updateOrder;
 
 		static bool leftToRight;
@@ -69,7 +64,6 @@ namespace Pixels {
 		std::vector<Simulation::Chunk> chunks;
 		std::unordered_map<std::pair<int, int>, Simulation::Chunk*, hashFNV1A> chunkLookup;
 
-		//std::vector<std::thread*> threads;
 		std::mutex chunkLock;
 		ThreadPool threadPool;
 

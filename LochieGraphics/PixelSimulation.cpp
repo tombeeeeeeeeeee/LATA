@@ -237,7 +237,6 @@ void Pixels::Simulation::UpdateChunks(glm::ivec2 check, const std::vector<Chunk*
 		Simulation& ref = *this;
 		Chunk* chunk = updateChunks.at(i);
 		if (abs(chunk->x % 2) == check.x && abs(chunk->y % 2) == check.y) {
-			//threads.push_back(new std::thread(UpdateChunk, chunk, std::ref(ref)));
 			threadPool.DoJob(std::bind(UpdateChunk, chunk, std::ref(ref)));
 		}
 	}
@@ -245,13 +244,6 @@ void Pixels::Simulation::UpdateChunks(glm::ivec2 check, const std::vector<Chunk*
 	{
 		// Waiting for threads
 	}
-	//for (size_t i = 0; i < threads.size(); i++)
-	//{
-	//	threads.at(i)->join();
-	//}
-	//for (auto i : threads) {
-	//	delete i;
-	//}
 }
 
 void Pixels::Simulation::UpdateChunk(Chunk* chunk, Simulation& sim)
@@ -431,7 +423,6 @@ void Pixels::Simulation::Update()
 		updateChunks[i] = &chunks[i];
 	}
 
-	// TODO: Sort by the updating direction
 	std::qsort(updateChunks.data(), updateChunks.size(), sizeof(Chunk*), ChunkSort);
 
 	for (int i = 0; i < updateChunks.size(); i++)
@@ -619,25 +610,25 @@ Pixels::Simulation::Simulation() : threadPool(2)
 
 int Pixels::Simulation::ChunkSort(const void* l, const void* r)
 {
-		const Chunk* a = static_cast<const Chunk*>(l);
-		const Chunk* b = static_cast<const Chunk*>(r);
-		if (a->y < b->y) {
-			return upToDown ? -1 : 1;
-		}
-		else if (b->y < a->y) {
-			return upToDown ? 1 : -1;
-		}
+	const Chunk* a = static_cast<const Chunk*>(l);
+	const Chunk* b = static_cast<const Chunk*>(r);
+	if (a->y < b->y) {
+		return upToDown ? -1 : 1;
+	}
+	else if (b->y < a->y) {
+		return upToDown ? 1 : -1;
+	}
 
-		if (a->x < b->x) {
-			return leftToRight ? -1 : 1;
-		}
-		else if (b->x < a->x) {
-			return leftToRight ? 1 : -1;
-		}
-		else {
-			// Shouldn't be able to be here
-			// TODO: error
-			return 0;
-		}
+	if (a->x < b->x) {
+		return leftToRight ? -1 : 1;
+	}
+	else if (b->x < a->x) {
+		return leftToRight ? 1 : -1;
+	}
+	else {
+		// Shouldn't be able to be here
+		// TODO: error
+		return 0;
+	}
 }
 
