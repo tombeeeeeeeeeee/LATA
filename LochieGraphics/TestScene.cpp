@@ -227,12 +227,21 @@ void TestScene::GUI()
 
 
 	if (ImGui::CollapsingHeader("Selected Info")) {
-		ImGui::SeparatorText("Pixel Info");
-		if (mouseMode == MouseMode::Select) {
-			pixelSim.PixelGUI(selectGuiCursor);
+		ImGui::Separator();
+
+		const Pixels::Simulation::Chunk* chunk = pixelSim.getChunk(guiCursor.x, guiCursor.y);
+		if (chunk) {
+			bool temp = chunk->prevUpdated;
+			ImGui::Checkbox("Chunk updated!", &temp);
 		}
-		else {
-			pixelSim.PixelGUI(guiCursor);
+
+		if (ImGui::CollapsingHeader("Pixel Info")) {
+			if (mouseMode == MouseMode::Select) {
+				pixelSim.PixelGUI(selectGuiCursor);
+			}
+			else {
+				pixelSim.PixelGUI(guiCursor);
+			}
 		}
 	}
 

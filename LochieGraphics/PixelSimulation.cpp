@@ -13,6 +13,9 @@ bool Pixels::Simulation::upToDown = false;
 
 void Pixels::Simulation::Chunk::Update(Simulation& sim)
 {
+	if (!prevUpdated) {
+		return;
+	}
 	int cStart = (sim.leftToRight) ? 0 : chunkWidth - 1;
 	short cSign = sim.leftToRight ? 1 : -1;
 
@@ -29,7 +32,10 @@ void Pixels::Simulation::Chunk::Update(Simulation& sim)
 			if (mat.flags & MaterialFlags::neverUpdate) { continue; }
 			int globalX = x * chunkWidth + c;
 			int globalY = y * chunkHeight + r;
-			if (mat.flags & MaterialFlags::gravity) { sim.Gravity(curr, mat, globalX, globalY); }
+			if (mat.flags & MaterialFlags::gravity) {
+				updated = true;
+				sim.Gravity(curr, mat, globalX, globalY); 
+			}
 		}
 	}
 }
@@ -66,6 +72,9 @@ void Pixels::Simulation::Chunk::SetDebugColours()
 
 void Pixels::Simulation::Chunk::PrepareDraw()
 {
+	if (!prevUpdated) {
+		return;
+	}
 	if (!ssboGenerated) {
 		ssboGenerated = true;
 		// Set up pixel colour SSBO, this is how the pixel colours are stored on the GPU
@@ -131,24 +140,11 @@ Pixels::Simulation::Chunk& Pixels::Simulation::AddChunk(int x, int y)
 
 Pixels::Cell& Pixels::Simulation::getGlobal(int cellX, int cellY)
 {
-	int x = (int)floorf((float)cellX / chunkWidth);
-	int y = (int)floorf((float)cellY / chunkHeight);
-
-	auto search = chunkLookup.find(std::pair<int, int>(x, y));
-	Chunk* chunk = nullptr;
-	if (search == chunkLookup.end()) {
-		std::lock_guard<std::mutex> lock(chunkCreationLock);
-		if (chunks.size() >= maxChunks) {
-			return theEdge;
-		}
-		else {
-			chunk = &AddChunk(x, y);
-		}
+	Chunk* chunk = getChunkNonConst(cellX, cellY);
+	if (chunk == nullptr) {
+		return theEdge;
 	}
-	else {
-		chunk = search->second;
-	}
-	return chunk->getLocal(cellX - (x * chunkWidth), cellY - (y * chunkHeight));
+	return chunk->getLocal(cellX - (chunk->x * chunkWidth), cellY - (chunk->y * chunkHeight));
 }
 
 bool Pixels::Simulation::MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 desiredPos)
@@ -452,6 +448,12 @@ void Pixels::Simulation::Update()
 			updateChunks.at(i)->Update(*this);
 		}
 	}
+	for (size_t i = 0; i < updateChunks.size(); i++)
+	{
+		Chunk* chunk = updateChunks.at(i);
+		chunk->prevUpdated = chunk->updated;
+		chunk->updated = false;
+	}
 }
 
 unsigned int Pixels::Simulation::AmountOf(MatID materialID) const
@@ -592,6 +594,41 @@ int Pixels::Simulation::getChunkCount() const
 const std::vector<Pixels::Simulation::Chunk>& Pixels::Simulation::getChunks() const
 {
 	return chunks;
+}
+
+const Pixels::Simulation::Chunk* Pixels::Simulation::getChunk(int cellX, int cellY) const
+{
+	int x = (int)floorf((float)cellX / chunkWidth);
+	int y = (int)floorf((float)cellY / chunkHeight);
+
+	auto search = chunkLookup.find(std::pair<int, int>(x, y));
+	if (search == chunkLookup.end()) {
+		return nullptr;
+	}
+	return search->second;
+}
+
+Pixels::Simulation::Chunk* Pixels::Simulation::getChunkNonConst(int cellX, int cellY)
+{
+	int x = (int)floorf((float)cellX / chunkWidth);
+	int y = (int)floorf((float)cellY / chunkHeight);
+
+	auto search = chunkLookup.find(std::pair<int, int>(x, y));
+	Chunk* chunk = nullptr;
+	if (search == chunkLookup.end()) {
+		std::lock_guard<std::mutex> lock(chunkCreationLock);
+		if (chunks.size() >= maxChunks) {
+			return nullptr;
+		}
+		else {
+			chunk = &AddChunk(x, y);
+		}
+	}
+	else {
+		chunk = search->second;
+	}
+	chunk->updated = true;
+	return chunk;
 }
 
 void Pixels::Simulation::SetDebugColours()

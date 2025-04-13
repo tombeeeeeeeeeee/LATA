@@ -36,8 +36,8 @@ namespace Pixels {
 			bool draw = true;
 			bool drawVelocity = false;
 
-			bool updated = false;
-			bool shouldUpdate = true;
+			bool updated = true;
+			bool prevUpdated = true;
 
 			std::array<std::array<GpuCell, chunkHeight>, chunkWidth> GpuCells = {};
 
@@ -116,6 +116,8 @@ namespace Pixels {
 		int getChunkCount() const;
 
 		const std::vector<Chunk>& getChunks() const;
+		const Chunk* getChunk(int cellX, int cellY) const;
+		Chunk* getChunkNonConst(int cellX, int cellY);
 
 		void SetDebugColours();
 
