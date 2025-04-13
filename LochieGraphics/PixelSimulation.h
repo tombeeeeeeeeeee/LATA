@@ -14,8 +14,6 @@
 
 
 namespace Pixels {
-	std::vector<glm::ivec2> GeneratePathBetween(glm::ivec2 start, glm::ivec2 end);
-
 	constexpr short chunkWidth = 64;
 	constexpr short chunkHeight = 64;
 
@@ -88,6 +86,7 @@ namespace Pixels {
 		Material& getNonConstMat(MatID index);
 	public:
 		bool multithreaded = true;
+		
 		glm::vec2 gravityForce = { 0.0f, -0.05f };
 		bool testCenterGravity = false;
 		std::vector<Material> materialInfos;

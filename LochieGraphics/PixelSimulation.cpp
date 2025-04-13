@@ -16,15 +16,23 @@ void Pixels::Simulation::Chunk::Update(Simulation& sim)
 	if (!prevUpdated) {
 		return;
 	}
-	int cStart = (sim.leftToRight) ? 0 : chunkWidth - 1;
-	short cSign = sim.leftToRight ? 1 : -1;
+	int cStart = ((sim.leftToRight) ? 0 : chunkWidth - 1);
+	signed char cSign = (sim.leftToRight ? 1 : -1);
 
-	int rStart = (sim.upToDown) ? chunkHeight - 1 : 0;
-	short rSign = (sim.upToDown) ? -1 : 1;	
+	int rStart = ((sim.upToDown) ? chunkHeight - 1 : 0);
+	signed char rSign = ((sim.upToDown) ? -1 : 1);
 
-	for (signed int c = cStart; (sim.leftToRight) ? (c < chunkWidth) : (c >= 0); c += cSign)
+	auto cCheck = (sim.leftToRight ? 
+		([](signed int a) -> bool { return a < chunkWidth; }) :
+		([](signed int a) -> bool { return a >= 0; }));
+
+	auto rCheck = (sim.upToDown ?
+		([](signed int a) -> bool { return a >= 0; }) :
+		([](signed int a) -> bool { return a < chunkHeight; }));
+
+	for (signed int c = cStart; cCheck(c); c += cSign)
 	{
-		for (signed int r = rStart; (sim.upToDown) ? (r >= 0) : (r < chunkHeight); r += rSign)
+		for (signed int r = rStart; rCheck(r); r += rSign)
 		{
 			Cell& curr = getLocal(c, r);
 			if (curr.updated) { continue; }
@@ -550,37 +558,6 @@ void Pixels::Simulation::PixelGUI(int x, int y)
 	getNonConstMat(currPixel.materialID).GUI();
 }
 
-std::vector<glm::ivec2> Pixels::GeneratePathBetween(glm::ivec2 start, glm::ivec2 end)
-{
-	// Always contain the starting position
-	std::vector<glm::ivec2> values = { start };
-	if (start == end) {
-		// Early return if the pixel locations are the same
-		return values;
-	}
-	glm::vec2 checking = start;
-	const float checkEvery = 0.5f;
-	const glm::vec2 normal = glm::normalize(glm::vec2(end - start));
-	const float checkDistance = glm::length(glm::vec2(end - start)) - 0.5f;
-	const glm::vec2 offset = normal * checkEvery;
-	bool last = false;
-	const glm::vec2 startF = glm::vec2(start);
-	for (glm::vec2 checking = startF + offset; !last; checking += offset)
-	{
-		if (glm::length(checking - startF) >= checkDistance) {
-			last = true;
-			checking = end;
-		}
-		glm::ivec2 checkingPixelPos = glm::ivec2(roundf(checking.x), roundf(checking.y));
-		// Don't insert value if it is already in
-		if (checkingPixelPos != values.back()) {
-			values.push_back(checkingPixelPos);
-		}
-	}
-	return values;
-}
-
-
 bool Pixels::Simulation::isCellAt(int x, int y)
 {
 	return (chunkLookup.find(std::pair<int, int>(floorf((float)x / chunkWidth), floorf((float)y / chunkHeight))) != chunkLookup.end());
@@ -665,10 +642,10 @@ int Pixels::Simulation::ChunkSort(const void* l, const void* r)
 	}
 
 	if (a->x < b->x) {
-		return !leftToRight ? -1 : 1;
+		return leftToRight ? -1 : 1;
 	}
 	else if (b->x < a->x) {
-		return !leftToRight ? 1 : -1;
+		return leftToRight ? 1 : -1;
 	}
 	else {
 		// Shouldn't be able to be here

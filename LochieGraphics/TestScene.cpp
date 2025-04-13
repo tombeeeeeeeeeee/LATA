@@ -14,6 +14,36 @@
 
 #include <iostream>
 
+std::vector<glm::ivec2> TestScene::GeneratePathBetween(glm::ivec2 start, glm::ivec2 end)
+{
+	// Always contain the starting position
+	std::vector<glm::ivec2> values = { start };
+	if (start == end) {
+		// Early return if the pixel locations are the same
+		return values;
+	}
+	glm::vec2 checking = start;
+	const float checkEvery = 0.5f;
+	const glm::vec2 normal = glm::normalize(glm::vec2(end - start));
+	const float checkDistance = glm::length(glm::vec2(end - start)) - 0.5f;
+	const glm::vec2 offset = normal * checkEvery;
+	bool last = false;
+	const glm::vec2 startF = glm::vec2(start);
+	for (glm::vec2 checking = startF + offset; !last; checking += offset)
+	{
+		if (glm::length(checking - startF) >= checkDistance) {
+			last = true;
+			checking = end;
+		}
+		glm::ivec2 checkingPixelPos = glm::ivec2(roundf(checking.x), roundf(checking.y));
+		// Don't insert value if it is already in
+		if (checkingPixelPos != values.back()) {
+			values.push_back(checkingPixelPos);
+		}
+	}
+	return values;
+}
+
 TestScene::TestScene()
 {
 }
@@ -66,7 +96,7 @@ void TestScene::Update(float delta)
 	}
 	// Ensure imgui isn't using mouse
 	if (!ImGui::GetIO().WantCaptureMouse && glfwGetMouseButton(renderSystem.window, GLFW_MOUSE_BUTTON_LEFT)) {
-		auto path = Pixels::GeneratePathBetween(previousGuiCursor, guiCursor);
+		auto path = GeneratePathBetween(previousGuiCursor, guiCursor);
 		switch (mouseMode)
 		{
 		case TestScene::MouseMode::None:
@@ -176,6 +206,16 @@ void TestScene::GUI()
 	//int amountOfAir = pixelStuff.AmountOf(0);
 	//ImGui::InputInt("Amount of Air", &amountOfAir);
 
+	const auto& chunks = pixelSim.getChunks();
+	int updatedCount = 0;
+	for (auto& i : chunks)
+	{
+		if (i.prevUpdated) {
+			updatedCount++;
+		}
+	}
+	ImGui::InputInt("Chunk prev updated", &updatedCount);
+
 	ImGui::EndDisabled();
 
 	if (ImGui::CollapsingHeader("Materials")) {
@@ -207,11 +247,9 @@ void TestScene::GUI()
 		pixelSim.SetEverythingTo(selectMat);
 	}
 
-
 	if (ImGui::Button("Set select to above material")) {
 		pixelSim.SetCircleToMaterial(guiCursor.x, guiCursor.y, selectEditRadius, selectMat);
 	}
-
 
 	if (ImGui::Button("Set everything to colour")) {
 		pixelSim.SetEverythingToColour(pickerColour);
@@ -224,7 +262,6 @@ void TestScene::GUI()
 	ExtraEditorGUI::SliderEnum({ "None", "Brush", "Select", }, (int*)& mouseMode);
 
 	ImGui::DragInt2("Gui Cursor", &guiCursor.x);
-
 
 	if (ImGui::CollapsingHeader("Selected Info")) {
 		ImGui::Separator();
