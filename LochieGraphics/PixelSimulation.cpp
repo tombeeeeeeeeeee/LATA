@@ -17,15 +17,14 @@ void Pixels::Simulation::Chunk::Update(Simulation& sim)
 		return;
 	}
 	int cStart = ((sim.leftToRight) ? 0 : chunkWidth - 1);
-	signed char cSign = (sim.leftToRight ? 1 : -1);
-
 	int rStart = ((sim.upToDown) ? chunkHeight - 1 : 0);
+
+	signed char cSign = (sim.leftToRight ? 1 : -1);
 	signed char rSign = ((sim.upToDown) ? -1 : 1);
 
 	auto cCheck = (sim.leftToRight ? 
 		([](signed int a) -> bool { return a < chunkWidth; }) :
 		([](signed int a) -> bool { return a >= 0; }));
-
 	auto rCheck = (sim.upToDown ?
 		([](signed int a) -> bool { return a >= 0; }) :
 		([](signed int a) -> bool { return a < chunkHeight; }));
@@ -172,6 +171,8 @@ bool Pixels::Simulation::MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 des
 	Cell& hitCell = getGlobal(hitCellPos.x, hitCellPos.y);
 	hitCell.colour.y += 1_uc;
 
+
+#if !true
 	glm::vec2 relativeVel = hitCell.velocity - a.velocity;
 	glm::vec2 normal = glm::normalize(glm::vec2(hitCellPos) - glm::vec2(path.back()));
 	if (glm::dot(normal, relativeVel) >= 0) {
@@ -188,6 +189,7 @@ bool Pixels::Simulation::MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 des
 	glm::vec2 j = (-(1 + elasticity) * glm::dot(relativeVel, normal) / combinedInverseMass) * normal;
 	a.velocity += -j * 1.0f / aMat.density;
 	hitCell.velocity += j * 1.0f / hMat.density;
+#endif
 	return returnValue;
 }
 
@@ -258,14 +260,28 @@ void Pixels::Simulation::UpdateChunk(Chunk* chunk, Simulation& sim)
 
 void Pixels::Simulation::Gravity(Cell& pixel, const Material& mat, int x, int y)
 {
-	if (testCenterGravity) {
+	if (testCentreGravity) {
 		glm::vec2 pos = { x, y };
-		glm::vec2 testPos = { 0.0f, 0.0f };
-		float length = glm::length(testPos - pos);
-		glm::vec2 add = glm::normalize(testPos - pos) * 0.1f;
-		// TODO: is there something better then this
-		if (!glm::isnan(add.x) && !glm::isnan(add.y)) {
-			pixel.velocity += add;
+		glm::vec2 centre = { 0.0f, 0.0f };
+		constexpr float radius = 70.0f;
+		const float length = glm::length(centre - pos);
+		constexpr float gc = 1.0f;
+		constexpr float massPerCell = 1.0f;
+		const glm::vec2 normal = glm::normalize(centre - pos);
+		if (length > radius) {
+			const float mass = massPerCell * radius * radius * PI;
+			const float acc = (gc * mass) / powf(length, 2);
+			glm::vec2 add = normal * acc;
+			if (!glm::isnan(add.x) && !glm::isnan(add.y)) {
+				pixel.velocity += add;
+			}
+		}
+		else {
+			const float acc = (PI * gc * massPerCell * length) / radius;
+			glm::vec2 add = normal * acc;
+			if (!glm::isnan(add.x) && !glm::isnan(add.y)) {
+				pixel.velocity += add;
+			}
 		}
 	}
 	else {

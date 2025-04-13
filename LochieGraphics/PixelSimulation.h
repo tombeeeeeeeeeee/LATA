@@ -88,7 +88,7 @@ namespace Pixels {
 		bool multithreaded = true;
 		
 		glm::vec2 gravityForce = { 0.0f, -0.05f };
-		bool testCenterGravity = false;
+		bool testCentreGravity = false;
 		std::vector<Material> materialInfos;
 
 		std::vector<glm::ivec2> GeneratePathFromToward(const Cell& a, glm::ivec2 start, glm::ivec2 end);

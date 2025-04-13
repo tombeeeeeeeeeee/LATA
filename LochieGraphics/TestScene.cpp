@@ -235,7 +235,7 @@ void TestScene::GUI()
 	}
 
 	ImGui::DragFloat2("Gravity", &pixelSim.gravityForce.x);
-	ImGui::Checkbox("Centre Gravity", &pixelSim.testCenterGravity);
+	ImGui::Checkbox("Centre Gravity", &pixelSim.testCentreGravity);
 
 	ImGui::ColorEdit3("Colour to set", &pickerColour.x);
 
