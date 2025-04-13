@@ -9,6 +9,16 @@
 class TestScene : public Scene
 {
 private:
+
+	enum class MouseMode : int {
+		None,
+		Brush,
+		Select,
+		COUNT
+	};
+
+	MouseMode mouseMode = MouseMode::Brush;
+
 	Pixels::Simulation pixelSim;
 
 	bool updateSim = true;
@@ -30,6 +40,7 @@ private:
 
 	glm::vec3 pickerColour = { 1.0f, 1.0f, 1.0f };
 	glm::ivec2 guiCursor = { 2, 2 };
+	glm::ivec2 selectGuiCursor = { 2, 2 };
 
 	float selectEditRadius = 1.0f;
 

@@ -36,6 +36,9 @@ namespace Pixels {
 			bool draw = true;
 			bool drawVelocity = false;
 
+			bool updated = false;
+			bool shouldUpdate = true;
+
 			std::array<std::array<GpuCell, chunkHeight>, chunkWidth> GpuCells = {};
 
 
@@ -59,12 +62,12 @@ namespace Pixels {
 
 		Cell theEdge;
 
-		unsigned short maxChunks = 64;
+		unsigned short maxChunks = 512;
 
 		std::vector<Simulation::Chunk> chunks;
 		std::unordered_map<std::pair<int, int>, Simulation::Chunk*, hashFNV1A> chunkLookup;
 
-		std::mutex chunkLock;
+		std::mutex chunkCreationLock;
 		ThreadPool threadPool;
 
 		Chunk& AddChunk(int x, int y);
@@ -105,11 +108,12 @@ namespace Pixels {
 
 		void AddVelocityToCircle(int x, int y, float radius, glm::vec2 vel);
 
+		void PixelGUI(glm::ivec2 xy);
 		void PixelGUI(int x, int y);
 
 		bool isCellAt(int x, int y);
 
-		int getChunkCount();
+		int getChunkCount() const;
 
 		const std::vector<Chunk>& getChunks() const;
 

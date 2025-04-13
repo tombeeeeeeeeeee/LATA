@@ -92,9 +92,10 @@ void Pixels::Simulation::Chunk::PrepareDraw()
 				}
 				else {
 					glm::vec2 dir = glm::normalize(cell.velocity);
+					float length = glm::length(cell.velocity);
 					float angle = std::atan2f(dir.y, dir.x);
 					float r, g, b;
-					ImGui::ColorConvertHSVtoRGB(angle / (2 * PI) + 0.5f, 1.0f, 1.0f, r, g, b);
+					ImGui::ColorConvertHSVtoRGB(angle / (2 * PI) + 0.5f, fminf(length / 10.0f, 1.0f), 1.0f, r, g, b);
 					colour = glm::u8vec4(r * 255, g * 255, b * 255, 1.0);
 				}
 				GpuCells[c][r].colour = colour;
@@ -114,7 +115,6 @@ const Pixels::GpuCell* Pixels::Simulation::Chunk::GetGpuPixelToDrawFrom() const
 
 Pixels::Simulation::Chunk& Pixels::Simulation::AddChunk(int x, int y)
 {
-	std::lock_guard<std::mutex> lock(chunkLock);
 	auto search = chunkLookup.find(std::pair<int, int>(x, y));
 	if (search != chunkLookup.end()) {
 		return *search->second;
@@ -137,6 +137,7 @@ Pixels::Cell& Pixels::Simulation::getGlobal(int cellX, int cellY)
 	auto search = chunkLookup.find(std::pair<int, int>(x, y));
 	Chunk* chunk = nullptr;
 	if (search == chunkLookup.end()) {
+		std::lock_guard<std::mutex> lock(chunkCreationLock);
 		if (chunks.size() >= maxChunks) {
 			return theEdge;
 		}
@@ -152,38 +153,38 @@ Pixels::Cell& Pixels::Simulation::getGlobal(int cellX, int cellY)
 
 bool Pixels::Simulation::MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 desiredPos)
 {
+	bool returnValue = false;
 	auto path = GeneratePathFromToward(a, pos, desiredPos);
-	bool previousSpace = false;
-	const Material& mat = getMat(a.materialID);
-	size_t i = 0;
-	// TODO: Why am I even iterating this, it should be the last one as the path is now generated toward, instead as a whole
-	for (; i < path.size(); i++)
-	{
-		if (pos == path[i]) {
-			continue;
-		}
-		const Material& checkingMat = getMat(getGlobal(path[i].x, path[i].y).materialID);
-		// TODO: Could edit this part to make materials flow through other materials slower
-		// TODO: If we are keeping the density thing, should be a function for this check
-		// TODO: If this is different materials each check could look quite weird, would need to change how the swapping or check works
-		// TODO: This isn't even supposed to be here like this is it? I put it in the Generate Path From Toward
-		if (checkingMat.density < mat.density) {
-			previousSpace = true;
-		}
-		else if (previousSpace || (checkingMat.density == mat.density)) {
-			break;
-		}
-	}
-	if (previousSpace) {
-		glm::ivec2 to = path[i - 1];
-		// TODO: Change how this works
-		if (i != path.size()) {
-			//a.velocity *= 0.9f;
-		}
+	if (path.size() > 1) {
+		glm::ivec2 to = path.back();
 		SwapPixels(a, getGlobal(to.x, to.y));
-		return true;
+		returnValue = true;
 	}
-	return false;
+	glm::vec2 hitPos = glm::vec2(path.back()) + glm::normalize(a.velocity);
+	glm::ivec2 hitCellPos(roundf(hitPos.x), roundf(hitPos.y));
+	if (hitCellPos == path.back()) {
+		std::cout << "Error\n";
+	}
+	Cell& hitCell = getGlobal(hitCellPos.x, hitCellPos.y);
+	hitCell.colour.y += 1_uc;
+
+	glm::vec2 relativeVel = hitCell.velocity - a.velocity;
+	glm::vec2 normal = glm::normalize(glm::vec2(hitCellPos) - glm::vec2(path.back()));
+	if (glm::dot(normal, relativeVel) >= 0) {
+		return returnValue;
+	}
+
+	const Material& aMat = getMat(a.materialID);
+	const Material& hMat = getMat(hitCell.materialID);
+	if (hMat.flags & MaterialFlags::neverUpdate) {
+		return returnValue;
+	}
+	float combinedInverseMass = (1 / aMat.density) + (1 / hMat.density);
+	float elasticity = 1.0f;
+	glm::vec2 j = (-(1 + elasticity) * glm::dot(relativeVel, normal) / combinedInverseMass) * normal;
+	a.velocity += -j * 1.0f / aMat.density;
+	hitCell.velocity += j * 1.0f / hMat.density;
+	return returnValue;
 }
 
 void Pixels::Simulation::setCell(int x, int y, MatID matID)
@@ -395,8 +396,10 @@ void Pixels::Simulation::SetSimpleMaterials()
 		{ "air", { 197_uc, 222_uc, 227_uc }, 0.0f, MaterialFlags::neverUpdate},
 		{ "edge", { 255_uc, 0_uc, 255_uc }, FLT_MAX, MaterialFlags::neverUpdate },
 		{ "sand", { 212_uc, 178_uc, 57_uc }, 1.0f, MaterialFlags::gravity},
-		{ "stone", { 25_uc, 25_uc, 25_uc }, 10.0f, MaterialFlags::neverUpdate}
+		{ "stone", { 25_uc, 25_uc, 25_uc }, 10.0f, MaterialFlags::neverUpdate},
+		{ "water", { 100_uc, 170_uc, 255_uc }, 0.5f, MaterialFlags::gravity},
 	};
+	materialInfos[4].halfAngleSpread = PI / 2;
 }
 
 void Pixels::Simulation::PrepareDraw(int left, int down)
@@ -530,6 +533,11 @@ void Pixels::Simulation::AddVelocityToCircle(int x, int y, float radius, glm::ve
 	}
 }
 
+void Pixels::Simulation::PixelGUI(glm::ivec2 xy)
+{
+	PixelGUI(xy.x, xy.y);
+}
+
 void Pixels::Simulation::PixelGUI(int x, int y)
 {
 	auto& currPixel = getGlobal(x, y);
@@ -576,7 +584,7 @@ bool Pixels::Simulation::isCellAt(int x, int y)
 	return (chunkLookup.find(std::pair<int, int>(floorf((float)x / chunkWidth), floorf((float)y / chunkHeight))) != chunkLookup.end());
 }
 
-int Pixels::Simulation::getChunkCount()
+int Pixels::Simulation::getChunkCount() const
 {
 	return chunks.size();
 }
@@ -620,10 +628,10 @@ int Pixels::Simulation::ChunkSort(const void* l, const void* r)
 	}
 
 	if (a->x < b->x) {
-		return leftToRight ? -1 : 1;
+		return !leftToRight ? -1 : 1;
 	}
 	else if (b->x < a->x) {
-		return leftToRight ? 1 : -1;
+		return !leftToRight ? 1 : -1;
 	}
 	else {
 		// Shouldn't be able to be here

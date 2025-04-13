@@ -10,7 +10,7 @@
 
 #include "Paths.h"
 
-#include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
 
 #include <iostream>
 
@@ -60,20 +60,32 @@ void TestScene::Update(float delta)
 	glm::vec2 mouse = { 
 		(cursorPos->x - 0.5f) * ratio * camera->orthoScale + camera->transform.getPosition().x,
 		(cursorPos->y - 0.5f)* camera->orthoScale + camera->transform.getPosition().y };
-	guiCursor = glm::ivec2{ mouse.x * Pixels::chunkWidth, mouse.y * Pixels::chunkHeight };
+	guiCursor = glm::ivec2{ floorf(mouse.x * Pixels::chunkWidth), floorf(mouse.y * Pixels::chunkHeight) };
 	if (!pixelSim.isCellAt(guiCursor.x, guiCursor.y)) {
 		//guiCursor = previousGuiCursor;
 	}
 	// Ensure imgui isn't using mouse
 	if (!ImGui::GetIO().WantCaptureMouse && glfwGetMouseButton(renderSystem.window, GLFW_MOUSE_BUTTON_LEFT)) {
 		auto path = Pixels::GeneratePathBetween(previousGuiCursor, guiCursor);
-		for (auto& i : path)
+		switch (mouseMode)
 		{
-			pixelSim.SetCircleToMaterial(i.x, i.y, selectEditRadius, selectMat);
-			if (glfwGetKey(renderSystem.window, GLFW_KEY_X) != GLFW_PRESS) {
-				glm::vec2 vel = (guiCursor - previousGuiCursor) / 10;
-				pixelSim.AddVelocityToCircle(i.x, i.y, selectEditRadius, vel);
+		case TestScene::MouseMode::None:
+			break;
+		case TestScene::MouseMode::Brush:
+			for (auto& i : path)
+			{
+				pixelSim.SetCircleToMaterial(i.x, i.y, selectEditRadius, selectMat);
+				if (glfwGetKey(renderSystem.window, GLFW_KEY_X) != GLFW_PRESS) {
+					glm::vec2 vel = (guiCursor - previousGuiCursor) / 10;
+					pixelSim.AddVelocityToCircle(i.x, i.y, selectEditRadius, vel);
+				}
 			}
+			break;
+		case TestScene::MouseMode::Select:
+			selectGuiCursor = guiCursor;
+			break;
+		default:
+			break;
 		}
 	}
 	previousGuiCursor = guiCursor;
@@ -209,11 +221,19 @@ void TestScene::GUI()
 		pixelSim.SetAllToDefaultColour();
 	}
 
+	ExtraEditorGUI::SliderEnum({ "None", "Brush", "Select", }, (int*)& mouseMode);
+
 	ImGui::DragInt2("Gui Cursor", &guiCursor.x);
+
 
 	if (ImGui::CollapsingHeader("Selected Info")) {
 		ImGui::SeparatorText("Pixel Info");
-		pixelSim.PixelGUI(guiCursor.x, guiCursor.y);
+		if (mouseMode == MouseMode::Select) {
+			pixelSim.PixelGUI(selectGuiCursor);
+		}
+		else {
+			pixelSim.PixelGUI(guiCursor);
+		}
 	}
 
 	ImGui::End();

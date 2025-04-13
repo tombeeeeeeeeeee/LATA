@@ -12,7 +12,7 @@ namespace Pixels {
 	// Make sure this stays as small as reasonably can
 	struct Cell {
 		glm::u8vec3 colour = { 0xc5_uc, 0xde_uc, 0xe3_uc };
-		bool updated = false;
+		bool updated : 1 = false;
 		MatID materialID = 0;
 		glm::vec2 velocity = { 0.0f, 0.0f };
 
