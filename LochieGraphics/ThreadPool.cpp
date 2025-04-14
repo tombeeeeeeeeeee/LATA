@@ -38,6 +38,16 @@ int ThreadPool::getJobsWaiting() const
 	return jobsWaiting;
 }
 
+void ThreadPool::AddThread()
+{
+	threads.emplace_back(std::bind(&ThreadPool::ThreadEntry, this, threads.size()));
+}
+
+size_t ThreadPool::getThreadCount() const
+{
+	return threads.size();
+}
+
 void ThreadPool::ThreadEntry(int i)
 {
 	std::function <void(void)> job;

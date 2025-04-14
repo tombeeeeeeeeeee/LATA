@@ -25,6 +25,10 @@ public:
 
 	int getJobsWaiting() const;
 
+	void AddThread();
+
+	size_t getThreadCount() const;
+
 private:
 	void ThreadEntry(int i);
 };

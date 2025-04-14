@@ -76,6 +76,8 @@ void TestScene::Start()
 
 	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
 	camera->editorOrth = true;
+
+	pixelSim.testCentreGravity = true;
 }
 
 void TestScene::Update(float delta)
@@ -102,11 +104,11 @@ void TestScene::Update(float delta)
 		case TestScene::MouseMode::None:
 			break;
 		case TestScene::MouseMode::Brush:
+			glm::vec2 vel = (glm::vec2(guiCursor) - glm::vec2(previousGuiCursor)) / 10.0f;
 			for (auto& i : path)
 			{
 				pixelSim.SetCircleToMaterial(i.x, i.y, selectEditRadius, selectMat);
 				if (glfwGetKey(renderSystem.window, GLFW_KEY_X) != GLFW_PRESS) {
-					glm::vec2 vel = (guiCursor - previousGuiCursor) / 10;
 					pixelSim.AddVelocityToCircle(i.x, i.y, selectEditRadius, vel);
 				}
 			}
@@ -150,8 +152,7 @@ void TestScene::Draw(float delta)
 		FrameBuffer::Unbind();
 		glViewport(0, 0, *windowWidth, *windowHeight);
 
-
-
+		
 		simple2dShader->Use();
 		simple2dShader->setMat4("vp", SceneManager::viewProjection);
 		glm::mat4 model = glm::mat4(0.5f);
@@ -197,33 +198,59 @@ void TestScene::GUI()
 		pixelSim.Update();
 	}
 
-	ImGui::Checkbox("Multithreaded", &pixelSim.multithreaded);
+	if (ImGui::CollapsingHeader("Multithreaded Options")) {
+		ImGui::Indent();
+		ImGui::Checkbox("Multithreaded", &pixelSim.multithreaded);
 
-	ImGui::BeginDisabled();
-	
-	int chunkCount = pixelSim.getChunkCount();
-	ImGui::InputInt("Chunk count", &chunkCount);
-	//int amountOfAir = pixelStuff.AmountOf(0);
-	//ImGui::InputInt("Amount of Air", &amountOfAir);
+		ImGui::BeginDisabled();
 
-	const auto& chunks = pixelSim.getChunks();
-	int updatedCount = 0;
-	for (auto& i : chunks)
-	{
-		if (i.prevUpdated) {
-			updatedCount++;
+		ThreadPool& threadPool = pixelSim.getThreadPool();
+		int temp = threadPool.getThreadCount();
+		ImGui::DragInt("Thread count", &temp);
+		ImGui::EndDisabled();
+		if (ImGui::Button("Add thread!")) {
+			threadPool.AddThread();
 		}
+		ImGui::Unindent();
 	}
-	ImGui::InputInt("Chunk prev updated", &updatedCount);
+	if (ImGui::CollapsingHeader("Stats")) {
+		ImGui::Indent();
+		ImGui::BeginDisabled();
+		int chunkCount = pixelSim.getChunkCount();
+		ImGui::DragInt("Chunk count", &chunkCount);
 
-	ImGui::EndDisabled();
+		ImGui::DragInt("Count of selected pixel mat", &lastCount);
+		ImGui::SameLine();
+		ImGui::EndDisabled();
+		if (ImGui::Button("Refresh / Update count")) {
+			lastCount = pixelSim.getAmountOf(selectMat);
+		}
+		ImGui::BeginDisabled();
+		const auto& chunks = pixelSim.getChunks();
+		int updatedCount = 0;
+		for (auto& i : chunks)
+		{
+			if (i.prevUpdated) {
+				updatedCount++;
+			}
+		}
+		ImGui::DragInt("Chunk prev updated", &updatedCount);
+
+		ImGui::EndDisabled();
+		ImGui::Unindent();
+	}
 
 	if (ImGui::CollapsingHeader("Materials")) {
-		for (auto& i : pixelSim.materialInfos)
+		ImGui::Indent();
+		for (size_t i = 0; i < pixelSim.materialInfos.size(); i++)
 		{
-			i.GUI();
-			ImGui::Separator();
+			if (ImGui::CollapsingHeader(("Material ID: " + std::to_string(i)).c_str())) {
+				ImGui::Indent();
+				pixelSim.materialInfos.at(i).GUI();
+				ImGui::Unindent();
+			}
 		}
+		ImGui::Unindent();
 	}
 
 	if (ImGui::Button("Set debug colours")) {
@@ -245,6 +272,7 @@ void TestScene::GUI()
 
 	if (ImGui::Button("Set everything to above material")) {
 		pixelSim.SetEverythingTo(selectMat);
+		pixelSim.SetAllToDefaultColour();
 	}
 
 	if (ImGui::Button("Set select to above material")) {
@@ -273,12 +301,14 @@ void TestScene::GUI()
 		}
 
 		if (ImGui::CollapsingHeader("Pixel Info")) {
+			ImGui::Indent();
 			if (mouseMode == MouseMode::Select) {
 				pixelSim.PixelGUI(selectGuiCursor);
 			}
 			else {
 				pixelSim.PixelGUI(guiCursor);
 			}
+			ImGui::Unindent();
 		}
 	}
 

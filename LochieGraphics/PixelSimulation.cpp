@@ -163,6 +163,7 @@ bool Pixels::Simulation::MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 des
 		SwapPixels(a, getGlobal(to.x, to.y));
 		returnValue = true;
 	}
+#if !true
 	glm::vec2 hitPos = glm::vec2(path.back()) + glm::normalize(a.velocity);
 	glm::ivec2 hitCellPos(roundf(hitPos.x), roundf(hitPos.y));
 	if (hitCellPos == path.back()) {
@@ -172,7 +173,6 @@ bool Pixels::Simulation::MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 des
 	hitCell.colour.y += 1_uc;
 
 
-#if !true
 	glm::vec2 relativeVel = hitCell.velocity - a.velocity;
 	glm::vec2 normal = glm::normalize(glm::vec2(hitCellPos) - glm::vec2(path.back()));
 	if (glm::dot(normal, relativeVel) >= 0) {
@@ -195,7 +195,11 @@ bool Pixels::Simulation::MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 des
 
 void Pixels::Simulation::setCell(int x, int y, MatID matID)
 {
-	Cell& cell = getGlobal(x, y);
+	setCell(getGlobal(x, y), matID);
+}
+
+void Pixels::Simulation::setCell(Cell& cell, MatID matID)
+{
 	if (cell.materialID == theEdge.materialID) {
 		// TODO: Maybe a warning or something
 		return;
@@ -515,7 +519,7 @@ void Pixels::Simulation::SetEverythingTo(MatID materialID)
 		for (auto& r : chunk.cells) {
 			for (auto& i : r)
 			{
-				i.materialID = materialID;
+				setCell(i, materialID);
 			}
 		}
 	}
@@ -568,10 +572,7 @@ void Pixels::Simulation::PixelGUI(int x, int y)
 {
 	auto& currPixel = getGlobal(x, y);
 
-	currPixel.GUI();
-
-	ImGui::SeparatorText("Pixel Material Info");
-	getNonConstMat(currPixel.materialID).GUI();
+	currPixel.GUI(x, y);
 }
 
 bool Pixels::Simulation::isCellAt(int x, int y)
@@ -582,6 +583,24 @@ bool Pixels::Simulation::isCellAt(int x, int y)
 int Pixels::Simulation::getChunkCount() const
 {
 	return chunks.size();
+}
+
+int Pixels::Simulation::getAmountOf(MatID mat) const
+{
+	int count = 0;
+	for (const auto& chunk : chunks)
+	{
+		for (const auto& c : chunk.cells)
+		{
+			for (const auto& i : c)
+			{
+				if (i.materialID == mat) {
+					count++;
+				}
+			}
+		}
+	}
+	return count;
 }
 
 const std::vector<Pixels::Simulation::Chunk>& Pixels::Simulation::getChunks() const
@@ -639,7 +658,7 @@ void Pixels::Simulation::SetDrawVelocity(bool value)
 	}
 }
 
-Pixels::Simulation::Simulation() : threadPool(2)
+Pixels::Simulation::Simulation() : threadPool(32)
 {
 	chunks.reserve(maxChunks);
 	chunkLookup.reserve(maxChunks);
@@ -668,5 +687,10 @@ int Pixels::Simulation::ChunkSort(const void* l, const void* r)
 		// TODO: error
 		return 0;
 	}
+}
+
+ThreadPool& Pixels::Simulation::getThreadPool()
+{
+	return threadPool;
 }
 

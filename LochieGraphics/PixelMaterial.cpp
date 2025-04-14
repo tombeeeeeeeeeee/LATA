@@ -16,7 +16,7 @@ void Pixels::Material::GUI()
 	std::string tag = Utilities::PointerToString(this);
 
 	ImGui::InputText(("Name##" + tag).c_str(), &name);
-	ExtraEditorGUI::ColourEdit3("Coloadsaur##" + tag, defaultColour);
+	ExtraEditorGUI::ColourEdit3("Default Colour##" + tag, defaultColour);
 	ImGui::CheckboxFlags(("Never Update##" + tag).c_str(), &flags, MaterialFlags::neverUpdate);
 	ImGui::CheckboxFlags(("Gravity##" + tag).c_str(), &flags, MaterialFlags::gravity);
 	ImGui::InputFloat(("Density##" + tag).c_str(), &density);

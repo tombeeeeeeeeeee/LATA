@@ -16,6 +16,6 @@ namespace Pixels {
 		MatID materialID = 0;
 		glm::vec2 velocity = { 0.0f, 0.0f };
 
-		void GUI();
+		void GUI(int x, int y);
 	};
 }

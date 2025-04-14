@@ -74,6 +74,7 @@ namespace Pixels {
 
 		bool MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 desiredPos);
 		void setCell(int x, int y, MatID matID);
+		void setCell(Cell& cell, MatID matID);
 		bool SwapPixels(Cell& a, Cell& b);
 
 		void UpdateChunks(glm::ivec2 check, const std::vector<Chunk*>& updateChunks);
@@ -114,6 +115,8 @@ namespace Pixels {
 
 		int getChunkCount() const;
 
+		int getAmountOf(MatID mat) const;
+
 		const std::vector<Chunk>& getChunks() const;
 		const Chunk* getChunk(int cellX, int cellY) const;
 		Chunk* getChunkNonConst(int cellX, int cellY);
@@ -125,6 +128,8 @@ namespace Pixels {
 		Simulation();
 
 		static int ChunkSort(const void* l, const void* r);
+
+		ThreadPool& getThreadPool();
 	};
 }
 

@@ -46,6 +46,8 @@ private:
 
 	unsigned int selectMat = 2;
 
+	int lastCount = 0;
+
 	glm::ivec2 previousGuiCursor;
 
 	// TODO: Figure out a spot for this
