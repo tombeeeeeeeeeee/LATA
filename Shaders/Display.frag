@@ -28,13 +28,13 @@ void main()
 
 
     // tone mapping
-    result = vec3(1.0) - exp(-result * exposure);
+    //result = vec3(1.0) - exp(-result * exposure);
 
 
     ////Gamma
     const float gamma = 2.2;
 
-    result = pow(result, vec3(1.0 / gamma));
+    //result = pow(result, vec3(1.0 / gamma));
     FragColor = vec4(result, 1.0);
 
     switch(bufferIndex)

@@ -46,6 +46,11 @@ const float MAX_REFLECTION_LOD = 4.0;
 
 void main()
 {
+    vec3 albe222do = texture(screenAlbedo, texCoords).rgb;
+    FragColour = vec4(albe222do * 1.0, 0.0);
+    return;
+
+
 	float depthValue = texture(screenDepth, texCoords).r;
 
     if(depthValue == 1.0)
