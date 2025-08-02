@@ -17,6 +17,12 @@ public:
 			r = _r; b = _b; g = _g;
 		}
 	};
+	enum class Plane
+	{
+		XY,
+		YZ,
+		XZ
+	};
 
 private:
 	std::vector<glm::vec3> positions;
@@ -51,13 +57,13 @@ public:
 
 	void DrawLineSegment(glm::vec3 start, glm::vec3 end);
 	void DrawLineSegment(glm::vec3 start, glm::vec3 end, Colour colour);
-	void DrawLineSegement2D(glm::vec2 start, glm::vec2 end, float yOffset = 0.1f);
-	void DrawLineSegement2D(glm::vec2 start, glm::vec2 end, Colour colour, float yOffset = 0.1f);
+	void DrawLineSegementXZ(glm::vec2 start, glm::vec2 end, float yOffset = 0.1f);
+	void DrawLineSegementXZ(glm::vec2 start, glm::vec2 end, Colour colour, float yOffset = 0.1f);
 
-	void DrawCircle(glm::vec3 centre, float size);
-	void DrawCircle(glm::vec3 centre, float size, int segmentCount);
-	void DrawCircle(glm::vec3 centre, float size, Colour colour);
-	void DrawCircle(glm::vec3 centre, float size, Colour colour, int segmentCount);
+	void DrawCircle(glm::vec3 centre, float size, Plane plane);
+	void DrawCircle(glm::vec3 centre, float size, Plane plane, int segmentCount);
+	void DrawCircle(glm::vec3 centre, float size, Plane plane, Colour colour);
+	void DrawCircle(glm::vec3 centre, float size, Plane plane, Colour colour, int segmentCount);
 
 	void FinishLineStrip();
 	void FinishLineLoop();
