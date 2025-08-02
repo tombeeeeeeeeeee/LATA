@@ -233,16 +233,19 @@ void SceneManager::Update()
 	deltaTime = fminf(maxFrameTime, deltaTime);
 
 	ProcessInput(window);
+	// Delete sceneobjects marked for deletion
+	scene->DeleteSceneObjectsMarkedForDelete();
+	scene->Update(deltaTime);
+}
+
+void SceneManager::Draw()
+{
 	// TODO: The view and projection should be updated after the update, but before the draw
 	// TODO: Function for gettings the aspectRatio
 	projection = camera.GetProjectionMatrix((float)windowWidth / (float)windowHeight);
 	view = camera.GetViewMatrix();
 	viewProjection = projection * view;
 
-	// Delete sceneobjects marked for deletion
-	scene->DeleteSceneObjectsMarkedForDelete();
-
-	//// TODO: Actual draw/update loop
 	scene->renderSystem.projection = projection;
 	scene->renderSystem.viewMatrix = view;
 
@@ -285,7 +288,6 @@ void SceneManager::Update()
 	scene->renderSystem.debugLines.Clear();
 	scene->gui.Update();
 	ImGui::Render();
-	scene->Update(deltaTime);
 
 	// TODO: remove if if not needed
 	//if (ImGui::GetDrawData())
@@ -303,6 +305,15 @@ void SceneManager::Update()
 	// Check and call events and swap the buffers
 	glfwSwapBuffers(window);
 	glfwPollEvents();
+}
+
+void SceneManager::Run()
+{
+	while (!ShouldClose())
+	{
+		Update();
+		Draw();
+	}
 }
 
 bool SceneManager::ShouldClose() const

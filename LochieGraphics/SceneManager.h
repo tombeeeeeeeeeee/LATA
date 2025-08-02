@@ -66,6 +66,8 @@ private:
 	static void ProcessMouseInput(GLFWwindow* window);
 	static void ToggleFullscreen(); // TODO: fullscreen for correct monitor and remember size and pos
 	
+	void Update();
+	void Draw();
 public:
 
 	SceneManager(Scene* _scene);
@@ -74,7 +76,7 @@ public:
 	SceneManager(const SceneManager& other) = delete;
 	SceneManager& operator=(const SceneManager& other) = delete;
 
-	void Update();
+	void Run();
 	bool ShouldClose() const;
 
 	static void SwitchToWindowMode(WindowModes mode);

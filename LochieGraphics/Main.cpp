@@ -8,8 +8,5 @@ int main()
 {
 	TestScene scene;
 	SceneManager sceneManager(&scene);
-	while (!sceneManager.ShouldClose())
-	{
-		sceneManager.Update();
-	}
+	sceneManager.Run();
 }
