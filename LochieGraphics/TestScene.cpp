@@ -76,6 +76,7 @@ void TestScene::Start()
 
 	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
 	camera->editorOrth = true;
+	camera->state = Camera::State::tilePlacing;
 
 	pixelSim.testCentreGravity = true;
 }
@@ -173,22 +174,98 @@ void TestScene::Draw(float delta)
 
 	// Unbind framebuffer
 	// TODO: Is there a rendersystem function for this, if not maybe there should be something similar
+	if (ImGui::CollapsingHeader("Pixel Info")) {
+		ExtraEditorGUI::ScopedIndent indent;
+		if (mouseMode == MouseMode::Select) {
+			pixelSim.PixelGUI(selectGuiCursor);
+		}
+		else {
+			pixelSim.PixelGUI(guiCursor);
+		}
+	}
+}
 
-;
-	//// Draw framebuffer texture to screen
-	//overlayShader->Use();
-	//overlayShader->setFloat("material.alpha", 1.0f);
+void TestScene::SelectedInfoGUI()
+{
+	ExtraEditorGUI::ScopedBegin open("Selected Info", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	if (!open)
+	{
+		return;
+	}
+	const Pixels::Simulation::Chunk* chunk = pixelSim.getChunk(guiCursor.x, guiCursor.y);
+	if (chunk) {
+		bool temp = chunk->prevUpdated;
+		ImGui::Checkbox("Chunk updated!", &temp);
+	}
 
-	//texture->Bind(1);
-	//overlayShader->setSampler("material.albedo", 1);
+	if (ImGui::CollapsingHeader("Pixel Info")) {
+		ExtraEditorGUI::ScopedIndent indent;
+		if (mouseMode == MouseMode::Select) {
+			pixelSim.PixelGUI(selectGuiCursor);
+		}
+		else {
+			pixelSim.PixelGUI(guiCursor);
+		}
+	}
+}
 
-	//quad.Draw();
+void TestScene::StatsGUI()
+{
+	ExtraEditorGUI::ScopedBegin open("Stats", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	if (!open)
+	{
+		return;
+	}
+	{
+		ExtraEditorGUI::ScopedDisable disable;
+		int chunkCount = pixelSim.getChunkCount();
+		ImGui::DragInt("Chunk count", &chunkCount);
+
+		ImGui::DragInt("Count of selected pixel mat", &lastCount);
+		ImGui::SameLine();
+	}
+	if (ImGui::Button("Refresh / Update count")) {
+		lastCount = pixelSim.getAmountOf(selectMat);
+	}
+	{
+		ExtraEditorGUI::ScopedDisable disable;
+		const auto& chunks = pixelSim.getChunks();
+		int updatedCount = 0;
+		for (auto& i : chunks)
+		{
+			if (i.prevUpdated) {
+				updatedCount++;
+			}
+		}
+		ImGui::DragInt("Chunk prev updated", &updatedCount);
+	}
+}
+
+void TestScene::PixelMaterialsGUI()
+{
+	ExtraEditorGUI::ScopedBegin open("Pixel Materials", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	if (!open)
+	{
+		return;
+	}
+	for (size_t i = 0; i < pixelSim.materialInfos.size(); i++)
+	{
+		if (ImGui::CollapsingHeader(("Material ID: " + std::to_string(i) + " ").c_str()))
+		{
+			ExtraEditorGUI::ScopedIndent indent;
+			pixelSim.materialInfos.at(i).GUI();
+		}
+	}
 }
 
 void TestScene::GUI()
 {
-	if (!ImGui::Begin("Test Scene!", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::End();
+	SelectedInfoGUI();
+	StatsGUI();
+	PixelMaterialsGUI();
+
+	ExtraEditorGUI::ScopedBegin open("Test Scene!", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	if (!open) {
 		return;
 	}
 
@@ -199,7 +276,7 @@ void TestScene::GUI()
 	}
 
 	if (ImGui::CollapsingHeader("Multithreaded Options")) {
-		ImGui::Indent();
+		ExtraEditorGUI::ScopedIndent indent;
 		ImGui::Checkbox("Multithreaded", &pixelSim.multithreaded);
 
 		ImGui::BeginDisabled();
@@ -211,58 +288,25 @@ void TestScene::GUI()
 		if (ImGui::Button("Add thread!")) {
 			threadPool.AddThread();
 		}
-		ImGui::Unindent();
 	}
-	if (ImGui::CollapsingHeader("Stats")) {
-		ImGui::Indent();
-		ImGui::BeginDisabled();
-		int chunkCount = pixelSim.getChunkCount();
-		ImGui::DragInt("Chunk count", &chunkCount);
 
-		ImGui::DragInt("Count of selected pixel mat", &lastCount);
-		ImGui::SameLine();
-		ImGui::EndDisabled();
-		if (ImGui::Button("Refresh / Update count")) {
-			lastCount = pixelSim.getAmountOf(selectMat);
+	if (ImGui::CollapsingHeader("PixelSim debug stuff"))
+	{
+		ExtraEditorGUI::ScopedIndent indent;
+		if (ImGui::Button("Set debug colours")) {
+			pixelSim.SetDebugColours();
 		}
-		ImGui::BeginDisabled();
-		const auto& chunks = pixelSim.getChunks();
-		int updatedCount = 0;
-		for (auto& i : chunks)
-		{
-			if (i.prevUpdated) {
-				updatedCount++;
-			}
+
+		if (ImGui::Button("Toggle Draw Velocities")) {
+			pixelSim.SetDrawVelocity(!pixelSim.getChunks()[0].drawVelocity);
 		}
-		ImGui::DragInt("Chunk prev updated", &updatedCount);
 
-		ImGui::EndDisabled();
-		ImGui::Unindent();
+		ImGui::DragFloat2("Gravity", &pixelSim.gravityForce.x);
+		ImGui::Checkbox("Centre Gravity", &pixelSim.testCentreGravity);
+
+		ImGui::DragFloat("Radius", &pixelSim.radius);
+		ImGui::DragFloat("Mass per cell", &pixelSim.massPerCell);
 	}
-
-	if (ImGui::CollapsingHeader("Materials")) {
-		ImGui::Indent();
-		for (size_t i = 0; i < pixelSim.materialInfos.size(); i++)
-		{
-			if (ImGui::CollapsingHeader(("Material ID: " + std::to_string(i)).c_str())) {
-				ImGui::Indent();
-				pixelSim.materialInfos.at(i).GUI();
-				ImGui::Unindent();
-			}
-		}
-		ImGui::Unindent();
-	}
-
-	if (ImGui::Button("Set debug colours")) {
-		pixelSim.SetDebugColours();
-	}
-
-	if (ImGui::Button("Toggle Draw Velocities")) {
-		pixelSim.SetDrawVelocity(!pixelSim.getChunks()[0].drawVelocity);
-	}
-
-	ImGui::DragFloat2("Gravity", &pixelSim.gravityForce.x);
-	ImGui::Checkbox("Centre Gravity", &pixelSim.testCentreGravity);
 
 	ImGui::ColorEdit3("Colour to set", &pickerColour.x);
 
@@ -290,32 +334,8 @@ void TestScene::GUI()
 	ExtraEditorGUI::SliderEnum({ "None", "Brush", "Select", }, (int*)& mouseMode);
 
 	ImGui::DragInt2("Gui Cursor", &guiCursor.x);
-
-	if (ImGui::CollapsingHeader("Selected Info")) {
-		ImGui::Separator();
-
-		const Pixels::Simulation::Chunk* chunk = pixelSim.getChunk(guiCursor.x, guiCursor.y);
-		if (chunk) {
-			bool temp = chunk->prevUpdated;
-			ImGui::Checkbox("Chunk updated!", &temp);
-		}
-
-		if (ImGui::CollapsingHeader("Pixel Info")) {
-			ImGui::Indent();
-			if (mouseMode == MouseMode::Select) {
-				pixelSim.PixelGUI(selectGuiCursor);
-			}
-			else {
-				pixelSim.PixelGUI(guiCursor);
-			}
-			ImGui::Unindent();
-		}
-	}
-
-	ImGui::End();
 }
 
 TestScene::~TestScene()
 {
 }
-

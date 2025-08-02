@@ -267,10 +267,8 @@ void Pixels::Simulation::Gravity(Cell& pixel, const Material& mat, int x, int y)
 	if (testCentreGravity) {
 		glm::vec2 pos = { x, y };
 		glm::vec2 centre = { 0.0f, 0.0f };
-		constexpr float radius = 70.0f;
 		const float length = glm::length(centre - pos);
 		constexpr float gc = 1.0f;
-		constexpr float massPerCell = 1.0f;
 		const glm::vec2 normal = glm::normalize(centre - pos);
 		if (length > radius) {
 			const float mass = massPerCell * radius * radius * PI;

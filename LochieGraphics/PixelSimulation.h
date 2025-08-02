@@ -89,6 +89,8 @@ namespace Pixels {
 		bool multithreaded = true;
 		
 		glm::vec2 gravityForce = { 0.0f, -0.05f };
+		float radius = 70.0f;
+		float massPerCell = 1.0f;
 		bool testCentreGravity = false;
 		std::vector<Material> materialInfos;
 
