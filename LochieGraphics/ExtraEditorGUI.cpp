@@ -54,3 +54,38 @@ bool ExtraEditorGUI::SliderEnum(const std::vector<std::string>& names, int* valu
 	std::string current = (*value >= 0 && *value < (int)names.size()) ? names.at(*value) : "Unknown";
 	return ImGui::SliderInt("slider enum", value, 0, (int)names.size() - 1, current.c_str(), ImGuiSliderFlags_NoInput);
 }
+
+ExtraEditorGUI::ScopedIndent::ScopedIndent()
+{
+	ImGui::Indent();
+}
+
+ExtraEditorGUI::ScopedIndent::~ScopedIndent()
+{
+	ImGui::Unindent();
+}
+
+ExtraEditorGUI::ScopedDisable::ScopedDisable()
+{
+	ImGui::BeginDisabled();
+}
+
+ExtraEditorGUI::ScopedDisable::~ScopedDisable()
+{
+	ImGui::EndDisabled();
+}
+
+ExtraEditorGUI::ScopedBegin::ScopedBegin(std::string name, bool* p_open, ImGuiWindowFlags flags)
+{
+	open = ImGui::Begin(name.c_str(), p_open, flags);
+}
+
+ExtraEditorGUI::ScopedBegin::~ScopedBegin()
+{
+	ImGui::End();
+}
+
+ExtraEditorGUI::ScopedBegin::operator bool() const
+{
+	return open;
+}

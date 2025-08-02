@@ -21,6 +21,28 @@ public:
 
 	static bool SliderEnum(const std::vector<std::string>& names, int* value);
 
+	// ImGui closing/end/reverse statements shouldn't need to have to be worried about being forgotten
+	// Use this to avoid having to put the unindent after
+	class ScopedIndent {
+	public:
+		ScopedIndent();
+		~ScopedIndent();
+	};
+
+	class ScopedDisable {
+	public:
+		ScopedDisable();
+		~ScopedDisable();
+	};
+
+	class ScopedBegin {
+	public:
+		bool open;
+		ScopedBegin(std::string name, bool* p_open = nullptr, ImGuiWindowFlags flags = 0);
+		~ScopedBegin();
+		operator bool() const;
+	};
+
 	// Filter is used for the input search box
 	static std::string filter;
 
