@@ -83,6 +83,8 @@ void TestScene::Start()
 
 void TestScene::Update(float delta)
 {
+	auto& lines = renderSystem.debugLines;
+
 	if (updateSim) {
 		pixelSim.Update();
 	}
@@ -122,67 +124,13 @@ void TestScene::Update(float delta)
 		}
 	}
 	previousGuiCursor = guiCursor;
+
+	lines.DrawCircle(glm::vec3(mouse.x, mouse.y, 0.0f), selectEditRadius / Pixels::chunkWidth, LineRenderer::Plane::XY);
 }
 
 void TestScene::Draw(float delta)
 {
-	// Update the gpu version in preperation to send to GPU
-	pixelSim.PrepareDraw(camera->transform.getPosition().x, camera->transform.getPosition().y);
-	
-
-	//// Note: Not using the render system for anything yet, haven't changed anything with it yet, should be fine either commented or not
-	//renderSystem.Update(
-	//	transforms,
-	//	pointLights,
-	//	spotlights,
-	//	camera,
-	//	delta
-	//);
-	
-	for (auto& i : pixelSim.getChunks())
-	{
-		chunkFrameBuffer->Bind();
-		glViewport(0, 0, Pixels::chunkWidth, Pixels::chunkHeight);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, i.ssbo);
-
-
-		// Draw pixels
-		pixelShader->Use();
-		quad.Draw();
-
-		FrameBuffer::Unbind();
-		glViewport(0, 0, *windowWidth, *windowHeight);
-
-		
-		simple2dShader->Use();
-		simple2dShader->setMat4("vp", SceneManager::viewProjection);
-		glm::mat4 model = glm::mat4(0.5f);
-		model = glm::translate(model, glm::vec3(i.x * 2.0f + 1.0f, i.y * 2.0f + 1.0f, 0.0f));
-		simple2dShader->setMat4("model", model);
-		chunkTexture->Bind(1);
-		simple2dShader->setSampler("albedo", 1);
-		quad.Draw();
-
-		
-		//break;
-	}
-
-	// Note: The framebuffer is not required for the current set up, is here for the sake of it at the moment
-	// Bind framebuffer for drawing pixels
-	
-
-
-	// Unbind framebuffer
-	// TODO: Is there a rendersystem function for this, if not maybe there should be something similar
-	if (ImGui::CollapsingHeader("Pixel Info")) {
-		ExtraEditorGUI::ScopedIndent indent;
-		if (mouseMode == MouseMode::Select) {
-			pixelSim.PixelGUI(selectGuiCursor);
-		}
-		else {
-			pixelSim.PixelGUI(guiCursor);
-		}
-	}
+	renderSystem.Update(transforms, pointLights, spotlights, camera, delta, pixelSim, chunkFrameBuffer, pixelShader, quad, simple2dShader, chunkTexture);
 }
 
 void TestScene::SelectedInfoGUI()

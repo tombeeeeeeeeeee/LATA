@@ -13,6 +13,8 @@
 #include "FrameBuffer.h"
 #include "Paths.h"
 #include "SceneObject.h"
+#include "PixelSimulation.h"
+#include "Mesh.h"
 
 #include "Utilities.h"
 #include "EditorGUI.h"
@@ -285,7 +287,13 @@ void RenderSystem::Update(
     std::unordered_map<unsigned long long, PointLight>& pointLights,
     std::unordered_map<unsigned long long, Spotlight>& spotlights,
     Camera* camera,
-    float delta
+    float delta,
+    Pixels::Simulation& pixelSim,
+    FrameBuffer* chunkFrameBuffer,
+    Shader* pixelShader,
+    Mesh& quad,
+    Shader* simple2dShader,
+    Texture* chunkTexture
 )
 {
     frameCountInSixteen = (frameCountInSixteen + 1) % 16;
@@ -325,7 +333,11 @@ void RenderSystem::Update(
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glDisable(GL_DEPTH_TEST);
 
-    RenderSSAO();
+    DrawPixelSim(pixelSim, camera, chunkFrameBuffer, pixelShader, quad, simple2dShader, chunkTexture, deferredFBO);
+
+
+
+    //RenderSSAO();
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
@@ -334,7 +346,11 @@ void RenderSystem::Update(
     glBlendEquation(GL_FUNC_ADD);
     glDepthMask(GL_FALSE);
 
-    RenderPointLights(pointLights, transforms, delta);
+    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    //RenderPointLights(pointLights, transforms, delta);
     RenderAmbientPass();
 
     glEnable(GL_DEPTH_TEST);
@@ -439,6 +455,73 @@ void RenderSystem::Update(
 
     // Re enable the depth test
     glEnable(GL_DEPTH_TEST);
+}
+
+void RenderSystem::DrawPixelSim(
+    const Pixels::Simulation& pixelSim, 
+    const Camera* camera,
+    FrameBuffer* chunkFrameBuffer,
+    Shader* pixelShader,
+    Mesh& quad,
+    Shader* simple2dShader,
+    Texture* chunkTexture,
+    unsigned int defaultFrameBuffer
+    )
+{
+    // Update the gpu version in preperation to send to GPU
+    pixelSim.PrepareDraw(camera->transform.getPosition().x, camera->transform.getPosition().y);
+
+    for (auto& i : pixelSim.getChunks())
+    {
+        chunkFrameBuffer->Bind();
+        glViewport(0, 0, Pixels::chunkWidth, Pixels::chunkHeight);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, i.ssbo);
+
+
+        // Draw pixels
+        pixelShader->Use();
+        quad.Draw();
+        
+        FrameBuffer::Unbind();
+        glBindFramebuffer(GL_FRAMEBUFFER, defaultFrameBuffer);
+
+        glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        simple2dShader->Use();
+        simple2dShader->setMat4("vp", SceneManager::viewProjection);
+        glm::mat4 model = glm::mat4(0.5f);
+        model = glm::translate(model, glm::vec3(i.x * 2.0f + 1.0f, i.y * 2.0f + 1.0f, 0.0f));
+        simple2dShader->setMat4("model", model);
+        chunkTexture->Bind(1);
+        simple2dShader->setSampler("tex", 1);
+        quad.Draw();
+
+        //break;
+    }
+
+    //RenderLinePass();
+    //RenderComposite();
+
+
+    // Note: The framebuffer is not required for the current set up, is here for the sake of it at the moment
+    // Bind framebuffer for drawing pixels
+
+
+
+    // Unbind framebuffer
+    // TODO: Is there a rendersystem function for this, if not maybe there should be something similar
+
+    ;
+    //// Draw framebuffer texture to screen
+    //overlayShader->Use();
+    //overlayShader->setFloat("material.alpha", 1.0f);
+
+    //texture->Bind(1);
+    //overlayShader->setSampler("material.albedo", 1);
+
+    //quad.Draw();
+
+
 }
 
 void RenderSystem::SSAOUpdate()

@@ -28,8 +28,9 @@ namespace Pixels {
 
 			std::array<std::array<Cell, chunkHeight>, chunkWidth> cells;
 
-			bool ssboGenerated = false;
-			unsigned int ssbo = 0;
+			// TODO: Lochie: consider moving these to the render system
+			mutable bool ssboGenerated = false;
+			mutable unsigned int ssbo = 0;
 
 			bool draw = true;
 			bool drawVelocity = false;
@@ -37,18 +38,19 @@ namespace Pixels {
 			bool updated = true;
 			bool prevUpdated = true;
 
-			std::array<std::array<GpuCell, chunkHeight>, chunkWidth> GpuCells = {};
+			mutable std::array<std::array<GpuCell, chunkHeight>, chunkWidth> GpuCells = {};
 
 
 			void Update(Simulation& pixelStuff);
 
 			Cell& getLocal(int x, int y);
+			const Cell& getLocalConst(int x, int y) const;
 
 			Chunk(int _x, int _y);
 
 			void SetDebugColours();
 
-			void PrepareDraw();
+			void PrepareDraw() const;
 
 			const GpuCell* GetGpuPixelToDrawFrom() const;
 		};
@@ -97,7 +99,7 @@ namespace Pixels {
 		std::vector<glm::ivec2> GeneratePathFromToward(const Cell& a, glm::ivec2 start, glm::ivec2 end);
 
 		void SetSimpleMaterials();
-		void PrepareDraw(int left, int down);
+		void PrepareDraw(int left, int down) const;
 		void Update();
 
 		unsigned int AmountOf(MatID materialID) const;

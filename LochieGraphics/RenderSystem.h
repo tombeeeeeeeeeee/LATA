@@ -15,6 +15,12 @@ class Transform;
 class Texture;
 class PointLight;
 class Spotlight;
+class Mesh;
+
+namespace Pixels
+{
+    class Simulation;
+}
 
 struct bloomMip
 {
@@ -36,7 +42,7 @@ public:
     Texture* colourKey2 = nullptr;
     Texture* roomAmbience = nullptr;
     float postEffectPercent = 1.0f;
-    bool postEffectOn = true;
+    bool postEffectOn = false;
 
     int superSampling = 1;
 
@@ -80,12 +86,31 @@ public:
     void LightPassUpdate();
     void LinesUpdate();
 
+    // Probably store
     void Update(
         std::unordered_map<unsigned long long, Transform>& transforms,
         std::unordered_map<unsigned long long, PointLight>& pointLights,
         std::unordered_map<unsigned long long, Spotlight>& spotlights,
         Camera* camera,
-        float delta
+        float delta,
+        Pixels::Simulation& pixelSim,
+        FrameBuffer* chunkFrameBuffer,
+        Shader* pixelShader,
+        Mesh& quad,
+        Shader* simple2dShader,
+        Texture* chunkTexture
+    );
+
+    // TODO: Lochie: consider what arguments should be apart of the rendersystem
+    void DrawPixelSim(
+        const Pixels::Simulation& pixelSim,
+        const Camera* camera,
+        FrameBuffer* chunkFrameBuffer,
+        Shader* pixelShader,
+        Mesh& quad,
+        Shader* simple2dShader,
+        Texture* chunkTexture,
+        unsigned int defaultFrameBuffer
     );
 
     void ScreenResize(int width, int height);

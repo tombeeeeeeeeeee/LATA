@@ -52,6 +52,11 @@ Pixels::Cell& Pixels::Simulation::Chunk::getLocal(int x, int y)
 	return cells[x][y];
 }
 
+const Pixels::Cell& Pixels::Simulation::Chunk::getLocalConst(int x, int y) const
+{
+	return cells[x][y];
+}
+
 Pixels::Simulation::Chunk::Chunk(int _x, int _y) :
 	x(_x),
 	y(_y)
@@ -77,7 +82,7 @@ void Pixels::Simulation::Chunk::SetDebugColours()
 	getLocal(chunkWidth - 1, chunkHeight - 1).colour = { 0_uc, 0_uc, 0_uc };
 }
 
-void Pixels::Simulation::Chunk::PrepareDraw()
+void Pixels::Simulation::Chunk::PrepareDraw() const
 {
 	if (!prevUpdated) {
 		return;
@@ -97,7 +102,7 @@ void Pixels::Simulation::Chunk::PrepareDraw()
 	{
 		for (int r = 0; r < chunkHeight; r++)
 		{
-			const Cell& cell = getLocal(c, r);
+			const Cell& cell = getLocalConst(c, r);
 			if (!drawVelocity) {
 				GpuCells[c][r].colour = glm::u8vec4(cell.colour, 255_uc);
 			}
@@ -424,7 +429,7 @@ void Pixels::Simulation::SetSimpleMaterials()
 	materialInfos[4].halfAngleSpread = PI / 2;
 }
 
-void Pixels::Simulation::PrepareDraw(int left, int down)
+void Pixels::Simulation::PrepareDraw(int left, int down) const
 {
 	for (auto& i : chunkLookup)
 	{
