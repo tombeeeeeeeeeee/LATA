@@ -260,7 +260,20 @@ void TestScene::GUI()
 
 	ImGui::DragFloat("Select Edit Radius", &selectEditRadius);
 
-	ImGui::InputScalar("Material", ImGuiDataType_U32, &selectMat);
+
+	Pixels::Material* selected = &pixelSim.materialInfos[selectMat];
+	if (ExtraEditorGUI::InputSearchBox2(pixelSim.materialInfos.begin(), pixelSim.materialInfos.end(), &selected, "Selcted Material", "matSelectedMainGui", false))
+	{
+		for (size_t i = 0; i < pixelSim.materialInfos.size(); i++)
+		{
+			if (&pixelSim.materialInfos[i] == selected)
+			{
+				selectMat = i;
+				break;
+			}
+		}
+	}
+	
 
 	if (ImGui::Button("Set everything to above material")) {
 		pixelSim.SetEverythingTo(selectMat);

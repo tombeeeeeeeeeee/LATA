@@ -20,6 +20,8 @@ namespace Pixels {
 		float density = 0; // Would we want this to be a float or an int?
 		Material(std::string _name, glm::u8vec3(_colour), float _density, unsigned int _flags);
 
+		operator std::string() const;
+
 		void GUI();
 	};
 }

@@ -11,6 +11,11 @@ Pixels::Material::Material(std::string _name, glm::u8vec3(_colour), float _densi
 {
 }
 
+Pixels::Material::operator std::string() const
+{
+	return name;
+}
+
 void Pixels::Material::GUI()
 {
 	std::string tag = Utilities::PointerToString(this);
