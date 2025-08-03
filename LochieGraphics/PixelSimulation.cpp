@@ -623,7 +623,7 @@ const Pixels::Simulation::Chunk* Pixels::Simulation::getChunk(int cellX, int cel
 	return search->second;
 }
 
-Pixels::Simulation::Chunk* Pixels::Simulation::getChunkNonConst(int cellX, int cellY)
+Pixels::Simulation::Chunk* Pixels::Simulation::getChunkNonConst(int cellX, int cellY, bool canCreateNewChunk)
 {
 	int x = (int)floorf((float)cellX / chunkWidth);
 	int y = (int)floorf((float)cellY / chunkHeight);
@@ -631,12 +631,18 @@ Pixels::Simulation::Chunk* Pixels::Simulation::getChunkNonConst(int cellX, int c
 	auto search = chunkLookup.find(std::pair<int, int>(x, y));
 	Chunk* chunk = nullptr;
 	if (search == chunkLookup.end()) {
-		std::lock_guard<std::mutex> lock(chunkCreationLock);
-		if (chunks.size() >= maxChunks) {
-			return nullptr;
+		if (canCreateNewChunk)
+		{
+			std::lock_guard<std::mutex> lock(chunkCreationLock);
+			if (chunks.size() >= maxChunks) {
+				return nullptr;
+			}
+			else {
+				chunk = &AddChunk(x, y);
+			}
 		}
 		else {
-			chunk = &AddChunk(x, y);
+			return nullptr;
 		}
 	}
 	else {

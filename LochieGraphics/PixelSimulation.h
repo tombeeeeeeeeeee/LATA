@@ -123,7 +123,7 @@ namespace Pixels {
 
 		const std::vector<Chunk>& getChunks() const;
 		const Chunk* getChunk(int cellX, int cellY) const;
-		Chunk* getChunkNonConst(int cellX, int cellY);
+		Chunk* getChunkNonConst(int cellX, int cellY, bool canCreateNewChunk = true);
 
 		void SetDebugColours();
 
