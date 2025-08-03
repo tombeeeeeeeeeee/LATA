@@ -478,6 +478,8 @@ void SceneManager::ProcessKeyboardInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::LEFT, deltaTime); }
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::RIGHT, deltaTime); }
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::UP, deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::ROLL_LEFT, deltaTime); }
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) { camera.ProcessKeyboard(Camera::ROLL_RIGHT, deltaTime); }
 
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
 		if (scene->gui.getSelected()) {

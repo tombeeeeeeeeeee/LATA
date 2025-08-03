@@ -55,7 +55,9 @@ public:
 		LEFT,
 		RIGHT,
 		UP,
-		DOWN
+		DOWN,
+		ROLL_LEFT,
+		ROLL_RIGHT,
 	};
 
 	Camera();
@@ -83,6 +85,7 @@ public:
 	bool InOrthoMode() const;
 
 	void Rotate(float x, float y);
+	void RotateZ(float z);
 
 	void GUI();
 
