@@ -81,6 +81,28 @@ void TestScene::Start()
 	pixelSim.testCentreGravity = true;
 }
 
+glm::vec2 TestScene::ScreenToWorldPos(const glm::vec2& screenPos)
+{
+	float ratio = (float)*windowWidth / (float)*windowHeight;
+
+	// Centre screen pos, X and Y should be between -0.5 to 0.5
+	glm::vec2 pos = screenPos - glm::vec2(0.5f, 0.5f);
+	// Adjust scale
+	pos.x *= ratio;
+	pos *= camera->orthoScale;
+
+	float camX = camera->transform.getPosition().x;
+	float camY = camera->transform.getPosition().y;
+
+	float camSin = sinf(glm::radians(glm::degrees(glm::eulerAngles(camera->transform.getRotation())).z));
+	float camCos = cosf(glm::radians(glm::degrees(glm::eulerAngles(camera->transform.getRotation())).z));
+
+	return glm::vec2(
+		camX - (pos.x * camCos - pos.y * camSin),
+		camY - (pos.y * camCos + pos.x * camSin)
+	);
+}
+
 void TestScene::Update(float delta)
 {
 	auto& lines = renderSystem.debugLines;
@@ -91,10 +113,8 @@ void TestScene::Update(float delta)
 
 	// Convert mouse cursor position to pixelspace
 	// TODO: A function for ratio or something
-	float ratio = (float)*windowWidth / (float)*windowHeight;
-	glm::vec2 mouse = { 
-		(cursorPos->x - 0.5f) * ratio * camera->orthoScale + camera->transform.getPosition().x,
-		(cursorPos->y - 0.5f)* camera->orthoScale + camera->transform.getPosition().y };
+
+	glm::vec2 mouse = ScreenToWorldPos(*cursorPos);
 	guiCursor = glm::ivec2{ floorf(mouse.x * Pixels::chunkWidth), floorf(mouse.y * Pixels::chunkHeight) };
 	if (!pixelSim.isCellAt(guiCursor.x, guiCursor.y)) {
 		//guiCursor = previousGuiCursor;

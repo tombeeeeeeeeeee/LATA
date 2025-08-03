@@ -53,6 +53,8 @@ private:
 	// TODO: Figure out a spot for this
 	std::vector<glm::ivec2> GeneratePathBetween(glm::ivec2 start, glm::ivec2 end);
 
+	glm::vec2 ScreenToWorldPos(const glm::vec2& screenPos);
+
 	void SelectedInfoGUI();
 	void StatsGUI();
 	void PixelMaterialsGUI();
