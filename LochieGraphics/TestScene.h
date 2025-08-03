@@ -43,7 +43,7 @@ private:
 
 	float selectEditRadius = 1.0f;
 
-	unsigned int selectMat = 2;
+	Pixels::MatID selectMat = 2;
 
 	int lastCount = 0;
 

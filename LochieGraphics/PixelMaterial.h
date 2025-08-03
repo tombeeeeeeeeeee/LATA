@@ -4,9 +4,9 @@
 
 #include <string>
 
-typedef unsigned short MatID;
 
 namespace Pixels {
+	typedef unsigned short MatID;
 	enum MaterialFlags {
 		neverUpdate = 1 << 0,
 		gravity = 2 << 0

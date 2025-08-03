@@ -52,10 +52,12 @@ void TestScene::Start()
 {
 	// pixelSim setup
 	pixelSim.SetSimpleMaterials();
-	pixelSim.SetCircleToMaterial( 1,  1, 0.5f, 3);
-	pixelSim.SetCircleToMaterial( 1, -1, 0.5f, 3);
-	pixelSim.SetCircleToMaterial(-1,  1, 0.5f, 3);
-	pixelSim.SetCircleToMaterial(-1, -1, 0.5f, 3);
+	//pixelSim.SetCircleToMaterial( 1,  1, 0.5f, 3);
+	//pixelSim.SetCircleToMaterial( 1, -1, 0.5f, 3);
+	//pixelSim.SetCircleToMaterial(-1,  1, 0.5f, 3);
+	//pixelSim.SetCircleToMaterial(-1, -1, 0.5f, 3);
+	pixelSim.SetCircleToMaterial(0, 0, 110, 3);
+	pixelSim.SetCircleToMaterial(0, 0, 100, 0);
 	//pixelSim.SetDebugColours();
 
 	// Rendering preperations
@@ -75,8 +77,6 @@ void TestScene::Start()
 	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
 	camera->editorOrth = true;
 	camera->state = Camera::State::tilePlacing;
-
-	pixelSim.testCentreGravity = true;
 }
 
 glm::vec2 TestScene::ScreenToWorldPos(const glm::vec2& screenPos)
@@ -275,11 +275,26 @@ void TestScene::GUI()
 		pixelSim.SetDrawVelocity(!pixelSim.drawVelocity);
 	}
 
-	ImGui::DragFloat2("Gravity", &pixelSim.gravityForce.x);
 	ImGui::Checkbox("Centre Gravity", &pixelSim.testCentreGravity);
-
-	ImGui::DragFloat("Radius", &pixelSim.radius);
-	ImGui::DragFloat("Mass per cell", &pixelSim.massPerCell);
+	{
+		ExtraEditorGUI::ScopedIndent indent;
+		if (!pixelSim.testCentreGravity)
+		{
+			ImGui::BeginDisabled();
+		}
+		ImGui::DragFloat("Radius", &pixelSim.radius);
+		ImGui::DragFloat("Mass per cell", &pixelSim.massPerCell);
+		if (!pixelSim.testCentreGravity) {
+			ImGui::EndDisabled();
+		}
+		else {
+			ImGui::BeginDisabled();
+		}
+		ImGui::DragFloat2("Gravity", &pixelSim.gravityForce.x);
+		if (pixelSim.testCentreGravity) {
+			ImGui::EndDisabled();
+		}
+	}
 
 	ImGui::ColorEdit3("Colour to set", &pickerColour.x);
 
