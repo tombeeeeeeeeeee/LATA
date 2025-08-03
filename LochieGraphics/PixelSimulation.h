@@ -33,7 +33,6 @@ namespace Pixels {
 			mutable unsigned int ssbo = 0;
 
 			bool draw = true;
-			bool drawVelocity = false;
 
 			bool updated = true;
 			bool prevUpdated = true;
@@ -50,7 +49,7 @@ namespace Pixels {
 
 			void SetDebugColours();
 
-			void PrepareDraw() const;
+			void PrepareDraw(const Pixels::Simulation& sim) const;
 
 			const GpuCell* GetGpuPixelToDrawFrom() const;
 		};
@@ -95,6 +94,7 @@ namespace Pixels {
 		float massPerCell = 1.0f;
 		bool testCentreGravity = false;
 		std::vector<Material> materialInfos;
+		bool drawVelocity = false;
 
 		std::vector<glm::ivec2> GeneratePathFromToward(const Cell& a, glm::ivec2 start, glm::ivec2 end);
 

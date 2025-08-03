@@ -146,7 +146,11 @@ void TestScene::Update(float delta)
 	else {
 		// Getting this will flag the chunk as updated (chunk won't redraw unless considered updated)
 		// This should be changed so that this is neccessary
-		pixelSim.getChunkNonConst(guiCursor.x, guiCursor.y, false)->prevUpdated = true;
+		Pixels::Simulation::Chunk* chunk = pixelSim.getChunkNonConst(guiCursor.x, guiCursor.y, false);
+		if (chunk)
+		{
+			chunk->prevUpdated = true;
+		}
 	}
 
 	lines.DrawCircle(glm::vec3(mouse.x, mouse.y, 0.0f), selectEditRadius / Pixels::chunkWidth, LineRenderer::Plane::XY);
@@ -268,7 +272,7 @@ void TestScene::GUI()
 	}
 
 	if (ImGui::Button("Toggle Draw Velocities")) {
-		pixelSim.SetDrawVelocity(!pixelSim.getChunks()[0].drawVelocity);
+		pixelSim.SetDrawVelocity(!pixelSim.drawVelocity);
 	}
 
 	ImGui::DragFloat2("Gravity", &pixelSim.gravityForce.x);

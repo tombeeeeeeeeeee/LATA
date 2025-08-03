@@ -82,7 +82,7 @@ void Pixels::Simulation::Chunk::SetDebugColours()
 	getLocal(chunkWidth - 1, chunkHeight - 1).colour = { 0_uc, 0_uc, 0_uc };
 }
 
-void Pixels::Simulation::Chunk::PrepareDraw() const
+void Pixels::Simulation::Chunk::PrepareDraw(const Pixels::Simulation& sim) const
 {
 	// As this is now drawing, prevUpdated is for this frame
 	if (!prevUpdated) {
@@ -104,7 +104,7 @@ void Pixels::Simulation::Chunk::PrepareDraw() const
 		for (int r = 0; r < chunkHeight; r++)
 		{
 			const Cell& cell = getLocalConst(c, r);
-			if (!drawVelocity) {
+			if (!sim.drawVelocity) {
 				GpuCells[c][r].colour = glm::u8vec4(cell.colour, 255_uc);
 			}
 			else {
@@ -435,7 +435,7 @@ void Pixels::Simulation::PrepareDraw(int left, int down) const
 	for (auto& i : chunkLookup)
 	{
 		if (i.second->draw) {
-			i.second->PrepareDraw();
+			i.second->PrepareDraw(*this);
 		}
 	}
 }
@@ -539,6 +539,8 @@ void Pixels::Simulation::SetEverythingToColour(const glm::vec3& colour)
 				i.colour = glm::vec3(colour * 255.0f);
 			}
 		}
+		chunk.updated = true;
+		chunk.prevUpdated = true;
 	}
 }
 
@@ -552,6 +554,8 @@ void Pixels::Simulation::SetAllToDefaultColour()
 				i.colour = getMat(i.materialID).defaultColour;
 			}
 		}
+		chunk.updated = true;
+		chunk.prevUpdated = true;
 	}
 }
 
@@ -658,13 +662,18 @@ void Pixels::Simulation::SetDebugColours()
 	for (auto& chunk : chunks)
 	{
 		chunk.SetDebugColours();
+		chunk.prevUpdated = true;
+		chunk.updated = true;
 	}
 }
+
 void Pixels::Simulation::SetDrawVelocity(bool value)
 {
+	drawVelocity = value;
 	for (auto& chunk : chunks)
 	{
-		chunk.drawVelocity = value;
+		chunk.prevUpdated = true;
+		chunk.updated = true;
 	}
 }
 
