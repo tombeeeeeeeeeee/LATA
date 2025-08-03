@@ -730,7 +730,8 @@ void RenderSystem::GUI()
         ImGui::DragFloat("Radius", &ssaoRadius);
         ImGui::DragFloat("Bias", &ssaoBias);
     }
-    ImGui::Combo("Buffer Index", &bufferIndex, "Result\0Albedo\0World Normals\0Emission\0PBR (Roughness, Metallic, AO)\0Roughness\0Metallic\0AO\0SSAO\0Bloom\0\0");
+    ImGui::Combo("Buffer Index", &bufferIndex,
+        "Result\0Albedo\0World Normals\0Emission\0PBR (Roughness, Metallic, AO)\0Roughness\0Metallic\0AO\0SSAO\0Bloom\0Colour\0Lights\0\0");
     ImGui::DragFloat("Exposure", &exposure, 0.01f, 0.0f, 5.0f);
     ImGui::DragFloat("Ambient Light Intensity", &ambientIntensity, 0.1f, 0);
     ImGui::Text("Light Speeds");

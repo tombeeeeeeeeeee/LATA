@@ -41,7 +41,7 @@ void main()
 
     switch(bufferIndex)
     {
-        //Depth
+        //Default, adjusted colour
         case 0:
         //FragColor = vec4(texture(lightBuffer, texCoords).rgb ,1.0);
         break;
@@ -64,7 +64,6 @@ void main()
         //PBR
         case 4:
         FragColor =  vec4(texture(pbr, texCoords).rgb, 1.0);
-
         break;
 
         // Roughness
@@ -94,5 +93,16 @@ void main()
         case 9:
         FragColor = vec4(texture(bloomBlur, texCoords).rgb, 1.0);
         break;
+
+        // Colour
+        case 10:
+        FragColor = vec4(texture(colour, texCoords).rgb, 1.0);
+        break;
+
+        // Lights
+        case 11:
+        FragColor = vec4(texture(lightBuffer, texCoords).rgb ,1.0);
+        break;
+
     }
 }
