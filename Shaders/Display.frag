@@ -13,7 +13,7 @@ uniform sampler2D bloomBlur;
 uniform sampler2D lightBuffer;
 
 uniform float exposure;
-uniform float bloomStrength = 0.04f;
+uniform float bloomStrength = 0.08f;
 uniform int bufferIndex;
 
 void main()
@@ -24,7 +24,9 @@ void main()
     result = texture(colour, texCoords).rgb;
     //
     vec3 bloomColor = texture(bloomBlur, texCoords).rgb;
-    result = mix(result, bloomColor, bloomStrength); // linear interpolation
+    //result = mix(result, bloomColor, bloomStrength); // linear interpolation
+    //result = mix(result, result + bloomColor, bloomStrength);
+    result += bloomColor * bloomStrength;
 
 
     // tone mapping
