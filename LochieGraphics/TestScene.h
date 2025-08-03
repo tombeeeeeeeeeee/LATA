@@ -29,7 +29,6 @@ private:
 	//FrameBuffer* output = nullptr;
 	//Texture* outputTexture = nullptr;
 
-	Shader* overlayShader = nullptr;
 	Shader* pixelShader = nullptr;
 	Shader* simple2dShader = nullptr;
 	Mesh quad;

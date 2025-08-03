@@ -59,15 +59,13 @@ void TestScene::Start()
 	//pixelSim.SetDebugColours();
 
 	// Rendering preperations
-	chunkTexture = ResourceManager::CreateTexture(Pixels::chunkWidth, Pixels::chunkHeight, GL_SRGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
+	chunkTexture = ResourceManager::CreateTexture(Pixels::chunkWidth, Pixels::chunkHeight, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
 	chunkFrameBuffer = new FrameBuffer(Pixels::chunkWidth, Pixels::chunkHeight, chunkTexture, nullptr, false);
 
 	pixelShader = ResourceManager::LoadShader("simplePixel");
 	pixelShader->Use();
 	pixelShader->setInt("gridCols", Pixels::chunkWidth);
 	pixelShader->setInt("gridRows", Pixels::chunkHeight);
-
-	overlayShader = ResourceManager::LoadShader("Shaders/default.vert", "Shaders/simpleTexturedWithCutout.frag");
 
 	simple2dShader = ResourceManager::LoadShader("2dShader");
 
@@ -168,6 +166,7 @@ void TestScene::SelectedInfoGUI()
 	}
 	const Pixels::Simulation::Chunk* chunk = pixelSim.getChunk(guiCursor.x, guiCursor.y);
 	if (chunk) {
+		ExtraEditorGUI::ScopedDisable disable;
 		bool temp = chunk->prevUpdated;
 		ImGui::Checkbox("Chunk updated!", &temp);
 	}
@@ -264,31 +263,30 @@ void TestScene::GUI()
 		}
 	}
 
-	if (ImGui::CollapsingHeader("PixelSim debug stuff"))
-	{
-		ExtraEditorGUI::ScopedIndent indent;
-		if (ImGui::Button("Set debug colours")) {
-			pixelSim.SetDebugColours();
-		}
-
-		if (ImGui::Button("Toggle Draw Velocities")) {
-			pixelSim.SetDrawVelocity(!pixelSim.getChunks()[0].drawVelocity);
-		}
-
-		ImGui::DragFloat2("Gravity", &pixelSim.gravityForce.x);
-		ImGui::Checkbox("Centre Gravity", &pixelSim.testCentreGravity);
-
-		ImGui::DragFloat("Radius", &pixelSim.radius);
-		ImGui::DragFloat("Mass per cell", &pixelSim.massPerCell);
+	if (ImGui::Button("Set debug colours")) {
+		pixelSim.SetDebugColours();
 	}
+
+	if (ImGui::Button("Toggle Draw Velocities")) {
+		pixelSim.SetDrawVelocity(!pixelSim.getChunks()[0].drawVelocity);
+	}
+
+	ImGui::DragFloat2("Gravity", &pixelSim.gravityForce.x);
+	ImGui::Checkbox("Centre Gravity", &pixelSim.testCentreGravity);
+
+	ImGui::DragFloat("Radius", &pixelSim.radius);
+	ImGui::DragFloat("Mass per cell", &pixelSim.massPerCell);
 
 	ImGui::ColorEdit3("Colour to set", &pickerColour.x);
 
 	ImGui::DragFloat("Select Edit Radius", &selectEditRadius);
 
-
 	Pixels::Material* selected = &pixelSim.materialInfos[selectMat];
-	if (ExtraEditorGUI::InputSearchBox2(pixelSim.materialInfos.begin(), pixelSim.materialInfos.end(), &selected, "Selcted Material", "matSelectedMainGui", false))
+	{
+		ExtraEditorGUI::ColourEdit3("Selected Material Colour", selected->defaultColour, ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoInputs);
+	}
+	ImGui::SameLine();
+	if (ExtraEditorGUI::InputSearchBox2(pixelSim.materialInfos.begin(), pixelSim.materialInfos.end(), &selected, "Selected Material", "matSelectedMainGui", false))
 	{
 		for (size_t i = 0; i < pixelSim.materialInfos.size(); i++)
 		{
