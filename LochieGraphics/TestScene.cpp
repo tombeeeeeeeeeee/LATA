@@ -312,7 +312,7 @@ void TestScene::GUI()
 		pixelSim.SetAllToDefaultColour();
 	}
 
-	ExtraEditorGUI::SliderEnum({ "None", "Brush", "Select", }, (int*)& mouseMode);
+	ExtraEditorGUI::SliderEnum("Left click mouse mode", { "None", "Brush", "Select", }, (int*)&mouseMode);
 
 	ImGui::DragInt2("Gui Cursor", &guiCursor.x);
 }
