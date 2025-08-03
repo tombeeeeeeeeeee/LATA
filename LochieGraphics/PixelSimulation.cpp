@@ -84,6 +84,7 @@ void Pixels::Simulation::Chunk::SetDebugColours()
 
 void Pixels::Simulation::Chunk::PrepareDraw() const
 {
+	// As this is now drawing, prevUpdated is for this frame
 	if (!prevUpdated) {
 		return;
 	}

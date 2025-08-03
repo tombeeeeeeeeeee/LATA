@@ -107,10 +107,6 @@ void TestScene::Update(float delta)
 {
 	auto& lines = renderSystem.debugLines;
 
-	if (updateSim) {
-		pixelSim.Update();
-	}
-
 	// Convert mouse cursor position to pixelspace
 	// TODO: A function for ratio or something
 
@@ -144,6 +140,16 @@ void TestScene::Update(float delta)
 		}
 	}
 	previousGuiCursor = guiCursor;
+
+
+	if (updateSim) {
+		pixelSim.Update();
+	}
+	else {
+		// Getting this will flag the chunk as updated (chunk won't redraw unless considered updated)
+		// This should be changed so that this is neccessary
+		pixelSim.getChunkNonConst(guiCursor.x, guiCursor.y, false)->prevUpdated = true;
+	}
 
 	lines.DrawCircle(glm::vec3(mouse.x, mouse.y, 0.0f), selectEditRadius / Pixels::chunkWidth, LineRenderer::Plane::XY);
 }
