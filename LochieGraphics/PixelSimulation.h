@@ -79,7 +79,7 @@ namespace Pixels {
 
 		Cell& getGlobal(int cellX, int cellY);
 
-		bool MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 desiredPos);
+		bool MovePixelToward(Cell& a, glm::ivec2& pos, glm::ivec2 desiredPos, Cell** hit);
 		void setCell(int x, int y, MatID matID);
 		void setCell(Cell& cell, MatID matID);
 		bool SwapPixels(Cell& a, Cell& b);
@@ -87,8 +87,11 @@ namespace Pixels {
 		void UpdateChunks(glm::ivec2 check, const std::vector<Chunk*>& updateChunks);
 		static void UpdateChunk(Chunk* chunk, Simulation& sim);
 		// TODO: Think about how these functions could and should exist
+		void ApplyExternalForces(Cell& pixel, const Material& mat, int x, int y);
 		void Gravity(Cell& pixel, const Material& mat, int x, int y);
 		bool GravityDiagonalHelper(Cell& pixel, const Material& mat, unsigned int c, unsigned int r, bool spread);
+
+		bool ApplySpeedLimit(glm::ivec2 start, glm::ivec2& end);
 
 		const Material& getMat(MatID index) const;
 		Material& getNonConstMat(MatID index);
@@ -102,7 +105,7 @@ namespace Pixels {
 		std::vector<Material> materialInfos;
 		DrawMode drawMode = DrawMode::Colour;
 
-		std::vector<glm::ivec2> GeneratePathFromToward(const Cell& a, glm::ivec2 start, glm::ivec2 end);
+		std::vector<glm::ivec2> GeneratePathFromToward(const Cell& a, glm::ivec2 start, glm::ivec2 end, Cell** hit);
 
 		void SetSimpleMaterials();
 		void PrepareDraw(int left, int down) const;

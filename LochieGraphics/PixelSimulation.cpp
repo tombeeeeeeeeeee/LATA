@@ -181,16 +181,17 @@ Pixels::Cell& Pixels::Simulation::getGlobal(int cellX, int cellY)
 	return chunk->getLocal(cellX - (chunk->x * chunkWidth), cellY - (chunk->y * chunkHeight));
 }
 
-bool Pixels::Simulation::MovePixelToward(Cell& a, glm::ivec2 pos, glm::ivec2 desiredPos)
+bool Pixels::Simulation::MovePixelToward(Cell& a, glm::ivec2& pos, glm::ivec2 desiredPos, Cell** hit)
 {
 	bool returnValue = false;
-	auto path = GeneratePathFromToward(a, pos, desiredPos);
+	auto path = GeneratePathFromToward(a, pos, desiredPos, hit);
+#if true
 	if (path.size() > 1) {
-		glm::ivec2 to = path.back();
-		SwapPixels(a, getGlobal(to.x, to.y));
+		pos = path.back();
+		SwapPixels(a, getGlobal(pos.x, pos.y));
 		returnValue = true;
 	}
-#if !true
+#else
 	glm::vec2 hitPos = glm::vec2(path.back()) + glm::normalize(a.velocity);
 	glm::ivec2 hitCellPos(roundf(hitPos.x), roundf(hitPos.y));
 	if (hitCellPos == path.back()) {
@@ -289,7 +290,7 @@ void Pixels::Simulation::UpdateChunk(Chunk* chunk, Simulation& sim)
 	chunk->Update(sim);
 }
 
-void Pixels::Simulation::Gravity(Cell& pixel, const Material& mat, int x, int y)
+void Pixels::Simulation::ApplyExternalForces(Cell& pixel, const Material& mat, int x, int y)
 {
 	if (testCentreGravity) {
 		glm::vec2 pos = { x, y };
@@ -317,49 +318,94 @@ void Pixels::Simulation::Gravity(Cell& pixel, const Material& mat, int x, int y)
 		pixel.velocity += gravityForce;
 	}
 	if (glm::isnan(pixel.velocity.x)) {
-		do {} while (true);
+		__debugbreak();
+	}
+}
+
+void Pixels::Simulation::Gravity(Cell& pixel, const Material& mat, int x, int y)
+{
+	if (pixel.atRest)
+	{
+		return;
 	}
 
 	// TODO: Just use round instead of floor+.5
 	glm::ivec2 desiredPos = { floorf(x + pixel.velocity.x + 0.5f), floorf(y + pixel.velocity.y + 0.5f) };
-	//desiredPos = { glm::clamp(desiredPos.x, 0, PIXELS_W - 1), glm::clamp(desiredPos.y, 0, PIXELS_H - 1) };
-	//if (desiredPos.x < 0 || desiredPos.x >= PIXELS_W || desiredPos.y < 0 || desiredPos.y >= PIXELS_H) {
+	glm::ivec2 pixelPos = { x, y };
+	ApplySpeedLimit(pixelPos, desiredPos);
+	Cell* hit = nullptr;
+	bool moved = MovePixelToward(pixel, pixelPos, desiredPos, &hit);
+	glm::ivec2 deltaPos = pixelPos - glm::ivec2(x, y);
+	float delta = sqrtf(powf(deltaPos.x, 2.0f) + powf(deltaPos.y, 2.0f));
+	glm::ivec2 desiredDeltaPos = desiredPos - glm::ivec2(x, y);
+	float wantedDelta = sqrt(powf(desiredDeltaPos.x, 2.0f) + powf(desiredDeltaPos.y, 2.0f));
+	if (delta < wantedDelta)
+	{
+		if (delta == 0.0f)
+		{
+			pixel.atRest = true;
+			pixel.velocity = glm::vec2(0.0f, 0.0f);
+		}
+		float ratio = delta / wantedDelta;
+		glm::vec2 oldVel = pixel.velocity;
+		pixel.velocity *= ratio;
+		glm::vec2 lostVelocity = oldVel - pixel.velocity;
+		// This shouldn't be done as this should have been gotten already with the like move toward function
+		//Cell& hit = getGlobal(x + glm::sign(desiredDeltaPos.x), y + glm::sign(desiredDeltaPos.y));
+		if (hit->materialID == 0)
+		{
+			__debugbreak();
+		}
+		hit->velocity += lostVelocity;
+	}
+	else if (wantedDelta != 0.0f){
+		getGlobal(x, y - 1).atRest = false;
+		getGlobal(x, y + 1).atRest = false;
+		getGlobal(x - 1, y).atRest = false;
+		getGlobal(x + 1, y).atRest = false;
+	}
+
+	ApplyExternalForces(pixel, mat, x, y);
+
+
+	////desiredPos = { glm::clamp(desiredPos.x, 0, PIXELS_W - 1), glm::clamp(desiredPos.y, 0, PIXELS_H - 1) };
+	////if (desiredPos.x < 0 || desiredPos.x >= PIXELS_W || desiredPos.y < 0 || desiredPos.y >= PIXELS_H) {
+	////	return;
+	////}
+	//// TODO: This function should be slightly different, consider if 2 pixels were clashing (on the x axis) and both pointed a lil up, they would be stuck
+	//bool moved = MovePixelToward(pixel, { x, y }, desiredPos);
+	//glm::vec2 pos(x, y);
+	//glm::vec2 originalDesPos(x + pixel.velocity.x, y + pixel.velocity.y);
+	//glm::vec2 originalOffset = originalDesPos - pos;
+	//glm::vec2 direction = glm::normalize(originalOffset);
+	//if (glm::isnan(direction.x)) {
 	//	return;
 	//}
-	// TODO: This function should be slightly different, consider if 2 pixels were clashing (on the x axis) and both pointed a lil up, they would be stuck
-	bool moved = MovePixelToward(pixel, { x, y }, desiredPos);
-	glm::vec2 pos(x, y);
-	glm::vec2 originalDesPos(x + pixel.velocity.x, y + pixel.velocity.y);
-	glm::vec2 originalOffset = originalDesPos - pos;
-	glm::vec2 direction = glm::normalize(originalOffset);
-	if (glm::isnan(direction.x)) {
-		return;
-	}
-	float length = glm::length(originalOffset);
-	float originalDesAngle = std::atan2f(direction.y, direction.x);
-	if (!moved) {
-		float angle = originalDesAngle + ((leftToRight ? -1 : 1) * mat.halfAngleSpread);
-		glm::vec2 desiredNormal(cosf(angle), sinf(angle));
-		glm::vec2 newDesiredPos = pos + (desiredNormal * length);
-		desiredPos = { floorf(newDesiredPos.x + 0.5f), floorf(newDesiredPos.y + 0.5f) };
-		moved = MovePixelToward(pixel, { x, y }, desiredPos);
-	}
-	if (!moved) {
-		float angle = originalDesAngle + ((leftToRight ? 1 : -1) * mat.halfAngleSpread);
-		glm::vec2 desiredNormal(cosf(angle), sinf(angle));
-		glm::vec2 newDesiredPos = pos + (desiredNormal * length);
-		desiredPos = { floorf(newDesiredPos.x + 0.5f), floorf(newDesiredPos.y + 0.5f) };
-		moved = MovePixelToward(pixel, { x, y }, desiredPos);
-	}
-	//auto& next = chunk.pixels[desiredPos.x][desiredPos.y];
-	//const auto& nextMat = getMat(next.materialID);
-	//if (nextMat.density < mat.density) {
-	//	SwapPixels(pixel, next);
-	//	return;
+	//float length = glm::length(originalOffset);
+	//float originalDesAngle = std::atan2f(direction.y, direction.x);
+	//if (!moved) {
+	//	float angle = originalDesAngle + ((leftToRight ? -1 : 1) * mat.halfAngleSpread);
+	//	glm::vec2 desiredNormal(cosf(angle), sinf(angle));
+	//	glm::vec2 newDesiredPos = pos + (desiredNormal * length);
+	//	desiredPos = { floorf(newDesiredPos.x + 0.5f), floorf(newDesiredPos.y + 0.5f) };
+	//	moved = MovePixelToward(pixel, { x, y }, desiredPos);
 	//}
-	//bool spread = true;
-	//if (GravityDiagonalHelper(pixel, mat, c, r, spread)) { return; }
-	//if (GravityDiagonalHelper(pixel, mat, c, r, !spread)) { return; }
+	//if (!moved) {
+	//	float angle = originalDesAngle + ((leftToRight ? 1 : -1) * mat.halfAngleSpread);
+	//	glm::vec2 desiredNormal(cosf(angle), sinf(angle));
+	//	glm::vec2 newDesiredPos = pos + (desiredNormal * length);
+	//	desiredPos = { floorf(newDesiredPos.x + 0.5f), floorf(newDesiredPos.y + 0.5f) };
+	//	moved = MovePixelToward(pixel, { x, y }, desiredPos);
+	//}
+	////auto& next = chunk.pixels[desiredPos.x][desiredPos.y];
+	////const auto& nextMat = getMat(next.materialID);
+	////if (nextMat.density < mat.density) {
+	////	SwapPixels(pixel, next);
+	////	return;
+	////}
+	////bool spread = true;
+	////if (GravityDiagonalHelper(pixel, mat, c, r, spread)) { return; }
+	////if (GravityDiagonalHelper(pixel, mat, c, r, !spread)) { return; }
 }
 
 bool Pixels::Simulation::GravityDiagonalHelper(Cell& pixel, const Material& mat, unsigned int c, unsigned int r, bool spread)
@@ -371,6 +417,19 @@ bool Pixels::Simulation::GravityDiagonalHelper(Cell& pixel, const Material& mat,
 		if (SwapPixels(pixel, downNext)) {
 			return true;
 		}
+	}
+	return false;
+}
+
+bool Pixels::Simulation::ApplySpeedLimit(glm::ivec2 start, glm::ivec2& end)
+{
+	const glm::vec2 normal(glm::normalize(glm::vec2(end - start)));
+	float distance = glm::length(glm::vec2(end - start)) - 0.5f;
+	if (distance > maxTravelDistance) {
+		// Minus 0.5f to ensure rounding doesn't cause distance past maxTravelDistance
+		glm::vec2 temp = normal * (maxTravelDistance - 0.5f);
+		end = start + glm::ivec2(roundf(temp.x), roundf(temp.y));
+		return true;
 	}
 	return false;
 }
@@ -393,7 +452,7 @@ Pixels::Material& Pixels::Simulation::getNonConstMat(MatID index)
 	return materialInfos[index];
 }
 
-std::vector<glm::ivec2> Pixels::Simulation::GeneratePathFromToward(const Cell& a, glm::ivec2 start, glm::ivec2 end)
+std::vector<glm::ivec2> Pixels::Simulation::GeneratePathFromToward(const Cell& a, glm::ivec2 start, glm::ivec2 end, Cell** hit)
 {
 	// Always contain the starting position
 	std::vector<glm::ivec2> values = { start };
@@ -403,14 +462,11 @@ std::vector<glm::ivec2> Pixels::Simulation::GeneratePathFromToward(const Cell& a
 	}
 	glm::vec2 checking = start;
 	const float checkEvery = 0.9f;
+
+	ApplySpeedLimit(start, end);
 	const glm::vec2 normal(glm::normalize(glm::vec2(end - start)));
 	float checkDistance = glm::length(glm::vec2(end - start)) - 0.5f;
-	if (checkDistance > maxTravelDistance) {
-		// Minus 0.5f to ensure rounding doesn't cause distance past maxTravelDistance
-		glm::vec2 temp = normal * (maxTravelDistance - 0.5f);
-		end = start + glm::ivec2(roundf(temp.x), roundf(temp.y));
-		checkDistance = glm::length(glm::vec2(end - start)) - 0.5f;
-	}
+
 	const glm::vec2 offset = normal * checkEvery;
 	bool last = false;
 	const glm::vec2 startF = glm::vec2(start);
@@ -424,16 +480,18 @@ std::vector<glm::ivec2> Pixels::Simulation::GeneratePathFromToward(const Cell& a
 		}
 
 		const glm::ivec2 checkingPixelPos(roundf(checking.x), roundf(checking.y));
-
-		const auto& checkingMat = getMat(getGlobal(checkingPixelPos.x, checkingPixelPos.y).materialID);
+		// Don't insert value if it is already in
+		if (checkingPixelPos == values.back()) {
+			continue;
+		}
+		auto& checkingCell = getGlobal(checkingPixelPos.x, checkingPixelPos.y);
+		const auto& checkingMat = getMat(checkingCell.materialID);
 		if (checkingMat.density >= aMat.density) {
+			*hit = &checkingCell;
 			break;
 		}
 
-		// Don't insert value if it is already in
-		if (checkingPixelPos != values.back()) {
-			values.push_back(checkingPixelPos);
-		}
+		values.push_back(checkingPixelPos);
 	}
 	return values;
 }
