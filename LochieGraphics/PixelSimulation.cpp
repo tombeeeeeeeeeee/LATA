@@ -104,10 +104,16 @@ void Pixels::Simulation::Chunk::PrepareDraw(const Pixels::Simulation& sim) const
 		for (int r = 0; r < chunkHeight; r++)
 		{
 			const Cell& cell = getLocalConst(c, r);
-			if (!sim.drawVelocity) {
+			switch (sim.drawMode)
+			{
+			case DrawMode::AtRest:
+				GpuCells[c][r].colour = cell.atRest ? glm::u8vec4(255_uc, 0_uc, 0_uc, 255_uc) : glm::u8vec4(255_uc, 255_uc, 255_uc, 255_uc);
+				break;
+			case DrawMode::Colour:
+			default:
 				GpuCells[c][r].colour = glm::u8vec4(cell.colour, 255_uc);
-			}
-			else {
+				break;
+			case DrawMode::Velocity:
 				glm::u8vec4 colour;
 				if (cell.velocity == glm::vec2(0, 0)) {
 					colour = { 255_uc, 255_uc, 255_uc, 255_uc };
@@ -121,6 +127,21 @@ void Pixels::Simulation::Chunk::PrepareDraw(const Pixels::Simulation& sim) const
 					colour = glm::u8vec4(r * 255, g * 255, b * 255, 1.0);
 				}
 				GpuCells[c][r].colour = colour;
+				break;
+			case DrawMode::VelocityNormal:
+				glm::u8vec4 colour1;
+				if (cell.velocity == glm::vec2(0, 0)) {
+					colour1 = { 255_uc, 255_uc, 255_uc, 255_uc };
+				}
+				else {
+					glm::vec2 dir = glm::normalize(cell.velocity);
+					float angle = std::atan2f(dir.y, dir.x);
+					float r, g, b;
+					ImGui::ColorConvertHSVtoRGB(angle / (2 * PI) + 0.5f, 1.0f, 1.0f, r, g, b);
+					colour1 = glm::u8vec4(r * 255, g * 255, b * 255, 1.0);
+				}
+				GpuCells[c][r].colour = colour1;
+				break;
 			}
 		}
 	}
@@ -667,9 +688,9 @@ void Pixels::Simulation::SetDebugColours()
 	}
 }
 
-void Pixels::Simulation::SetDrawVelocity(bool value)
+void Pixels::Simulation::ChangeDrawMode(Pixels::Simulation::DrawMode value)
 {
-	drawVelocity = value;
+	drawMode = value;
 	for (auto& chunk : chunks)
 	{
 		chunk.prevUpdated = true;

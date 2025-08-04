@@ -271,8 +271,9 @@ void TestScene::GUI()
 		pixelSim.SetDebugColours();
 	}
 
-	if (ImGui::Button("Toggle Draw Velocities")) {
-		pixelSim.SetDrawVelocity(!pixelSim.drawVelocity);
+	if (ExtraEditorGUI::SliderEnum("Draw Mode", { "Colour", "Velocity", "Velocity Normals", "At Rest" }, (int*)&pixelSim.drawMode))
+	{
+		pixelSim.ChangeDrawMode(pixelSim.drawMode);
 	}
 
 	ImGui::Checkbox("Centre Gravity", &pixelSim.testCentreGravity);

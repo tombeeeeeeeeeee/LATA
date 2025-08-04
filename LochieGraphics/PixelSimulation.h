@@ -53,6 +53,12 @@ namespace Pixels {
 
 			const GpuCell* GetGpuPixelToDrawFrom() const;
 		};
+		enum class DrawMode {
+			Colour,
+			Velocity,
+			VelocityNormal,
+			AtRest,
+		};
 	private:
 		static unsigned char updateOrder;
 
@@ -94,7 +100,7 @@ namespace Pixels {
 		float massPerCell = 1.0f;
 		bool testCentreGravity = false;
 		std::vector<Material> materialInfos;
-		bool drawVelocity = false;
+		DrawMode drawMode = DrawMode::Colour;
 
 		std::vector<glm::ivec2> GeneratePathFromToward(const Cell& a, glm::ivec2 start, glm::ivec2 end);
 
@@ -127,7 +133,7 @@ namespace Pixels {
 
 		void SetDebugColours();
 
-		void SetDrawVelocity(bool value);
+		void ChangeDrawMode(DrawMode value);
 
 		Simulation();
 
