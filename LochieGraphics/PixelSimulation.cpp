@@ -4,6 +4,7 @@
 
 #include "Graphics.h"
 
+#include "stdint.h"
 // TODO: remove
 #include <iostream>
 
@@ -34,14 +35,25 @@ void Pixels::Simulation::Chunk::Update(Simulation& sim)
 		for (signed int r = rStart; rCheck(r); r += rSign)
 		{
 			Cell& curr = getLocal(c, r);
-			if (curr.updated) { continue; }
+			if (curr.updated)
+			{
+				continue;
+			}
 			const auto& mat = sim.getMat(curr.materialID);
-			if (mat.flags & MaterialFlags::neverUpdate) { continue; }
+			if (mat.flags & MaterialFlags::neverUpdate)
+			{
+				continue;
+			}
 			int globalX = x * chunkWidth + c;
 			int globalY = y * chunkHeight + r;
-			if (mat.flags & MaterialFlags::gravity) {
+			if (mat.flags & MaterialFlags::gravity)
+			{
 				updated = true;
-				sim.Gravity(curr, mat, globalX, globalY); 
+				if (&sim.getMat(curr.materialID) != &mat)
+				{
+					do {} while (false);
+				}
+				sim.Gravity(curr, mat, globalX, globalY);
 			}
 		}
 	}
@@ -260,11 +272,15 @@ bool Pixels::Simulation::SwapPixels(Cell& a, Cell& b)
 	a.velocity = b.velocity;
 	b.velocity = tempVel;
 
-
 	// neverUpdate pixels should not be marked as updated, they can be 'moved' around multiple times
 	// Other types of pixels should be marked as updated if they are moved
 	a.updated = getMat(a.materialID).flags != MaterialFlags::neverUpdate;
 	b.updated = getMat(b.materialID).flags != MaterialFlags::neverUpdate;
+
+	if ((!a.updated && a.velocity != glm::zero<glm::vec2>()) || (!b.updated && b.velocity != glm::zero<glm::vec2>()))
+	{
+		do {} while(false);
+	}
 
 	return true;
 }
@@ -298,20 +314,25 @@ void Pixels::Simulation::ApplyExternalForces(Cell& pixel, const Material& mat, i
 		const float length = glm::length(centre - pos);
 		constexpr float gc = 1.0f;
 		const glm::vec2 normal = glm::normalize(centre - pos);
+		float acc;
 		if (length > radius) {
 			const float mass = massPerCell * radius * radius * PI;
-			const float acc = (gc * mass) / powf(length, 2);
-			glm::vec2 add = normal * acc;
-			if (!glm::isnan(add.x) && !glm::isnan(add.y)) {
-				pixel.velocity += add;
-			}
+			acc = (gc * mass) / powf(length, 2);
 		}
 		else {
-			const float acc = (PI * gc * massPerCell * length) / radius;
-			glm::vec2 add = normal * acc;
-			if (!glm::isnan(add.x) && !glm::isnan(add.y)) {
-				pixel.velocity += add;
-			}
+			acc = (PI * gc * massPerCell * length) / radius;
+		}
+		if (acc == 0.0f)
+		{
+			return;
+		}
+		glm::vec2 add = normal * acc;
+		if (!glm::isnan(add.x) && !glm::isnan(add.y)) {
+			pixel.velocity += add;
+		}
+		else
+		{
+			do {} while (false);
 		}
 	}
 	else {
@@ -329,43 +350,69 @@ void Pixels::Simulation::Gravity(Cell& pixel, const Material& mat, int x, int y)
 		return;
 	}
 
+	glm::vec2 precisePos = pixel.getPos(x, y);
+	auto preciseDesiredPos = glm::vec2(precisePos.x + pixel.velocity.x, precisePos.y + pixel.velocity.y);
 	// TODO: Just use round instead of floor+.5
-	glm::ivec2 desiredPos = { floorf(x + pixel.velocity.x + 0.5f), floorf(y + pixel.velocity.y + 0.5f) };
+	glm::ivec2 desiredPos = { floorf(preciseDesiredPos.x + 0.5f), floorf(preciseDesiredPos.y + 0.5f) };
+
 	glm::ivec2 pixelPos = { x, y };
 	ApplySpeedLimit(pixelPos, desiredPos);
 	Cell* hit = nullptr;
 	bool moved = MovePixelToward(pixel, pixelPos, desiredPos, &hit);
+	Cell& newPixel = getGlobal(pixelPos.x, pixelPos.y);
 	glm::ivec2 deltaPos = pixelPos - glm::ivec2(x, y);
+
 	float delta = sqrtf(powf(deltaPos.x, 2.0f) + powf(deltaPos.y, 2.0f));
 	glm::ivec2 desiredDeltaPos = desiredPos - glm::ivec2(x, y);
 	float wantedDelta = sqrt(powf(desiredDeltaPos.x, 2.0f) + powf(desiredDeltaPos.y, 2.0f));
+	glm::vec2 oldVel = pixel.velocity;
 	if (delta < wantedDelta)
 	{
-		if (delta == 0.0f)
+		if (hit != nullptr)
 		{
-			pixel.atRest = true;
-			pixel.velocity = glm::vec2(0.0f, 0.0f);
+			constexpr float elasticityLoss = 0.8f;
+			float ratio = delta / wantedDelta;
+			pixel.velocity *= ratio * elasticityLoss;
+			glm::vec2 lostVelocity = oldVel - pixel.velocity;
+			pixel.velocity *= elasticityLoss;
+			// This shouldn't be done as this should have been gotten already with the like move toward function
+			//Cell& hit = getGlobal(x + glm::sign(desiredDeltaPos.x), y + glm::sign(desiredDeltaPos.y));
+			if (hit->materialID == 0)
+			{
+				__debugbreak();
+			}
+			hit->velocity += lostVelocity * elasticityLoss;
 		}
-		float ratio = delta / wantedDelta;
-		glm::vec2 oldVel = pixel.velocity;
-		pixel.velocity *= ratio;
-		glm::vec2 lostVelocity = oldVel - pixel.velocity;
-		// This shouldn't be done as this should have been gotten already with the like move toward function
-		//Cell& hit = getGlobal(x + glm::sign(desiredDeltaPos.x), y + glm::sign(desiredDeltaPos.y));
-		if (hit->materialID == 0)
-		{
-			__debugbreak();
-		}
-		hit->velocity += lostVelocity;
 	}
 	else if (wantedDelta != 0.0f){
 		getGlobal(x, y - 1).atRest = false;
 		getGlobal(x, y + 1).atRest = false;
 		getGlobal(x - 1, y).atRest = false;
 		getGlobal(x + 1, y).atRest = false;
+
+		glm::vec2 precise = glm::vec2(preciseDesiredPos.x - (float)desiredPos.x, preciseDesiredPos.y - (float)desiredPos.y);
+		newPixel.precision = glm::i8vec2{ int8_t(precise.x * INT8_MAX), int8_t(precise.y * INT8_MAX) };
+	}
+	else
+	{
+		newPixel.precision += glm::i8vec2{ newPixel.velocity.x * INT8_MAX, newPixel.velocity.y * INT8_MAX };
 	}
 
-	ApplyExternalForces(pixel, mat, x, y);
+
+	ApplyExternalForces(newPixel, mat, pixelPos.x, pixelPos.y);
+
+	if (delta == 0.0f)
+	{
+		float oldVelAngle = atan2f(oldVel.y, oldVel.x);
+		float newVelAngle = atan2f(newPixel.velocity.y, newPixel.velocity.x);
+		float oldLength = glm::length(oldVel);
+		float newLength = glm::length(newPixel.velocity);
+		if (fabsf(newVelAngle - oldVelAngle) < 0.001f && fabsf(newLength - oldLength) < 0.001f)
+		{
+			//newPixel.atRest = true;
+			newPixel.velocity = glm::vec2(0.0f, 0.0f);
+		}
+	}
 
 
 	////desiredPos = { glm::clamp(desiredPos.x, 0, PIXELS_W - 1), glm::clamp(desiredPos.y, 0, PIXELS_H - 1) };
@@ -461,7 +508,7 @@ std::vector<glm::ivec2> Pixels::Simulation::GeneratePathFromToward(const Cell& a
 		return values;
 	}
 	glm::vec2 checking = start;
-	const float checkEvery = 0.9f;
+	const float checkEvery = 0.99f;
 
 	ApplySpeedLimit(start, end);
 	const glm::vec2 normal(glm::normalize(glm::vec2(end - start)));
@@ -473,22 +520,59 @@ std::vector<glm::ivec2> Pixels::Simulation::GeneratePathFromToward(const Cell& a
 	const auto& aMat = getMat(a.materialID);
 	for (glm::vec2 checking = startF + offset; !last; checking += offset)
 	{
-
 		if (glm::length(checking - startF) >= checkDistance) {
 			last = true;
+			//checking = startF + glm::normalize(checking - startF) * checkDistance;
 			checking = end;
 		}
 
-		const glm::ivec2 checkingPixelPos(roundf(checking.x), roundf(checking.y));
+		glm::ivec2 checkingPixelPos(roundf(checking.x), roundf(checking.y));
 		// Don't insert value if it is already in
 		if (checkingPixelPos == values.back()) {
 			continue;
 		}
 		auto& checkingCell = getGlobal(checkingPixelPos.x, checkingPixelPos.y);
 		const auto& checkingMat = getMat(checkingCell.materialID);
+
+
 		if (checkingMat.density >= aMat.density) {
-			*hit = &checkingCell;
-			break;
+			bool doneCauseHitSomething = true;
+			// If the material can spill, this is where it needs to check
+			// TODO: Use the left right thing to determine the order here maybe
+			glm::vec2 previousCheckSpot = checking - offset;
+			float normalAngle = atan2f(normal.y, normal.x);
+			float angle1 = aMat.halfAngleSpread + normalAngle;
+			float angle2 = -aMat.halfAngleSpread + normalAngle;
+			float sinAngle1 = sinf(angle1);
+			float cosAngle1 = cosf(angle1);
+			float sinAngle2 = sinf(angle2);
+			float cosAngle2 = cosf(angle2);
+			auto extraCheck1Thing = glm::vec2(cosAngle1, sinAngle1);
+			auto extraCheck2Thing = glm::vec2(cosAngle2, sinAngle2);
+			glm::vec2 extraCheck1 = previousCheckSpot + (extraCheck1Thing * checkEvery);
+			glm::vec2 extraCheck2 = previousCheckSpot + (extraCheck2Thing * checkEvery);
+			glm::ivec2 extraPixelPos1(roundf(extraCheck1.x), roundf(extraCheck1.y));
+			glm::ivec2 extraPixelPos2(roundf(extraCheck2.x), roundf(extraCheck2.y));
+			auto& checkingCell1 = getGlobal(extraPixelPos1.x, extraPixelPos1.y);
+			auto& checkingCell2 = getGlobal(extraPixelPos2.x, extraPixelPos2.y);
+			if (getMat(checkingCell1.materialID).density < aMat.density)
+			{
+				doneCauseHitSomething = false;
+				checking = extraCheck1;
+				checkingPixelPos = extraPixelPos1;
+			}
+			else if (getMat(checkingCell2.materialID).density < aMat.density)
+			{
+				doneCauseHitSomething = false;
+				checking = extraCheck2;
+				checkingPixelPos = extraPixelPos2;
+			}
+
+			if (doneCauseHitSomething)
+			{
+				*hit = &checkingCell;
+				break;
+			}
 		}
 
 		values.push_back(checkingPixelPos);
@@ -506,7 +590,7 @@ void Pixels::Simulation::SetSimpleMaterials()
 		{ "stone", { 25_uc, 25_uc, 25_uc }, 10.0f, MaterialFlags::neverUpdate},
 		{ "water", { 100_uc, 170_uc, 255_uc }, 0.5f, MaterialFlags::gravity},
 	};
-	materialInfos[4].halfAngleSpread = PI / 2;
+	materialInfos[4].halfAngleSpread = PI * 0.45;
 }
 
 void Pixels::Simulation::PrepareDraw(int left, int down) const

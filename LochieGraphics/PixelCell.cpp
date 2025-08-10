@@ -17,3 +17,8 @@ void Pixels::Cell::GUI(int x, int y)
 	// TODO: Should be some better GUI option for this
 	ImGui::InputScalar("Material ID", ImGuiDataType_U16, &materialID);
 }
+
+glm::vec2 Pixels::Cell::getPos(int x, int y) const
+{
+	return glm::vec2((float)x + ((float)precision.x / (float)INT8_MAX), (float)y + (float)precision.y / (float)INT8_MAX);
+}

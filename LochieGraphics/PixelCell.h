@@ -15,8 +15,10 @@ namespace Pixels {
 		bool updated : 1 = false;
 		bool atRest : 1 = false;
 		MatID materialID = 0;
+		glm::i8vec2 precision = { 0, 0 };
 		glm::vec2 velocity = { 0.0f, 0.0f };
-
 		void GUI(int x, int y);
+
+		glm::vec2 getPos(int x, int y) const;
 	};
 }

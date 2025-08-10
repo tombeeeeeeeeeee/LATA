@@ -15,7 +15,7 @@ namespace Pixels {
 	struct Material {
 		std::string name;
 		glm::u8vec3 defaultColour;
-		float halfAngleSpread = PI / 4;
+		float halfAngleSpread = glm::radians(45.0f);
 		unsigned int flags;
 		float density = 0; // Would we want this to be a float or an int?
 		Material(std::string _name, glm::u8vec3(_colour), float _density, unsigned int _flags);

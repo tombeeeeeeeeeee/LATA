@@ -42,10 +42,10 @@ namespace Pixels {
 
 			void Update(Simulation& pixelStuff);
 
-			Cell& getLocal(int x, int y);
-			const Cell& getLocalConst(int x, int y) const;
+			inline Cell& getLocal(int x, int y);
+			inline const Cell& getLocalConst(int x, int y) const;
 
-			Chunk(int _x, int _y);
+			inline Chunk(int _x, int _y);
 
 			void SetDebugColours();
 
