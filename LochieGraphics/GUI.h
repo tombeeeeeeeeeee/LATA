@@ -22,24 +22,40 @@ private:
 	std::vector<SceneObject*> hierarchySceneObjects = {};
 	std::set<SceneObject*> multiSelectedSceneObjects = {};
 
-	bool openMultiSelectRightClickMenu = false;
 
 	std::string hierarchyMenuSearch = "";
 
-	bool focusSceneObjectMenu = false;
 
 
 	std::vector<glm::mat4> selectedObjectLocalMatrixHistory = {};
 	unsigned int selectedObjectHistoryIndex = 0;
-	bool gizmoChanged = false;
+	unsigned int multiSceneObjectEditorPartsFilter = 0;
 
+
+	// ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize
+	int defaultWindowFlags = 64;
+	// ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	int baseNodeFlags = 128 | 64 | 2048;
+	// ImGuizmo::OPERATION::TRANSLATE
+	unsigned int transformGizmoOperation = 7;
+	// ImGuizmo::MODE::WORLD
+	unsigned int transformGizmoMode = 1;
+	bool openMultiSelectRightClickMenu = false;
+	bool focusSceneObjectMenu = false;
+	bool gizmoChanged = false;
 	bool zPressed = false;
+	bool draggingSceneObject = false;
+	bool draggingCheck = false;
+	bool guizmoOperationChanged = false;
+	bool guizmoModeChanged = false;
+	bool disableGUIHeld = false;
 
 public:
 	Scene* scene = nullptr;
 
 	SceneObject* lastSelected = nullptr;
 	unsigned int partsFilter = 0u;
+	int moveSelection = 0;
 	
 	bool showResourceMenu = false;
 	bool showTestMenu = false;
@@ -58,7 +74,6 @@ public:
 	bool showAudioMenu = false;
 	bool showStyleMenu = false;
 
-	int moveSelection = 0;
 
 	void Update();
 
@@ -71,11 +86,7 @@ public:
 
 private:
 
-	bool draggingSceneObject = false;
-	bool draggingCheck = false;
 
-	// ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize
-	int defaultWindowFlags = 64;
 
 	void ResourceMenu();
 
@@ -93,22 +104,10 @@ private:
 	void TransformTree(SceneObject* sceneObject);
 	void TransformTree(SceneObject* so, ModelHierarchyInfo* model);
 	void TransformDragDrop(SceneObject* sceneObject);
-	// ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-	int baseNodeFlags = 128 | 64 | 2048;
-
-	bool guizmoOperationChanged = false;
-	bool guizmoModeChanged = false;
-	// ImGuizmo::OPERATION::TRANSLATE
-	unsigned int transformGizmoOperation = 7;
-	// ImGuizmo::MODE::WORLD
-	unsigned int transformGizmoMode = 1;
-	bool disableGUIHeld = false;
-
 	void AddFromToSelection(SceneObject* from, SceneObject* to);
 	void UpdateSelection();
 	void MultiSceneObjectRightClickMenu();
 
-	unsigned int multiSceneObjectEditorPartsFilter = 0;
 	void MultiSceneObjectEditor();
 };
 

@@ -23,21 +23,22 @@ namespace Pixels {
 	{
 	public:
 		struct Chunk {
+			std::array<std::array<Cell, chunkHeight>, chunkWidth> cells;
+			mutable std::array<std::array<GpuCell, chunkHeight>, chunkWidth> GpuCells = {};
+
 			const int x;
 			const int y;
 
-			std::array<std::array<Cell, chunkHeight>, chunkWidth> cells;
 
 			// TODO: Lochie: consider moving these to the render system
-			mutable bool ssboGenerated = false;
 			mutable unsigned int ssbo = 0;
+			mutable bool ssboGenerated = false;
 
 			bool draw = true;
 
 			bool updated = true;
 			bool prevUpdated = true;
 
-			mutable std::array<std::array<GpuCell, chunkHeight>, chunkWidth> GpuCells = {};
 
 
 			void Update(Simulation& pixelStuff);
@@ -93,7 +94,6 @@ namespace Pixels {
 
 		bool ApplySpeedLimit(glm::ivec2 start, glm::ivec2& end);
 
-		const Material& getMat(MatID index) const;
 		Material& getNonConstMat(MatID index);
 	public:
 		bool multithreaded = true;
@@ -111,6 +111,9 @@ namespace Pixels {
 		void PrepareDraw(int left, int down) const;
 		void Update();
 
+		const Material& getMat(MatID index) const;
+		const Cell& getGlobalConst(int x, int y) const;
+
 		unsigned int AmountOf(MatID materialID) const;
 
 		void SetCircleToMaterial(int cx, int cy, float radius, MatID materialID);
@@ -118,6 +121,8 @@ namespace Pixels {
 		void SetEverythingTo(MatID materialID);
 		void SetEverythingToColour(const glm::vec3& colour);
 		void SetAllToDefaultColour();
+
+		glm::vec2 getGravityAtPoint(glm::vec2 pos) const;
 
 		void AddVelocityToCircle(int x, int y, float radius, glm::vec2 vel);
 

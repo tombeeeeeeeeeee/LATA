@@ -17,11 +17,16 @@ private:
 		COUNT
 	};
 
+	SceneObject* player;
+	glm::vec2 playerVel = { 0.0f, 0.0f };
+
 	MouseMode mouseMode = MouseMode::Brush;
 
 	Pixels::Simulation pixelSim;
 
 	bool updateSim = true;
+
+	bool activePlayer = false;
 
 	FrameBuffer* chunkFrameBuffer = nullptr;
 	Texture* chunkTexture = nullptr;
@@ -57,6 +62,8 @@ private:
 	void SelectedInfoGUI();
 	void StatsGUI();
 	void PixelMaterialsGUI();
+
+	void SetupSim();
 
 public:
 	TestScene();

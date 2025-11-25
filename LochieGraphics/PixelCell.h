@@ -21,4 +21,4 @@ namespace Pixels {
 
 		glm::vec2 getPos(int x, int y) const;
 	};
-}
+} 

@@ -193,6 +193,16 @@ Pixels::Cell& Pixels::Simulation::getGlobal(int cellX, int cellY)
 	return chunk->getLocal(cellX - (chunk->x * chunkWidth), cellY - (chunk->y * chunkHeight));
 }
 
+const Pixels::Cell& Pixels::Simulation::getGlobalConst(int cellX, int cellY) const
+{
+	const Chunk* chunk = getChunk(cellX, cellY);
+	if (chunk == nullptr) {
+		return theEdge;
+	}
+	return chunk->getLocalConst(cellX - (chunk->x * chunkWidth), cellY - (chunk->y * chunkHeight));
+}
+
+
 bool Pixels::Simulation::MovePixelToward(Cell& a, glm::ivec2& pos, glm::ivec2 desiredPos, Cell** hit)
 {
 	bool returnValue = false;
@@ -306,10 +316,9 @@ void Pixels::Simulation::UpdateChunk(Chunk* chunk, Simulation& sim)
 	chunk->Update(sim);
 }
 
-void Pixels::Simulation::ApplyExternalForces(Cell& pixel, const Material& mat, int x, int y)
+glm::vec2 Pixels::Simulation::getGravityAtPoint(glm::vec2 pos) const
 {
 	if (testCentreGravity) {
-		glm::vec2 pos = { x, y };
 		glm::vec2 centre = { 0.0f, 0.0f };
 		const float length = glm::length(centre - pos);
 		constexpr float gc = 1.0f;
@@ -324,20 +333,25 @@ void Pixels::Simulation::ApplyExternalForces(Cell& pixel, const Material& mat, i
 		}
 		if (acc == 0.0f)
 		{
-			return;
+			return { 0.0f, 0.0f};
 		}
 		glm::vec2 add = normal * acc;
 		if (!glm::isnan(add.x) && !glm::isnan(add.y)) {
-			pixel.velocity += add;
+			return add;
 		}
 		else
 		{
-			do {} while (false);
+			__debugbreak();
 		}
 	}
 	else {
-		pixel.velocity += gravityForce;
+		return gravityForce;
 	}
+}
+
+void Pixels::Simulation::ApplyExternalForces(Cell& pixel, const Material& mat, int x, int y)
+{
+	pixel.velocity += getGravityAtPoint({x, y});
 	if (glm::isnan(pixel.velocity.x)) {
 		__debugbreak();
 	}

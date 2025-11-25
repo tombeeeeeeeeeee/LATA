@@ -5,6 +5,7 @@
 #include "ResourceManager.h"
 #include "FrameBuffer.h"
 #include "SceneManager.h"
+#include "SceneObject.h"
 
 #include "Utilities.h"
 
@@ -48,7 +49,7 @@ TestScene::TestScene()
 {
 }
 
-void TestScene::Start()
+void TestScene::SetupSim()
 {
 	// pixelSim setup
 	pixelSim.SetSimpleMaterials();
@@ -59,6 +60,13 @@ void TestScene::Start()
 	pixelSim.SetCircleToMaterial(0, 0, 110, 3);
 	pixelSim.SetCircleToMaterial(0, 0, 100, 0);
 	//pixelSim.SetDebugColours();
+}
+
+void TestScene::Start()
+{
+	SetupSim();
+
+	player = new SceneObject(this, "Player");
 
 	// Rendering preperations
 	chunkTexture = ResourceManager::CreateTexture(Pixels::chunkWidth, Pixels::chunkHeight, GL_RGB, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
@@ -154,6 +162,52 @@ void TestScene::Update(float delta)
 	}
 
 	lines.DrawCircle(glm::vec3(mouse.x, mouse.y, 0.0f), selectEditRadius / Pixels::chunkWidth, LineRenderer::Plane::XY);
+
+
+	Transform* transform = player->transform();
+	glm::vec3 playerPos = transform->getPosition();
+	glm::vec2 playerGravity = pixelSim.getGravityAtPoint({ playerPos.x, playerPos.y });
+	playerVel += playerGravity;
+
+	glm::vec2 playerDown = glm::normalize(playerGravity);
+	glm::vec2 playerRight = { -playerDown.y, playerDown.x };
+
+	float playerMovementSpeed = 5.0f;
+	float playerUpSpeed = 2.0f;
+	bool left = glfwGetKey(renderSystem.window, GLFW_KEY_A) == GLFW_PRESS;
+	bool right = glfwGetKey(renderSystem.window, GLFW_KEY_D) == GLFW_PRESS;
+	bool up = glfwGetKey(renderSystem.window, GLFW_KEY_W) == GLFW_PRESS;
+
+	float playerHorizontalMovement = ((right ? 1.0f : 0.0f) - (left ? 1.0f : 0.0f)) * playerMovementSpeed;
+	float playerVerticalMovement = (up ? 1.0f : 0.0f) * playerUpSpeed;
+
+	glm::vec2 playerMovementDelta = (playerRight * playerHorizontalMovement) + (playerDown * (-playerVerticalMovement) + playerVel);
+	playerMovementDelta *= delta;
+	playerPos.x += playerMovementDelta.x;
+	playerPos.y += playerMovementDelta.y;
+
+	// This is in world space, which I've for some reason made different to just pixel cell space, this should probably change and be the same
+	glm::vec2 playerCellPosWorld = { playerPos.x, playerPos.y };
+	glm::vec2 playerCellPosCell = { (playerCellPosWorld.x * Pixels::chunkWidth) + playerDown.x, (playerCellPosWorld.y * Pixels::chunkHeight) + playerDown.y };
+
+	const Pixels::Cell& playerStandingOn = pixelSim.getGlobalConst(roundf(playerCellPosCell.x), roundf(playerCellPosCell.y));
+	const Pixels::Material mat = pixelSim.getMat(playerStandingOn.materialID);
+
+	if (mat.density >= 0.9f)
+	{
+		playerVel = glm::vec2(0.0f, 0.0f);
+		float dot = glm::dot(playerCellPosWorld, -playerMovementDelta);
+		playerPos += glm::vec3{ dot* glm::normalize(playerCellPosWorld - playerMovementDelta), 0.0f};
+	}
+
+	if (isnan(playerPos.x) || isnan(playerPos.y))
+	{
+		__debugbreak();
+	}
+
+	player->transform()->setPosition({ playerPos.x, playerPos.y, 0.0f });
+
+	lines.DrawCircle(glm::vec3(playerPos.x, playerPos.y, 0.0f), 3.0f / Pixels::chunkWidth, LineRenderer::Plane::XY);
 }
 
 void TestScene::Draw(float delta)
@@ -250,6 +304,11 @@ void TestScene::GUI()
 	ImGui::SameLine();
 	if (ImGui::Button("Update Frame")) {
 		pixelSim.Update();
+	}
+
+	if (ImGui::Checkbox("Player", &activePlayer))
+	{
+		camera->state = activePlayer ? Camera::State::targetingPositionOrthographic : Camera::State::tilePlacing;
 	}
 
 	if (ImGui::CollapsingHeader("Multithreaded Options")) {

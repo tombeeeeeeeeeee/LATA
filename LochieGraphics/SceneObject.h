@@ -47,10 +47,10 @@ public:
 	std::string name = "Unnamed Scene Object";
 	unsigned long long GUID = 0ull;
 	unsigned int parts = 0u;
-	Scene* scene = nullptr;
-
 	PrefabStatus prefabStatus = PrefabStatus::none;
 	unsigned long long prefabBase = 0ull;
+	Scene* scene = nullptr;
+
 
 	SceneObject(Scene* _scene, std::string name = "Unnamed Scene Object");
 	SceneObject(Scene* _scene, toml::table* table);
