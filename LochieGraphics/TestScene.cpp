@@ -147,7 +147,6 @@ void TestScene::Update(float delta)
 	}
 	previousGuiCursor = guiCursor;
 
-
 	if (updateSim) {
 		pixelSim.Update();
 	}
@@ -190,14 +189,25 @@ void TestScene::Update(float delta)
 	glm::vec2 playerCellPosWorld = { playerPos.x, playerPos.y };
 	glm::vec2 playerCellPosCell = { (playerCellPosWorld.x * Pixels::chunkWidth) + playerDown.x, (playerCellPosWorld.y * Pixels::chunkHeight) + playerDown.y };
 
-	const Pixels::Cell& playerStandingOn = pixelSim.getGlobalConst(roundf(playerCellPosCell.x), roundf(playerCellPosCell.y));
+	const Pixels::Cell& playerStandingOn = pixelSim.getGlobalConst((int)roundf(playerCellPosCell.x), (int)roundf(playerCellPosCell.y));
 	const Pixels::Material mat = pixelSim.getMat(playerStandingOn.materialID);
 
 	if (mat.density >= 0.9f)
 	{
+		static float e = 0.0f;
+		
 		playerVel = glm::vec2(0.0f, 0.0f);
-		float dot = glm::dot(playerCellPosWorld, -playerMovementDelta);
-		playerPos += glm::vec3{ dot* glm::normalize(playerCellPosWorld - playerMovementDelta), 0.0f};
+
+
+		//float overlap = glm::length(playerMovementDelta);
+		//glm::vec2 normal = glm::vec2{ glm::normalize(playerCellPosWorld - playerMovementDelta)};
+		//glm::vec2 depen = overlap * normal;
+		glm::vec2 depen = -playerMovementDelta;
+		playerPos += glm::vec3{ depen, 0.0f};
+		
+
+		
+
 	}
 
 	if (isnan(playerPos.x) || isnan(playerPos.y))
@@ -205,9 +215,26 @@ void TestScene::Update(float delta)
 		__debugbreak();
 	}
 
+	if (activePlayer)
+	{
+		glm::vec3 cameraPos = camera->transform.getPosition();
+		float oldZ = cameraPos.z;
+
+		cameraPos = player->transform()->getPosition();
+		cameraPos.z = oldZ;
+
+		camera->transform.setPosition(cameraPos);
+
+		glm::vec3 prevCameraEulerRot = camera->transform.getEulerRotation();
+		
+		float zRot = (atan2f(playerDown.y, playerDown.x) * 180.0f / PI) + 90.0f;
+		camera->transform.setEulerRotation({ prevCameraEulerRot.x, prevCameraEulerRot.y, zRot });
+	}
+
 	player->transform()->setPosition({ playerPos.x, playerPos.y, 0.0f });
 
 	lines.DrawCircle(glm::vec3(playerPos.x, playerPos.y, 0.0f), 3.0f / Pixels::chunkWidth, LineRenderer::Plane::XY);
+	lines.DrawCircle(glm::vec3(playerPos.x, playerPos.y, 0.0f), 0.5f / Pixels::chunkWidth, LineRenderer::Plane::XY);
 }
 
 void TestScene::Draw(float delta)

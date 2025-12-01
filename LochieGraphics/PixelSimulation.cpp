@@ -631,7 +631,8 @@ void Pixels::Simulation::Update()
 		updateChunks[i] = &chunks[i];
 	}
 
-	std::qsort(updateChunks.data(), updateChunks.size(), sizeof(Chunk*), ChunkSort);
+	// TODO: this just doesn't work sometimes fix
+	//std::qsort(updateChunks.data(), updateChunks.size(), sizeof(Chunk*), ChunkSort);
 
 	for (int i = 0; i < updateChunks.size(); i++)
 	{
