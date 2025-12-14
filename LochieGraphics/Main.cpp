@@ -3,10 +3,11 @@
 #include "Scene.h"
 
 #include "TestScene.h"
+#include "RaytracerThingScene.h"
 
 int main()
 {
-	TestScene scene;
+	RaytracerThingScene scene;
 	SceneManager sceneManager(&scene);
 	sceneManager.Run();
 }

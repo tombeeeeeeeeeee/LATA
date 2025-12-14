@@ -93,7 +93,7 @@ public:
         std::unordered_map<unsigned long long, Spotlight>& spotlights,
         Camera* camera,
         float delta,
-        Pixels::Simulation& pixelSim,
+        Pixels::Simulation* pixelSim,
         FrameBuffer* chunkFrameBuffer,
         Shader* pixelShader,
         Mesh& quad,

@@ -547,7 +547,7 @@ void SceneManager::SwitchToWindowMode(WindowModes mode)
 	{
 	case WindowModes::windowed:
 		glfwRestoreWindow(window);
-		glfwSetWindowMonitor(window, nullptr, windowWidth / 4, windowHeight / 4, windowWidth / 2, windowHeight / 2, temp->refreshRate);
+		glfwSetWindowMonitor(window, nullptr, windowWidth / 4, windowHeight / 4, windowWidth, windowHeight, temp->refreshRate);
 		break;
 	case WindowModes::borderlessFullscreen:
 		glfwRestoreWindow(window);

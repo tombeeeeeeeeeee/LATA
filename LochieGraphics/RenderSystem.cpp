@@ -288,7 +288,7 @@ void RenderSystem::Update(
     std::unordered_map<unsigned long long, Spotlight>& spotlights,
     Camera* camera,
     float delta,
-    Pixels::Simulation& pixelSim,
+    Pixels::Simulation* pixelSim,
     FrameBuffer* chunkFrameBuffer,
     Shader* pixelShader,
     Mesh& quad,
@@ -333,7 +333,10 @@ void RenderSystem::Update(
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glDisable(GL_DEPTH_TEST);
 
-    DrawPixelSim(pixelSim, camera, chunkFrameBuffer, pixelShader, quad, simple2dShader, chunkTexture, deferredFBO);
+    if (pixelSim)
+    {
+        DrawPixelSim(*pixelSim, camera, chunkFrameBuffer, pixelShader, quad, simple2dShader, chunkTexture, deferredFBO);
+    }
 
 
 
