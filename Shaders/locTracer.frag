@@ -5,17 +5,24 @@ out vec4 FragColor;
 in vec2 TexCoord;
 
 
-uniform int width;
-uniform int height;
 
 uniform vec3 pixel00_loc;
 uniform vec3 pixel_delta_u;
 uniform vec3 pixel_delta_v;
-uniform vec3 camera_center;
 
 uniform float timer;
 
+float randSeed;
 
+struct Camera
+{
+    vec3 center;
+    int width;
+    int height;
+    int samples;
+};
+
+uniform Camera camera;
 
 struct HitRecord
 {
@@ -54,6 +61,59 @@ struct Interval
     float maxV;
 };
 
+float lengthSquared(vec3 v)
+{
+    return v.x*v.x + v.y*v.y + v.z*v.z;
+}
+
+float rand(vec2 co)
+{
+    return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+float nextRand()
+{
+    randSeed = rand(vec2(randSeed, randSeed + randSeed));
+    return randSeed;
+}
+
+vec3 randVec3()
+{
+    return vec3(nextRand(), nextRand(), nextRand());
+}
+
+vec3 sample_square()
+{
+    return vec3(nextRand() - 0.5, nextRand() - 0.5, 0.0);
+}
+
+vec3 randomUnitVec3()
+{
+    // redo if get invalid result
+    while (true)
+    {
+        vec3 p = randVec3() * vec3(2.0.xxx) - vec3(1.0.xxx);
+        float lensq = lengthSquared(p);
+        if (0.00000000001 < lensq)
+        {
+            return p / sqrt(lensq);
+        }
+    }
+}
+
+vec3 randomUnitVecOnHemisphere(vec3 hemisphereNormal)
+{
+    vec3 onUnitSphere = randomUnitVec3();
+    if (dot(onUnitSphere, hemisphereNormal) > 0.0)
+    {
+        return onUnitSphere;
+    }
+    else
+    {
+        return -onUnitSphere;
+    }
+}
+
 float IntervalSize(Interval interval)
 {
     return interval.maxV - interval.minV;
@@ -69,9 +129,9 @@ bool IntervalSurrounds(Interval interval, float v)
     return interval.minV < v && v < interval.maxV;
 }
 
-float lengthSqaured(vec3 v)
+float IntervalClamp(Interval interval, float v)
 {
-    return v.x*v.x + v.y*v.y + v.z*v.z;
+    return clamp(v, interval.minV, interval.maxV);
 }
 
 void set_face_normal(inout HitRecord hitRecord, Ray r, vec3 outward_normal)
@@ -88,9 +148,9 @@ vec3 RayAt(Ray ray, float t)
 bool hit_sphere(Sphere sphere, Ray r, Interval ray_t, out HitRecord rec)
 {
     vec3 oc = sphere.center - r.origin;
-    float a = lengthSqaured(r.direction);
+    float a = lengthSquared(r.direction);
     float h = dot(r.direction, oc);
-    float c = lengthSqaured(oc) - (sphere.radius * sphere.radius);
+    float c = lengthSquared(oc) - (sphere.radius * sphere.radius);
     float discriminant = h * h - a * c;
     //return (discriminant >= 0);
 
@@ -138,9 +198,86 @@ bool hit_hitlist(Hitlist hitlist, Ray r, Interval ray_t, out HitRecord rec)
     return hit_anything;
 }
 
-vec3 getColour(Ray r)
+vec3 getSingleRayColour(Ray r, Hitlist hitlist, out HitRecord rec)
+{
+    bool hit = hit_hitlist(hitlist, r, Interval(0.0, infinity), rec);
+    if (hit)
+    {
+          vec3 direction = randomUnitVecOnHemisphere(rec.normal);
+          return 0.5.xxx;// * getColour(Ray(rec.p, direction), hitlist);
+//        vec3 N = randomUnitVecOnHemisphere(rec.normal);
+//        if (rec.front_face)
+//        {
+//            //N = -N;
+//        }
+//        //return rec.t / 3 * vec3(1, 1, 1);
+//        return 0.5 * (N + vec3(1.0, 1.0, 1.0));
+    }
+
+    // "sky"
+    vec3 unit_direction = normalize(r.direction);
+    float a = 0.5*(unit_direction.y + 1.0);
+    return (1.0-a)*vec3(1.0, 1.0, 1.0) + a*vec3(0.5, 0.7, 1.0);
+}
+
+vec3 getColour(Ray r, Hitlist hitlist)
 {
     HitRecord rec;
+    vec3 colour = vec3(0);
+    vec3 theColorOfLikeEverything = vec3(0.5);
+    float percent = 1.0;
+    int maxHitCount = 4;
+    for (int i = 0; i < maxHitCount; ++i)
+    {
+        bool hit = hit_hitlist(hitlist, r, Interval(0.0, infinity), rec);
+        if (hit)
+        {
+            r = Ray(rec.p, randomUnitVecOnHemisphere(rec.normal));
+            colour *= theColorOfLikeEverything * percent;
+            percent /= 2.0;
+        }
+        else
+        {
+            vec3 unit_direction = normalize(r.direction);
+            float a = 0.5*(unit_direction.y + 1.0);
+            colour += ((1.0-a)*vec3(1.0, 1.0, 1.0) + a*vec3(0.5, 0.7, 1.0)) * percent;
+            break;
+        }
+    }
+    return colour;
+}
+
+Ray camera_getRay(Camera camera, ivec2 coords)
+{
+    vec3 offset = sample_square();
+    vec3 pixel_center = pixel00_loc
+            + ((coords.x + offset.x) * pixel_delta_u)
+            + ((coords.y + offset.y) * pixel_delta_v);
+    vec3 ray_direction = pixel_center - camera.center;
+    Ray r = Ray(camera.center, ray_direction);
+
+    return r;
+}
+
+vec3 camera_render(Camera camera, Hitlist hitlist)
+{
+    int i = int(TexCoord.x * float(camera.width));
+    int j = int((-TexCoord.y + 1.0) * float(camera.height));
+
+
+    vec3 colour = vec3(0.0, 0.0, 0.0);
+    for (int s = 0; s < camera.samples; ++s)
+    {
+        Ray r = camera_getRay(camera, ivec2(i, j));
+        colour += getColour(r, hitlist) * (1.0 / camera.samples);
+    }
+
+    return colour;
+}
+
+void main()
+{
+    randSeed = rand(TexCoord + sin(timer));
 //    Sphere sphere1 = Sphere(vec3(cos(timer) / 10, 0, sin(timer) / 5.0 - 1.0), ((cos(timer / 5.0) + sin(timer / 7.0)) / 20.0) + 0.5);
 //    Sphere sphere2 = Sphere(vec3(0.0, 0, (sin(timer) / 2.0) +  -1.0), 0.5);
 //    float orbitD = 0.5 / 2.0;
@@ -160,33 +297,8 @@ vec3 getColour(Ray r)
     hitlist.spheres[0] = sphere1;
     hitlist.spheres[1] = sphere2;
     hitlist.activeSpheres = 2;
-    bool hit = hit_hitlist(hitlist, r, Interval(0.0, infinity), rec);
-    if (hit)
-    {
-        vec3 N = rec.normal;
-        if (rec.front_face)
-        {
-            //N = -N;
-        }
-//        return rec.t / 3 * vec3(1, 1, 1);
-        return 0.5 * (N + vec3(1.0, 1.0, 1.0));
-    }
 
-    vec3 unit_direction = normalize(r.direction);
-    float a = 0.5*(unit_direction.y + 1.0);
-    return (1.0-a)*vec3(1.0, 1.0, 1.0) + a*vec3(0.5, 0.7, 1.0);
-}
-
-void main()
-{
-    int i = int(TexCoord.x * float(width));
-    int j = int((-TexCoord.y + 1.0) * float(height));
-
-    vec3 pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
-    vec3 ray_direction = pixel_center - camera_center;
-    Ray r = Ray(camera_center, ray_direction);
-
-    vec3 colour = getColour(r);
+    vec3 colour = camera_render(camera, hitlist);
     //vec3 colour  = vec3(TexCoord.xy, 0);
-    FragColor = vec4(colour * 1, 1.0);
+    FragColor = vec4(colour, 1.0);
 }

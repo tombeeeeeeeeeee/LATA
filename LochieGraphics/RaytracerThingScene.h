@@ -16,10 +16,14 @@ private:
 	Shader* simpleShader;
 	Mesh quad;
 
-	bool redraw = false;
-	bool redrawKeyDown = false;
+	bool reload = false;
+	bool reloadKeyDown = false;
+
+	bool alwaysRedraw = true;
 
 	float timer = 0.0f;
+
+	int samplePerPixel = 1;
 
 	void DoRayTraceSetup();
 
