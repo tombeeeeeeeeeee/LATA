@@ -192,6 +192,7 @@
     <ClCompile Include="..\Third Party\soloud\src\core\soloud_thread.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="GpuPixelSimScene.cpp" />
     <ClCompile Include="ImguiMathsGLM.cpp" />
     <ClCompile Include="PixelMaterial.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -227,6 +228,7 @@
     <ClInclude Include="..\Third Party\soloud\src\audiosource\wav\stb_vorbis.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="glad.h" />
+    <ClInclude Include="GpuPixelSimScene.h" />
     <ClInclude Include="ImguiMathsGLM.h" />
     <ClInclude Include="khrplatform.h" />
     <ClInclude Include="PixelMaterial.h" />
@@ -309,6 +311,8 @@
     <None Include="..\Shaders\pointLight.vert" />
     <None Include="..\Shaders\simplePixel.frag" />
     <None Include="..\Shaders\simplePixel.vert" />
+    <None Include="..\Shaders\simplePixelGpu.frag" />
+    <None Include="..\Shaders\simplePixelGpu.vert" />
     <None Include="..\Shaders\simpleTexturedWithCutout.frag" />
     <None Include="..\Shaders\spotlight.frag" />
     <None Include="..\Shaders\spotlight.vert" />
@@ -316,6 +320,7 @@
     <None Include="..\Shaders\spotlightShadows.vert" />
     <None Include="..\Shaders\syncArrow.frag" />
     <None Include="..\Shaders\syncArrow.vert" />
+    <None Include="..\Shaders\testPixelCompute.comp" />
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>

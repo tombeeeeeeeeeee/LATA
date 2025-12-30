@@ -2,11 +2,11 @@
 #include "SceneManager.h"
 #include "Scene.h"
 
-#include "TestScene.h"
+#include "GpuPixelSimScene.h"
 
 int main()
 {
-	TestScene scene;
+	GpuPixelSimScene scene;
 	SceneManager sceneManager(&scene);
 	sceneManager.Run();
 }
