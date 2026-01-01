@@ -373,7 +373,8 @@ void GLAPIENTRY SceneManager::ErrorMessageCallback(GLenum source, GLenum type, G
 	// #131185 - Buffer detailed info
 	// #131218 - Program/shader state performance warning
 	// #131204 - Texture state usage warning
-	if (id == 131169 || id == 131185 || id == 131218 || id == 131204) {
+	// #131154 Pixel-path performance warning, suggesting gpu side asynchronous processing (Current use cases want this behaviour to be synchronous)
+	if (id == 131169 || id == 131185 || id == 131218 || id == 131204 || id == 131154) {
 		return;
 	}
 

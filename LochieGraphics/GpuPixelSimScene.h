@@ -28,12 +28,19 @@ namespace PixelsGPU
 		void Initialise();
 		void Update(float delta);
 
+		size_t CalculateSsboSize();
+
 		void SetCircleToMaterial(glm::ivec2 pos, float radius, int matID);
+		void SetCircleToMaterial(int x, int y, float radius, int matID);
 	};
 
-	struct CellPixel
+	// Keep this correctly aligned with the gpu version, as thats all this is really for
+	// Currently this is only used to be a size representation of the gpu version
+	struct alignas(32) CellPixel // Think we would want something other than just alignas
 	{
 		int matId;
+		glm::vec2 vel;
+		glm::vec4 colour;
 	};
 	
 }

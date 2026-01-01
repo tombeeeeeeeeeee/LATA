@@ -8,9 +8,7 @@ in vec2 texCoords;
 uniform int gridCols;
 uniform int gridRows;
 
-struct Pixel {
-	int matID;
-};
+//! #include "gpuPixelRep.glsl"
 
 layout(std430, binding = 4) buffer Pixels
 {

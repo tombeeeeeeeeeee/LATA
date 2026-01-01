@@ -2,24 +2,66 @@
 
 //! #include "basePixel.comp"
 
+// We don't actually want to work out exactly the position if we don't care, only need for the one that will take our spot
+ivec2 getExpectedPos(ivec2 coords, int index)
+{
+	if (coords.y > 0 && coords.x >= 0 && coords.x < gridCols && read[index].matID == 2)
+	{
+
+
+		ivec2 oneDownPos = coords + ivec2(0, -1);
+		int oneDownIndex = indexFromCoords(oneDownPos);
+		ivec2 oneDownLeftPos = coords + ivec2(-1, -1);
+		int oneDownLeftIndex = indexFromCoords(oneDownLeftPos);
+		ivec2 oneDownRightPos = coords + ivec2(1, -1);
+		int oneDownRightIndex = indexFromCoords(oneDownRightPos);
+		
+		if (read[oneDownIndex].matID == 1)
+		{
+			return oneDownPos;
+		}
+		else if (coords.x > 0 && read[oneDownLeftIndex].matID == 1)
+		{
+			return oneDownLeftPos;
+		}
+		else if (coords.y < gridCols && read[oneDownRightIndex].matID == 1)
+		{
+			return oneDownRightPos;
+		}
+	}
+	// Not expected to move
+	return coords;
+}
+
 void main() {
 	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
 	int index = indexFromCoords(coords);
 	Pixel at = read[index];
 
-	Pixel oneUp = read[indexFromCoords(coords + ivec2(0, 1))];
-	Pixel oneDown = read[indexFromCoords(coords - ivec2(0, 1))];
-	if (at.matID == 1 && oneUp.matID == 2)
-	{
-		write[index].matID = 2;
-	}
-	else if (at.matID == 2 && oneDown.matID == 1)
-	{
-		write[index].matID = 1;
-	}
-	else
-	{
-		write[index] = read[index];
-	}
+	int searchMin = -1;
+	int searchMax = 1;
 
+	if (at.matID != 1)
+	{
+		return;
+	}
+	for (int lx = searchMin; lx <= searchMax; ++lx)
+	{
+		for (int ly = searchMin; ly <= searchMax; ++ly)
+		{
+			if (ly == lx && lx == 0)
+			{
+				// This is our pixel, dont check would just fail
+				continue;
+			}
+			ivec2 lCoords = coords + ivec2(lx, ly);
+			int lIndex = indexFromCoords(lCoords);
+
+			if (getExpectedPos(lCoords, lIndex) == coords)
+			{
+				write[index].matID = read[lIndex].matID;
+				write[lIndex].matID = at.matID;
+			}
+		}
+	}
 }

@@ -42,7 +42,7 @@ void PixelsGPU::Simulation::Initialise()
 	glGenBuffers(1, &ssbo1);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo1);
 
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(CellPixel) * width * height, nullptr, GL_DYNAMIC_COPY);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, CalculateSsboSize(), nullptr, GL_DYNAMIC_COPY);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo1);
 	readSsbo = &ssbo1;
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -50,7 +50,7 @@ void PixelsGPU::Simulation::Initialise()
 	glGenBuffers(1, &ssbo2);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo2);
 
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(CellPixel) * width * height, nullptr, GL_DYNAMIC_COPY);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, CalculateSsboSize(), nullptr, GL_DYNAMIC_COPY);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo2);
 	writeSsbo = &ssbo2;
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -59,6 +59,13 @@ void PixelsGPU::Simulation::Initialise()
 void PixelsGPU::Simulation::Update(float delta)
 {
 	BindCorrectReadWriteSSBOs();
+	glBindBuffer(GL_COPY_READ_BUFFER, *readSsbo);
+	glBindBuffer(GL_COPY_WRITE_BUFFER, *writeSsbo);
+	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, CalculateSsboSize());
+	glBindBuffer(GL_COPY_READ_BUFFER, 0);
+	glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT); // Lochie: Not sure on what should actually be here
+	
 
 	updatePixels->Use();
 	updatePixels->setInt("gridCols", width);
@@ -66,6 +73,11 @@ void PixelsGPU::Simulation::Update(float delta)
 
 	updatePixels->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
 	SwitchReadWriteSSBOs();
+}
+
+size_t PixelsGPU::Simulation::CalculateSsboSize()
+{
+	return sizeof(CellPixel) * width * height;
 }
 
 void PixelsGPU::Simulation::SetCircleToMaterial(glm::ivec2 pos, float radius, int matID)
@@ -82,6 +94,11 @@ void PixelsGPU::Simulation::SetCircleToMaterial(glm::ivec2 pos, float radius, in
 
 	placeCircle->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
 	SwitchReadWriteSSBOs();
+}
+
+void PixelsGPU::Simulation::SetCircleToMaterial(int x, int y, float radius, int matID)
+{
+	SetCircleToMaterial(glm::ivec2(x, y), radius, matID);
 }
 
 void GpuPixelSimScene::Start()
