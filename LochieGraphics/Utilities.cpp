@@ -91,3 +91,9 @@ std::string Utilities::FilenameFromPath(const std::string& path, bool includeExt
 	return path.substr(start, path.find_last_of('.') - start);
 }
 
+std::string Utilities::PathWithoutFilename(const std::string& path)
+{
+	unsigned long long end = path.find_last_of("/\\") + 1;
+	return path.substr(0, end);
+}
+
