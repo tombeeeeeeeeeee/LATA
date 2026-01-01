@@ -78,9 +78,6 @@
     <Filter Include="Source Files\Pixels">
       <UniqueIdentifier>{fe25e853-725c-452e-b543-1a7cf617a6a1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Third-Party\box2d\include">
-      <UniqueIdentifier>{8917e0e7-5b5c-4b82-8532-0fde194b7858}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -329,6 +326,9 @@
     <ClCompile Include="ThreadPool.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="GpuPixelSimScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -553,6 +553,14 @@
     <ClInclude Include="ThreadPool.h">
       <Filter>Source Files\Misc</Filter>
     </ClInclude>
+    <ClInclude Include="..\Third Party\box2d\box2cpp\box2cpp.h" />
+    <ClInclude Include="..\Third Party\box2d\box2d\include\base.h" />
+    <ClInclude Include="..\Third Party\box2d\box2d\include\box2d.h" />
+    <ClInclude Include="..\Third Party\box2d\box2d\include\collision.h" />
+    <ClInclude Include="..\Third Party\box2d\box2d\include\id.h" />
+    <ClInclude Include="..\Third Party\box2d\box2d\include\math_functions.h" />
+    <ClInclude Include="..\Third Party\box2d\box2d\include\types.h" />
+    <ClInclude Include="GpuPixelSimScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
@@ -787,6 +795,24 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\2dShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\basePixel.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\drawCircle.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\update.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\testPixelCompute.comp">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\simplePixelGpu.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\simplePixelGpu.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

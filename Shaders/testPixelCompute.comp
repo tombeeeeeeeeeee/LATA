@@ -1,23 +1,12 @@
 #version 460 core
 
-layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
-
-layout (location = 0) uniform float t;
-
-struct Pixel {
-	int matID;
-};
-
-layout(std430, binding = 4) buffer Pixels
-{
-	Pixel grid[];
-};
+//! #include "basePixel.comp"
 
 void main() {
-	grid[gl_GlobalInvocationID.x].matID = (int(gl_GlobalInvocationID.x) + grid[gl_GlobalInvocationID.x].matID) % 3;
-	//if (gl_GlobalInvocationID.x < 1)
-	//{
-	//	grid[gl_GlobalInvocationID.x].matID = 1;
-	//}
+	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
+	int index = indexFromCoords(coords);
+	Pixel at = read[index];
+
+	write[index].matID = (int(gl_GlobalInvocationID.x + gl_GlobalInvocationID.y) + at.matID) % 3;
 
 }

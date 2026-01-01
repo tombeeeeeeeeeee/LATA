@@ -1,0 +1,23 @@
+#version 460 core
+
+//! #include "basePixel.comp"
+
+uniform ivec2 centerCoords;
+uniform float radius;
+uniform Pixel pixel;
+
+void main() {
+	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
+	int index = indexFromCoords(coords);
+	Pixel at = read[index];
+
+	//write[index].matID = (int(gl_GlobalInvocationID.x + gl_GlobalInvocationID.y) + at.matID) % 3;
+	if (length(vec2(coords - centerCoords)) <= radius)
+	{
+		write[index] = pixel;
+	}
+	else
+	{
+		write[index] = read[index];
+	}
+}

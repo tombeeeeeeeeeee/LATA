@@ -17,13 +17,17 @@ layout(std430, binding = 4) buffer Pixels
 	Pixel grid[];
 };
 
+int indexFromCoords(ivec2 coord)
+{
+	return (coord.x % gridCols) + (coord.y * gridCols);
+}
 
 void main()
 {
 	int col = int(gridCols * texCoords.x);
 	int row = int(gridRows * texCoords.y);
 	
-	int index = col * gridRows + row;
+	int index = indexFromCoords(ivec2(col, row));
 	
 	uint gridValue = grid[index].matID;
 

@@ -1,0 +1,25 @@
+#version 460 core
+
+//! #include "basePixel.comp"
+
+void main() {
+	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
+	int index = indexFromCoords(coords);
+	Pixel at = read[index];
+
+	Pixel oneUp = read[indexFromCoords(coords + ivec2(0, 1))];
+	Pixel oneDown = read[indexFromCoords(coords - ivec2(0, 1))];
+	if (at.matID == 1 && oneUp.matID == 2)
+	{
+		write[index].matID = 2;
+	}
+	else if (at.matID == 2 && oneDown.matID == 1)
+	{
+		write[index].matID = 1;
+	}
+	else
+	{
+		write[index] = read[index];
+	}
+
+}

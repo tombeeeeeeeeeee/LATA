@@ -7,45 +7,97 @@
 
 #include "Paths.h"
 
+void GpuPixelSimScene::LoadShaders()
+{
+	pixelShader = ResourceManager::LoadShader("simplePixelGpu");
+	simple2dShader = ResourceManager::LoadShader("ui");
+	if (updatePixels)
+	{
+		updatePixels->DeleteProgram();
+	}
+	updatePixels = new ComputeShader(Paths::importShaderLocation + "update" + Paths::computeExtension);
+	placeCircle = new ComputeShader(Paths::importShaderLocation + "drawCircle" + Paths::computeExtension);
+	testCompute = new ComputeShader(Paths::importShaderLocation + "testPixelCompute" + Paths::computeExtension);
+}
+
+void GpuPixelSimScene::BindCorrectReadWriteSSBOs()
+{
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, *readSsbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, *writeSsbo);
+}
+
+void GpuPixelSimScene::SwitchReadWriteSSBOs()
+{
+	readSsbo = readSsbo == &ssbo1 ? &ssbo2 : &ssbo1;
+	writeSsbo = writeSsbo == &ssbo1 ? &ssbo2 : &ssbo1;
+}
+
 void GpuPixelSimScene::Start()
 {
-	glGenBuffers(1, &ssbo);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+	glGenBuffers(1, &ssbo1);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo1);
 
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(CellPixel) * width * height, nullptr, GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo1);
+	readSsbo = &ssbo1;
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+	glGenBuffers(1, &ssbo2);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo2);
+
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(CellPixel) * width * height, nullptr, GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo2);
+	writeSsbo = &ssbo2;
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
 
 	texture = ResourceManager::CreateTexture(width, height, GL_RGBA, nullptr, GL_CLAMP_TO_BORDER, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
 
 	frameBuffer = new FrameBuffer(width, height, texture, nullptr, false);
 
+	LoadShaders();
 	//displayGUI = false;
-
-	pixelShader = ResourceManager::LoadShader("simplePixelGpu");
-	simple2dShader = ResourceManager::LoadShader("ui");
-	temp1 = new ComputeShader(Paths::importShaderLocation + "testPixelCompute" + Paths::computeExtension);
 
 	quad.InitialiseQuad(1.0f);
 }
 
 void GpuPixelSimScene::Update(float delta)
 {
+	if (update || updateOnce)
+	{
+		updateOnce = false;
+		BindCorrectReadWriteSSBOs();
+
+		updatePixels->Use();
+		updatePixels->setInt("gridCols", width);
+		updatePixels->setInt("gridRows", height);
+
+		updatePixels->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+		SwitchReadWriteSSBOs();
+	}
+
+	if (glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		BindCorrectReadWriteSSBOs();
+
+		placeCircle->Use();
+		placeCircle->setInt("gridCols", width);
+		placeCircle->setInt("gridRows", height);
+
+		placeCircle->setIVec2("centerCoords", glm::ivec2(cursorPos->x * width, cursorPos->y * height));
+		placeCircle->setFloat("radius", 5.0f);
+		placeCircle->setInt("pixel.matID", placingMatID);
+		
+		placeCircle->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+		SwitchReadWriteSSBOs();
+	}
 }
 
-static bool doThing = false;
 
 void GpuPixelSimScene::Draw(float delta)
 {
-	if (doThing)
-	{
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+	BindCorrectReadWriteSSBOs();
 
-		doThing = false;
-		temp1->Run(width * height, 1u, 1u);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-	}
 
 	frameBuffer->Bind();
 	glViewport(0, 0, width, height);
@@ -66,8 +118,14 @@ void GpuPixelSimScene::Draw(float delta)
 
 void GpuPixelSimScene::GUI()
 {
-	if (ImGui::Button("Test"))
+	ImGui::Checkbox("Update", &update);
+	if (ImGui::Button("Update once"))
 	{
-		doThing = true;
+		updateOnce = true;
 	}
+	if (ImGui::Button("Reload shaders"))
+	{
+		LoadShaders();
+	}
+	ImGui::InputInt("MatID placing", &placingMatID);
 }

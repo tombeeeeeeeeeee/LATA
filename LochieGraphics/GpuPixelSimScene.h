@@ -13,22 +13,37 @@ private:
 		int matId;
 	};
 
+	bool update = false;
+	bool updateOnce = false;
 	
 	int width = 100;
 	int height = 100;
 
+	int placingMatID = 0;
+
 	// this will be the ssbo that holds all the pixel data
-	unsigned int ssbo = -1;
+	unsigned int ssbo1 = -1;
+	unsigned int ssbo2 = -1;
+
+	unsigned int* readSsbo = nullptr;
+	unsigned int* writeSsbo = nullptr;
 
 	Texture* texture = nullptr;
 	FrameBuffer* frameBuffer = nullptr;
 
-	ComputeShader* temp1 = nullptr;
+	ComputeShader* updatePixels = nullptr;
+	ComputeShader* placeCircle = nullptr;
+	ComputeShader* testCompute = nullptr;
 
 	Shader* pixelShader = nullptr;
 	Shader* simple2dShader = nullptr;
 
 	Mesh quad;
+
+	void LoadShaders();
+
+	void BindCorrectReadWriteSSBOs();
+	void SwitchReadWriteSSBOs();
 
 public:
 	//GpuPixelSimScene();
