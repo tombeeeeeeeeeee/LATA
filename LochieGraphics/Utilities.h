@@ -33,4 +33,5 @@ namespace Utilities {
 	std::string ToLower(const std::string& str);
 
 	std::string FilenameFromPath(const std::string& path, bool includeExtension = true);
+	std::string PathWithoutFilename(const std::string& path);
 }
