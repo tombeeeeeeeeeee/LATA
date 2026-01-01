@@ -52,9 +52,30 @@ Shader::Shader(std::string _vertexPath, std::string _fragmentPath, int _updateFl
 	Load();
 }
 
+std::string Shader::GetShaderCode(std::string path)
+{
+	std::string code = Utilities::FileToString(path);
+	// Use this as the include symbol as thats what the vs extension very simply recognises
+	static const std::string preInclude = "\n//! #include \"";
+	
+	for (size_t found = code.find(preInclude); found != std::string::npos; found = code.find(preInclude))
+	{
+		size_t endIncludeFileNameIndex = code.find_first_of('\"', found + preInclude.size());
+		size_t startIncludeFileNameIndex = found + preInclude.size();
+		std::string includeFileName = code.substr(startIncludeFileNameIndex, endIncludeFileNameIndex - startIncludeFileNameIndex);
+		
+		std::string pathWithoutFilename = Utilities::PathWithoutFilename(path);
+		std::string includeFilePath = pathWithoutFilename + includeFileName;
+
+		code.replace(found, endIncludeFileNameIndex + 1 - found, GetShaderCode(includeFilePath));
+	}
+
+	return code;
+}
+
 unsigned int Shader::CompileShader(std::string path, int type)
 {
-	std::string temp = Utilities::FileToString(path);
+	std::string temp = GetShaderCode(path);
 	const char* shaderCode = temp.c_str();
 
 	unsigned int shader;
@@ -124,7 +145,6 @@ GLint Shader::getUniformLocation(const std::string& name) const
 	return location;
 }
 
-
 void Shader::Use()
 {
 	if (usingID != GLID) {
@@ -147,6 +167,11 @@ void Shader::setSampler(const std::string& name, unsigned int value)
 void Shader::setInt(const std::string& name, int value)
 {
 	glUniform1i(getUniformLocation(name), value);
+}
+
+void Shader::setIVec2(const std::string& name, const glm::ivec2& value)
+{
+	glUniform2iv(getUniformLocation(name), 1, &value[0]);
 }
 
 void Shader::setFloat(const std::string& name, float value)

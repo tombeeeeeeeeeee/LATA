@@ -26,6 +26,7 @@ class Shader
 {
 protected:
 	int getUniformLocation(const std::string& name) const;
+	static std::string GetShaderCode(std::string path);
 	static unsigned int CompileShader(std::string path, int type);
 	static unsigned int CreateProgram(std::vector<unsigned int> shaders);
 	bool loaded = false;
@@ -67,6 +68,7 @@ public:
 	void setBool(const std::string& name, bool value);
 	void setSampler(const std::string& name, unsigned int value);
 	void setInt(const std::string& name, int value);
+	void setIVec2(const std::string& name, const glm::ivec2& value);
 	void setFloat(const std::string& name, float value);
 	void setVec2(const std::string& name, const glm::vec2& value);
 	void setVec2(const std::string& name, float x, float y);
