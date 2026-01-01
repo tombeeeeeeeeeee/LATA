@@ -11,6 +11,11 @@ void GpuPixelSimScene::LoadShaders()
 {
 	pixelShader = ResourceManager::LoadShader("simplePixelGpu");
 	simple2dShader = ResourceManager::LoadShader("ui");
+	pixelSim.LoadComputeShaders();
+}
+
+void PixelsGPU::Simulation::LoadComputeShaders()
+{
 	if (updatePixels)
 	{
 		updatePixels->DeleteProgram();
@@ -20,19 +25,19 @@ void GpuPixelSimScene::LoadShaders()
 	testCompute = new ComputeShader(Paths::importShaderLocation + "testPixelCompute" + Paths::computeExtension);
 }
 
-void GpuPixelSimScene::BindCorrectReadWriteSSBOs()
+void PixelsGPU::Simulation::BindCorrectReadWriteSSBOs()
 {
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, *readSsbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, *writeSsbo);
 }
 
-void GpuPixelSimScene::SwitchReadWriteSSBOs()
+void PixelsGPU::Simulation::SwitchReadWriteSSBOs()
 {
 	readSsbo = readSsbo == &ssbo1 ? &ssbo2 : &ssbo1;
 	writeSsbo = writeSsbo == &ssbo1 ? &ssbo2 : &ssbo1;
 }
 
-void GpuPixelSimScene::Start()
+void PixelsGPU::Simulation::Initialise()
 {
 	glGenBuffers(1, &ssbo1);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo1);
@@ -49,11 +54,43 @@ void GpuPixelSimScene::Start()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo2);
 	writeSsbo = &ssbo2;
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
 
+void PixelsGPU::Simulation::Update(float delta)
+{
+	BindCorrectReadWriteSSBOs();
 
-	texture = ResourceManager::CreateTexture(width, height, GL_RGBA, nullptr, GL_CLAMP_TO_BORDER, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
+	updatePixels->Use();
+	updatePixels->setInt("gridCols", width);
+	updatePixels->setInt("gridRows", height);
 
-	frameBuffer = new FrameBuffer(width, height, texture, nullptr, false);
+	updatePixels->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+	SwitchReadWriteSSBOs();
+}
+
+void PixelsGPU::Simulation::SetCircleToMaterial(glm::ivec2 pos, float radius, int matID)
+{
+	BindCorrectReadWriteSSBOs();
+
+	placeCircle->Use();
+	placeCircle->setInt("gridCols", width);
+	placeCircle->setInt("gridRows", height);
+
+	placeCircle->setIVec2("centerCoords", pos);
+	placeCircle->setFloat("radius", radius);
+	placeCircle->setInt("pixel.matID", matID);
+
+	placeCircle->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+	SwitchReadWriteSSBOs();
+}
+
+void GpuPixelSimScene::Start()
+{
+	pixelSim.Initialise();
+
+	texture = ResourceManager::CreateTexture(pixelSim.width, pixelSim.height, GL_RGBA, nullptr, GL_CLAMP_TO_BORDER, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
+
+	frameBuffer = new FrameBuffer(pixelSim.width, pixelSim.height, texture, nullptr, false);
 
 	LoadShaders();
 	//displayGUI = false;
@@ -66,45 +103,26 @@ void GpuPixelSimScene::Update(float delta)
 	if (update || updateOnce)
 	{
 		updateOnce = false;
-		BindCorrectReadWriteSSBOs();
-
-		updatePixels->Use();
-		updatePixels->setInt("gridCols", width);
-		updatePixels->setInt("gridRows", height);
-
-		updatePixels->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
-		SwitchReadWriteSSBOs();
+		pixelSim.Update(delta);
 	}
 
 	if (glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
-		BindCorrectReadWriteSSBOs();
-
-		placeCircle->Use();
-		placeCircle->setInt("gridCols", width);
-		placeCircle->setInt("gridRows", height);
-
-		placeCircle->setIVec2("centerCoords", glm::ivec2(cursorPos->x * width, cursorPos->y * height));
-		placeCircle->setFloat("radius", 5.0f);
-		placeCircle->setInt("pixel.matID", placingMatID);
-		
-		placeCircle->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
-		SwitchReadWriteSSBOs();
+		pixelSim.SetCircleToMaterial(glm::ivec2(cursorPos->x * pixelSim.width, cursorPos->y * pixelSim.height), placingRadius, placingMatID);
 	}
 }
 
 
 void GpuPixelSimScene::Draw(float delta)
 {
-	BindCorrectReadWriteSSBOs();
-
+	pixelSim.BindCorrectReadWriteSSBOs();
 
 	frameBuffer->Bind();
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, pixelSim.width, pixelSim.height);
 
 	pixelShader->Use();
-	pixelShader->setInt("gridCols", width);
-	pixelShader->setInt("gridRows", height);
+	pixelShader->setInt("gridCols", pixelSim.width);
+	pixelShader->setInt("gridRows", pixelSim.height);
 	quad.Draw();
 
 	frameBuffer->Unbind();
@@ -128,4 +146,5 @@ void GpuPixelSimScene::GUI()
 		LoadShaders();
 	}
 	ImGui::InputInt("MatID placing", &placingMatID);
+	ImGui::SliderFloat("Placing radius", &placingRadius, 0.0f, (pixelSim.width + pixelSim.height) / 2);
 }

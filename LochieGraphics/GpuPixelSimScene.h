@@ -4,36 +4,54 @@
 #include "ComputeShader.h"
 #include "Mesh.h"
 
-class GpuPixelSimScene : public Scene
+namespace PixelsGPU
 {
-private:
+	class Simulation
+	{
+	public:
+		// this will be the ssbo that holds all the pixel data
+		unsigned int ssbo1 = -1;
+		unsigned int ssbo2 = -1;
+		unsigned int* readSsbo = nullptr;
+		unsigned int* writeSsbo = nullptr;
+	
+		int width = 1000;
+		int height = 1000;
+
+		ComputeShader* updatePixels = nullptr;
+		ComputeShader* placeCircle = nullptr;
+		ComputeShader* testCompute = nullptr;
+		void LoadComputeShaders();
+		void BindCorrectReadWriteSSBOs();
+		void SwitchReadWriteSSBOs();
+
+		void Initialise();
+		void Update(float delta);
+
+		void SetCircleToMaterial(glm::ivec2 pos, float radius, int matID);
+	};
 
 	struct CellPixel
 	{
 		int matId;
 	};
+	
+}
+
+class GpuPixelSimScene : public Scene
+{
+private:
+
+	PixelsGPU::Simulation pixelSim;
 
 	bool update = false;
 	bool updateOnce = false;
-	
-	int width = 100;
-	int height = 100;
 
 	int placingMatID = 0;
-
-	// this will be the ssbo that holds all the pixel data
-	unsigned int ssbo1 = -1;
-	unsigned int ssbo2 = -1;
-
-	unsigned int* readSsbo = nullptr;
-	unsigned int* writeSsbo = nullptr;
+	float placingRadius = 5;
 
 	Texture* texture = nullptr;
 	FrameBuffer* frameBuffer = nullptr;
-
-	ComputeShader* updatePixels = nullptr;
-	ComputeShader* placeCircle = nullptr;
-	ComputeShader* testCompute = nullptr;
 
 	Shader* pixelShader = nullptr;
 	Shader* simple2dShader = nullptr;
@@ -42,8 +60,6 @@ private:
 
 	void LoadShaders();
 
-	void BindCorrectReadWriteSSBOs();
-	void SwitchReadWriteSSBOs();
 
 public:
 	//GpuPixelSimScene();
