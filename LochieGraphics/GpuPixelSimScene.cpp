@@ -58,6 +58,8 @@ void PixelsGPU::Simulation::Initialise()
 
 void PixelsGPU::Simulation::Update(float delta)
 {
+	timer += delta;
+
 	BindCorrectReadWriteSSBOs();
 	glBindBuffer(GL_COPY_READ_BUFFER, *readSsbo);
 	glBindBuffer(GL_COPY_WRITE_BUFFER, *writeSsbo);
@@ -70,9 +72,12 @@ void PixelsGPU::Simulation::Update(float delta)
 	updatePixels->Use();
 	updatePixels->setInt("gridCols", width);
 	updatePixels->setInt("gridRows", height);
+	updatePixels->setInt("frameCount", frameCount);
 
 	updatePixels->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
 	SwitchReadWriteSSBOs();
+
+	++frameCount;
 }
 
 size_t PixelsGPU::Simulation::CalculateSsboSize()
@@ -91,6 +96,20 @@ void PixelsGPU::Simulation::SetCircleToMaterial(glm::ivec2 pos, float radius, in
 	placeCircle->setIVec2("centerCoords", pos);
 	placeCircle->setFloat("radius", radius);
 	placeCircle->setInt("pixel.matID", matID);
+	if (matID == 2)
+	{
+		placeCircle->setVec4("pixel.colour", glm::vec4(sin(timer * PI) / 4.0f + 0.75f, 0.76f, sin(timer * PI * 4) / 6.0f + 0.17f, 1.0));
+	}
+	else if (matID != 0)
+	{
+		placeCircle->setVec4("pixel.colour", glm::vec4(0.9, 0.9, 0.9, 1.0f));
+	}
+	else
+	{
+		placeCircle->setVec4("pixel.colour", glm::vec4(0.0, 0.0, 0.0, 1.0f));
+	}
+
+	placeCircle->setFloat("timer", timer);
 
 	placeCircle->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
 	SwitchReadWriteSSBOs();
@@ -140,6 +159,7 @@ void GpuPixelSimScene::Draw(float delta)
 	pixelShader->Use();
 	pixelShader->setInt("gridCols", pixelSim.width);
 	pixelShader->setInt("gridRows", pixelSim.height);
+	pixelShader->setInt("renderIndex", renderIndex);
 	quad.Draw();
 
 	frameBuffer->Unbind();
@@ -164,4 +184,5 @@ void GpuPixelSimScene::GUI()
 	}
 	ImGui::InputInt("MatID placing", &placingMatID);
 	ImGui::SliderFloat("Placing radius", &placingRadius, 0.0f, (pixelSim.width + pixelSim.height) / 2);
+	ImGui::InputInt("RenderIndex", &renderIndex);
 }

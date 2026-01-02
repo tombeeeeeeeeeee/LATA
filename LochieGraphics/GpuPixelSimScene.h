@@ -15,8 +15,11 @@ namespace PixelsGPU
 		unsigned int* readSsbo = nullptr;
 		unsigned int* writeSsbo = nullptr;
 	
-		int width = 1000;
-		int height = 1000;
+		int width = 1600;
+		int height = 900;
+
+		float timer = 0.0f;
+		int frameCount = 0;
 
 		ComputeShader* updatePixels = nullptr;
 		ComputeShader* placeCircle = nullptr;
@@ -56,6 +59,7 @@ private:
 
 	int placingMatID = 0;
 	float placingRadius = 5;
+	int renderIndex = 0;
 
 	Texture* texture = nullptr;
 	FrameBuffer* frameBuffer = nullptr;

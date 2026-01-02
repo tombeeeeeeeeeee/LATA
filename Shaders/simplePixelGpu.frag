@@ -4,11 +4,17 @@ out vec4 FragColor;
 
 in vec2 texCoords;
 
+//! #include "gpuPixelRep.glsl"
+
 // TODO: Should these be constants instead
 uniform int gridCols;
 uniform int gridRows;
 
-//! #include "gpuPixelRep.glsl"
+
+uniform int renderIndex;
+
+// Lochie: TODO: Prob move this to a own file
+const float PI = 3.1415926535897932384626433832795;
 
 layout(std430, binding = 4) buffer Pixels
 {
@@ -27,19 +33,38 @@ void main()
 	
 	int index = indexFromCoords(ivec2(col, row));
 	
-	uint gridValue = grid[index].matID;
+	Pixel pixel = grid[index];
+	vec3 colour = vec3(0.0, 0.0, 0.0);
 
-	vec3 pixelColour = vec3(0.0, 0.0, 0.0);
-	if (gridValue == 1)
+	if (renderIndex == 0) // Colour
 	{
-		pixelColour = vec3(0.62, 0.8, 0.84);
+		colour = vec3(pixel.colour);
 	}
-	else if (gridValue == 2)
+	else if (renderIndex == 1) // Vel
 	{
-		pixelColour = vec3(1.0, 0.84, 0.37);
+		colour = vec3(0.5 - (atan(pixel.vel.x) / PI), 0.5 - (atan(pixel.vel.y) / PI), 0.5);
+	}
+	else if (renderIndex == 2) // ID
+	{
+		uint gridValue = pixel.matID;
+		if (gridValue == 1)
+		{
+			colour = vec3(0.62, 0.8, 0.84);
+		}
+		else if (gridValue == 2)
+		{
+			colour = vec3(1.0, 0.84, 0.37);
+		}
+		else {
+			colour = vec3(1.0, 0.4 ,0.7);
+		}
+	}
+	else // Invalid
+	{
+		colour = vec3(texCoords, 0.5);
 	}
 
-	FragColor = vec4(pixelColour, 1.0);
+	FragColor = vec4(colour, 1.0);
 
 	// FragColor = vec4(float(col) / gridCols, float(row) / gridRows, float(index) / (gridRows * gridCols), 1.0);
 	// FragColor = vec4(texCoords, 0.0, 1.0);

@@ -2,52 +2,80 @@
 
 //! #include "basePixel.comp"
 
+uniform int frameCount;
+
 // We don't actually want to work out exactly the position if we don't care, only need for the one that will take our spot
-ivec2 getExpectedPos(ivec2 coords, int index)
+ivec2 getExpectedPos(ivec2 coords, int index, bool evenFrame)
 {
-	if (coords.y > 0 && coords.x >= 0 && coords.x < gridCols && read[index].matID == 2)
+	if (read[index].matID == 2)
 	{
-
-
-		ivec2 oneDownPos = coords + ivec2(0, -1);
-		int oneDownIndex = indexFromCoords(oneDownPos);
-		ivec2 oneDownLeftPos = coords + ivec2(-1, -1);
-		int oneDownLeftIndex = indexFromCoords(oneDownLeftPos);
-		ivec2 oneDownRightPos = coords + ivec2(1, -1);
-		int oneDownRightIndex = indexFromCoords(oneDownRightPos);
-		
-		if (read[oneDownIndex].matID == 1)
-		{
-			return oneDownPos;
-		}
-		else if (coords.x > 0 && read[oneDownLeftIndex].matID == 1)
-		{
-			return oneDownLeftPos;
-		}
-		else if (coords.y < gridCols && read[oneDownRightIndex].matID == 1)
-		{
-			return oneDownRightPos;
-		}
+		return coords + ivec2(round(read[index].vel));
 	}
+//	if (coords.y > 0 && coords.x >= 0 && coords.x < gridCols && read[index].matID == 2)
+//	{
+//		ivec2 oneDownPos = coords + ivec2(0, -1);
+//		int oneDownIndex = indexFromCoords(oneDownPos);
+//		ivec2 oneDownLeftPos = coords + ivec2(-1, -1);
+//		int oneDownLeftIndex = indexFromCoords(oneDownLeftPos);
+//		ivec2 oneDownRightPos = coords + ivec2(1, -1);
+//		int oneDownRightIndex = indexFromCoords(oneDownRightPos);
+//
+//		if (read[oneDownIndex].matID == 1)
+//		{
+//			return oneDownPos;
+//		}
+//		else if ((evenFrame) && (coords.x > 0) && (read[oneDownLeftIndex].matID == 1))
+//		{
+//			return oneDownLeftPos;
+//		}
+//		else if ((evenFrame) && (coords.y < gridCols) && (read[oneDownRightIndex].matID == 1))
+//		{
+//			return oneDownRightPos;
+//		}
+//		else if ((!evenFrame) && (coords.y < gridCols) && (read[oneDownRightIndex].matID == 1))
+//		{
+//			return oneDownRightPos;
+//		}
+//		else if ((!evenFrame) && (coords.x > 0) && (read[oneDownLeftIndex].matID == 1))
+//		{
+//			return oneDownLeftPos;
+//		}
+//	}
 	// Not expected to move
 	return coords;
 }
 
-void main() {
-	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
-	int index = indexFromCoords(coords);
+vec2 getExternalForcesAt(ivec2 coords)
+{
+	return vec2(0.0, -0.01);
+}
+
+void UpdateCell(ivec2 coords, int index)
+{
 	Pixel at = read[index];
 
-	int searchMin = -1;
-	int searchMax = 1;
+	bool even1Frame = frameCount % 2 == 0;
+	bool even2Frame = frameCount % 4 < 2;
+	bool even4Frame = frameCount % 8 < 4;
+	
+	// is a square but yeah
+	int searchRadius = 1;
+
+	int searchStartX = even2Frame ? -searchRadius : searchRadius;
+	int searchEndX   = even2Frame ? searchRadius + 1 : -searchRadius - 1;
+	int searchDirX   = even2Frame ? 1 : -1;
+	
+	int searchStartY = even4Frame ? -searchRadius : searchRadius;
+	int searchEndY   = even4Frame ? searchRadius + 1 : -searchRadius - 1;
+	int searchDirY   = even4Frame ? 1 : -1;
 
 	if (at.matID != 1)
 	{
 		return;
 	}
-	for (int lx = searchMin; lx <= searchMax; ++lx)
+	for (int ly = searchStartY; ly != searchEndY; ly+=searchDirY)
 	{
-		for (int ly = searchMin; ly <= searchMax; ++ly)
+		for (int lx = searchStartX; lx != searchEndX; lx+=searchDirX)
 		{
 			if (ly == lx && lx == 0)
 			{
@@ -57,11 +85,30 @@ void main() {
 			ivec2 lCoords = coords + ivec2(lx, ly);
 			int lIndex = indexFromCoords(lCoords);
 
-			if (getExpectedPos(lCoords, lIndex) == coords)
+			if (getExpectedPos(lCoords, lIndex, even1Frame) == coords)
 			{
-				write[index].matID = read[lIndex].matID;
-				write[lIndex].matID = at.matID;
+				write[index] = read[lIndex];
+				write[lIndex] = at;
+				return;
 			}
 		}
 	}
+}
+
+void main() {
+
+	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
+	int index = indexFromCoords(coords);
+	UpdateCell(coords, index);
+	// need to ensure speed limit here
+	float speedLimit = 1.0;
+	vec2 newVel = write[index].vel + getExternalForcesAt(coords);
+	float newVelLength = length(newVel);
+	if (newVelLength > speedLimit)
+	{
+		newVel /= newVelLength;
+		newVel *= speedLimit;
+	}
+	write[index].vel = newVel;
+
 }
