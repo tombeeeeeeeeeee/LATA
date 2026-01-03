@@ -82,38 +82,12 @@ void PixelsGPU::Simulation::Update(float delta)
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT); // Lochie: Not sure on what should actually be here
 	glBindBuffer(GL_COPY_READ_BUFFER, 0);
 	glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
-	//if (!debugTest)
-	//{
-	//	testCompute2->Use();
-	//	testCompute2->setInt("gridCols", width);
-	//	testCompute2->setInt("gridRows", height);
-	//	testCompute2->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
-	//}
-	//else
-	//{
-	//	testCompute->Use();
-	//	testCompute->setInt("gridCols", width);
-	//	testCompute->setInt("gridRows", height);
-	//	testCompute->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
-	//}
-	
 
-	if (debugTest)
-	{
-		updatePixels->Use();
-		updatePixels->setInt("gridCols", width);
-		updatePixels->setInt("gridRows", height);
-		updatePixels->setInt("frameCount", frameCount);
-		updatePixels->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
-	}
-	else
-	{
-		testCompute2->Use();
-		testCompute2->setInt("gridCols", width);
-		testCompute2->setInt("gridRows", height);
-		testCompute2->setInt("frameCount", frameCount);
-		testCompute2->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
-	}
+	updatePixels->Use();
+	updatePixels->setInt("gridCols", width);
+	updatePixels->setInt("gridRows", height);
+	updatePixels->setInt("frameCount", frameCount);
+	updatePixels->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
 	SwitchReadWriteSSBOs();
 
 	++frameCount;
@@ -150,7 +124,7 @@ void PixelsGPU::Simulation::SetCircleToMaterial(glm::ivec2 pos, float radius, in
 
 	placeCircle->setFloat("timer", timer);
 
-	placeCircle->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+	placeCircle->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
 	SwitchReadWriteSSBOs();
 }
 
