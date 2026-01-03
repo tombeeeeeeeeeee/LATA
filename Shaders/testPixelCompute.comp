@@ -5,8 +5,7 @@
 void main() {
 	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
 	int index = indexFromCoords(coords);
-	Pixel at = read[index];
 
-	write[index].matID = (int(gl_GlobalInvocationID.x + gl_GlobalInvocationID.y) + at.matID) % 3;
-
+	write[index] = read[index];
+	write[index].colour = vec4(1, 1, 0, 1);
 }

@@ -15,15 +15,17 @@ namespace PixelsGPU
 		unsigned int* readSsbo = nullptr;
 		unsigned int* writeSsbo = nullptr;
 	
-		int width = 1600;
-		int height = 900;
+		int width = 1024;
+		int height = 1024;
 
 		float timer = 0.0f;
 		int frameCount = 0;
+		bool debugTest = false;
 
 		ComputeShader* updatePixels = nullptr;
 		ComputeShader* placeCircle = nullptr;
 		ComputeShader* testCompute = nullptr;
+		ComputeShader* testCompute2 = nullptr;
 		void LoadComputeShaders();
 		void BindCorrectReadWriteSSBOs();
 		void SwitchReadWriteSSBOs();

@@ -61,7 +61,7 @@ void main()
 	}
 	else // Invalid
 	{
-		colour = vec3(texCoords, 0.5);
+		colour = vec3(texCoords, 0.0);
 	}
 
 	FragColor = vec4(colour, 1.0);

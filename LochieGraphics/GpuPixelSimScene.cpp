@@ -20,9 +20,24 @@ void PixelsGPU::Simulation::LoadComputeShaders()
 	{
 		updatePixels->DeleteProgram();
 	}
+
+	int workGroupSize[3];
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &workGroupSize[0]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &workGroupSize[1]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &workGroupSize[2]);
+
+	int workGroupCounts[3] = { 0 };
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &workGroupCounts[0]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &workGroupCounts[1]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &workGroupCounts[2]);
+
+	int workGroupInvocations;
+	glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &workGroupInvocations);
+
 	updatePixels = new ComputeShader(Paths::importShaderLocation + "update" + Paths::computeExtension);
 	placeCircle = new ComputeShader(Paths::importShaderLocation + "drawCircle" + Paths::computeExtension);
 	testCompute = new ComputeShader(Paths::importShaderLocation + "testPixelCompute" + Paths::computeExtension);
+	testCompute2 = new ComputeShader(Paths::importShaderLocation + "testPixelCompute2" + Paths::computeExtension);
 }
 
 void PixelsGPU::Simulation::BindCorrectReadWriteSSBOs()
@@ -64,17 +79,41 @@ void PixelsGPU::Simulation::Update(float delta)
 	glBindBuffer(GL_COPY_READ_BUFFER, *readSsbo);
 	glBindBuffer(GL_COPY_WRITE_BUFFER, *writeSsbo);
 	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, CalculateSsboSize());
+	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT); // Lochie: Not sure on what should actually be here
 	glBindBuffer(GL_COPY_READ_BUFFER, 0);
 	glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT); // Lochie: Not sure on what should actually be here
+	//if (!debugTest)
+	//{
+	//	testCompute2->Use();
+	//	testCompute2->setInt("gridCols", width);
+	//	testCompute2->setInt("gridRows", height);
+	//	testCompute2->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+	//}
+	//else
+	//{
+	//	testCompute->Use();
+	//	testCompute->setInt("gridCols", width);
+	//	testCompute->setInt("gridRows", height);
+	//	testCompute->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+	//}
 	
 
-	updatePixels->Use();
-	updatePixels->setInt("gridCols", width);
-	updatePixels->setInt("gridRows", height);
-	updatePixels->setInt("frameCount", frameCount);
-
-	updatePixels->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+	if (debugTest)
+	{
+		updatePixels->Use();
+		updatePixels->setInt("gridCols", width);
+		updatePixels->setInt("gridRows", height);
+		updatePixels->setInt("frameCount", frameCount);
+		updatePixels->Run(width, height, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+	}
+	else
+	{
+		testCompute2->Use();
+		testCompute2->setInt("gridCols", width);
+		testCompute2->setInt("gridRows", height);
+		testCompute2->setInt("frameCount", frameCount);
+		testCompute2->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+	}
 	SwitchReadWriteSSBOs();
 
 	++frameCount;
@@ -185,4 +224,5 @@ void GpuPixelSimScene::GUI()
 	ImGui::InputInt("MatID placing", &placingMatID);
 	ImGui::SliderFloat("Placing radius", &placingRadius, 0.0f, (pixelSim.width + pixelSim.height) / 2);
 	ImGui::InputInt("RenderIndex", &renderIndex);
+	ImGui::Checkbox("debug test", &pixelSim.debugTest);
 }

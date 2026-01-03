@@ -1,6 +1,33 @@
 #version 460 core
 
-//! #include "basePixel.comp"
+
+layout (local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
+
+//! #include "gpuPixelRep.glsl"
+
+// TODO: Should these be constants instead
+uniform int gridCols;
+uniform int gridRows;
+
+layout(std430, binding = 4) buffer PixelsRead
+{
+	Pixel read[];
+};
+
+layout(std430, binding = 5) buffer PixelsWrite
+{
+	Pixel write[];
+};
+
+int indexFromCoords(ivec2 coord)
+{
+	return (coord.x % gridCols) + (coord.y * gridCols);
+}
+
+ivec2 coordsFromIndex(int index)
+{
+	return ivec2(index % gridCols, index / gridCols);
+}
 
 uniform int frameCount;
 
@@ -9,7 +36,7 @@ ivec2 getExpectedPos(ivec2 coords, int index, bool evenFrame)
 {
 	if (read[index].matID == 2)
 	{
-		return coords + ivec2(round(read[index].vel));
+		return coords + ivec2(round(read[index].vel + read[index].subPos));
 	}
 
 	// Not expected to move
