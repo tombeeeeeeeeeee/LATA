@@ -21,6 +21,7 @@ void PixelsGPU::Simulation::LoadComputeShaders()
 		updatePixels->DeleteProgram();
 	}
 
+	// Need to make sure these are all good limit wise when running on a worse device than mine
 	int workGroupSize[3];
 	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &workGroupSize[0]);
 	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &workGroupSize[1]);

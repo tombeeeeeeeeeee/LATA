@@ -5,6 +5,8 @@
 
 #include "PixelSimulation.h"
 
+#include "GpuPixelSimScene.h"
+
 
 class TestScene : public Scene
 {

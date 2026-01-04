@@ -45,6 +45,7 @@ namespace PixelsGPU
 	{
 		int matId;
 		glm::vec2 vel;
+		glm::vec2 subPos;
 		glm::vec4 colour;
 	};
 	

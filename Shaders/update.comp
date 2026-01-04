@@ -9,7 +9,7 @@ ivec2 getExpectedPos(ivec2 coords, int index, bool evenFrame)
 {
 	if (read[index].matID == 2)
 	{
-		return coords + ivec2(round(read[index].vel));
+		return coords + ivec2(round(read[index].vel + read[index].subPos));
 	}
 
 	// Not expected to move
@@ -18,7 +18,9 @@ ivec2 getExpectedPos(ivec2 coords, int index, bool evenFrame)
 
 vec2 getExternalForcesAt(ivec2 coords)
 {
-	return vec2(0.0, -0.01);
+	ivec2 middle = ivec2(512, 512);
+	vec2 toMiddle = middle - coords;
+	return normalize(toMiddle) * 0.0005;
 }
 
 bool UpdateCell(ivec2 coords, int index)

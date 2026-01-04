@@ -75,6 +75,7 @@ SceneManager::SceneManager(Scene* _scene)
 	glfwSetMouseButtonCallback(window, MouseButtonCallback);
 
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(0); // v sync off
 	
 	if (!gladLoadGL())
 	{
@@ -421,6 +422,7 @@ void GLAPIENTRY SceneManager::ErrorMessageCallback(GLenum source, GLenum type, G
 
 void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	// If you hit a breakpoint here, check if the one above has for some reason been reset here
 	if (ImGui::GetIO().WantCaptureKeyboard) { return; }
 
 	if ((key == GLFW_KEY_F11 && action == GLFW_PRESS) || (key == GLFW_KEY_ENTER && action == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)) {

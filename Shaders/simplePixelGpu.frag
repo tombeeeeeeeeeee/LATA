@@ -59,6 +59,10 @@ void main()
 			colour = vec3(1.0, 0.4 ,0.7);
 		}
 	}
+	else if (renderIndex == 3) // subpos
+	{
+		colour = vec3(pixel.subPos.x + 0.5, pixel.subPos.y + 0.5, 0);
+	}
 	else // Invalid
 	{
 		colour = vec3(texCoords, 0.0);
