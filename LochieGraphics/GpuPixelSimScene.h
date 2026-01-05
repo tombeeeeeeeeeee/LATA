@@ -23,6 +23,7 @@ namespace PixelsGPU
 		bool debugTest = false;
 
 		ComputeShader* updatePixels = nullptr;
+		ComputeShader* preUpdate = nullptr;
 		ComputeShader* placeCircle = nullptr;
 		ComputeShader* testCompute = nullptr;
 		ComputeShader* testCompute2 = nullptr;

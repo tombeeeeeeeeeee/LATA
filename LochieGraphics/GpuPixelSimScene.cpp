@@ -36,6 +36,7 @@ void PixelsGPU::Simulation::LoadComputeShaders()
 	glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &workGroupInvocations);
 
 	updatePixels = new ComputeShader(Paths::importShaderLocation + "update" + Paths::computeExtension);
+	preUpdate = new ComputeShader(Paths::importShaderLocation + "preUpdate" + Paths::computeExtension);
 	placeCircle = new ComputeShader(Paths::importShaderLocation + "drawCircle" + Paths::computeExtension);
 	testCompute = new ComputeShader(Paths::importShaderLocation + "testPixelCompute" + Paths::computeExtension);
 	testCompute2 = new ComputeShader(Paths::importShaderLocation + "testPixelCompute2" + Paths::computeExtension);
@@ -77,6 +78,17 @@ void PixelsGPU::Simulation::Update(float delta)
 	timer += delta;
 
 	BindCorrectReadWriteSSBOs();
+
+	preUpdate->Use();
+	updatePixels->setInt("gridCols", width);
+	updatePixels->setInt("gridRows", height);
+	updatePixels->setInt("frameCount", frameCount);
+	updatePixels->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+
+	// Instead of doing swaping the ssbos, could just have either one of have them swapped inside of the shader
+	SwitchReadWriteSSBOs();
+	BindCorrectReadWriteSSBOs();
+
 	glBindBuffer(GL_COPY_READ_BUFFER, *readSsbo);
 	glBindBuffer(GL_COPY_WRITE_BUFFER, *writeSsbo);
 	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, CalculateSsboSize());
@@ -90,6 +102,8 @@ void PixelsGPU::Simulation::Update(float delta)
 	updatePixels->setInt("frameCount", frameCount);
 	updatePixels->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
 	SwitchReadWriteSSBOs();
+
+	
 
 	++frameCount;
 }
