@@ -42,7 +42,7 @@ void main()
 	}
 	else if (renderIndex == 1) // Vel
 	{
-		colour = vec3(0.5 - (atan(pixel.vel.x) / PI), 0.5 - (atan(pixel.vel.y) / PI), 0.5);
+		colour = vec3(0.5 + (atan(pixel.vel.x) / PI), 0.5 + (atan(pixel.vel.y) / PI), 0.5);
 	}
 	else if (renderIndex == 2) // ID
 	{
@@ -61,7 +61,8 @@ void main()
 	}
 	else if (renderIndex == 3) // subpos
 	{
-		colour = vec3(pixel.subPos.x + 0.5, pixel.subPos.y + 0.5, 0);
+		colour = vec3(0.5 + (atan(pixel.subPos.x) / PI), 0.5 + (atan(pixel.subPos.y) / PI), 0.5);
+		//colour = vec3(pixel.subPos.x / 2.0 + 0.5, pixel.subPos.y / 2.0 + 0.5, 0);
 	}
 	else // Invalid
 	{

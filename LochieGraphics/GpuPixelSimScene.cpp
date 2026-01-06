@@ -75,37 +75,28 @@ void PixelsGPU::Simulation::Initialise()
 
 void PixelsGPU::Simulation::Update(float delta)
 {
-	timer += delta;
+	for (int i = 0; i < subUpdates; i++)
+	{
+		timer += delta;
 
-	BindCorrectReadWriteSSBOs();
+		BindCorrectReadWriteSSBOs();
+		preUpdate->Use();
+		preUpdate->setInt("gridCols", width);
+		preUpdate->setInt("gridRows", height);
+		preUpdate->setInt("frameCount", frameCount);
+		preUpdate->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+		SwitchReadWriteSSBOs();
 
-	preUpdate->Use();
-	updatePixels->setInt("gridCols", width);
-	updatePixels->setInt("gridRows", height);
-	updatePixels->setInt("frameCount", frameCount);
-	updatePixels->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+		BindCorrectReadWriteSSBOs();
+		updatePixels->Use();
+		updatePixels->setInt("gridCols", width);
+		updatePixels->setInt("gridRows", height);
+		updatePixels->setInt("frameCount", frameCount);
+		updatePixels->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
+		SwitchReadWriteSSBOs();
 
-	// Instead of doing swaping the ssbos, could just have either one of have them swapped inside of the shader
-	SwitchReadWriteSSBOs();
-	BindCorrectReadWriteSSBOs();
-
-	glBindBuffer(GL_COPY_READ_BUFFER, *readSsbo);
-	glBindBuffer(GL_COPY_WRITE_BUFFER, *writeSsbo);
-	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, CalculateSsboSize());
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT); // Lochie: Not sure on what should actually be here
-	glBindBuffer(GL_COPY_READ_BUFFER, 0);
-	glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
-
-	updatePixels->Use();
-	updatePixels->setInt("gridCols", width);
-	updatePixels->setInt("gridRows", height);
-	updatePixels->setInt("frameCount", frameCount);
-	updatePixels->Run(width / 32, height / 32, 1u, GL_SHADER_STORAGE_BARRIER_BIT);
-	SwitchReadWriteSSBOs();
-
-	
-
-	++frameCount;
+		++frameCount;
+	}
 }
 
 size_t PixelsGPU::Simulation::CalculateSsboSize()
@@ -146,6 +137,12 @@ void PixelsGPU::Simulation::SetCircleToMaterial(glm::ivec2 pos, float radius, in
 void PixelsGPU::Simulation::SetCircleToMaterial(int x, int y, float radius, int matID)
 {
 	SetCircleToMaterial(glm::ivec2(x, y), radius, matID);
+}
+
+void PixelsGPU::Simulation::GUI()
+{
+	ImGui::Checkbox("debug test", &debugTest);
+	ImGui::InputInt("Sub updates", &subUpdates);
 }
 
 void GpuPixelSimScene::Start()
@@ -213,5 +210,6 @@ void GpuPixelSimScene::GUI()
 	ImGui::InputInt("MatID placing", &placingMatID);
 	ImGui::SliderFloat("Placing radius", &placingRadius, 0.0f, (pixelSim.width + pixelSim.height) / 2);
 	ImGui::InputInt("RenderIndex", &renderIndex);
-	ImGui::Checkbox("debug test", &pixelSim.debugTest);
+
+	pixelSim.GUI();
 }

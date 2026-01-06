@@ -16,13 +16,6 @@ ivec2 getExpectedPos(ivec2 coords, int index, bool evenFrame)
 	return coords;
 }
 
-vec2 getExternalForcesAt(ivec2 coords)
-{
-	ivec2 middle = ivec2(512, 512);
-	vec2 toMiddle = middle - coords;
-	return normalize(toMiddle) * 0.0005;
-}
-
 bool UpdateCell(ivec2 coords, int index)
 {
 	Pixel at = read[index];
@@ -60,7 +53,12 @@ bool UpdateCell(ivec2 coords, int index)
 
 			if (getExpectedPos(lCoords, lIndex, even1Frame) == coords)
 			{
-				write[index] = read[lIndex];
+				Pixel pixel = read[lIndex];
+				vec2 actualExpectedPos = vec2(lCoords) + pixel.subPos + pixel.vel;
+				vec2 differenceFromActual = actualExpectedPos - vec2(coords);
+				pixel.subPos = differenceFromActual;
+				pixel.movedLastUpdate = true;
+				write[index] = pixel;
 				write[lIndex] = at;
 				return true;
 			}
@@ -70,18 +68,7 @@ bool UpdateCell(ivec2 coords, int index)
 }
 
 void main() {
-
 	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
 	int index = indexFromCoords(coords);
 	UpdateCell(coords, index);
-	// need to ensure speed limit here
-	float speedLimit = 1.0;
-	vec2 newVel = write[index].vel + getExternalForcesAt(coords);
-	float newVelLength = length(newVel);
-	if (newVelLength > speedLimit)
-	{
-		newVel /= newVelLength;
-		newVel *= speedLimit;
-	}
-	write[index].vel = newVel;
 }

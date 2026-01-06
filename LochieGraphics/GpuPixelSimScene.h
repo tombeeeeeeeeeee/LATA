@@ -21,6 +21,7 @@ namespace PixelsGPU
 		float timer = 0.0f;
 		int frameCount = 0;
 		bool debugTest = false;
+		int subUpdates = 10;
 
 		ComputeShader* updatePixels = nullptr;
 		ComputeShader* preUpdate = nullptr;
@@ -38,6 +39,8 @@ namespace PixelsGPU
 
 		void SetCircleToMaterial(glm::ivec2 pos, float radius, int matID);
 		void SetCircleToMaterial(int x, int y, float radius, int matID);
+
+		void GUI();
 	};
 
 	// Keep this correctly aligned with the gpu version, as thats all this is really for
@@ -45,10 +48,12 @@ namespace PixelsGPU
 	struct alignas(32) CellPixel // Think we would want something other than just alignas
 	{
 		int matId;
+		int /*bool*/ movedLastUpdate;
 		glm::vec2 vel;
 		glm::vec2 subPos;
 		glm::vec4 colour;
 	};
+	static_assert(sizeof(CellPixel) <= 64, "CellPixel too large, this is already more than big enough, need to pack the data better");
 	
 }
 
