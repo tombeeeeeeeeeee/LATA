@@ -75,8 +75,11 @@
     <Filter Include="Source Files\Third-Party\soloud\core">
       <UniqueIdentifier>{9ae7af90-7bca-491e-a511-14745b6a322d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Pixels">
+    <Filter Include="Source Files\CPU Pixels">
       <UniqueIdentifier>{fe25e853-725c-452e-b543-1a7cf617a6a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GPU Pixels">
+      <UniqueIdentifier>{b08cfb69-2c8e-42b8-a27e-ae777931157c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -315,19 +318,22 @@
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="PixelCell.cpp">
-      <Filter>Source Files\Pixels</Filter>
+      <Filter>Source Files\CPU Pixels</Filter>
     </ClCompile>
     <ClCompile Include="PixelMaterial.cpp">
-      <Filter>Source Files\Pixels</Filter>
+      <Filter>Source Files\CPU Pixels</Filter>
     </ClCompile>
     <ClCompile Include="PixelSimulation.cpp">
-      <Filter>Source Files\Pixels</Filter>
+      <Filter>Source Files\CPU Pixels</Filter>
     </ClCompile>
     <ClCompile Include="ThreadPool.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="GpuPixels.cpp">
+      <Filter>Source Files\GPU Pixels</Filter>
+    </ClCompile>
     <ClCompile Include="GpuPixelSimScene.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -539,13 +545,13 @@
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="PixelSimulation.h">
-      <Filter>Source Files\Pixels</Filter>
+      <Filter>Source Files\CPU Pixels</Filter>
     </ClInclude>
     <ClInclude Include="PixelCell.h">
-      <Filter>Source Files\Pixels</Filter>
+      <Filter>Source Files\CPU Pixels</Filter>
     </ClInclude>
     <ClInclude Include="PixelMaterial.h">
-      <Filter>Source Files\Pixels</Filter>
+      <Filter>Source Files\CPU Pixels</Filter>
     </ClInclude>
     <ClInclude Include="UserDefinedLiterals.h">
       <Filter>Source Files\Misc</Filter>
@@ -560,7 +566,12 @@
     <ClInclude Include="..\Third Party\box2d\box2d\include\id.h" />
     <ClInclude Include="..\Third Party\box2d\box2d\include\math_functions.h" />
     <ClInclude Include="..\Third Party\box2d\box2d\include\types.h" />
-    <ClInclude Include="GpuPixelSimScene.h" />
+    <ClInclude Include="GpuPixels.h">
+      <Filter>Source Files\GPU Pixels</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuPixelSimScene.h">
+      <Filter>Source Files\Scene Management\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
