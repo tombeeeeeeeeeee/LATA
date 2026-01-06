@@ -10,7 +10,8 @@
 void GpuPixelSimScene::LoadShaders()
 {
 	pixelShader = ResourceManager::LoadShader("simplePixelGpu");
-	simple2dShader = ResourceManager::LoadShader("ui");
+	//simple2dShader = ResourceManager::LoadShader("ui");
+	simple2dShader = ResourceManager::LoadShader("2dShader");
 	pixelSim.LoadComputeShaders();
 }
 
@@ -81,8 +82,16 @@ void GpuPixelSimScene::Draw(float delta)
 
 	simple2dShader->Use();
 	texture->Bind(1);
-	simple2dShader->setSampler("material.albedo", 1);
+	//simple2dShader->setSampler("material.albedo", 1);
+	simple2dShader->setMat4("vp", SceneManager::viewProjection);
+	glm::mat4 model = glm::mat4(0.5f);
+	glm::ivec2 i = glm::ivec2(0, 0);
+	model = glm::translate(model, glm::vec3(i.x * 2.0f + 1.0f, i.y * 2.0f + 1.0f, 0.0f));
+	simple2dShader->setMat4("model", model);
+	simple2dShader->setSampler("tex", 1);
+
 	quad.Draw();
+
 }
 
 void GpuPixelSimScene::GUI()
