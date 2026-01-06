@@ -104,7 +104,7 @@ size_t PixelsGPU::Simulation::CalculateSsboSize()
 	return sizeof(CellPixel) * width * height;
 }
 
-void PixelsGPU::Simulation::SetCircleToMaterial(glm::ivec2 pos, float radius, int matID)
+void PixelsGPU::Simulation::SetCircleTo(glm::ivec2 pos, float radius, PixelsGPU::CellPixel cell)
 {
 	BindCorrectReadWriteSSBOs();
 
@@ -114,12 +114,13 @@ void PixelsGPU::Simulation::SetCircleToMaterial(glm::ivec2 pos, float radius, in
 
 	placeCircle->setIVec2("centerCoords", pos);
 	placeCircle->setFloat("radius", radius);
-	placeCircle->setInt("pixel.matID", matID);
-	if (matID == 2)
+	placeCircle->setInt("pixel.matID", cell.matID);
+	placeCircle->setVec2("pixel.vel", cell.vel);
+	if (cell.matID == 2)
 	{
 		placeCircle->setVec4("pixel.colour", glm::vec4(sin(timer * PI) / 4.0f + 0.75f, 0.76f, sin(timer * PI * 4) / 6.0f + 0.17f, 1.0));
 	}
-	else if (matID != 0)
+	else if (cell.matID != 0)
 	{
 		placeCircle->setVec4("pixel.colour", glm::vec4(0.9, 0.9, 0.9, 1.0f));
 	}
@@ -134,9 +135,9 @@ void PixelsGPU::Simulation::SetCircleToMaterial(glm::ivec2 pos, float radius, in
 	SwitchReadWriteSSBOs();
 }
 
-void PixelsGPU::Simulation::SetCircleToMaterial(int x, int y, float radius, int matID)
+void PixelsGPU::Simulation::SetCircleTo(int x, int y, float radius, PixelsGPU::CellPixel cell)
 {
-	SetCircleToMaterial(glm::ivec2(x, y), radius, matID);
+	SetCircleTo(glm::ivec2(x, y), radius, cell);
 }
 
 void PixelsGPU::Simulation::GUI()
@@ -159,6 +160,11 @@ void GpuPixelSimScene::Start()
 	quad.InitialiseQuad(1.0f);
 }
 
+static glm::ivec2 CursorToWorld(glm::vec2 cursor, int width, int height)
+{
+	return glm::ivec2(cursor.x * width, cursor.y * height);
+}
+
 void GpuPixelSimScene::Update(float delta)
 {
 	if (update || updateOnce)
@@ -169,8 +175,23 @@ void GpuPixelSimScene::Update(float delta)
 
 	if (glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
-		pixelSim.SetCircleToMaterial(glm::ivec2(cursorPos->x * pixelSim.width, cursorPos->y * pixelSim.height), placingRadius, placingMatID);
+		PixelsGPU::CellPixel cell;
+		cell.matID = placingMatID;
+		
+		glm::ivec2 worldCurrentCursorPos = CursorToWorld(*cursorPos, pixelSim.width, pixelSim.height);
+		glm::ivec2 worldPreviousCursorPos = CursorToWorld(previousCursorPos, pixelSim.width, pixelSim.height);
+
+		glm::vec2 vel = *cursorPos - previousCursorPos;
+
+		static float velMultiplier = 3.1f;
+
+		vel *= velMultiplier;
+		cell.vel = vel;
+		
+		pixelSim.SetCircleTo(worldCurrentCursorPos, placingRadius, cell);
 	}
+
+	previousCursorPos = *cursorPos;
 }
 
 

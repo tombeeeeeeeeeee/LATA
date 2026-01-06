@@ -49,6 +49,10 @@ bool UpdateCell(ivec2 coords, int index)
 				continue;
 			}
 			ivec2 lCoords = coords + ivec2(lx, ly);
+			if (lCoords.x < 0 || lCoords.y < 0 || lCoords.x >= gridCols || lCoords.y >= gridRows)
+			{
+				continue;
+			}
 			int lIndex = indexFromCoords(lCoords);
 
 			if (getExpectedPos(lCoords, lIndex, even1Frame) == coords)
