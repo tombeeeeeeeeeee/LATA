@@ -82,7 +82,6 @@ void RenderSystem::Start()
     colourKey2->Load();
     
     beamShader = ResourceManager::LoadShader("beam");
-    syncAimShader = ResourceManager::LoadShader("syncArrow");
 }
 
 void RenderSystem::DeferredUpdate()
@@ -528,6 +527,7 @@ void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameB
 {
     pixelSim.BindCorrectReadWriteSSBOs();
 
+    glm::ivec2 i = glm::ivec2(0, 0);
     frameBuffer->Bind();
     glViewport(0, 0, pixelSim.width, pixelSim.height);
 
@@ -545,9 +545,11 @@ void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameB
     texture->Bind(1);
     //simple2dShader->setSampler("material.albedo", 1);
     simple2dShader->setMat4("vp", SceneManager::viewProjection);
-    glm::mat4 model = glm::mat4(0.5f);
-    glm::ivec2 i = glm::ivec2(0, 0);
-    model = glm::translate(model, glm::vec3(i.x * 2.0f + 1.0f, i.y * 2.0f + 1.0f, 0.0f));
+    glm::mat4 model = glm::mat4(1.0f);
+    const float halfWidth = (float)pixelSim.width / 2.0f;
+    const float halfHeight = (float)pixelSim.height / 2.0f;
+    model = glm::translate(model, glm::vec3(i.x * pixelSim.width + halfWidth , i.y * pixelSim.height + halfHeight, 0.0f));
+    model = glm::scale(model, glm::vec3(halfWidth, halfHeight, 1.0f));
     simple2dShader->setMat4("model", model);
     simple2dShader->setSampler("tex", 1);
 

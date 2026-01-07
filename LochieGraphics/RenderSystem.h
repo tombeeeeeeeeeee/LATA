@@ -118,7 +118,15 @@ public:
         unsigned int defaultFrameBuffer
     );
 
-    void DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameBuffer* frameBuffer, Shader* pixelShader, int renderIndex, const Mesh& quad, Shader* simple2dShader, Texture* texture, unsigned int defaultFrameBuffer);
+    void DrawGpuPixelSim(
+        const PixelsGPU::Simulation& pixelSim,
+        FrameBuffer* frameBuffer,
+        Shader* pixelShader,
+        int renderIndex,
+        const Mesh& quad,
+        Shader* simple2dShader,
+        Texture* texture,
+        unsigned int defaultFrameBuffer);
 
     void ScreenResize(int width, int height);
 
@@ -222,7 +230,6 @@ private:
     void RenderLinePass();
 
     Shader* beamShader;
-    Shader* syncAimShader;
     float tileLength = 50.0f;
     void RenderBeams(float delta);
 

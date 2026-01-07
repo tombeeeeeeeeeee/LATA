@@ -75,7 +75,7 @@ SceneManager::SceneManager(Scene* _scene)
 	glfwSetMouseButtonCallback(window, MouseButtonCallback);
 
 	glfwMakeContextCurrent(window);
-	//glfwSwapInterval(0); // vsync off
+	glfwSwapInterval(0); // vsync off
 	
 	if (!gladLoadGL())
 	{

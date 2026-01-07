@@ -3,6 +3,7 @@
 #include "Scene.h"
 
 #include "GpuPixelSimScene.h"
+#include "TestScene.h"
 
 int main()
 {
