@@ -45,7 +45,6 @@ public:
     Texture* baseColourKey = nullptr;
     Texture* colourKey1 = nullptr;
     Texture* colourKey2 = nullptr;
-    Texture* roomAmbience = nullptr;
     float postEffectPercent = 1.0f;
     bool postEffectOn = false;
 
@@ -70,15 +69,14 @@ public:
     float sssThickness = 0.05f;
     float sssMaxDepthDelta = 0.005f;
 
+    static constexpr bool ssaoEnabled = false;
+    static constexpr bool beamsEnabled = false;
+    static constexpr bool linesEnabled = false;
+    static constexpr bool clearEveryDraw = true;
+    static constexpr bool renderAmbientPass = true;
+    static constexpr bool bloomEnabled = false;
 
     void Start();
-
-    void LevelLoad();
-
-    void PlayStart(
-        std::unordered_map<unsigned long long, PointLight>& pointLights,
-        std::unordered_map<unsigned long long, Spotlight>& spotlights
-    );
 
     float exposure = 1.0f;
     int bufferIndex = 0;
