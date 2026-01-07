@@ -39,7 +39,7 @@ namespace PixelsGPU
 		ComputeShader* testCompute = nullptr;
 		ComputeShader* testCompute2 = nullptr;
 		void LoadComputeShaders();
-		void BindCorrectReadWriteSSBOs();
+		void BindCorrectReadWriteSSBOs() const;
 		void SwitchReadWriteSSBOs();
 
 		void Initialise();

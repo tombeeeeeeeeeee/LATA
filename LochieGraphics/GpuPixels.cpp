@@ -32,7 +32,7 @@ void PixelsGPU::Simulation::LoadComputeShaders()
 	testCompute2 = new ComputeShader(Paths::importShaderLocation + "testPixelCompute2" + Paths::computeExtension);
 }
 
-void PixelsGPU::Simulation::BindCorrectReadWriteSSBOs()
+void PixelsGPU::Simulation::BindCorrectReadWriteSSBOs() const
 {
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, *readSsbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, *writeSsbo);

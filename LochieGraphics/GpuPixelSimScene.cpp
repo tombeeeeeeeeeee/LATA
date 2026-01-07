@@ -27,6 +27,10 @@ void GpuPixelSimScene::Start()
 	//displayGUI = false;
 
 	quad.InitialiseQuad(1.0f);
+
+	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
+	camera->editorOrth = true;
+	camera->state = Camera::State::tilePlacing;
 }
 
 static glm::ivec2 CursorToWorld(glm::vec2 cursor, int width, int height)
@@ -66,32 +70,38 @@ void GpuPixelSimScene::Update(float delta)
 
 void GpuPixelSimScene::Draw(float delta)
 {
-	pixelSim.BindCorrectReadWriteSSBOs();
+	if (pixelSim.debugTest)
+	{
+		pixelSim.BindCorrectReadWriteSSBOs();
 
-	frameBuffer->Bind();
-	glViewport(0, 0, pixelSim.width, pixelSim.height);
+		frameBuffer->Bind();
+		glViewport(0, 0, pixelSim.width, pixelSim.height);
 
-	pixelShader->Use();
-	pixelShader->setInt("gridCols", pixelSim.width);
-	pixelShader->setInt("gridRows", pixelSim.height);
-	pixelShader->setInt("renderIndex", renderIndex);
-	quad.Draw();
+		pixelShader->Use();
+		pixelShader->setInt("gridCols", pixelSim.width);
+		pixelShader->setInt("gridRows", pixelSim.height);
+		pixelShader->setInt("renderIndex", renderIndex);
+		quad.Draw();
 
-	frameBuffer->Unbind();
-	glViewport(0, 0, *windowWidth, *windowHeight);
+		frameBuffer->Unbind();
+		glViewport(0, 0, *windowWidth, *windowHeight);
 
-	simple2dShader->Use();
-	texture->Bind(1);
-	//simple2dShader->setSampler("material.albedo", 1);
-	simple2dShader->setMat4("vp", SceneManager::viewProjection);
-	glm::mat4 model = glm::mat4(0.5f);
-	glm::ivec2 i = glm::ivec2(0, 0);
-	model = glm::translate(model, glm::vec3(i.x * 2.0f + 1.0f, i.y * 2.0f + 1.0f, 0.0f));
-	simple2dShader->setMat4("model", model);
-	simple2dShader->setSampler("tex", 1);
+		simple2dShader->Use();
+		texture->Bind(1);
+		//simple2dShader->setSampler("material.albedo", 1);
+		simple2dShader->setMat4("vp", SceneManager::viewProjection);
+		glm::mat4 model = glm::mat4(0.5f);
+		glm::ivec2 i = glm::ivec2(0, 0);
+		model = glm::translate(model, glm::vec3(i.x * 2.0f + 1.0f, i.y * 2.0f + 1.0f, 0.0f));
+		simple2dShader->setMat4("model", model);
+		simple2dShader->setSampler("tex", 1);
 
-	quad.Draw();
-
+		quad.Draw();
+	}
+	else
+	{
+		renderSystem.Update(transforms, pointLights, spotlights, camera, delta, nullptr, &pixelSim, frameBuffer, pixelShader, quad, simple2dShader, texture, renderIndex);
+	}
 }
 
 void GpuPixelSimScene::GUI()
