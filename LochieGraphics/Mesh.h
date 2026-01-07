@@ -38,7 +38,7 @@ public:
 
 	unsigned long long GUID;
 
-	void Draw();
+	void Draw() const;
 
 	Mesh();
 	~Mesh();
@@ -55,5 +55,5 @@ private:
 
 	void GenAndBind();
 	// Should be static?
-	void Unbind();
+	void Unbind() const;
 };

@@ -15,6 +15,7 @@
 #include "SceneObject.h"
 #include "PixelSimulation.h"
 #include "Mesh.h"
+#include "GpuPixels.h"
 
 #include "Utilities.h"
 #include "EditorGUI.h"
@@ -288,12 +289,14 @@ void RenderSystem::Update(
     std::unordered_map<unsigned long long, Spotlight>& spotlights,
     Camera* camera,
     float delta,
-    Pixels::Simulation& pixelSim,
+    const Pixels::Simulation* cpuPixelSim,
+    const PixelsGPU::Simulation* gpuPixelSim,
     FrameBuffer* chunkFrameBuffer,
     Shader* pixelShader,
     Mesh& quad,
     Shader* simple2dShader,
-    Texture* chunkTexture
+    Texture* chunkTexture,
+    int pixelsRenderIndex
 )
 {
     frameCountInSixteen = (frameCountInSixteen + 1) % 16;
@@ -333,9 +336,14 @@ void RenderSystem::Update(
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glDisable(GL_DEPTH_TEST);
 
-    DrawPixelSim(pixelSim, camera, chunkFrameBuffer, pixelShader, quad, simple2dShader, chunkTexture, deferredFBO);
-
-
+    if (cpuPixelSim)
+    {
+        DrawPixelSim(*cpuPixelSim, camera, chunkFrameBuffer, pixelShader, quad, simple2dShader, chunkTexture, deferredFBO);
+    }
+    if (gpuPixelSim)
+    {
+        DrawGpuPixelSim(*gpuPixelSim, chunkFrameBuffer, pixelShader, pixelsRenderIndex, quad, simple2dShader, chunkTexture, deferredFBO);
+    }
 
     //RenderSSAO();
 
@@ -521,6 +529,37 @@ void RenderSystem::DrawPixelSim(
 
     //quad.Draw();
 
+
+}
+
+void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameBuffer* frameBuffer, Shader* pixelShader, int renderIndex, const Mesh& quad, Shader* simple2dShader, Texture* texture, unsigned int defaultFrameBuffer)
+{
+    pixelSim.BindCorrectReadWriteSSBOs();
+
+    frameBuffer->Bind();
+    glViewport(0, 0, pixelSim.width, pixelSim.height);
+
+    pixelShader->Use();
+    pixelShader->setInt("gridCols", pixelSim.width);
+    pixelShader->setInt("gridRows", pixelSim.height);
+    pixelShader->setInt("renderIndex", renderIndex);
+    quad.Draw();
+
+    //frameBuffer->Unbind();
+    glBindFramebuffer(GL_FRAMEBUFFER, defaultFrameBuffer);
+    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    simple2dShader->Use();
+    texture->Bind(1);
+    //simple2dShader->setSampler("material.albedo", 1);
+    simple2dShader->setMat4("vp", SceneManager::viewProjection);
+    glm::mat4 model = glm::mat4(0.5f);
+    glm::ivec2 i = glm::ivec2(0, 0);
+    model = glm::translate(model, glm::vec3(i.x * 2.0f + 1.0f, i.y * 2.0f + 1.0f, 0.0f));
+    simple2dShader->setMat4("model", model);
+    simple2dShader->setSampler("tex", 1);
+
+    quad.Draw();
 
 }
 

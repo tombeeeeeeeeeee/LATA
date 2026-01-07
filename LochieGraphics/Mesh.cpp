@@ -120,7 +120,7 @@ void Mesh::InitialiseQuad(float size, float offset)
 	Initialise(vertexCount, vertices);
 }
 
-void Mesh::Draw()
+void Mesh::Draw() const
 {
 	// draw mesh
 	glBindVertexArray(VAO);
@@ -147,7 +147,7 @@ void Mesh::GenAndBind()
 	glBindVertexArray(VAO);
 }
 
-void Mesh::Unbind()
+void Mesh::Unbind() const
 {
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

@@ -22,6 +22,11 @@ namespace Pixels
     class Simulation;
 }
 
+namespace PixelsGPU
+{
+    class Simulation;
+}
+
 struct bloomMip
 {
     glm::vec2 size;
@@ -53,7 +58,7 @@ public:
 
     float lightTimeToOn = 2.5f;
     float lightTimeToOff = 2.5f;
-    float lightTimeToExplode = 0.5f; 
+    float lightTimeToExplode = 0.5f;
     float lightTimeToFlicker = 5.5f;
     float ambientIntensity = 1.0f;
     bool inOrtho = false;
@@ -73,7 +78,7 @@ public:
     void PlayStart(
         std::unordered_map<unsigned long long, PointLight>& pointLights,
         std::unordered_map<unsigned long long, Spotlight>& spotlights
-        );
+    );
 
     float exposure = 1.0f;
     int bufferIndex = 0;
@@ -93,12 +98,14 @@ public:
         std::unordered_map<unsigned long long, Spotlight>& spotlights,
         Camera* camera,
         float delta,
-        Pixels::Simulation& pixelSim,
+        const Pixels::Simulation* cpuPixelSim,
+        const PixelsGPU::Simulation* gpuPixelSim,
         FrameBuffer* chunkFrameBuffer,
         Shader* pixelShader,
         Mesh& quad,
         Shader* simple2dShader,
-        Texture* chunkTexture
+        Texture* chunkTexture,
+        int pixelsRenderIndex
     );
 
     // TODO: Lochie: consider what arguments should be apart of the rendersystem
@@ -112,6 +119,8 @@ public:
         Texture* chunkTexture,
         unsigned int defaultFrameBuffer
     );
+
+    void DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameBuffer* frameBuffer, Shader* pixelShader, int renderIndex, const Mesh& quad, Shader* simple2dShader, Texture* texture, unsigned int defaultFrameBuffer);
 
     void ScreenResize(int width, int height);
 

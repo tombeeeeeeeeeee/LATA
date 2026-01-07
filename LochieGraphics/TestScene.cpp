@@ -239,7 +239,7 @@ void TestScene::Update(float delta)
 
 void TestScene::Draw(float delta)
 {
-	renderSystem.Update(transforms, pointLights, spotlights, camera, delta, pixelSim, chunkFrameBuffer, pixelShader, quad, simple2dShader, chunkTexture);
+	renderSystem.Update(transforms, pointLights, spotlights, camera, delta, &pixelSim, nullptr, chunkFrameBuffer, pixelShader, quad, simple2dShader, chunkTexture, 0);
 }
 
 void TestScene::SelectedInfoGUI()
