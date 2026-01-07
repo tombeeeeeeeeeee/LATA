@@ -123,7 +123,6 @@ void RenderSystem::DeferredUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, albedoBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, emissionBuffer, 0);
@@ -148,7 +147,6 @@ void RenderSystem::LightPassUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, lightPassBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
 
@@ -170,7 +168,6 @@ void RenderSystem::LinesUpdate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, linesBuffer, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
 
@@ -345,6 +342,7 @@ void RenderSystem::Update(
     {
         RenderAmbientPass();
     }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -605,7 +603,7 @@ std::unordered_map<unsigned long long, Transform>& transforms,
 float delta
 )
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
+    // FBO should be bound a layer up
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_GREATER);
@@ -1018,8 +1016,7 @@ void RenderSystem::SSAOSetup()
 
 void RenderSystem::RenderAmbientPass()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
-    
+    // FBO should be bound a layer up
     ambientPassShader->Use();
     ambientPassShader->setInt("screenDepth", 1);
     ambientPassShader->setInt("screenAlbedo", 2);
@@ -1059,8 +1056,6 @@ void RenderSystem::RenderAmbientPass()
     glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
 
     RenderQuad();
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
