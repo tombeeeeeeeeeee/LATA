@@ -19,14 +19,41 @@ namespace PixelsGPU
 	class Simulation
 	{
 	public:
-		// this will be the ssbo that holds all the pixel data
-		unsigned int ssbo1 = -1;
-		unsigned int ssbo2 = -1;
-		unsigned int* readSsbo = nullptr;
-		unsigned int* writeSsbo = nullptr;
+		static constexpr int chunkWidth = 128;
+		static constexpr int chunkHeight = 128;
 
-		int width = 128;
-		int height = 128;
+		static constexpr unsigned int computeLocalSizeX = 32;
+		static constexpr unsigned int computeLocalSizeY = 32;
+		static constexpr unsigned int computeLocalSizeZ = 1;
+
+
+		class Chunk
+		{
+		public:
+			// this will be the ssbo that holds all the pixel data
+			unsigned int ssbo1 = 0;
+			unsigned int ssbo2 = 0;
+			bool readSsbo1 = false;
+			bool writeSsbo1 = false;
+
+
+			int x;
+			int y;
+
+			void BindCorrectReadWriteSSBOs() const;
+			void SwitchReadWriteSSBOs();
+			size_t CalculateSsboSize() const;
+
+			Chunk(int _x, int _y);
+			~Chunk();
+
+			Chunk(const Chunk& _) = delete;
+			Chunk& operator=(const Chunk& _) = delete;
+			Chunk(Chunk&& _) = default;
+			Chunk& operator =(Chunk&& _) = default;
+		};
+
+		std::vector<Chunk> chunks;
 
 		float timer = 0.0f;
 		int frameCount = 0;
@@ -39,13 +66,10 @@ namespace PixelsGPU
 		ComputeShader* testCompute = nullptr;
 		ComputeShader* testCompute2 = nullptr;
 		void LoadComputeShaders();
-		void BindCorrectReadWriteSSBOs() const;
-		void SwitchReadWriteSSBOs();
 
 		void Initialise();
 		void Update(float delta);
 
-		size_t CalculateSsboSize();
 
 		void SetCircleTo(glm::ivec2 pos, float radius, PixelsGPU::CellPixel cell);
 		void SetCircleTo(int x, int y, float radius, PixelsGPU::CellPixel cell);

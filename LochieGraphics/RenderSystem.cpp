@@ -523,35 +523,37 @@ void RenderSystem::DrawPixelSim(
 
 void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameBuffer* frameBuffer, Shader* pixelShader, int renderIndex, const Mesh& quad, Shader* simple2dShader, Texture* texture, unsigned int defaultFrameBuffer)
 {
-    pixelSim.BindCorrectReadWriteSSBOs();
+    for (const PixelsGPU::Simulation::Chunk& chunk : pixelSim.chunks)
+    {
+        chunk.BindCorrectReadWriteSSBOs();
 
-    glm::ivec2 i = glm::ivec2(0, 0);
-    frameBuffer->Bind();
-    glViewport(0, 0, pixelSim.width, pixelSim.height);
+        frameBuffer->Bind();
+        glViewport(0, 0, pixelSim.chunkWidth, pixelSim.chunkHeight);
 
-    pixelShader->Use();
-    pixelShader->setInt("gridCols", pixelSim.width);
-    pixelShader->setInt("gridRows", pixelSim.height);
-    pixelShader->setInt("renderIndex", renderIndex);
-    quad.Draw();
+        pixelShader->Use();
+        pixelShader->setInt("gridCols", pixelSim.chunkWidth);
+        pixelShader->setInt("gridRows", pixelSim.chunkHeight);
+        pixelShader->setInt("renderIndex", renderIndex);
+        quad.Draw();
 
-    //frameBuffer->Unbind();
-    glBindFramebuffer(GL_FRAMEBUFFER, defaultFrameBuffer);
-    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        //frameBuffer->Unbind();
+        glBindFramebuffer(GL_FRAMEBUFFER, defaultFrameBuffer);
+        glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    simple2dShader->Use();
-    texture->Bind(1);
-    //simple2dShader->setSampler("material.albedo", 1);
-    simple2dShader->setMat4("vp", SceneManager::viewProjection);
-    glm::mat4 model = glm::mat4(1.0f);
-    const float halfWidth = (float)pixelSim.width / 2.0f;
-    const float halfHeight = (float)pixelSim.height / 2.0f;
-    model = glm::translate(model, glm::vec3(i.x * pixelSim.width + halfWidth , i.y * pixelSim.height + halfHeight, 0.0f));
-    model = glm::scale(model, glm::vec3(halfWidth, halfHeight, 1.0f));
-    simple2dShader->setMat4("model", model);
-    simple2dShader->setSampler("tex", 1);
+        simple2dShader->Use();
+        texture->Bind(1);
+        //simple2dShader->setSampler("material.albedo", 1);
+        simple2dShader->setMat4("vp", SceneManager::viewProjection);
+        glm::mat4 model = glm::mat4(1.0f);
+        const float halfWidth = (float)pixelSim.chunkWidth / 2.0f;
+        const float halfHeight = (float)pixelSim.chunkHeight / 2.0f;
+        model = glm::translate(model, glm::vec3(chunk.x * pixelSim.chunkWidth + halfWidth , chunk.y * pixelSim.chunkHeight + halfHeight, 0.0f));
+        model = glm::scale(model, glm::vec3(halfWidth, halfHeight, 1.0f));
+        simple2dShader->setMat4("model", model);
+        simple2dShader->setSampler("tex", 1);
+        quad.Draw();
+    }
 
-    quad.Draw();
 
 }
 

@@ -19,9 +19,9 @@ void GpuPixelSimScene::Start()
 {
 	pixelSim.Initialise();
 
-	texture = ResourceManager::CreateTexture(pixelSim.width, pixelSim.height, GL_RGBA, nullptr, GL_CLAMP_TO_BORDER, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
+	texture = ResourceManager::CreateTexture(pixelSim.chunkWidth, pixelSim.chunkHeight, GL_RGBA, nullptr, GL_CLAMP_TO_BORDER, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
 
-	frameBuffer = new FrameBuffer(pixelSim.width, pixelSim.height, texture, nullptr, false);
+	frameBuffer = new FrameBuffer(pixelSim.chunkWidth, pixelSim.chunkHeight, texture, nullptr, false);
 
 	LoadShaders();
 	//displayGUI = false;
@@ -51,8 +51,8 @@ void GpuPixelSimScene::Update(float delta)
 		PixelsGPU::CellPixel cell;
 		cell.matID = placingMatID;
 		
-		glm::ivec2 worldCurrentCursorPos = CursorToWorld(*cursorPos, pixelSim.width, pixelSim.height);
-		glm::ivec2 worldPreviousCursorPos = CursorToWorld(previousCursorPos, pixelSim.width, pixelSim.height);
+		glm::ivec2 worldCurrentCursorPos = CursorToWorld(*cursorPos, pixelSim.chunkWidth, pixelSim.chunkHeight);
+		glm::ivec2 worldPreviousCursorPos = CursorToWorld(previousCursorPos, pixelSim.chunkWidth, pixelSim.chunkHeight);
 
 		glm::vec2 vel = *cursorPos - previousCursorPos;
 
@@ -70,38 +70,7 @@ void GpuPixelSimScene::Update(float delta)
 
 void GpuPixelSimScene::Draw(float delta)
 {
-	if (pixelSim.debugTest)
-	{
-		pixelSim.BindCorrectReadWriteSSBOs();
-
-		frameBuffer->Bind();
-		glViewport(0, 0, pixelSim.width, pixelSim.height);
-
-		pixelShader->Use();
-		pixelShader->setInt("gridCols", pixelSim.width);
-		pixelShader->setInt("gridRows", pixelSim.height);
-		pixelShader->setInt("renderIndex", renderIndex);
-		quad.Draw();
-
-		frameBuffer->Unbind();
-		glViewport(0, 0, *windowWidth, *windowHeight);
-
-		simple2dShader->Use();
-		texture->Bind(1);
-		//simple2dShader->setSampler("material.albedo", 1);
-		simple2dShader->setMat4("vp", SceneManager::viewProjection);
-		glm::mat4 model = glm::mat4(0.5f);
-		glm::ivec2 i = glm::ivec2(0, 0);
-		model = glm::translate(model, glm::vec3(i.x * 2.0f + 1.0f, i.y * 2.0f + 1.0f, 0.0f));
-		simple2dShader->setMat4("model", model);
-		simple2dShader->setSampler("tex", 1);
-
-		quad.Draw();
-	}
-	else
-	{
 		renderSystem.Update(transforms, pointLights, spotlights, camera, delta, nullptr, &pixelSim, frameBuffer, pixelShader, quad, simple2dShader, texture, renderIndex);
-	}
 }
 
 void GpuPixelSimScene::GUI()
@@ -116,7 +85,7 @@ void GpuPixelSimScene::GUI()
 		LoadShaders();
 	}
 	ImGui::InputInt("MatID placing", &placingMatID);
-	ImGui::SliderFloat("Placing radius", &placingRadius, 0.0f, (pixelSim.width + pixelSim.height) / 2);
+	ImGui::SliderFloat("Placing radius", &placingRadius, 0.0f, (pixelSim.chunkWidth + pixelSim.chunkHeight) / 2);
 	ImGui::InputInt("RenderIndex", &renderIndex);
 
 	pixelSim.GUI();
