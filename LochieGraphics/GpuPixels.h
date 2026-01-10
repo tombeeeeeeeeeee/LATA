@@ -32,15 +32,13 @@ namespace PixelsGPU
 		public:
 			// this will be the ssbo that holds all the pixel data
 			unsigned int ssbo1 = 0;
-			unsigned int ssbo2 = 0;
-			bool readSsbo1 = false;
-			bool writeSsbo1 = false;
-
+			//unsigned int ssbo2 = 0;
+			bool readSsboFirst = false;
 
 			int x;
 			int y;
 
-			void BindCorrectReadWriteSSBOs() const;
+			void BindCorrectSSBO() const;
 			void SwitchReadWriteSSBOs();
 			size_t CalculateSsboSize() const;
 

@@ -525,7 +525,7 @@ void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameB
 {
     for (const PixelsGPU::Simulation::Chunk& chunk : pixelSim.chunks)
     {
-        chunk.BindCorrectReadWriteSSBOs();
+        chunk.BindCorrectSSBO();
 
         frameBuffer->Bind();
         glViewport(0, 0, pixelSim.chunkWidth, pixelSim.chunkHeight);
@@ -534,6 +534,7 @@ void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameB
         pixelShader->setInt("gridCols", pixelSim.chunkWidth);
         pixelShader->setInt("gridRows", pixelSim.chunkHeight);
         pixelShader->setInt("renderIndex", renderIndex);
+        pixelShader->setBool("readSsboFirst", chunk.readSsboFirst);
         quad.Draw();
 
         //frameBuffer->Unbind();
@@ -553,8 +554,6 @@ void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameB
         simple2dShader->setSampler("tex", 1);
         quad.Draw();
     }
-
-
 }
 
 void RenderSystem::SSAOUpdate()

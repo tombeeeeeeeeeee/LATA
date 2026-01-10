@@ -10,31 +10,37 @@ uniform int gridRows;
 
 uniform ivec2 chunkCoords;
 
+uniform bool readSsboFirst;
+
 layout(std430, binding = 4) buffer ChunkSlot1
 {
-	Pixel read[];
-//	Pixel write1[];
+	Pixel chunkData1[];
 };
 
-layout(std430, binding = 5) buffer ChunkSlot2
-{
+//layout(std430, binding = 5) buffer ChunkSlot2
+//{
 //	Pixel read2[];
-	Pixel write[];
-};
+//	Pixel write2[];
+//};
+
+int getDataOffset()
+{
+	return gridCols * gridRows;
+}
 
 Pixel getRead(int index)
 {
-	return read[index];
+	return readSsboFirst ? chunkData1[index] : chunkData1[index + getDataOffset()];
 }
 
 void setWrite(int index, Pixel pixel)
 {
-	write[index] = pixel;
+	chunkData1[readSsboFirst ? index + getDataOffset() : index] = pixel;
 }
 
 void setRead(int index, Pixel pixel)
 {
-	read[index] = pixel;
+	chunkData1[readSsboFirst ? index : index + getDataOffset()] = pixel;
 }
 
 int indexFromCoords(ivec2 coord)

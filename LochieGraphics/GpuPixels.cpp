@@ -37,16 +37,15 @@ void PixelsGPU::Simulation::LoadComputeShaders()
 	testCompute2 = new ComputeShader(Paths::importShaderLocation + "testPixelCompute2" + Paths::computeExtension);
 }
 
-void PixelsGPU::Simulation::Chunk::BindCorrectReadWriteSSBOs() const
+void PixelsGPU::Simulation::Chunk::BindCorrectSSBO() const
 {
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, readSsbo1 ? ssbo1 : ssbo2);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, writeSsbo1 ? ssbo1 : ssbo2);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo1);
+	//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, writeSsbo1 ? ssbo1 : ssbo2);
 }
 
 void PixelsGPU::Simulation::Chunk::SwitchReadWriteSSBOs()
 {
-	readSsbo1 = !readSsbo1;
-	writeSsbo1 = !writeSsbo1;
+	readSsboFirst = !readSsboFirst;
 }
 
 PixelsGPU::Simulation::Chunk::Chunk(int _x, int _y) :
@@ -58,15 +57,7 @@ PixelsGPU::Simulation::Chunk::Chunk(int _x, int _y) :
 
 	glBufferData(GL_SHADER_STORAGE_BUFFER, CalculateSsboSize(), nullptr, GL_DYNAMIC_COPY);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo1);
-	readSsbo1 = true;
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-
-	glGenBuffers(1, &ssbo2);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo2);
-
-	glBufferData(GL_SHADER_STORAGE_BUFFER, CalculateSsboSize(), nullptr, GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo2);
-	writeSsbo1 = false;
+	readSsboFirst = true;
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
@@ -98,7 +89,8 @@ void PixelsGPU::Simulation::Update(float delta)
 		preUpdate->setInt("updateCount", updateCount);
 		for (auto& chunk : chunks)
 		{
-			chunk.BindCorrectReadWriteSSBOs();
+			chunk.BindCorrectSSBO();
+			preUpdate->setBool("readSsboFirst", chunk.readSsboFirst);
 			preUpdate->setIVec2("chunkCoords", glm::ivec2(chunk.x, chunk.y));
 			preUpdate->Run(Simulation::chunkWidth / computeLocalSizeX, Simulation::chunkHeight / computeLocalSizeY, computeLocalSizeZ, GL_SHADER_STORAGE_BARRIER_BIT);
 			chunk.SwitchReadWriteSSBOs();
@@ -110,7 +102,8 @@ void PixelsGPU::Simulation::Update(float delta)
 		updatePixels->setInt("updateCount", updateCount);
 		for (auto& chunk : chunks)
 		{
-			chunk.BindCorrectReadWriteSSBOs();
+			chunk.BindCorrectSSBO();
+			updatePixels->setBool("readSsboFirst", chunk.readSsboFirst);
 			updatePixels->setIVec2("chunkCoords", glm::ivec2(chunk.x, chunk.y));
 			updatePixels->Run(Simulation::chunkWidth / computeLocalSizeX, Simulation::chunkHeight / computeLocalSizeY, computeLocalSizeZ, GL_SHADER_STORAGE_BARRIER_BIT);
 			chunk.SwitchReadWriteSSBOs();
@@ -121,7 +114,7 @@ void PixelsGPU::Simulation::Update(float delta)
 
 size_t PixelsGPU::Simulation::Chunk::CalculateSsboSize() const
 {
-	return sizeof(PixelsGPU::CellPixel) * Simulation::chunkWidth * Simulation::chunkHeight;
+	return sizeof(PixelsGPU::CellPixel) * Simulation::chunkWidth * Simulation::chunkHeight * 2;
 }
 
 void PixelsGPU::Simulation::SetCircleTo(glm::ivec2 pos, float radius, PixelsGPU::CellPixel cell)
@@ -151,7 +144,8 @@ void PixelsGPU::Simulation::SetCircleTo(glm::ivec2 pos, float radius, PixelsGPU:
 
 	for (auto& chunk : chunks)
 	{
-		chunk.BindCorrectReadWriteSSBOs();
+		chunk.BindCorrectSSBO();
+		placeCircle->setBool("readSsboFirst", chunk.readSsboFirst);
 		placeCircle->setIVec2("chunkCoords", glm::ivec2(chunk.x, chunk.y));
 		placeCircle->Run(Simulation::chunkWidth / computeLocalSizeX, Simulation::chunkHeight / computeLocalSizeY, computeLocalSizeZ, GL_SHADER_STORAGE_BARRIER_BIT);
 		chunk.SwitchReadWriteSSBOs();

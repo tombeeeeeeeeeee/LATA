@@ -16,14 +16,21 @@ uniform int renderIndex;
 // Lochie: TODO: Prob move this to a own file
 const float PI = 3.1415926535897932384626433832795;
 
-layout(std430, binding = 4) buffer Pixels
+uniform bool readSsboFirst;
+
+layout(std430, binding = 4) buffer ChunkSlot1
 {
-	Pixel grid[];
+	Pixel chunkData1[];
 };
 
 int indexFromCoords(ivec2 coord)
 {
 	return (coord.x % gridCols) + (coord.y * gridCols);
+}
+
+int getDataOffset()
+{
+	return gridCols * gridRows;
 }
 
 void main()
@@ -33,7 +40,7 @@ void main()
 	
 	int index = indexFromCoords(ivec2(col, row));
 	
-	Pixel pixel = grid[index];
+	Pixel pixel = chunkData1[readSsboFirst ? index : index + getDataOffset()];
 	vec3 colour = vec3(0.0, 0.0, 0.0);
 
 	if (renderIndex == 0) // Colour
