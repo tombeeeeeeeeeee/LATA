@@ -14,10 +14,6 @@
 
 bool UserPreferences::escapeCloses = false;
 std::string UserPreferences::filename = "";
-std::string UserPreferences::defaultLevelLoad = "";
-bool UserPreferences::rememberLastLevel = true;
-bool UserPreferences::loadDefaultLevel = true;
-bool UserPreferences::enterPlayModeOnStart = false;
 int UserPreferences::windowedStartMode = (int)WindowModes::maximised;
 float UserPreferences::defaultGlobalVolume = 1.0f;
 float UserPreferences::camMove;
@@ -27,7 +23,6 @@ float UserPreferences::camBoomTruck;
 float UserPreferences::camMoveDolly;
 float UserPreferences::camScrollDolly;
 float UserPreferences::orthScrollSpeed;
-bool UserPreferences::saveOnLevelPlay;
 std::string UserPreferences::defaultStyleLoad = "OtherStyle";
 bool UserPreferences::clearSearchBar = true;
 bool UserPreferences::advancedTransformInfo = false;
@@ -105,23 +100,6 @@ void UserPreferences::GUI()
 		ImGui::Unindent();
 	}
 
-	if (ImGui::CollapsingHeader("Level Editor")) {
-		ImGui::Indent();
-		if (ImGui::Checkbox("Load Default Level", &loadDefaultLevel)) { shouldSave = true; }
-		if (!loadDefaultLevel) { 
-			ImGui::BeginDisabled();
-			ImGui::Indent();
-		}
-		if (ImGui::InputText("Default Level Load", &defaultLevelLoad)) { shouldSave = true; }
-		if (ImGui::Checkbox("Rememeber Last Level", &rememberLastLevel)) { shouldSave = true; }
-		if (ImGui::Checkbox("Enter Play Mode On Launch", &enterPlayModeOnStart)) { shouldSave = true; }
-		if (!loadDefaultLevel) { 
-			ImGui::EndDisabled();
-			ImGui::Unindent();
-		}
-		if (ImGui::Checkbox("Save on level play", &saveOnLevelPlay)) { shouldSave = true; }
-		ImGui::Unindent();
-	}
 	if (shouldSave) {
 		Save();
 	}
@@ -169,10 +147,6 @@ void UserPreferences::Save()
 
 	toml::table table{
 		{ "escapeCloses", escapeCloses },
-		{ "loadDefaultLevel", loadDefaultLevel },
-		{ "defaultLevelLoad", defaultLevelLoad },
-		{ "rememberLastLevel", rememberLastLevel },
-		{ "enterPlayModeOnStart", enterPlayModeOnStart },
 		{ "windowedStartMode", windowedStartMode },
 		{ "defaultGlobalVolume", defaultGlobalVolume },
 		{ "camMove", camMove},
@@ -188,7 +162,6 @@ void UserPreferences::Save()
 		{ "showSelectedBox", showSelectedBox },
 		{ "directionalLightDirection", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.direction)},
 		{ "directionalLightColour", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.colour)},
-		{ "saveOnLevelPlay", saveOnLevelPlay },
 	};
 
 	file << table << '\n';
@@ -212,10 +185,6 @@ bool UserPreferences::Load()
 	toml::table data = toml::parse(file);
 
 	escapeCloses = Serialisation::LoadAsBool(data["escapeCloses"]);
-	loadDefaultLevel = Serialisation::LoadAsBool(data["loadDefaultLevel"]);
-	defaultLevelLoad = Serialisation::LoadAsString(data["defaultLevelLoad"]);
-	rememberLastLevel = Serialisation::LoadAsBool(data["rememberLastLevel"]);
-	enterPlayModeOnStart = Serialisation::LoadAsBool(data["enterPlayModeOnStart"]);
 	windowedStartMode = Serialisation::LoadAsInt(data["windowedStartMode"]);
 	// TODO: Set the volume here to this
 	defaultGlobalVolume = Serialisation::LoadAsFloat(data["defaultGlobalVolume"], 1.0f);
@@ -230,7 +199,6 @@ bool UserPreferences::Load()
 	advancedTransformInfo = Serialisation::LoadAsBool(data["advancedTransformInfo"], false);
 	defaultStyleLoad = Serialisation::LoadAsString(data["defaultStyleLoad"], "Default");
 	showSelectedBox = Serialisation::LoadAsBool(data["showSelectedBox"], true);
-	saveOnLevelPlay = Serialisation::LoadAsBool(data["saveOnLevelPlay"], true);
 
 	file.close();
 

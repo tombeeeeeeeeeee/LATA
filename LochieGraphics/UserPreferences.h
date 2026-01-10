@@ -20,12 +20,7 @@ public:
 	static bool escapeCloses;
 
 	static bool clearSearchBar;
-	
-	static bool saveOnLevelPlay;
-	static bool loadDefaultLevel;
-	static std::string defaultLevelLoad;
-	static bool rememberLastLevel;
-	static bool enterPlayModeOnStart;
+
 	static int windowedStartMode;
 
 	static std::string defaultStyleLoad;
