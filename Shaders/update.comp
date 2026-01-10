@@ -1,15 +1,15 @@
-#version 460 core
 
 //! #include "basePixel.comp"
 
-uniform int frameCount;
+uniform int updateCount;
+
 
 // We don't actually want to work out exactly the position if we don't care, only need for the one that will take our spot
 ivec2 getExpectedPos(ivec2 coords, int index, bool evenFrame)
 {
-	if (read[index].matID == 2)
+	if (getRead(index).matID == 2)
 	{
-		return coords + ivec2(round(read[index].vel + read[index].subPos));
+		return coords + ivec2(round(getRead(index).vel + getRead(index).subPos));
 	}
 
 	// Not expected to move
@@ -18,11 +18,11 @@ ivec2 getExpectedPos(ivec2 coords, int index, bool evenFrame)
 
 bool UpdateCell(ivec2 coords, int index)
 {
-	Pixel at = read[index];
+	Pixel at = getRead(index);
 
-	bool even1Frame = frameCount % 2 == 0;
-	bool even2Frame = frameCount % 4 < 2;
-	bool even4Frame = frameCount % 8 < 4;
+	bool even1Frame = updateCount % 2 == 0;
+	bool even2Frame = updateCount % 4 < 2;
+	bool even4Frame = updateCount % 8 < 4;
 	
 	// is a square but yeah
 	int searchRadius = 1;
@@ -49,7 +49,7 @@ bool UpdateCell(ivec2 coords, int index)
 				continue;
 			}
 			ivec2 lCoords = coords + ivec2(lx, ly);
-			if (lCoords.x < 0 || lCoords.y < 0 || lCoords.x >= gridCols || lCoords.y >= gridRows)
+			if (!containsLocalCoords(lCoords))
 			{
 				continue;
 			}
@@ -57,13 +57,13 @@ bool UpdateCell(ivec2 coords, int index)
 
 			if (getExpectedPos(lCoords, lIndex, even1Frame) == coords)
 			{
-				Pixel pixel = read[lIndex];
+				Pixel pixel = getRead(lIndex);
 				vec2 actualExpectedPos = vec2(lCoords) + pixel.subPos + pixel.vel;
 				vec2 differenceFromActual = actualExpectedPos - vec2(coords);
 				pixel.subPos = differenceFromActual;
 				pixel.movedLastUpdate = true;
-				write[index] = pixel;
-				write[lIndex] = at;
+				setWrite(index, pixel);
+				setWrite(lIndex, at);
 				return true;
 			}
 		}
@@ -72,7 +72,7 @@ bool UpdateCell(ivec2 coords, int index)
 }
 
 void main() {
-	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
+	ivec2 coords = getLocalCoords();
 	int index = indexFromCoords(coords);
 	UpdateCell(coords, index);
 }

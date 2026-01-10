@@ -28,6 +28,8 @@ private:
 
 	void LoadShaders();
 
+	glm::vec2 ScreenToWorld(glm::vec2 cursor);
+
 
 public:
 	//GpuPixelSimScene();

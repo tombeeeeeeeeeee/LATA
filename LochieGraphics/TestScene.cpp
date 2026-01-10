@@ -118,9 +118,6 @@ void TestScene::Update(float delta)
 
 	glm::vec2 mouse = ScreenToWorldPos(*cursorPos);
 	guiCursor = glm::ivec2{ floorf(mouse.x * Pixels::chunkWidth), floorf(mouse.y * Pixels::chunkHeight) };
-	if (!pixelSim.isCellAt(guiCursor.x, guiCursor.y)) {
-		//guiCursor = previousGuiCursor;
-	}
 	// Ensure imgui isn't using mouse
 	if (!ImGui::GetIO().WantCaptureMouse && glfwGetMouseButton(renderSystem.window, GLFW_MOUSE_BUTTON_LEFT)) {
 		auto path = GeneratePathBetween(previousGuiCursor, guiCursor);

@@ -1,4 +1,3 @@
-#version 460 core
 
 //! #include "basePixel.comp"
 
@@ -9,19 +8,20 @@ uniform Pixel pixel;
 uniform float timer;
 
 void main() {
-	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
-	int index = indexFromCoords(coords);
-	Pixel at = read[index];
+	ivec2 localCoords = getLocalCoords();
+	int index = indexFromCoords(localCoords);
+	Pixel at = getRead(index);
 
 	//write[index].matID = (int(gl_GlobalInvocationID.x + gl_GlobalInvocationID.y) + at.matID) % 3;
 	//if (0 < centerCoords.x - abs(coords.x) && centerCoords.x - abs(coords.x) <= radius 
 	//&& 0 < centerCoords.y - abs(coords.y) && centerCoords.y - abs(coords.y) <= radius)
-	if (length(vec2(coords - centerCoords)) <= radius)
+	ivec2 globalCoords = localToGlobalCoords(localCoords);
+	if (length(vec2(globalCoords - centerCoords)) <= radius)
 	{
-		write[index] = pixel;
+		setWrite(index, pixel);
 	}
 	else
 	{
-		write[index] = read[index];
+		setWrite(index, getRead(index));
 	}
 }

@@ -29,13 +29,32 @@ void GpuPixelSimScene::Start()
 	quad.InitialiseQuad(1.0f);
 
 	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
+	camera->transform.setPosition({ pixelSim.chunkWidth / 2.0f, pixelSim.chunkHeight / 2.0f, camera->transform.getPosition().z });
 	camera->editorOrth = true;
+	camera->orthoScale = 600;
 	camera->state = Camera::State::tilePlacing;
 }
 
-static glm::ivec2 CursorToWorld(glm::vec2 cursor, int width, int height)
+glm::vec2 GpuPixelSimScene::ScreenToWorld(glm::vec2 screenPos)
 {
-	return glm::ivec2(cursor.x * width, cursor.y * height);
+	float ratio = (float)*windowWidth / (float)*windowHeight;
+
+	// Centre screen pos, X and Y should be between -0.5 to 0.5
+	glm::vec2 pos = screenPos - glm::vec2(0.5f, 0.5f);
+	// Adjust scale
+	pos.x *= ratio;
+	pos *= camera->orthoScale;
+
+	float camX = camera->transform.getPosition().x;
+	float camY = camera->transform.getPosition().y;
+
+	float camSin = sinf(glm::radians(glm::degrees(glm::eulerAngles(camera->transform.getRotation())).z));
+	float camCos = cosf(glm::radians(glm::degrees(glm::eulerAngles(camera->transform.getRotation())).z));
+
+	return glm::vec2(
+		camX - (pos.x * camCos - pos.y * camSin),
+		camY - (pos.y * camCos + pos.x * camSin)
+	);
 }
 
 void GpuPixelSimScene::Update(float delta)
@@ -51,12 +70,12 @@ void GpuPixelSimScene::Update(float delta)
 		PixelsGPU::CellPixel cell;
 		cell.matID = placingMatID;
 		
-		glm::ivec2 worldCurrentCursorPos = CursorToWorld(*cursorPos, pixelSim.chunkWidth, pixelSim.chunkHeight);
-		glm::ivec2 worldPreviousCursorPos = CursorToWorld(previousCursorPos, pixelSim.chunkWidth, pixelSim.chunkHeight);
+		glm::ivec2 worldCurrentCursorPos = ScreenToWorld(*cursorPos);
+		glm::ivec2 worldPreviousCursorPos = ScreenToWorld(previousCursorPos);
 
 		glm::vec2 vel = *cursorPos - previousCursorPos;
 
-		static float velMultiplier = 3.1f;
+		static float velMultiplier = 16.0f;
 
 		vel *= velMultiplier;
 		cell.vel = vel;
@@ -70,7 +89,7 @@ void GpuPixelSimScene::Update(float delta)
 
 void GpuPixelSimScene::Draw(float delta)
 {
-		renderSystem.Update(transforms, pointLights, spotlights, camera, delta, nullptr, &pixelSim, frameBuffer, pixelShader, quad, simple2dShader, texture, renderIndex);
+	renderSystem.Update(transforms, pointLights, spotlights, camera, delta, nullptr, &pixelSim, frameBuffer, pixelShader, quad, simple2dShader, texture, renderIndex);
 }
 
 void GpuPixelSimScene::GUI()

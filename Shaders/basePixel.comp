@@ -1,3 +1,4 @@
+#version 460 core
 
 layout (local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
 
@@ -7,15 +8,34 @@ layout (local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
 uniform int gridCols;
 uniform int gridRows;
 
-layout(std430, binding = 4) buffer PixelsRead
+uniform ivec2 chunkCoords;
+
+layout(std430, binding = 4) buffer ChunkSlot1
 {
 	Pixel read[];
+//	Pixel write1[];
 };
 
-layout(std430, binding = 5) buffer PixelsWrite
+layout(std430, binding = 5) buffer ChunkSlot2
 {
+//	Pixel read2[];
 	Pixel write[];
 };
+
+Pixel getRead(int index)
+{
+	return read[index];
+}
+
+void setWrite(int index, Pixel pixel)
+{
+	write[index] = pixel;
+}
+
+void setRead(int index, Pixel pixel)
+{
+	read[index] = pixel;
+}
 
 int indexFromCoords(ivec2 coord)
 {
@@ -25,4 +45,30 @@ int indexFromCoords(ivec2 coord)
 ivec2 coordsFromIndex(int index)
 {
 	return ivec2(index % gridCols, index / gridCols);
+}
+
+ivec2 globalToLocalCoords(ivec2 globalCoords)
+{
+	return ivec2(globalCoords.x - (chunkCoords.x * gridCols), globalCoords.y - (chunkCoords.y * gridRows));
+}
+
+ivec2 localToGlobalCoords(ivec2 localCoords)
+{
+	return ivec2(localCoords.x + (chunkCoords.x * gridCols), localCoords.y + (chunkCoords.y * gridRows));
+}
+
+bool containsLocalCoords(ivec2 localCoords)
+{
+	return localCoords.x >= 0 && localCoords.x < gridCols && localCoords.y >= 0 && localCoords.y < gridRows;
+}
+
+bool containsGlobalCoords(ivec2 globalCoords)
+{
+	ivec2 asLocal = globalToLocalCoords(globalCoords);
+	return containsLocalCoords(asLocal);
+}
+
+ivec2 getLocalCoords()
+{
+	return ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
 }

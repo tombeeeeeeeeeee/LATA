@@ -1,4 +1,3 @@
-#version 460 core
 
 //! #include "basePixel.comp"
 
@@ -11,10 +10,10 @@ vec2 getExternalForcesAt(ivec2 coords)
 }
 
 void main() {
-	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
+	ivec2 coords = getLocalCoords();
 	int index = indexFromCoords(coords);
 
-	Pixel pixel = read[index];
+	Pixel pixel = getRead(index);
 	
 	if (!pixel.movedLastUpdate)
 	{
@@ -49,6 +48,6 @@ void main() {
 
 	pixel.movedLastUpdate = false;
 
-	write[index] = pixel;
-	read[index] = pixel;
+	setWrite(index, pixel);
+	setRead(index, pixel);
 }

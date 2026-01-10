@@ -56,7 +56,7 @@ namespace PixelsGPU
 		std::vector<Chunk> chunks;
 
 		float timer = 0.0f;
-		int frameCount = 0;
+		int updateCount = 0;
 		bool debugTest = false;
 		int subUpdates = 10;
 
