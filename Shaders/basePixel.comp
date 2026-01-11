@@ -24,19 +24,39 @@ int getDataOffset()
 	return gridCols * gridRows;
 }
 
+int getReadIndex(int index, bool chunkReadSsboFirst)
+{
+	return chunkReadSsboFirst ? index : index + getDataOffset();
+}
+
+int getWriteIndex(int index, bool chunkReadSsboFirst)
+{
+	return chunkReadSsboFirst ? index + getDataOffset() : index;
+}
+
+int getReadIndex(int index)
+{
+	return getReadIndex(index, readSsboFirst);
+}
+
+int getWriteIndex(int index)
+{
+	return getWriteIndex(index, readSsboFirst);
+}
+
 Pixel getRead(int index)
 {
-	return readSsboFirst ? chunkData1[index] : chunkData1[index + getDataOffset()];
+	return chunkData1[getReadIndex(index)];
 }
 
 void setWrite(int index, Pixel pixel)
 {
-	chunkData1[readSsboFirst ? index + getDataOffset() : index] = pixel;
+	chunkData1[getWriteIndex(index)] = pixel;
 }
 
 void setRead(int index, Pixel pixel)
 {
-	chunkData1[readSsboFirst ? index : index + getDataOffset()] = pixel;
+	chunkData1[getReadIndex(index)] = pixel;
 }
 
 int indexFromCoords(ivec2 coord)
@@ -65,12 +85,12 @@ ivec2 localToOtherLocalCoords(ivec2 localCoords, ivec2 otherChunkCoords)
 	return ivec2(localCoords.x + ((chunkCoords.x - otherChunkCoords.x) * gridCols), localCoords.y + ((chunkCoords.y - otherChunkCoords.y) * gridRows));
 }
 
-bool containsLocalCoords(ivec2 localCoords)
+bool containsLocalCoords(const ivec2 localCoords)
 {
 	return localCoords.x >= 0 && localCoords.x < gridCols && localCoords.y >= 0 && localCoords.y < gridRows;
 }
 
-bool containsGlobalCoords(ivec2 globalCoords)
+bool containsGlobalCoords(const ivec2 globalCoords)
 {
 	ivec2 asLocal = globalToLocalCoords(globalCoords);
 	return containsLocalCoords(asLocal);
@@ -79,4 +99,11 @@ bool containsGlobalCoords(ivec2 globalCoords)
 ivec2 getLocalCoords()
 {
 	return ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
+}
+
+// Returns the "direction" of the belonging chunk
+// For example: (0, 0) for contained, (-1, 0) for left, (1, 1) for up right
+ivec2 getLocalChunkDirection(const ivec2 localCoords)
+{
+	return ivec2((localCoords.x < 0) ? -1 : ((localCoords.x >= gridCols) ? 1 : 0), (localCoords.y < 0) ? -1 : ((localCoords.y >= gridRows) ? 1 : 0));
 }

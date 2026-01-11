@@ -6,12 +6,13 @@ vec2 getExternalForcesAt(ivec2 coords)
 //	ivec2 middle = ivec2(512, 512);
 //	vec2 toMiddle = middle - coords;
 //	return normalize(toMiddle) * 0.00005;
-	return vec2(0, -0.0002);
+//	return vec2(0, -0.0002);
+	return vec2(-0.0002, -0.0002);
 }
 
 void main() {
-	ivec2 coords = getLocalCoords();
-	int index = indexFromCoords(coords);
+	const ivec2 coords = getLocalCoords();
+	const int index = indexFromCoords(coords);
 
 	Pixel pixel = getRead(index);
 	
@@ -24,8 +25,8 @@ void main() {
 	{
 //		pixel.colour.r = 0.9;
 	}
-	float subPosLength = length(pixel.subPos);
-	float subPosLimit = 0.49;
+	const float subPosLength = length(pixel.subPos);
+	const float subPosLimit = 0.49;
 	if (subPosLength >= subPosLimit)
 	{
 		pixel.subPos /= subPosLength;
@@ -35,9 +36,9 @@ void main() {
 	// need to ensure speed limit here
 	if (pixel.matID == 2)
 	{
-		float speedLimit = 1.0;
+		const float speedLimit = 1.0;
 		vec2 newVel = pixel.vel + getExternalForcesAt(coords);
-		float newVelLength = length(newVel);
+		const float newVelLength = length(newVel);
 		if (newVelLength > speedLimit)
 		{
 			newVel /= newVelLength;

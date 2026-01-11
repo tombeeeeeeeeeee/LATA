@@ -42,14 +42,48 @@ layout(std430, binding = ssboBindingOffset + 9) buffer ChunkSlot9
 	Pixel chunkData9[];
 };
 
+#define DoChunkCheckThing(checkChunkIndex, chunkBuffer)																\
+{																													\
+	const ivec2 nearChunkCoordsLocal = nearChunkOffsetCoords[checkChunkIndex];										\
+	const ivec2 localChunkDirection = getLocalChunkDirection(lCoords);												\
+	if (localChunkDirection == nearChunkCoordsLocal && (nearChunkStatus[checkChunkIndex] > 0))						\
+	{																												\
+		const int nearIndex = getLocalCoordsAsOtherChunkIndex(lCoords, nearChunkCoordsLocal);						\
+		const bool nearChunkReadStatus = nearChunkStatus[checkChunkIndex] == 1;										\
+		Pixel pixel = chunkBuffer[getReadIndex(nearIndex, nearChunkReadStatus)];									\
+		if (getExpectedLocalPos(lCoords, pixel, even1Frame) == coords)												\
+		{																											\
+			pixel.subPos = calculateNewSubPos(lCoords, coords, pixel.subPos, pixel.vel);							\
+			pixel.movedLastUpdate = true;																			\
+			setWrite(index, pixel);																					\
+			chunkBuffer[getWriteIndex(nearIndex, nearChunkReadStatus)] = at;										\
+			return true;																							\
+		}																											\
+		continue;																									\
+	}																												\
+}
+
 uniform int updateCount;
 
+const int nearChunkCount = 8;
 // Treat as bools
 // 0, not one on that side, 1 is read first, 2 is write first
-uniform int nearChunkStatus[8];
+uniform int nearChunkStatus[nearChunkCount];
+
+const ivec2 nearChunkOffsetCoords[nearChunkCount] =
+{
+	ivec2(-1, 0),
+	ivec2(0, 1),
+	ivec2(1, 0),
+	ivec2(0, -1),
+	ivec2(-1, 1),
+	ivec2(1, 1),
+	ivec2(-1, -1),
+	ivec2(1, -1),
+};
 
 // We don't actually want to work out exactly the position if we don't care, only need for the one that will take our spot
-ivec2 getExpectedLocalPos(ivec2 lcoords, Pixel pixel, bool evenFrame)
+ivec2 getExpectedLocalPos(const ivec2 lcoords, const Pixel pixel, const bool evenFrame)
 {
 	if (pixel.matID == 2)
 	{
@@ -62,10 +96,21 @@ ivec2 getExpectedLocalPos(ivec2 lcoords, Pixel pixel, bool evenFrame)
 	return lcoords;
 }
 
+int getLocalCoordsAsOtherChunkIndex(const ivec2 lCoords, const ivec2 chunkCoordsLocal)
+{
+	const ivec2 otherLocal = localToOtherLocalCoords(lCoords, chunkCoords + chunkCoordsLocal);
+	return indexFromCoords(otherLocal);
+}
+
+vec2 calculateNewSubPos(const ivec2 originalCoords, const ivec2 newCoords, const vec2 subPos, const vec2 vel)
+{
+	const vec2 actualExpectedPos = vec2(originalCoords) + subPos + vel;
+	const vec2 differenceFromActual = actualExpectedPos - vec2(newCoords);
+	return differenceFromActual;
+}
+
 bool UpdateCell(ivec2 coords, int index)
 {
-	Pixel at = getRead(index);
-
 	const bool even1Frame = updateCount % 2 == 0;
 	const bool even2Frame = updateCount % 4 < 2;
 	const bool even4Frame = updateCount % 8 < 4;
@@ -81,6 +126,7 @@ bool UpdateCell(ivec2 coords, int index)
 	const int searchEndY   = even4Frame ? searchRadius + 1 : -searchRadius - 1;
 	const int searchDirY   = even4Frame ? 1 : -1;
 
+	Pixel at = getRead(index);
 	if (at.matID != 1)
 	{
 		return false;
@@ -97,29 +143,31 @@ bool UpdateCell(ivec2 coords, int index)
 			const ivec2 lCoords = coords + ivec2(lx, ly);
 			if (!containsLocalCoords(lCoords))
 			{
-				if (nearChunkStatus[1] > 0 && lx == 0 && ly > 0)
-				{
-					const ivec2 otherLocal = localToOtherLocalCoords(lCoords, chunkCoords + ivec2(0, 1));
-					const bool upReadStatus = nearChunkStatus[1] == 1;
-					const int upIndex = indexFromCoords(otherLocal);
-					Pixel pixel = chunkData3[upReadStatus ? upIndex : upIndex + getDataOffset()];
-
-					if (getExpectedLocalPos(lCoords, pixel, even1Frame) == coords)
-					{
-						const vec2 actualExpectedPos = vec2(lCoords) + pixel.subPos + pixel.vel;
-						const vec2 differenceFromActual = actualExpectedPos - vec2(coords);
-						pixel.subPos = differenceFromActual;
-						pixel.movedLastUpdate = true;
-						
-						setWrite(index, pixel);
-						chunkData3[upReadStatus ? upIndex + getDataOffset() : upIndex] = at;
-						//setWrite(lIndex, at);
-						
-						return true;
-					}
-
-
-				}
+//				const int upChunkIndex = 1;
+//				const ivec2 upChunkCoordsLocal = nearChunkOffsetCoords[upChunkIndex];
+//				if (nearChunkStatus[upChunkIndex] > 0 && lx == upChunkCoordsLocal.x && ly == upChunkCoordsLocal.y)
+//				{
+//					const int upIndex = getLocalCoordsAsOtherChunkIndex(lCoords, upChunkCoordsLocal);
+//					const bool upReadStatus = nearChunkStatus[upChunkIndex] == 1;
+//					Pixel pixel = chunkData3[getReadIndex(upIndex, upReadStatus)];
+//					if (getExpectedLocalPos(lCoords, pixel, even1Frame) == coords)
+//					{
+//						pixel.subPos = calculateNewSubPos(lCoords, coords, pixel.subPos, pixel.vel);
+//						pixel.movedLastUpdate = true;
+//						setWrite(index, pixel);
+//						chunkData3[getWriteIndex(upIndex, upReadStatus)] = at;
+//						return true;
+//					}
+//					continue;
+//				}
+				DoChunkCheckThing(0, chunkData2);
+				DoChunkCheckThing(1, chunkData3);
+				DoChunkCheckThing(2, chunkData4);
+				DoChunkCheckThing(3, chunkData5);
+				DoChunkCheckThing(4, chunkData6);
+				DoChunkCheckThing(5, chunkData7);
+				DoChunkCheckThing(6, chunkData8);
+				DoChunkCheckThing(7, chunkData9);
 				continue;
 			}
 
@@ -128,9 +176,7 @@ bool UpdateCell(ivec2 coords, int index)
 			Pixel pixel = getRead(lIndex);
 			if (getExpectedLocalPos(lCoords, pixel, even1Frame) == coords)
 			{
-				const vec2 actualExpectedPos = vec2(lCoords) + pixel.subPos + pixel.vel;
-				const vec2 differenceFromActual = actualExpectedPos - vec2(coords);
-				pixel.subPos = differenceFromActual;
+				pixel.subPos = calculateNewSubPos(lCoords, coords, pixel.subPos, pixel.vel);
 				pixel.movedLastUpdate = true;
 				setWrite(index, pixel);
 				setWrite(lIndex, at);

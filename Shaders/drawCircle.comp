@@ -8,14 +8,10 @@ uniform Pixel pixel;
 uniform float timer;
 
 void main() {
-	ivec2 localCoords = getLocalCoords();
-	int index = indexFromCoords(localCoords);
-	Pixel at = getRead(index);
-
-	//write[index].matID = (int(gl_GlobalInvocationID.x + gl_GlobalInvocationID.y) + at.matID) % 3;
-	//if (0 < centerCoords.x - abs(coords.x) && centerCoords.x - abs(coords.x) <= radius 
-	//&& 0 < centerCoords.y - abs(coords.y) && centerCoords.y - abs(coords.y) <= radius)
-	ivec2 globalCoords = localToGlobalCoords(localCoords);
+	const ivec2 localCoords = getLocalCoords();
+	const int index = indexFromCoords(localCoords);
+	
+	const ivec2 globalCoords = localToGlobalCoords(localCoords);
 	if (length(vec2(globalCoords - centerCoords)) <= radius)
 	{
 		setWrite(index, pixel);
