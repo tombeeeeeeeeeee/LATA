@@ -71,6 +71,10 @@ void main()
 		colour = vec3(0.5 + (atan(pixel.subPos.x) / PI), 0.5 + (atan(pixel.subPos.y) / PI), 0.5);
 		//colour = vec3(pixel.subPos.x / 2.0 + 0.5, pixel.subPos.y / 2.0 + 0.5, 0);
 	}
+	else if (renderIndex == 4) //movedLastUpdate
+	{
+		colour = pixel.movedLastUpdate ? vec3(1, 0, 0) : vec3(1, 1, 1);
+	}
 	else // Invalid
 	{
 		colour = vec3(texCoords, 0.0);

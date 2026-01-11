@@ -53,7 +53,9 @@ ivec2 getExpectedLocalPos(ivec2 lcoords, Pixel pixel, bool evenFrame)
 {
 	if (pixel.matID == 2)
 	{
+		//return lcoords + ivec2(0, -1);
 		return lcoords + ivec2(round(pixel.vel + pixel.subPos));
+		//return lcoords + ivec2(round(pixel.vel));
 	}
 
 	// Not expected to move
@@ -95,7 +97,7 @@ bool UpdateCell(ivec2 coords, int index)
 			const ivec2 lCoords = coords + ivec2(lx, ly);
 			if (!containsLocalCoords(lCoords))
 			{
-				if (nearChunkStatus[1] > 0 && ly > 0)
+				if (nearChunkStatus[1] > 0 && lx == 0 && ly > 0)
 				{
 					const ivec2 otherLocal = localToOtherLocalCoords(lCoords, chunkCoords + ivec2(0, 1));
 					const bool upReadStatus = nearChunkStatus[1] == 1;
@@ -104,7 +106,7 @@ bool UpdateCell(ivec2 coords, int index)
 
 					if (getExpectedLocalPos(lCoords, pixel, even1Frame) == coords)
 					{
-						const vec2 actualExpectedPos = vec2(otherLocal) + pixel.subPos + pixel.vel;
+						const vec2 actualExpectedPos = vec2(lCoords) + pixel.subPos + pixel.vel;
 						const vec2 differenceFromActual = actualExpectedPos - vec2(coords);
 						pixel.subPos = differenceFromActual;
 						pixel.movedLastUpdate = true;
