@@ -68,6 +68,7 @@ public:
 	void setBool(const std::string& name, bool value);
 	void setSampler(const std::string& name, unsigned int value);
 	void setInt(const std::string& name, int value);
+	void setIntArray(const std::string& name, int* values, int count);
 	void setIVec2(const std::string& name, const glm::ivec2& value);
 	void setFloat(const std::string& name, float value);
 	void setVec2(const std::string& name, const glm::vec2& value);
