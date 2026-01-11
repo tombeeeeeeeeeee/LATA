@@ -169,6 +169,11 @@ void Shader::setInt(const std::string& name, int value)
 	glUniform1i(getUniformLocation(name), value);
 }
 
+void Shader::setIntArray(const std::string& name, int* values, int count)
+{
+	glUniform1iv(getUniformLocation(name), count, values);
+}
+
 void Shader::setIVec2(const std::string& name, const glm::ivec2& value)
 {
 	glUniform2iv(getUniformLocation(name), 1, &value[0]);
