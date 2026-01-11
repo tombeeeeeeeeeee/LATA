@@ -525,7 +525,7 @@ void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameB
 {
     for (const PixelsGPU::Simulation::Chunk& chunk : pixelSim.chunks)
     {
-        chunk.BindCorrectSSBO();
+        chunk.BindSSBO(PixelsGPU::Simulation::Chunk::centreIndexSSBO);
 
         frameBuffer->Bind();
         glViewport(0, 0, pixelSim.chunkWidth, pixelSim.chunkHeight);
@@ -535,6 +535,7 @@ void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameB
         pixelShader->setInt("gridRows", pixelSim.chunkHeight);
         pixelShader->setInt("renderIndex", renderIndex);
         pixelShader->setBool("readSsboFirst", chunk.readSsboFirst);
+        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
         quad.Draw();
 
         //frameBuffer->Unbind();
@@ -548,7 +549,7 @@ void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameB
         glm::mat4 model = glm::mat4(1.0f);
         const float halfWidth = (float)pixelSim.chunkWidth / 2.0f;
         const float halfHeight = (float)pixelSim.chunkHeight / 2.0f;
-        model = glm::translate(model, glm::vec3(chunk.x * pixelSim.chunkWidth + halfWidth , chunk.y * pixelSim.chunkHeight + halfHeight, 0.0f));
+        model = glm::translate(model, glm::vec3(chunk.coords.x * pixelSim.chunkWidth + halfWidth , chunk.coords.y * pixelSim.chunkHeight + halfHeight, 0.0f));
         model = glm::scale(model, glm::vec3(halfWidth, halfHeight, 1.0f));
         simple2dShader->setMat4("model", model);
         simple2dShader->setSampler("tex", 1);

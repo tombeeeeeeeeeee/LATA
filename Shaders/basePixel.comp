@@ -12,16 +12,12 @@ uniform ivec2 chunkCoords;
 
 uniform bool readSsboFirst;
 
-layout(std430, binding = 4) buffer ChunkSlot1
+const int ssboBindingOffset = 3;
+
+layout(std430, binding = ssboBindingOffset + 1) buffer ChunkSlot1
 {
 	Pixel chunkData1[];
 };
-
-//layout(std430, binding = 5) buffer ChunkSlot2
-//{
-//	Pixel read2[];
-//	Pixel write2[];
-//};
 
 int getDataOffset()
 {
@@ -53,6 +49,7 @@ ivec2 coordsFromIndex(int index)
 	return ivec2(index % gridCols, index / gridCols);
 }
 
+// Assumes that the globalCoords are contained within the chunk
 ivec2 globalToLocalCoords(ivec2 globalCoords)
 {
 	return ivec2(globalCoords.x - (chunkCoords.x * gridCols), globalCoords.y - (chunkCoords.y * gridRows));
@@ -61,6 +58,11 @@ ivec2 globalToLocalCoords(ivec2 globalCoords)
 ivec2 localToGlobalCoords(ivec2 localCoords)
 {
 	return ivec2(localCoords.x + (chunkCoords.x * gridCols), localCoords.y + (chunkCoords.y * gridRows));
+}
+
+ivec2 localToOtherLocalCoords(ivec2 localCoords, ivec2 otherChunkCoords)
+{
+	return ivec2(localCoords.x + ((chunkCoords.x - otherChunkCoords.x) * gridCols), localCoords.y + ((chunkCoords.y - otherChunkCoords.y) * gridRows));
 }
 
 bool containsLocalCoords(ivec2 localCoords)
