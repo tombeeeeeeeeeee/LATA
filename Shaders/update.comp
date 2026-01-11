@@ -143,23 +143,6 @@ bool UpdateCell(ivec2 coords, int index)
 			const ivec2 lCoords = coords + ivec2(lx, ly);
 			if (!containsLocalCoords(lCoords))
 			{
-//				const int upChunkIndex = 1;
-//				const ivec2 upChunkCoordsLocal = nearChunkOffsetCoords[upChunkIndex];
-//				if (nearChunkStatus[upChunkIndex] > 0 && lx == upChunkCoordsLocal.x && ly == upChunkCoordsLocal.y)
-//				{
-//					const int upIndex = getLocalCoordsAsOtherChunkIndex(lCoords, upChunkCoordsLocal);
-//					const bool upReadStatus = nearChunkStatus[upChunkIndex] == 1;
-//					Pixel pixel = chunkData3[getReadIndex(upIndex, upReadStatus)];
-//					if (getExpectedLocalPos(lCoords, pixel, even1Frame) == coords)
-//					{
-//						pixel.subPos = calculateNewSubPos(lCoords, coords, pixel.subPos, pixel.vel);
-//						pixel.movedLastUpdate = true;
-//						setWrite(index, pixel);
-//						chunkData3[getWriteIndex(upIndex, upReadStatus)] = at;
-//						return true;
-//					}
-//					continue;
-//				}
 				DoChunkCheckThing(0, chunkData2);
 				DoChunkCheckThing(1, chunkData3);
 				DoChunkCheckThing(2, chunkData4);

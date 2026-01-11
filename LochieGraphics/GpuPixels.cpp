@@ -73,10 +73,18 @@ PixelsGPU::Simulation::Chunk::~Chunk()
 
 void PixelsGPU::Simulation::Initialise()
 {
-	constexpr int r = 1;
-	for (int x = -r; x < r + 1; x++)
+	//constexpr int r = 1;
+	//for (int x = -r; x < r + 1; x++)
+	//{
+	//	for (int y = -r; y < r + 1; y++)
+	//	{
+	//		chunks.emplace_back(glm::ivec2(x, y));
+	//	}
+	//}
+	constexpr int r = 2;
+	for (int x = 0; x < r; x++)
 	{
-		for (int y = -r; y < r + 1; y++)
+		for (int y = 0; y < r; y++)
 		{
 			chunks.emplace_back(glm::ivec2(x, y));
 		}

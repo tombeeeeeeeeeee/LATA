@@ -33,6 +33,8 @@ void GpuPixelSimScene::Start()
 	camera->editorOrth = true;
 	camera->orthoScale = 600;
 	camera->state = Camera::State::tilePlacing;
+
+	gui.showResourceMenu = true;
 }
 
 glm::vec2 GpuPixelSimScene::ScreenToWorld(glm::vec2 screenPos)
