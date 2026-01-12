@@ -17,13 +17,13 @@ void GpuPixelSimScene::LoadShaders()
 
 void GpuPixelSimScene::Start()
 {
+	LoadShaders();
 	pixelSim.Initialise();
 
 	texture = ResourceManager::CreateTexture(pixelSim.chunkWidth, pixelSim.chunkHeight, GL_RGBA, nullptr, GL_CLAMP_TO_BORDER, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
 
 	frameBuffer = new FrameBuffer(pixelSim.chunkWidth, pixelSim.chunkHeight, texture, nullptr, false);
 
-	LoadShaders();
 	//displayGUI = false;
 
 	quad.InitialiseQuad(1.0f);

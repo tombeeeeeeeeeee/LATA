@@ -10,7 +10,7 @@ private:
 
 	PixelsGPU::Simulation pixelSim;
 
-	bool update = false;
+	bool update = true;
 	bool updateOnce = false;
 
 	int placingMatID = 0;

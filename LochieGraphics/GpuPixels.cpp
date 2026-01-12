@@ -81,14 +81,18 @@ void PixelsGPU::Simulation::Initialise()
 	//		chunks.emplace_back(glm::ivec2(x, y));
 	//	}
 	//}
-	constexpr int r = 2;
-	for (int x = 0; x < r; x++)
+	//constexpr int r = 4;
+	for (int x = 0; x < 4; x++)
 	{
-		for (int y = 0; y < r; y++)
+		for (int y = 0; y < 4; y++)
 		{
 			chunks.emplace_back(glm::ivec2(x, y));
 		}
 	}
+	PixelsGPU::CellPixel cell;
+	cell.matID = 1;
+	cell.colour = glm::vec4(1, 1, 1, 1);
+	SetCircleTo(0, 0, 999999999.0f, cell);
 }
 
 void PixelsGPU::Simulation::Update(float delta)

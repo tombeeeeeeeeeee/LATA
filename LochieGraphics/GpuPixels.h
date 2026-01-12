@@ -19,8 +19,8 @@ namespace PixelsGPU
 	class Simulation
 	{
 	public:
-		static constexpr int chunkWidth = 256;
-		static constexpr int chunkHeight = 256;
+		static constexpr int chunkWidth = 128;
+		static constexpr int chunkHeight = 128;
 
 		static constexpr unsigned int computeLocalSizeX = 32;
 		static constexpr unsigned int computeLocalSizeY = 32;
