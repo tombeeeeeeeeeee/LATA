@@ -85,11 +85,9 @@ const ivec2 nearChunkOffsetCoords[nearChunkCount] =
 // We don't actually want to work out exactly the position if we don't care, only need for the one that will take our spot
 ivec2 getExpectedLocalPos(const ivec2 lcoords, const Pixel pixel, const bool evenFrame)
 {
-	if (pixel.matID == 2)
+	switch (pixel.matID)
 	{
-		//return lcoords + ivec2(0, -1);
-		return lcoords + ivec2(round(pixel.vel + pixel.subPos));
-		//return lcoords + ivec2(round(pixel.vel));
+	// CODE INSERT: MOVEMENT
 	}
 
 	// Not expected to move
@@ -127,7 +125,7 @@ bool UpdateCell(ivec2 coords, int index)
 	const int searchDirY   = even4Frame ? 1 : -1;
 
 	Pixel at = getRead(index);
-	if (at.matID != 1)
+	if (!matsEmptyStatus[at.matID])
 	{
 		return false;
 	}

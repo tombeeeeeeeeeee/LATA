@@ -107,3 +107,5 @@ ivec2 getLocalChunkDirection(const ivec2 localCoords)
 {
 	return ivec2((localCoords.x < 0) ? -1 : ((localCoords.x >= gridCols) ? 1 : 0), (localCoords.y < 0) ? -1 : ((localCoords.y >= gridRows) ? 1 : 0));
 }
+
+// CODE INSERT: MATERIAL_INFO

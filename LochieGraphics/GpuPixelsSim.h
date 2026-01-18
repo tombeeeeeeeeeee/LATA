@@ -4,6 +4,7 @@
 
 #include "GpuPixelsCell.h"
 #include "GpuPixelsChunk.h"
+#include "GpuPixelsMat.h"
 
 namespace PixelsGPU
 {
@@ -15,6 +16,7 @@ namespace PixelsGPU
 		static constexpr unsigned int computeLocalSizeZ = 1;
 
 		std::vector<Chunk> chunks;
+		std::vector<PixelsGPU::Material> materials;
 
 		float timer = 0.0f;
 		int updateCount = 0;
@@ -28,7 +30,8 @@ namespace PixelsGPU
 		ComputeShader* testCompute2 = nullptr;
 		void LoadComputeShaders();
 
-		void Initialise();
+		void InitialiseMaterials();
+		void InitialiseChunks();
 		void Update(float delta);
 
 		const Chunk* getChunkAt(glm::ivec2 chunkCoords);

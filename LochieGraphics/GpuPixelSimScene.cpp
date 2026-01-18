@@ -18,8 +18,9 @@ void GpuPixelSimScene::LoadShaders()
 
 void GpuPixelSimScene::Start()
 {
+	pixelSim.InitialiseMaterials();
 	LoadShaders();
-	pixelSim.Initialise();
+	pixelSim.InitialiseChunks();
 
 	texture = ResourceManager::CreateTexture(PixelsGPU::chunkWidth, PixelsGPU::chunkHeight, GL_RGBA, nullptr, GL_CLAMP_TO_BORDER, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
 

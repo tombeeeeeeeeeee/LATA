@@ -4,16 +4,13 @@
 #include "Paths.h"
 #include "EditorGUI.h"
 #include "Colour.h"
+#include "Utilities.h"
 
 #include <functional>
+#include <filesystem>
 
 void PixelsGPU::Simulation::LoadComputeShaders()
 {
-	if (updatePixels)
-	{
-		updatePixels->DeleteProgram();
-	}
-
 	// Need to make sure these are all good limit wise when running on a worse device than mine
 	int workGroupSize[3];
 	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &workGroupSize[0]);
@@ -37,14 +34,65 @@ void PixelsGPU::Simulation::LoadComputeShaders()
 		__debugbreak();
 	}
 
-	updatePixels = new ComputeShader(Paths::importShaderLocation + "update" + Paths::computeExtension);
+	if (updatePixels)
+	{
+		updatePixels->DeleteProgram();
+	}
+	const std::string updateFilepath = Paths::importShaderLocation + "update" + Paths::computeExtension;
+	std::string updateCode = Utilities::FileToString(updateFilepath);
+	updateCode = Shader::PreProcessShaderCode(updateCode, updateFilepath);
+	
+	std::string movementCode = Material::GetMovementCode(materials);
+	const std::string movementIdentifier = "// CODE INSERT: MOVEMENT";
+	size_t movementSlot = updateCode.find(movementIdentifier);
+	updateCode.replace(movementSlot, movementIdentifier.size(), movementCode);
+	
+	std::string materialInfoCode = Material::GetMaterialInfoCode(materials);
+	const std::string materialInfoIdentifier = "// CODE INSERT: MATERIAL_INFO";
+	size_t materialInfoSlot = updateCode.find(materialInfoIdentifier);
+	updateCode.replace(materialInfoSlot, materialInfoIdentifier.size(), materialInfoCode);
+
+	updatePixels = ComputeShader::CreateCustomComputeShader(updateCode);
+	if (preUpdate)
+	{
+		preUpdate->DeleteProgram();
+	}
 	preUpdate = new ComputeShader(Paths::importShaderLocation + "preUpdate" + Paths::computeExtension);
+	if (placeCircle)
+	{
+		placeCircle->DeleteProgram();
+	}
 	placeCircle = new ComputeShader(Paths::importShaderLocation + "drawCircle" + Paths::computeExtension);
+	if (testCompute)
+	{
+		testCompute->DeleteProgram();
+	}
 	testCompute = new ComputeShader(Paths::importShaderLocation + "testPixelCompute" + Paths::computeExtension);
+	if (testCompute2)
+	{
+		testCompute2->DeleteProgram();
+	}
 	testCompute2 = new ComputeShader(Paths::importShaderLocation + "testPixelCompute2" + Paths::computeExtension);
 }
 
-void PixelsGPU::Simulation::Initialise()
+void PixelsGPU::Simulation::InitialiseMaterials()
+{
+	materials.clear();
+	for (auto& i : std::filesystem::directory_iterator(Material::defaultSavePath))
+	{
+		if (i.path().filename().string() == ".FolderNeedsToExist")
+		{
+			continue;
+		}
+		materials.emplace_back(i.path().stem().string());
+	}
+	for (auto& mat : materials)
+	{
+		mat.SaveAsFile();
+	}
+}
+
+void PixelsGPU::Simulation::InitialiseChunks()
 {
 	//constexpr int r = 1;
 	//for (int x = -r; x < r + 1; x++)
@@ -203,4 +251,18 @@ void PixelsGPU::Simulation::GUI()
 {
 	ImGui::Checkbox("debug test", &debugTest);
 	ImGui::InputInt("Sub updates", &subUpdates);
+	if (ImGui::Button("Re load materials"))
+	{
+		InitialiseMaterials();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Re load compute shaders"))
+	{
+		LoadComputeShaders();
+	}
+	if (ImGui::Button("Re load material and compute shaders"))
+	{
+		InitialiseMaterials();
+		LoadComputeShaders();
+	}
 }
