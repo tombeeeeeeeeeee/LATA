@@ -12,6 +12,10 @@ FrameBuffer::FrameBuffer(unsigned int _width, unsigned int _height, Texture* _co
 	useRBO(_useRBO)
 {
 	glGenFramebuffers(1, &FBO);
+	if (useRBO)
+	{
+		glGenRenderbuffers(1, &RBO);
+	}
 	Load();
 }
 
@@ -40,7 +44,7 @@ void FrameBuffer::Load()
 	}
 
 	if (useRBO) {
-		glGenRenderbuffers(1, &RBO);
+
 		glBindRenderbuffer(GL_RENDERBUFFER, RBO);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
