@@ -329,13 +329,16 @@
     <ClCompile Include="ThreadPool.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
-    <ClCompile Include="GpuPixels.cpp">
-      <Filter>Source Files\GPU Pixels</Filter>
-    </ClCompile>
     <ClCompile Include="GpuPixelSimScene.cpp">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Colour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuPixelsSim.cpp">
+      <Filter>Source Files\GPU Pixels</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuPixelsCell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -569,13 +572,14 @@
     <ClInclude Include="..\Third Party\box2d\box2d\include\id.h" />
     <ClInclude Include="..\Third Party\box2d\box2d\include\math_functions.h" />
     <ClInclude Include="..\Third Party\box2d\box2d\include\types.h" />
-    <ClInclude Include="GpuPixels.h">
-      <Filter>Source Files\GPU Pixels</Filter>
-    </ClInclude>
     <ClInclude Include="GpuPixelSimScene.h">
       <Filter>Source Files\Scene Management\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Colour.h" />
+    <ClInclude Include="GpuPixelsSim.h">
+      <Filter>Source Files\GPU Pixels</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuPixelsCell.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">

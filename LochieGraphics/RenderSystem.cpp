@@ -15,7 +15,7 @@
 #include "SceneObject.h"
 #include "PixelSimulation.h"
 #include "Mesh.h"
-#include "GpuPixels.h"
+#include "GpuPixelsSim.h"
 
 #include "Utilities.h"
 #include "EditorGUI.h"

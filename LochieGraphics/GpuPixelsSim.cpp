@@ -1,4 +1,4 @@
-#include "GpuPixels.h"
+#include "GpuPixelsSim.h"
 
 #include "Graphics.h"
 #include "Paths.h"

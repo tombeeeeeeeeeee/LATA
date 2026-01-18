@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 
-#include "GpuPixels.h"
+#include "GpuPixelsSim.h"
 #include "Mesh.h"
 
 class GpuPixelSimScene : public Scene
