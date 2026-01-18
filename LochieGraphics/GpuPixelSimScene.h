@@ -8,6 +8,16 @@ class GpuPixelSimScene : public Scene
 {
 private:
 
+	enum class MouseMode : int {
+		None,
+		Brush,
+		SelectPixel,
+		SelectChunk,
+		COUNT
+	};
+
+	MouseMode mouseMode = MouseMode::Brush;
+
 	PixelsGPU::Simulation pixelSim;
 
 	bool update = true;
@@ -17,6 +27,7 @@ private:
 	float placingRadius = 5;
 	int renderIndex = 0;
 	glm::vec2 previousCursorPos;
+	glm::ivec2 chunkSelected;
 
 	Texture* texture = nullptr;
 	FrameBuffer* frameBuffer = nullptr;
@@ -29,6 +40,8 @@ private:
 	void LoadShaders();
 
 	glm::vec2 ScreenToWorld(glm::vec2 cursor);
+
+	void DrawCircle(glm::vec2 worldCurrentCursorPos);
 
 
 public:

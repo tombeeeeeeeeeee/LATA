@@ -3,7 +3,8 @@
 #include "ResourceManager.h"
 #include "FrameBuffer.h"
 #include "SceneManager.h"
-#include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
+#include "SceneObject.h"
 
 #include "Paths.h"
 
@@ -59,6 +60,20 @@ glm::vec2 GpuPixelSimScene::ScreenToWorld(glm::vec2 screenPos)
 	);
 }
 
+void GpuPixelSimScene::DrawCircle(glm::vec2 worldCurrentCursorPos)
+{
+	PixelsGPU::CellPixel cell;
+	cell.matID = placingMatID;
+
+	const glm::vec2 worldDifference = worldCurrentCursorPos - previousCursorPos;
+	static constexpr float velMultiplier = 1.0f;
+	const glm::vec2 vel = worldDifference * velMultiplier;
+	cell.vel = vel;
+
+	pixelSim.SetCircleTo(worldCurrentCursorPos, placingRadius, cell);
+
+}
+
 void GpuPixelSimScene::Update(float delta)
 {
 	if (update || updateOnce)
@@ -67,25 +82,32 @@ void GpuPixelSimScene::Update(float delta)
 		pixelSim.Update(delta);
 	}
 
-	if (glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	glm::vec2 worldCurrentCursorPos = ScreenToWorld(*cursorPos);
+	
+	if (!ImGui::GetIO().WantCaptureMouse && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
-		PixelsGPU::CellPixel cell;
-		cell.matID = placingMatID;
-		
-		glm::ivec2 worldCurrentCursorPos = ScreenToWorld(*cursorPos);
-		glm::ivec2 worldPreviousCursorPos = ScreenToWorld(previousCursorPos);
-
-		glm::vec2 vel = *cursorPos - previousCursorPos;
-
-		static float velMultiplier = 16.0f;
-
-		vel *= velMultiplier;
-		cell.vel = vel;
-		
-		pixelSim.SetCircleTo(worldCurrentCursorPos, placingRadius, cell);
+		switch (mouseMode)
+		{
+		case GpuPixelSimScene::MouseMode::None:
+			break;
+		case GpuPixelSimScene::MouseMode::Brush:
+			DrawCircle(worldCurrentCursorPos);
+			break;
+		case GpuPixelSimScene::MouseMode::SelectPixel:
+			break;
+		case GpuPixelSimScene::MouseMode::SelectChunk:
+			glm::vec2 chunkSpacePos = worldCurrentCursorPos / glm::vec2(PixelsGPU::Simulation::chunkWidth, PixelsGPU::Simulation::chunkHeight);
+			glm::ivec2 chunkCoord = glm::ivec2(floorf(chunkSpacePos.x), floorf(chunkSpacePos.y));
+			chunkSelected = chunkCoord;
+			break;
+		case GpuPixelSimScene::MouseMode::COUNT:
+			break;
+		default:
+			break;
+		}
 	}
 
-	previousCursorPos = *cursorPos;
+	previousCursorPos = worldCurrentCursorPos;
 }
 
 
@@ -105,9 +127,33 @@ void GpuPixelSimScene::GUI()
 	{
 		LoadShaders();
 	}
+	
+	ExtraEditorGUI::SliderEnum("Mouse mode", { "None", "Brush", "Select Pixel", "Select Chunk" }, (int*)&mouseMode);
 	ImGui::InputInt("MatID placing", &placingMatID);
 	ImGui::SliderFloat("Placing radius", &placingRadius, 0.0f, (pixelSim.chunkWidth + pixelSim.chunkHeight) / 2);
 	ImGui::InputInt("RenderIndex", &renderIndex);
+	const PixelsGPU::Simulation::Chunk* chunk = pixelSim.getChunkAt(chunkSelected);
+	{
+		ExtraEditorGUI::ScopedDisable disable;
+		ImGui::DragInt2("Chunk Coords", &chunkSelected.x);
+	}
+	if (chunk)
+	{
+		if (ImGui::Button("Destroy Chunk"))
+		{
+			pixelSim.DestroyChunk(chunkSelected);
+		}
+		ExtraEditorGUI::ScopedDisable disable;
+		auto temp = chunk->ssbo1;
+		ImGui::DragScalar("Chunk SSBO", ImGuiDataType_U32, &temp);
+	}
+	else
+	{
+		if (ImGui::Button("Create Chunk"))
+		{
+			pixelSim.CreateChunk(chunkSelected);
+		}
+	}
 
 	pixelSim.GUI();
 }
