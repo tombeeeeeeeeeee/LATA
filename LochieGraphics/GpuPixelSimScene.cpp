@@ -21,16 +21,16 @@ void GpuPixelSimScene::Start()
 	LoadShaders();
 	pixelSim.Initialise();
 
-	texture = ResourceManager::CreateTexture(pixelSim.chunkWidth, pixelSim.chunkHeight, GL_RGBA, nullptr, GL_CLAMP_TO_BORDER, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
+	texture = ResourceManager::CreateTexture(PixelsGPU::chunkWidth, PixelsGPU::chunkHeight, GL_RGBA, nullptr, GL_CLAMP_TO_BORDER, GL_UNSIGNED_BYTE, false, GL_NEAREST, GL_NEAREST);
 
-	frameBuffer = new FrameBuffer(pixelSim.chunkWidth, pixelSim.chunkHeight, texture, nullptr, false);
+	frameBuffer = new FrameBuffer(PixelsGPU::chunkWidth, PixelsGPU::chunkHeight, texture, nullptr, false);
 
 	//displayGUI = false;
 
 	quad.InitialiseQuad(1.0f);
 
 	camera->transform.setEulerRotation({ 0.0f, 180.0f, 0.0f });
-	camera->transform.setPosition({ pixelSim.chunkWidth / 2.0f, pixelSim.chunkHeight / 2.0f, camera->transform.getPosition().z });
+	camera->transform.setPosition({ PixelsGPU::chunkWidth / 2.0f, PixelsGPU::chunkHeight / 2.0f, camera->transform.getPosition().z });
 	camera->editorOrth = true;
 	camera->orthoScale = 600;
 	camera->state = Camera::State::tilePlacing;
@@ -96,7 +96,7 @@ void GpuPixelSimScene::Update(float delta)
 		case GpuPixelSimScene::MouseMode::SelectPixel:
 			break;
 		case GpuPixelSimScene::MouseMode::SelectChunk:
-			glm::vec2 chunkSpacePos = worldCurrentCursorPos / glm::vec2(PixelsGPU::Simulation::chunkWidth, PixelsGPU::Simulation::chunkHeight);
+			glm::vec2 chunkSpacePos = worldCurrentCursorPos / glm::vec2(PixelsGPU::chunkWidth, PixelsGPU::chunkHeight);
 			glm::ivec2 chunkCoord = glm::ivec2(floorf(chunkSpacePos.x), floorf(chunkSpacePos.y));
 			chunkSelected = chunkCoord;
 			break;
@@ -130,9 +130,9 @@ void GpuPixelSimScene::GUI()
 	
 	ExtraEditorGUI::SliderEnum("Mouse mode", { "None", "Brush", "Select Pixel", "Select Chunk" }, (int*)&mouseMode);
 	ImGui::InputInt("MatID placing", &placingMatID);
-	ImGui::SliderFloat("Placing radius", &placingRadius, 0.0f, (pixelSim.chunkWidth + pixelSim.chunkHeight) / 2);
+	ImGui::SliderFloat("Placing radius", &placingRadius, 0.0f, (PixelsGPU::chunkWidth + PixelsGPU::chunkHeight) / 2);
 	ImGui::InputInt("RenderIndex", &renderIndex);
-	const PixelsGPU::Simulation::Chunk* chunk = pixelSim.getChunkAt(chunkSelected);
+	const PixelsGPU::Chunk* chunk = pixelSim.getChunkAt(chunkSelected);
 	{
 		ExtraEditorGUI::ScopedDisable disable;
 		ImGui::DragInt2("Chunk Coords", &chunkSelected.x);

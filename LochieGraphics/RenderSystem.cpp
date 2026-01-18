@@ -523,16 +523,16 @@ void RenderSystem::DrawPixelSim(
 
 void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameBuffer* frameBuffer, Shader* pixelShader, int renderIndex, const Mesh& quad, Shader* simple2dShader, Texture* texture, unsigned int defaultFrameBuffer)
 {
-    for (const PixelsGPU::Simulation::Chunk& chunk : pixelSim.chunks)
+    for (const PixelsGPU::Chunk& chunk : pixelSim.chunks)
     {
-        chunk.BindSSBO(PixelsGPU::Simulation::Chunk::centreIndexSSBO);
+        chunk.BindSSBO(PixelsGPU::Chunk::centreIndexSSBO);
 
         frameBuffer->Bind();
-        glViewport(0, 0, pixelSim.chunkWidth, pixelSim.chunkHeight);
+        glViewport(0, 0, PixelsGPU::chunkWidth, PixelsGPU::chunkHeight);
 
         pixelShader->Use();
-        pixelShader->setInt("gridCols", pixelSim.chunkWidth);
-        pixelShader->setInt("gridRows", pixelSim.chunkHeight);
+        pixelShader->setInt("gridCols", PixelsGPU::chunkWidth);
+        pixelShader->setInt("gridRows", PixelsGPU::chunkHeight);
         pixelShader->setInt("renderIndex", renderIndex);
         pixelShader->setBool("readSsboFirst", chunk.readSsboFirst);
         glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
@@ -547,9 +547,9 @@ void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameB
         //simple2dShader->setSampler("material.albedo", 1);
         simple2dShader->setMat4("vp", SceneManager::viewProjection);
         glm::mat4 model = glm::mat4(1.0f);
-        const float halfWidth = (float)pixelSim.chunkWidth / 2.0f;
-        const float halfHeight = (float)pixelSim.chunkHeight / 2.0f;
-        model = glm::translate(model, glm::vec3(chunk.coords.x * pixelSim.chunkWidth + halfWidth , chunk.coords.y * pixelSim.chunkHeight + halfHeight, 0.0f));
+        const float halfWidth = (float)PixelsGPU::chunkWidth / 2.0f;
+        const float halfHeight = (float)PixelsGPU::chunkHeight / 2.0f;
+        model = glm::translate(model, glm::vec3(chunk.coords.x * PixelsGPU::chunkWidth + halfWidth , chunk.coords.y * PixelsGPU::chunkHeight + halfHeight, 0.0f));
         model = glm::scale(model, glm::vec3(halfWidth, halfHeight, 1.0f));
         simple2dShader->setMat4("model", model);
         simple2dShader->setSampler("tex", 1);
