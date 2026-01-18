@@ -54,21 +54,30 @@ void PixelsGPU::Simulation::Chunk::SwitchReadWriteSSBOs()
 	readSsboFirst = !readSsboFirst;
 }
 
-PixelsGPU::Simulation::Chunk::Chunk(glm::ivec2 _coords) :
-	coords(_coords)
+void PixelsGPU::Simulation::Chunk::Initialise()
 {
 	glGenBuffers(1, &ssbo1);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo1);
 
 	glBufferData(GL_SHADER_STORAGE_BUFFER, CalculateSsboSize(), nullptr, GL_DYNAMIC_COPY);
+	glClearNamedBufferData(ssbo1, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo1);
 	readSsboFirst = true;
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
+void PixelsGPU::Simulation::Chunk::Deinitalise()
+{
+	glDeleteBuffers(1, &ssbo1);
+}
+
+PixelsGPU::Simulation::Chunk::Chunk(glm::ivec2 _coords) :
+	coords(_coords)
+{
+}
+
 PixelsGPU::Simulation::Chunk::~Chunk()
 {
-	// TODO: how to clear free ssbo
 }
 
 void PixelsGPU::Simulation::Initialise()
@@ -86,7 +95,7 @@ void PixelsGPU::Simulation::Initialise()
 	{
 		for (int y = 0; y < 4; y++)
 		{
-			chunks.emplace_back(glm::ivec2(x, y));
+			CreateChunk(glm::ivec2(x, y));
 		}
 	}
 	PixelsGPU::CellPixel cell;
@@ -157,6 +166,26 @@ const PixelsGPU::Simulation::Chunk* PixelsGPU::Simulation::getChunkAt(glm::ivec2
 		}
 	}
 	return nullptr;
+}
+
+PixelsGPU::Simulation::Chunk& PixelsGPU::Simulation::CreateChunk(glm::ivec2 chunkCoords)
+{
+	auto& chunk = chunks.emplace_back(chunkCoords);
+	chunk.Initialise();
+	return chunk;
+}
+
+void PixelsGPU::Simulation::DestroyChunk(glm::ivec2 chunkCoords)
+{
+	for (auto i = chunks.begin(); i != chunks.end(); ++i)
+	{
+		if (i->coords == chunkCoords)
+		{
+			i->Deinitalise();
+			chunks.erase(i);
+			return;
+		}
+	}
 }
 
 size_t PixelsGPU::Simulation::Chunk::CalculateSsboSize() const

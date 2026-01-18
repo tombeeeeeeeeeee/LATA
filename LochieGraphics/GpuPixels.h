@@ -69,6 +69,9 @@ namespace PixelsGPU
 			void SwitchReadWriteSSBOs();
 			size_t CalculateSsboSize() const;
 
+			void Initialise();
+			void Deinitalise();
+
 			Chunk(glm::ivec2 _coords);
 			~Chunk();
 
@@ -96,6 +99,8 @@ namespace PixelsGPU
 		void Update(float delta);
 
 		const Chunk* getChunkAt(glm::ivec2 chunkCoords);
+		Chunk& CreateChunk(glm::ivec2 chunkCoords);
+		void DestroyChunk(glm::ivec2 chunkCoords);
 
 		void SetCircleTo(glm::ivec2 pos, float radius, PixelsGPU::CellPixel cell);
 		void SetCircleTo(int x, int y, float radius, PixelsGPU::CellPixel cell);
