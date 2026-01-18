@@ -71,7 +71,7 @@ public:
 
     static constexpr bool ssaoEnabled = false;
     static constexpr bool beamsEnabled = false;
-    static constexpr bool linesEnabled = false;
+    static constexpr bool linesEnabled = true;
     static constexpr bool clearEveryDraw = true;
     static constexpr bool renderAmbientPass = true;
     static constexpr bool bloomEnabled = false;
