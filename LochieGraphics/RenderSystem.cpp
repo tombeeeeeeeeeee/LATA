@@ -932,6 +932,7 @@ void RenderSystem::LinesSetup()
 void RenderSystem::RenderLinePass()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
+    glClear(GL_COLOR_BUFFER_BIT);
     ResourceManager::lines->Use();
     lines.Draw();
 
