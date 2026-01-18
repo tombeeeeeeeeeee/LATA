@@ -2,6 +2,8 @@
 
 #include "Maths.h"
 
+#include "Serialisation.h"
+
 class Colour
 {
 public:
@@ -34,6 +36,13 @@ public:
 	{
 	}
 
+	constexpr Colour() :
+		data(glm::u8vec4(0, 0, 0, 1)),
+		dataType(DataType::rgba0255I4)
+	{
+	}
+
+	Colour(toml::table& toml);
 
 	static rgbF4_t RGBA01FromRGBA0255(rgbI4_t input);
 	static Colour::rgbI4_t RGBA0255FromRGBA01(rgbF4_t input);
@@ -43,5 +52,8 @@ public:
 	rgbF4_t getAsRGBA01() const;
 	Colour::rgbI4_t getAsRGBA0255() const;
 	uint32_t getAsRGBAU32() const;
+
+	toml::table Serialise() const;
+	void Load(toml::table& toml);
 };
 
