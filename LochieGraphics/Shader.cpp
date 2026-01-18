@@ -179,6 +179,11 @@ void Shader::setIVec2(const std::string& name, const glm::ivec2& value)
 	glUniform2iv(getUniformLocation(name), 1, &value[0]);
 }
 
+void Shader::setUnsignedInt(const std::string& name, unsigned int value)
+{
+	glUniform1ui(getUniformLocation(name), value);
+}
+
 void Shader::setFloat(const std::string& name, float value)
 {
 	glUniform1f(getUniformLocation(name), value);
