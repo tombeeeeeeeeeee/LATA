@@ -2,6 +2,8 @@
 
 #include "Utilities.h"
 
+#include "ExtraEditorGUI.h"
+
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -30,14 +32,20 @@ std::string PixelsGPU::Material::GetMovementCode(const std::vector<Material>& ma
 	return defaults + customs;
 }
 
-std::string PixelsGPU::Material::GetMaterialInfoCode(const std::vector<Material>& mats)
+int PixelsGPU::Material::GetLargestID(const std::vector<Material>& mats)
 {
-	std::string code = "";
 	int largestID = 0;
 	for (const auto& mat : mats)
 	{
 		largestID = glm::max(largestID, mat.id);
 	}
+	return largestID;
+}
+
+std::string PixelsGPU::Material::GetMaterialInfoCode(const std::vector<Material>& mats)
+{
+	std::string code = "";
+	int largestID = GetLargestID(mats);
 	const int materialCount = largestID + 1;
 	code += "const int materialCount = " + std::to_string(materialCount) + ";\n";
 	code += "const bool matsEmptyStatus[materialCount] = {\n";
@@ -131,4 +139,8 @@ void PixelsGPU::Material::Load(toml::table& table)
 void PixelsGPU::Material::Reload()
 {
 	Load(filename);
+}
+
+void PixelsGPU::Material::GUI()
+{
 }

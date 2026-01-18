@@ -25,6 +25,7 @@ namespace PixelsGPU
 		bool empty; // Other pixels able to move to this one
 
 		static std::string GetMovementCode(const std::vector<Material>& mats);
+		static int GetLargestID(const std::vector<Material>& mats);
 		static std::string GetMaterialInfoCode(const std::vector<Material>& mats);
 
 		static std::string getFullPath(std::string filename);
@@ -37,5 +38,7 @@ namespace PixelsGPU
 		void SaveAsFile();
 		toml::table Serialise();
 		void Reload();
+
+		void GUI();
 	};
 }

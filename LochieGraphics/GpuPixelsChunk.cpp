@@ -17,7 +17,7 @@ void PixelsGPU::Chunk::Initialise()
 	glGenBuffers(1, &ssbo1);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo1);
 
-	glBufferData(GL_SHADER_STORAGE_BUFFER, CalculateSsboSize(), nullptr, GL_DYNAMIC_COPY);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, CalculateSsboSize(), nullptr, GL_STATIC_COPY);
 	glClearNamedBufferData(ssbo1, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo1);
 	readSsboFirst = true;
