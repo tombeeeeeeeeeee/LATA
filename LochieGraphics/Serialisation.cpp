@@ -59,6 +59,26 @@ glm::vec4 Serialisation::LoadAsVec4(toml::node_view<toml::node> toml)
     return LoadAsVec4(toml.as_array());
 }
 
+glm::u8vec4 Serialisation::LoadAsU8Vec4(toml::array* toml)
+{
+    if (!toml)
+    {
+        std::cout << "Failed to load u8vec4\n";
+        return { NAN, NAN, NAN, NAN };
+    }
+    return glm::u8vec4(
+        toml->at(0).value_or<uint8_t>(0),
+        toml->at(1).value_or<uint8_t>(0),
+        toml->at(2).value_or<uint8_t>(0),
+        toml->at(3).value_or<uint8_t>(0)
+    );
+}
+
+glm::u8vec4 Serialisation::LoadAsU8Vec4(toml::node_view<toml::node> toml)
+{
+    return LoadAsU8Vec4(toml.as_array());
+}
+
 unsigned long long Serialisation::LoadAsUnsignedLongLong(toml::node_view<toml::node> toml)
 {
     return std::strtoull(LoadAsString(toml).c_str(), 0, 10);
@@ -177,6 +197,11 @@ toml::array Serialisation::SaveAsVec3(glm::vec3 vec)
 }
 
 toml::array Serialisation::SaveAsVec4(glm::vec4 vec)
+{
+    return toml::array(vec.x, vec.y, vec.z, vec.w);
+}
+
+toml::array Serialisation::SaveAsU8Vec4(glm::u8vec4 vec)
 {
     return toml::array(vec.x, vec.y, vec.z, vec.w);
 }
