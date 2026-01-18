@@ -45,7 +45,10 @@ void main()
 
 	if (renderIndex == 0) // Colour
 	{
-		colour = vec3(pixel.colour);
+		colour.r = (pixel.colour >> 24 & 0xFF) / 255.0;
+		colour.g = (pixel.colour >> 16 & 0xFF) / 255.0;
+		colour.b = (pixel.colour >> 8 & 0xFF) / 255.0;
+		//colour = vec3((pixel.colour >> 24) & 0xFF, (pixel.colour >> 16) & 0xFF, (pixel.colour >> 8) & 0xFF);
 	}
 	else if (renderIndex == 1) // Vel
 	{

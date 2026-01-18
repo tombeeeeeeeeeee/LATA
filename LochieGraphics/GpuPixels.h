@@ -12,7 +12,7 @@ namespace PixelsGPU
 		int /*bool*/ movedLastUpdate;
 		glm::vec2 vel;
 		glm::vec2 subPos;
-		glm::vec4 colour;
+		unsigned int colour;
 	};
 	static_assert(sizeof(CellPixel) <= 64, "CellPixel too large, this is already more than big enough, need to pack the data better");
 

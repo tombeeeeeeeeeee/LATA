@@ -3,6 +3,7 @@
 #include "Graphics.h"
 #include "Paths.h"
 #include "EditorGUI.h"
+#include "Colour.h"
 
 #include <functional>
 
@@ -100,7 +101,7 @@ void PixelsGPU::Simulation::Initialise()
 	}
 	PixelsGPU::CellPixel cell;
 	cell.matID = 1;
-	cell.colour = glm::vec4(1, 1, 1, 1);
+	cell.colour = 0xFFFFFFFF;
 	SetCircleTo(0, 0, 999999999.0f, cell);
 }
 
@@ -205,15 +206,15 @@ void PixelsGPU::Simulation::SetCircleTo(glm::ivec2 pos, float radius, PixelsGPU:
 	placeCircle->setVec2("pixel.vel", cell.vel);
 	if (cell.matID == 2)
 	{
-		placeCircle->setVec4("pixel.colour", glm::vec4(sin(timer * PI) / 4.0f + 0.75f, 0.76f, sin(timer * PI * 4) / 6.0f + 0.17f, 1.0));
+		placeCircle->setUnsignedInt("pixel.colour", Colour::RGBAU32FromRGBA01(glm::vec4(sin(timer * PI) / 4.0f + 0.75f, 0.76f, sin(timer * PI * 4) / 6.0f + 0.17f, 1.0)));
 	}
 	else if (cell.matID != 0)
 	{
-		placeCircle->setVec4("pixel.colour", glm::vec4(0.9, 0.9, 0.9, 1.0f));
+		placeCircle->setUnsignedInt("pixel.colour", Colour::RGBAU32FromRGBA01(glm::vec4(0.9, 0.9, 0.9, 1.0f)));
 	}
 	else
 	{
-		placeCircle->setVec4("pixel.colour", glm::vec4(0.0, 0.0, 0.0, 1.0f));
+		placeCircle->setUnsignedInt("pixel.colour", Colour::RGBAU32FromRGBA01(glm::vec4(0, 0, 0, 1.0f)));
 	}
 
 	placeCircle->setFloat("timer", timer);
