@@ -8,6 +8,14 @@ ComputeShader::ComputeShader(std::string path)
 	GLID = Shader::CreateProgram({ compute });
 }
 
+ComputeShader* ComputeShader::CreateCustomComputeShader(std::string code)
+{
+	GLuint computeProgram = Shader::CompileShaderSource(code, GL_COMPUTE_SHADER);
+	ComputeShader* computeShader = new ComputeShader();
+	computeShader->GLID = Shader::CreateProgram({ computeProgram });
+	return computeShader;
+}
+
 void ComputeShader::Run(unsigned int xGroups, unsigned int yGroups, unsigned int zGroups, unsigned int barrier)
 {
 	Use();
