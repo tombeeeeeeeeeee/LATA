@@ -55,43 +55,31 @@ Shader::Shader(std::string _vertexPath, std::string _fragmentPath, int _updateFl
 std::string Shader::GetShaderCode(std::string path)
 {
 	std::string code = Utilities::FileToString(path);
-	// Use this as the include symbol as thats what the vs extension very simply recognises
-	static const std::string preInclude = "\n//! #include \"";
-	
-	for (size_t found = code.find(preInclude); found != std::string::npos; found = code.find(preInclude))
-	{
-		size_t endIncludeFileNameIndex = code.find_first_of('\"', found + preInclude.size());
-		size_t startIncludeFileNameIndex = found + preInclude.size();
-		std::string includeFileName = code.substr(startIncludeFileNameIndex, endIncludeFileNameIndex - startIncludeFileNameIndex);
-		
-		std::string pathWithoutFilename = Utilities::PathWithoutFilename(path);
-		std::string includeFilePath = pathWithoutFilename + includeFileName;
 
-		code.replace(found, endIncludeFileNameIndex + 1 - found, GetShaderCode(includeFilePath));
-	}
-
-	return code;
+	return PreProcessShaderCode(code, path);
 }
 
-unsigned int Shader::CompileShader(std::string path, int type)
+unsigned int Shader::CompileShaderFile(std::string path, int type)
 {
-	std::string temp = GetShaderCode(path);
-	const char* shaderCode = temp.c_str();
+	std::string code = GetShaderCode(path);
+	return CompileShaderSource(code, type, path);
+}
 
-	unsigned int shader;
-
-	int success;
-	char infoLog[512];
-
-	shader = glCreateShader(type);
+unsigned int Shader::CompileShaderSource(std::string code, int type, std::string debugInfo)
+{
+	std::string preProcessedCode = PreProcessShaderCode(code, Paths::importShaderLocation);
+	const char* shaderCode = preProcessedCode.c_str();
+	unsigned int shader = glCreateShader(type);
 	glShaderSource(shader, 1, &shaderCode, nullptr);
 	glCompileShader(shader);
 
 	// Print any compile errors;
+	int success;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
+		char infoLog[512];
 		glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-		std::cout << "Shader error, compilation failed, path: " << path << "\n" << infoLog << "\n";
+		std::cout << "Shader error, compilation failed, path: " << debugInfo << "\n" << infoLog << "\n";
 	}
 	return shader;
 }
@@ -120,8 +108,8 @@ GLuint Shader::CreateProgram(std::vector<GLuint> shaders)
 void Shader::Load()
 {
 	if (loaded) { DeleteProgram(); }
-	GLuint vertex = CompileShader(vertexPath, GL_VERTEX_SHADER);
-	GLuint fragment = CompileShader(fragmentPath, GL_FRAGMENT_SHADER);
+	GLuint vertex = CompileShaderFile(vertexPath, GL_VERTEX_SHADER);
+	GLuint fragment = CompileShaderFile(fragmentPath, GL_FRAGMENT_SHADER);
 
 	GLID = CreateProgram({ vertex, fragment });
 
@@ -143,6 +131,25 @@ GLint Shader::getUniformLocation(const std::string& name) const
 		//std::cout << "Couldn't find: \"" << name << "\" in shader ID" << fragmentPath << "\n";
 	}
 	return location;
+}
+
+std::string Shader::PreProcessShaderCode(std::string code, std::string includePath)
+{
+	// Use this as the include symbol as thats what the vs extension very simply recognises
+	static const std::string preInclude = "\n//! #include \"";
+
+	for (size_t found = code.find(preInclude); found != std::string::npos; found = code.find(preInclude))
+	{
+		size_t endIncludeFileNameIndex = code.find_first_of('\"', found + preInclude.size());
+		size_t startIncludeFileNameIndex = found + preInclude.size();
+		std::string includeFileName = code.substr(startIncludeFileNameIndex, endIncludeFileNameIndex - startIncludeFileNameIndex);
+
+		std::string pathWithoutFilename = Utilities::PathWithoutFilename(includePath);
+		std::string includeFilePath = pathWithoutFilename + includeFileName;
+
+		code.replace(found, endIncludeFileNameIndex + 1 - found, GetShaderCode(includeFilePath));
+	}
+	return code;
 }
 
 void Shader::Use()

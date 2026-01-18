@@ -4,7 +4,7 @@
 
 ComputeShader::ComputeShader(std::string path)
 {
-	GLuint compute = Shader::CompileShader(path, GL_COMPUTE_SHADER);
+	GLuint compute = Shader::CompileShaderFile(path, GL_COMPUTE_SHADER);
 	GLID = Shader::CreateProgram({ compute });
 }
 
