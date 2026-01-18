@@ -27,7 +27,8 @@ class Shader
 protected:
 	int getUniformLocation(const std::string& name) const;
 	static std::string GetShaderCode(std::string path);
-	static unsigned int CompileShader(std::string path, int type);
+	static unsigned int CompileShaderFile(std::string path, int type);
+	static unsigned int CompileShaderSource(std::string code, int type, std::string debugInfo = "");
 	static unsigned int CreateProgram(std::vector<unsigned int> shaders);
 	bool loaded = false;
 	int updateFlag;
@@ -45,6 +46,8 @@ public:
 		Painted  = 1 << 4,
 		EccoAnim = 1 << 5,
 	};
+
+	static std::string PreProcessShaderCode(std::string code, std::string includePath);
 
 	int getFlag() const;
 	bool getFlag(int _flag) const;
