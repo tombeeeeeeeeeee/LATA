@@ -19,6 +19,8 @@ public:
 	static glm::vec3 LoadAsVec3(toml::node_view<toml::node> toml, glm::vec3 failedReadValue = { 0.0f, 0.0f, 0.0f });
 	static glm::vec4 LoadAsVec4(toml::array* toml);
 	static glm::vec4 LoadAsVec4(toml::node_view<toml::node> toml);
+	static glm::u8vec4 LoadAsU8Vec4(toml::array* toml);
+	static glm::u8vec4 LoadAsU8Vec4(toml::node_view<toml::node> toml);
 	static unsigned long long LoadAsUnsignedLongLong(toml::node_view<toml::node> toml);
 	static unsigned long long LoadAsUnsignedLongLong(toml::node& toml);
 	static std::string LoadAsString(toml::node_view<toml::node> toml, std::string failedReadValue = "");
@@ -42,6 +44,7 @@ public:
 	static toml::array SaveAsVec2(glm::vec2 vec);
 	static toml::array SaveAsVec3(glm::vec3 vec);
 	static toml::array SaveAsVec4(glm::vec4 vec);
+	static toml::array SaveAsU8Vec4(glm::u8vec4 vec);
 	static std::string SaveAsUnsignedLongLong(unsigned long long n);
 	static std::string SaveAsUnsignedInt(unsigned int n);
 
