@@ -6,6 +6,7 @@ uniform float radius;
 uniform Pixel pixel;
 
 uniform float timer;
+uniform bool velocityAdd;
 
 void main() {
 	const ivec2 localCoords = getLocalCoords();
@@ -14,7 +15,18 @@ void main() {
 	const ivec2 globalCoords = localToGlobalCoords(localCoords);
 	if (length(vec2(globalCoords - centerCoords)) <= radius)
 	{
-		setWrite(index, pixel);
+		if (velocityAdd)
+		{
+			Pixel read = getRead(index);
+			vec2 vel = read.vel + pixel.vel;
+			read = pixel;
+			read.vel = vel;
+			setWrite(index, read);
+		}
+		else
+		{
+			setWrite(index, pixel);
+		}
 	}
 	else
 	{

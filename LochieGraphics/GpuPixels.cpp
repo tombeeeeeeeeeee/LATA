@@ -47,7 +47,6 @@ void PixelsGPU::Simulation::LoadComputeShaders()
 void PixelsGPU::Simulation::Chunk::BindSSBO(int index) const
 {
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, ssbo1);
-	//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, writeSsbo1 ? ssbo1 : ssbo2);
 }
 
 void PixelsGPU::Simulation::Chunk::SwitchReadWriteSSBOs()
@@ -204,6 +203,7 @@ void PixelsGPU::Simulation::SetCircleTo(glm::ivec2 pos, float radius, PixelsGPU:
 	placeCircle->setFloat("radius", radius);
 	placeCircle->setInt("pixel.matID", cell.matID);
 	placeCircle->setVec2("pixel.vel", cell.vel);
+	placeCircle->setBool("velocityAdd", true);
 	if (cell.matID == 2)
 	{
 		placeCircle->setUnsignedInt("pixel.colour", Colour::RGBAU32FromRGBA01(glm::vec4(sin(timer * PI) / 4.0f + 0.75f, 0.76f, sin(timer * PI * 4) / 6.0f + 0.17f, 1.0)));
