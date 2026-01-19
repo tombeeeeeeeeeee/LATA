@@ -30,6 +30,7 @@ public:
 
 	static float defaultGlobalVolume;
 
+	static float fontGlobalScale;
 	static void GUI();
 
 	static void Initialise();

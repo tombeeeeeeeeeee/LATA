@@ -100,6 +100,13 @@ void UserPreferences::GUI()
 		ImGui::Unindent();
 	}
 
+	auto& io = ImGui::GetIO();
+	float scale = io.FontGlobalScale;
+	if (ImGui::InputFloat("Font global scale", &scale))
+	{
+		io.FontGlobalScale = scale;
+		shouldSave = true;
+	}
 	if (shouldSave) {
 		Save();
 	}
@@ -162,6 +169,7 @@ void UserPreferences::Save()
 		{ "showSelectedBox", showSelectedBox },
 		{ "directionalLightDirection", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.direction)},
 		{ "directionalLightColour", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.colour)},
+		{ "fontGlobalScale", ImGui::GetIO().FontGlobalScale },
 	};
 
 	file << table << '\n';
@@ -199,6 +207,7 @@ bool UserPreferences::Load()
 	advancedTransformInfo = Serialisation::LoadAsBool(data["advancedTransformInfo"], false);
 	defaultStyleLoad = Serialisation::LoadAsString(data["defaultStyleLoad"], "Default");
 	showSelectedBox = Serialisation::LoadAsBool(data["showSelectedBox"], true);
+	ImGui::GetIO().FontGlobalScale = Serialisation::LoadAsFloat(data["fontGlobalScale"], 1.0f);
 
 	file.close();
 
