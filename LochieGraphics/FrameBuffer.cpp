@@ -66,6 +66,10 @@ void FrameBuffer::Bind()
 void FrameBuffer::Unbind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	if (useRBO)
+	{
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	}
 }
 
 FrameBuffer::~FrameBuffer()

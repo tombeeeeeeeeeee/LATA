@@ -428,7 +428,7 @@ void RenderSystem::Update(
     if (postEffectOn) {
         postFrameBuffer->Bind();
         RenderQuad();
-        FrameBuffer::Unbind();
+        postFrameBuffer->Unbind();
 
         glViewport(0, 0, SCREEN_WIDTH / superSampling, SCREEN_HEIGHT / superSampling);
 
@@ -479,7 +479,7 @@ void RenderSystem::DrawPixelSim(
         pixelShader->Use();
         quad.Draw();
         
-        FrameBuffer::Unbind();
+        chunkFrameBuffer->Unbind();
         glBindFramebuffer(GL_FRAMEBUFFER, defaultFrameBuffer);
 
         glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
