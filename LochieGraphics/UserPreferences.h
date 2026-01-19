@@ -31,6 +31,8 @@ public:
 	static float defaultGlobalVolume;
 
 	static float fontGlobalScale;
+
+	static bool vsyncOn;
 	static void GUI();
 
 	static void Initialise();

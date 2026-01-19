@@ -75,7 +75,6 @@ SceneManager::SceneManager(Scene* _scene)
 	glfwSetMouseButtonCallback(window, MouseButtonCallback);
 
 	glfwMakeContextCurrent(window);
-	glfwSwapInterval(0); // vsync off
 	
 	if (!gladLoadGL())
 	{
@@ -180,8 +179,11 @@ SceneManager::SceneManager(Scene* _scene)
 		});
 	ResourceManager::defaultShader = ResourceManager::super;
 
+	// User prefs also handles vsync
 	UserPreferences::Initialise();
 	PrefabManager::Initialise();
+	
+
 
 	// TODO: Use a shader asset
 	Shader* particleShader = ResourceManager::LoadShader("particle", Shader::Flags::VPmatrix);

@@ -27,6 +27,7 @@ std::string UserPreferences::defaultStyleLoad = "OtherStyle";
 bool UserPreferences::clearSearchBar = true;
 bool UserPreferences::advancedTransformInfo = false;
 bool UserPreferences::showSelectedBox = true;
+bool UserPreferences::vsyncOn = true;
 
 void UserPreferences::GUI()
 {
@@ -107,6 +108,12 @@ void UserPreferences::GUI()
 		io.FontGlobalScale = scale;
 		shouldSave = true;
 	}
+
+	if (ImGui::Checkbox("Vsync on", &vsyncOn))
+	{
+		glfwSwapInterval(vsyncOn ? 1 : 0);
+		shouldSave = true;
+	}
 	if (shouldSave) {
 		Save();
 	}
@@ -170,6 +177,7 @@ void UserPreferences::Save()
 		{ "directionalLightDirection", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.direction)},
 		{ "directionalLightColour", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.colour)},
 		{ "fontGlobalScale", ImGui::GetIO().FontGlobalScale },
+		{ "vsyncOn", vsyncOn },
 	};
 
 	file << table << '\n';
@@ -208,6 +216,8 @@ bool UserPreferences::Load()
 	defaultStyleLoad = Serialisation::LoadAsString(data["defaultStyleLoad"], "Default");
 	showSelectedBox = Serialisation::LoadAsBool(data["showSelectedBox"], true);
 	ImGui::GetIO().FontGlobalScale = Serialisation::LoadAsFloat(data["fontGlobalScale"], 1.0f);
+	vsyncOn = Serialisation::LoadAsBool(data["vsyncOn"], true);
+	glfwSwapInterval(vsyncOn ? 1 : 0);
 
 	file.close();
 
