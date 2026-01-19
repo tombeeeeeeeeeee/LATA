@@ -38,6 +38,7 @@ bool UserPreferences::clearSearchBar = true;
 bool UserPreferences::advancedTransformInfo = false;
 bool UserPreferences::showModelHierarchy = false;
 bool UserPreferences::showSelectedBox = true;
+bool UserPreferences::vsyncOn = true;
 
 glm::vec3 UserPreferences::loadedDirectionalLightDirection = {};
 glm::vec3 UserPreferences::loadedDirectionalLightColour = {};
@@ -145,6 +146,12 @@ void UserPreferences::GUI()
 		io.FontGlobalScale = scale;
 		shouldSave = true;
 	}
+
+	if (ImGui::Checkbox("Vsync on", &vsyncOn))
+	{
+		glfwSwapInterval(vsyncOn ? 1 : 0);
+		shouldSave = true;
+	}
 	if (shouldSave) {
 		Save();
 	}
@@ -218,6 +225,7 @@ void UserPreferences::Save()
 		{ "directionalLightColour", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.colour)},
 		{ "saveOnLevelPlay", saveOnLevelPlay },
 		{ "fontGlobalScale", ImGui::GetIO().FontGlobalScale },
+		{ "vsyncOn", vsyncOn },
 	};
 
 	file << table << '\n';
@@ -269,6 +277,8 @@ bool UserPreferences::Load()
 	loadedDirectionalLightColour = Serialisation::LoadAsVec3(data["directionalLightColour"], { 0.5f, 0.5f, 0.5f });
 	loadedDirectionalLightDirection = Serialisation::LoadAsVec3(data["directionalLightDirection"], { 0.0f, -1.0f, 0.0f });
 	ImGui::GetIO().FontGlobalScale = Serialisation::LoadAsFloat(data["fontGlobalScale"], 1.0f);
+	vsyncOn = Serialisation::LoadAsBool(data["vsyncOn"], true);
+	glfwSwapInterval(vsyncOn ? 1 : 0);
 
 	file.close();
 
