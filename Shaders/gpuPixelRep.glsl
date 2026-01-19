@@ -6,5 +6,5 @@ struct Pixel {
 	bool movedLastUpdate;
 	vec2 vel;
 	vec2 subPos;
-	unsigned int colour;
+	uint colour;
 };
