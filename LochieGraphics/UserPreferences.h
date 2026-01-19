@@ -33,6 +33,9 @@ public:
 	static float fontGlobalScale;
 
 	static bool vsyncOn;
+
+	static bool pixelsLaunchUpdateOn;
+
 	static void GUI();
 
 	static void Initialise();

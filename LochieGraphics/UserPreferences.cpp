@@ -28,6 +28,7 @@ bool UserPreferences::clearSearchBar = true;
 bool UserPreferences::advancedTransformInfo = false;
 bool UserPreferences::showSelectedBox = true;
 bool UserPreferences::vsyncOn = true;
+bool UserPreferences::pixelsLaunchUpdateOn = true;
 
 void UserPreferences::GUI()
 {
@@ -114,6 +115,12 @@ void UserPreferences::GUI()
 		glfwSwapInterval(vsyncOn ? 1 : 0);
 		shouldSave = true;
 	}
+
+	if (ImGui::Checkbox("pixelsLaunchUpdateOn", &pixelsLaunchUpdateOn))
+	{
+		shouldSave = true;
+	}
+
 	if (shouldSave) {
 		Save();
 	}
@@ -178,6 +185,7 @@ void UserPreferences::Save()
 		{ "directionalLightColour", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.colour)},
 		{ "fontGlobalScale", ImGui::GetIO().FontGlobalScale },
 		{ "vsyncOn", vsyncOn },
+		{ "pixelsLaunchUpdateOn", pixelsLaunchUpdateOn },
 	};
 
 	file << table << '\n';
@@ -217,7 +225,9 @@ bool UserPreferences::Load()
 	showSelectedBox = Serialisation::LoadAsBool(data["showSelectedBox"], true);
 	ImGui::GetIO().FontGlobalScale = Serialisation::LoadAsFloat(data["fontGlobalScale"], 1.0f);
 	vsyncOn = Serialisation::LoadAsBool(data["vsyncOn"], true);
+	pixelsLaunchUpdateOn = Serialisation::LoadAsBool(data["pixelsLaunchUpdateOn"], true);
 	glfwSwapInterval(vsyncOn ? 1 : 0);
+
 
 	file.close();
 

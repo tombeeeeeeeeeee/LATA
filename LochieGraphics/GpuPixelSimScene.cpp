@@ -37,6 +37,8 @@ void GpuPixelSimScene::Start()
 	camera->state = Camera::State::tilePlacing;
 
 	gui.showResourceMenu = true;
+
+	update = UserPreferences::pixelsLaunchUpdateOn;
 }
 
 glm::vec2 GpuPixelSimScene::ScreenToWorld(glm::vec2 screenPos)
