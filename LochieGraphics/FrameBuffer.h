@@ -24,7 +24,7 @@ public:
 
 	void Bind();
 
-	static void Unbind();
+	void Unbind();
 
 	~FrameBuffer();
 };

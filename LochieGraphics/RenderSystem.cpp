@@ -542,7 +542,7 @@ void RenderSystem::Update(
     if (postEffectOn) {
         postFrameBuffer->Bind();
         RenderQuad();
-        FrameBuffer::Unbind();
+        postFrameBuffer->Unbind();
 
         glViewport(0, 0, SCREEN_WIDTH / superSampling, SCREEN_HEIGHT / superSampling);
 
