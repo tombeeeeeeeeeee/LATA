@@ -49,6 +49,7 @@ public:
 	static glm::vec3 loadedDirectionalLightDirection;
 	static glm::vec3 loadedDirectionalLightColour;
 
+	static float fontGlobalScale;
 	static void GUI();
 
 	static void Initialise();

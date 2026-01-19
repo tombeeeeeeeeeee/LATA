@@ -138,6 +138,13 @@ void UserPreferences::GUI()
 		if (HealthSystem::FileSelector(&defaultHealthSystemLoad)) { shouldSave = true; }
 		ImGui::Unindent();
 	}
+	auto& io = ImGui::GetIO();
+	float scale = io.FontGlobalScale;
+	if (ImGui::InputFloat("Font global scale", &scale))
+	{
+		io.FontGlobalScale = scale;
+		shouldSave = true;
+	}
 	if (shouldSave) {
 		Save();
 	}
@@ -210,6 +217,7 @@ void UserPreferences::Save()
 		{ "directionalLightDirection", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.direction)},
 		{ "directionalLightColour", Serialisation::SaveAsVec3(SceneManager::scene->directionalLight.colour)},
 		{ "saveOnLevelPlay", saveOnLevelPlay },
+		{ "fontGlobalScale", ImGui::GetIO().FontGlobalScale },
 	};
 
 	file << table << '\n';
@@ -260,6 +268,7 @@ bool UserPreferences::Load()
 
 	loadedDirectionalLightColour = Serialisation::LoadAsVec3(data["directionalLightColour"], { 0.5f, 0.5f, 0.5f });
 	loadedDirectionalLightDirection = Serialisation::LoadAsVec3(data["directionalLightDirection"], { 0.0f, -1.0f, 0.0f });
+	ImGui::GetIO().FontGlobalScale = Serialisation::LoadAsFloat(data["fontGlobalScale"], 1.0f);
 
 	file.close();
 
