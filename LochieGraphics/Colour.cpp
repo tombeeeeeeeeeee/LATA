@@ -72,6 +72,19 @@ uint32_t Colour::getAsRGBAU32() const
 	}
 }
 
+bool Colour::ColourPicker(std::string label, ImGuiColorEditFlags flags)
+{
+	std::string tag = Utilities::PointerToString(this);
+	glm::vec4 tempEditColour = getAsRGBA01();
+	if (ImGui::ColorPicker4((label + "##" + tag).c_str(), &tempEditColour.x))
+	{
+		dataType = DataType::rgba01F4;
+		data.rgba01F4 = tempEditColour;
+		return true;
+	}
+	return false;
+}
+
 toml::table Colour::Serialise() const
 {
 	toml::table table;
