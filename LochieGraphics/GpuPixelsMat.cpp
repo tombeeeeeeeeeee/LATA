@@ -141,6 +141,35 @@ void PixelsGPU::Material::Reload()
 	Load(filename);
 }
 
+void PixelsGPU::Material::MaterialsGUI(std::vector<Material>& mats)
+{
+	for (auto& mat : mats)
+	{
+		std::string tag = Utilities::PointerToString(&mat);
+		if (ImGui::CollapsingHeader((mat.name + "##" + tag).c_str()))
+		{
+			ExtraEditorGUI::ScopedIndent indent;
+			mat.GUI();
+		}
+	}
+}
+
 void PixelsGPU::Material::GUI()
 {
+	bool shouldSave = false;
+	std::string tag = Utilities::PointerToString(this);
+	shouldSave |= ImGui::InputText(("Filename##" + tag).c_str(), &filename);
+	shouldSave |= ImGui::InputText(("Name##" + tag).c_str(), &name);
+	shouldSave |= ImGui::InputText(("Pre update function##" + tag).c_str(), &preUpdateFunction);
+	shouldSave |= ImGui::InputText(("Move function##" + tag).c_str(), &moveFunction);
+	shouldSave |= defaultColour.ColourPicker("Default colour");
+	shouldSave |= ImGui::InputInt(("ID##" + tag).c_str(), &id);
+	shouldSave |= ImGui::InputFloat(("Density##" + tag).c_str(), &density);
+	shouldSave |= ImGui::Checkbox(("Does gravity##" + tag).c_str(), &affectedByGravity);
+	shouldSave |= ImGui::Checkbox(("Empty##" + tag).c_str(), &empty);
+
+	if (shouldSave)
+	{
+		SaveAsFile();
+	}
 }

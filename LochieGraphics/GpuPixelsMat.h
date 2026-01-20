@@ -39,6 +39,7 @@ namespace PixelsGPU
 		toml::table Serialise();
 		void Reload();
 
+		static void MaterialsGUI(std::vector<Material>& mats);
 		void GUI();
 	};
 }

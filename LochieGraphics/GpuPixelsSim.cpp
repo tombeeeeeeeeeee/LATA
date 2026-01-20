@@ -265,4 +265,5 @@ void PixelsGPU::Simulation::GUI()
 		InitialiseMaterials();
 		LoadComputeShaders();
 	}
+	PixelsGPU::Material::MaterialsGUI(materials);
 }
