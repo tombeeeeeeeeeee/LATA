@@ -4,6 +4,8 @@
 
 #include "Serialisation.h"
 
+#include "imgui.h"
+
 class Colour
 {
 public:
@@ -52,6 +54,8 @@ public:
 	rgbF4_t getAsRGBA01() const;
 	Colour::rgbI4_t getAsRGBA0255() const;
 	uint32_t getAsRGBAU32() const;
+
+	bool ColourPicker(std::string label, ImGuiColorEditFlags flags = 0);
 
 	toml::table Serialise() const;
 	void Load(toml::table& toml);
