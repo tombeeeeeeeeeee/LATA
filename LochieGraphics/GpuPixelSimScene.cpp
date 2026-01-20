@@ -18,6 +18,7 @@ void GpuPixelSimScene::LoadShaders()
 
 void GpuPixelSimScene::Start()
 {
+	pixelSim.InitialisePlayer();
 	pixelSim.InitialiseMaterials();
 	LoadShaders();
 	pixelSim.InitialiseChunks();

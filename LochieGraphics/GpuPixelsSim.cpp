@@ -12,7 +12,7 @@
 void PixelsGPU::Simulation::LoadComputeShaders()
 {
 	// Need to make sure these are all good limit wise when running on a worse device than mine
-	int workGroupSize[3];
+	int workGroupSize[3] = { 0 };
 	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &workGroupSize[0]);
 	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &workGroupSize[1]);
 	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &workGroupSize[2]);
@@ -73,6 +73,17 @@ void PixelsGPU::Simulation::LoadComputeShaders()
 		testCompute2->DeleteProgram();
 	}
 	testCompute2 = new ComputeShader(Paths::importShaderLocation + "testPixelCompute2" + Paths::computeExtension);
+}
+
+void PixelsGPU::Simulation::InitialisePlayer()
+{
+	glGenBuffers(1, &playerInfoSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, playerInfoSSBO);
+
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(PixelsGPU::PlayerInfo), nullptr, GL_STATIC_COPY);
+	glClearNamedBufferData(playerInfoSSBO, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, playerInfoSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 void PixelsGPU::Simulation::InitialiseMaterials()

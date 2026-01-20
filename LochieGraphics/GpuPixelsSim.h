@@ -8,6 +8,11 @@
 
 namespace PixelsGPU
 {
+	struct PlayerInfo
+	{
+		glm::vec2 pos;
+	};
+
 	class Simulation
 	{
 	public:
@@ -17,6 +22,8 @@ namespace PixelsGPU
 
 		std::vector<Chunk> chunks;
 		std::vector<PixelsGPU::Material> materials;
+
+		unsigned int playerInfoSSBO;
 
 		float timer = 0.0f;
 		int updateCount = 0;
@@ -30,6 +37,7 @@ namespace PixelsGPU
 		ComputeShader* testCompute2 = nullptr;
 		void LoadComputeShaders();
 
+		void InitialisePlayer();
 		void InitialiseMaterials();
 		void InitialiseChunks();
 		void Update(float delta);

@@ -1,7 +1,25 @@
 
-//! #include "basePixel.comp"
+// Don't actually //! #include "basePixel.comp"
+
+struct PlayerInfo
+{
+	vec2 pos;
+	vec2 vel;
+};
+
+
+layout(std430, binding = 2) buffer PlayerSlot
+{
+	PlayerInfo playerInfo;
+};
+
+vec2 getGravityForPlayer(PlayerInfo playerInfo)
+{
+	return vec2(0, -0.1);
+}
 
 void main() {
+	playerInfo.pos += 
 //	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
 //	int index = indexFromCoords(coords);
 //
