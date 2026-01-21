@@ -82,7 +82,7 @@ void PixelsGPU::Simulation::InitialisePlayer()
 	glGenBuffers(1, &playerInfoSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, playerInfoSSBO);
 
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(PixelsGPU::PlayerInfo), nullptr, GL_STATIC_COPY);
+	glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(PixelsGPU::PlayerInfo), nullptr, 0);
 	glClearNamedBufferData(playerInfoSSBO, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, playerInfoSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
