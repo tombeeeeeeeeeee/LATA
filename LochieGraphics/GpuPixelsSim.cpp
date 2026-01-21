@@ -1,5 +1,7 @@
 #include "GpuPixelsSim.h"
 
+#include "SceneManager.h"
+
 #include "Graphics.h"
 #include "Paths.h"
 #include "EditorGUI.h"
@@ -130,12 +132,26 @@ void PixelsGPU::Simulation::InitialiseChunks()
 void PixelsGPU::Simulation::Update(float delta)
 {
 	timer += delta;
+	preUpdate->Use();
+	preUpdate->setInt("gridCols", chunkWidth);
+	preUpdate->setInt("gridRows", chunkHeight);
+	preUpdate->setInt("updateCount", updateCount);
+
+	updatePixels->Use();
+	updatePixels->setInt("gridCols", chunkWidth);
+	updatePixels->setInt("gridRows", chunkHeight);
+	updatePixels->setInt("updateCount", updateCount);
+
+	testCompute->Use();
+	bool left = glfwGetKey(SceneManager::window, GLFW_KEY_A) == GLFW_PRESS;
+	bool right = glfwGetKey(SceneManager::window, GLFW_KEY_D) == GLFW_PRESS;
+	bool up = glfwGetKey(SceneManager::window, GLFW_KEY_W) == GLFW_PRESS;
+	bool down = glfwGetKey(SceneManager::window, GLFW_KEY_S) == GLFW_PRESS;
+	testCompute->setVec2("currentInput", glm::vec2((left ? -1 : 0) + (right ? 1 : 0), (up ? 1 : 0) + (down ? -1 : 0)));
+
 	for (int i = 0; i < subUpdates; i++)
 	{
 		preUpdate->Use();
-		preUpdate->setInt("gridCols", chunkWidth);
-		preUpdate->setInt("gridRows", chunkHeight);
-		preUpdate->setInt("updateCount", updateCount);
 		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 		for (auto& chunk : chunks)
 		{
@@ -146,10 +162,12 @@ void PixelsGPU::Simulation::Update(float delta)
 			chunk.SwitchReadWriteSSBOs();
 		}
 
+		if (debugTest)
+		{
+			testCompute->Run(1, 1, 1, 0);
+		}
+
 		updatePixels->Use();
-		updatePixels->setInt("gridCols", chunkWidth);
-		updatePixels->setInt("gridRows", chunkHeight);
-		updatePixels->setInt("updateCount", updateCount);
 		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 		for (auto& chunk : chunks)
 		{

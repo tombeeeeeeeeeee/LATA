@@ -34,6 +34,7 @@ private:
 
 	Shader* pixelShader = nullptr;
 	Shader* simple2dShader = nullptr;
+	Shader* playerShader = nullptr;
 
 	Mesh quad;
 

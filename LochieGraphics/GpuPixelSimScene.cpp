@@ -13,6 +13,7 @@ void GpuPixelSimScene::LoadShaders()
 	pixelShader = ResourceManager::LoadShader("simplePixelGpu");
 	//simple2dShader = ResourceManager::LoadShader("ui");
 	simple2dShader = ResourceManager::LoadShader("2dShader");
+	playerShader = ResourceManager::LoadShader("2dShaderPlayer");
 	pixelSim.LoadComputeShaders();
 }
 
@@ -117,7 +118,7 @@ void GpuPixelSimScene::Update(float delta)
 
 void GpuPixelSimScene::Draw(float delta)
 {
-	renderSystem.Update(transforms, pointLights, spotlights, camera, delta, nullptr, &pixelSim, frameBuffer, pixelShader, quad, simple2dShader, texture, renderIndex);
+	renderSystem.Update(transforms, pointLights, spotlights, camera, delta, nullptr, &pixelSim, frameBuffer, pixelShader, quad, simple2dShader, texture, renderIndex, playerShader);
 }
 
 void GpuPixelSimScene::GUI()

@@ -103,7 +103,8 @@ public:
         Mesh& quad,
         Shader* simple2dShader,
         Texture* chunkTexture,
-        int pixelsRenderIndex
+        int pixelsRenderIndex,
+        Shader* pixelPlayerShader = nullptr
     );
 
     // TODO: Lochie: consider what arguments should be apart of the rendersystem
@@ -126,7 +127,9 @@ public:
         const Mesh& quad,
         Shader* simple2dShader,
         Texture* texture,
-        unsigned int defaultFrameBuffer);
+        unsigned int defaultFrameBuffer,
+        Shader* playerShader,
+        Camera* camera);
 
     void ScreenResize(int width, int height);
 

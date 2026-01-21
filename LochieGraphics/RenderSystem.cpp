@@ -272,7 +272,8 @@ void RenderSystem::Update(
     Mesh& quad,
     Shader* simple2dShader,
     Texture* chunkTexture,
-    int pixelsRenderIndex
+    int pixelsRenderIndex,
+    Shader* pixelPlayerShader
 )
 {
     frameCountInSixteen = (frameCountInSixteen + 1) % 16;
@@ -318,7 +319,7 @@ void RenderSystem::Update(
     }
     if (gpuPixelSim)
     {
-        DrawGpuPixelSim(*gpuPixelSim, chunkFrameBuffer, pixelShader, pixelsRenderIndex, quad, simple2dShader, chunkTexture, deferredFBO);
+        DrawGpuPixelSim(*gpuPixelSim, chunkFrameBuffer, pixelShader, pixelsRenderIndex, quad, simple2dShader, chunkTexture, deferredFBO, pixelPlayerShader, camera);
     }
 
     if (ssaoEnabled)
@@ -521,10 +522,12 @@ void RenderSystem::DrawPixelSim(
 
 }
 
-void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameBuffer* frameBuffer, Shader* pixelShader, int renderIndex, const Mesh& quad, Shader* simple2dShader, Texture* texture, unsigned int defaultFrameBuffer)
+void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameBuffer* frameBuffer, Shader* pixelShader, int renderIndex, const Mesh& quad, Shader* simple2dShader, Texture* texture, unsigned int defaultFrameBuffer, Shader* playerShader, Camera* camera)
 {
+    // Draw each chunk
     for (const PixelsGPU::Chunk& chunk : pixelSim.chunks)
     {
+        // Draw chunk to texture
         chunk.BindSSBO(PixelsGPU::Chunk::centreIndexSSBO);
 
         frameBuffer->Bind();
@@ -538,6 +541,7 @@ void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameB
         glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
         quad.Draw();
 
+        // Draw chunk to main screen texture
         //frameBuffer->Unbind();
         glBindFramebuffer(GL_FRAMEBUFFER, defaultFrameBuffer);
         glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -555,6 +559,19 @@ void RenderSystem::DrawGpuPixelSim(const PixelsGPU::Simulation& pixelSim, FrameB
         simple2dShader->setSampler("tex", 1);
         quad.Draw();
     }
+
+    playerShader->Use();
+    glm::vec3 cameraPos3d = camera->transform.getGlobalPosition();
+    glm::vec2 camPos = glm::vec2(cameraPos3d.x, cameraPos3d.y);
+    playerShader->setVec2("camPos", camPos);
+    float ratio = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
+    playerShader->setFloat("aspectRatio", ratio);
+    float camSin = sinf(glm::radians(glm::degrees(glm::eulerAngles(camera->transform.getRotation())).z));
+    float camCos = cosf(glm::radians(glm::degrees(glm::eulerAngles(camera->transform.getRotation())).z));
+    glm::vec2 camSinCos = glm::vec2(camSin, camCos);
+    playerShader->setVec2("camSinCos", camSinCos);
+    playerShader->setFloat("orthScale", camera->orthoScale);
+    quad.Draw();
 }
 
 void RenderSystem::SSAOUpdate()
