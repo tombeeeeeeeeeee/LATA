@@ -54,6 +54,14 @@ void PixelsGPU::Simulation::LoadComputeShaders()
 	size_t materialInfoSlot = updateCode.find(materialInfoIdentifier);
 	updateCode.replace(materialInfoSlot, materialInfoIdentifier.size(), materialInfoCode);
 
+	
+	const std::string playerFilePath = Paths::importShaderLocation + "testPixelCompute" + Paths::computeExtension;
+	std::string playerCode = Utilities::FileToString(playerFilePath);
+	playerCode = Shader::PreProcessShaderCode(playerCode, updateFilepath);
+
+	materialInfoSlot = playerCode.find(materialInfoIdentifier);
+	playerCode.replace(materialInfoSlot, materialInfoIdentifier.size(), materialInfoCode);
+
 	updatePixels = ComputeShader::CreateCustomComputeShader(updateCode);
 	if (preUpdate)
 	{
@@ -69,7 +77,7 @@ void PixelsGPU::Simulation::LoadComputeShaders()
 	{
 		testCompute->DeleteProgram();
 	}
-	testCompute = new ComputeShader(Paths::importShaderLocation + "testPixelCompute" + Paths::computeExtension);
+	testCompute = ComputeShader::CreateCustomComputeShader(playerCode);
 	if (testCompute2)
 	{
 		testCompute2->DeleteProgram();
@@ -148,9 +156,33 @@ void PixelsGPU::Simulation::Update(float delta)
 	bool up = glfwGetKey(SceneManager::window, GLFW_KEY_W) == GLFW_PRESS;
 	bool down = glfwGetKey(SceneManager::window, GLFW_KEY_S) == GLFW_PRESS;
 	testCompute->setVec2("currentInput", glm::vec2((left ? -1 : 0) + (right ? 1 : 0), (up ? 1 : 0) + (down ? -1 : 0)));
+	testCompute->setInt("gridCols", chunkWidth);
+	testCompute->setInt("gridRows", chunkHeight);
+
 
 	for (int i = 0; i < subUpdates; i++)
 	{
+		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, playerInfoSSBO);
+		glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(PlayerInfo), &playerInfo);
+		glm::ivec2 playerChunkCoords = getChunkCoordsAtWorldSpace(playerInfo.pos);
+		Chunk* playerChunk = getChunkAt(playerChunkCoords);
+
+		if (!playerChunk)
+		{
+			playerChunk = CreateChunk(playerChunkCoords);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, playerInfoSSBO);
+		}
+		playerChunk->BindSSBO(Chunk::centreIndexSSBO);
+		std::array<int, Chunk::nearbyChunkCount> nearChunkStatus = getNearbyChunkStatus(playerChunkCoords);
+		testCompute->Use();
+
+		testCompute->setIntArray("nearChunkStatus", nearChunkStatus.data(), Chunk::nearbyChunkCount);
+		testCompute->setIVec2("chunkCoords", playerChunk->coords);
+		testCompute->Run(1, 1, 1, 0);
+		testCompute->setBool("readSsboFirst", playerChunk->readSsboFirst);
+
+
 		preUpdate->Use();
 		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 		for (auto& chunk : chunks)
@@ -160,11 +192,6 @@ void PixelsGPU::Simulation::Update(float delta)
 			preUpdate->setIVec2("chunkCoords", chunk.coords);
 			preUpdate->Run(chunkWidth / computeLocalSizeX, chunkHeight / computeLocalSizeY, computeLocalSizeZ, 0);
 			chunk.SwitchReadWriteSSBOs();
-		}
-
-		if (debugTest)
-		{
-			testCompute->Run(1, 1, 1, 0);
 		}
 
 		updatePixels->Use();

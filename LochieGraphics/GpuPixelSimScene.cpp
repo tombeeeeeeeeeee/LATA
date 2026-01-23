@@ -132,6 +132,12 @@ void GpuPixelSimScene::GUI()
 	{
 		LoadShaders();
 	}
+
+	if (ImGui::Checkbox("Player", &activePlayer))
+	{
+		camera->state = activePlayer ? Camera::State::targetingPositionOrthographic : Camera::State::tilePlacing;
+	}
+
 	
 	ExtraEditorGUI::SliderEnum("Mouse mode", { "None", "Brush", "Select Pixel", "Select Chunk" }, (int*)&mouseMode);
 	ImGui::InputInt("MatID placing", &placingMatID);

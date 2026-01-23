@@ -4,12 +4,16 @@ layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 //! #include "basePixel.comp"
 
+//! #include "colourUtils.glsl"
+
+
 uniform vec2 currentInput;
 
 struct PlayerInfo
 {
 	vec2 pos;
 	vec2 vel;
+	uint colour;
 };
 
 layout(std430, binding = 2) buffer PlayerSlot
@@ -19,14 +23,28 @@ layout(std430, binding = 2) buffer PlayerSlot
 
 vec2 getGravityForPlayer(PlayerInfo playerInfo)
 {
-	return vec2(0, -0.1);
+	return vec2(0, -0.0001);
 }
 
-const float moveSpeed = 0.1;
+const float moveSpeed = 1.1;
 
 void main() {
-	//playerInfo.pos += getGravityForPlayer(playerInfo);
+	vec2 oldPlayerPos = playerInfo.pos;
+	playerInfo.vel += getGravityForPlayer(playerInfo);
 	playerInfo.pos += moveSpeed * currentInput;
+	playerInfo.pos += playerInfo.vel;
+
+	ivec2 globalCoords = ivec2(floor(playerInfo.pos.x), floor(playerInfo.pos.y));
+	Pixel pixelAt = getReadFromGlobalCoords(globalCoords);
+	playerInfo.colour = colourPackUnsigned(vec4(playerInfo.pos.x / gridCols, playerInfo.pos.y / gridRows, (pixelAt.matID == 0) ? 1 : 0, 1));
+
+	if (!matsEmptyStatus[pixelAt.matID])
+	{
+		playerInfo.vel = vec2(0, 0);
+		playerInfo.pos = oldPlayerPos;
+	}
+
+
 //	ivec2 coords = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
 //	int index = indexFromCoords(coords);
 //

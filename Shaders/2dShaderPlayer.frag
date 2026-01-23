@@ -15,7 +15,10 @@ struct PlayerInfo
 {
 	vec2 pos;
 	vec2 vel;
+	uint colour;
 };
+
+//! #include "colourUtils.glsl"
 
 const float playerRenderRadius = 4.0;
 
@@ -28,18 +31,19 @@ layout(std430, binding = 2) buffer PlayerSlot
 
 void main()
 {
-    if (length(FragPos.xy - playerInfo.pos) > playerRenderRadius)
-    {
-        discard;
-    }
-    vec3 albedoColour = vec3(1, 0.3, 0.1);
-//    vec3 albedoColour = texture(tex, TexCoords).rgb;
+	if (length(FragPos.xy - playerInfo.pos) > playerRenderRadius)
+	{
+		discard;
+	}
+	vec3 albedoColour = colourUnpackUnsigned(playerInfo.colour).rgb;
+    //vec3 albedoColour = colourUnpackUnsigned(colourPackUnsigned(vec4(TexCoords.rg, 0, 1))).rgb;
+    //vec3 albedoColour = texture(tex, TexCoords).rgb;
 
-    albedo = vec4(albedoColour, 1.0);
-    pbr = vec4(0, 0, 0, 1);
-    emission = vec4(0.0, 0.0, 0.0, 0.0);
-    normal = vec4(0, 0, 1, 0);
+	albedo = vec4(albedoColour, 1.0);
+	pbr = vec4(0, 0, 0, 1);
+	emission = vec4(0.0, 0.0, 0.0, 0.0);
+	normal = vec4(0, 0, 1, 0);
 
 
-    //FragColor = vec4(1.0.xxxx);
+	//FragColor = vec4(1.0.xxxx);
 } 

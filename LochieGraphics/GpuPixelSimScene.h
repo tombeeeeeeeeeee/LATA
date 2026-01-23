@@ -16,6 +16,8 @@ private:
 		COUNT
 	};
 
+	bool activePlayer = true;
+
 	MouseMode mouseMode = MouseMode::Brush;
 
 	PixelsGPU::Simulation pixelSim;

@@ -14,6 +14,7 @@ namespace PixelsGPU
 	{
 		glm::vec2 pos;
 		glm::vec2 vel;
+		unsigned int colour;
 	};
 
 	class Simulation
@@ -26,6 +27,8 @@ namespace PixelsGPU
 		std::vector<Chunk> chunks;
 		std::vector<PixelsGPU::Material> materials;
 
+		// This is not the main representation, as that exists as an the SSBO
+		PlayerInfo playerInfo;
 		unsigned int playerInfoSSBO;
 
 		float timer = 0.0f;
