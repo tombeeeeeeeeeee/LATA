@@ -173,17 +173,8 @@ void PixelsGPU::Simulation::Update(float delta)
 		{
 			chunk.BindSSBO(Chunk::centreIndexSSBO);
 
-			int nearChunkStatus[std::size(Chunk::orderedNearIndexSSBO)];
-			for (int nearI = 0; nearI < std::size(Chunk::orderedNearIndexSSBO); ++nearI)
-			{
-				const Chunk* nearChunk = getChunkAt(chunk.coords + Chunk::orderedNearChunksLocalOffsets[nearI]);
-				if (nearChunk)
-				{
-					nearChunk->BindSSBO(Chunk::orderedNearIndexSSBO[nearI]);
-				}
-				nearChunkStatus[nearI] = (nearChunk) ? (nearChunk->readSsboFirst ? 1 : 2) : 0;
-			}
-			updatePixels->setIntArray("nearChunkStatus", nearChunkStatus, std::size(Chunk::orderedNearIndexSSBO));
+			std::array<int, PixelsGPU::Chunk::nearbyChunkCount> nearChunkStatus = getNearbyChunkStatus(chunk.coords);
+			updatePixels->setIntArray("nearChunkStatus", nearChunkStatus.data(), PixelsGPU::Chunk::nearbyChunkCount);
 
 			updatePixels->setBool("readSsboFirst", chunk.readSsboFirst);
 			updatePixels->setIVec2("chunkCoords", chunk.coords);
@@ -197,7 +188,12 @@ void PixelsGPU::Simulation::Update(float delta)
 	}
 }
 
-const PixelsGPU::Chunk* PixelsGPU::Simulation::getChunkAt(glm::ivec2 chunkCoords)
+glm::ivec2 PixelsGPU::Simulation::getChunkCoordsAtWorldSpace(glm::vec2 world)
+{
+	return glm::ivec2(floorf(world.x / chunkWidth), floorf(world.y / chunkHeight));
+}
+
+const PixelsGPU::Chunk* PixelsGPU::Simulation::getChunkAt(glm::ivec2 chunkCoords) const
 {
 	for (const auto& chunk : chunks)
 	{
@@ -209,11 +205,38 @@ const PixelsGPU::Chunk* PixelsGPU::Simulation::getChunkAt(glm::ivec2 chunkCoords
 	return nullptr;
 }
 
-PixelsGPU::Chunk& PixelsGPU::Simulation::CreateChunk(glm::ivec2 chunkCoords)
+PixelsGPU::Chunk* PixelsGPU::Simulation::getChunkAt(glm::ivec2 chunkCoords)
+{
+	for (auto& chunk : chunks)
+	{
+		if (chunk.coords == chunkCoords)
+		{
+			return &chunk;
+		}
+	}
+	return nullptr;
+}
+
+std::array<int, PixelsGPU::Chunk::nearbyChunkCount> PixelsGPU::Simulation::getNearbyChunkStatus(glm::ivec2 chunkCoord) const
+{
+	std::array<int, std::size(PixelsGPU::Chunk::orderedNearIndexSSBO)> nearChunkStatus;
+	for (int nearI = 0; nearI < std::size(Chunk::orderedNearIndexSSBO); ++nearI)
+	{
+		const Chunk* nearChunk = getChunkAt(chunkCoord + Chunk::orderedNearChunksLocalOffsets[nearI]);
+		if (nearChunk)
+		{
+			nearChunk->BindSSBO(Chunk::orderedNearIndexSSBO[nearI]);
+		}
+		nearChunkStatus[nearI] = (nearChunk) ? (nearChunk->readSsboFirst ? 1 : 2) : 0;
+	}
+	return nearChunkStatus;
+}
+
+PixelsGPU::Chunk* PixelsGPU::Simulation::CreateChunk(glm::ivec2 chunkCoords)
 {
 	auto& chunk = chunks.emplace_back(chunkCoords);
 	chunk.Initialise();
-	return chunk;
+	return &chunk;
 }
 
 void PixelsGPU::Simulation::DestroyChunk(glm::ivec2 chunkCoords)

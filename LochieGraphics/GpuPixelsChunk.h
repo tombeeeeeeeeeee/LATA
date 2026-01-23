@@ -14,7 +14,8 @@ namespace PixelsGPU
 		static constexpr int offsetIndexSBBO = 3;
 		static constexpr int centreIndexSSBO = offsetIndexSBBO + 1;
 
-		static constexpr int orderedNearIndexSSBO[8] =
+		static constexpr int nearbyChunkCount = 8;
+		static constexpr int orderedNearIndexSSBO[nearbyChunkCount] =
 		{
 			offsetIndexSBBO + 2,
 			offsetIndexSBBO + 3,
@@ -26,7 +27,7 @@ namespace PixelsGPU
 			offsetIndexSBBO + 9,
 		};
 
-		static constexpr glm::ivec2 orderedNearChunksLocalOffsets[8] =
+		static constexpr glm::ivec2 orderedNearChunksLocalOffsets[nearbyChunkCount] =
 		{
 			glm::ivec2(-1, 0),
 			glm::ivec2(0, 1),

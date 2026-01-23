@@ -6,6 +6,8 @@
 #include "GpuPixelsChunk.h"
 #include "GpuPixelsMat.h"
 
+#include <array>
+
 namespace PixelsGPU
 {
 	struct PlayerInfo
@@ -43,8 +45,11 @@ namespace PixelsGPU
 		void InitialiseChunks();
 		void Update(float delta);
 
-		const Chunk* getChunkAt(glm::ivec2 chunkCoords);
-		Chunk& CreateChunk(glm::ivec2 chunkCoords);
+		glm::ivec2 getChunkCoordsAtWorldSpace(glm::vec2 world);
+		const Chunk* getChunkAt(glm::ivec2 chunkCoords) const;
+		Chunk* getChunkAt(glm::ivec2 chunkCoords);
+		std::array<int, Chunk::nearbyChunkCount> getNearbyChunkStatus(glm::ivec2 chunkCoord) const;
+		Chunk* CreateChunk(glm::ivec2 chunkCoords);
 		void DestroyChunk(glm::ivec2 chunkCoords);
 
 		void SetCircleTo(glm::ivec2 pos, float radius, PixelsGPU::CellPixel cell);
