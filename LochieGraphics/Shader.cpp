@@ -176,7 +176,7 @@ void Shader::setInt(const std::string& name, int value)
 	glUniform1i(getUniformLocation(name), value);
 }
 
-void Shader::setIntArray(const std::string& name, int* values, int count)
+void Shader::setIntArray(const std::string& name, const int* values, int count)
 {
 	glUniform1iv(getUniformLocation(name), count, values);
 }
