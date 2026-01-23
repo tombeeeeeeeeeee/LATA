@@ -162,4 +162,12 @@ ivec2 getLocalChunkDirection(const ivec2 localCoords)
 	return ivec2((localCoords.x < 0) ? -1 : ((localCoords.x >= gridCols) ? 1 : 0), (localCoords.y < 0) ? -1 : ((localCoords.y >= gridRows) ? 1 : 0));
 }
 
+Pixel getReadFromGlobalCoords(ivec2 globalCoords)
+{
+	ivec2 localCoords = globalToLocalCoords(globalCoords);
+	int index = indexFromCoords(localCoords);
+	return getRead(index);
+}
+
+
 // CODE INSERT: MATERIAL_INFO
