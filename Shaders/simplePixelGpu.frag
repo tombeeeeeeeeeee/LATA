@@ -6,6 +6,8 @@ in vec2 texCoords;
 
 //! #include "gpuPixelRep.glsl"
 
+//! #include "colourUtils.glsl"
+
 // TODO: Should these be constants instead
 uniform int gridCols;
 uniform int gridRows;
@@ -45,10 +47,7 @@ void main()
 
 	if (renderIndex == 0) // Colour
 	{
-		colour.r = (pixel.colour >> 24 & 0xFF) / 255.0;
-		colour.g = (pixel.colour >> 16 & 0xFF) / 255.0;
-		colour.b = (pixel.colour >> 8 & 0xFF) / 255.0;
-		//colour = vec3((pixel.colour >> 24) & 0xFF, (pixel.colour >> 16) & 0xFF, (pixel.colour >> 8) & 0xFF);
+		colour = colourUnpackUnsigned(pixel.colour).rgb;
 	}
 	else if (renderIndex == 1) // Vel
 	{
