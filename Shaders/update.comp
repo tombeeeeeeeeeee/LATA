@@ -2,45 +2,6 @@
 //! #include "basePixel.comp"
 
 
-layout(std430, binding = ssboBindingOffset + 2) buffer ChunkSlot2
-{
-	Pixel chunkData2[];
-};
-
-layout(std430, binding = ssboBindingOffset + 3) buffer ChunkSlot3
-{
-	Pixel chunkData3[];
-};
-
-layout(std430, binding = ssboBindingOffset + 4) buffer ChunkSlot4
-{
-	Pixel chunkData4[];
-};
-
-layout(std430, binding = ssboBindingOffset + 5) buffer ChunkSlot5
-{
-	Pixel chunkData5[];
-};
-
-layout(std430, binding = ssboBindingOffset + 6) buffer ChunkSlot6
-{
-	Pixel chunkData6[];
-};
-
-layout(std430, binding = ssboBindingOffset + 7) buffer ChunkSlot7
-{
-	Pixel chunkData7[];
-};
-
-layout(std430, binding = ssboBindingOffset + 8) buffer ChunkSlot8
-{
-	Pixel chunkData8[];
-};
-
-layout(std430, binding = ssboBindingOffset + 9) buffer ChunkSlot9
-{
-	Pixel chunkData9[];
-};
 
 #define DoChunkCheckThing(checkChunkIndex, chunkBuffer)																\
 {																													\
@@ -64,23 +25,6 @@ layout(std430, binding = ssboBindingOffset + 9) buffer ChunkSlot9
 }
 
 uniform int updateCount;
-
-const int nearChunkCount = 8;
-// Treat as bools
-// 0, not one on that side, 1 is read first, 2 is write first
-uniform int nearChunkStatus[nearChunkCount];
-
-const ivec2 nearChunkOffsetCoords[nearChunkCount] =
-{
-	ivec2(-1, 0),
-	ivec2(0, 1),
-	ivec2(1, 0),
-	ivec2(0, -1),
-	ivec2(-1, 1),
-	ivec2(1, 1),
-	ivec2(-1, -1),
-	ivec2(1, -1),
-};
 
 // We don't actually want to work out exactly the position if we don't care, only need for the one that will take our spot
 ivec2 getExpectedLocalPos(const ivec2 lcoords, const Pixel pixel, const bool evenFrame)
