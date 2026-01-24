@@ -90,8 +90,8 @@ void PixelsGPU::Simulation::InitialisePlayer()
 	glGenBuffers(1, &playerInfoSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, playerInfoSSBO);
 
-	glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(PixelsGPU::PlayerInfo), nullptr, 0);
-	glClearNamedBufferData(playerInfoSSBO, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
+	glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(PixelsGPU::PlayerInfo), nullptr, GL_CLIENT_STORAGE_BIT);
+	glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, playerInfoSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
@@ -150,37 +150,43 @@ void PixelsGPU::Simulation::Update(float delta)
 	updatePixels->setInt("gridRows", chunkHeight);
 	updatePixels->setInt("updateCount", updateCount);
 
-	testCompute->Use();
-	bool left = glfwGetKey(SceneManager::window, GLFW_KEY_A) == GLFW_PRESS;
-	bool right = glfwGetKey(SceneManager::window, GLFW_KEY_D) == GLFW_PRESS;
-	bool up = glfwGetKey(SceneManager::window, GLFW_KEY_W) == GLFW_PRESS;
-	bool down = glfwGetKey(SceneManager::window, GLFW_KEY_S) == GLFW_PRESS;
-	testCompute->setVec2("currentInput", glm::vec2((left ? -1 : 0) + (right ? 1 : 0), (up ? 1 : 0) + (down ? -1 : 0)));
-	testCompute->setInt("gridCols", chunkWidth);
-	testCompute->setInt("gridRows", chunkHeight);
+	if (debugTest)
+	{
+		testCompute->Use();
+		bool left = glfwGetKey(SceneManager::window, GLFW_KEY_A) == GLFW_PRESS;
+		bool right = glfwGetKey(SceneManager::window, GLFW_KEY_D) == GLFW_PRESS;
+		bool up = glfwGetKey(SceneManager::window, GLFW_KEY_W) == GLFW_PRESS;
+		bool down = glfwGetKey(SceneManager::window, GLFW_KEY_S) == GLFW_PRESS;
+		testCompute->setVec2("currentInput", glm::vec2((left ? -1 : 0) + (right ? 1 : 0), (up ? 1 : 0) + (down ? -1 : 0)));
+		testCompute->setInt("gridCols", chunkWidth);
+		testCompute->setInt("gridRows", chunkHeight);
+	}
 
 
 	for (int i = 0; i < subUpdates; i++)
 	{
-		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, playerInfoSSBO);
-		glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(PlayerInfo), &playerInfo);
-		glm::ivec2 playerChunkCoords = getChunkCoordsAtWorldSpace(playerInfo.pos);
-		Chunk* playerChunk = getChunkAt(playerChunkCoords);
-
-		if (!playerChunk)
+		if (debugTest)
 		{
-			playerChunk = CreateChunk(playerChunkCoords);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, playerInfoSSBO);
-		}
-		playerChunk->BindSSBO(Chunk::centreIndexSSBO);
-		std::array<int, Chunk::nearbyChunkCount> nearChunkStatus = getNearbyChunkStatus(playerChunkCoords);
-		testCompute->Use();
+			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+			glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(PlayerInfo), &playerInfo);
+			glm::ivec2 playerChunkCoords = getChunkCoordsAtWorldSpace(playerInfo.pos);
+			Chunk* playerChunk = getChunkAt(playerChunkCoords);
 
-		testCompute->setIntArray("nearChunkStatus", nearChunkStatus.data(), Chunk::nearbyChunkCount);
-		testCompute->setIVec2("chunkCoords", playerChunk->coords);
-		testCompute->Run(1, 1, 1, 0);
-		testCompute->setBool("readSsboFirst", playerChunk->readSsboFirst);
+			if (!playerChunk)
+			{
+				playerChunk = CreateChunk(playerChunkCoords);
+				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, playerInfoSSBO);
+			}
+			playerChunk->BindSSBO(Chunk::centreIndexSSBO);
+			std::array<int, Chunk::nearbyChunkCount> nearChunkStatus = getNearbyChunkStatus(playerChunkCoords);
+			testCompute->Use();
+
+			testCompute->setIntArray("nearChunkStatus", nearChunkStatus.data(), Chunk::nearbyChunkCount);
+			testCompute->setIVec2("chunkCoords", playerChunk->coords);
+			testCompute->Run(1, 1, 1, 0);
+			testCompute->setBool("readSsboFirst", playerChunk->readSsboFirst);
+		}
 
 
 		preUpdate->Use();
