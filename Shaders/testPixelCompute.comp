@@ -35,6 +35,20 @@ void main() {
 	playerInfo.pos += playerInfo.vel;
 
 	ivec2 globalCoords = ivec2(floor(playerInfo.pos.x), floor(playerInfo.pos.y));
+	ivec2 localCoords = globalToLocalCoords(globalCoords);
+	ivec2 chunkDir = getLocalChunkDirection(localCoords);
+	// Need to check what chunk we are moving to
+	// Would usually be outselves, followed by a direct neighbor, and then diagonally
+
+	DoChunkCheckThing(0, chunkData2);
+	DoChunkCheckThing(1, chunkData3);
+	DoChunkCheckThing(2, chunkData4);
+	DoChunkCheckThing(3, chunkData5);
+	DoChunkCheckThing(4, chunkData6);
+	DoChunkCheckThing(5, chunkData7);
+	DoChunkCheckThing(6, chunkData8);
+	DoChunkCheckThing(7, chunkData9);
+
 	Pixel pixelAt = getReadFromGlobalCoords(globalCoords);
 	playerInfo.colour = colourPackUnsigned(vec4(playerInfo.pos.x / gridCols, playerInfo.pos.y / gridRows, (pixelAt.matID == 0) ? 1 : 0, 1));
 
