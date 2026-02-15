@@ -56,6 +56,8 @@ SceneManager::SceneManager(Scene* _scene)
 #if _DEBUG  
 	std::cout << "Running in debug mode!\n";
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#else
+	std::cout << "Running in release mode!\n";
 #endif
 
 	//glfwGetPrimaryMonitor();
