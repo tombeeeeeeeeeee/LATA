@@ -40,28 +40,28 @@ void LineRenderer::DrawLineSegment(glm::vec3 start, glm::vec3 end, Colour colour
 	colours.push_back(colour);
 }
 
-void LineRenderer::DrawLineSegement2D(glm::vec2 start, glm::vec2 end, float yOffset)
+void LineRenderer::DrawLineSegementXZ(glm::vec2 start, glm::vec2 end, float yOffset)
 {
 	glm::vec3 start3D = { start.x, yOffset, start.y };
 	glm::vec3 end3D = { end.x, yOffset, end.y };
 	DrawLineSegment(start3D, end3D);
 }
 
-void LineRenderer::DrawLineSegement2D(glm::vec2 start, glm::vec2 end, Colour colour, float yOffset)
+void LineRenderer::DrawLineSegementXZ(glm::vec2 start, glm::vec2 end, Colour colour, float yOffset)
 {
 	glm::vec3 start3D = { start.x, yOffset, start.y };
 	glm::vec3 end3D = { end.x, yOffset, end.y };
 	DrawLineSegment(start3D, end3D, colour);
 }
 
-void LineRenderer::DrawCircle(glm::vec3 centre, float size)
+void LineRenderer::DrawCircle(glm::vec3 centre, float size, Plane plane)
 {
-	DrawCircle(centre, size, currentColour);
+	DrawCircle(centre, size, plane, currentColour);
 }
 
-void LineRenderer::DrawCircle(glm::vec3 centre, float size, Colour colour)
+void LineRenderer::DrawCircle(glm::vec3 centre, float size, Plane plane, Colour colour)
 {
-	DrawCircle(centre, size, colour, GetCircleSegmentCount(size));
+	DrawCircle(centre, size, plane, colour, GetCircleSegmentCount(size));
 }
 
 void LineRenderer::FinishLineStrip()
@@ -164,28 +164,56 @@ int LineRenderer::GetCircleSegmentCount(float radius) const
 	//return glm::clamp((int)(sqrtf(radius * 10.0f/1080.0f) * 32 + 4), 5, 128);
 }
 
-void LineRenderer::DrawCircle(glm::vec3 centre, float size, int segmentCount)
+void LineRenderer::DrawCircle(glm::vec3 centre, float size, Plane plane, int segmentCount)
 {
-	DrawCircle(centre, size, currentColour, segmentCount);
+	DrawCircle(centre, size, plane, currentColour, segmentCount);
 }
 
-void LineRenderer::DrawCircle(glm::vec3 centre, float size, Colour colour, int segmentCount)
+void LineRenderer::DrawCircle(glm::vec3 centre, float size, Plane plane, Colour colour, int segmentCount)
 {
 	float c = cos(2 * PI / segmentCount);
 	float s = sin(2 * PI / segmentCount);
 
-	glm::vec3 plotPoint(0, 0, size);
+	glm::vec3 start;
+	switch (plane)
+	{
+	case LineRenderer::Plane::XY:
+		start = glm::vec3(0, size, 0);
+		break;
+	case LineRenderer::Plane::YZ:
+		start = glm::vec3(0, 0, size);
+		break;
+	case LineRenderer::Plane::XZ:
+		start = glm::vec3(0, 0, size);
+		break;
+	default:
+		break;
+	}
+	glm::vec3 plotPoint(start);
 
 	for (int i = 0; i < segmentCount - 1; i++)
 	{
 		positions.push_back(centre + plotPoint);
-		plotPoint = { plotPoint.x * c - plotPoint.z * s, 0.0f, plotPoint.z * c + plotPoint.x * s };
+		switch (plane)
+		{
+		case LineRenderer::Plane::XY:
+			plotPoint = { plotPoint.x * c - plotPoint.y * s, plotPoint.y * c + plotPoint.x * s, 0.0f };
+			break;
+		case LineRenderer::Plane::YZ:
+			plotPoint = { 0.0f, plotPoint.y * c - plotPoint.z * s, plotPoint.z * c + plotPoint.y * s };
+			break;
+		case LineRenderer::Plane::XZ:
+			plotPoint = { plotPoint.x * c - plotPoint.z * s, 0.0f, plotPoint.z * c + plotPoint.x * s };
+			break;
+		default:
+			break;
+		}
 		positions.push_back(centre + plotPoint);
 		colours.push_back(colour);
 		colours.push_back(colour);
 	}
 	positions.push_back(centre + plotPoint);
-	positions.push_back(centre + glm::vec3(0, 0, size));
+	positions.push_back(centre + start);
 	colours.push_back(colour);
 	colours.push_back(colour);
 }
