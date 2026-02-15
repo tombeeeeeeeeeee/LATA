@@ -16,7 +16,7 @@ Light::Light(glm::vec3 _colour) :
 void Light::Initialise()
 {
 	// Create shadow depth texture for the light
-	depthMap = ResourceManager::LoadTexture(shadowTexWidth, shadowTexHeight, GL_DEPTH_COMPONENT, nullptr, GL_CLAMP_TO_BORDER, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
+	depthMap = ResourceManager::CreateTexture(shadowTexWidth, shadowTexHeight, GL_DEPTH_COMPONENT, nullptr, GL_CLAMP_TO_BORDER, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
 	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 }; // TODO: Move to be apart of texture
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	shadowFrameBuffer = new FrameBuffer(shadowTexWidth, shadowTexHeight, nullptr, depthMap, false);
