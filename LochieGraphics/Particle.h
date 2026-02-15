@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Mesh.h"
-
 #include "Maths.h"
 
 #include <random>

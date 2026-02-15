@@ -15,7 +15,7 @@ void Audio::CheckForMissingPaths()
 	for (size_t i = 0; i < sounds.size(); i++)
 	{
 		if (sounds.at(i).filename == "") {
-			soundsMissing.push_back(i);
+			soundsMissing.push_back((unsigned int)i);
 		}
 	}
 	if (!soundsMissing.empty()) {

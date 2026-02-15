@@ -35,7 +35,7 @@ float RenderSystem::eccoAnimLifeTime = 1;
 
 void RenderSystem::Start(unsigned int _skyboxTexture)
 {
-    std::srand(2.0f);
+    std::srand(2);
     if (SCREEN_WIDTH == 0)
     {
         int scrWidth, scrHeight;
