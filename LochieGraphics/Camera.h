@@ -65,6 +65,7 @@ public:
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
 
     glm::mat4 GetViewMatrix() const;
+    glm::mat4 GetProjectionMatrix(float aspectRatio) const;
 
     // processes keyboard input. Accepts input parameter in the form of camera defined ENUM to abstract it from windowing systems
     void ProcessKeyboard(Direction direction, float deltaTime);
@@ -77,8 +78,8 @@ public:
     void ProcessMouseScroll(float yoffset);
 
     // TODO: This shouldn't be hardcoded
-    float getOrthoHeight() const { return 9.0f * orthoScale; };
-    float getOrthoWidth() const { return 16.0f * orthoScale; };
+    float getOrthoHeight(float ratio) const;
+    float getOrthoWidth(float ratio) const;
 
     bool InOrthoMode() const;
 
