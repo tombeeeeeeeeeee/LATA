@@ -420,7 +420,7 @@ void EnemySystem::Steering(
                     glm::vec2 playerForce = glm::normalize(enemyPair.second.target - transforms[enemyPair.first].get2DGlobalPosition());
                     playerForce *= 100 * playerCoef;
                     enemyPair.second.influenceThisFrame += playerForce;
-                    if(drawForceLines) RenderSystem::lines.DrawLineSegement2D(transforms[enemyPair.first].get2DGlobalPosition(), transforms[enemyPair.first].get2DGlobalPosition() + playerForce * 10.0f, { 1,1,0 }, 100);
+                    if(drawForceLines) RenderSystem::lines.DrawLineSegementXZ(transforms[enemyPair.first].get2DGlobalPosition(), transforms[enemyPair.first].get2DGlobalPosition() + playerForce * 10.0f, { 1,1,0 }, 100);
                 }
                 else
                 {
@@ -469,7 +469,7 @@ void EnemySystem::Steering(
                     }
                 }
                 if (drawForceLines)
-                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + enemyPair.second.influenceThisFrame * 10.0f, { 0,0,1 }, 100);
+                RenderSystem::lines.DrawLineSegementXZ(enemyPos, enemyPos + enemyPair.second.influenceThisFrame * 10.0f, { 0,0,1 }, 100);
                 float enemyLOSNormalMultiplier = 10.0f;
                 if (enemyPair.second.hasLOS)
                 {
@@ -482,7 +482,7 @@ void EnemySystem::Steering(
                         enemyPair.second.influenceThisFrame += playerForce;
                         if (drawForceLines)
                         {
-                            RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + playerForce * 10.0f, { 1,1,0 }, 100);
+                            RenderSystem::lines.DrawLineSegementXZ(enemyPos, enemyPos + playerForce * 10.0f, { 1,1,0 }, 100);
                         }
                     }
 
@@ -499,7 +499,7 @@ void EnemySystem::Steering(
                             enemyPair.second.influenceThisFrame += playerForce;
                             if (drawForceLines)
                             {
-                                RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + playerForce * 10.0f, { 1,1,0 }, 100);
+                                RenderSystem::lines.DrawLineSegementXZ(enemyPos, enemyPos + playerForce * 10.0f, { 1,1,0 }, 100);
                             }
                         }
                     }
@@ -514,7 +514,7 @@ void EnemySystem::Steering(
 
                 if (drawForceLines)
                 {
-                    RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + normalForce * 10.0f, { 1,0,0 }, 100);
+                    RenderSystem::lines.DrawLineSegementXZ(enemyPos, enemyPos + normalForce * 10.0f, { 1,0,0 }, 100);
                 }
                 if (totalNeighbours == 0) continue;
 
@@ -527,8 +527,8 @@ void EnemySystem::Steering(
 
                 if (drawForceLines)
                 {
-                    RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + cohesionForce * 10.0f,  { 0,1,0 }, 100);
-                    RenderSystem::lines.DrawLineSegement2D(enemyPos, enemyPos + alignmentForce * 10.0f, { 0,1,1 }, 100);
+                    RenderSystem::lines.DrawLineSegementXZ(enemyPos, enemyPos + cohesionForce * 10.0f,  { 0,1,0 }, 100);
+                    RenderSystem::lines.DrawLineSegementXZ(enemyPos, enemyPos + alignmentForce * 10.0f, { 0,1,1 }, 100);
                 }
 
                 enemyPair.second.influenceThisFrame += alignmentForce + cohesionForce;

@@ -148,7 +148,7 @@ void PolygonCollider::DebugDraw(Transform* transform)
 		glm::vec2 p = RigidBody::Transform2Din3DSpace(transform->getGlobalMatrix(), verts[0]);
 		float height = 0.1f;
 		if (collisionLayer & (int)CollisionLayers::reflectiveSurface) height = 70.0f;
-		RenderSystem::debugLines.DrawCircle({p.x, height, p.y}, radius, { 0.0f,1.0f,0.0f });
+		RenderSystem::debugLines.DrawCircle(glm::vec3{p.x, height, p.y}, radius, LineRenderer::Plane::XZ);
 	}
 	else
 	{

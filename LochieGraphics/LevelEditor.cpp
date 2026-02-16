@@ -1015,11 +1015,11 @@ void LevelEditor::DrawGrid()
 	lines->SetColour({ gridColour.x, gridColour.y, gridColour.z });
 	for (float x = xMin; x <= xMax; x += placementGridSize)
 	{
-		lines->DrawLineSegement2D({ x, zMin }, { x, zMax }, placementGridHeight);
+		lines->DrawLineSegementXZ({ x, zMin }, { x, zMax }, placementGridHeight);
 	}
 	for (float z = zMin; z <= zMax; z += placementGridSize)
 	{
-		lines->DrawLineSegement2D({ xMin, z }, { xMax, z }, placementGridHeight);
+		lines->DrawLineSegementXZ({ xMin, z }, { xMax, z }, placementGridHeight);
 	}
 
 }

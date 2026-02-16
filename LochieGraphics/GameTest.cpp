@@ -263,7 +263,7 @@ void GameTest::Update(float delta)
 	lines.DrawLineSegment(extraPoints[6], otherPos3);
 	lines.DrawLineSegment(extraPoints[7], otherPos4);
 	
-	lines.DrawCircle(h->transform()->getGlobalPosition(), hRadius, 40);
+	lines.DrawCircle(h->transform()->getGlobalPosition(), hRadius, LineRenderer::Plane::XZ, 40);
 
 	for (int y = 0; y < level.height - 1; y++)
 	{
