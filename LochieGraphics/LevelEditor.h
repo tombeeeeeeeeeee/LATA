@@ -3,6 +3,7 @@
 
 #include "Input.h"
 #include "Lights.h"
+#include "Mesh.h"
 
 #include "hashFNV1A.h"
 
