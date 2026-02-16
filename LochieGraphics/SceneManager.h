@@ -7,6 +7,7 @@
 #include "Graphics.h"
 
 class Scene;
+class Skybox;
 
 enum class WindowModes {
 	windowed,
@@ -48,6 +49,8 @@ private:
 	static WindowModes windowMode;
 	static unsigned int windowWidth;
 	static unsigned int windowHeight;
+
+	Skybox* defaultSkybox = nullptr;
 
 	// Callbacks //TODO: change how these functions are called, look at other examples on how callbacks can be handled
 	static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
