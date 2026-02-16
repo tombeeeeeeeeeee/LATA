@@ -6,7 +6,6 @@
 
 #include "Graphics.h"
 
-class Skybox;
 class Scene;
 
 enum class WindowModes {
@@ -50,9 +49,6 @@ private:
 	static unsigned int windowWidth;
 	static unsigned int windowHeight;
 
-	// TODO: Should prob be static
-	Skybox* defaultSkybox = nullptr;
-
 	// Callbacks //TODO: change how these functions are called, look at other examples on how callbacks can be handled
 	static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 	static void MouseMoveCallback(GLFWwindow* window, double xposIn, double yposIn);
@@ -70,6 +66,8 @@ private:
 	static void ProcessMouseInput(GLFWwindow* window);
 	static void ToggleFullscreen(); // TODO: fullscreen for correct monitor and remember size and pos
 	
+	void Update();
+	void Draw();
 public:
 
 	SceneManager(Scene* _scene);
@@ -78,7 +76,7 @@ public:
 	SceneManager(const SceneManager& other) = delete;
 	SceneManager& operator=(const SceneManager& other) = delete;
 
-	void Update();
+	void Run();
 	bool ShouldClose() const;
 
 	static void SwitchToWindowMode(WindowModes mode);
