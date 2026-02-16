@@ -48,6 +48,10 @@ public:
 
 	template <class Type, class Iter>
 	static bool InputSearchBox(Iter begin, Iter end, Type** selector, std::string label, std::string tag, bool showNull = false, Type*(*createFunction) (void) = nullptr);
+
+	// TODO: Rename
+	template <class Type, class Iter>
+	static bool InputSearchBox2(Iter begin, Iter end, Type** selector, std::string label, std::string tag, bool showNull, Type* (*createFunction) (void) = nullptr);
 };
 
 template<class Type, class Iter>
@@ -126,4 +130,16 @@ inline bool ExtraEditorGUI::InputSearchBox(Iter begin, Iter end, Type** selector
 
 	ImGui::EndPopup();
 	return returnBool;
+}
+
+
+template<class Type, class Iter>
+inline bool ExtraEditorGUI::InputSearchBox2(Iter begin, Iter end, Type** selector, std::string label, std::string tag, bool showNull, Type* (*createFunction) (void))
+{
+	std::vector<Type*> tempVector;
+	for (auto& i = begin; i != end; i++)
+	{
+		tempVector.push_back(&(*i));
+	}
+	return InputSearchBox(tempVector.begin(), tempVector.end(), selector, label, tag, showNull, createFunction);
 }
