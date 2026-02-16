@@ -1030,7 +1030,8 @@ glm::vec2 LevelEditor::EditorCamMouseToWorld() const
 	glm::vec2 camPoint = glm::vec2(camPos.x, camPos.z);
 
 	glm::vec2 adjustedCursor = *cursorPos - glm::vec2{ 0.5f, 0.5f };
-	glm::vec2 temp = camPoint + glm::vec2(adjustedCursor.x * camera->getOrthoWidth(), -adjustedCursor.y * camera->getOrthoHeight());
+	float scrRatio = *windowWidth / *windowHeight;
+	glm::vec2 temp = camPoint + glm::vec2(adjustedCursor.x * camera->getOrthoWidth(scrRatio), -adjustedCursor.y * camera->getOrthoHeight(scrRatio));
 
 	return temp;
 }
