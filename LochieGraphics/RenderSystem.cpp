@@ -453,6 +453,7 @@ void RenderSystem::Update(
     glBlendEquation(GL_FUNC_ADD);
     glDepthMask(GL_FALSE);
 
+    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
     RenderPointLights(pointLights, transforms, delta);
     RenderLineLights();
     RenderSpotlights(spotlights, transforms, delta);
