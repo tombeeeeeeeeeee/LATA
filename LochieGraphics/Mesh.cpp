@@ -395,7 +395,7 @@ void Mesh::InitialiseIndexFromFile(std::string path, int i)
 	aiReleaseImport(scene);
 }
 
-void Mesh::Draw()
+void Mesh::Draw() const
 {
 	// draw mesh
 	glBindVertexArray(VAO);
@@ -422,7 +422,7 @@ void Mesh::GenAndBind()
 	glBindVertexArray(VAO);
 }
 
-void Mesh::Unbind()
+void Mesh::Unbind() const
 {
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
