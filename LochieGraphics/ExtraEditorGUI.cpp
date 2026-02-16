@@ -49,10 +49,10 @@ bool ExtraEditorGUI::ColourEdit3(std::string tag, glm::u8vec3& col, ImGuiColorEd
 	return false;
 }
 
-bool ExtraEditorGUI::SliderEnum(const std::vector<std::string>& names, int* value)
+bool ExtraEditorGUI::SliderEnum(std::string label, const std::vector<std::string>& names, int* value)
 {
 	std::string current = (*value >= 0 && *value < (int)names.size()) ? names.at(*value) : "Unknown";
-	return ImGui::SliderInt("slider enum", value, 0, (int)names.size() - 1, current.c_str(), ImGuiSliderFlags_NoInput);
+	return ImGui::SliderInt(label.c_str(), value, 0, (int)names.size() - 1, current.c_str(), ImGuiSliderFlags_NoInput);
 }
 
 ExtraEditorGUI::ScopedIndent::ScopedIndent()

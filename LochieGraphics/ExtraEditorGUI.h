@@ -19,7 +19,7 @@ public:
 
 	static bool ColourEdit3(std::string tag, glm::u8vec3& col, ImGuiColorEditFlags flags = 0);
 
-	static bool SliderEnum(const std::vector<std::string>& names, int* value);
+	static bool SliderEnum(std::string label, const std::vector<std::string>& names, int* value);
 
 	// ImGui closing/end/reverse statements shouldn't need to have to be worried about being forgotten
 	// Use this to avoid having to put the unindent after
