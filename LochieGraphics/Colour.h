@@ -29,7 +29,7 @@ public:
 		rgbF4_t rgba01F4;
 		rgbI4_t rgba0255I4;
 	};
-	Data data;
+	Data data{};
 	DataType dataType;
 
 	constexpr Colour(Data _data, DataType _dataType) :
@@ -39,9 +39,9 @@ public:
 	}
 
 	constexpr Colour() :
-		data(glm::u8vec4(0, 0, 0, 1)),
 		dataType(DataType::rgba0255I4)
 	{
+		data.rgba0255I4 = rgbI4_t{ 0, 0, 0, 1 };
 	}
 
 	Colour(toml::table& toml);
