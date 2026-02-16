@@ -367,9 +367,9 @@ void ArtScene::Start()
 	glfwSetDropCallback(SceneManager::window, DragDropCallback);
 
 	// TODO: These should not be one channel, and instead create the image so that it is white ( not red)
-	metallicPreview = ResourceManager::LoadTexture(1024, 1024);
-	roughnessPreview = ResourceManager::LoadTexture(1024, 1024);
-	aoPreview = ResourceManager::LoadTexture(1024, 1024);
+	metallicPreview = ResourceManager::CreateTexture(1024, 1024);
+	roughnessPreview = ResourceManager::CreateTexture(1024, 1024);
+	aoPreview = ResourceManager::CreateTexture(1024, 1024);
 
 	importTextures["metallic"] = &metallicPreview;
 	importTextures["roughness"] = &roughnessPreview;
