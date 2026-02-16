@@ -68,6 +68,12 @@ public:
     float sssThickness = 0.05f;
     float sssMaxDepthDelta = 0.005f;
 
+    static constexpr bool ssaoEnabled = false;
+    static constexpr bool beamsEnabled = false;
+    static constexpr bool linesEnabled = false;
+    static constexpr bool clearEveryDraw = true;
+    static constexpr bool renderAmbientPass = true;
+    static constexpr bool bloomEnabled = false;
 
     void Start(unsigned int _skyboxTexture);
 

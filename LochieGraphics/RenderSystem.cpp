@@ -324,7 +324,10 @@ void RenderSystem::CompositeBufferUpdate()
 
 void RenderSystem::OutputBufferUpdate()
 {
-    if (outputFBO == 0) return;
+    if (outputFBO == 0)
+    {
+        return;
+    }
 
     // create unsigned int color buffer
     glBindTexture(GL_TEXTURE_2D, outputTexture);
@@ -335,7 +338,9 @@ void RenderSystem::OutputBufferUpdate()
     glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, outputTexture, 0);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
         std::cout << "Framebuffer not complete!" << std::endl;
+    }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -403,18 +408,21 @@ void RenderSystem::Update(
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     viewMatrix = camera->GetViewMatrix();
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //DrawAllRenderers(animators, transforms, renders, animatedRenderered, (*shaders)[shadowMapDepth]);
+    
+    if (clearEveryDraw)
+    {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
     // Render scene with shadow map, to the screen framebuffer
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-
     glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (clearEveryDraw)
+    {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -465,7 +473,10 @@ void RenderSystem::Update(
 
     if (syncAiming) RenderSyncAim(delta);
 
-    RenderLinePass();
+    if (linesEnabled)
+    {
+        RenderLinePass();
+    }
 
     RenderComposite();
 
@@ -475,7 +486,10 @@ void RenderSystem::Update(
 
     glDepthFunc(GL_LESS);
 
-    RenderBloom(bloomBuffer);
+    if (bloomEnabled)
+    {
+        RenderBloom(bloomBuffer);
+    }
 
     // Unbind framebuffer
     //FrameBuffer::Unbind();
@@ -530,14 +544,7 @@ void RenderSystem::Update(
 
     if (postEffectOn) {
         postFrameBuffer->Bind();
-    }
-    else {
-        glViewport(0, 0, SCREEN_WIDTH / superSampling, SCREEN_HEIGHT / superSampling);
-    }
-    
-    RenderQuad();
-
-    if (postEffectOn) {
+        RenderQuad();
         FrameBuffer::Unbind();
 
         glViewport(0, 0, SCREEN_WIDTH / superSampling, SCREEN_HEIGHT / superSampling);
@@ -553,6 +560,10 @@ void RenderSystem::Update(
 
         postProcess->setFloat("colourGradeInterpolation", postEffectPercent);
 
+        RenderQuad();
+    }
+    else {
+        glViewport(0, 0, SCREEN_WIDTH / superSampling, SCREEN_HEIGHT / superSampling);
         RenderQuad();
     }
 
