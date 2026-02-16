@@ -69,6 +69,8 @@ void Camera::ProcessKeyboard(Direction direction, float deltaTime)
         case Camera::BACKWARD: transform.setPosition(transform.getPosition() - transform.up() * velocity);    break;
         case Camera::LEFT:     transform.setPosition(transform.getPosition() - transform.right() * velocity); break;
         case Camera::RIGHT:    transform.setPosition(transform.getPosition() + transform.right() * velocity); break;
+        case Camera::ROLL_LEFT: RotateZ(-5 * deltaTime); break; // TODO: Replace with given (userpref) number
+        case Camera::ROLL_RIGHT: RotateZ(5 * deltaTime); break;
         }
     }
 }
@@ -162,6 +164,12 @@ void Camera::Rotate(float x, float y)
     glm::quat temp2 = glm::angleAxis(y, transform.right());
 
     transform.setRotation(temp1 * temp2 * transform.getRotation());
+}
+
+void Camera::RotateZ(float z)
+{
+    glm::quat temp1 = glm::angleAxis(z, transform.forward());
+    transform.setRotation(temp1 * transform.getRotation());
 }
 
 toml::table Camera::Serialise() const

@@ -55,7 +55,9 @@ public:
         LEFT,
         RIGHT,
         UP,
-        DOWN
+		DOWN,
+		ROLL_LEFT,
+		ROLL_RIGHT,
     };
 
     Camera();
@@ -77,13 +79,13 @@ public:
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset);
 
-    // TODO: This shouldn't be hardcoded
     float getOrthoHeight(float ratio) const;
     float getOrthoWidth(float ratio) const;
 
     bool InOrthoMode() const;
 
     void Rotate(float x, float y);
+	void RotateZ(float z);
 
     void GUI();
 
