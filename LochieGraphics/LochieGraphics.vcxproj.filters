@@ -471,7 +471,7 @@
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="HealthRangeCondition.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\State Machine\Conditions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -847,8 +847,12 @@
     <ClInclude Include="Colour.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="HealthRangeCondition.h" />
-    <ClInclude Include="UserDefinedLiterals.h" />
+    <ClInclude Include="HealthRangeCondition.h">
+      <Filter>Source Files\State Machine\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="UserDefinedLiterals.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\cubemap.frag">
