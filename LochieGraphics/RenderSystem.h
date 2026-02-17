@@ -47,7 +47,7 @@ public:
     float postEffectPercent = 1.0f;
     bool postEffectOn = true;
 
-    int superSampling = 1;
+    float superSampling = 1.0f;
 
     static LineRenderer lines;
     static LineRenderer debugLines;

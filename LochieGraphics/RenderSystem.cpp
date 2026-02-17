@@ -542,7 +542,7 @@ void RenderSystem::Update(
         RenderQuad();
         postFrameBuffer->Unbind();
 
-        glViewport(0, 0, SCREEN_WIDTH / superSampling, SCREEN_HEIGHT / superSampling);
+        glViewport(0, 0, int(SCREEN_WIDTH / superSampling), int(SCREEN_HEIGHT / superSampling));
 
         postProcess->Use();
         postFrameTexture->Bind(1);
@@ -558,7 +558,7 @@ void RenderSystem::Update(
         RenderQuad();
     }
     else {
-        glViewport(0, 0, SCREEN_WIDTH / superSampling, SCREEN_HEIGHT / superSampling);
+        glViewport(0, 0, int(SCREEN_WIDTH / superSampling), int(SCREEN_HEIGHT / superSampling));
         RenderQuad();
     }
 
@@ -591,8 +591,8 @@ void RenderSystem::SSAOUpdate()
 
 void RenderSystem::ScreenResize(int width, int height)
 {
-    SCREEN_HEIGHT = height * superSampling;
-    SCREEN_WIDTH = width * superSampling;
+    SCREEN_HEIGHT = int(height * superSampling);
+    SCREEN_WIDTH = int(width * superSampling);
 
     postFrameBuffer->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
     postFrameTexture->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -1215,8 +1215,11 @@ void RenderSystem::GUI()
     ImGui::DragFloat("Exploding Light Time", &lightTimeToExplode);
     ImGui::DragFloat("Flicker Light Time", &lightTimeToFlicker);
 
-    int previousSuper = superSampling;
-    if (ImGui::DragInt("Super Sampling", &superSampling, 0.2f, 1, 4)) {
+    float previousSuper = superSampling;
+    constexpr float minSuperSampling = 0.1f;
+    constexpr float maxSuperSampling = 4.0f;
+    constexpr float superSamplingGuiDragSpeed = 0.2f;
+    if (ImGui::DragFloat("Super Sampling", &superSampling, superSamplingGuiDragSpeed, minSuperSampling, maxSuperSampling)) {
         ScreenResize(SCREEN_WIDTH / previousSuper, SCREEN_HEIGHT / previousSuper);
     }
     ImGui::Checkbox("Post Effect on", &postEffectOn);
