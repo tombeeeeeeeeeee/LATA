@@ -137,9 +137,7 @@ void RenderSystem::PlayStart(std::unordered_map<unsigned long long, PointLight>&
 
 void RenderSystem::SetIrradianceMap(unsigned int textureID)
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
+    // Correct framebuffer (none) should be bound
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glGenFramebuffers(1, &captureFBO);
@@ -170,8 +168,6 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
 
     unsigned int currShader = ResourceManager::irradiance->GLID;
@@ -183,7 +179,6 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
 
 
     glViewport(0, 0, 32, 32);
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i)
     {
         glUniformMatrix4fv(glGetUniformLocation(currShader, "view"), 1, GL_FALSE, &captureViews[i][0][0]);
@@ -193,6 +188,7 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
         cube->Draw();
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
@@ -458,6 +454,7 @@ void RenderSystem::Update(
     RenderLineLights();
     RenderSpotlights(spotlights, transforms, delta);
     RenderAmbientPass();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -616,7 +613,7 @@ void RenderSystem::RenderDecals(
     Frustum frustum
 )
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO);
+    // Correct framebuffer should already be bound (likely deferred)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_GREATER);
     glCullFace(GL_FRONT);
@@ -942,7 +939,7 @@ void RenderSystem::ActivateFlaggedVariables(
 
 void RenderSystem::RenderLineLights()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
+    // Framebuffer should already be bound
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_GREATER);
     glCullFace(GL_FRONT);
