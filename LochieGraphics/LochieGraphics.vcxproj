@@ -131,16 +131,16 @@
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-Release\include</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Third Party\assimp\out\build\x64-Release\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Art Tool|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-Release\include</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Third Party\assimp\out\build\x64-Release\lib</LibraryPath>
     <TargetName>Art Tool</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Level Editor|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-Release\include</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\include</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Third Party\assimp\out\build\x64-Release\lib</LibraryPath>
     <TargetName>Level Editor</TargetName>
   </PropertyGroup>
