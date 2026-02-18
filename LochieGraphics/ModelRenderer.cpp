@@ -208,7 +208,10 @@ ModelRenderer::ModelRenderer(toml::table table)
 {
 	modelGUID = Serialisation::LoadAsUnsignedLongLong(table["modelGuid"]);
 	materialTint = Serialisation::LoadAsVec3(table["materialTint"]);
-	if (isnan(materialTint.x)) materialTint = {1.0f,1.0f,1.0f};
+	if (isnan(materialTint.x))
+	{
+		materialTint = {1.0f,1.0f,1.0f};
+	}
 	toml::array* loadingMaterials = table["materials"].as_array();
 	for (size_t i = 0; i < loadingMaterials->size(); i++)
 	{
@@ -229,7 +232,9 @@ void ModelRenderer::setMaterialTint(glm::vec3 colour)
 {
 	materialTint = colour;
 	if (materialTint.x > 1.0f || materialTint.y > 1.0f || materialTint.z > 1.0f)
+	{
 		materialTint /= 255.0f;
+	}
 }
 
 // TODO: Make sure to call this

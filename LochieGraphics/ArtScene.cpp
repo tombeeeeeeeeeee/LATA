@@ -43,14 +43,14 @@ std::string ArtScene::EnsureCorrectFileLocation(const std::string& path, const s
 	}
 	catch (const std::filesystem::filesystem_error)
 	{
-	}	
+	}
 	
 	std::cout << "Copied file for locality, from, to:\n" << path << "\n" << newPath << '\n';
 	// TODO: Consider using filesystem function to copy file
 	std::ifstream original(path, std::ios::binary);
 	std::ofstream copied(newPath, std::ios::binary);
 
-	copied << original.rdbuf();	
+	copied << original.rdbuf();
 
 	original.close();
 	copied.close();
