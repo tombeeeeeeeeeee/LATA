@@ -87,6 +87,18 @@
     <Filter Include="Source Files\State Machine\Behaviours">
       <UniqueIdentifier>{02dab582-2c47-4621-b13d-4e1634e7a6d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SyncAndEcco">
+      <UniqueIdentifier>{08f6e58d-846a-4a99-8ce1-a39dcb2f01f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SyncAndEcco\Parts">
+      <UniqueIdentifier>{896ed3db-32f3-4124-aad7-740d2389107b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SyncAndEcco\State Machine">
+      <UniqueIdentifier>{6cc07a4e-8e5d-4fa1-8093-f99ea999b168}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SyncAndEcco\Systems">
+      <UniqueIdentifier>{173e424d-c590-45e3-8466-4fcb7a067c86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -221,15 +233,6 @@
     <ClCompile Include="GamePlayCameraSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Sync.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Ecco.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Health.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
     <ClCompile Include="Collider.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
@@ -254,12 +257,6 @@
     <ClCompile Include="Spotlight.cpp">
       <Filter>Source Files\Parts\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="EnemySystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
     <ClCompile Include="hashFNV1A.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
@@ -268,12 +265,6 @@
     </ClCompile>
     <ClCompile Include="ImGuizmo.cpp">
       <Filter>Source Files\Third-Party\stb\imguizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="HealthSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="ExitElevator.cpp">
-      <Filter>Source Files\Parts</Filter>
     </ClCompile>
     <ClCompile Include="LocWorkshop.cpp">
       <Filter>Source Files\Scene Management\Scenes</Filter>
@@ -317,19 +308,7 @@
     <ClCompile Include="glad.c">
       <Filter>Source Files\Third-Party\GLAD</Filter>
     </ClCompile>
-    <ClCompile Include="SpawnManager.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
     <ClCompile Include="TriggerSystem.cpp">
-      <Filter>Source Files\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="PressurePlate.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="Door.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
-    <ClCompile Include="DoorAndBollardSystem.cpp">
       <Filter>Source Files\Systems</Filter>
     </ClCompile>
     <ClCompile Include="ParticleSystem.cpp">
@@ -416,9 +395,6 @@
     <ClCompile Include="BoneInfo.cpp">
       <Filter>Source Files\Rendering\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Bollard.cpp">
-      <Filter>Source Files\Parts</Filter>
-    </ClCompile>
     <ClCompile Include="ImguiMathsGLM.cpp">
       <Filter>Source Files\Third-Party</Filter>
     </ClCompile>
@@ -449,12 +425,6 @@
     <ClCompile Include="VelocityCondition.cpp">
       <Filter>Source Files\State Machine\Conditions</Filter>
     </ClCompile>
-    <ClCompile Include="SyncChargingCondition.cpp">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="SyncChargeLevelCondition.cpp">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClCompile>
     <ClCompile Include="AnimateBehaviour.cpp">
       <Filter>Source Files\State Machine\Behaviours</Filter>
     </ClCompile>
@@ -467,11 +437,53 @@
     <ClCompile Include="Colour.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="HealthRangeCondition.cpp">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClCompile>
     <ClCompile Include="Colour.cpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthRangeCondition.cpp">
+      <Filter>SyncAndEcco\State Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="SyncChargingCondition.cpp">
+      <Filter>SyncAndEcco\State Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="SyncChargeLevelCondition.cpp">
+      <Filter>SyncAndEcco\State Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="Bollard.cpp">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="Door.cpp">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="Ecco.cpp">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="ExitElevator.cpp">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="Health.cpp">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="PressurePlate.cpp">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnManager.cpp">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="Sync.cpp">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="DoorAndBollardSystem.cpp">
+      <Filter>SyncAndEcco\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemySystem.cpp">
+      <Filter>SyncAndEcco\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthSystem.cpp">
+      <Filter>SyncAndEcco\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -631,17 +643,8 @@
     <ClInclude Include="ModelHierarchyInfo.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Sync.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Ecco.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
     <ClInclude Include="Collision.h">
       <Filter>Source Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Health.h">
-      <Filter>Source Files\Parts</Filter>
     </ClInclude>
     <ClInclude Include="Image.h">
       <Filter>Source Files\Rendering</Filter>
@@ -667,17 +670,8 @@
     <ClInclude Include="Spotlight.h">
       <Filter>Source Files\Parts\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="BlastLine.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
     <ClInclude Include="Hit.h">
       <Filter>Source Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemySystem.h">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Source Files\Parts</Filter>
     </ClInclude>
     <ClInclude Include="hashFNV1A.h">
       <Filter>Source Files\Misc</Filter>
@@ -693,12 +687,6 @@
     </ClInclude>
     <ClInclude Include="ImGuizmo.h">
       <Filter>Source Files\Third-Party\stb\imguizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="HealthSystem.h">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="ExitElevator.h">
-      <Filter>Source Files\Parts</Filter>
     </ClInclude>
     <ClInclude Include="eNetTest.h">
       <Filter>Source Files\Networking\eNet</Filter>
@@ -754,19 +742,7 @@
     <ClInclude Include="khrplatform.h">
       <Filter>Source Files\Third-Party\GLAD</Filter>
     </ClInclude>
-    <ClInclude Include="SpawnManager.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
     <ClInclude Include="TriggerSystem.h">
-      <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="PressurePlate.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="Door.h">
-      <Filter>Source Files\Parts</Filter>
-    </ClInclude>
-    <ClInclude Include="DoorAndBollardSystem.h">
       <Filter>Source Files\Systems</Filter>
     </ClInclude>
     <ClInclude Include="ParticleSystem.h">
@@ -786,9 +762,6 @@
     </ClInclude>
     <ClInclude Include="Audio.h">
       <Filter>Source Files\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Bollard.h">
-      <Filter>Source Files\Parts</Filter>
     </ClInclude>
     <ClInclude Include="ImguiMathsGLM.h">
       <Filter>Source Files\Third-Party</Filter>
@@ -829,17 +802,8 @@
     <ClInclude Include="VelocityCondition.h">
       <Filter>Source Files\State Machine\Conditions</Filter>
     </ClInclude>
-    <ClInclude Include="SyncChargeLevelCondition.h">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="SyncChargingCondition.h">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClInclude>
     <ClInclude Include="AnimateBehaviour.h">
       <Filter>Source Files\State Machine\Behaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="SyncChargeLevel.h">
-      <Filter>Source Files\Parts</Filter>
     </ClInclude>
     <ClInclude Include="AnimationFinishedCondition.h">
       <Filter>Source Files\State Machine\Conditions</Filter>
@@ -847,11 +811,59 @@
     <ClInclude Include="Colour.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="HealthRangeCondition.h">
-      <Filter>Source Files\State Machine\Conditions</Filter>
-    </ClInclude>
     <ClInclude Include="UserDefinedLiterals.h">
       <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthRangeCondition.h">
+      <Filter>SyncAndEcco\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="SyncChargeLevel.h">
+      <Filter>SyncAndEcco\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="SyncChargingCondition.h">
+      <Filter>SyncAndEcco\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="SyncChargeLevelCondition.h">
+      <Filter>SyncAndEcco\State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="BlastLine.h">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="Bollard.h">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="Door.h">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="Ecco.h">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="ExitElevator.h">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="Health.h">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="PressurePlate.h">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnManager.h">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="Sync.h">
+      <Filter>SyncAndEcco\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="DoorAndBollardSystem.h">
+      <Filter>SyncAndEcco\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemySystem.h">
+      <Filter>SyncAndEcco\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthSystem.h">
+      <Filter>SyncAndEcco\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
