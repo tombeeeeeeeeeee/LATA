@@ -20,12 +20,8 @@ void ComputeShader::Run(unsigned int xGroups, unsigned int yGroups, unsigned int
 {
 	Use();
 	glDispatchCompute(xGroups, yGroups, zGroups);
-	// TODO: This isn't always going to be the right memory barrier
-	// TODO: Move to before draw instead of here
 	if (barrier != 0)
 	{
 		glMemoryBarrier(barrier);
 	}
-	//glFinish();
-	//glFlush();
 }
