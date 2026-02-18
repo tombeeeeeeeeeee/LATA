@@ -38,7 +38,7 @@ void Door::TriggerCall(std::string tag, bool toggle)
 		{
 			float randPercentage = std::rand() / (float)RAND_MAX;
 
-			int index = floor(randPercentage * 26.0f);
+			int index = (int)floor(randPercentage * 26.0f);
 			SceneManager::scene->audio.PlaySound((Audio::SoundIndex)(index + (int)Audio::dabMove00));
 		}
 		state = toggle;

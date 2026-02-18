@@ -107,7 +107,7 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 
 		if (animator) {
 			const std::vector<glm::mat4>& boneMatrices = animator->getFinalBoneMatrices();
-			unsigned int count;
+			size_t count;
 			if (animator->getAnimation()) {
 				count = animator->getAnimation()->bones.size();
 			}
@@ -115,7 +115,7 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 				count = boneMatrices.size();
 			}
 
-			for (int i = 0; i < count; i++)
+			for (unsigned int i = 0; i < count; i++)
 			{
 				shader->setMat4("boneMatrices[" + std::to_string(i) + "]", boneMatrices.at(i));
 			}

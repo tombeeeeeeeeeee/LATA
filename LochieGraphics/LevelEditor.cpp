@@ -366,7 +366,7 @@ void LevelEditor::Update(float delta)
 		{
 			float randPercentage = std::rand() / (float)RAND_MAX;
 
-			int index = floor(randPercentage * 3.0f);
+			int index = int(floor(randPercentage * 3.0f));
 			SceneManager::scene->audio.PlaySound((Audio::SoundIndex)(index + (int)Audio::syncDamageTaken0));
 		}
 		syncHPLastFrame = healths[sync->GUID].currHealth;
@@ -1030,7 +1030,7 @@ glm::vec2 LevelEditor::EditorCamMouseToWorld() const
 	glm::vec2 camPoint = glm::vec2(camPos.x, camPos.z);
 
 	glm::vec2 adjustedCursor = *cursorPos - glm::vec2{ 0.5f, 0.5f };
-	float scrRatio = *windowWidth / *windowHeight;
+	float scrRatio = (float)*windowWidth / (float)*windowHeight;
 	glm::vec2 temp = camPoint + glm::vec2(adjustedCursor.x * camera->getOrthoWidth(scrRatio), -adjustedCursor.y * camera->getOrthoHeight(scrRatio));
 
 	return temp;

@@ -1059,7 +1059,7 @@ void RenderSystem::RenderSpotLightShadowMaps(
 
         Frustum spotlightFrustum = Frustum(
             transforms[pair.first].getGlobalPosition(),
-            2.0f * acosf(1.0 - pair.second.outerCutOff), 1.0f,
+            2.0f * acosf(1.0f - pair.second.outerCutOff), 1.0f,
             1.0f, 2000.0f,
             up,
             spotlightDir,
@@ -1220,7 +1220,7 @@ void RenderSystem::GUI()
     constexpr float maxSuperSampling = 4.0f;
     constexpr float superSamplingGuiDragSpeed = 0.2f;
     if (ImGui::DragFloat("Super Sampling", &superSampling, superSamplingGuiDragSpeed, minSuperSampling, maxSuperSampling)) {
-        ScreenResize(SCREEN_WIDTH / previousSuper, SCREEN_HEIGHT / previousSuper);
+        ScreenResize(int(SCREEN_WIDTH / previousSuper), int(SCREEN_HEIGHT / previousSuper));
     }
     ImGui::Checkbox("Post Effect on", &postEffectOn);
     if (!postEffectOn) { ImGui::BeginDisabled(); }
@@ -1334,7 +1334,7 @@ void RenderSystem::RenderUpSamples(float aspectRatio)
         glBindTexture(GL_TEXTURE_2D, mip.texture);
 
         // Set framebuffer render target (we write to this texture)
-        glViewport(0, 0, nextMip.size.x, nextMip.size.y);
+        glViewport(0, 0, (int)nextMip.size.x, (int)nextMip.size.y);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
             GL_TEXTURE_2D, nextMip.texture, 0);
 
@@ -1529,7 +1529,7 @@ void RenderSystem::UpdateEccoFaceAnim(float delta)
     {
         float randPercentage = std::rand() / (float)RAND_MAX;
 
-        int index = floor(randPercentage * 5.0f);
+        int index = (int)floor(randPercentage * 5.0f);
         index += 1;
         if (index == 2) index = 8;
         eccoAnimLifeTime = 2.0f;

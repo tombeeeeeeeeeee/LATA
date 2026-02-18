@@ -1121,7 +1121,7 @@ void EnemySystem::PopulateNormalFlowMapFromCircle(PolygonCollider* circle, Trans
     maxY /= nfmDensity;
 
     //Check every "tile" on colourMap
-    for (int x = minX; x < maxX; x++)
+    for (int x = int(minX); x < int(maxX); x++)
     {
         for (int z = minY; z < maxY; z++)
         {
