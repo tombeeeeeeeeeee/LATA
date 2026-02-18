@@ -15,8 +15,6 @@ namespace toml {
 	}
 }
 
-// TODO: With how some stuff is laid out almost feels like it would be worth having an 
-
 class Animator
 {
 protected:

@@ -32,7 +32,7 @@ std::string ArtScene::EnsureCorrectFileLocation(const std::string& path, const s
 
 	std::string newPath = expected + Utilities::FilenameFromPath(path, true);
 	if (newPath == path) { return newPath; }
-	// TODO: Look into a better way to have this writted, the try catch feels bad
+	// TODO: Look into a better way to have this written, the try catch feels bad
 	try
 	{
 		if (std::filesystem::equivalent(std::filesystem::path(newPath), std::filesystem::path(path)))
