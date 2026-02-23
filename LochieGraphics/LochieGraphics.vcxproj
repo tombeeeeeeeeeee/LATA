@@ -23,35 +23,27 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{2a4b1773-c8fa-428d-8f2a-360fdc44e407}</ProjectGuid>
     <RootNamespace>LochieGraphics</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Art Tool|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Level Editor|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -60,50 +52,35 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\EnginePropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\EnginePropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Art Tool|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\EnginePropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Level Editor|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\EnginePropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\lib</LibraryPath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\include</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\lib</LibraryPath>
-  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Art Tool|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\lib</LibraryPath>
     <TargetName>Art Tool</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Level Editor|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Third Party\assimp\include;$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(SolutionDir)Third Party\assimp\out\build\x64-$(Configuration)\lib</LibraryPath>
     <TargetName>Level Editor</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WITH_WINMM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Third Party\enet\include;$(SolutionDir)Third Party\GLFW;$(SolutionDir)Third Party\glm;$(SolutionDir)Third Party\imgui;$(SolutionDir)Third Party\soloud\include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Third Party\GLFW;$(SolutionDir)Third Party\enet</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Ws2_32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies);$(SolutionDir)Third Party\GLFW\glfw3.lib;enet64.lib;winmm.lib;$(SolutionDir)Third Party\assimp\out\build\x64-Debug\lib\assimp-vc143-mtd.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -112,75 +89,30 @@
     <ProjectReference />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile />
+    <Link />
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);;WITH_WINMM</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Third Party\enet\include;$(SolutionDir)Third Party\GLFW;$(SolutionDir)Third Party\glm;$(SolutionDir)Third Party\imgui;$(SolutionDir)Third Party\soloud\include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_CONSOLE;%(PreprocessorDefinitions);WITH_WINMM;NDEBUG</PreprocessorDefinitions>
     </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Third Party\GLFW;$(SolutionDir)Third Party\enet</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Ws2_32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies);$(SolutionDir)Third Party\GLFW\glfw3.lib;enet64.lib;winmm.lib;$(SolutionDir)Third Party\assimp\out\build\x64-Release\lib\assimp-vc143-mt.lib</AdditionalDependencies>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Art Tool|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);ART_TOOL;WITH_WINMM</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Third Party\enet\include;$(SolutionDir)Third Party\GLFW;$(SolutionDir)Third Party\glm;$(SolutionDir)Third Party\imgui;$(SolutionDir)Third Party\soloud\include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_CONSOLE;%(PreprocessorDefinitions);WITH_WINMMN;DEBUG;ART_TOOL;</PreprocessorDefinitions>
     </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Third Party\GLFW;$(SolutionDir)Third Party\enet</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Ws2_32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies);$(SolutionDir)Third Party\GLFW\glfw3.lib;enet64.lib;winmm.lib;$(SolutionDir)Third Party\assimp\out\build\x64-Release\lib\assimp-vc143-mt.lib</AdditionalDependencies>
-    </Link>
+    <Link />
     <PostBuildEvent>
       <Command>"$(SolutionDir)Build Tools\UpdateArtTool.bat"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Level Editor|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);LEVEL_EDITOR;WITH_WINMM</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Third Party\enet\include;$(SolutionDir)Third Party\GLFW;$(SolutionDir)Third Party\glm;$(SolutionDir)Third Party\imgui;$(SolutionDir)Third Party\soloud\include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <ObjectFileName>$(IntDir)</ObjectFileName>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Third Party\GLFW;$(SolutionDir)Third Party\enet</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Ws2_32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies);$(SolutionDir)Third Party\GLFW\glfw3.lib;enet64.lib;winmm.lib;$(SolutionDir)Third Party\assimp\out\build\x64-Release\lib\assimp-vc143-mt.lib</AdditionalDependencies>
-    </Link>
+    <ClCompile />
+    <Link />
     <PostBuildEvent>
       <Command>"$(SolutionDir)Build Tools\UpdateLevelEditor.bat"</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <PreprocessorDefinitions>LEVEL_EDITOR;_UNICODE;UNICODE;_CONSOLE;%(PreprocessorDefinitions);WITH_WINMM;NDEBUG</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Third Party\imgui\imgui.cpp" />
