@@ -250,9 +250,9 @@ Model::Model(toml::table table)
 	LoadModel(Serialisation::LoadAsString(table["path"]));
 }
 
-glm::vec3* Model::GetOOB(glm::mat4 modelMatrix)
+std::array<glm::vec3, 8> Model::GetOOB(glm::mat4 modelMatrix)
 {
-	glm::vec3 OOBB[8] =
+	std::array<glm::vec3, 8> OOBB =
 	{
 		modelMatrix * glm::vec4(min, 1.0f),
 		modelMatrix * glm::vec4(min.x, min.y, max.z, 1.0f),

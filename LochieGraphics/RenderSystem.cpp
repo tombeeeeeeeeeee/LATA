@@ -908,8 +908,8 @@ void RenderSystem::DrawAllRenderers(
         }
         if (i.second.model)
         {
-            glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
-            if (frustum.IsOnFrustum(OOB))
+            std::array<glm::vec3, 8> OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
+            if (frustum.IsOnFrustum(OOB.data()))
             {
                 i.second.Draw(transform->getGlobalMatrix(), givenShader);
             }
@@ -1080,8 +1080,8 @@ void RenderSystem::RenderSpotLightShadowMaps(
                 Transform* transform = &transforms.at(i.first);
                 if (i.second.model)
                 {
-                    glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
-                    if (spotlightFrustum.IsOnFrustum(OOB))
+                    std::array<glm::vec3, 8> OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
+                    if (spotlightFrustum.IsOnFrustum(OOB.data()))
                     {
                         if (i.second.animator || !transform->getStatic())
                         {
@@ -1111,8 +1111,8 @@ void RenderSystem::RenderSpotLightShadowMaps(
             Transform* transform = &transforms.at(i.first);
             if (i.second.model)
             {
-                glm::vec3* OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
-                if (spotlightFrustum.IsOnFrustum(OOB))
+                std::array<glm::vec3, 8> OOB = i.second.model->GetOOB(transform->getGlobalMatrix());
+                if (spotlightFrustum.IsOnFrustum(OOB.data()))
                 {
                     i.second.Draw(transform->getGlobalMatrix(), spotlightShadowPassShader);
                 }
@@ -1133,7 +1133,8 @@ void RenderSystem::RenderSpotLightShadowMaps(
                 {
                     glm::mat4 model = shadowTransform.getGlobalMatrix();
 
-                    if (spotlightFrustum.IsOnFrustum(renderers.at(i.first).model->GetOOB(transforms[i.first].getGlobalMatrix())))
+                    std::array<glm::vec3, 8> OOB = renderers.at(i.first).model->GetOOB(transforms[i.first].getGlobalMatrix());
+                    if (spotlightFrustum.IsOnFrustum(OOB.data()))
                     {
                         spotlightShadowPassShader->setMat4("model", model);
                         renderers.at(i.first).model->meshes[0]->Draw();
