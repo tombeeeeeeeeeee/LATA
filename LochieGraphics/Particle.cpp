@@ -20,7 +20,7 @@ Particle::Particle(unsigned int _count, float _lifetime, Shader* _shader, Textur
 	positions.assign(count, glm::vec4(startingPos.x, startingPos.y, startingPos.z, sizeStart));
 	velocities.resize(count);
 	scales.resize(count);
-	for (int i = 0; i < count; i++)
+	for (unsigned int i = 0; i < count; i++)
 	{
 		std::uniform_real_distribution<float> distribution(-scaleDelta, scaleDelta);
 		scales.at(i) = distribution(random);

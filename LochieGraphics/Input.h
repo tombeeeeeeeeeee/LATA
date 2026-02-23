@@ -44,14 +44,14 @@ public:
 
 		void GUI() override;
 
-		glm::vec2 move;
-		glm::vec2 look;
-		float leftTrigger;
-		float rightTrigger;
-		bool button1;
-		bool button2;
-		bool button3;
-		bool button4;
+		glm::vec2 move = { 0.0f, 0.0f };
+		glm::vec2 look = { 0.0f, 0.0f };
+		float leftTrigger = 0.0f;
+		float rightTrigger = 0.0f;
+		bool button1 = false;
+		bool button2 = false;
+		bool button3 = false;
+		bool button4 = false;
 	};
 
 	class Keyboard : public InputDevice {

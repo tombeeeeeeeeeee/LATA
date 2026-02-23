@@ -1081,9 +1081,9 @@ void EnemySystem::PopulateNormalFlowMap(
             g = influence.y * b;
             b *= 255.0f;
 
-            mapColours[(x + z * mapDimensions.x) * 4 + 0] = r;
-            mapColours[(x + z * mapDimensions.x) * 4 + 1] = g;
-            mapColours[(x + z * mapDimensions.x) * 4 + 2] = b;
+            mapColours[(unsigned char)((x + z * mapDimensions.x) * 4 + 0)] = r;
+            mapColours[(unsigned char)((x + z * mapDimensions.x) * 4 + 1)] = g;
+            mapColours[(unsigned char)((x + z * mapDimensions.x) * 4 + 2)] = b;
         }
     }
 
@@ -1123,7 +1123,7 @@ void EnemySystem::PopulateNormalFlowMapFromCircle(PolygonCollider* circle, Trans
     //Check every "tile" on colourMap
     for (int x = int(minX); x < int(maxX); x++)
     {
-        for (int z = minY; z < maxY; z++)
+        for (int z = (int)minY; z < maxY; z++)
         {
             glm::vec2 tilePos = { x * nfmDensity + mapMinCorner.x, z * nfmDensity + mapMinCorner.y };
             glm::vec2 delta = tilePos - pos;

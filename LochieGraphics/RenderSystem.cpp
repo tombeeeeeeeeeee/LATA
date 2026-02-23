@@ -740,7 +740,10 @@ float delta
             break;
 
         case PointLightEffect::OffDelete:
-            if (pair.second.timeInType >= lightTimeToOff) SceneManager::scene->DeleteSceneObjectAndChildren(pair.first);
+            if (pair.second.timeInType >= lightTimeToOff)
+            {
+                SceneManager::scene->DeleteSceneObjectAndChildren(pair.first);
+            }
         case PointLightEffect::Off:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOff);
             lerpAmount = pair.second.timeInType / lightTimeToOff;

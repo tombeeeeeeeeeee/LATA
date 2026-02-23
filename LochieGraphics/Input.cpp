@@ -162,8 +162,8 @@ void Input::SetVibrationOfControllerIndex(unsigned int i, float leftPercent, flo
 
 	XINPUT_VIBRATION vibration;
 	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
-	vibration.wLeftMotorSpeed = leftPercent / 100.0f * 65535; // use any value between 0-65535 here
-	vibration.wRightMotorSpeed = rightPercent / 100.0f * 65535; // use any value between 0-65535 here
+	vibration.wLeftMotorSpeed = (int)(leftPercent / 100.0f * 65535); // use any value between 0-65535 here
+	vibration.wRightMotorSpeed = (int)(rightPercent / 100.0f * 65535); // use any value between 0-65535 here
 	XInputSetState(i, &vibration);
 
 }

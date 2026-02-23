@@ -15,7 +15,7 @@ public:
 	float angleTolerance = 1.0f;
 	float scale = 1.0f;
 
-	Material* mat;
+	Material* mat = nullptr;
 
 	Decal() {};
 	Decal(toml::table table);
