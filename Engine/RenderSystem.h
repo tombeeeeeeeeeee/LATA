@@ -41,8 +41,8 @@ class RenderSystem : public GuiWindow
 public:
     RenderSystem(GUI& gui);
 
-    Texture* postFrameTexture;
-    FrameBuffer* postFrameBuffer;
+    Texture* postFrameTexture = nullptr;
+    FrameBuffer* postFrameBuffer = nullptr;
     Texture* baseColourKey = nullptr;
     Texture* colourKey1 = nullptr;
     Texture* colourKey2 = nullptr;
