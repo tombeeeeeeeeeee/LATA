@@ -13,6 +13,7 @@
 
 std::unordered_map<unsigned long long, toml::table> PrefabManager::loadedPrefabOriginals = {};
 unsigned long long PrefabManager::selectedPrefab = 0;
+bool PrefabManager::showPrefabMenu = false;
 
 void PrefabManager::Initialise()
 {
@@ -92,17 +93,20 @@ void PrefabManager::PrefabSelector()
 
 void PrefabManager::GUI()
 {
-	PrefabSelector();
+	if (ImGui::Begin("Prefab Manager", &showPrefabMenu, GUI::defaultWindowFlags)) {
+		PrefabSelector();
 
-	if (ImGui::Button("Refresh Instances of Selected")) {
-		RefreshPrefabInstancesOf(selectedPrefab);
+		if (ImGui::Button("Refresh Instances of Selected")) {
+			RefreshPrefabInstancesOf(selectedPrefab);
+		}
+		if (ImGui::Button("Refresh All Prefab Instances")) {
+			RefreshAllPrefabInstances();
+		}
+		if (ImGui::Button("Save Any Origins")) {
+			SaveAllPrefabOrigins();
+		}
 	}
-	if (ImGui::Button("Refresh All Prefab Instances")) {
-		RefreshAllPrefabInstances();
-	}
-	if (ImGui::Button("Save Any Origins")) {
-		SaveAllPrefabOrigins();
-	}
+	ImGui::End();
 }
 
 PrefabManager::PrefabHolder::operator std::string()

@@ -662,8 +662,6 @@ void LevelEditor::GUI()
 		}
 		ImGui::EndMainMenuBar();
 	}
-
-	input.GUI();
 }
 
 void LevelEditor::OnMouseDown()

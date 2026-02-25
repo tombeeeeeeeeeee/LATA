@@ -31,6 +31,10 @@
 #include <ostream>
 #include <fstream>
 
+EnemySystem::EnemySystem(GUI& gui) : GuiWindow(gui, "Enemy System")
+{
+
+}
 
 void EnemySystem::Load(toml::table table)
 {
@@ -779,8 +783,13 @@ bool EnemySystem::FileSelector(std::string* filename)
     return false;
 }
 
-void EnemySystem::GUI()
+bool EnemySystem::DoGuiWindow()
 {
+    if (!ImGui::Begin("Enemy Menu", &showGuiWindow, GUI::defaultWindowFlags)) {
+        ImGui::End();
+        return false;
+    }
+
     FileSelector(&filename);
 
     if (ImGui::Button("Save##EnemySystems")) {
@@ -858,6 +867,8 @@ void EnemySystem::GUI()
     ImGui::InputText("Ranged Enemy Material", &rangedEnemyMaterialPath);
 
     ImGui::End();
+
+    return true;
 }
 
 toml::table EnemySystem::Serialise() const

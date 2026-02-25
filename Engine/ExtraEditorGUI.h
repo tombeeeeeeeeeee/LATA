@@ -21,6 +21,8 @@ public:
 
 	static bool SliderEnum(std::string label, const std::vector<std::string>& names, int* value);
 
+	static bool MainMenuItem(std::string menuName, std::string itemName, bool* selected);
+
 	// ImGui closing/end/reverse statements shouldn't need to have to be worried about being forgotten
 	// Use this to avoid having to put the unindent after
 	class ScopedIndent {

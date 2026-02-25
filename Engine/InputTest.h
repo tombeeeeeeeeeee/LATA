@@ -8,7 +8,7 @@ class InputTest : public Scene
 {
 public:
 
-	Input input;
+	Input input{ gui };
 
 
 	InputTest();

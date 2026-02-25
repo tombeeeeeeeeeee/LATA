@@ -91,11 +91,11 @@ public:
 	unsigned int* windowWidth = 0;
 	unsigned int* windowHeight = 0;
 
-	RenderSystem renderSystem;
+	RenderSystem renderSystem { gui };
 	PhysicsSystem physicsSystem;
 	GameplayCameraSystem gameCamSystem;
-	HealthSystem healthSystem;
-	EnemySystem enemySystem;
+	HealthSystem healthSystem = { gui };
+	EnemySystem enemySystem = { gui };
 	TriggerSystem triggerSystem;
 	DoorAndBollardSystem dabSystem;
 	ParticleSystem particleSystem;

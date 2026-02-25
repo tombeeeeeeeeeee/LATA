@@ -1,8 +1,10 @@
 #pragma once
 
-#include <string>
+#include "GuiWindow.h"
 
 #include "Maths.h"
+
+#include <string>
 
 class UserPreferences
 {

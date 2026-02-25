@@ -4,6 +4,7 @@
 
 #include "Maths.h"
 #include "ExtraEditorGUI.h"
+#include "GuiWindow.h"
 
 #include <vector>
 #include <string>
@@ -16,6 +17,7 @@ class SceneObject;
 class ModelRenderer;
 class SpawnManager;
 class Health;
+class GUI;
 struct HealthPacket;
 struct Collision;
 struct Collider;
@@ -34,7 +36,7 @@ namespace toml {
 //class Ecco;
 //class Sync;
 
-class EnemySystem
+class EnemySystem : public GuiWindow
 {
 private:
 	float maxSpeed = 200.0f;
@@ -58,7 +60,7 @@ public:
 	int maxNormalInfluence = 1024;
 	
 
-	EnemySystem() {};
+	EnemySystem(GUI& gui);
 	void Load(toml::table table);
 	void Start(
 		std::unordered_map<unsigned long long, Transform>& transforms,
@@ -141,7 +143,7 @@ public:
 	static bool FileSelector(std::string* filename);
 
 
-	void GUI();
+	bool DoGuiWindow() override;
 	void SaveAsGUI();
 
 	std::string filename = "";

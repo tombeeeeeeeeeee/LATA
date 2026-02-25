@@ -63,25 +63,23 @@ void GUI::Update()
 		if (ImGui::BeginMenu("Windows")) {
 			ImGui::MenuItem("Audio Menu", NULL, &showAudioMenu);
 			ImGui::MenuItem("Camera Menu", NULL, &showCameraMenu);
-			ImGui::MenuItem("Enemy System", NULL, &showEnemyMenu);
-			ImGui::MenuItem("Health System", NULL, &showHealthSystemMenu);
 			if (ImGui::MenuItem("Hierarchy", NULL, &showHierarchy)) {
 				showSceneObject = showHierarchy;
 			}
 			ImGui::MenuItem("Light Menu", NULL, &showLightMenu);
 			ImGui::MenuItem("Particle Menu", NULL, &showParticleMenu);
 			ImGui::MenuItem("Physics System", NULL, &showPhysicsMenu);
-			ImGui::MenuItem("Prefabs Menu", NULL, &showPrefabMenu);
-			ImGui::MenuItem("Render System", NULL, &showRenderSystemMenu);
+			ImGui::MenuItem("Prefabs Menu", NULL, &PrefabManager::showPrefabMenu);
 			ImGui::MenuItem("Resource Menu", NULL, &showResourceMenu);
-			if (ImGui::MenuItem("SceneObject Menu", NULL, &showSceneObject)) {
+			if (ImGui::MenuItem("SceneObject Menu", NULL, &showSceneObject))
+			{
 				showHierarchy = showSceneObject;
 			}
-			ImGui::MenuItem("Style Editor Menu", NULL, &showStyleMenu);
-			ImGui::MenuItem("User Prefs", NULL, &showUserPrefsMenu);
-
-			ImGui::MenuItem("Imgui Demo", NULL, &showImguiExampleMenu);
-
+			ImGui::MenuItem("User Prefs Menu", NULL, &showUserPrefsMenu);
+			for (auto& guiWindow : guiWindows)
+			{
+				ImGui::MenuItem(guiWindow->guiMenuButtonName.c_str(), NULL, &guiWindow->showGuiWindow);
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("SceneObject")) {
@@ -101,24 +99,39 @@ void GUI::Update()
 		ImGui::EndMainMenuBar();
 	}
 
-	if (showResourceMenu) { ResourceMenu(); }
-	if (showCameraMenu) { CameraMenu(); }
+	if (showResourceMenu)
+	{
+		ResourceMenu();
+	}
+	if (showCameraMenu)
+	{
+		CameraMenu();
+	}
+	if (showLightMenu)
+	{
+		LightMenu();
+	}
+	if (showPhysicsMenu)
+	{
+		PhysicsMenu();
+	}
+	if (showImguiExampleMenu)
+	{
+		ImGui::ShowDemoWindow();
+	}
+	for (auto& guiWindow : guiWindows)
+	{
+		if (guiWindow->showGuiWindow)
+		{
+			guiWindow->DoGuiWindow();
+		}
+	}
+
 	if (showSceneObject) { SceneObjectMenu(); }
 	else { focusSceneObjectMenu = false; }
-	if (showLightMenu) { LightMenu(); }
 	if (showHierarchy) { HierarchyMenu(); }
 	else { moveSelection = 0; }
-	if (showPhysicsMenu) { PhysicsMenu(); }
-	if (showEnemyMenu) { EnemyMenu(); }
-	if (showHealthSystemMenu) { HealthMenu(); }
-	if (showImguiExampleMenu) { ImGui::ShowDemoWindow(); }
-	if (showRenderSystemMenu) { scene->renderSystem.GUI(); }
-	if (showPrefabMenu) {
-		if (ImGui::Begin("Prefab Manager", &showPrefabMenu, defaultWindowFlags)) {
-			PrefabManager::GUI();
-		}
-		ImGui::End();
-	}
+
 	if (showUserPrefsMenu) { 
 		if (ImGui::Begin("User Preferences Menu", &showUserPrefsMenu, defaultWindowFlags)) {
 			UserPreferences::GUI();
@@ -309,6 +322,11 @@ void GUI::MultiSceneObjectEditor()
 bool GUI::isObjectSelectedOrMultiSelected(SceneObject* so) const
 {
 	return sceneObjectSelected == so || std::find(multiSelectedSceneObjects.begin(), multiSelectedSceneObjects.end(), so) != multiSelectedSceneObjects.end();
+}
+
+void GUI::RegisterGuiWindow(GuiWindow* guiWindow)
+{
+	guiWindows.push_back(guiWindow);
 }
 
 void GUI::ResourceMenu()
@@ -753,24 +771,4 @@ void GUI::PhysicsMenu()
 
 	ImGui::DragInt("Collision Itterations", &scene->physicsSystem.collisionItterations, 0.5f, 0);
 	ImGui::End();
-}
-
-void GUI::EnemyMenu()
-{
-	if (!ImGui::Begin("Enemy Menu", &showEnemyMenu, defaultWindowFlags)) {
-		ImGui::End();
-		return;
-	}
-	EnemySystem& es = scene->enemySystem;
-
-	es.GUI();
-}
-
-void GUI::HealthMenu()
-{
-	if(!ImGui::Begin("Health Menu", &showHealthSystemMenu, defaultWindowFlags)) {
-		ImGui::End();
-		return;
-	}
-	scene->healthSystem.GUI();
 }

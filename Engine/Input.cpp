@@ -5,7 +5,8 @@
 
 #include "Utilities.h"
 
-#include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
+#include "GUI.h"
 
 #include <iostream>
 
@@ -23,6 +24,10 @@
 
 
 Input* Input::input = nullptr;
+
+Input::Input(GUI& gui) : GuiWindow(gui, "Input")
+{
+}
 
 void Input::Initialise()
 {
@@ -77,22 +82,11 @@ void Input::Update()
 	}
 }
 
-void Input::GUI()
+bool Input::DoGuiWindow()
 {
-	if (ImGui::BeginMainMenuBar()) {
-		if (ImGui::BeginMenu("Windows")) {
-			if (ImGui::MenuItem("Input", nullptr, &windowOpen)) {
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMainMenuBar();
-	}
-
-	if (!windowOpen) { return; }
-
-	if (!ImGui::Begin("Input Debug", &windowOpen, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (!ImGui::Begin("Input Debug", &showGuiWindow, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
-		return;
+		return false;
 	}
 	if (ImGui::Button("Show all controller connection information (console)")) {
 		ShowAllControllerSlotStatuses();
@@ -143,6 +137,7 @@ void Input::GUI()
 
 	}
 	ImGui::End();
+	return true;
 }
 
 void Input::SetVibrationOfControllerIndex(unsigned int i, float leftPercent, float rightPercent)
@@ -352,7 +347,7 @@ Input::Type Input::FakeInputDevice::getType() const
 	return Type::Fake;
 }
 
-void Input::FakeInputDevice::GUI()
+void Input::FakeInputDevice::DoGui()
 {
 	std::string tag = Utilities::PointerToString(this);
 	ImGui::DragFloat2(("Move##" + tag).c_str(), &(move.x));

@@ -15,6 +15,7 @@ public:
 		operator std::string();
 	};
 
+	static bool showPrefabMenu;
 	static std::unordered_map<unsigned long long, toml::table> loadedPrefabOriginals;
 
 	static unsigned long long selectedPrefab;

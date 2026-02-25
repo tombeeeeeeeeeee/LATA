@@ -23,6 +23,10 @@
 #include <ostream>
 #include <fstream>
 
+HealthSystem::HealthSystem(GUI& gui) : GuiWindow(gui, "Health System")
+{
+}
+
 void HealthSystem::Load(toml::table table)
 {
 	damageColour = Serialisation::LoadAsVec3(table["damageColour"]);
@@ -217,8 +221,13 @@ bool HealthSystem::FileSelector(std::string* filename)
 	return false;
 }
 
-void HealthSystem::GUI()
+bool HealthSystem::DoGuiWindow()
 {
+	if (!ImGui::Begin("Health Menu", &showGuiWindow, GUI::defaultWindowFlags)) {
+		ImGui::End();
+		return false;
+	}
+
 	FileSelector(&filename);
 
 	if (ImGui::Button("Save##HealthSystems")) {

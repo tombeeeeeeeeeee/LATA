@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GuiWindow.h"
+
 #include "Maths.h"
 
 #include <vector>
@@ -19,6 +21,8 @@ private:
 
 	std::vector<std::pair<SceneObject*, SceneObject*>> addRangeToSelection;
 
+	std::vector<GuiWindow*> guiWindows;
+
 	std::vector<SceneObject*> hierarchySceneObjects = {};
 	std::set<SceneObject*> multiSelectedSceneObjects = {};
 
@@ -36,27 +40,25 @@ private:
 	bool zPressed = false;
 
 public:
+	// ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize
+	static constexpr int defaultWindowFlags = 64;
+	static constexpr std::string mainMenuWindowName = "Window";
 	Scene* scene = nullptr;
 
-	SceneObject* lastSelected = nullptr;
-	unsigned int partsFilter = 0u;
-	
 	bool showResourceMenu = false;
-	bool showTestMenu = false;
-	bool showCameraMenu = false;
-	bool showHierarchy = false;
 	bool showSceneObject = false;
-	bool showPhysicsMenu = false;
-	bool showEnemyMenu = false;
-	bool showLightMenu = false;
-	bool showImguiExampleMenu = false;
-	bool showRenderSystemMenu = false;
-	bool showHealthSystemMenu = false;
+	bool showHierarchy = false;
 	bool showUserPrefsMenu = false;
-	bool showPrefabMenu = false;
 	bool showParticleMenu = false;
 	bool showAudioMenu = false;
 	bool showStyleMenu = false;
+	bool showCameraMenu = false;
+	bool showLightMenu = false;
+	bool showPhysicsMenu = false;
+	bool showImguiExampleMenu = false;
+
+	SceneObject* lastSelected = nullptr;
+	unsigned int partsFilter = 0u;
 
 	int moveSelection = 0;
 
@@ -69,17 +71,15 @@ public:
 
 	bool isObjectSelectedOrMultiSelected(SceneObject* so) const;
 
+	void RegisterGuiWindow(GuiWindow* guiWindow);
+
 private:
 
 	bool draggingSceneObject = false;
 	bool draggingCheck = false;
 
-	// ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize
-	int defaultWindowFlags = 64;
 
 	void ResourceMenu();
-
-	void TestMenu();
 	
 	void CameraMenu();
 	
@@ -104,8 +104,6 @@ private:
 	unsigned int transformGizmoMode = 1;
 
 	void PhysicsMenu();
-	void EnemyMenu();
-	void HealthMenu();
 	bool disableGUIHeld = false;
 
 	void AddFromToSelection(SceneObject* from, SceneObject* to);

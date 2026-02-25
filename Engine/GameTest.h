@@ -11,7 +11,7 @@ class GameTest : public Scene
 {
 private:
 
-	Input input;
+	Input input { gui };
 
 	SceneObject* h;
 	SceneObject* r;

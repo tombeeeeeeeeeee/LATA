@@ -3,12 +3,16 @@
 #include "Graphics.h"
 #include "Maths.h"
 
+#include "GuiWindow.h"
+
 #include <vector>
 
-class Input
+class Input : public GuiWindow
 {
-public:
+private:
 	static Input* input;
+
+public:
 
 	enum class Type {
 		Keyboard,
@@ -42,7 +46,7 @@ public:
 		bool getButton4() const override;
 		Type getType() const override;
 
-		void GUI() override;
+		void DoGui();
 
 		glm::vec2 move = { 0.0f, 0.0f };
 		glm::vec2 look = { 0.0f, 0.0f };
@@ -106,6 +110,7 @@ public:
 
 	std::vector<InputDevice*> inputDevices;
 
+	Input(GUI& gui);
 
 	void Initialise();
 	void AddGamepad(int id);
@@ -119,8 +124,7 @@ public:
 
 	void Update();
 
-	bool windowOpen = true;
-	void GUI();
+	bool DoGuiWindow() override;
 
 	// Might not work correctly if keyboard or non controllers connected
 	// Percents are expected to be within 0 - 100

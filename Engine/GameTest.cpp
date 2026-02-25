@@ -326,8 +326,6 @@ void GameTest::Draw(float delta)
 
 void GameTest::GUI()
 {
-	input.GUI();
-
 	ecco->GUI();
 	sync->GUI();
 

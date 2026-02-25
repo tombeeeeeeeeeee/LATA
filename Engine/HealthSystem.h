@@ -1,10 +1,14 @@
 #pragma once
 
+#include "GuiWindow.h"
+
 #include "UiElement.h"
 
 #include <unordered_map>
 #include <string>
 
+
+class GUI;
 class Health;
 class ModelRenderer;
 struct HealthPacket;
@@ -16,9 +20,11 @@ namespace toml {
 	}
 }
 
-class HealthSystem
+class HealthSystem : public GuiWindow
 {
 public:
+	HealthSystem(GUI& gui);
+
 	void Load(toml::table table);
 	toml::table Serialise();
 
@@ -42,7 +48,7 @@ public:
 
 	// TODO: make a util function to do some of this
 	static bool FileSelector(std::string* filename);
-	void GUI();
+	bool DoGuiWindow() override;
 	void SaveAsGUI();
 	glm::vec3 damageColour = { 0.8f,0.0f,0.0f };
 	glm::vec3 healColour = { 0.0f,0.8f,0.0f };

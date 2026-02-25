@@ -2,6 +2,7 @@
 
 #include "LineRenderer.h"
 #include "Graphics.h"
+#include "GuiWindow.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -17,6 +18,7 @@ class Model;
 class Shader;
 class Transform;
 class Texture;
+class GUI;
 class Particle;
 class Decal;
 class PointLight;
@@ -34,9 +36,10 @@ struct bloomMip
 
 const int bloomMipMapCount = 6;
 
-class RenderSystem
+class RenderSystem : public GuiWindow
 {
 public:
+    RenderSystem(GUI& gui);
 
     Texture* postFrameTexture;
     FrameBuffer* postFrameBuffer;
@@ -131,7 +134,7 @@ public:
     GLFWwindow* window = nullptr;
 
 
-    void GUI();
+    bool DoGuiWindow() override;
 
     glm::mat4 viewMatrix = glm::zero<glm::mat4>();
 

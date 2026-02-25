@@ -55,6 +55,24 @@ bool ExtraEditorGUI::SliderEnum(std::string label, const std::vector<std::string
 	return ImGui::SliderInt(label.c_str(), value, 0, (int)names.size() - 1, current.c_str(), ImGuiSliderFlags_NoInput);
 }
 
+bool ExtraEditorGUI::MainMenuItem(std::string menuName, std::string itemName, bool* selected)
+{
+	bool ret = false;
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu(menuName.c_str()))
+		{
+			if (ImGui::MenuItem(itemName.c_str(), nullptr, selected))
+			{
+				ret = true;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+	return ret;
+}
+
 ExtraEditorGUI::ScopedIndent::ScopedIndent()
 {
 	ImGui::Indent();

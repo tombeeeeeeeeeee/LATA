@@ -59,7 +59,7 @@ private:
 	bool openLoad = false;
 
 	// TODO: Should be apart of base scene
-	Input input;
+	Input input{gui};
 
 	float syncRadius = 10.0f;
 

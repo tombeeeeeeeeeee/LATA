@@ -19,6 +19,7 @@
 #include "Paths.h"
 #include "Frustum.h"
 #include "SceneObject.h"
+#include "GUI.h"
 
 #include "Utilities.h"
 #include "EditorGUI.h"
@@ -32,6 +33,11 @@ BlastLine RenderSystem::syncAim = {};
 bool RenderSystem::syncAiming = false;
 int RenderSystem::eccoAnimIndex = 1;
 float RenderSystem::eccoAnimLifeTime = 1;
+
+RenderSystem::RenderSystem(GUI& gui) : GuiWindow(gui, "Render System")
+{
+
+}
 
 void RenderSystem::Start(unsigned int _skyboxTexture)
 {
@@ -1196,11 +1202,11 @@ void RenderSystem::IBLBufferSetup(unsigned int skybox)
     glEnable(GL_DEPTH_TEST);
 }
 
-void RenderSystem::GUI()
+bool RenderSystem::DoGuiWindow()
 {
     if (!ImGui::Begin("Render System", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::End();
-        return;
+        return false;
     }
     ImGui::SliderInt("Ecco Face", &eccoAnimIndex, 0, 8);
     ImGui::Checkbox("Light Lines for ALL!", &lightsForAllLines);
@@ -1231,6 +1237,8 @@ void RenderSystem::GUI()
     ImGui::SliderFloat("Tone Mapping Slider", &postEffectPercent, 0.0f, 1.0f);
     if (!postEffectOn) { ImGui::EndDisabled(); }
     ImGui::End();
+
+    return true;
 }
 
 void RenderSystem::BloomSetup()
