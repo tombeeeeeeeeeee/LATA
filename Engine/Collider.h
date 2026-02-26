@@ -45,6 +45,7 @@ struct Collider
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	static Collider* Load(toml::table table);
 	Collider() = default;
+	void PartGUI();
 	virtual void GUI();
 	virtual void DebugDraw(Transform* transform) = 0;
 	static const int transparentLayers = (int)CollisionLayers::trigger | (int)CollisionLayers::enemyProjectile | (int)CollisionLayers::softCover | (int)CollisionLayers::halfCover | (int)CollisionLayers::count;

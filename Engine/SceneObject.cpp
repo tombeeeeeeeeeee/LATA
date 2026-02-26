@@ -120,9 +120,7 @@ void SceneObject::GUI()
 
 	if (parts & Parts::collider) { 
 		// Collapsing Header is not apart of the collider GUI as it can be apart of the rigidbody too
-		if (ImGui::CollapsingHeader(("Collider##" + tag).c_str())) {
-			scene->colliders.at(GUID)->GUI();
-		}
+		scene->colliders.at(GUID)->PartGUI();
 	}
 	
 	if (parts & Parts::enemy) { scene->enemies[GUID].GUI(); }

@@ -2,7 +2,7 @@
 
 #include "Utilities.h"
 
-#include "EditorGUI.h"
+#include "ExtraEditorGUI.h"
 #include "Serialisation.h"
 #include "Transform.h"
 #include "RigidBody.h"
@@ -46,9 +46,17 @@ Collider* Collider::Load(toml::table table)
 	}
 }
 
+void Collider::PartGUI()
+{
+	std::string tag = Utilities::PointerToString(this);
+	if (ImGui::CollapsingHeader(("Collider##" + tag).c_str())) {
+		GUI();
+	}
+}
+
 void Collider::GUI()
 {
-	ImGui::Indent();
+	ExtraEditorGUI::ScopedIndent indent;
 	std::string tag = Utilities::PointerToString(this);
 	ImGui::BeginDisabled();
 	std::string type = "Error!";
@@ -83,7 +91,6 @@ void Collider::GUI()
 		}
 		ImGui::EndCombo();
 	}
-	ImGui::Unindent();
 }
 
 
