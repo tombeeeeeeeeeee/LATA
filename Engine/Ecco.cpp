@@ -21,6 +21,7 @@ bool Ecco::Update(
 	Transform& transform, 
 	RigidBody& rigidBody, 
 	Health& health,
+	Directional2dAnimator* animator,
 	float delta, 
 	float cameraRotationDelta
 )
@@ -46,8 +47,6 @@ bool Ecco::Update(
 	glm::vec3 right = transform.right();
 	glm::vec3 forward = transform.forward();
 	glm::vec2 moveInput = inputDevice.getMove();
-
-	Directional2dAnimator* animator = (Directional2dAnimator*)SceneManager::scene->sceneObjects.at(GUID)->animator();
 
 	//Reading joystick input as wheel direction
 	if (glm::length(moveInput) > deadZone)
@@ -376,7 +375,7 @@ void Ecco::GUI()
 		ImGui::DragInt(("Max Health##" + tag).c_str(), &maxHealth);
 		if (ImGui::DragFloat(("Heal Button Tolerance##" + tag).c_str(), &windowOfTimeForHealPressed))
 		{
-			SceneManager::scene->sync->windowOfTimeForHealPressed = windowOfTimeForHealPressed;
+			SceneManager::scene->syncs.begin()->second.windowOfTimeForHealPressed = windowOfTimeForHealPressed;
 		}
 		ImGui::BeginDisabled();
 		ImGui::DragFloat2((("WheelDirection##" + tag).c_str()), &wheelDirection[0]);
@@ -395,7 +394,7 @@ void Ecco::GUI()
 	}
 }
 
-toml::table Ecco::Serialise()
+toml::table Ecco::Serialise(unsigned long long GUID)
 {
 	return toml::table{
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},
@@ -443,7 +442,6 @@ float Ecco::getSpeedBoostCooldownPercent() const
 Ecco::Ecco(toml::table table)
 {
 	timeSinceLastHeal = FLT_MAX;
-	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
 	wheelDirection = Serialisation::LoadAsVec2(table["wheelDirection"]);
 	carMoveSpeed = Serialisation::LoadAsFloat(table["carMoveSpeed"]);
 	carReverseMoveSpeed = Serialisation::LoadAsFloat(table["carReverseMoveSpeed"]);

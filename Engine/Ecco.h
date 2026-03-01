@@ -7,6 +7,7 @@
 class Transform;
 class RigidBody;
 class Health;
+class Directional2dAnimator;
 struct Collision;
 namespace toml {
 	inline namespace v3 {
@@ -17,7 +18,6 @@ namespace toml {
 class Ecco
 {
 public:
-	unsigned long long GUID = 0;
 
 	Ecco() {};
 	Ecco(toml::table table);
@@ -27,6 +27,7 @@ public:
 		Transform& transform,
 		RigidBody& rigidBody,
 		Health& health,
+		Directional2dAnimator* animator,
 		float delta,
 		float cameraRotationDelta
 	);
@@ -34,7 +35,7 @@ public:
 	void OnCollision(Collision collision);
 
 	void GUI();
-	toml::table Serialise();
+	toml::table Serialise(unsigned long long GUID);
 
 	glm::vec2 wheelDirection = { 0.0f, 0.0f };	
 

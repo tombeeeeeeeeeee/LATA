@@ -24,8 +24,6 @@ namespace toml {
 class Sync
 {
 public:
-	unsigned long long GUID = 0;
-
 	Sync();
 	Sync(toml::table table);
 	void Load(toml::table table);
@@ -41,7 +39,7 @@ public:
 
 	void GUI();
 
-	toml::table Serialise() const;
+	toml::table Serialise(unsigned long long GUID) const;
 	void ShootMisfire(glm::vec3 pos);
 	void ShootSniper(glm::vec3 pos);
 	void ShootOverClocked(glm::vec3 pos);

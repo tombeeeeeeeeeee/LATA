@@ -13,6 +13,7 @@ class Health;
 class ModelRenderer;
 struct HealthPacket;
 class SceneObject;
+class Transform;
 
 namespace toml {
 	inline namespace v3 {
@@ -34,9 +35,7 @@ public:
 		float delta
 	);
 
-	void PlayerHealingActivate(
-		glm::vec2 eccoPos, glm::vec2 syncPos
-	);
+	void PlayerHealingActivate(glm::vec2 eccoPos, glm::vec2 syncPos, Transform* sync, Transform* ecco);
 
 	void PlayerHealingUpdate(
 		Health* eccoHealth, Health* syncHealth,

@@ -60,11 +60,13 @@ void GameTest::Start()
 
 	hRb = &rigidBodies[h->GUID];
 	rRb = &rigidBodies[r->GUID];
-	h->setSync(sync);
+
+
+	h->setSync(new Sync());
 	h->setHealth(new Health());
-	r->setEcco(ecco);
+	r->setEcco(new Ecco());
 	r->setHealth(new Health());
-	ecco->wheelDirection = {r->transform()->left().x, r->transform()->left().y};
+	r->ecco()->wheelDirection = {r->transform()->left().x, r->transform()->left().y};
 
 	level.path = "level.png";
 	level.Load();
@@ -90,7 +92,7 @@ void GameTest::Start()
 	r->name = "Ecco";
 	h->name = "Sync";
 
-	sync->Start(h);
+	h->sync()->Start(h);
 
 	SceneObject* newSceneObject = new SceneObject(this, "Walls");
 	RigidBody* newRigidBody = new RigidBody(0.0f, 0.0f, {}, true);
@@ -138,11 +140,10 @@ void GameTest::Update(float delta)
 		delta
 	);
 
+	Ecco* ecco = r->ecco();
+	Sync* sync = h->sync();
+
 	input.Update();
-	if(ecco->GUID != 0)
-	r = sceneObjects[ecco->GUID];
-	if (sync->GUID != 0)
-	h = sceneObjects[sync->GUID];
 
 	if (firstFrame)
 	{
@@ -178,6 +179,7 @@ void GameTest::Update(float delta)
 					*r->transform(),
 					*r->rigidbody(),
 					*r->health(),
+					(Directional2dAnimator*)r->animator(),
 					delta,
 					camera->transform.getEulerRotation().y
 				);
@@ -193,6 +195,7 @@ void GameTest::Update(float delta)
 				*r->transform(),
 				*r->rigidbody(),
 				*r->health(),
+				(Directional2dAnimator*)r->animator(),
 				delta,
 				camera->transform.getEulerRotation().y
 			);
@@ -326,9 +329,6 @@ void GameTest::Draw(float delta)
 
 void GameTest::GUI()
 {
-	ecco->GUI();
-	sync->GUI();
-
 	gameCamSystem.GUI();
 
 }

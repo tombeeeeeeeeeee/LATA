@@ -137,14 +137,12 @@ void SceneObject::GUI()
 
 	if (parts & Parts::ecco)
 	{
-		if(scene->ecco)
-			scene->ecco->GUI();
+		scene->eccos.at(GUID).GUI();
 	}
 
 	if (parts & Parts::sync)
 	{
-		if (scene->sync)
-			scene->sync->GUI();
+		scene->syncs.at(GUID).GUI();
 	}
 
 	if (parts & Parts::exitElevator)
@@ -177,11 +175,9 @@ void SceneObject::GUI()
 		AddPartGUI(decal, setDecal, Decal, ("Decal##Add part" + tag).c_str());
 
 		AddPartGUI(door, setDoor, Door, ("Door ##Add part" + tag).c_str());
-		if (ecco() == nullptr && scene->ecco->GUID == 0) {
-			if (ImGui::MenuItem(("Ecco##Add part" + tag).c_str())) {
-				setEcco();
-			}
-		}
+
+		AddPartGUI(ecco, setEcco, Ecco, ("Ecco##Add part" + tag).c_str());
+
 		AddPartGUI(enemy, setEnemy, Enemy, ("Enemy##Add part" + tag).c_str());
 		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
 		AddPartGUI(health, setHealth, Health, ("Health##Add part" + tag).c_str());
@@ -205,11 +201,7 @@ void SceneObject::GUI()
 		}
 		AddPartGUI(spawnManager, setSpawnManager, SpawnManager, ("Spawn Manager ##Add part" + tag).c_str());
 		AddPartGUI(spotlight, setSpotlight, Spotlight, ("Spotlight ##Add part" + tag).c_str());
-		if (sync() == nullptr && scene->sync->GUID == 0) {
-			if (ImGui::MenuItem(("Sync##Add part" + tag).c_str())) {
-				setSync();
-			}
-		}
+		AddPartGUI(sync, setSync, Sync, ("Sync ##Add part" + tag).c_str());
 		AddPartGUI(triggerable, setTriggerable, Triggerable, ("Triggerable##Add part" + tag).c_str());
 		ImGui::EndPopup();
 	}
@@ -220,11 +212,7 @@ void SceneObject::GUI()
 		RemovePartGUI(collider, setCollider, ("Collider##Remove part" + tag).c_str());
 		RemovePartGUI(decal, setDecal, ("Decal##Remove part" + tag).c_str());
 		RemovePartGUI(door, setDoor, ("Door##Remove part" + tag).c_str());
-		if (parts & Parts::ecco) {
-			if (ImGui::MenuItem(("Ecco##Remove part" + tag).c_str())) {
-				setEcco(nullptr);
-			}
-		}
+		RemovePartGUI(ecco, setEcco, ("Ecco#Remove part" + tag).c_str());
 		RemovePartGUI(enemy, setEnemy, ("Enemy##Remove part" + tag).c_str());
 		RemovePartGUI(exitElevator, setExitElevator, ("Exit##Remove part" + tag).c_str());
 		RemovePartGUI(health, setHealth, ("Health##Remove part" + tag).c_str());
@@ -239,11 +227,7 @@ void SceneObject::GUI()
 		};
 		RemovePartGUI(spawnManager, setSpawnManager, ("Spawn Manager ##Remove part" + tag).c_str());
 		RemovePartGUI(spotlight, setSpotlight, ("Spotlight ##Remove part" + tag).c_str());
-		if (parts & Parts::sync) {
-			if (ImGui::MenuItem(("Sync##Remove part" + tag).c_str())) {
-				setSync(nullptr);
-			}
-		}
+		RemovePartGUI(sync, setSync, ("Sync##Remove part" + tag).c_str());
 		RemovePartGUI(triggerable, setTriggerable, ("Triggerable##Remove part" + tag).c_str());
 
 		ImGui::EndPopup();
@@ -497,14 +481,9 @@ toml::table SceneObject::SerialiseWithParts() const
 		table.emplace("collider", scene->colliders.at(GUID)->Serialise(GUID));
 		safetyCheck &= ~Parts::collider;
 	}
-	if (Parts::ecco & parts) {
-		table.emplace("ecco", scene->ecco->Serialise());
-		safetyCheck &= ~Parts::ecco;
-	}
-	if (Parts::sync & parts) {
-		table.emplace("sync", scene->sync->Serialise());
-		safetyCheck &= ~Parts::sync;
-	}
+
+	SavePart("ecco", ecco, eccos);
+	SavePart("sync", sync, syncs);
 
 	table.emplace("transform", transform()->Serialise(GUID));
 
@@ -581,6 +560,7 @@ SetAndGetForPart(Triggerable, triggerables, Parts::triggerable, Triggerable, tri
 SetAndGetForPart(PointLight, pointLights, Parts::pointLight, PointLight, pointLight)
 SetAndGetForPart(Decal, decals, Parts::decal, Decal, decal);
 SetAndGetForPart(ShadowWall, shadowWalls, Parts::shadowWall, ShadowWall, shadowWall);
+
 void SceneObject::setSpotlight(Spotlight* part) {
 	if (part) {
 		parts |= Parts::spotlight; scene->spotlights[GUID] = std::move(*part);
@@ -615,65 +595,9 @@ Collider* SceneObject::collider()
 	return nullptr;
 }
 
-void SceneObject::setEcco(Ecco* ecco)
-{
-	if (ecco)
-	{
-		parts |= Parts::ecco;
-		scene->ecco = ecco;
-		scene->ecco->GUID = GUID;
-	}
-	else
-	{
-		parts &= ~Parts::ecco;
-		if (scene->ecco && scene->ecco->GUID == GUID)
-			scene->ecco->GUID = 0;
-	}
-}
+SetAndGetForPart(Ecco, eccos, Parts::ecco, Ecco, ecco)
 
-void SceneObject::setEcco()
-{
-	parts |= Parts::ecco;	
-	if(scene->ecco)
-		scene->ecco->GUID = GUID;
-}
-
-Ecco* SceneObject::ecco() const
-{
-	if (parts & Parts::ecco)
-		return scene->ecco;
-	else return nullptr;
-}
-
-void SceneObject::setSync(Sync* sync)
-{
-	if (sync)
-	{
-		parts |= Parts::sync;
-		scene->sync = sync;
-		scene->sync->GUID = GUID;
-	}
-	else
-	{
-		parts &= ~Parts::sync;
-		if (scene->sync && scene->sync->GUID == GUID)
-			scene->sync->GUID = 0;
-	}
-}
-
-void SceneObject::setSync()
-{
-	parts |= Parts::sync;
-	if (scene->sync)
-		scene->sync->GUID = GUID;
-}
-
-Sync* SceneObject::sync() const
-{
-	if (parts & Parts::sync)
-		return scene->sync;
-	else return nullptr;
-}
+SetAndGetForPart(Sync, syncs, Parts::sync, Sync, sync)
 
 void SceneObject::ClearParts(unsigned int toDelete)
 {
@@ -755,16 +679,8 @@ void SceneObject::LoadWithParts(toml::table table)
 	if (intendedParts & Parts::collider) {
 		setCollider(Collider::Load(*table["collider"].as_table()));
 	}
-	if (intendedParts & Parts::ecco) {
-		// TODO: stop leaking memory
-		scene->ecco = new Ecco(*table["ecco"].as_table());
-		setEcco(scene->ecco);
-	}
-	if (intendedParts & Parts::sync) {
-		// TODO: Stop leaking
-		scene->sync = new Sync(*table["sync"].as_table());
-		setSync(scene->sync);
-	}
+	LoadPart("ecco", ecco, setEcco, Ecco);
+	LoadPart("sync", sync, setSync, Sync);
 
 	auto loadingTransform = table["transform"];
 	if (!loadingTransform) {

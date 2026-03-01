@@ -139,12 +139,10 @@ public:
 	Collider* collider();
 
 	void setEcco(Ecco* ecco);
-	void setEcco();
-	Ecco* ecco() const;
+	Ecco* ecco();
 
 	void setSync(Sync* sync);
-	void setSync();
-	Sync* sync() const;
+	Sync* sync();
 
 	void setHealth(Health* health);
 	Health* health();

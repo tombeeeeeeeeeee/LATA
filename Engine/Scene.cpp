@@ -20,8 +20,6 @@
 Scene::Scene()
 {
 	gui.scene = this;
-	ecco = new Ecco();
-	sync = new Sync();
 }
 
 Scene::~Scene()
@@ -199,6 +197,8 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 	SavePart(spotlights);
 	SavePart(decals);
 	SavePart(shadowWalls);
+	SavePart(syncs);
+	SavePart(eccos);
 
 	return toml::table{
 		{ "SceneObjects", savedSceneObjects },
@@ -214,8 +214,8 @@ toml::table Scene::SaveSceneObjectsAndParts(bool(*shouldSave)(SceneObject*))
 		{ "Plates", savedplates},
 		{ "Doors", saveddoors},
 		{ "Bollards", savedbollards},
-		{ "Sync", sync->Serialise() },
-		{ "Ecco", ecco->Serialise() },
+		{ "Sync", savedsyncs },
+		{ "Ecco", savedeccos },
 		{ "Triggerables", savedtriggerables},
 		{ "PointLights", savedpointLights},
 		{ "Spotlights", savedspotlights},
@@ -324,9 +324,8 @@ void Scene::LoadSceneObjectsAndParts(toml::table& data)
 	LoadPart(healths, "Healths", Health);
 	LoadPart(exits, "Exits", ExitElevator);
 
-	*ecco = Ecco(*data["Ecco"].as_table());
-	// Sync specifically loads here is it needs to keep some stuff
-	sync->Load(*data["Sync"].as_table());
+	LoadPart(syncs, "Sync", Sync);
+	LoadPart(eccos, "Ecco", Ecco);
 
 	// Load Hierarchy Data
 	for (int i = 0; i < loadingSceneObjects->size(); i++)
@@ -416,10 +415,10 @@ void Scene::EnsurePartsValueMatchesParts()
 void Scene::InitialiseLayers()
 {
 	////ecco
-	SceneObject* eccoSO = sceneObjects[ecco->GUID];
-	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { ecco->OnCollision(collision); });
+	SceneObject* eccoSO = sceneObjects[eccos.begin()->first];
+	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { eccos.begin()->second.OnCollision(collision); });
 	////sync
-	SceneObject* syncSO = sceneObjects[sync->GUID];
+	SceneObject* syncSO = sceneObjects[syncs.begin()->first];
 	//if (!syncSO->health()) syncSO->setHealth(new Health());
 	syncSO->rigidbody()->vel = { 0.0f, 0.0f };
 

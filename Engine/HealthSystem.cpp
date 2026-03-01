@@ -91,7 +91,7 @@ void HealthSystem::Update(
 	}
 }
 
-void HealthSystem::PlayerHealingActivate(glm::vec2 eccoPos, glm::vec2 syncPos)
+void HealthSystem::PlayerHealingActivate(glm::vec2 eccoPos, glm::vec2 syncPos, Transform* syncTransform, Transform* eccoTransform)
 {
 	if (!playerHealingAbility && timeSinceLastHealingAbility > healingAbilityCooldown)
 	{
@@ -106,7 +106,7 @@ void HealthSystem::PlayerHealingActivate(glm::vec2 eccoPos, glm::vec2 syncPos)
 			currentPulseCount = 0;
 
 			eccoHealthLight = new SceneObject(SceneManager::scene, "eccoLight");
-			eccoHealthLight->transform()->setParent(&SceneManager::scene->transforms[SceneManager::scene->ecco->GUID]);
+			eccoHealthLight->transform()->setParent(eccoTransform);
 			eccoHealthLight->transform()->setPosition({0.0f,250.0f,0.0f});
 			eccoHealthLight->setPointLight(new PointLight(PointLightEffect::On));
 			eccoHealthLight->pointLight()->colour = healColour;
@@ -115,7 +115,7 @@ void HealthSystem::PlayerHealingActivate(glm::vec2 eccoPos, glm::vec2 syncPos)
 			eccoHealthLight->pointLight()->SetRange(300.0f);
 
 			syncHealthLight = new SceneObject(SceneManager::scene, "syncLight");
-			syncHealthLight->transform()->setParent(&SceneManager::scene->transforms[SceneManager::scene->sync->GUID]);
+			syncHealthLight->transform()->setParent(syncTransform);
 			syncHealthLight->transform()->setPosition({0.0f,250.0f,0.0f});
 			syncHealthLight->setPointLight(new PointLight(PointLightEffect::On));
 			syncHealthLight->pointLight()->colour = healColour;

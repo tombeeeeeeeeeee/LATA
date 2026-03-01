@@ -79,8 +79,8 @@ public:
 
 	std::vector<unsigned long long> markedForDeletion = {};
 
-	Ecco* ecco = nullptr;
-	Sync* sync = nullptr;
+	std::unordered_map<unsigned long long, Ecco> eccos = {};
+	std::unordered_map<unsigned long long, Sync> syncs = {};
 	bool eccoHealPressed = false;
 	bool syncHealPressed = false;
 	SoLoud::handle eccoCurrHandle;

@@ -43,7 +43,6 @@ Sync::Sync(toml::table table) : Sync()
 
 void Sync::Load(toml::table table)
 {
-	GUID = Serialisation::LoadAsUnsignedLongLong(table["guid"]);
 	moveSpeed = Serialisation::LoadAsFloat(table["moveSpeed"]);
 	lookDeadZone = Serialisation::LoadAsFloat(table["lookDeadZone"]);
 	moveDeadZone = Serialisation::LoadAsFloat(table["moveDeadZone"]);
@@ -87,8 +86,6 @@ void Sync::Start(SceneObject* sceneObjectWithAnimator)
 	Model* misfireModel = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + misfireModelPath + Paths::modelExtension);
 	Material* misfireMaterial = ResourceManager::defaultMaterial;
 	misfireModelRender = new ModelRenderer(misfireModel, misfireMaterial);
-
-
 
 	VelocityCondition* movingEnoughToRun = new VelocityCondition(1.0f, FLT_MAX);
 	animatorStateMachine.AddCondition(movingEnoughToRun);
@@ -399,7 +396,7 @@ void Sync::GUI()
 	ImGui::DragFloat(("Stop Slow Time##" + tag).c_str(), &stopSlowTime, 0.02f, startSlowTime);
 	if (ImGui::DragFloat(("Heal Button Tolerance##" + tag).c_str(), &windowOfTimeForHealPressed))
 	{
-		SceneManager::scene->ecco->windowOfTimeForHealPressed = windowOfTimeForHealPressed;
+		SceneManager::scene->eccos.begin()->second.windowOfTimeForHealPressed = windowOfTimeForHealPressed;
 	}
 
 	ImGui::DragFloat3(("Barrel Offset##" + tag).c_str(), &barrelOffset[0]);
@@ -443,7 +440,7 @@ void Sync::GUI()
 	ImGui::Unindent();
 }
 
-toml::table Sync::Serialise() const
+toml::table Sync::Serialise(unsigned long long GUID) const
 {
 	return toml::table{
 		{ "guid", Serialisation::SaveAsUnsignedLongLong(GUID)},

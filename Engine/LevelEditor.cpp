@@ -152,7 +152,11 @@ void LevelEditor::Start()
 		syncAnimatorSo = nullptr;
 		syncGun = nullptr;
 	}
-	sync->Start(syncAnimatorSo);
+	
+	for (auto& i : syncs)
+	{
+		i.second.Start(syncAnimatorSo);
+	}
 	eccoSo = new SceneObject(this, "Ecco");
 	eccoSo->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(2091576976424546894ull));
 
@@ -305,7 +309,7 @@ void LevelEditor::Update(float delta)
 
 		if (singlePlayer == 1)
 		{
-			syncHealPressed = sync->Update(
+			syncHealPressed = syncSo->sync()->Update(
 				syncAnimatorSo,
 				*input.inputDevices[0],
 				*syncSo->transform(),
@@ -319,11 +323,12 @@ void LevelEditor::Update(float delta)
 		}
 		else
 		{
-			eccoHealPressed = ecco->Update(
+			eccoHealPressed = eccoSo->ecco()->Update(
 				*input.inputDevices[0],
 				*eccoSo->transform(),
 				*eccoSo->rigidbody(),
 				*eccoSo->health(),
+				(Directional2dAnimator*)eccoSo->animator(),
 				delta,
 				angle
 			);
@@ -332,7 +337,7 @@ void LevelEditor::Update(float delta)
 		{
 			if (input.inputDevices.size() > 1)
 			{
-				syncHealPressed = sync->Update(
+				syncHealPressed = syncSo->sync()->Update(
 					syncAnimatorSo,
 					*input.inputDevices[1],
 					*syncSo->transform(),
@@ -362,14 +367,14 @@ void LevelEditor::Update(float delta)
 				return;
 		}
 
-		if (syncHPLastFrame > healths[sync->GUID].currHealth)
+		if (syncHPLastFrame > syncSo->health()->currHealth)
 		{
 			float randPercentage = std::rand() / (float)RAND_MAX;
 
 			int index = int(floor(randPercentage * 3.0f));
 			SceneManager::scene->audio.PlaySound((Audio::SoundIndex)(index + (int)Audio::syncDamageTaken0));
 		}
-		syncHPLastFrame = healths[sync->GUID].currHealth;
+		syncHPLastFrame = syncSo->health()->currHealth;
 		// TODO: Remove this here and just change the state when the option is switched via the GUI
 		
 		if		(singlePlayer == 1) gameCamSystem.target = syncSo->transform()->getGlobalPosition();
@@ -378,7 +383,7 @@ void LevelEditor::Update(float delta)
 		gameCamSystem.Update(*camera, *eccoSo->transform(), *syncSo->transform(), camera->orthoScale);
 
 		if (eccoHealPressed && syncHealPressed) healthSystem.PlayerHealingActivate(
-			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition());
+			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), syncSo->transform(), eccoSo->transform());
 
 		healthSystem.PlayerHealingUpdate(eccoSo->health(), syncSo->health(),
 			eccoSo->transform()->get2DGlobalPosition(), syncSo->transform()->get2DGlobalPosition(), delta);
@@ -517,13 +522,16 @@ void LevelEditor::Draw(float delta)
 		glDisable(GL_BLEND);
 		healthShader->Use();
 
-		ecco->boostUI.ApplyToShader(healthShader, ecco->getSpeedBoostCooldownPercent());
+		Ecco* eccoPart = eccoSo->ecco();
+		Sync* syncPart = syncSo->sync();
+
+		eccoPart->boostUI.ApplyToShader(healthShader, eccoPart->getSpeedBoostCooldownPercent());
 		healthBar.Draw();
-		sync->healthUI.ApplyToShader(healthShader, (float)syncSo->health()->currHealth / (float)syncSo->health()->getMaxHealth());
+		syncPart->healthUI.ApplyToShader(healthShader, (float)syncSo->health()->currHealth / (float)syncSo->health()->getMaxHealth());
 		healthBar.Draw();
-		ecco->healthUI.ApplyToShader(healthShader, (float)eccoSo->health()->currHealth / (float)eccoSo->health()->getMaxHealth());
+		eccoPart->healthUI.ApplyToShader(healthShader, (float)eccoSo->health()->currHealth / (float)eccoSo->health()->getMaxHealth());
 		healthBar.Draw();
-		sync->chargeUI.ApplyToShader(healthShader, sync->chargedDuration / sync->overclockChargeTime);
+		syncPart->chargeUI.ApplyToShader(healthShader, syncPart->chargedDuration / syncPart->overclockChargeTime);
 		healthBar.Draw();
 		healthSystem.abilityUI.ApplyToShader(healthShader, glm::clamp(healthSystem.timeSinceLastHealingAbility / healthSystem.healingAbilityCooldown, 0.0f, 1.0f));
 		healthBar.Draw();
@@ -845,8 +853,14 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	if (levelToLoad != "") windowName = levelToLoad;
 	std::ifstream file(Paths::levelsPath + windowName + Paths::levelExtension);
 
-	ecco->currHealth = healths[ecco->GUID].currHealth;
-	sync->currHealth = healths[sync->GUID].currHealth;
+	for (auto& i : syncs)
+	{
+		i.second.currHealth = healths.at(i.first).currHealth;
+	}
+	for (auto& i : eccos)
+	{
+		i.second.currHealth = healths.at(i.first).currHealth;
+	}
 	if (inPlay) inPlay = inPlayMaintained;
 	if (!file) {
 		std::cout << "Level File not found\n";
@@ -943,8 +957,10 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	renderSystem.LevelLoad();
 	syncSo->transform()->setEulerRotation({ 0.0f, 0.0f, 0.0f });
 
-	sync->LevelLoad();
-
+	for (auto& i : syncs)
+	{
+		i.second.LevelLoad();
+	}
 }
 
 void LevelEditor::ModelPlacer(glm::vec2 targetPos)
