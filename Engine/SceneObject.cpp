@@ -190,8 +190,8 @@ void SceneObject::GUI()
 				{ -50, +50}
 			}, 0.0f), ("Polygon Collider##Add part" + tag).c_str());
 		AddPartGUI(rigidbody, setRigidBody, RigidBody(), ("Rigid Body##Add part" + tag).c_str());
-		AddPartGUI(renderer, setRenderer, ModelRenderer(), ("Model Renderer##Add part" + tag).c_str());
-		if(renderer() != nullptr)
+		AddPartGUI(modelRenderer, setModelRenderer, ModelRenderer(), ("Model Renderer##Add part" + tag).c_str());
+		if(modelRenderer() != nullptr)
 		{ 
 			if (shadowWall() == nullptr) {
 				if (ImGui::MenuItem(("Shadow Wall##Add part" + tag).c_str())) {
@@ -216,7 +216,7 @@ void SceneObject::GUI()
 		RemovePartGUI(enemy, setEnemy, ("Enemy##Remove part" + tag).c_str());
 		RemovePartGUI(exitElevator, setExitElevator, ("Exit##Remove part" + tag).c_str());
 		RemovePartGUI(health, setHealth, ("Health##Remove part" + tag).c_str());
-		RemovePartGUI(modelRenderer, setRenderer, ("Model Renderer##Remove part" + tag).c_str());
+		RemovePartGUI(modelRenderer, setModelRenderer, ("Model Renderer##Remove part" + tag).c_str());
 		RemovePartGUI(plate, setPressurePlate, ("Pressure Plate##Remove part" + tag).c_str());
 		RemovePartGUI(pointLight, setPointLight, ("Point Light##Remove part" + tag).c_str());
 		RemovePartGUI(rigidBody, setRigidBody, ("Rigid Body##Remove part" + tag).c_str());
@@ -374,7 +374,7 @@ void SceneObject::DebugDraw()
 		scene->colliders.at(GUID)->DebugDraw(t);
 	}
 	if (parts & Parts::modelRenderer && UserPreferences::showSelectedBox) {
-		Model* model = renderer()->model;
+		Model* model = modelRenderer()->model;
 		if (model) {
 			LineRenderer& lines = RenderSystem::lines;
 			lines.SetColour({ 1.0f, 1.0f, 1.0f });
@@ -528,18 +528,18 @@ Transform* SceneObject::transform() const
 
 // TODO: There is a case for the scene load to ensure that the below is also matched on scene load
 // TODO: Try to remove any different special set / get
-SetAndGetForPart(ModelRenderer, renderers, Parts::modelRenderer, Renderer, renderer)
+SetAndGetForPart(ModelRenderer, renderers, Parts::modelRenderer, ModelRenderer, modelRenderer)
 void SceneObject::setAnimator(Animator* part) {
 	if (part) {
 		parts |= Parts::animator; scene->animators[GUID] = part;
 		if (parts & Parts::modelRenderer) {
-			renderer()->animator = scene->animators[GUID];
+			modelRenderer()->animator = scene->animators[GUID];
 		}
 	}
 	else {
 		parts &= ~Parts::animator; scene->animators.erase(GUID);
 		if (parts & Parts::modelRenderer) {
-			renderer()->animator = nullptr;
+			modelRenderer()->animator = nullptr;
 		}
 	};
 } 
@@ -658,7 +658,7 @@ void SceneObject::LoadWithParts(toml::table table)
 
 	unsigned long long intendedParts = Serialisation::LoadAsUnsignedIntOLD(sceneObjectTable["parts"]);
 
-	LoadPart("modelRenderer", modelRenderer, setRenderer, ModelRenderer);
+	LoadPart("modelRenderer", modelRenderer, setModelRenderer, ModelRenderer);
 	if (intendedParts & Parts::animator) {
 		setAnimator(Animator::Load(*table["animator"].as_table()));
 	};

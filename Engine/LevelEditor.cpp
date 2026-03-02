@@ -69,7 +69,7 @@ SceneObject* LevelEditor::CellAt(int x, int z)
 SceneObject* LevelEditor::PlaceTileAt(float x, float z)
 {
 	SceneObject* newTile = new SceneObject(this, "tile " + std::to_string(++tileCount));
-	newTile->setRenderer(new ModelRenderer(ground, (unsigned long long)0));
+	newTile->setModelRenderer(new ModelRenderer(ground, (unsigned long long)0));
 	newTile->transform()->setPosition({ x * gridSize, 0.0f, z * gridSize });
 	newTile->transform()->setParent(groundTileParent->transform());
 	tiles[{(int)x, (int)z}] = newTile;
@@ -723,7 +723,7 @@ void LevelEditor::OnMouseDown()
 			glm::vec3 selectMax;
 			Model* model = nullptr;
 			if (i.second->parts & Parts::modelRenderer) { 
-				model = i.second->renderer()->model;
+				model = i.second->modelRenderer()->model;
 			}
 			if (model) {
 				selectMin = model->min;
@@ -923,7 +923,7 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 		if ((float)i.first.second > max.y) { max.y = (float)i.first.second; };
 
 
-		ModelRenderer* tileRenderer = i.second->renderer();
+		ModelRenderer* tileRenderer = i.second->modelRenderer();
 		if (tileRenderer) {
 			tileRenderer->materials[0] = groundMaterial;
 		}
@@ -968,8 +968,8 @@ void LevelEditor::ModelPlacer(glm::vec2 targetPos)
 	glm::vec3 pos = { targetPos.x, assetPlacerHeight, targetPos.y };
 
 	SceneObject* newSceneObject = new SceneObject(this, Utilities::FilenameFromPath(assetPlacer->path, false));
-	newSceneObject->setRenderer(new ModelRenderer(assetPlacer, 0ull));
-	newSceneObject->renderer()->setMaterialTint(assetPlacerColour);
+	newSceneObject->setModelRenderer(new ModelRenderer(assetPlacer, 0ull));
+	newSceneObject->modelRenderer()->setMaterialTint(assetPlacerColour);
 	newSceneObject->transform()->setPosition(pos);
 	newSceneObject->transform()->setEulerRotation({ 0.0f, assetPlacerRotation, 0.0f });
 	newSceneObject->setCollider(new PolygonCollider({

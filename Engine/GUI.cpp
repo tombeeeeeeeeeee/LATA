@@ -388,12 +388,12 @@ void GUI::SceneObjectMenu()
 	}
 	else if (modelHierarchySelected) {
 		if (lastSelected) {
-			if (lastSelected->parts & Parts::modelRenderer && lastSelected->renderer()->model) {
+			if (lastSelected->parts & Parts::modelRenderer && lastSelected->modelRenderer()->model) {
 				if (lastSelected->parts & Parts::animator) {
-					modelHierarchySelected->GUI(false, &lastSelected->renderer()->model->boneInfoMap, lastSelected->animator());
+					modelHierarchySelected->GUI(false, &lastSelected->modelRenderer()->model->boneInfoMap, lastSelected->animator());
 				}
 				else {
-					modelHierarchySelected->GUI(false, &lastSelected->renderer()->model->boneInfoMap);
+					modelHierarchySelected->GUI(false, &lastSelected->modelRenderer()->model->boneInfoMap);
 				}
 			}
 			else {
@@ -528,7 +528,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 	if (isObjectSelectedOrMultiSelected(sceneObject)) {
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	}
-	bool hasChildren = sceneObject->transform()->HasChildren() || (sceneObject->parts & Parts::modelRenderer && sceneObject->renderer()->model && UserPreferences::showModelHierarchy);
+	bool hasChildren = sceneObject->transform()->HasChildren() || (sceneObject->parts & Parts::modelRenderer && sceneObject->modelRenderer()->model && UserPreferences::showModelHierarchy);
 	if (!hasChildren) {
 		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
@@ -600,7 +600,7 @@ void GUI::TransformTree(SceneObject* sceneObject)
 		TransformTree(child->getSceneObject());
 	}
 	if (sceneObject->parts & Parts::modelRenderer && UserPreferences::showModelHierarchy) {
-		auto model = sceneObject->renderer()->model;
+		auto model = sceneObject->modelRenderer()->model;
 		if (model) {
 			TransformTree(sceneObject, &model->root);
 		}

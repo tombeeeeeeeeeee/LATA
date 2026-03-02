@@ -81,7 +81,7 @@ void GameTest::Start()
 			ResourceManager::LoadTexture("models/soulspear/soulspear_normal.tga", Texture::Type::normal, GL_REPEAT, true),
 	});
 
-	r->setRenderer(new ModelRenderer(
+	r->setModelRenderer(new ModelRenderer(
 		ResourceManager::LoadModel("models/P2_Blockout.fbx"),
 		robotMaterial
 	));

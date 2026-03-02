@@ -485,7 +485,7 @@ toml::table Sync::Serialise(unsigned long long GUID) const
 void Sync::ShootMisfire(glm::vec3 pos)
 {
 	SceneObject* shot = new SceneObject(SceneManager::scene);
-	shot->setRenderer(misfireModelRender);
+	shot->setModelRenderer(misfireModelRender);
 
 	shot->setRigidBody(new RigidBody(0.0f,0.0f));
 	PolygonCollider* collider = new PolygonCollider({ {0.0f,0.0f} }, misfireColliderRadius, CollisionLayers::sync);

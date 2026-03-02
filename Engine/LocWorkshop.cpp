@@ -48,14 +48,14 @@ void LocWorkshop::Start()
 	{
 		i.animatedSceneObject = new SceneObject(this, i.name);
 		i.model = ResourceManager::LoadModel(i.path);
-		i.animatedSceneObject->setRenderer(new ModelRenderer(i.model, ResourceManager::defaultMaterial));
+		i.animatedSceneObject->setModelRenderer(new ModelRenderer(i.model, ResourceManager::defaultMaterial));
 		i.animation = ResourceManager::LoadAnimation(i.path, i.model);
 		i.animatedSceneObject->setAnimator(new Animator(i.animation));
 
 		i.animatedSceneObject->transform()->setPosition(placePos);
 
 		i.modelSceneObject = new SceneObject(this, i.name + "_MODEL");
-		//i.modelSceneObject->setRenderer(new ModelRenderer(i.model, ResourceManager::defaultMaterial));
+		//i.modelSceneObject->setModelRenderer(new ModelRenderer(i.model, ResourceManager::defaultMaterial));
 		i.modelSceneObject->transform()->setPosition(placePos + glm::vec3{ 0.0f, 0.0f, 600.0f });
 
 
@@ -76,7 +76,7 @@ void LocWorkshop::Start()
 	//eccoAnimator = Directional2dAnimator(eccoLeft, eccoRight, eccoUp, eccoDown);
 
 	//SceneObject* animatedEcco = new SceneObject(this, "animatedEcco");
-	//animatedEcco->setRenderer(new ModelRenderer(eccoModel, ResourceManager::defaultMaterial));
+	//animatedEcco->setModelRenderer(new ModelRenderer(eccoModel, ResourceManager::defaultMaterial));
 	//animatedEcco->setAnimator(&eccoAnimator);
 
 	//animatedEcco->transform()->setPosition(placePos);

@@ -316,8 +316,8 @@ void ArtScene::ImportMesh(std::string& path, std::string& filename)
 		model = ResourceManager::LoadModel(EnsureCorrectFileLocation(path, Paths::importModelLocation));
 	}
 
-	sceneObject->renderer()->modelGUID = model->GUID;
-	sceneObject->renderer()->Refresh();
+	sceneObject->modelRenderer()->modelGUID = model->GUID;
+	sceneObject->modelRenderer()->Refresh();
 
 	ResetCamera();
 }
@@ -362,7 +362,7 @@ void ArtScene::Start()
 	material->name = "New Material";
 
 	ModelRenderer* modelRenderer = new ModelRenderer(model, material);
-	sceneObject->setRenderer(modelRenderer);
+	sceneObject->setModelRenderer(modelRenderer);
 
 	glfwSetDropCallback(SceneManager::window, DragDropCallback);
 
@@ -476,7 +476,7 @@ void ArtScene::GUI()
 
 void ArtScene::SaveModal()
 {
-	ModelRenderer* renderer = sceneObject->renderer();
+	ModelRenderer* renderer = sceneObject->modelRenderer();
 
 	if (openSave) {
 		ImGui::OpenPopup("Save Assets");
@@ -607,7 +607,7 @@ void ArtScene::SaveArtAsset() const
 		// TODO: Makes more sense to save as a prefab
 		std::ofstream file(Paths::rendererSaveLocation + sceneObject->name + Paths::rendererExtension);
 		// The renderer itself does not need to save its GUID
-		file << sceneObject->renderer()->Serialise(0);
+		file << sceneObject->modelRenderer()->Serialise(0);
 		file.close();
 	}
 

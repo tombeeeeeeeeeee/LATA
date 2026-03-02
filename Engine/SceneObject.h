@@ -116,8 +116,8 @@ public:
 #pragma region Part Get and Set
 	Transform* transform() const;
 
-	void setRenderer(ModelRenderer* renderer);
-	ModelRenderer* renderer();
+	void setModelRenderer(ModelRenderer* renderer);
+	ModelRenderer* modelRenderer();
 
 	void setAnimator(Animator* animator);
 	Animator* animator();

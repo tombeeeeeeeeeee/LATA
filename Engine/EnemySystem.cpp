@@ -131,7 +131,7 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos, std::string tag)
     enemy->health()->setMaxHealth(explosiveEnemyHealth);
     enemy->setRigidBody(new RigidBody());
     enemy->rigidbody()->invMass = 1.0f;
-    enemy->setRenderer(
+    enemy->setModelRenderer(
         explosiveEnemyRenderer
     );
     enemy->setAnimator(new Animator(explosiveEnemyIdle));
@@ -153,7 +153,7 @@ void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
     enemy->health()->setMaxHealth(meleeEnemyHealth);
     enemy->setRigidBody(new RigidBody());
     enemy->rigidbody()->invMass = 1.0f;
-    enemy->setRenderer(
+    enemy->setModelRenderer(
         meleeEnemyRenderer
     );
     enemy->setAnimator(new BlendedAnimator(meleeEnemyIdle, meleeEnemyAttack));
@@ -176,7 +176,7 @@ void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
     enemy->health()->currHealth = rangedEnemyHealth;
     enemy->setRigidBody(new RigidBody());
     enemy->rigidbody()->invMass = 1.0f;
-    enemy->setRenderer(
+    enemy->setModelRenderer(
         rangedEnemyRenderer
     );
     enemy->setAnimator(new Animator(rangedEnemyIdle));
