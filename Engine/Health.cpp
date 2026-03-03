@@ -64,7 +64,7 @@ Health::Health(toml::table table)
 	maxHealth = Serialisation::LoadAsInt(table["maxHealth"]);
 }
 
-void Health::GUI()
+void Health::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Health##" + tag).c_str())) {

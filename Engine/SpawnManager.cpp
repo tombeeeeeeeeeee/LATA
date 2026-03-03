@@ -59,7 +59,7 @@ void SpawnManager::TriggerCall(std::string tag, bool toggle)
 	}
 }
 
-void SpawnManager::GUI()
+void SpawnManager::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Spawn Manager##" + tag).c_str()))

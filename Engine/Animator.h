@@ -80,7 +80,7 @@ public:
 
 	virtual toml::table Serialise(unsigned long long GUID) const;
 
-	virtual void GUI();
+	virtual void PartGUI();
 
 	virtual Type getType() const;
 

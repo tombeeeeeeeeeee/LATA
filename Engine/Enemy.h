@@ -45,7 +45,7 @@ struct Enemy
 
 	std::string tag = "";
 
-	void GUI();
+	void PartGUI();
 	toml::table Serialise(unsigned long long GUID);
 };
 

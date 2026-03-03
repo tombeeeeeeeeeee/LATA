@@ -23,6 +23,6 @@ public:
 	float timeInProcess = 0.0f;
 	std::string triggerTag;
 
-	void GUI();
+	void PartGUI();
 	toml::table Serialise(unsigned long long guid);
 };

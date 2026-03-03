@@ -23,53 +23,6 @@
 #include <fstream>
 #include <array>
 
-#define SavePart(saveName, partsName, container)                              \
-	if (Parts::##partsName & parts) {                                         \
-		table.emplace(saveName, scene->##container.at(GUID).Serialise(GUID)); \
-		safetyCheck &= ~Parts::##partsName;                                   \
-	}
-
-#define AddPartGUI(getter, setter, constructor, label) \
-if (getter() == nullptr) {                             \
-if (ImGui::MenuItem(label)) {                          \
-		setter(new constructor);                       \
-	}                                                  \
-}
-
-#define RemovePartGUI(partsType, setter, label) \
-if (parts & Parts::partsType) {                 \
-	if (ImGui::MenuItem(label)) {               \
-		setter(nullptr);                        \
-	}                                           \
-}
-
-#define setPart(part, container, enumValue)                     \
-	if (part) {                                                 \
-		parts |= enumValue;                                     \
- /*TODO: Ensure that this isn't leaking memory and is alright*/ \
-		scene->container[GUID] = *part;                         \
-	}                                                           \
-	else {                                                      \
-		parts &= ~enumValue;                                    \
-		scene->container.erase(GUID);                           \
-	}
-
-#define getPart(container, enumValue)        \
-	if (parts & enumValue) {                 \
-		return &(scene->container.at(GUID)); \
-	}                                        \
-	return nullptr
-
-#define SetAndGetForPart(Type, container, enumValue, nameInSet, nameInGet) \
-void SceneObject::set##nameInSet(Type* part)                               \
-{                                                                          \
-	setPart(part, container, enumValue);                                   \
-}                                                                          \
-Type * SceneObject::##nameInGet()                                          \
-{                                                                          \
-	getPart(container, enumValue);                                         \
-}
-
 SceneObject::SceneObject(Scene* _scene, std::string _name) :
 	scene(_scene),
 	name(_name)
@@ -109,46 +62,13 @@ void SceneObject::GUI()
 
 	scene->transforms.at(GUID).GUI();
 
-	if (parts & Parts::modelRenderer) { scene->renderers.at(GUID).GUI(); }
-	if (parts & Parts::rigidBody) { scene->rigidBodies.at(GUID).GUI(); }
+#define PART_ENTRY(index, enumName, cls, collection, access, ignore, ...) \
+	if (parts & Parts::enumName) { scene->collection.at(GUID)access PartGUI(); }
 
-	if (parts & Parts::collider) { 
-		// Collapsing Header is not apart of the collider GUI as it can be apart of the rigidbody too
-		scene->colliders.at(GUID)->PartGUI();
-	}
-	
-	if (parts & Parts::enemy) { scene->enemies[GUID].GUI(); }
-	if (parts & Parts::health) { scene->healths[GUID].GUI(); }
-	if (parts & Parts::spawnManager) { scene->spawnManagers[GUID].GUI(); }
-	if (parts & Parts::plate) { scene->plates[GUID].GUI(); }
-	if (parts & Parts::door) { scene->doors[GUID].GUI(); }
-	if (parts & Parts::bollard) { scene->bollards[GUID].GUI(); }
-	if (parts & Parts::triggerable) { scene->triggerables[GUID].GUI(); }
-	if (parts & Parts::pointLight) { scene->pointLights[GUID].GUI(); }
-	if (parts & Parts::spotlight) { scene->spotlights[GUID].GUI(); }
-	if (parts & Parts::decal) { scene->decals[GUID].GUI(); }
-	if (parts & Parts::shadowWall) { scene->shadowWalls[GUID].GUI(); }
+	ALL_PARTS
+#undef PART_ENTRY
 
-	if (parts & Parts::ecco)
-	{
-		scene->eccos.at(GUID).GUI();
-	}
-
-	if (parts & Parts::sync)
-	{
-		scene->syncs.at(GUID).GUI();
-	}
-
-	if (parts & Parts::exitElevator)
-	{
-		scene->exits.at(GUID).GUI(this);
-	}
-	// TODO: Add animator parts;
-	if ((parts & Parts::animator)) {
-		scene->animators.at(GUID)->GUI();
-	}
-
-	std::string addPopup = "SceneObject Add Part" + tag;
+		std::string addPopup = "SceneObject Add Part" + tag;
 	std::string removePopup = "SceneObject Remove Part" + tag;
 
 	if (ImGui::Button(("Add Part##" + tag).c_str())) {
@@ -161,70 +81,42 @@ void SceneObject::GUI()
 
 	if (ImGui::BeginPopup(addPopup.c_str())) {
 
-		AddPartGUI(animator, setAnimator, Animator(), ("Animator##Add part" + tag).c_str());
+
+#define AddPartGUI(getter, setter, constructor, label) \
+if (getter() == nullptr) {                             \
+if (ImGui::MenuItem(label)) {                          \
+		setter(new constructor);                       \
+	}                                                  \
+}
+
+#define PART_ENTRY(index, lower, cls, collection, a, b, c, d, construct, ignore, ...) \
+	AddPartGUI(lower, set##cls, construct(), (#cls "##Add part" + tag).c_str());
+
+		ALL_PARTS;
+
+#undef PART_ENTRY
+
 		AddPartGUI(animator, setAnimator, BlendedAnimator(), ("Blended Animator##Add part" + tag).c_str());
 		AddPartGUI(animator, setAnimator, Directional2dAnimator(), ("Directional 2D Animator##Add part" + tag).c_str());
-		AddPartGUI(bollard, setBollard, Bollard, ("Bollard ##Add part" + tag).c_str());
-
-		AddPartGUI(decal, setDecal, Decal, ("Decal##Add part" + tag).c_str());
-
-		AddPartGUI(door, setDoor, Door, ("Door ##Add part" + tag).c_str());
-
-		AddPartGUI(ecco, setEcco, Ecco, ("Ecco##Add part" + tag).c_str());
-
-		AddPartGUI(enemy, setEnemy, Enemy, ("Enemy##Add part" + tag).c_str());
-		AddPartGUI(exitElevator, setExitElevator, ExitElevator, ("Exit Elevator##Add part" + tag).c_str());
-		AddPartGUI(health, setHealth, Health, ("Health##Add part" + tag).c_str());
-		AddPartGUI(plate, setPressurePlate, PressurePlate, ("Pressure Plate ##Add part" + tag).c_str());
-		AddPartGUI(pointLight, setPointLight, PointLight, ("Point Light##Add part" + tag).c_str());
-		AddPartGUI(collider, setCollider, PolygonCollider({
-				{ +50, +50},
-				{ +50, -50},
-				{ -50, -50},
-				{ -50, +50}
-			}, 0.0f), ("Polygon Collider##Add part" + tag).c_str());
-		AddPartGUI(rigidBody, setRigidBody, RigidBody(), ("Rigid Body##Add part" + tag).c_str());
-		AddPartGUI(modelRenderer, setModelRenderer, ModelRenderer(), ("Model Renderer##Add part" + tag).c_str());
-		if(modelRenderer() != nullptr)
-		{ 
-			if (shadowWall() == nullptr) {
-				if (ImGui::MenuItem(("Shadow Wall##Add part" + tag).c_str())) {
-					setShadowWall(new ShadowWall());
-				}
-			};
-		}
-		AddPartGUI(spawnManager, setSpawnManager, SpawnManager, ("Spawn Manager ##Add part" + tag).c_str());
-		AddPartGUI(spotlight, setSpotlight, Spotlight, ("Spotlight ##Add part" + tag).c_str());
-		AddPartGUI(sync, setSync, Sync, ("Sync ##Add part" + tag).c_str());
-		AddPartGUI(triggerable, setTriggerable, Triggerable, ("Triggerable##Add part" + tag).c_str());
 		ImGui::EndPopup();
 	}
 
 	if (ImGui::BeginPopup(removePopup.c_str())) {
-		RemovePartGUI(animator, setAnimator, ("Animator##Remove part" + tag).c_str());
-		RemovePartGUI(bollard, setBollard, ("Bollard##Remove part" + tag).c_str());
-		RemovePartGUI(collider, setCollider, ("Collider##Remove part" + tag).c_str());
-		RemovePartGUI(decal, setDecal, ("Decal##Remove part" + tag).c_str());
-		RemovePartGUI(door, setDoor, ("Door##Remove part" + tag).c_str());
-		RemovePartGUI(ecco, setEcco, ("Ecco#Remove part" + tag).c_str());
-		RemovePartGUI(enemy, setEnemy, ("Enemy##Remove part" + tag).c_str());
-		RemovePartGUI(exitElevator, setExitElevator, ("Exit##Remove part" + tag).c_str());
-		RemovePartGUI(health, setHealth, ("Health##Remove part" + tag).c_str());
-		RemovePartGUI(modelRenderer, setModelRenderer, ("Model Renderer##Remove part" + tag).c_str());
-		RemovePartGUI(plate, setPressurePlate, ("Pressure Plate##Remove part" + tag).c_str());
-		RemovePartGUI(pointLight, setPointLight, ("Point Light##Remove part" + tag).c_str());
-		RemovePartGUI(rigidBody, setRigidBody, ("Rigid Body##Remove part" + tag).c_str());
-		if (parts & Parts::shadowWall) {
-			if (ImGui::MenuItem(("Shadow Wall##Remove part" + tag).c_str())) {
-				setShadowWall(nullptr);
-			}
-		};
-		RemovePartGUI(spawnManager, setSpawnManager, ("Spawn Manager ##Remove part" + tag).c_str());
-		RemovePartGUI(spotlight, setSpotlight, ("Spotlight ##Remove part" + tag).c_str());
-		RemovePartGUI(sync, setSync, ("Sync##Remove part" + tag).c_str());
-		RemovePartGUI(triggerable, setTriggerable, ("Triggerable##Remove part" + tag).c_str());
 
-		ImGui::EndPopup();
+#define PART_ENTRY(index, lower, cls, ignore, ...)                     \
+		if (parts & Parts::lower)                                      \
+		{                                                              \
+			if (ImGui::MenuItem((#cls "##Remove part" + tag).c_str())) \
+			{                                                          \
+					set##cls(nullptr);                                 \
+			}                                                          \
+		}
+
+		ALL_PARTS
+
+#undef PART_ENTRY
+
+			ImGui::EndPopup();
 	}
 }
 
@@ -338,26 +230,19 @@ bool SceneObject::PartsFilterSelector(const std::string& label, unsigned int& pa
 		return false;
 	}
 
-	ImGui::CheckboxFlags("Animator##Parts Filter", &parts, Parts::animator);
-	ImGui::CheckboxFlags("Bollard##Parts Filter", &parts, Parts::bollard);
-	ImGui::CheckboxFlags("Collider##Parts Filter", &parts, Parts::collider);
-	ImGui::CheckboxFlags("Door##Parts Filter", &parts, Parts::door);
-	ImGui::CheckboxFlags("Ecco##Parts Filter", &parts, Parts::ecco);
-	ImGui::CheckboxFlags("Enemy##Parts Filter", &parts, Parts::enemy);
-	ImGui::CheckboxFlags("Exit Elevator##Parts Filter", &parts, Parts::exitElevator);
-	ImGui::CheckboxFlags("Plate##Parts Filter", &parts, Parts::plate);
-	ImGui::CheckboxFlags("PointLight##Parts Filter", &parts, Parts::pointLight);
-	ImGui::CheckboxFlags("RigidBody##Parts Filter", &parts, Parts::rigidBody);
-	ImGui::CheckboxFlags("Spawn Manager##Parts Filter", &parts, Parts::spawnManager);
-	ImGui::CheckboxFlags("Spotlight##Parts Filter", &parts, Parts::spotlight);
-	ImGui::CheckboxFlags("Sync##Parts Filter", &parts, Parts::sync);
+	// TODO: These should be able to be sorted alphabetically instead
+#define PART_ENTRY(index, lower, cls, ignore, ...) \
+	{ ImGui::CheckboxFlags(#cls "##Parts Filter", &parts, Parts::lower); }
+	ALL_PARTS
+#undef PART_ENTRY
 
-	ImGui::EndPopup();
+		ImGui::EndPopup();
 	return true;
 }
 
 void SceneObject::DebugDraw()
 {
+	// TODO: Make this ignorant of the parts
 	Transform* t = &scene->transforms.at(GUID);
 	if (parts & Parts::rigidBody)
 	{
@@ -373,7 +258,7 @@ void SceneObject::DebugDraw()
 			LineRenderer& lines = RenderSystem::lines;
 			lines.SetColour({ 1.0f, 1.0f, 1.0f });
 
-			std::array<glm::vec3, 16> v {
+			std::array<glm::vec3, 16> v{
 				glm::vec3{ model->min.x, model->min.y, model->min.z },
 				glm::vec3{ model->min.x, model->min.y, model->max.z },
 				glm::vec3{ model->min.x, model->max.y, model->max.z },
@@ -407,6 +292,7 @@ void SceneObject::DebugDraw()
 
 void SceneObject::TriggerCall(std::string tag, bool toggle)
 {
+	// TODO: Adjust this so things register for the call instead, or something alike
 	if (parts & Parts::spawnManager)
 		scene->spawnManagers[GUID].TriggerCall(tag, toggle);
 
@@ -453,33 +339,21 @@ toml::table SceneObject::SerialiseWithParts() const
 	toml::table table;
 	table.emplace("sceneObject", Serialise());
 
-	SavePart("modelRenderer", modelRenderer, renderers);
-	if (Parts::animator & parts) {
-		table.emplace("animator", scene->animators.at(GUID)->Serialise(GUID)); safetyCheck &= ~Parts::animator;
-	};
-	SavePart("rigidBody", rigidBody, rigidBodies);
-	SavePart("health", health, healths);
-	SavePart("enemy", enemy, enemies);
-	SavePart("exitElevator", exitElevator, exits);
-	SavePart("spawnManager", spawnManager, spawnManagers);
-	SavePart("plate", plate, plates);
-	SavePart("door", door, doors);
-	SavePart("bollard", bollard, bollards);
-	SavePart("triggerable", triggerable, triggerables);
-	SavePart("spotlight", spotlight, spotlights); 
-	SavePart("decal", decal, decals);
-	SavePart("pointLight", pointLight, pointLights);
-	SavePart("shadowWall", shadowWall, shadowWalls);
 
-	if (Parts::collider & parts) {
-		table.emplace("collider", scene->colliders.at(GUID)->Serialise(GUID));
-		safetyCheck &= ~Parts::collider;
+#define SavePart(saveName, partsName, container, access)                              \
+	if (Parts::##partsName & parts) {                                                 \
+		table.emplace(saveName, scene->##container.at(GUID) access Serialise(GUID));  \
+		safetyCheck &= ~Parts::##partsName;                                           \
 	}
 
-	SavePart("ecco", ecco, eccos);
-	SavePart("sync", sync, syncs);
+#define PART_ENTRY(index, lower, cls, collection, access, ignore, ...) \
+	SavePart(#lower, lower, collection, access)
 
-	table.emplace("transform", transform()->Serialise(GUID));
+	ALL_PARTS
+
+#undef PART_ENTRY
+
+		table.emplace("transform", transform()->Serialise(GUID));
 
 	// TODO: Probably don't need a whole assert here, could just print a error and continue on
 	assert(safetyCheck == 0);
@@ -520,100 +394,71 @@ Transform* SceneObject::transform() const
 	return &(scene->transforms.at(GUID));
 }
 
-// TODO: There is a case for the scene load to ensure that the below is also matched on scene load
-// TODO: Try to remove any different special set / get
-SetAndGetForPart(ModelRenderer, renderers, Parts::modelRenderer, ModelRenderer, modelRenderer)
-void SceneObject::setAnimator(Animator* part) {
-	if (part) {
-		parts |= Parts::animator; scene->animators[GUID] = part;
-		if (parts & Parts::modelRenderer) {
-			modelRenderer()->animator = scene->animators[GUID];
+void SceneObject::OnPartSet(Animator* part)
+{
+	if (parts & Parts::modelRenderer)
+	{
+		if (part)
+		{
+			modelRenderer()->animator = scene->animators.at(GUID);
 		}
-	}
-	else {
-		parts &= ~Parts::animator; scene->animators.erase(GUID);
-		if (parts & Parts::modelRenderer) {
+		else {
 			modelRenderer()->animator = nullptr;
 		}
-	};
-} 
-Animator* SceneObject::animator() {
-	if (parts & Parts::animator) {
-		return (scene->animators.at(GUID));
-	} return nullptr;
-}
-SetAndGetForPart(RigidBody, rigidBodies, Parts::rigidBody, RigidBody, rigidBody)
-SetAndGetForPart(Health, healths, Parts::health, Health, health)
-SetAndGetForPart(Enemy, enemies, Parts::enemy, Enemy, enemy)
-SetAndGetForPart(ExitElevator, exits, Parts::exitElevator, ExitElevator, exitElevator)
-SetAndGetForPart(SpawnManager, spawnManagers, Parts::spawnManager, SpawnManager, spawnManager)
-SetAndGetForPart(PressurePlate, plates, Parts::plate, PressurePlate, plate)
-SetAndGetForPart(Door, doors, Parts::door, Door, door)
-SetAndGetForPart(Bollard, bollards, Parts::bollard, Bollard, bollard)
-SetAndGetForPart(Triggerable, triggerables, Parts::triggerable, Triggerable, triggerable)
-SetAndGetForPart(PointLight, pointLights, Parts::pointLight, PointLight, pointLight)
-SetAndGetForPart(Decal, decals, Parts::decal, Decal, decal);
-SetAndGetForPart(ShadowWall, shadowWalls, Parts::shadowWall, ShadowWall, shadowWall);
-
-void SceneObject::setSpotlight(Spotlight* part) {
-	if (part) {
-		parts |= Parts::spotlight; scene->spotlights[GUID] = std::move(*part);
 	}
-	else {
-		parts &= ~Parts::spotlight; scene->spotlights.erase(GUID);
-	};
-} Spotlight* SceneObject::spotlight() {
-	if (parts & Parts::spotlight) {
-		return &(scene->spotlights.at(GUID));
-	} return nullptr;
 }
 
-void SceneObject::setCollider(Collider* collider)
+void SceneObject::OnPartSet(ModelRenderer* part)
 {
-	if (collider)
+	if (parts & Parts::animator && parts & Parts::modelRenderer)
 	{
-		parts |= Parts::collider;
-		scene->colliders[GUID] = collider;
-	}
-	else
-	{
-		parts &= ~Parts::collider;
-		scene->colliders.erase(GUID);
+		modelRenderer()->animator = scene->animators.at(GUID);
 	}
 }
 
-Collider* SceneObject::collider()
-{
-	if (parts & Parts::collider)
-		return (scene->colliders[GUID]);
-	return nullptr;
+#define SetAndGetForPart(Type, container, enumValue, nameInSet, nameInGet, toStore, toGet) \
+void SceneObject::set##nameInSet(Type* part)                                               \
+{                                                                                          \
+	if (part) {                                                                            \
+		parts |= enumValue;                                                                \
+ /*TODO: Ensure that this isn't leaking memory and is alright*/                            \
+		scene->container[GUID] = toStore part;                                             \
+	}                                                                                      \
+	else {                                                                                 \
+		parts &= ~enumValue;                                                               \
+		scene->container.erase(GUID);                                                      \
+	}                                                                                      \
+	OnPartSet(part);                                                                       \
+}                                                                                          \
+Type * SceneObject::##nameInGet()                                                          \
+{                                                                                          \
+	if (parts & enumValue) {                                                               \
+		return toGet(scene->container.at(GUID));                                           \
+	}                                                                                      \
+	return nullptr;                                                                        \
 }
 
-SetAndGetForPart(Ecco, eccos, Parts::ecco, Ecco, ecco)
 
-SetAndGetForPart(Sync, syncs, Parts::sync, Sync, sync)
+// TODO: There is a case for the scene load to ensure that the below is also matched on scene load
+
+#define PART_ENTRY(index, lower, cls, container, access, rep, set, get, ignore, ...) \
+SetAndGetForPart(cls, container, Parts::lower, cls, lower, set, get)
+
+ALL_PARTS
+
+#undef PART_ENTRY
 
 void SceneObject::ClearParts(unsigned int toDelete)
 {
-	if (toDelete & parts & Parts::modelRenderer) { scene->renderers.erase(GUID);     parts &= ~(Parts::modelRenderer); }
-	// TODO: If animator removed the model render needs to know about it
-	if (toDelete & parts & Parts::animator)      { scene->animators.erase(GUID);     parts &= ~(Parts::animator);}
-	if (toDelete & parts & Parts::rigidBody)     { scene->rigidBodies.erase(GUID);   parts &= ~(Parts::rigidBody);}
-	if (toDelete & parts & Parts::collider)      { scene->colliders.erase(GUID);     parts &= ~(Parts::collider);}
-	if (toDelete & parts & Parts::ecco)          { scene->ecco->GUID = 0;            parts &= ~(Parts::ecco);}
-	if (toDelete & parts & Parts::sync)          { scene->sync->GUID = 0;            parts &= ~(Parts::sync);}
-	if (toDelete & parts & Parts::health)        { scene->healths.erase(GUID);       parts &= ~(Parts::health);}
-	if (toDelete & parts & Parts::enemy)         { scene->enemies.erase(GUID);       parts &= ~(Parts::enemy);}
-	if (toDelete & parts & Parts::exitElevator)  { scene->exits.erase(GUID);         parts &= ~(Parts::exitElevator);}
-	if (toDelete & parts & Parts::spawnManager)  { scene->spawnManagers.erase(GUID); parts &= ~(Parts::spawnManager);}
-	if (toDelete & parts & Parts::plate)		 { scene->plates.erase(GUID);		 parts &= ~(Parts::plate);}
-	if (toDelete & parts & Parts::door)		     { scene->doors.erase(GUID);	     parts &= ~(Parts::door);}	
-	if (toDelete & parts & Parts::bollard)		 { scene->bollards.erase(GUID);	     parts &= ~(Parts::bollard);}	
-	if (toDelete & parts & Parts::triggerable)   { scene->triggerables.erase(GUID);	 parts &= ~(Parts::triggerable);}	
-	if (toDelete & parts & Parts::pointLight)    { scene->pointLights.erase(GUID);	 parts &= ~(Parts::pointLight);}	
-	if (toDelete & parts & Parts::spotlight)	 { scene->spotlights.erase(GUID);	 parts &= ~(Parts::spotlight);}	
-	if (toDelete & parts & Parts::decal)		 { scene->decals.erase(GUID);	     parts &= ~(Parts::decal);}	
-	if (toDelete & parts & Parts::shadowWall)	 { scene->shadowWalls.erase(GUID);	 parts &= ~(Parts::shadowWall);}	
+#define PART_ENTRY(index, enumName, className, container, ignore, ...) \
+	if (toDelete & parts & Parts::enumName) \
+	{                                \
+		scene->container.erase(GUID);        \
+		parts &= ~(Parts::enumName);        \
+	}
+	ALL_PARTS
+#undef PART_ENTRY
+		//// TODO: If animator removed the model render needs to know about it
 }
 
 void SceneObject::ClearParts()
@@ -628,7 +473,7 @@ void SceneObject::SaveAsPrefab()
 
 	std::ofstream file(Paths::prefabsSaveLocation + name + Paths::prefabExtension);
 
-	toml::table table =	SerialiseWithPartsAndChildren();
+	toml::table table = SerialiseWithPartsAndChildren();
 
 	file << table << '\n';
 
@@ -659,24 +504,12 @@ void SceneObject::LoadWithParts(toml::table table)
 		setter(type::Load(*table[saveName].as_table()));    \
 	}
 
-	LoadPart("modelRenderer", modelRenderer, setModelRenderer, ModelRenderer);
-	LoadPart("animator", animator, setAnimator, Animator);
-	LoadPart("rigidBody", rigidBody, setRigidBody, RigidBody);
-	LoadPart("health", health, setHealth, Health);
-	LoadPart("enemy", enemy, setEnemy, Enemy);
-	LoadPart("exitElevator", exitElevator, setExitElevator, ExitElevator);
-	LoadPart("spawnManager", spawnManager, setSpawnManager, SpawnManager);
-	LoadPart("plate", plate, setPressurePlate, PressurePlate);
-	LoadPart("door", door, setDoor, Door);
-	LoadPart("bollard", bollard, setBollard, Bollard);
-	LoadPart("triggerable", triggerable, setTriggerable, Triggerable);
-	LoadPart("spotlight", spotlight, setSpotlight, Spotlight);
-	LoadPart("pointLight", pointLight, setPointLight, PointLight);
-	LoadPart("decal", decal, setDecal, Decal);
-	LoadPart("shadowWall", shadowWall, setShadowWall, ShadowWall);
-	LoadPart("collider", collider, setCollider, Collider);
-	LoadPart("ecco", ecco, setEcco, Ecco);
-	LoadPart("sync", sync, setSync, Sync);
+#define PART_ENTRY(index, lower, cls, ignore, ...) \
+	LoadPart(#lower, lower, set##cls, cls)
+
+	ALL_PARTS;
+
+#undef PART_ENTRY
 
 	auto loadingTransform = table["transform"];
 	if (!loadingTransform) {
@@ -727,7 +560,6 @@ void SceneObject::LoadWithPartsSafe(toml::table table)
 		spotlightTag = spotlight()->triggerTag;
 	}
 
-
 	// Load parts
 	LoadWithParts(table);
 
@@ -750,7 +582,7 @@ void SceneObject::LoadWithPartsSafe(toml::table table)
 	if (parts & Parts::spawnManager && hadSpawnManager) {
 		spawnManager()->Load(spawnManagerData);
 	}
-	if (parts & Parts::pointLight && pointLightTag != "") {		
+	if (parts & Parts::pointLight && pointLightTag != "") {
 		pointLight()->triggerTag = pointLightTag;
 	}
 	if (parts & Parts::spotlight && spotlightTag != "") {

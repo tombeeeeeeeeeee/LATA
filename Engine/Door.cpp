@@ -50,7 +50,7 @@ void Door::TriggerCall(std::string tag, bool toggle)
 	}
 }
 
-void Door::GUI()
+void Door::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Door##" + tag).c_str()))

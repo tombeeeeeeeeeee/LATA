@@ -86,7 +86,7 @@ glm::vec2 RigidBody::Transform2Din3DSpace(glm::mat4 global, glm::vec2 input)
 	return glm::vec2(result.x, result.z);
 }
 
-void RigidBody::GUI()
+void RigidBody::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Rigid Body##" + tag).c_str()))

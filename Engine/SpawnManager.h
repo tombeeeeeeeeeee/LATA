@@ -35,7 +35,7 @@ public:
 
 	float timeSinceLastSpawn = 0.0f;
 
-	void GUI();
+	void PartGUI();
 	toml::table Serialise(unsigned long long guid);
 
 private:

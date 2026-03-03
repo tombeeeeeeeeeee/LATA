@@ -32,7 +32,7 @@ void Bollard::TriggerCall(std::string tag, bool toggle)
 	}
 }
 
-void Bollard::GUI()
+void Bollard::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Bollard##" + tag).c_str()))

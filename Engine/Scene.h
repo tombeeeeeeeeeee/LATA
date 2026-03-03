@@ -1,5 +1,6 @@
 #pragma once
 
+#include "PartsList.h"
 #include "ModelRenderer.h"
 #include "Transform.h"
 #include "Animator.h"
@@ -17,6 +18,8 @@
 #include "Spotlight.h"
 #include "DirectionalLight.h"
 #include "InvisibleWall.h"
+#include "Sync.h"
+#include "Ecco.h"
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
@@ -32,8 +35,6 @@
 #include <map>
 
 class SceneObject;
-class Ecco;
-class Sync;
 class Skybox;
 
 class Scene
@@ -55,32 +56,23 @@ public:
 	// TODO: Pretty sure these no longer need to be stored on the heap
 	//std::vector<SceneObject*> sceneObjects = {};
 
-	std::map<unsigned long long, SceneObject*> sceneObjects = {};
-	std::unordered_map<unsigned long long, ModelRenderer> renderers = {};
-	std::unordered_map<unsigned long long, Transform> transforms = {};
-	// TODO: There is types of animators, don't think its safe to store them like this
-	std::unordered_map<unsigned long long, Animator*> animators = {};
-	std::unordered_map<unsigned long long, RigidBody> rigidBodies = {};
-	std::unordered_map<unsigned long long, Collider*> colliders = {};
-	std::unordered_map<unsigned long long, Health> healths = {};
-	std::unordered_map<unsigned long long, Enemy> enemies = {};
-	std::unordered_map<unsigned long long, ExitElevator> exits = {};
-	std::unordered_map<unsigned long long, SpawnManager> spawnManagers = {};
-	std::unordered_map<unsigned long long, PressurePlate> plates = {};
-	std::unordered_map<unsigned long long, Door> doors = {};
-	std::unordered_map<unsigned long long, Bollard> bollards = {};
-	std::unordered_map<unsigned long long, Triggerable> triggerables = {};
-	std::unordered_map<unsigned long long, PointLight> pointLights = {};
-	std::unordered_map<unsigned long long, Spotlight> spotlights = {};
-	std::unordered_map<unsigned long long, Decal> decals = {};
-	std::unordered_map<unsigned long long, ShadowWall> shadowWalls = {};
 
+
+	std::map<unsigned long long, SceneObject*> sceneObjects = {};
+
+#define PART_ENTRY(index, lower, cls, container, access, store, ignore, ...) \
+std::unordered_map<unsigned long long, cls store> container = {};
+
+	ALL_PARTS
+
+#undef PART_ENTRY
+
+	std::unordered_map<unsigned long long, Transform> transforms = {};
+	
 	DirectionalLight directionalLight;
 
 	std::vector<unsigned long long> markedForDeletion = {};
 
-	std::unordered_map<unsigned long long, Ecco> eccos = {};
-	std::unordered_map<unsigned long long, Sync> syncs = {};
 	bool eccoHealPressed = false;
 	bool syncHealPressed = false;
 	SoLoud::handle eccoCurrHandle;

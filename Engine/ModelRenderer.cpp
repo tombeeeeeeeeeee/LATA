@@ -97,8 +97,7 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 			model->root.ModelHierarchyInfoOfMesh(i, &info);
 			subModel = info->transform.getGlobalMatrix();;
 		}
-		
-		
+
 		shader->setMat4("model", modelMatrix * subModel);
 		SceneManager::scene->renderSystem.ActivateFlaggedVariables(shader, materials.at(materialID));
 
@@ -124,7 +123,7 @@ void ModelRenderer::Draw(glm::mat4 modelMatrix, Shader* givenShader)
 	}
 }
 
-void ModelRenderer::GUI()
+void ModelRenderer::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (!ImGui::CollapsingHeader(("Model Renderer##" + tag).c_str()))

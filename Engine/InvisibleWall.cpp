@@ -3,7 +3,7 @@
 #include "imgui.h"
 #include "Utilities.h"
 
-void ShadowWall::GUI()
+void ShadowWall::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Shadow Wall##" + tag).c_str()))

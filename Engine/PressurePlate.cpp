@@ -6,7 +6,7 @@
 #include "ExtraEditorGUI.h"
 #include "TriggerSystem.h"
 
-void PressurePlate::GUI()
+void PressurePlate::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Pressure Plate##" + tag).c_str()))

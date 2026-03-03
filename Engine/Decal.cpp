@@ -19,7 +19,7 @@ Decal::Decal(toml::table table)
 	mat = ResourceManager::GetMaterial(matGUID);
 }
 
-void Decal::GUI()
+void Decal::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Decal##" + tag).c_str()))

@@ -25,6 +25,8 @@
 
 using Utilities::PointerToString;
 
+const std::string GUI::mainMenuWindowName = "Window";
+
 //TODO: move some of these to their own classes
 void GUI::Update()
 {

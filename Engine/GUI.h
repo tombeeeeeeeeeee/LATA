@@ -42,7 +42,7 @@ private:
 public:
 	// ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize
 	static constexpr int defaultWindowFlags = 64;
-	static constexpr std::string mainMenuWindowName = "Window";
+	static const std::string mainMenuWindowName;
 	Scene* scene = nullptr;
 
 	bool showResourceMenu = false;

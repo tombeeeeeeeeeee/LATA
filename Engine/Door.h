@@ -27,5 +27,5 @@ public:
 
 	toml::table Serialise(unsigned long long guid);
 	void TriggerCall(std::string tag, bool toggle);
-	void GUI();
+	void PartGUI();
 };

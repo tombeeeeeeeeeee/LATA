@@ -172,7 +172,7 @@ toml::table BlendedAnimator::Serialise(unsigned long long GUID) const
     return table;
 }
 
-void BlendedAnimator::GUI()
+void BlendedAnimator::PartGUI()
 {
     std::string tag = Utilities::PointerToString(this);
     if (ImGui::CollapsingHeader(("Blended Animator##" + tag).c_str())) {

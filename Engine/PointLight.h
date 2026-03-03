@@ -38,7 +38,7 @@ public:
     PointLight(toml::table table);
     static PointLight* Load(toml::table table);
     PointLight(PointLightEffect _effect) : effect(_effect) {};
-    virtual void GUI();
+    virtual void PartGUI();
 
     void SetRange(float range);
     void SetRange(float linear, float quadratic);

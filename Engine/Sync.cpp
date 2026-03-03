@@ -385,7 +385,7 @@ bool Sync::Update(
 	return timeSinceHealButtonPressed <= windowOfTimeForHealPressed;
 }
 
-void Sync::GUI()
+void Sync::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (!ImGui::CollapsingHeader(("Sync Component##" + tag).c_str()))

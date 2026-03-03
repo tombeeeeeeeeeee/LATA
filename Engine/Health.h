@@ -30,7 +30,7 @@ public:
 	static Health* Load(toml::table table);
 	Health(toml::table table);
 
-	void GUI();
+	void PartGUI();
 
 private:
 	int maxHealth = 0;

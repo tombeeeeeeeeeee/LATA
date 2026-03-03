@@ -27,7 +27,7 @@ public:
     void UpdateAnimation(float delta, bool updateBoneTransforms = true) override;
     void CalculateBoneTransform(const ModelHierarchyInfo* node, const glm::mat4& parentTransform) override;
 
-    virtual void GUI() override;
+    virtual void PartGUI() override;
 
     toml::table Serialise(unsigned long long GUID) const override;
 

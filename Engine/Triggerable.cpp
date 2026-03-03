@@ -5,17 +5,16 @@
 #include "Serialisation.h"
 #include "Collider.h"
 
-void Triggerable::GUI()
+void Triggerable::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Triggerable##" + tag).c_str()))
 	{
-		ImGui::Indent();
+		ExtraEditorGUI::ScopedIndent indent;
 		ImGui::InputText(("Trigger ID##" + tag).c_str(), &triggerTag);
 		ImGui::Checkbox(("Both Players Needed##" + tag).c_str(), &bothPlayersNeeded);
 		ImGui::Checkbox(("False is True##" + tag).c_str(), &falseIsTrue);
 		ImGui::Checkbox(("Don't Send False##" + tag).c_str(), &doesntSendFalseEveryFrame);
-		ImGui::Unindent();
 	}
 }
 

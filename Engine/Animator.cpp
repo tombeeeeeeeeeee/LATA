@@ -122,7 +122,7 @@ Animator::Type Animator::getType() const
     return Type::base;
 }
 
-void Animator::GUI()
+void Animator::PartGUI()
 {
     std::string tag = Utilities::PointerToString(this);
     if (ImGui::CollapsingHeader(("Animator##" + tag).c_str())) {

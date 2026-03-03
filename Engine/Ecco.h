@@ -35,7 +35,7 @@ public:
 
 	void OnCollision(Collision collision);
 
-	void GUI();
+	void PartGUI();
 	toml::table Serialise(unsigned long long GUID);
 
 	glm::vec2 wheelDirection = { 0.0f, 0.0f };	

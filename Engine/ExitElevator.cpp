@@ -74,7 +74,7 @@ void ExitElevator::OnTrigger(Collision collision)
 	}
 }
 
-void ExitElevator::GUI(SceneObject* so)
+void ExitElevator::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Exit Elevator##" + tag).c_str()))

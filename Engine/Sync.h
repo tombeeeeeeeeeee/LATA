@@ -36,7 +36,7 @@ public:
 		float delta, float cameraAngleOffset, Transform* gunTransform, bool dead
 	);
 
-	void GUI();
+	void PartGUI();
 
 	toml::table Serialise(unsigned long long GUID) const;
 	void ShootMisfire(glm::vec3 pos);

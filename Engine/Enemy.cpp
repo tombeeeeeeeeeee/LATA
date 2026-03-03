@@ -15,7 +15,7 @@ Enemy::Enemy(toml::table table)
 	type = Serialisation::LoadAsInt(table["type"]);
 }
 
-void Enemy::GUI()
+void Enemy::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 

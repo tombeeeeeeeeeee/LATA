@@ -41,7 +41,7 @@ public:
 
 	void Draw(glm::mat4 modelMatrix, Shader* givenShader = nullptr);
 
-	void GUI();
+	void PartGUI();
 
 	toml::table Serialise(unsigned long long GUID) const;
 

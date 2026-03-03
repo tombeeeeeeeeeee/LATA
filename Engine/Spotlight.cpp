@@ -121,7 +121,7 @@ void Spotlight::Initialise()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Spotlight::GUI()
+void Spotlight::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Spotlight##" + tag).c_str()))

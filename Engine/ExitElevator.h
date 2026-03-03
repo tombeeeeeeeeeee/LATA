@@ -21,7 +21,7 @@ public:
 	bool Update(float delta);
 	void OnTrigger(Collision collision);
 
-	void GUI(SceneObject* so);
+	void PartGUI();
 
 	toml::table Serialise(unsigned long long GUID) const;
 

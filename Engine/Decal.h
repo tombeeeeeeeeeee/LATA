@@ -19,7 +19,7 @@ public:
 
 	Decal() {};
 	Decal(toml::table table);
-	void GUI();
 	static Decal* Load(toml::table table);
+	void PartGUI();
 	toml::table Serialise(unsigned long long guid);
 };

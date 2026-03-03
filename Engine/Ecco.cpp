@@ -339,7 +339,7 @@ void Ecco::OnCollision(Collision collision)
 	}
 }
 
-void Ecco::GUI()
+void Ecco::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	//ImGui::Text("");

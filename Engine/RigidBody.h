@@ -67,7 +67,7 @@ public:
 
 	static glm::vec2 Transform2Din3DSpace(glm::mat4 global, glm::vec2 input);
 
-	void GUI();
+	void PartGUI();
 	void DebugDraw(Transform* transform);
 
 	toml::table Serialise(unsigned long long GUID) const;

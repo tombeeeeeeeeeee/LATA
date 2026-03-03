@@ -15,7 +15,7 @@ public:
 	bool falseIsTrue = false;
 	bool doesntSendFalseEveryFrame = false;
 
-	void GUI();
+	void PartGUI();
 	Triggerable() {};
 	Triggerable(toml::table table);
 	static Triggerable* Load(toml::table table);

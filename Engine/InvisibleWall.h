@@ -10,7 +10,7 @@ struct ShadowWall
 {
 
 	bool hasLocalMesh = false; 
-	void GUI();
+	void PartGUI();
 	ShadowWall() {};
 	ShadowWall(toml::table table);
 	static ShadowWall* Load(toml::table table);

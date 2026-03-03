@@ -27,7 +27,7 @@ PointLight::PointLight(toml::table table)
 	castsShadows = Serialisation::LoadAsBool(table["castsShadows"], true);
 }
 
-void PointLight::GUI()
+void PointLight::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Point Light##" + tag).c_str()))

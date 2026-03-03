@@ -1,31 +1,23 @@
 #pragma once
 
+#include "PartsList.h"
+
 #include <string>
 
 #include <set>
 
-struct Collider;
+#define PART_ENTRY(index, lower, cls, container, access, deref, a, b, construct, classOrStruct, ignore, ...) \
+classOrStruct cls;
+
+ALL_PARTS
+
+#undef PART_ENTRY
+
 class Scene;
 class Shader;
 class Transform;
-class ModelRenderer;
-class Ecco;
-class Sync;
-class Health;
-class Animator;
-class RigidBody;
-class ExitElevator;
-class SpawnManager;
 class LineRenderer;
-class PressurePlate;
-class Door;
-class Bollard;
-class Triggerable;
-class PointLight;
-class Spotlight;
 class Decal;
-struct Enemy;
-struct ShadowWall;
 
 namespace toml {
 	inline namespace v3 {
@@ -35,28 +27,17 @@ namespace toml {
 
 // TODO: There might be issues later due to the parts being saved as an signed int, not unsigned
 // Changing how they are saved can affect other saves and isn't worth it at the moment of writing
+
 enum Parts : unsigned int
 {
-	modelRenderer = 1 << 1,
-	animator =      1 << 2,
-	rigidBody =     1 << 3,
-	pointLight =    1 << 4,
-	collider =      1 << 5,
-	ecco =          1 << 6,
-	sync =          1 << 7,
-	health =        1 << 8,
-	enemy =         1 << 9,
-	exitElevator =	1 << 10,
-	spotlight =		1 << 11,
-	plate = 		1 << 12,
-	spawnManager =	1 << 13,
-	door		 =	1 << 14,
-	bollard		 =	1 << 15,
-	triggerable	 =	1 << 16,
-	decal		 =  1 << 17,
-	shadowWall	 =  1 << 18,
-	ALL = (1 << 19) - 1 - 1,
-}; // NOTE: The all has a minus 1 because it needs to be flipped to be all 1s, and another minus one as there is no part with the number 1
+#define PART_ENTRY(index, enumName, ignore, ...) enumName = 1 << index,
+	ALL_PARTS
+#undef PART_ENTRY
+
+#define PART_ENTRY(index, enumName, ignore, ...) | (1 << index)
+	ALL = 0 ALL_PARTS,
+#undef PART_ENTRY
+};
 
 class Scene;
 
@@ -116,65 +97,32 @@ public:
 #pragma region Part Get and Set
 	Transform* transform() const;
 
-	void setModelRenderer(ModelRenderer* renderer);
-	ModelRenderer* modelRenderer();
+#define PART_ENTRY(index, lowerName, cls, container, access, pointer, ignore, ...) \
+void set##cls(cls* lowerName);
 
-	void setAnimator(Animator* animator);
-	Animator* animator();
+	ALL_PARTS
 
-	void setPointLight(PointLight* pointLight);
-	PointLight* pointLight();
+#undef PART_ENTRY
 
-	void setSpotlight(Spotlight* spotlight);
-	Spotlight* spotlight();
+#define PART_ENTRY(index, lowerName, cls, container, acess, pointer, ignore, ...) \
+cls * lowerName();
 
-	void setDecal(Decal* decal);
-	Decal* decal();
+	ALL_PARTS
 
-	void setRigidBody(RigidBody* rb);
-	// TODO: Should be a cap b to match the rest?
-	RigidBody* rigidbody();
-
-	void setCollider(Collider* collider);
-	Collider* collider();
-
-	void setEcco(Ecco* ecco);
-	Ecco* ecco();
-
-	void setSync(Sync* sync);
-	Sync* sync();
-
-	void setHealth(Health* health);
-	Health* health();
-
-	void setEnemy(Enemy* enemy);
-	Enemy* enemy();
-
-	void setExitElevator(ExitElevator* exitElevator);
-	ExitElevator* exitElevator();
-
-	void setSpawnManager(SpawnManager* spawnManager);
-	SpawnManager* spawnManager();
-
-	void setPressurePlate(PressurePlate* plate);
-	PressurePlate* plate();
-
-	void setDoor(Door* door);
-	Door* door();
-
-	void setBollard(Bollard* bollard);
-	Bollard* bollard();
-
-	void setTriggerable(Triggerable* triggerable);
-	Triggerable* triggerable();
-
-	void setShadowWall(ShadowWall* shadowWall);
-	ShadowWall* shadowWall();
+#undef PART_ENTRY
 
 #pragma endregion
 
 	void ClearParts();
 	void ClearParts(unsigned int toDelete);
+
+private:
+	template<typename T>
+	void OnPartSet(T* partPntr)
+	{}
+
+	void OnPartSet(Animator* part);
+	void OnPartSet(ModelRenderer* part);
 };
 
 

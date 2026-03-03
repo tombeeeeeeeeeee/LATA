@@ -21,7 +21,7 @@ public:
 	bool triggeredThisFrame = false;
 	bool triggeredLastFrame = false;
 	PressurePlate() {};
-	void GUI();
+	void PartGUI();
 
 	PressurePlate(toml::table table);
 	static PressurePlate* Load(toml::table table);

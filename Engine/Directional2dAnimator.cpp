@@ -139,7 +139,7 @@ void Directional2dAnimator::CalculateBoneTransform(const ModelHierarchyInfo* nod
 	}
 }
 
-void Directional2dAnimator::GUI()
+void Directional2dAnimator::PartGUI()
 {
 	std::string tag = Utilities::PointerToString(this);
 	if (ImGui::CollapsingHeader(("Directional 2D Animator##" + tag).c_str())) {

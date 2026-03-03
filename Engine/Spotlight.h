@@ -34,7 +34,7 @@ public:
     
     void Initialise();
 
-    void GUI() override;
+    void PartGUI() override;
 
     glm::mat4 getProj();
     glm::mat4 getView(glm::mat4 globalTransform);
