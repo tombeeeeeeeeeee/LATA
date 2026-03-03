@@ -27,6 +27,11 @@ Triggerable::Triggerable(toml::table table)
 	doesntSendFalseEveryFrame = Serialisation::LoadAsBool(table["doesntSendFalseEveryFrame"]);
 }
 
+Triggerable* Triggerable::Load(toml::table table)
+{
+	return new Triggerable(table);
+}
+
 toml::table Triggerable::Serialise(unsigned long long guid)
 {
 	return toml::table

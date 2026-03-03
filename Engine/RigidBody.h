@@ -71,6 +71,7 @@ public:
 	void DebugDraw(Transform* transform);
 
 	toml::table Serialise(unsigned long long GUID) const;
+	static RigidBody* Load(toml::table table);
 	RigidBody(toml::table table);
 
 	bool ignoreThisCollision = false;

@@ -44,6 +44,8 @@ public:
 	void GUI();
 
 	toml::table Serialise(unsigned long long GUID) const;
+
+	static ModelRenderer* Load(toml::table toml);
 	ModelRenderer(toml::table table);
 
 	glm::vec3 GetMaterialOverlayColour();

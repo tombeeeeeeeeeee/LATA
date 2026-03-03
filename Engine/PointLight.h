@@ -36,6 +36,7 @@ public:
 
     PointLight() { SetRange(100.0f); };
     PointLight(toml::table table);
+    static PointLight* Load(toml::table table);
     PointLight(PointLightEffect _effect) : effect(_effect) {};
     virtual void GUI();
 

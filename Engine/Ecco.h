@@ -21,6 +21,7 @@ public:
 
 	Ecco() {};
 	Ecco(toml::table table);
+	static Ecco* Load(toml::table table);
 	
 	bool Update(
 		Input::InputDevice& inputDevice,

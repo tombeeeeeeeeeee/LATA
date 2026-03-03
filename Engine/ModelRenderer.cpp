@@ -204,6 +204,11 @@ toml::table ModelRenderer::Serialise(unsigned long long GUID) const
 	};
 }
 
+ModelRenderer* ModelRenderer::Load(toml::table table)
+{
+	return new ModelRenderer(table);
+}
+
 ModelRenderer::ModelRenderer(toml::table table)
 {
 	modelGUID = Serialisation::LoadAsUnsignedLongLong(table["modelGuid"]);

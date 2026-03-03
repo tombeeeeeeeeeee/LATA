@@ -23,6 +23,7 @@ public:
 
     Spotlight();
     Spotlight(toml::table table);
+    static Spotlight* Load(toml::table table);
     ~Spotlight();
 
     Spotlight(const Spotlight& other) = delete;

@@ -23,6 +23,7 @@ public:
 	bool state = false;
 	Door() {};
 	Door(toml::table table);
+	static Door* Load(toml::table table);
 
 	toml::table Serialise(unsigned long long guid);
 	void TriggerCall(std::string tag, bool toggle);

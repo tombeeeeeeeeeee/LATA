@@ -53,6 +53,11 @@ PressurePlate::PressurePlate(toml::table table)
 	atRestHeight = Serialisation::LoadAsFloat(table["atRestHeight"], 5.0f);
 }
 
+PressurePlate* PressurePlate::Load(toml::table table)
+{
+	return new PressurePlate(table);
+}
+
 toml::table PressurePlate::Serialise(unsigned long long guid)
 {
 	return toml::table

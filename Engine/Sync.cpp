@@ -38,10 +38,10 @@ Sync::Sync()
 
 Sync::Sync(toml::table table) : Sync()
 {
-	Load(table);
+	InternalLoad(table);
 }
 
-void Sync::Load(toml::table table)
+void Sync::InternalLoad(toml::table table)
 {
 	moveSpeed = Serialisation::LoadAsFloat(table["moveSpeed"]);
 	lookDeadZone = Serialisation::LoadAsFloat(table["lookDeadZone"]);
@@ -80,6 +80,12 @@ void Sync::Load(toml::table table)
 
 	stateMachineSetup = false;
 }
+
+Sync* Sync::Load(toml::table table)
+{
+	return new Sync(table);
+}
+
 
 void Sync::Start(SceneObject* sceneObjectWithAnimator)
 {

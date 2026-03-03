@@ -27,6 +27,7 @@ public:
 	int getMaxHealth();
 
 	toml::table Serialise(unsigned long long GUID) const;
+	static Health* Load(toml::table table);
 	Health(toml::table table);
 
 	void GUI();

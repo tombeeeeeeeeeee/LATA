@@ -201,6 +201,11 @@ toml::table RigidBody::Serialise(unsigned long long GUID) const
 	};
 }
 
+RigidBody* RigidBody::Load(toml::table table)
+{
+	return new RigidBody(table);
+}
+
 RigidBody::RigidBody(toml::table table)
 {
 	netForce = Serialisation::LoadAsVec2(table["netForce"]);

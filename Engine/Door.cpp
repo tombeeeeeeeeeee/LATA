@@ -15,6 +15,11 @@ Door::Door(toml::table table)
 	triggerTag = Serialisation::LoadAsString(table["triggerTag"]);
 }
 
+Door* Door::Load(toml::table table)
+{
+	return new Door(table);
+}
+
 toml::table Door::Serialise(unsigned long long guid)
 {
 	return toml::table{

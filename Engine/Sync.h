@@ -26,8 +26,7 @@ class Sync
 public:
 	Sync();
 	Sync(toml::table table);
-	void Load(toml::table table);
-
+	static Sync* Load(toml::table table);
 
 	void Start(SceneObject* sceneObjectWithAnimator);
 
@@ -125,4 +124,6 @@ private:
 	
 	bool reachedCharge1 = false;
 	bool reachedCharge2 = false;
+
+	void InternalLoad(toml::table table);
 };

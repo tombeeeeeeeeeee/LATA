@@ -15,6 +15,7 @@ class ExitElevator
 public:
 
 	ExitElevator() {};
+	static ExitElevator* Load(toml::table table);
 	ExitElevator(toml::table table);
 
 	bool Update(float delta);

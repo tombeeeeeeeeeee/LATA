@@ -12,6 +12,7 @@ class Bollard
 public:
 	Bollard() {};
 	Bollard(toml::table table);
+	static Bollard* Load(toml::table table);
 
 	void TriggerCall(std::string tag, bool toggle);
 

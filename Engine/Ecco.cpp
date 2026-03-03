@@ -478,4 +478,9 @@ Ecco::Ecco(toml::table table)
 	boostUI.Load(table["boostUI"].as_table());
 }
 
+Ecco* Ecco::Load(toml::table table)
+{
+	return new Ecco(table);
+}
+
 

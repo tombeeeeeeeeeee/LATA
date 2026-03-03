@@ -18,6 +18,7 @@ public:
 	void GUI();
 	Triggerable() {};
 	Triggerable(toml::table table);
+	static Triggerable* Load(toml::table table);
 	toml::table Serialise(unsigned long long guid);
 	void OnTrigger(unsigned int mask);
 

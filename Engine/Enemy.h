@@ -24,6 +24,7 @@ struct Enemy
 {
 	Enemy() {};
 	Enemy(toml::table table);
+	static Enemy* Load(toml::table table);
 	Enemy(int _type, std::string _tag, int frame = 0) { type = _type; tag = _tag; frameForCheck = frame;  hasLOS = false; };
 
 	int type = (int)EnemyType::spawnSpot;

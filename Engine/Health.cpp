@@ -53,6 +53,11 @@ toml::table Health::Serialise(unsigned long long GUID) const
 	};
 }
 
+Health* Health::Load(toml::table table)
+{
+	return new Health(table);
+}
+
 Health::Health(toml::table table)
 {
 	currHealth = Serialisation::LoadAsInt(table["currHealth"]);

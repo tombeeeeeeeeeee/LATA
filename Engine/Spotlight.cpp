@@ -24,6 +24,11 @@ Spotlight::Spotlight(toml::table table) : PointLight::PointLight(table)
 	Initialise();
 }
 
+Spotlight* Spotlight::Load(toml::table table)
+{
+	return new Spotlight(table);
+}
+
 Spotlight::~Spotlight()
 {
 	glDeleteTextures(1, &depthBuffer);

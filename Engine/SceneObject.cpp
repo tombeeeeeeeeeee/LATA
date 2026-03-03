@@ -29,12 +29,6 @@
 		safetyCheck &= ~Parts::##partsName;                                   \
 	}
 
-#define LoadPart(saveName, partsName, setter, type)         \
-	if (intendedParts & Parts::##partsName) {               \
-		/* TODO: likely leaking here, fix */                \
-		setter(new type(*table[saveName].as_table()));      \
-	}
-
 #define AddPartGUI(getter, setter, constructor, label) \
 if (getter() == nullptr) {                             \
 if (ImGui::MenuItem(label)) {                          \
@@ -658,10 +652,15 @@ void SceneObject::LoadWithParts(toml::table table)
 
 	unsigned long long intendedParts = Serialisation::LoadAsUnsignedIntOLD(sceneObjectTable["parts"]);
 
+
+#define LoadPart(saveName, partsName, setter, type, v)      \
+	if (intendedParts & Parts::##partsName) {               \
+		/* TODO: likely leaking here, fix */                \
+		setter(type::Load(*table[saveName].as_table()));    \
+	}
+
 	LoadPart("modelRenderer", modelRenderer, setModelRenderer, ModelRenderer);
-	if (intendedParts & Parts::animator) {
-		setAnimator(Animator::Load(*table["animator"].as_table()));
-	};
+	LoadPart("animator", animator, setAnimator, Animator);
 	LoadPart("rigidBody", rigidBody, setRigidBody, RigidBody);
 	LoadPart("health", health, setHealth, Health);
 	LoadPart("enemy", enemy, setEnemy, Enemy);
@@ -675,10 +674,7 @@ void SceneObject::LoadWithParts(toml::table table)
 	LoadPart("pointLight", pointLight, setPointLight, PointLight);
 	LoadPart("decal", decal, setDecal, Decal);
 	LoadPart("shadowWall", shadowWall, setShadowWall, ShadowWall);
-
-	if (intendedParts & Parts::collider) {
-		setCollider(Collider::Load(*table["collider"].as_table()));
-	}
+	LoadPart("collider", collider, setCollider, Collider);
 	LoadPart("ecco", ecco, setEcco, Ecco);
 	LoadPart("sync", sync, setSync, Sync);
 

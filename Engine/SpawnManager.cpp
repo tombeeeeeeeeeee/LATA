@@ -4,7 +4,7 @@
 #include "Serialisation.h"
 #include "TriggerSystem.h"
 
-void SpawnManager::Load(toml::table table)
+void SpawnManager::InternalLoad(toml::table table)
 {	
 	numToSpawn = Serialisation::LoadAsInt(table["numToSpawn"]);
 	timeBetweenSpawns = Serialisation::LoadAsFloat(table["timeBetweenSpawns"]);
@@ -28,7 +28,12 @@ void SpawnManager::Load(toml::table table)
 
 SpawnManager::SpawnManager(toml::table table)
 {
-	Load(table);
+	InternalLoad(table);
+}
+
+SpawnManager* SpawnManager::Load(toml::table table)
+{
+	return new SpawnManager(table);
 }
 
 void SpawnManager::TriggerCall(std::string tag, bool toggle)

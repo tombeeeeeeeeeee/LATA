@@ -5,6 +5,11 @@
 #include "EditorGUI.h"
 #include "Serialisation.h"
 
+Enemy* Enemy::Load(toml::table table)
+{
+	return new Enemy(table);
+}
+
 Enemy::Enemy(toml::table table)
 {
 	type = Serialisation::LoadAsInt(table["type"]);

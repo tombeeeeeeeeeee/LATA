@@ -21,6 +21,12 @@ ShadowWall::ShadowWall(toml::table table)
 	hasLocalMesh = Serialisation::LoadAsBool(table["hasLocalMesh"]);
 }
 
+ShadowWall* ShadowWall::Load(toml::table table)
+{
+	return new ShadowWall(table);
+}
+
+
 toml::table ShadowWall::Serialise(unsigned long long guid)
 {
 	return toml::table{ 

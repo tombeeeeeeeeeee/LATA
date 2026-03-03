@@ -27,6 +27,11 @@ ExitElevator::ExitElevator(toml::table table)
 	levelToLoad = Serialisation::LoadAsString(table["levelToLoad"]);
 }
 
+ExitElevator* ExitElevator::Load(toml::table table)
+{
+	return new ExitElevator(table);
+}
+
 bool ExitElevator::Update(float delta)
 {
 	if (syncInExit && eccoInExit)

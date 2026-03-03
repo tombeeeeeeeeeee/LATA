@@ -20,5 +20,6 @@ public:
 	Decal() {};
 	Decal(toml::table table);
 	void GUI();
+	static Decal* Load(toml::table table);
 	toml::table Serialise(unsigned long long guid);
 };

@@ -5,6 +5,11 @@
 #include "Material.h"
 #include "ResourceManager.h"
 
+Decal* Decal::Load(toml::table table)
+{
+	return new Decal(table);
+}
+
 Decal::Decal(toml::table table)
 {
 	depthOfDecal = Serialisation::LoadAsFloat(table["depthOfDecal"], 0.1f);

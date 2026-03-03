@@ -25,8 +25,8 @@ public:
 	std::string triggerTag;
 	std::string enemyTriggerTag;
 	SpawnManager() {};
-	void Load(toml::table table);
-	SpawnManager(toml::table);
+	SpawnManager(toml::table table);
+	static SpawnManager* Load(toml::table table);
 
 	void TriggerCall(std::string tag, bool toggle);
 
@@ -37,5 +37,9 @@ public:
 
 	void GUI();
 	toml::table Serialise(unsigned long long guid);
+
+private:
+
+	void InternalLoad(toml::table table);
 };
 

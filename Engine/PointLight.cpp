@@ -8,6 +8,10 @@
 #include "Serialisation.h"
 
 
+PointLight* PointLight::Load(toml::table table)
+{
+	return new PointLight(table);
+}
 
 PointLight::PointLight(toml::table table)
 {
