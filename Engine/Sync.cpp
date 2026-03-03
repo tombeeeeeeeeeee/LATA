@@ -490,9 +490,9 @@ void Sync::ShootMisfire(glm::vec3 pos)
 	shot->setRigidBody(new RigidBody(0.0f,0.0f));
 	PolygonCollider* collider = new PolygonCollider({ {0.0f,0.0f} }, misfireColliderRadius, CollisionLayers::sync);
 	collider->isTrigger = true;
-	shot->rigidbody()->addCollider(collider);
-	shot->rigidbody()->vel += fireDirection * misfireShotSpeed;
-	shot->rigidbody()->onTrigger.push_back([this](Collision collision) {misfireShotOnCollision(collision); });
+	shot->rigidBody()->addCollider(collider);
+	shot->rigidBody()->vel += fireDirection * misfireShotSpeed;
+	shot->rigidBody()->onTrigger.push_back([this](Collision collision) {misfireShotOnCollision(collision); });
 	shot->transform()->setPosition(pos);
 	shot->transform()->setScale(0.1f);
 

@@ -113,7 +113,7 @@ void GameTest::Start()
 
 			if (wallHere)
 			{
-				newSceneObject->rigidbody()->addCollider(new PolygonCollider({ 
+				newSceneObject->rigidBody()->addCollider(new PolygonCollider({
 					{x + 0.525f, yPos + 0.525f},  {x + 0.525f, yPos + -0.525f}, {x + -0.525f, yPos + -0.525f},  {x + -0.525f, yPos + 0.525f}, }, 0.0f));
 			}
 			else
@@ -164,7 +164,7 @@ void GameTest::Update(float delta)
 					nullptr,
 					*input.inputDevices[0],
 					*h->transform(),
-					*h->rigidbody(),
+					*h->rigidBody(),
 					&renderSystem.lines,
 					delta,
 					camera->transform.getEulerRotation().y,
@@ -177,7 +177,7 @@ void GameTest::Update(float delta)
 				ecco->Update(
 					*input.inputDevices[0],
 					*r->transform(),
-					*r->rigidbody(),
+					*r->rigidBody(),
 					*r->health(),
 					(Directional2dAnimator*)r->animator(),
 					delta,
@@ -193,7 +193,7 @@ void GameTest::Update(float delta)
 			ecco->Update(
 				*input.inputDevices[0],
 				*r->transform(),
-				*r->rigidbody(),
+				*r->rigidBody(),
 				*r->health(),
 				(Directional2dAnimator*)r->animator(),
 				delta,
@@ -206,7 +206,7 @@ void GameTest::Update(float delta)
 					nullptr,
 					*input.inputDevices[1],
 					*h->transform(),
-					*h->rigidbody(),
+					*h->rigidBody(),
 					&renderSystem.lines,
 					delta,
 					camera->transform.getEulerRotation().y,

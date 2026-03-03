@@ -189,7 +189,7 @@ void SceneObject::GUI()
 				{ -50, -50},
 				{ -50, +50}
 			}, 0.0f), ("Polygon Collider##Add part" + tag).c_str());
-		AddPartGUI(rigidbody, setRigidBody, RigidBody(), ("Rigid Body##Add part" + tag).c_str());
+		AddPartGUI(rigidBody, setRigidBody, RigidBody(), ("Rigid Body##Add part" + tag).c_str());
 		AddPartGUI(modelRenderer, setModelRenderer, ModelRenderer(), ("Model Renderer##Add part" + tag).c_str());
 		if(modelRenderer() != nullptr)
 		{ 
@@ -548,7 +548,7 @@ Animator* SceneObject::animator() {
 		return (scene->animators.at(GUID));
 	} return nullptr;
 }
-SetAndGetForPart(RigidBody, rigidBodies, Parts::rigidBody, RigidBody, rigidbody)
+SetAndGetForPart(RigidBody, rigidBodies, Parts::rigidBody, RigidBody, rigidBody)
 SetAndGetForPart(Health, healths, Parts::health, Health, health)
 SetAndGetForPart(Enemy, enemies, Parts::enemy, Enemy, enemy)
 SetAndGetForPart(ExitElevator, exits, Parts::exitElevator, ExitElevator, exitElevator)

@@ -416,11 +416,11 @@ void Scene::InitialiseLayers()
 {
 	////ecco
 	SceneObject* eccoSO = sceneObjects[eccos.begin()->first];
-	eccoSO->rigidbody()->onCollision.push_back([this](Collision collision) { eccos.begin()->second.OnCollision(collision); });
+	eccoSO->rigidBody()->onCollision.push_back([this](Collision collision) { eccos.begin()->second.OnCollision(collision); });
 	////sync
 	SceneObject* syncSO = sceneObjects[syncs.begin()->first];
 	//if (!syncSO->health()) syncSO->setHealth(new Health());
-	syncSO->rigidbody()->vel = { 0.0f, 0.0f };
+	syncSO->rigidBody()->vel = { 0.0f, 0.0f };
 
 	for (int i = 1; i < (int)CollisionLayers::count; i *= 2)
 	{

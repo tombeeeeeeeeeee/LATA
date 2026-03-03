@@ -303,7 +303,7 @@ void Ecco::OnCollision(Collision collision)
 {
 	if (collision.sceneObject->parts & Parts::enemy)
 	{
-		RigidBody* rb = collision.self->rigidbody();
+		RigidBody* rb = collision.self->rigidBody();
 		if (glm::dot(rb->vel, collision.normal) > 0.2f)
 		{
 			float speed = glm::length(rb->vel);
@@ -318,7 +318,7 @@ void Ecco::OnCollision(Collision collision)
 						collision.self->health()->addHealth(healingFromDamage);
 						timeSinceLastHeal = 0.0f;
 					}
-					collision.self->rigidbody()->AddImpulse(collision.normal * -speedReductionAfterDamaging);
+					collision.self->rigidBody()->AddImpulse(collision.normal * -speedReductionAfterDamaging);
 				}
 			}
 			else if (glm::length(rb->vel) > minSpeedDamageThreshold)
@@ -332,7 +332,7 @@ void Ecco::OnCollision(Collision collision)
 						collision.self->health()->addHealth(healingFromDamage);
 						timeSinceLastHeal = 0.0f;
 					}
-					collision.self->rigidbody()->AddImpulse(collision.normal * -speedReductionAfterDamaging);
+					collision.self->rigidBody()->AddImpulse(collision.normal * -speedReductionAfterDamaging);
 				}
 			}
 		}

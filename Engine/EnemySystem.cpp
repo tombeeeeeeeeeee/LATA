@@ -130,7 +130,7 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos, std::string tag)
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(explosiveEnemyHealth);
     enemy->setRigidBody(new RigidBody());
-    enemy->rigidbody()->invMass = 1.0f;
+    enemy->rigidBody()->invMass = 1.0f;
     enemy->setModelRenderer(
         explosiveEnemyRenderer
     );
@@ -139,8 +139,8 @@ void EnemySystem::SpawnExplosive(glm::vec3 pos, std::string tag)
     enemy->transform()->setPosition(pos + glm::vec3{0.0f, enemySpawnHeight, 0.0f});
     enemy->transform()->setStatic(false);
     enemy->health()->currHealth = explosiveEnemyHealth;
-    enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy));
-    enemy->rigidbody()->isStatic = false;
+    enemy->rigidBody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, explosiveEnemyColliderRadius, CollisionLayers::enemy));
+    enemy->rigidBody()->isStatic = false;
 }
 
 void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
@@ -152,7 +152,7 @@ void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
     enemy->setHealth(new Health());
     enemy->health()->setMaxHealth(meleeEnemyHealth);
     enemy->setRigidBody(new RigidBody());
-    enemy->rigidbody()->invMass = 1.0f;
+    enemy->rigidBody()->invMass = 1.0f;
     enemy->setModelRenderer(
         meleeEnemyRenderer
     );
@@ -161,8 +161,8 @@ void EnemySystem::SpawnMelee(glm::vec3 pos, std::string tag)
     enemy->transform()->setPosition(pos + glm::vec3{0.0f, enemySpawnHeight, 0.0f});
     enemy->transform()->setStatic(false);
     enemy->health()->currHealth = meleeEnemyHealth;
-    enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) );
-    enemy->rigidbody()->isStatic = false;
+    enemy->rigidBody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) );
+    enemy->rigidBody()->isStatic = false;
 }
 
 void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
@@ -175,7 +175,7 @@ void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
     enemy->health()->setMaxHealth(rangedEnemyHealth);
     enemy->health()->currHealth = rangedEnemyHealth;
     enemy->setRigidBody(new RigidBody());
-    enemy->rigidbody()->invMass = 1.0f;
+    enemy->rigidBody()->invMass = 1.0f;
     enemy->setModelRenderer(
         rangedEnemyRenderer
     );
@@ -183,8 +183,8 @@ void EnemySystem::SpawnRanged(glm::vec3 pos, std::string tag)
     enemy->transform()->setParent(nullptr);
     enemy->transform()->setStatic(false);
     enemy->transform()->setPosition(pos + glm::vec3{0.0f, enemySpawnHeight, 0.0f});
-    enemy->rigidbody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) );
-    enemy->rigidbody()->isStatic = false;
+    enemy->rigidBody()->addCollider(new PolygonCollider({{0.0f,0.0f}}, meleeEnemyColliderRadius, CollisionLayers::enemy) );
+    enemy->rigidBody()->isStatic = false;
 }
 
 void EnemySystem::SpawnExplosion(glm::vec3 pos)

@@ -17,7 +17,7 @@ void ExitElevator::Initialise(SceneObject* so)
 	{
 		if (so->parts & Parts::rigidBody)
 		{
-			so->rigidbody()->onTrigger.push_back([this](Collision collision) { OnTrigger(collision); });
+			so->rigidBody()->onTrigger.push_back([this](Collision collision) { OnTrigger(collision); });
 		}
 	}
 }

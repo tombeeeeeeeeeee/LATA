@@ -15,10 +15,10 @@ VelocityCondition::VelocityCondition(float _minVel, float _maxVel) :
 bool VelocityCondition::IsTrue(SceneObject* so) const
 {
 	// TODO: assign the rigidbody to check
-	RigidBody* rb = so->rigidbody();
+	RigidBody* rb = so->rigidBody();
 	if (!rb) {
 		if (so->transform()->getParent()) {
-			rb = so->transform()->getParent()->so->rigidbody();
+			rb = so->transform()->getParent()->so->rigidBody();
 		}
 		if (!rb) {
 			std::cout << "No rigidbody found for velocity\n";
