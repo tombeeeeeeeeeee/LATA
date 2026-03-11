@@ -215,35 +215,35 @@ bool CollisionFunctions::CircleOnPolyCheck(glm::vec2 circlePos, float radius, Po
 	return minDepth >= 0;
 }
 
-//TODO:
-CollisionPacket CollisionFunctions::CircleOnDirectionalPolyCollision(PolygonCollider* circle, DirectionalCollider directionalPoly, RigidBody* rigidBodyA, RigidBody* rigidBodyB, Transform* transformA, Transform* transformB)
-{
-	return CollisionPacket();
-}
+////TODO:
+//CollisionPacket CollisionFunctions::CircleOnDirectionalPolyCollision(PolygonCollider* circle, DirectionalCollider directionalPoly, RigidBody* rigidBodyA, RigidBody* rigidBodyB, Transform* transformA, Transform* transformB)
+//{
+//	return CollisionPacket();
+//}
 
-CollisionPacket CollisionFunctions::CircleOnPlaneCollision(PolygonCollider* circle, PlaneCollider* plane, RigidBody* rigidBodyA, RigidBody* rigidBodyB, Transform* transformA, Transform* transformB)
-{
-	CollisionPacket collision = CollisionPacket();
-	collision.rigidBodyA = rigidBodyA;
-	collision.rigidBodyB = rigidBodyB;
-	collision.colliderA = circle;
-	collision.colliderB = plane;
-	collision.soA = transformA->getSceneObject();
-	collision.soB = transformB->getSceneObject();
-
-	glm::vec2 posA = RigidBody::Transform2Din3DSpace(transformA->getGlobalMatrix(), { 0,0 });
-	glm::vec2 posB = RigidBody::Transform2Din3DSpace(transformB->getGlobalMatrix(), { 0,0 });
-	
-	collision.depth = circle->radius - (glm::dot(posA + circle->verts[0], plane->normal) - plane->displacement);
-	collision.normal = plane->normal;
-
-	collision.contactPoint = posA + circle->verts[0] - plane->normal * circle->radius;
-
-	collision.tangentA = collision.contactPoint - posA;
-	collision.tangentA = { -collision.tangentA.y, collision.tangentA.x };
-
-	return collision;
-}
+//CollisionPacket CollisionFunctions::CircleOnPlaneCollision(PolygonCollider* circle, PlaneCollider* plane, RigidBody* rigidBodyA, RigidBody* rigidBodyB, Transform* transformA, Transform* transformB)
+//{
+//	CollisionPacket collision = CollisionPacket();
+//	collision.rigidBodyA = rigidBodyA;
+//	collision.rigidBodyB = rigidBodyB;
+//	collision.colliderA = circle;
+//	collision.colliderB = plane;
+//	collision.soA = transformA->getSceneObject();
+//	collision.soB = transformB->getSceneObject();
+//
+//	glm::vec2 posA = RigidBody::Transform2Din3DSpace(transformA->getGlobalMatrix(), { 0,0 });
+//	glm::vec2 posB = RigidBody::Transform2Din3DSpace(transformB->getGlobalMatrix(), { 0,0 });
+//	
+//	collision.depth = circle->radius - (glm::dot(posA + circle->verts[0], plane->normal) - plane->displacement);
+//	collision.normal = plane->normal;
+//
+//	collision.contactPoint = posA + circle->verts[0] - plane->normal * circle->radius;
+//
+//	collision.tangentA = collision.contactPoint - posA;
+//	collision.tangentA = { -collision.tangentA.y, collision.tangentA.x };
+//
+//	return collision;
+//}
 
 CollisionPacket CollisionFunctions::PolyOnPolyCollision(PolygonCollider* polyA, PolygonCollider* polyB, RigidBody* rigidBodyA, RigidBody* rigidBodyB, Transform* transformA, Transform* transformB)
 {
@@ -349,61 +349,61 @@ CollisionPacket CollisionFunctions::PolyOnPolyCollision(PolygonCollider* polyA, 
 	return collision;
 }
 
-//TODO:
-CollisionPacket CollisionFunctions::PolyOnDirectionalPolyCollision(PolygonCollider* poly, DirectionalCollider* directionalPoly, RigidBody* rigidBodyA, RigidBody* rigidBodyB, Transform* transformA, Transform* transformB)
-{
-	return CollisionPacket();
-}
+////TODO:
+//CollisionPacket CollisionFunctions::PolyOnDirectionalPolyCollision(PolygonCollider* poly, DirectionalCollider* directionalPoly, RigidBody* rigidBodyA, RigidBody* rigidBodyB, Transform* transformA, Transform* transformB)
+//{
+//	return CollisionPacket();
+//}
+//
+//CollisionPacket CollisionFunctions::PolyOnPlaneCollision(PolygonCollider* poly, PlaneCollider* plane, RigidBody* rigidBodyA, RigidBody* rigidBodyB, Transform* transformA, Transform* transformB)
+//{
+//	CollisionPacket collision = CollisionPacket();
+//	collision.rigidBodyA = rigidBodyA;
+//	collision.rigidBodyB = rigidBodyB;
+//	collision.colliderA = poly;
+//	collision.colliderB = plane;
+//	collision.soA = transformA->getSceneObject();
+//	collision.soB = transformB->getSceneObject();
+//
+//	glm::vec2 posA = RigidBody::Transform2Din3DSpace(transformA->getGlobalMatrix(), { 0,0 });
+//	glm::vec2 posB = RigidBody::Transform2Din3DSpace(transformB->getGlobalMatrix(), { 0,0 });
+//
+//	glm::mat4 globalA = transformA->getGlobalMatrix();
+//	std::vector<glm::vec2> points;
+//	points.reserve(poly->verts.size());
+//	for (int i = 0; i < poly->verts.size(); i++)
+//	{
+//		points.push_back(RigidBody::Transform2Din3DSpace(globalA, poly->verts[i]));
+//	}
+//
+//	float depth = -FLT_MAX;
+//	int pointIndex = 0;
+//	for (int i = 0; i < points.size(); i++)
+//	{
+//		float pointDepth = -glm::dot(points[i], plane->normal) + plane->displacement;
+//		if (pointDepth > depth)
+//		{
+//			depth = pointDepth;
+//			pointIndex = i;
+//		}
+//	}
+//
+//	collision.depth = depth;
+//	collision.normal = plane->normal;
+//
+//	collision.contactPoint = points[pointIndex];
+//
+//	collision.tangentA = collision.contactPoint - posA;
+//	collision.tangentA = {-collision.tangentA.y, collision.tangentA.x};
+//
+//	return collision;
+//}
 
-CollisionPacket CollisionFunctions::PolyOnPlaneCollision(PolygonCollider* poly, PlaneCollider* plane, RigidBody* rigidBodyA, RigidBody* rigidBodyB, Transform* transformA, Transform* transformB)
-{
-	CollisionPacket collision = CollisionPacket();
-	collision.rigidBodyA = rigidBodyA;
-	collision.rigidBodyB = rigidBodyB;
-	collision.colliderA = poly;
-	collision.colliderB = plane;
-	collision.soA = transformA->getSceneObject();
-	collision.soB = transformB->getSceneObject();
-
-	glm::vec2 posA = RigidBody::Transform2Din3DSpace(transformA->getGlobalMatrix(), { 0,0 });
-	glm::vec2 posB = RigidBody::Transform2Din3DSpace(transformB->getGlobalMatrix(), { 0,0 });
-
-	glm::mat4 globalA = transformA->getGlobalMatrix();
-	std::vector<glm::vec2> points;
-	points.reserve(poly->verts.size());
-	for (int i = 0; i < poly->verts.size(); i++)
-	{
-		points.push_back(RigidBody::Transform2Din3DSpace(globalA, poly->verts[i]));
-	}
-
-	float depth = -FLT_MAX;
-	int pointIndex = 0;
-	for (int i = 0; i < points.size(); i++)
-	{
-		float pointDepth = -glm::dot(points[i], plane->normal) + plane->displacement;
-		if (pointDepth > depth)
-		{
-			depth = pointDepth;
-			pointIndex = i;
-		}
-	}
-
-	collision.depth = depth;
-	collision.normal = plane->normal;
-
-	collision.contactPoint = points[pointIndex];
-
-	collision.tangentA = collision.contactPoint - posA;
-	collision.tangentA = {-collision.tangentA.y, collision.tangentA.x};
-
-	return collision;
-}
-
-//TODO: 
-CollisionPacket CollisionFunctions::DirectionalPolyOnPlaneCollision(DirectionalCollider* directionalPoly, PlaneCollider* plane, RigidBody* rigidBodyA, RigidBody* rigidBodyB, Transform* transformA, Transform* transformB)
-{
-	return CollisionPacket();
-}
+////TODO: 
+//CollisionPacket CollisionFunctions::DirectionalPolyOnPlaneCollision(DirectionalCollider* directionalPoly, PlaneCollider* plane, RigidBody* rigidBodyA, RigidBody* rigidBodyB, Transform* transformA, Transform* transformB)
+//{
+//	return CollisionPacket();
+//}
 
 glm::vec2 CollisionFunctions::SATMinMax(glm::vec2 axis, std::vector<glm::vec2> verts)
 {

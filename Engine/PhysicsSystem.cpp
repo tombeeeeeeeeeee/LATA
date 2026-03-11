@@ -155,14 +155,14 @@ void PhysicsSystem::GetCollisions(
 					);
 					if (collision.depth >= -10) collisions.push_back(collision);
 				}
-				else if (colliderB->getType() == ColliderType::plane)
+				/*else if (colliderB->getType() == ColliderType::plane)
 				{
 					CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
 						(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
 						a, b, transformA, transformB
 					);
 					if (collision.depth >= -10) collisions.push_back(collision);
-				}
+				}*/
 				else if (colliderB->getType() == ColliderType::polygon)
 				{
 					CollisionPacket collision = CollisionFunctions::CircleOnPolyCollision(
@@ -172,25 +172,25 @@ void PhysicsSystem::GetCollisions(
 					if (collision.depth >= -10) collisions.push_back(collision);
 				}
 			}
-			else if (colliderA->getType() == ColliderType::plane)
-			{
-				if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
-				{
-					CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
-						(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
-						b, a, transformB, transformA
-					);
-					if (collision.depth >= -10) collisions.push_back(collision);
-				}
-				else if (colliderB->getType() == ColliderType::polygon)
-				{
-					CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
-						(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
-						b, a, transformB, transformA
-					);
-					if (collision.depth >= -10) collisions.push_back(collision);
-				}
-			}
+			//else if (colliderA->getType() == ColliderType::plane)
+			//{
+			//	if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
+			//	{
+			//		CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
+			//			(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
+			//			b, a, transformB, transformA
+			//		);
+			//		if (collision.depth >= -10) collisions.push_back(collision);
+			//	}
+			//	else if (colliderB->getType() == ColliderType::polygon)
+			//	{
+			//		CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
+			//			(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
+			//			b, a, transformB, transformA
+			//		);
+			//		if (collision.depth >= -10) collisions.push_back(collision);
+			//	}
+			//}
 			else if (colliderA->getType() == ColliderType::polygon)
 			{
 				if (colliderB->getType() == ColliderType::polygon)
@@ -201,14 +201,14 @@ void PhysicsSystem::GetCollisions(
 					);
 					if (collision.depth >= -10) collisions.push_back(collision);
 				}
-				else if (colliderB->getType() == ColliderType::plane)
+				/*else if (colliderB->getType() == ColliderType::plane)
 				{
 					CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
 						(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
 						a, b, transformA, transformB
 					);
 					if (collision.depth >= -10) collisions.push_back(collision);
-				}
+				}*/
 				else if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
 				{
 					CollisionPacket collision = CollisionFunctions::CircleOnPolyCollision(
@@ -243,15 +243,15 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 				if (collision.depth >= -collisionBuffer)
                     collisions.push_back(collision);
 			}
-			else if (colliderB->getType() == ColliderType::plane)
-			{
-				CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
-					(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
-					a, &dummyRigidBody, transformA, transformB
-				);
-				if (collision.depth >= -collisionBuffer)
-                    collisions.push_back(collision);
-			}
+			//else if (colliderB->getType() == ColliderType::plane)
+			//{
+			//	CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
+			//		(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
+			//		a, &dummyRigidBody, transformA, transformB
+			//	);
+			//	if (collision.depth >= -collisionBuffer)
+   //                 collisions.push_back(collision);
+			//}
 			else if (colliderB->getType() == ColliderType::polygon)
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnPolyCollision(
@@ -262,27 +262,27 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
                     collisions.push_back(collision);
 			}
 		}
-		else if (colliderA->getType() == ColliderType::plane)
-		{
-			if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
-			{
-				CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
-					(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
-					&dummyRigidBody, a, transformB, transformA
-				);
-				if (collision.depth >= -10)
-                    collisions.push_back(collision);
-			}
-			else if (colliderB->getType() == ColliderType::polygon)
-			{
-				CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
-					(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
-					&dummyRigidBody, a, transformB, transformA
-				);
-				if (collision.depth >= -10)
-                    collisions.push_back(collision);
-			}
-		}
+		//else if (colliderA->getType() == ColliderType::plane)
+		//{
+		//	if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
+		//	{
+		//		CollisionPacket collision = CollisionFunctions::CircleOnPlaneCollision(
+		//			(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
+		//			&dummyRigidBody, a, transformB, transformA
+		//		);
+		//		if (collision.depth >= -10)
+  //                  collisions.push_back(collision);
+		//	}
+		//	else if (colliderB->getType() == ColliderType::polygon)
+		//	{
+		//		CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
+		//			(PolygonCollider*)colliderB, (PlaneCollider*)colliderA,
+		//			&dummyRigidBody, a, transformB, transformA
+		//		);
+		//		if (collision.depth >= -10)
+  //                  collisions.push_back(collision);
+		//	}
+		//}
 		else if (colliderA->getType() == ColliderType::polygon)
 		{
 			if (colliderB->getType() == ColliderType::polygon)
@@ -294,15 +294,15 @@ void PhysicsSystem::GetCollisions(RigidBody* a, Collider* b, Transform* transfor
 				if (collision.depth >= -10)
 					collisions.push_back(collision);
 			}
-			else if (colliderB->getType() == ColliderType::plane)
-			{
-				CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
-					(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
-					a, &dummyRigidBody, transformA, transformB
-				);
-				if (collision.depth >= -10)
-                    collisions.push_back(collision);
-			}
+			//else if (colliderB->getType() == ColliderType::plane)
+			//{
+			//	CollisionPacket collision = CollisionFunctions::PolyOnPlaneCollision(
+			//		(PolygonCollider*)colliderA, (PlaneCollider*)colliderB,
+			//		a, &dummyRigidBody, transformA, transformB
+			//	);
+			//	if (collision.depth >= -10)
+   //                 collisions.push_back(collision);
+			//}
 			else if (colliderB->getType() == ColliderType::polygon && ((PolygonCollider*)colliderB)->verts.size() == 1)
 			{
 				CollisionPacket collision = CollisionFunctions::CircleOnPolyCollision(
@@ -709,24 +709,24 @@ CollisionPacket PhysicsSystem::RayCastAgainstCollider(glm::vec2 pos, glm::vec2 d
 	if (rigidBodiesInScene == nullptr) return collision;
 
 
-	if (collider->getType() == ColliderType::plane)
-	{
-		PlaneCollider* plane = (PlaneCollider*)collider;
-		float bDot = glm::dot(plane->normal, direction);
-		if(bDot > 0.0f)
-		{
-			float t = plane->displacement - glm::dot(pos, plane->normal);
-			t /= bDot;
-			if (t > 0.0f)
-			{
-				collision.contactPoint = pos + direction * t;
-				collision.colliderA = plane;
-				collision.normal = plane->normal;
-				collision.depth = glm::length(direction * t);
-				collision.soA = transform.getSceneObject();
-			}
-		}
-	}
+	//if (collider->getType() == ColliderType::plane)
+	//{
+	//	PlaneCollider* plane = (PlaneCollider*)collider;
+	//	float bDot = glm::dot(plane->normal, direction);
+	//	if(bDot > 0.0f)
+	//	{
+	//		float t = plane->displacement - glm::dot(pos, plane->normal);
+	//		t /= bDot;
+	//		if (t > 0.0f)
+	//		{
+	//			collision.contactPoint = pos + direction * t;
+	//			collision.colliderA = plane;
+	//			collision.normal = plane->normal;
+	//			collision.depth = glm::length(direction * t);
+	//			collision.soA = transform.getSceneObject();
+	//		}
+	//	}
+	//}
 	else if(collider->getType() == ColliderType::polygon)
 	{
 		PolygonCollider* poly = ((PolygonCollider*)collider);

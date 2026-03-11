@@ -37,9 +37,9 @@ Collider* Collider::Load(toml::table table)
 	case ColliderType::polygon:
 		return new PolygonCollider(table);
 	case ColliderType::plane:
-		return new PlaneCollider(table);
-	case ColliderType::directionalPoly:
-		return new DirectionalCollider(table);
+	//	return new PlaneCollider(table);
+	//case ColliderType::directionalPoly:
+	//	return new DirectionalCollider(table);
 	default:
 		std::cout << "Unsupported Collider attempting to load\n";
 		return nullptr;
@@ -98,6 +98,17 @@ Collider::Collider(toml::table table)
 {
 	isTrigger = Serialisation::LoadAsBool(table["isTrigger"]);
 	collisionLayer = Serialisation::LoadAsInt(table["collisionLayer"]);
+}
+
+PolygonCollider::PolygonCollider()
+{
+	verts = {
+		{ +50, +50 },
+		{ +50, -50 },
+		{ -50, -50 },
+		{ -50, +50 }
+	};
+	radius = 0.0f;
 }
 
 toml::table PolygonCollider::Serialise(unsigned long long GUID) const
@@ -171,64 +182,64 @@ void PolygonCollider::DebugDraw(Transform* transform)
 		RenderSystem::debugLines.FinishLineLoop();
 	}
 }
-
-toml::table PlaneCollider::Serialise(unsigned long long GUID) const
-{
-	toml::table table = Collider::Serialise(GUID);
-	table.emplace("normal", Serialisation::SaveAsVec2(normal));
-	table.emplace("displacement", displacement);
-
-	return table;
-}
-
-PlaneCollider::PlaneCollider(toml::table table) : Collider(table)
-{
-	normal = Serialisation::LoadAsVec2(table["normal"]);
-	displacement = Serialisation::LoadAsFloat(table["displacement"]);
-}
-
-void PlaneCollider::GUI()
-{
-	Collider::GUI();
-	ImGui::Indent();
-	std::string tag = Utilities::PointerToString(this);
-	// TODO: Better gui option for normal vectors
-	ImGui::DragFloat2(("Normal##" + tag).c_str(), &normal.x);
-	ImGui::DragFloat(("Displacement##" + tag).c_str(), &displacement);
-	ImGui::Unindent();
-}
-
-toml::table DirectionalCollider::Serialise(unsigned long long GUID) const
-{
-	toml::table table = Collider::Serialise(GUID);
-	toml::array savedFaces;
-	for (size_t i = 0; i < collidingFaces.size(); i++)
-	{
-		savedFaces.push_back(collidingFaces[i]);
-	}
-	table.emplace("collidingFaces", savedFaces);
-	return table;
-}
-
-DirectionalCollider::DirectionalCollider(toml::table table) : PolygonCollider(table)
-{
-	toml::array* loadingFaces = table["collidingFaces"].as_array();
-	for (size_t i = 0; i < loadingFaces->size(); i++)
-	{
-		collidingFaces.push_back(Serialisation::LoadAsInt(&loadingFaces->at(i)));
-	}
-}
-
-void DirectionalCollider::GUI()
-{
-	PolygonCollider::GUI();
-	ImGui::Indent();
-	std::string tag = Utilities::PointerToString(this);
-	if (ImGui::CollapsingHeader(("Colliding Faces##" + tag).c_str())) {
-		for (size_t i = 0; i < collidingFaces.size(); i++)
-		{
-			ImGui::DragInt(("##" + std::to_string(i) + tag).c_str(), &collidingFaces[i]);
-		}
-	}
-	ImGui::Unindent();
-}
+//
+//toml::table PlaneCollider::Serialise(unsigned long long GUID) const
+//{
+//	toml::table table = Collider::Serialise(GUID);
+//	table.emplace("normal", Serialisation::SaveAsVec2(normal));
+//	table.emplace("displacement", displacement);
+//
+//	return table;
+//}
+//
+//PlaneCollider::PlaneCollider(toml::table table) : Collider(table)
+//{
+//	normal = Serialisation::LoadAsVec2(table["normal"]);
+//	displacement = Serialisation::LoadAsFloat(table["displacement"]);
+//}
+//
+//void PlaneCollider::GUI()
+//{
+//	Collider::GUI();
+//	ImGui::Indent();
+//	std::string tag = Utilities::PointerToString(this);
+//	// TODO: Better gui option for normal vectors
+//	ImGui::DragFloat2(("Normal##" + tag).c_str(), &normal.x);
+//	ImGui::DragFloat(("Displacement##" + tag).c_str(), &displacement);
+//	ImGui::Unindent();
+//}
+//
+//toml::table DirectionalCollider::Serialise(unsigned long long GUID) const
+//{
+//	toml::table table = Collider::Serialise(GUID);
+//	toml::array savedFaces;
+//	for (size_t i = 0; i < collidingFaces.size(); i++)
+//	{
+//		savedFaces.push_back(collidingFaces[i]);
+//	}
+//	table.emplace("collidingFaces", savedFaces);
+//	return table;
+//}
+//
+//DirectionalCollider::DirectionalCollider(toml::table table) : PolygonCollider(table)
+//{
+//	toml::array* loadingFaces = table["collidingFaces"].as_array();
+//	for (size_t i = 0; i < loadingFaces->size(); i++)
+//	{
+//		collidingFaces.push_back(Serialisation::LoadAsInt(&loadingFaces->at(i)));
+//	}
+//}
+//
+//void DirectionalCollider::GUI()
+//{
+//	PolygonCollider::GUI();
+//	ImGui::Indent();
+//	std::string tag = Utilities::PointerToString(this);
+//	if (ImGui::CollapsingHeader(("Colliding Faces##" + tag).c_str())) {
+//		for (size_t i = 0; i < collidingFaces.size(); i++)
+//		{
+//			ImGui::DragInt(("##" + std::to_string(i) + tag).c_str(), &collidingFaces[i]);
+//		}
+//	}
+//	ImGui::Unindent();
+//}

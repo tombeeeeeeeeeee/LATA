@@ -61,30 +61,30 @@ struct PolygonCollider : public Collider
 	virtual const ColliderType getType() const { return ColliderType::polygon; };
 	PolygonCollider(std::vector<glm::vec2> _verts, float _radius, CollisionLayers layer = CollisionLayers::base) : verts(_verts), radius(_radius) { collisionLayer = (int)layer; };
 	PolygonCollider(float _radius) { radius = _radius; };
-	PolygonCollider() {};
+	PolygonCollider();
 	virtual toml::table Serialise(unsigned long long GUID) const;
 	PolygonCollider(toml::table table);
 	void GUI() override;
 	void DebugDraw(Transform* transform) override;
 };
 
-struct PlaneCollider : public Collider
-{
-	glm::vec2 normal;
-	float displacement;
-	virtual const ColliderType getType() const { return ColliderType::plane; };
-	virtual toml::table Serialise(unsigned long long GUID) const;
-	PlaneCollider(toml::table table);
-	void GUI() override;
-	void DebugDraw(Transform* transform) override {};
-};
-
-struct DirectionalCollider : public PolygonCollider
-{
-	std::vector<int> collidingFaces;
-	virtual const ColliderType getType() const { return ColliderType::directionalPoly; };
-	virtual toml::table Serialise(unsigned long long GUID) const;
-	DirectionalCollider(toml::table table);
-	void GUI() override;
-	void DebugDraw(Transform* transform) override {};
-};
+//struct PlaneCollider : public Collider
+//{
+//	glm::vec2 normal;
+//	float displacement;
+//	virtual const ColliderType getType() const { return ColliderType::plane; };
+//	virtual toml::table Serialise(unsigned long long GUID) const;
+//	PlaneCollider(toml::table table);
+//	void GUI() override;
+//	void DebugDraw(Transform* transform) override {};
+//};
+//
+//struct DirectionalCollider : public PolygonCollider
+//{
+//	std::vector<int> collidingFaces;
+//	virtual const ColliderType getType() const { return ColliderType::directionalPoly; };
+//	virtual toml::table Serialise(unsigned long long GUID) const;
+//	DirectionalCollider(toml::table table);
+//	void GUI() override;
+//	void DebugDraw(Transform* transform) override {};
+//};
