@@ -290,25 +290,6 @@ void SceneObject::DebugDraw()
 	//RenderSystem::debugLines.DrawLineSegment(t->getGlobalPosition(), t->getGlobalPosition() + t->forward() * s, { 0, 0, 1 });
 }
 
-void SceneObject::TriggerCall(std::string tag, bool toggle)
-{
-	// TODO: Adjust this so things register for the call instead, or something alike
-	if (parts & Parts::spawnManager)
-		scene->spawnManagers[GUID].TriggerCall(tag, toggle);
-
-	if (parts & Parts::door)
-		scene->doors[GUID].TriggerCall(tag, toggle);
-
-	if (parts & Parts::bollard)
-		scene->bollards[GUID].TriggerCall(tag, toggle);
-
-	if (parts & Parts::pointLight)
-		scene->pointLights[GUID].TriggerCall(tag, toggle);
-
-	if (parts & Parts::spotlight)
-		scene->spotlights[GUID].TriggerCall(tag, toggle);
-}
-
 toml::table SceneObject::Serialise() const
 {
 	auto parent = transform()->getParent();

@@ -21,6 +21,8 @@ public:
 	float timeToActuate = 0.2f;
 
 	static std::multimap<std::string, unsigned long long> triggerables;
+
+	static void TriggerCallOn(SceneObject* sceneObject, std::string tag, bool toggle);
 	static void TriggerTag(std::string tag, bool toggle);
 
 	void Start(

@@ -14,13 +14,35 @@
 
 std::multimap<std::string, unsigned long long> TriggerSystem::triggerables = {};
 
+
+
+void TriggerSystem::TriggerCallOn(SceneObject* sceneObject, std::string tag, bool toggle)
+{
+	// TODO: Adjust this so things register for the call instead, or something alike
+	if (sceneObject->parts & Parts::spawnManager)
+		sceneObject->scene->spawnManagers[sceneObject->GUID].TriggerCall(tag, toggle);
+
+	if (sceneObject->parts & Parts::door)
+		sceneObject->scene->doors[sceneObject->GUID].TriggerCall(tag, toggle);
+
+	if (sceneObject->parts & Parts::bollard)
+		sceneObject->scene->bollards[sceneObject->GUID].TriggerCall(tag, toggle);
+
+	if (sceneObject->parts & Parts::pointLight)
+		sceneObject->scene->pointLights[sceneObject->GUID].TriggerCall(tag, toggle);
+
+	if (sceneObject->parts & Parts::spotlight)
+		sceneObject->scene->spotlights[sceneObject->GUID].TriggerCall(tag, toggle);
+}
+
 void TriggerSystem::TriggerTag(std::string tag, bool toggle)
 {
 	if (tag == "") return;
 	auto range = triggerables.equal_range(tag);
 	for (auto& it = range.first; it != range.second; it++)
 	{
-		SceneManager::scene->sceneObjects[(*it).second]->TriggerCall(tag, toggle);
+		SceneObject* so = SceneManager::scene->sceneObjects[(*it).second];
+		TriggerCallOn(so, tag, toggle);
 	}
 }
 

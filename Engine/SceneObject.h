@@ -75,9 +75,7 @@ public:
 	static bool PartsFilterSelector(const std::string& label, unsigned int& parts);
 
 	void DebugDraw();
-
-	void TriggerCall(std::string tag, bool toggle);
-
+	
 	toml::table Serialise() const;
 	toml::table SerialiseWithParts() const;
 	toml::table SerialiseWithPartsAndChildren() const;
