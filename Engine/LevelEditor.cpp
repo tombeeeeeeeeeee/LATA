@@ -12,6 +12,7 @@
 #include "UserPreferences.h"
 #include "PrefabManager.h"
 #include "RayAgainstOBB.h"
+#include "Collision.h"
 
 #include "ExtraEditorGUI.h"
 #include "Serialisation.h"
