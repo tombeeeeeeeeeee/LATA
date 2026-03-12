@@ -132,5 +132,4 @@ protected:
 	void LoadSceneObjectsAndParts(toml::table& data);
 	void EnsureAllPartsHaveSceneObject();
 	void EnsurePartsValueMatchesParts();
-	void InitialiseLayers();
 };

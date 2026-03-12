@@ -963,6 +963,52 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	}
 }
 
+void LevelEditor::InitialiseLayers()
+{
+	// TODO: Shouldn't be direct sync/ecco references here, there should be an inherited function
+////ecco
+	SceneObject* eccoSO = sceneObjects[eccos.begin()->first];
+	eccoSO->rigidBody()->onCollision.push_back([this](Collision collision) { eccos.begin()->second.OnCollision(collision); });
+	////sync
+	SceneObject* syncSO = sceneObjects[syncs.begin()->first];
+	//if (!syncSO->health()) syncSO->setHealth(new Health());
+	syncSO->rigidBody()->vel = { 0.0f, 0.0f };
+
+	for (int i = 1; i < (int)CollisionLayers::count; i *= 2)
+	{
+
+		physicsSystem.SetCollisionLayerMask((int)CollisionLayers::reflectiveSurface, i, false);
+		physicsSystem.SetCollisionLayerMask((int)CollisionLayers::count, i, false);
+		physicsSystem.SetCollisionLayerMask(i, i, false);
+		switch (i)
+		{
+		case (int)CollisionLayers::base:
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::trigger, i, false);
+			break;
+		case (int)CollisionLayers::enemy:
+			physicsSystem.SetCollisionLayerMask(i, i, true);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
+			break;
+		case (int)CollisionLayers::trigger:
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::enemyProjectile, i, false);
+			break;
+		case (int)CollisionLayers::enemyProjectile:
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::softCover, i, false);
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
+			break;
+		case (int)CollisionLayers::softCover:
+			physicsSystem.SetCollisionLayerMask((int)CollisionLayers::halfCover, i, false);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 void LevelEditor::ModelPlacer(glm::vec2 targetPos)
 {
 	glm::vec3 pos = { targetPos.x, assetPlacerHeight, targetPos.y };

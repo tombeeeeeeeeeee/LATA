@@ -141,5 +141,6 @@ public:
 	void Save() override;
 	void Load() override;
 	void LoadLevel( bool inPlayMaintained = false, std::string levelToLoad = "" );
+	void InitialiseLayers();
 };
 
