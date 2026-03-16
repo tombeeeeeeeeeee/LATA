@@ -134,7 +134,6 @@ public:
 	LevelEditor();
 	void Start() override;
 	void Update(float delta) override;
-	void Draw(float delta) override;
 	void GUI() override;
 	void OnMouseDown() override;
 	~LevelEditor() override;

@@ -93,23 +93,6 @@ void LocWorkshop::Update(float delta)
 {
 }
 
-void LocWorkshop::Draw(float delta)
-{
-	renderSystem.Update(
-		renderers,
-		transforms,
-		renderers,
-		animators,
-		pointLights,
-		spotlights,
-		decals,
-		shadowWalls,
-		camera,
-		delta,
-		particleSystem.particles
-	);
-}
-
 void LocWorkshop::GUI()
 {
 }

@@ -326,7 +326,22 @@ void SceneManager::Draw()
 		}
 	}
 
-	scene->Draw(deltaTime);
+	scene->BeforeDraw(deltaTime);
+	scene->renderSystem.Update(
+		scene->renderers,
+		scene->transforms,
+		scene->renderers,
+		scene->animators,
+		scene->pointLights,
+		scene->spotlights,
+		scene->decals,
+		scene->shadowWalls,
+		scene->camera,
+		deltaTime,
+		scene->particleSystem.particles
+	);
+	scene->AfterDraw(deltaTime);
+
 	scene->renderSystem.lines.Clear();
 	scene->renderSystem.debugLines.Clear();
 	scene->gui.Update();

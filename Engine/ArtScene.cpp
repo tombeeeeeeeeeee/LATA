@@ -404,22 +404,6 @@ void ArtScene::Update(float delta)
 {
 }
 
-void ArtScene::Draw(float delta)
-{
-	renderSystem.Update(
-		renderers,
-		transforms,
-		renderers,
-		animators,
-		pointLights,
-		spotlights,
-		decals,
-		shadowWalls,
-		camera, 
-		delta
-	);
-}
-
 void ArtScene::GUI()
 {
 	if (ImGui::Begin("Art Stuff", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {

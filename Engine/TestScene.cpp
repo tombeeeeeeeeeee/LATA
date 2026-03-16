@@ -14,22 +14,6 @@ void TestScene::Update(float delta)
 {
 }
 
-void TestScene::Draw(float delta)
-{
-	renderSystem.Update(
-		renderers,
-		transforms,
-		renderers,
-		animators,
-		pointLights,
-		spotlights,
-		decals,
-		shadowWalls,
-		camera,
-		delta
-	);
-}
-
 void TestScene::OnMouseDown()
 {
 

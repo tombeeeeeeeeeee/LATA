@@ -18,22 +18,6 @@ void InputTest::Start()
 void InputTest::Update(float delta)
 {
 	input.Update();
-}
-
-void InputTest::Draw(float delta)
-{
-	renderSystem.Update(
-		renderers,
-		transforms,
-		renderers,
-		animators,
-		pointLights,
-		spotlights,
-		decals,
-		shadowWalls,
-		camera,
-		delta
-	);
 
 }
 

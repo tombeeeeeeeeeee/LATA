@@ -311,22 +311,6 @@ void GameTest::Update(float delta)
 	}
 }
 
-void GameTest::Draw(float delta)
-{
-	renderSystem.Update(
-		renderers,
-		transforms,
-		renderers,
-		animators,
-		pointLights,
-		spotlights,
-		decals,
-		shadowWalls,
-		camera,
-		delta
-	);
-}
-
 void GameTest::GUI()
 {
 	gameCamSystem.GUI();
