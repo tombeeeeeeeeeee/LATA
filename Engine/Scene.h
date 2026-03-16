@@ -92,6 +92,7 @@ std::unordered_map<unsigned long long, cls store> container = {};
 	DoorAndBollardSystem dabSystem;
 	ParticleSystem particleSystem;
 	Audio audio;
+	Input input{ gui };
 
 	virtual void Start() {};
 	virtual void Update(float delta) {};

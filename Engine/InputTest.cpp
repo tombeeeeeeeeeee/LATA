@@ -8,7 +8,6 @@ InputTest::InputTest()
 
 void InputTest::Start()
 {
-	input.Initialise();
 	input.ShowAllControllerSlotStatuses();
 	directionalLight = DirectionalLight
 	({ 1.0f, 1.0f, 1.0f }, { -0.533f, -0.533f, -0.533f });
@@ -17,8 +16,6 @@ void InputTest::Start()
 
 void InputTest::Update(float delta)
 {
-	input.Update();
-
 }
 
 void InputTest::GUI()

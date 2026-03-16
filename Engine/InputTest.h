@@ -8,9 +8,6 @@ class InputTest : public Scene
 {
 public:
 
-	Input input{ gui };
-
-
 	InputTest();
 	void Start() override;
 	void Update(float delta) override;

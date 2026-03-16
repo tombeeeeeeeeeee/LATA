@@ -216,7 +216,7 @@ SceneManager::SceneManager(Scene* _scene)
 	scene->particleSystem.Initialise(particleShader);
 
 	scene->audio.Initialise();
-
+	scene->input.Initialise();
 	scene->Start();
 
 	scene->renderSystem.Start(
@@ -271,6 +271,8 @@ void SceneManager::Update()
 	// Delete sceneobjects marked for deletion
 	scene->DeleteSceneObjectsMarkedForDelete();
 	scene->Update(deltaTime);
+	scene->input.Update();
+
 }
 
 void SceneManager::Draw()

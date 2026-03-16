@@ -53,8 +53,6 @@ void GameTest::Start()
 
 	h->transform()->setPosition({ 1.0f,0.0f,1.0f });
 
-	input.Initialise();
-
 	h->setRigidBody(hRb);
 	r->setRigidBody(rRb);
 
@@ -142,8 +140,6 @@ void GameTest::Update(float delta)
 
 	Ecco* ecco = r->ecco();
 	Sync* sync = h->sync();
-
-	input.Update();
 
 	if (firstFrame)
 	{
