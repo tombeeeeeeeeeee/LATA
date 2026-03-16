@@ -20,6 +20,7 @@
 #include "InvisibleWall.h"
 #include "Sync.h"
 #include "Ecco.h"
+#include "Input.h"
 
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
