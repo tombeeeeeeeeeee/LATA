@@ -1,6 +1,6 @@
 #include "ExitElevator.h"
 
-#include "LevelEditor.h"
+#include "GameSyncEcco.h"
 #include "SceneManager.h"
 #include "Collision.h"
 #include "SceneObject.h"
@@ -32,22 +32,21 @@ ExitElevator* ExitElevator::Load(toml::table table)
 	return new ExitElevator(table);
 }
 
-bool ExitElevator::Update(float delta)
+bool ExitElevator::Update(GameSyncEcco* game, float delta)
 {
 	if (syncInExit && eccoInExit)
 	{
-		LevelEditor* levelEditor = ((LevelEditor*)SceneManager::scene);
 		if (!countingDown) {
-			timerTillLevelSwitch = levelEditor->fadeOutTime;
-			levelEditor->fadeTimer = 0.0f;
-			levelEditor->fadeOut = true;
+			timerTillLevelSwitch = game->fadeOutTime;
+			game->fadeTimer = 0.0f;
+			game->fadeOut = true;
 
 			countingDown = true;
 		}
 		if (timerTillLevelSwitch <= 0.0f) {
 			syncInExit = eccoInExit = false;
-			levelEditor->LoadLevel(true, levelToLoad);
-			levelEditor->fadeOut = false;
+			game->LoadLevel(true, levelToLoad);
+			game->fadeOut = false;
 			return true;
 		}
 		else {

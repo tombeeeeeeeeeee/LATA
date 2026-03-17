@@ -4,6 +4,8 @@
 
 struct Collision;
 class SceneObject;
+class GameSyncEcco;
+
 namespace toml {
 	inline namespace v3 {
 		class table;
@@ -18,7 +20,7 @@ public:
 	static ExitElevator* Load(toml::table table);
 	ExitElevator(toml::table table);
 
-	bool Update(float delta);
+	bool Update(GameSyncEcco* game, float delta);
 	void OnTrigger(Collision collision);
 
 	void PartGUI();
