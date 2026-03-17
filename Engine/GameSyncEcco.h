@@ -1,7 +1,6 @@
 #pragma once
 #include "Scene.h"
 
-#include "Input.h"
 #include "Lights.h"
 #include "Mesh.h"
 
@@ -9,7 +8,7 @@
 
 #include <unordered_map>
 
-class LevelEditor : public Scene
+class GameSyncEcco : public Scene
 {
 private:
 
@@ -27,20 +26,9 @@ private:
 	Mesh healthBar;
 	Shader* healthShader = nullptr;
 
-	enum class BrushState {
-		none,
-		brush,
-		modelPlacer,
-		prefabPlacer,
-		viewSelect,
-	};
-	BrushState state = BrushState::none;
-
 	SceneObject* groundTileParent;
 
 	std::unordered_map<std::pair<int, int>, SceneObject*, hashFNV1A> tiles = {};
-
-	Model* ground = nullptr;
 
 	unsigned int tileCount = 0;
 
@@ -57,9 +45,6 @@ private:
 
 	bool openSaveAs = false;
 	bool openLoad = false;
-
-	// TODO: Should be apart of base scene
-	Input input{ gui };
 
 	float syncRadius = 10.0f;
 
@@ -81,43 +66,15 @@ private:
 
 	float defaultColliderLength = 50.0f;
 
-	bool showGrid = false;
-	float placementGridSize = 50.0f;
-	float placementGridHeight = 1.0f;
-	bool placementGridUseDebugLines = false;
-	glm::vec3 gridColour = { 1.0f, 1.0f, 1.0f };
-	bool snapToGridEnabled = false;
-
-	float selectSize = 50.0f;
-
-	bool multiSelecting = false;
-	glm::vec2 multiSelectingPos = { 0.0f, 0.0f };
-
 	bool died = false;
 	bool prevDied = false;
 
 	void RefreshMinMaxes();
 
-	SceneObject* CellAt(float x, float z);
-	SceneObject* CellAt(int x, int z);
-
-	// Worldspace placing issue
-	//SceneObject* PlaceWallAt(float x, float z, float direction, unsigned long long prefab);
-	SceneObject* PlaceTileAt(float x, float z);
-
-	void Brush(glm::vec2 targetCell);
-	void Eraser(glm::vec2 targetCell);
-	void ModelPlacer(glm::vec2 targetPos);
-	void PrefabPlacer(glm::vec2 targetPos);
-	void Selector(glm::vec2 targetPos);
-	void DrawGrid();
-
 	void SaveAsPrompt();
 	void LoadPrompt();
 
 	void SaveLevel();
-
-	glm::vec2 EditorCamMouseToWorld() const;
 
 	const float timeToShowDeathPicture = 3.0f;
 	float timerShowDeathPicture = 0.0f;
@@ -131,16 +88,16 @@ public:
 	float fadeOutTime = 1.5f;
 
 
-	LevelEditor();
+	GameSyncEcco();
 	void Start() override;
 	void Update(float delta) override;
-	void Draw(float delta) override;
+	void AfterDraw(float delta) override;
 	void GUI() override;
-	void OnMouseDown() override;
-	~LevelEditor() override;
+	~GameSyncEcco() override;
 	void Save() override;
 	void Load() override;
 	void LoadLevel(bool inPlayMaintained = false, std::string levelToLoad = "");
+	//static void LoadLevel(bool inPlayMaintained, std::string levelToLoad);
 	void InitialiseLayers();
 };
 

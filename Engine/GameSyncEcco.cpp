@@ -1,4 +1,4 @@
-#include "LevelEditor.h"
+#include "GameSyncEcco.h"
 
 #include "SceneObject.h"
 #include "ResourceManager.h"
@@ -21,7 +21,7 @@
 #include <iostream>
 #include <filesystem>
 
-void LevelEditor::RefreshMinMaxes()
+void GameSyncEcco::RefreshMinMaxes()
 {
 	// TODO: prob don't need a seperate min and maxes and could use the other one
 	float minX = FLT_MAX;
@@ -55,62 +55,13 @@ void LevelEditor::RefreshMinMaxes()
 	renderSystem.mapDelta = { maxX - minX, maxZ - minZ };
 }
 
-SceneObject* LevelEditor::CellAt(float x, float z)
-{
-	return CellAt((int)x, (int)z);
-}
-
-SceneObject* LevelEditor::CellAt(int x, int z)
-{
-	auto tile = tiles.find({ x, z });
-	if (tile == tiles.end()) { return nullptr; }
-	else { return tile->second; }
-}
-
-SceneObject* LevelEditor::PlaceTileAt(float x, float z)
-{
-	SceneObject* newTile = new SceneObject(this, "tile " + std::to_string(++tileCount));
-	newTile->setModelRenderer(new ModelRenderer(ground, (unsigned long long)0));
-	newTile->transform()->setPosition({ x * gridSize, 0.0f, z * gridSize });
-	newTile->transform()->setParent(groundTileParent->transform());
-	tiles[{(int)x, (int)z}] = newTile;
-	return newTile;
-}
-
-void LevelEditor::Brush(glm::vec2 targetCell)
-{
-	SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
-	if (alreadyPlaced) {
-		return;
-	}
-	PlaceTileAt(targetCell.x, targetCell.y);
-	// other setup here
-	gridMinX = (int)fminf(targetCell.x, (float)gridMinX);
-	gridMinZ = (int)fminf(targetCell.y, (float)gridMinZ);
-
-	gridMaxX = (int)fmaxf(targetCell.x, (float)gridMaxX);
-	gridMaxZ = (int)fmaxf(targetCell.y, (float)gridMaxZ);
-}
-
-void LevelEditor::Eraser(glm::vec2 targetCell)
-{
-	SceneObject* alreadyPlaced = CellAt(targetCell.x, targetCell.y);
-	if (!alreadyPlaced) {
-		return;
-	}
-	DeleteSceneObjectAndChildren(alreadyPlaced->GUID);
-	tiles.erase({ (int)targetCell.x, (int)targetCell.y });
-}
-
-LevelEditor::LevelEditor() :
+GameSyncEcco::GameSyncEcco() :
 	groundTileParent(new SceneObject(this, "Ground Tiles"))
 {
 }
 
-void LevelEditor::Start()
+void GameSyncEcco::Start()
 {
-	input.Initialise();
-
 	directionalLight.colour = { 0.0f, 0.0f, 0.0f };
 	gameUiOverlay = ResourceManager::LoadTexture("images/gameUiOverlay.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
 	deathScreen = ResourceManager::LoadTexture("images/DeathScreen1.png", Texture::Type::albedo, GL_CLAMP_TO_EDGE);
@@ -134,8 +85,6 @@ void LevelEditor::Start()
 
 	camera->farPlane = 100000.0f;
 	camera->nearPlane = 10.0f;
-
-	ground = ResourceManager::LoadModelAsset(Paths::modelSaveLocation + "SM_FloorTile" + Paths::modelExtension);
 
 	syncSo = new SceneObject(this, "Sync");
 	syncSo->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(2091576977596946314ull));
@@ -162,7 +111,6 @@ void LevelEditor::Start()
 	eccoSo->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(2091576976424546894ull));
 
 	gameCamSystem.cameraPositionDelta = { -150.0f, 100.0f, 150.0f };
-
 
 	physicsSystem.SetCollisionLayerMask((int)CollisionLayers::sync, (int)CollisionLayers::sync, false);
 
@@ -195,52 +143,12 @@ void LevelEditor::Start()
 
 	healthBar.InitialiseQuad(1.0f);
 	healthShader = ResourceManager::LoadShader("healthBar");
-
 }
 
-void LevelEditor::Update(float delta)
+void GameSyncEcco::Update(float delta)
 {
 	directionalLight.colour = { 0.0f, 0.0f, 0.0f };
 	bool playerDied = false;
-	if (showGrid) {
-		DrawGrid();
-	}
-	if (snapToGridEnabled) {
-		// TODO: Move to its own function
-		if (gui.getSelected()) {
-			glm::vec3 pos = gui.getSelected()->transform()->getPosition();
-			float previousY = pos.y;
-
-			pos -= glm::vec3((gridMinX - 0.5f) * gridSize, 0, (gridMinZ - 0.5f) * gridSize);
-			pos = glm::round(pos / placementGridSize) * placementGridSize;
-			pos += glm::vec3((gridMinX - 0.5f) * gridSize, 0, (gridMinZ - 0.5f) * gridSize);
-
-			gui.getSelected()->transform()->setPosition({ pos.x, previousY, pos.z });
-		}
-	}
-
-	if (multiSelecting && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
-		multiSelecting = false;
-		glm::vec2 mousePos = EditorCamMouseToWorld();
-		std::vector<SceneObject*> selected;
-		for (auto& i : transforms)
-		{
-			Transform* parent = i.second.getParent();
-			if (parent) {
-				if (parent->getSceneObject() == groundTileParent) {
-					continue;
-				}
-			}
-			glm::vec2 pos = i.second.get2DGlobalPosition();
-			if (pos.x > fminf(multiSelectingPos.x, mousePos.x) &&
-				pos.x < fmaxf(multiSelectingPos.x, mousePos.x) &&
-				pos.y > fminf(multiSelectingPos.y, mousePos.y) &&
-				pos.y < fmaxf(multiSelectingPos.y, mousePos.y)) {
-				selected.push_back(i.second.so);
-			}
-		}
-		gui.setSelected(selected);
-	}
 
 	if (!lastFramePlayState && inPlay) //On Play Enter
 	{
@@ -260,8 +168,6 @@ void LevelEditor::Update(float delta)
 		for (auto& pair : exits) pair.second.Initialise(sceneObjects[pair.first]);
 
 		renderSystem.PlayStart(pointLights, spotlights);
-
-		state = BrushState::none;
 
 		camera->nearPlane = 5000.0f;
 		camera->farPlane = 100000.0f;
@@ -292,8 +198,6 @@ void LevelEditor::Update(float delta)
 
 	lastFramePlayState = inPlay;
 	LineRenderer& lines = renderSystem.lines;
-	input.Update();
-
 
 	if (input.inputDevices.size() > 0)
 	{
@@ -364,7 +268,7 @@ void LevelEditor::Update(float delta)
 
 		for (auto& exitPair : exits)
 		{
-			if (exitPair.second.Update(delta))
+			if (exitPair.second.Update(this, delta))
 				return;
 		}
 
@@ -455,18 +359,6 @@ void LevelEditor::Update(float delta)
 		}
 	}
 
-	glm::vec2 targetCell = EditorCamMouseToWorld() / gridSize;
-	targetCell = glm::vec2{ roundf(targetCell.x), roundf(targetCell.y) };
-
-	if (ImGui::GetIO().WantCaptureMouse) { return; }
-	if (state == BrushState::brush && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-		Brush(targetCell);
-	}
-	// TODO: Refresh mins and maxes
-	if (state == BrushState::brush && glfwGetMouseButton(SceneManager::window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-		Eraser(targetCell);
-	}
-
 	if (glfwGetKey(SceneManager::window, GLFW_KEY_F1))
 	{
 		LoadLevel(inPlay, "MainMenu");
@@ -497,22 +389,8 @@ void LevelEditor::Update(float delta)
 	}
 }
 
-void LevelEditor::Draw(float delta)
+void GameSyncEcco::AfterDraw(float delta)
 {
-	renderSystem.Update(
-		renderers,
-		transforms,
-		renderers,
-		animators,
-		pointLights,
-		spotlights,
-		decals,
-		shadowWalls,
-		camera,
-		delta,
-		particleSystem.particles
-	);
-
 	if (windowName == "MainMenu") {
 		Health* health = eccoSo->health();
 		health->currHealth = health->getMaxHealth();
@@ -562,7 +440,7 @@ void LevelEditor::Draw(float delta)
 	}
 }
 
-void LevelEditor::GUI()
+void GameSyncEcco::GUI()
 {
 	if (ImGui::Begin("Level Editor")) {
 
@@ -601,58 +479,6 @@ void LevelEditor::GUI()
 				camera->state = Camera::targetingPlayersPerspective;
 			}
 		}
-
-		if (ImGui::Combo("Brush Mode", (int*)&state, "None\0Brush\0Model Placer\0Prefab Placer\0View Select\0\0")) {
-			switch (state)
-			{
-			case LevelEditor::BrushState::none:
-				camera->state = Camera::State::editorMode;
-				break;
-			case LevelEditor::BrushState::brush: [[fallthrough]];
-			case LevelEditor::BrushState::modelPlacer: [[fallthrough]];
-			case LevelEditor::BrushState::prefabPlacer: [[fallthrough]];
-			case LevelEditor::BrushState::viewSelect:
-				camera->state = Camera::State::tilePlacing;
-				camera->transform.setEulerRotation({ 90.0f, 180.0f, 0.0f });
-				glm::vec3 pos = camera->transform.getPosition();
-				pos.y = fmaxf(pos.y, 600);
-				camera->transform.setPosition(pos);
-				break;
-			default:
-				break;
-			}
-		}
-
-		ImGui::Indent();
-		if (state == BrushState::modelPlacer) {
-			ResourceManager::ModelSelector("Asset To Place", &assetPlacer);
-			ImGui::ColorEdit3("Asset Placement Colour", &assetPlacerColour.x);
-		}
-		if (state == BrushState::prefabPlacer) {
-			PrefabManager::PrefabSelector();
-		}
-		if (state == BrushState::modelPlacer || state == BrushState::prefabPlacer) {
-			ImGui::DragFloat("Placement Height", &assetPlacerHeight);
-			ImGui::DragFloat("Placement Rotation", &assetPlacerRotation);
-		}
-		ImGui::Unindent();
-
-		ImGui::Checkbox("Snap To Grid", &snapToGridEnabled);
-		if (ImGui::CollapsingHeader("Grid")) {
-			ImGui::Checkbox("Show##Grid", &showGrid);
-			if (!showGrid) {
-				ImGui::BeginDisabled();
-			}
-			ImGui::Checkbox("Always Visible##Grid", &placementGridUseDebugLines);
-			if (ImGui::InputFloat("Size##Grid", &placementGridSize, 10.0f, 100.0f)) {
-				placementGridSize = fmaxf(placementGridSize, 10.0f);
-			}
-			ImGui::DragFloat("Height##Grid", &placementGridHeight);
-			ImGui::ColorEdit3("Colour##Grid", &gridColour.x);
-			if (!showGrid) {
-				ImGui::EndDisabled();
-			}
-		}
 	}
 	ImGui::End();
 
@@ -673,88 +499,7 @@ void LevelEditor::GUI()
 	}
 }
 
-void LevelEditor::OnMouseDown()
-{
-	if (state == BrushState::modelPlacer && assetPlacer != nullptr) {
-		glm::vec2 mouseWorld = EditorCamMouseToWorld();
-		ModelPlacer(mouseWorld);
-	}
-
-	if (state == BrushState::prefabPlacer) {
-		glm::vec2 mouseWorld = EditorCamMouseToWorld();
-		PrefabPlacer(mouseWorld);
-	}
-
-	if (camera->state == Camera::State::tilePlacing && state == BrushState::viewSelect) {
-		glm::vec2 mouseWorld = EditorCamMouseToWorld();
-		if (glfwGetKey(SceneManager::window, GLFW_KEY_LEFT_SHIFT)) {
-			multiSelecting = true;
-			multiSelectingPos = mouseWorld;
-		}
-		else {
-			Selector(mouseWorld);
-		}
-	}
-
-	if (camera->state == Camera::State::editorMode && state == BrushState::none) {
-
-
-		glm::vec2 cursorPosNDC = (*cursorPos * 2.0f) - glm::vec2(1.0f, 1.0f);
-
-		glm::vec4 clipPos = glm::inverse(SceneManager::projection) * glm::vec4{ cursorPosNDC.x, cursorPosNDC.y, -1.0f, 1.0f };
-
-		glm::vec3 screenPos = glm::vec3(clipPos) / clipPos.w;
-		glm::vec4 worldPosNearPlanevec4 = (glm::inverse(SceneManager::view) * glm::vec4(screenPos, 1.0f));
-		glm::vec3 worldPosNearPlane = glm::vec3(worldPosNearPlanevec4);
-
-		glm::vec3 direction = worldPosNearPlane - camera->transform.getGlobalPosition();
-
-		float t = -camera->transform.getGlobalPosition().y / direction.y;
-
-		glm::vec3 clickPosGround = camera->transform.getGlobalPosition() + direction * t;
-
-		//Selector(glm::vec2(clickPosGround.x, clickPosGround.z));
-
-		float shortest = FLT_MAX;
-		SceneObject* toSelect = nullptr;
-		for (auto& i : sceneObjects)
-		{
-			if (gui.getSelected() == i.second) { continue; }
-			glm::vec3 selectMin;
-			glm::vec3 selectMax;
-			Model* model = nullptr;
-			if (i.second->parts & Parts::modelRenderer) {
-				model = i.second->modelRenderer()->model;
-			}
-			if (model) {
-				selectMin = model->min;
-				selectMax = model->max;
-			}
-			else {
-				selectMin = glm::vec3(-selectSize, -selectSize, -selectSize);
-				selectMax = glm::vec3(selectSize, selectSize, selectSize);
-			}
-			float distance = 0.0f;
-			if (RayAgainstOBB::RayAgainstOBB(camera->transform.getGlobalPosition(), glm::normalize(direction), selectMin, selectMax, i.second->transform()->getGlobalMatrix(), distance)) {
-				Transform* parent = i.second->transform()->getParent();
-				if (parent) {
-					if (parent->getSceneObject() == groundTileParent) {
-						continue;
-					}
-				}
-				if (i.second == groundTileParent) { continue; }
-
-				if (distance < shortest) {
-					toSelect = i.second;
-					shortest = distance;
-				}
-			}
-		}
-		gui.setSelected(toSelect);
-	}
-}
-
-void LevelEditor::SaveAsPrompt()
+void GameSyncEcco::SaveAsPrompt()
 {
 	if (openSaveAs) {
 		ImGui::OpenPopup("Save as");
@@ -785,7 +530,7 @@ void LevelEditor::SaveAsPrompt()
 	ImGui::EndPopup();
 }
 
-void LevelEditor::LoadPrompt()
+void GameSyncEcco::LoadPrompt()
 {
 	if (openLoad) {
 		ImGui::OpenPopup("Load Level", ImGuiPopupFlags_AnyPopup);
@@ -835,7 +580,7 @@ void LevelEditor::LoadPrompt()
 	ImGui::EndPopup();
 }
 
-void LevelEditor::SaveLevel()
+void GameSyncEcco::SaveLevel()
 {
 
 	if (UserPreferences::rememberLastLevel) {
@@ -849,7 +594,7 @@ void LevelEditor::SaveLevel()
 	file.close();
 }
 
-void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
+void GameSyncEcco::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 {
 	if (levelToLoad != "") windowName = levelToLoad;
 	std::ifstream file(Paths::levelsPath + windowName + Paths::levelExtension);
@@ -964,13 +709,12 @@ void LevelEditor::LoadLevel(bool inPlayMaintained, std::string levelToLoad)
 	}
 }
 
-void LevelEditor::InitialiseLayers()
+void GameSyncEcco::InitialiseLayers()
 {
-	// TODO: Shouldn't be direct sync/ecco references here, there should be an inherited function
-////ecco
+	//ecco
 	SceneObject* eccoSO = sceneObjects[eccos.begin()->first];
 	eccoSO->rigidBody()->onCollision.push_back([this](Collision collision) { eccos.begin()->second.OnCollision(collision); });
-	////sync
+	//sync
 	SceneObject* syncSO = sceneObjects[syncs.begin()->first];
 	//if (!syncSO->health()) syncSO->setHealth(new Health());
 	syncSO->rigidBody()->vel = { 0.0f, 0.0f };
@@ -1010,98 +754,11 @@ void LevelEditor::InitialiseLayers()
 	}
 }
 
-void LevelEditor::ModelPlacer(glm::vec2 targetPos)
-{
-	glm::vec3 pos = { targetPos.x, assetPlacerHeight, targetPos.y };
-
-	SceneObject* newSceneObject = new SceneObject(this, Utilities::FilenameFromPath(assetPlacer->path, false));
-	newSceneObject->setModelRenderer(new ModelRenderer(assetPlacer, 0ull));
-	newSceneObject->modelRenderer()->setMaterialTint(assetPlacerColour);
-	newSceneObject->transform()->setPosition(pos);
-	newSceneObject->transform()->setEulerRotation({ 0.0f, assetPlacerRotation, 0.0f });
-	newSceneObject->setCollider(new PolygonCollider({
-		{ +defaultColliderLength, +defaultColliderLength},
-		{ +defaultColliderLength, -defaultColliderLength},
-		{ -defaultColliderLength, -defaultColliderLength},
-		{ -defaultColliderLength, +defaultColliderLength}
-		}, 0.0f));
-
-	gui.setSelected(newSceneObject);
-}
-
-void LevelEditor::PrefabPlacer(glm::vec2 targetPos)
-{
-	if (PrefabManager::loadedPrefabOriginals.find(PrefabManager::selectedPrefab) == PrefabManager::loadedPrefabOriginals.end()) {
-		// No prefab selected
-		return;
-	}
-	glm::vec3 pos = { targetPos.x, assetPlacerHeight, targetPos.y };
-
-	SceneObject* newSceneObject = new SceneObject(this);
-
-	newSceneObject->LoadFromPrefab(PrefabManager::loadedPrefabOriginals.at(PrefabManager::selectedPrefab));
-
-	newSceneObject->transform()->setPosition(pos);
-	newSceneObject->transform()->setEulerRotation({ 0.0f, assetPlacerRotation, 0.0f });
-
-	gui.setSelected(newSceneObject);
-}
-
-void LevelEditor::Selector(glm::vec2 targetPos)
-{
-	for (auto& i : transforms)
-	{
-		Transform* parent = i.second.getParent();
-		if (parent) {
-			if (parent->getSceneObject() == groundTileParent) {
-				continue;
-			}
-		}
-		if (i.second.getSceneObject() == groundTileParent) { continue; }
-		if (i.second.getSceneObject() == gui.getSelected()) { continue; }
-		glm::vec2 pos = i.second.get2DGlobalPosition();
-		if (glm::length(pos - targetPos) < selectSize) {
-			gui.setSelected(i.second.getSceneObject());
-		}
-	}
-}
-
-void LevelEditor::DrawGrid()
-{
-	float xMin = (gridMinX - 0.5f) * gridSize;
-	float xMax = (gridMaxX + 0.5f) * gridSize;
-	float zMin = (gridMinZ - 0.5f) * gridSize;
-	float zMax = (gridMaxZ + 0.5f) * gridSize;
-	LineRenderer* lines = placementGridUseDebugLines ? &renderSystem.debugLines : &renderSystem.lines;
-	lines->SetColour({ gridColour.x, gridColour.y, gridColour.z });
-	for (float x = xMin; x <= xMax; x += placementGridSize)
-	{
-		lines->DrawLineSegementXZ({ x, zMin }, { x, zMax }, placementGridHeight);
-	}
-	for (float z = zMin; z <= zMax; z += placementGridSize)
-	{
-		lines->DrawLineSegementXZ({ xMin, z }, { xMax, z }, placementGridHeight);
-	}
-
-}
-
-glm::vec2 LevelEditor::EditorCamMouseToWorld() const
-{
-	glm::vec3 camPos = camera->transform.getGlobalPosition();
-	glm::vec2 camPoint = glm::vec2(camPos.x, camPos.z);
-
-	glm::vec2 adjustedCursor = *cursorPos - glm::vec2{ 0.5f, 0.5f };
-	float scrRatio = (float)*windowWidth / (float)*windowHeight;
-	glm::vec2 temp = camPoint + glm::vec2(adjustedCursor.x * camera->getOrthoWidth(scrRatio), -adjustedCursor.y * camera->getOrthoHeight(scrRatio));
-
-	return temp;
-}
-
-LevelEditor::~LevelEditor()
+GameSyncEcco::~GameSyncEcco()
 {
 }
 
-void LevelEditor::Save()
+void GameSyncEcco::Save()
 {
 	if (!previouslySaved) {
 		openSaveAs = true;
@@ -1111,7 +768,7 @@ void LevelEditor::Save()
 	}
 }
 
-void LevelEditor::Load()
+void GameSyncEcco::Load()
 {
 	openLoad = true;
 }
