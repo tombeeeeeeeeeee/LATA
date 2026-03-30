@@ -176,10 +176,10 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
 
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
 
-    unsigned int currShader = ResourceManager::irradiance->GLID;
-    glUseProgram(currShader);
-    glUniform1i(glGetUniformLocation(currShader, "environmentMap"), 1);
-    glUniformMatrix4fv(glGetUniformLocation(currShader, "projection"), 1, GL_FALSE, &captureProjection[0][0]);
+    Shader* currShader = ResourceManager::irradiance;
+    currShader->Use();
+    currShader->setSampler("environmentMap", 1);
+    currShader->setMat4("projection", captureProjection);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
@@ -187,7 +187,7 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
     glViewport(0, 0, 32, 32);
     for (unsigned int i = 0; i < 6; ++i)
     {
-        glUniformMatrix4fv(glGetUniformLocation(currShader, "view"), 1, GL_FALSE, &captureViews[i][0][0]);
+        currShader->setMat4("view", captureViews[i]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
