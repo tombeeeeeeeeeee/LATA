@@ -109,12 +109,21 @@ GLuint Texture::CreateTexture(int width, int height, GLenum format, unsigned cha
 	glGenTextures(1, &ID);
 
 	glBindTexture(GL_TEXTURE_2D, ID);
-	if(format == GL_SRGB_ALPHA)
+	switch (format)
+	{
+	case GL_SRGB_ALPHA:
+	case GL_RGBA16F:
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, dataType, data);
-	else if(format == GL_SRGB)
+		break;
+	case GL_SRGB:
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGB, dataType, data);
-	else
+		break;
+	case GL_DEPTH24_STENCIL8:
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_DEPTH_STENCIL, dataType, data);
+	default:
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, dataType, data);
+		break;
+	}
 	
 	if (mipMaps) {
 		glGenerateMipmap(GL_TEXTURE_2D); //TODO: Mip maps can look bad transitioning
