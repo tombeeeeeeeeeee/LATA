@@ -255,11 +255,11 @@ private:
     void RenderDownSamples(unsigned int srcTexture);
     void RenderUpSamples(float aspectRatio);
 
-    unsigned int normalBuffer = 0;
-    unsigned int albedoBuffer = 0;
-    unsigned int emissionBuffer = 0;
-    unsigned int pbrBuffer = 0;
-    unsigned int depthBuffer = 0;
+    Texture* normalBuffer = nullptr;
+    Texture* albedoBuffer = nullptr;
+    Texture* emissionBuffer = nullptr;
+    Texture* pbrBuffer = nullptr;
+    Texture* depthBuffer = nullptr;
     unsigned int deferredFBO = 0;
     void DeferredSetup();
 
