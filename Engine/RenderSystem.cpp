@@ -266,14 +266,16 @@ void RenderSystem::LightPassUpdate()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
 
-    glBindTexture(GL_TEXTURE_2D, lightPassBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    if (lightPassBuffer)
+    {
+        lightPassBuffer->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
+    }
+    else
+    {
+        lightPassBuffer = ResourceManager::CreateTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGBA16F, nullptr, GL_CLAMP_TO_EDGE, GL_FLOAT, false, GL_LINEAR, GL_LINEAR);
+    }
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, lightPassBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, lightPassBuffer->GLID, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GLID, 0);
 
     auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -287,14 +289,16 @@ void RenderSystem::LinesUpdate()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
 
-    glBindTexture(GL_TEXTURE_2D, linesBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    if (linesBuffer)
+    {
+        linesBuffer->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
+    }
+    else
+    {
+        linesBuffer = ResourceManager::CreateTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGBA16F, nullptr, GL_CLAMP_TO_EDGE, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
+    }
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, linesBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, linesBuffer->GLID, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GLID, 0);
 
     auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -531,16 +535,12 @@ void RenderSystem::Update(
     albedoBuffer->Bind(2);
     normalBuffer->Bind(3);
     emissionBuffer->Bind(4);
-
-    glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+    ssaoColorBuffer->Bind(5);
 
     glActiveTexture(GL_TEXTURE6);
     glBindTexture(GL_TEXTURE_2D, bloomMips[0].texture);
 
-    glActiveTexture(GL_TEXTURE7);
-    glBindTexture(GL_TEXTURE_2D, lightPassBuffer);
-
+    lightPassBuffer->Bind(7);
     pbrBuffer->Bind(8);
 
     ResourceManager::screen->setFloat("exposure", exposure);
@@ -578,22 +578,36 @@ void RenderSystem::Update(
 void RenderSystem::SSAOUpdate()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
-    glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RED, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
+
+    if (ssaoColorBuffer)
+    {
+        ssaoColorBuffer->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
+    }
+    else
+    {
+        ssaoColorBuffer = ResourceManager::CreateTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RED, nullptr, GL_CLAMP_TO_EDGE, GL_FLOAT, false, GL_LINEAR, GL_LINEAR);
+    }
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer->GLID, 0);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "SSAO Framebuffer not complete!" << std::endl;
 
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
-    glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RED, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoBluredBuffer, 0);
+
+    if (ssaoBluredBuffer)
+    {
+        ssaoBluredBuffer->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
+    }
+    else
+    {
+        // TODO: There wasn't actually a wrapping mode set directly for this, what would have been the default?
+        ssaoBluredBuffer = ResourceManager::CreateTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RED, nullptr, GL_CLAMP_TO_EDGE, GL_FLOAT, false, GL_LINEAR, GL_LINEAR);
+    };
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoBluredBuffer->GLID, 0);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
         std::cout << "SSAO Framebuffer not complete!" << std::endl;
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -702,21 +716,20 @@ float delta
     pointLightPassShader->setVec2("invViewPort", glm::vec2(1.0f/SCREEN_WIDTH, 1.0f/SCREEN_HEIGHT));
     pointLightPassShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
     pointLightPassShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
-    pointLightPassShader->setInt("albedo", 1);
-    pointLightPassShader->setInt("normal", 2);
-    pointLightPassShader->setInt("depth", 3);
-    pointLightPassShader->setInt("pbr", 4);
-    pointLightPassShader->setInt("lightLerp", 5);
-    pointLightPassShader->setInt("SSAO", 6);
+    pointLightPassShader->setSampler("albedo", 1);
+    pointLightPassShader->setSampler("normal", 2);
+    pointLightPassShader->setSampler("depth", 3);
+    pointLightPassShader->setSampler("pbr", 4);
+    int lightLerpTexSlot = 5;
+    pointLightPassShader->setSampler("lightLerp", lightLerpTexSlot);
+    pointLightPassShader->setSampler("SSAO", 6);
     pointLightPassShader->setInt("frameCount", frameCountInSixteen);
 
     albedoBuffer->Bind(1);
     normalBuffer->Bind(2);
     depthBuffer->Bind(3);
     pbrBuffer->Bind(4);
-
-    glActiveTexture(GL_TEXTURE0 + 6);
-    glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
+    ssaoBluredBuffer->Bind(6);
 
     for (auto& pair : pointLights)
     {
@@ -736,8 +749,7 @@ float delta
         case PointLightEffect::On:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOn);
             lerpAmount = pair.second.timeInType / lightTimeToOn;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, onLightTexture->GLID);
+            onLightTexture->Bind(lightLerpTexSlot);
             break;
 
         case PointLightEffect::OffDelete:
@@ -745,33 +757,30 @@ float delta
             {
                 SceneManager::scene->DeleteSceneObjectAndChildren(pair.first);
             }
+            [[fallthrough]];
         case PointLightEffect::Off:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOff);
             lerpAmount = pair.second.timeInType / lightTimeToOff;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, offLightTexture->GLID);
+            offLightTexture->Bind(lightLerpTexSlot);
             break;
 
         case PointLightEffect::Explosion:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToExplode);
             if (pair.second.timeInType >= lightTimeToExplode) SceneManager::scene->DeleteSceneObjectAndChildren(pair.first);
             lerpAmount = pair.second.timeInType / lightTimeToExplode;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, explodingLightTexture->GLID);
+            explodingLightTexture->Bind(lightLerpTexSlot);
             break;
 
         case PointLightEffect::Flickering:
             pair.second.timeInType = fmod(pair.second.timeInType, lightTimeToFlicker);
             lerpAmount = fmod(pair.second.timeInType + (pair.first % 100) / 100.0f, lightTimeToFlicker) / lightTimeToFlicker;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, flickeringLightTexture->GLID);
+            flickeringLightTexture->Bind(lightLerpTexSlot);
             break;
 
         case PointLightEffect::SpotLightSpawnRoom:
             pair.second.timeInType = glm::clamp(pair.second.timeInType, 0.0f, lightTimeToOn);
             lerpAmount = pair.second.timeInType / lightTimeToOn;
-            glActiveTexture(GL_TEXTURE0 + 5);
-            glBindTexture(GL_TEXTURE_2D, spawnRoomLightTexture->GLID);
+            spawnRoomLightTexture->Bind(lightLerpTexSlot);
         }
         pointLightPassShader->setFloat("lerpAmount", glm::clamp(lerpAmount, 0.0f, 1.0f));
         lightSphere->getMeshes()[0]->Draw();
@@ -800,12 +809,12 @@ void RenderSystem::RenderSpotlights(
     spotlightPassShader->setVec2("invViewPort", glm::vec2(1.0f / SCREEN_WIDTH, 1.0f / SCREEN_HEIGHT));
     spotlightPassShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
     spotlightPassShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
-    spotlightPassShader->setInt("albedo", 1);
-    spotlightPassShader->setInt("normal", 2);
-    spotlightPassShader->setInt("depth", 3);
-    spotlightPassShader->setInt("pbr", 4);
-    spotlightPassShader->setInt("lightLerp", 5);
-    spotlightPassShader->setInt("shadowMap", 6);
+    spotlightPassShader->setSampler("albedo", 1);
+    spotlightPassShader->setSampler("normal", 2);
+    spotlightPassShader->setSampler("depth", 3);
+    spotlightPassShader->setSampler("pbr", 4);
+    spotlightPassShader->setSampler("lightLerp", 5);
+    spotlightPassShader->setSampler("shadowMap", 6);
 
     albedoBuffer->Bind(1);
     normalBuffer->Bind(2);
@@ -925,8 +934,7 @@ void RenderSystem::ActivateFlaggedVariables(
         glActiveTexture(GL_TEXTURE0 + 7);
         glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
 
-        glActiveTexture(GL_TEXTURE0 + 11);
-        glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
+        ssaoBluredBuffer->Bind(11);
     }
     if (flag & Shader::Flags::EccoAnim)
     {
@@ -949,19 +957,17 @@ void RenderSystem::RenderLineLights()
     lineLightShader->setVec2("invViewPort", glm::vec2(1.0f / SCREEN_WIDTH, 1.0f / SCREEN_HEIGHT));
     lineLightShader->setVec3("camPos", SceneManager::camera.transform.getGlobalPosition());
     lineLightShader->setVec3("cameraDelta", SceneManager::scene->gameCamSystem.cameraPositionDelta);
-    lineLightShader->setInt("albedo", 1);
-    lineLightShader->setInt("normal", 2);
-    lineLightShader->setInt("depth", 3);
-    lineLightShader->setInt("pbr", 4);
-    lineLightShader->setInt("SSAO", 6);
+    lineLightShader->setSampler("albedo", 1);
+    lineLightShader->setSampler("normal", 2);
+    lineLightShader->setSampler("depth", 3);
+    lineLightShader->setSampler("pbr", 4);
+    lineLightShader->setSampler("SSAO", 6);
 
     albedoBuffer->Bind(1);
     normalBuffer->Bind(2);
     depthBuffer->Bind(3);
     pbrBuffer->Bind(4);
-
-    glActiveTexture(GL_TEXTURE0 + 6);
-    glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
+    ssaoBluredBuffer->Bind(6);
 
     for (auto& i : beams)
     {
@@ -1010,12 +1016,8 @@ void RenderSystem::RenderComposite()
     compositeShader->Use();
     compositeShader->setInt("lines", 1);
     compositeShader->setInt("lights", 2);
-
-    glActiveTexture(GL_TEXTURE0 + 1);
-    glBindTexture(GL_TEXTURE_2D, linesBuffer);
-
-    glActiveTexture(GL_TEXTURE0 + 2);
-    glBindTexture(GL_TEXTURE_2D, lightPassBuffer);
+    linesBuffer->Bind(1);
+    lightPassBuffer->Bind(2);
 
     RenderQuad();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -1343,10 +1345,8 @@ void RenderSystem::DeferredSetup()
     DeferredUpdate();
 }
 
-
 void RenderSystem::LightPassSetup()
 {
-    glGenTextures(1, &lightPassBuffer);
     glGenFramebuffers(1, &lightPassFBO);
     LightPassUpdate();
     ambientPassShader = ResourceManager::LoadShaderDefaultVert("ambient");
@@ -1357,7 +1357,6 @@ void RenderSystem::LightPassSetup()
 
 void RenderSystem::LinesSetup()
 {
-    glGenTextures(1, &linesBuffer);
     glGenFramebuffers(1, &linesFBO);
     LinesUpdate();
 }
@@ -1407,10 +1406,7 @@ void RenderSystem::RenderQuad()
 
 void RenderSystem::SSAOSetup()
 {
-    glGenTextures(1, &ssaoColorBuffer);
     glGenFramebuffers(1, &ssaoFBO);
-
-    glGenTextures(1, &ssaoBluredBuffer);
     glGenFramebuffers(1, &ssaoBlurFBO);
 
     Shader* ssaoShader = ResourceManager::ssao;
@@ -1441,13 +1437,16 @@ void RenderSystem::SSAOSetup()
         glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f); // rotate around z-axis (in tangent space)
         ssaoNoise.push_back(noise);
     }
-    glGenTextures(1, &noiseTexture);
-    glBindTexture(GL_TEXTURE_2D, noiseTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 4, 4, 0, GL_RGB, GL_FLOAT, &ssaoNoise[0]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    if (noiseTexture)
+    {
+        // Doesn't change size
+        noiseTexture->Load();
+    }
+    else
+    {
+        // TODO: Is this still alright, the internal format before was GL_RGB, however now it will be GL_RGB
+        noiseTexture = ResourceManager::CreateTexture(4, 4, GL_RGBA32F, (unsigned char*)&ssaoNoise[0], GL_REPEAT, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
+    }
 }
 
 void RenderSystem::RenderAmbientPass()
@@ -1477,9 +1476,7 @@ void RenderSystem::RenderAmbientPass()
     albedoBuffer->Bind(2);
     normalBuffer->Bind(3);
     emissionBuffer->Bind(4);
-
-    glActiveTexture(GL_TEXTURE0 + 5);
-    glBindTexture(GL_TEXTURE_2D, ssaoBluredBuffer);
+    ssaoBluredBuffer->Bind(5);
 
     glActiveTexture(GL_TEXTURE0 + 6);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
@@ -1622,19 +1619,14 @@ void RenderSystem::RenderSSAO()
 
     depthBuffer->Bind(1);
     normalBuffer->Bind(2);
-
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, noiseTexture);
-
+    noiseTexture->Bind(3);
     RenderQuad();
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
 
     Shader* blur = ResourceManager::ssaoBlur;
     blur->Use();
     blur->setInt("SSAO", 1);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
-
+    ssaoColorBuffer->Bind(1);
     RenderQuad();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

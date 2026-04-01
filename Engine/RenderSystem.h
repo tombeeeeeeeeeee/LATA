@@ -263,7 +263,7 @@ private:
     unsigned int deferredFBO = 0;
     void DeferredSetup();
 
-    unsigned int lightPassBuffer = 0;
+    Texture* lightPassBuffer = nullptr;
     unsigned int lightPassFBO = 0;
     Shader* ambientPassShader = nullptr;
     Shader* pointLightPassShader = nullptr;
@@ -272,7 +272,7 @@ private:
     void LightPassSetup();
     void RenderAmbientPass();
 
-    unsigned int linesBuffer = 0;
+    Texture* linesBuffer = nullptr;
     unsigned int linesFBO = 0;
     void LinesSetup();
     void RenderLinePass();
@@ -288,12 +288,12 @@ private:
     void RenderSyncAim(float delta);
 
     unsigned int ssaoFBO = 0;
-    unsigned int ssaoColorBuffer = 0;
+    Texture* ssaoColorBuffer = nullptr;
     unsigned int ssaoBlurFBO = 0;
-    unsigned int ssaoBluredBuffer = 0;
+    Texture* ssaoBluredBuffer = nullptr;
     std::vector<glm::vec3> ssaoKernel = {};
     std::vector<glm::vec3> ssaoNoise = {};
-    unsigned int noiseTexture = 0;
+    Texture* noiseTexture = nullptr;
     void SSAOSetup();
 
     void RenderSSAO();
