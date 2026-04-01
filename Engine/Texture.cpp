@@ -113,6 +113,7 @@ GLuint Texture::CreateTexture(int width, int height, GLenum format, unsigned cha
 	{
 	case GL_SRGB_ALPHA:
 	case GL_RGBA16F:
+	case GL_RGBA32F:
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, dataType, data);
 		break;
 	case GL_SRGB:
