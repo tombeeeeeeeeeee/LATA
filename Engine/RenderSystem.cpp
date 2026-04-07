@@ -311,27 +311,33 @@ void RenderSystem::LinesUpdate()
 
 void RenderSystem::CompositeBufferUpdate()
 {
-    glBindTexture(GL_TEXTURE_2D, colorBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    if (colorBuffer)
+    {
+        colorBuffer->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
+    }
+    else
+    {
+        colorBuffer = ResourceManager::CreateTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGBA16F, nullptr, GL_CLAMP_TO_EDGE, GL_FLOAT, false, GL_LINEAR, GL_LINEAR);
+    }
 
-    glBindTexture(GL_TEXTURE_2D, bloomBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    if (bloomBuffer)
+    {
+        bloomBuffer->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
+    }
+    else
+    {
+        bloomBuffer = ResourceManager::CreateTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGBA16F, nullptr, GL_CLAMP_TO_EDGE, GL_FLOAT, false, GL_LINEAR, GL_LINEAR);
+    }
 
     // attach buffers
     glBindFramebuffer(GL_FRAMEBUFFER, compositeFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, bloomBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer->GLID, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, bloomBuffer->GLID, 0);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
         std::cout << "Framebuffer not complete!" << std::endl;
+    }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -343,13 +349,18 @@ void RenderSystem::OutputBufferUpdate()
     }
 
     // create unsigned int color buffer
-    glBindTexture(GL_TEXTURE_2D, outputTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_INT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    if (outputTexture)
+    {
+        outputTexture->setWidthHeight(SCREEN_WIDTH, SCREEN_HEIGHT);
+    }
+    else
+    {
+        outputTexture = ResourceManager::CreateTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGBA, nullptr, GL_CLAMP_TO_EDGE, GL_UNSIGNED_INT, false, GL_LINEAR, GL_LINEAR);
+    }
+
     // attach buffer
     glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, outputTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, outputTexture->GLID, 0);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
         std::cout << "Framebuffer not complete!" << std::endl;
@@ -529,9 +540,7 @@ void RenderSystem::Update(
     ResourceManager::screen->setInt("pbr", 8);
 
 
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, colorBuffer);
-
+    colorBuffer->Bind(1);
     albedoBuffer->Bind(2);
     normalBuffer->Bind(3);
     emissionBuffer->Bind(4);
@@ -998,8 +1007,6 @@ void RenderSystem::RenderLineLights()
 void RenderSystem::CompositeBufferSetUp()
 {
     glGenFramebuffers(1, &compositeFBO);
-    glGenTextures(1, &colorBuffer);
-    glGenTextures(1, &bloomBuffer);
     compositeShader = ResourceManager::LoadShaderDefaultVert("composite");
 
     CompositeBufferUpdate();
@@ -1150,7 +1157,6 @@ void RenderSystem::RenderSpotLightShadowMaps(
 void RenderSystem::OutputBufferSetUp()
 {
     glGenFramebuffers(1, &outputFBO);
-    glGenTextures(1, &outputTexture);
 
     OutputBufferUpdate();
 }
@@ -1256,7 +1262,7 @@ void RenderSystem::BloomSetup()
     }
 }
 
-void RenderSystem::RenderBloom(unsigned int srcTexture)
+void RenderSystem::RenderBloom(Texture* srcTexture)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -1269,18 +1275,18 @@ void RenderSystem::RenderBloom(unsigned int srcTexture)
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-void RenderSystem::RenderDownSamples(unsigned int srcTexture)
+void RenderSystem::RenderDownSamples(Texture* srcTexture)
 {
-    ResourceManager::downSample->Use();
+    Shader* downSample = ResourceManager::downSample;
+    downSample->Use();
 
     // Bind srcTexture (HDR color buffer) as initial texture input
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, srcTexture);
+    srcTexture->Bind(0);
 
     glm::vec2 inverseRes = { 1.0f / (float)SCREEN_WIDTH, 1.0f / (float)SCREEN_HEIGHT };
 
-    ResourceManager::downSample->setInt("mipLevel", 0);
-    ResourceManager::downSample->setVec2("srcResolution", inverseRes);
+    downSample->setInt("mipLevel", 0);
+    downSample->setVec2("srcResolution", inverseRes);
 
     glDisable(GL_BLEND);
 

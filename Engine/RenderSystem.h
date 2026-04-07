@@ -133,7 +133,6 @@ public:
     /// </summary>
     GLFWwindow* window = nullptr;
 
-
     bool DoGuiWindow() override;
 
     glm::mat4 viewMatrix = glm::zero<glm::mat4>();
@@ -153,14 +152,7 @@ private:
 
     Mesh* screenQuad = nullptr;
 
-    Light* shadowCaster = nullptr;
-
     Shader* postProcess = nullptr;
-
-    /// <summary>
-    /// Missing Texture VRAM location
-    /// </summary>
-    unsigned int missingTextureTexture = 0;
 
     Texture* onLightTexture = nullptr;
     Texture* offLightTexture = nullptr;
@@ -233,12 +225,12 @@ private:
 
 
     unsigned int compositeFBO = 0;
-    unsigned int bloomBuffer = 0;
-    unsigned int colorBuffer = 0;
+    Texture* bloomBuffer = nullptr;
+    Texture* colorBuffer = nullptr;
     Shader* compositeShader = nullptr;
 
     unsigned int outputFBO = 0;
-    unsigned int outputTexture = 0;
+    Texture* outputTexture = 0;
 
     unsigned int captureFBO = 0;
     unsigned int captureRBO = 0;
@@ -250,9 +242,9 @@ private:
     unsigned int mFBO = 0;
     std::vector<bloomMip> bloomMips = {};
 
-    void RenderBloom(unsigned int srcTexture);
+    void RenderBloom(Texture* srcTexture);
 
-    void RenderDownSamples(unsigned int srcTexture);
+    void RenderDownSamples(Texture* srcTexture);
     void RenderUpSamples(float aspectRatio);
 
     Texture* normalBuffer = nullptr;
