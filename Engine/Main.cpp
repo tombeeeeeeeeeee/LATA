@@ -8,6 +8,7 @@
 #include "GameTest.h"
 #include "LevelEditor.h"
 #include "LocWorkshop.h"
+#include "GameSyncEcco.h"
 
 int main()
 {
@@ -16,7 +17,7 @@ int main()
 #elif defined LEVEL_EDITOR
 	LevelEditor scene;
 #else
-	LevelEditor scene;
+	GameSyncEcco scene;
 #endif
 	SceneManager sceneManager(&scene);
 	sceneManager.Run();

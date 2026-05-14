@@ -223,23 +223,21 @@ private:
 
     void UpdateEccoFaceAnim(float delta);
 
-
-    unsigned int compositeFBO = 0;
+    FrameBuffer* compositeFBO = nullptr;
     Texture* bloomBuffer = nullptr;
     Texture* colorBuffer = nullptr;
     Shader* compositeShader = nullptr;
 
-    unsigned int outputFBO = 0;
-    Texture* outputTexture = 0;
+    FrameBuffer* outputFB = nullptr;
+    Texture* outputTexture = nullptr;
 
-    unsigned int captureFBO = 0;
-    unsigned int captureRBO = 0;
+    FrameBuffer* captureFB = nullptr;
 
-    unsigned int irradianceMap = 0;
+    Texture* irradianceMap = nullptr;
     Texture* paintStrokeTexture = nullptr;
 
     void BloomSetup();
-    unsigned int mFBO = 0;
+    FrameBuffer* mFB = nullptr;
     std::vector<bloomMip> bloomMips = {};
 
     void RenderBloom(Texture* srcTexture);
@@ -252,11 +250,11 @@ private:
     Texture* emissionBuffer = nullptr;
     Texture* pbrBuffer = nullptr;
     Texture* depthBuffer = nullptr;
-    unsigned int deferredFBO = 0;
+    FrameBuffer* deferredFB = nullptr;
     void DeferredSetup();
 
     Texture* lightPassBuffer = nullptr;
-    unsigned int lightPassFBO = 0;
+    FrameBuffer* lightPassFBO = nullptr;
     Shader* ambientPassShader = nullptr;
     Shader* pointLightPassShader = nullptr;
     Shader* spotlightPassShader = nullptr;
@@ -265,7 +263,7 @@ private:
     void RenderAmbientPass();
 
     Texture* linesBuffer = nullptr;
-    unsigned int linesFBO = 0;
+    FrameBuffer* linesFB = nullptr;
     void LinesSetup();
     void RenderLinePass();
 
@@ -279,9 +277,9 @@ private:
     void RenderBeams(float delta);
     void RenderSyncAim(float delta);
 
-    unsigned int ssaoFBO = 0;
+    FrameBuffer* ssaoFB = nullptr;
     Texture* ssaoColorBuffer = nullptr;
-    unsigned int ssaoBlurFBO = 0;
+    FrameBuffer* ssaoBlurFB = nullptr;
     Texture* ssaoBluredBuffer = nullptr;
     std::vector<glm::vec3> ssaoKernel = {};
     std::vector<glm::vec3> ssaoNoise = {};

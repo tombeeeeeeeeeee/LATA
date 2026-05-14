@@ -16,6 +16,7 @@ private:
 	Texture* depthTexture;
 
 public:
+	// Width and height is only needed if an rbo is being used, adjust constructor/s
 	FrameBuffer(unsigned int _width, unsigned int _height, Texture* _colourTexture, Texture* _depthTexture, bool _useRBO);
 	
 	void setWidthHeight(unsigned int _width, unsigned int _height);

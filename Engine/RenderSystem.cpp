@@ -146,13 +146,19 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
     // Correct framebuffer (none) should be bound
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glGenFramebuffers(1, &captureFBO);
-    glGenRenderbuffers(1, &captureRBO);
+    if (captureFB)
+    {
+        delete captureFB;
+    }
+    captureFB = new FrameBuffer(512, 512, , , true)
+    //glGenFramebuffers(1, &captureFBO);
+    //glGenRenderbuffers(1, &captureRBO);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    //glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    //glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+        // Technically different, using depth24 8 stencil, rather than just depth
+    //glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
     glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
@@ -203,6 +209,10 @@ void RenderSystem::SetIrradianceMap(unsigned int textureID)
 void RenderSystem::DeferredUpdate()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO);
+    if (deferredFB)
+    {
+
+    }
 
     if (normalBuffer)
     {
@@ -261,10 +271,12 @@ void RenderSystem::DeferredUpdate()
     }
 }
 
-
 void RenderSystem::LightPassUpdate()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
+    if (lightPassFBO)
+    {
+        delete lightPassFBO;
+    }
 
     if (lightPassBuffer)
     {
@@ -275,19 +287,16 @@ void RenderSystem::LightPassUpdate()
         lightPassBuffer = ResourceManager::CreateTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGBA16F, nullptr, GL_CLAMP_TO_EDGE, GL_FLOAT, false, GL_LINEAR, GL_LINEAR);
     }
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, lightPassBuffer->GLID, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GLID, 0);
-
-    auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (whatever != GL_FRAMEBUFFER_COMPLETE) {
-        std::cout << "Error: Framebuffer is not complete!" << "\n";
-    }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    lightPassFBO = new FrameBuffer(0, 0, lightPassBuffer, depthBuffer, false);
 }
 
 void RenderSystem::LinesUpdate()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
+    if (linesFB)
+    {
+        delete linesFB;
+    }
+    linesFB = new FrameBuffer(0, 0, linesBuffer, depthBuffer, false);
 
     if (linesBuffer)
     {
@@ -297,15 +306,6 @@ void RenderSystem::LinesUpdate()
     {
         linesBuffer = ResourceManager::CreateTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGBA16F, nullptr, GL_CLAMP_TO_EDGE, GL_FLOAT, false, GL_NEAREST, GL_NEAREST);
     }
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, linesBuffer->GLID, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuffer->GLID, 0);
-
-    auto whatever = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (whatever != GL_FRAMEBUFFER_COMPLETE) {
-        std::cout << "Error: Framebuffer is not complete!" << "\n";
-    }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
@@ -586,7 +586,6 @@ void RenderSystem::Update(
 
 void RenderSystem::SSAOUpdate()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
 
     if (ssaoColorBuffer)
     {
@@ -597,11 +596,12 @@ void RenderSystem::SSAOUpdate()
         ssaoColorBuffer = ResourceManager::CreateTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RED, nullptr, GL_CLAMP_TO_EDGE, GL_FLOAT, false, GL_LINEAR, GL_LINEAR);
     }
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer->GLID, 0);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "SSAO Framebuffer not complete!" << std::endl;
+    if (ssaoFB)
+    {
+        delete ssaoFB;
+    }
+    ssaoFB = new FrameBuffer(0, 0, ssaoColorBuffer, nullptr, false);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
 
     if (ssaoBluredBuffer)
     {
@@ -612,13 +612,12 @@ void RenderSystem::SSAOUpdate()
         // TODO: There wasn't actually a wrapping mode set directly for this, what would have been the default?
         ssaoBluredBuffer = ResourceManager::CreateTexture(SCREEN_WIDTH, SCREEN_HEIGHT, GL_RED, nullptr, GL_CLAMP_TO_EDGE, GL_FLOAT, false, GL_LINEAR, GL_LINEAR);
     };
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoBluredBuffer->GLID, 0);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    {
-        std::cout << "SSAO Framebuffer not complete!" << std::endl;
-    }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if (ssaoBlurFB)
+    {
+        delete ssaoBlurFB;
+    }
+    ssaoBlurFB = new FrameBuffer(0, 0, ssaoBluredBuffer, nullptr, false);
 }
 
 void RenderSystem::ScreenResize(int width, int height)
@@ -1353,7 +1352,6 @@ void RenderSystem::DeferredSetup()
 
 void RenderSystem::LightPassSetup()
 {
-    glGenFramebuffers(1, &lightPassFBO);
     LightPassUpdate();
     ambientPassShader = ResourceManager::LoadShaderDefaultVert("ambient");
     pointLightPassShader = ResourceManager::LoadShader("pointLight");
@@ -1363,20 +1361,19 @@ void RenderSystem::LightPassSetup()
 
 void RenderSystem::LinesSetup()
 {
-    glGenFramebuffers(1, &linesFBO);
     LinesUpdate();
 }
 
 void RenderSystem::RenderLinePass()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
+    linesFB->Bind();
     glClear(GL_COLOR_BUFFER_BIT);
     ResourceManager::lines->Use();
     lines.Draw();
 
     glDepthFunc(GL_ALWAYS);
     debugLines.Draw();
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    linesFB->Unbind();
 }
 
 void RenderSystem::RenderQuad()
@@ -1412,16 +1409,13 @@ void RenderSystem::RenderQuad()
 
 void RenderSystem::SSAOSetup()
 {
-    glGenFramebuffers(1, &ssaoFBO);
-    glGenFramebuffers(1, &ssaoBlurFBO);
+    SSAOUpdate();
 
     Shader* ssaoShader = ResourceManager::ssao;
     ssaoShader->Use();
     ssaoShader->setInt("depth", 1);
     ssaoShader->setInt("normalColour", 2);
     ssaoShader->setInt("texNoise", 3);
-
-    SSAOUpdate();
 
     std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
     std::default_random_engine generator;
@@ -1501,9 +1495,9 @@ void RenderSystem::RenderParticles(
 )
 {
     glDisable(GL_CULL_FACE);
-    glBindFramebuffer(GL_FRAMEBUFFER, lightPassFBO);
+    lightPassFBO->Bind();
     ParticleSystem::Draw(particles);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    lightPassFBO->Unbind();
 }
 
 void RenderSystem::UpdateEccoFaceAnim(float delta)
@@ -1523,7 +1517,7 @@ void RenderSystem::UpdateEccoFaceAnim(float delta)
 
 void RenderSystem::RenderBeams(float delta)
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
+    linesFB->Bind();
     glDepthMask(GL_FALSE);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_BLEND);
@@ -1560,12 +1554,12 @@ void RenderSystem::RenderBeams(float delta)
     }
     glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    linesFB->Unbind();
 }
 
 void RenderSystem::RenderSyncAim(float delta)
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, linesFBO);
+    linesFB->Bind();
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1594,12 +1588,12 @@ void RenderSystem::RenderSyncAim(float delta)
 
     glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    linesFB->Unbind();
 }
 
 void RenderSystem::RenderSSAO()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+    ssaoFB->Bind();
     glClear(GL_COLOR_BUFFER_BIT);
 
     //SSAO Pre Blur
@@ -1608,7 +1602,9 @@ void RenderSystem::RenderSSAO()
 
     // Send kernel + rotation 
     for (unsigned int i = 0; i < 64; ++i)
+    {
         ssaoShader->setVec3("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
+    }
     ssaoShader->setMat4("projection", projection);
     ssaoShader->setMat4("invP", glm::inverse(projection));
     ssaoShader->setMat4("invV", glm::inverse(viewMatrix));
@@ -1627,13 +1623,12 @@ void RenderSystem::RenderSSAO()
     normalBuffer->Bind(2);
     noiseTexture->Bind(3);
     RenderQuad();
-    glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+    ssaoBlurFB->Bind();
 
     Shader* blur = ResourceManager::ssaoBlur;
     blur->Use();
     blur->setInt("SSAO", 1);
     ssaoColorBuffer->Bind(1);
     RenderQuad();
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    ssaoBlurFB->Unbind();
 }

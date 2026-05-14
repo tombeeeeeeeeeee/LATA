@@ -476,6 +476,7 @@ void GLAPIENTRY SceneManager::ErrorMessageCallback(GLenum source, GLenum type, G
 	case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "notification"; break;
 	}
 	std::cout << "\n";
+	__debugbreak();
 }
 
 void SceneManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
